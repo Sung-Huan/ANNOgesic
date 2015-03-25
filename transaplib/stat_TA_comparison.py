@@ -9,21 +9,21 @@ def assign_tss(tss, tran):
     if "ID" in tran.attributes.keys():
         tran_id = tran.attributes["ID"]
     else:
-        tran_id = tran.feature + ":" + str(tran.start) + "-" + \
-                  str(tran.end) + "_" + tran.strand
+        tran_id = "".join([tran.feature, ":", str(tran.start), "-",
+                           str(tran.end), "_", tran.strand])
     if "Parent_tran" not in tss.attributes.keys():
         tss.attributes["Parent_tran"] = tran_id
     else:
-        tss.attributes["Parent_tran"] = tss.attributes["Parent_tran"] + "&" + tran_id
+        tss.attributes["Parent_tran"] = "&".join([tss.attributes["Parent_tran"], tran_id])
     if "ID" in tss.attributes.keys():
         tss_name = tss.attributes["Name"]
     else:
-        tss_name = "TSS:" + str(tss.start) + "-" + \
-                  str(tss.end) + "_" + tss.strand
+        tss_name = "".joinn(["TSS:", str(tss.start), "-",
+                             str(tss.end), "_", tss.strand])
     if "associated_tss" not in tran.attributes.keys():
         tran.attributes["associated_tss"] = tss_name
     else:
-        tran.attributes["associated_tss"] = tran.attributes["associated_tss"] + "&" + tss_name
+        tran.attributes["associated_tss"] = "&".join([tran.attributes["associated_tss"], tss_name])
 
 def del_attributes(entry, features):
     attributes = {}
@@ -104,14 +104,14 @@ def detect_TAS_region(tsss, trans, out, out_tss, fuzzy):
 def print_TAS_stat(stat, out):
     total_tran = stat["with_TSS"] + stat["no_TSS"]
     total_TSS = stat["TSS_no_tran"] + stat["TSS_with_tran"]
-    out.write("\tTranscript starts or overlap with TSS:%s (%s)\n" %
-              (str(stat["with_TSS"]), str(float(stat["with_TSS"]) / float(total_tran))))
-    out.write("\tTranscript has no relationship with TSS:%s (%s)\n" %
-              (str(stat["no_TSS"]), str(float(stat["no_TSS"]) / float(total_tran))))
-    out.write("\tTSS starts or overlap with transcript:%s (%s)\n" %
-              (str(stat["TSS_with_tran"]), str(float(stat["TSS_with_tran"]) / float(total_TSS))))
-    out.write("\tTSS has no relationship with transcript:%s (%s)\n" %
-              (str(stat["TSS_no_tran"]), str(float(stat["TSS_no_tran"]) / float(total_TSS))))
+    out.write("\tTranscript starts or overlap with TSS:{0} ({1})\n".format(
+              stat["with_TSS"], float(stat["with_TSS"]) / float(total_tran)))
+    out.write("\tTranscript has no relationship with TSS:{0} ({1})\n".format(
+              stat["no_TSS"], float(stat["no_TSS"]) / float(total_tran)))
+    out.write("\tTSS starts or overlap with transcript:{0} ({1})\n".format(
+              stat["TSS_with_tran"], float(stat["TSS_with_tran"]) / float(total_TSS)))
+    out.write("\tTSS has no relationship with transcript:{0} ({1})\n".format(
+              stat["TSS_no_tran"], float(stat["TSS_no_tran"]) / float(total_TSS)))
 
 def read_TAS_file(tss_file, ta_file, tsss_uni, tsss, tas_uni, tas):
     tss_f = open(tss_file, "r")
@@ -163,7 +163,7 @@ def assign_parent(gff, tran):
     if "Parent_tran" not in gff.attributes.keys():
         gff.attributes["Parent_tran"] = tran.attributes["ID"]
     else:
-        gff.attributes["Parent_tran"] = gff.attributes["Parent_tran"] + "&" + tran.attributes["ID"]
+        gff.attributes["Parent_tran"] = "&".join([gff.attributes["Parent_tran"], tran.attributes["ID"]])
     if "associated_cds" not in tran.attributes.keys():
         if "protein_id" in gff.attributes.keys():
             tran.attributes["associated_cds"] = gff.attributes["protein_id"]
@@ -172,19 +172,22 @@ def assign_parent(gff, tran):
         elif "Name" in gff.attributes.keys():
             tran.attributes["associated_cds"] = gff.attributes["Name"]
         else:
-            tran.attributes["associated_cds"] = gff.feature + ":" + str(gff.start) + "-" + \
-                                                str(gff.end) + "_" + gff.strand
+            tran.attributes["associated_cds"] = "".join([gff.feature, ":", str(gff.start), 
+                                                "-", str(gff.end), "_", gff.strand])
     else:
         if "protein_id" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = tran.attributes["associated_cds"] + "&" + gff.attributes["protein_id"]
+            tran.attributes["associated_cds"] = "&".join([tran.attributes["associated_cds"], 
+                                                          gff.attributes["protein_id"]])
         elif "locus_tag" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = tran.attributes["associated_cds"] + "&" + gff.attributes["locus_tag"]
+            tran.attributes["associated_cds"] = "&".join([tran.attributes["associated_cds"],
+                                                          gff.attributes["locus_tag"]])
         elif "Name" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = tran.attributes["associated_cds"] + "&" + gff.attributes["Name"]
+            tran.attributes["associated_cds"] = "&".join([tran.attributes["associated_cds"],
+                                                          gff.attributes["Name"]])
         else:
-            tran.attributes["associated_cds"] = tran.attributes["associated_cds"] + "&" + \
-                                                gff.feature + ":" + str(gff.start) + "-" + \
-                                                str(gff.end) + "_" + gff.strand
+            tran.attributes["associated_cds"] = "&".join([tran.attributes["associated_cds"],
+                                                "".join([gff.feature, ":", str(gff.start), 
+                                                         "-", str(gff.end), "_", gff.strand])])
 
 def compare_TA_GFF(gffs, tran, check, tran_type, detect, stats):
     for gff in gffs:
