@@ -18,8 +18,7 @@ def assign_tss(tss, tran):
     if "ID" in tss.attributes.keys():
         tss_name = tss.attributes["Name"]
     else:
-        tss_name = "".joinn(["TSS:", str(tss.start), "-",
-                             str(tss.end), "_", tss.strand])
+        tss_name = "".join(["TSS:", str(tss.start), "_", tss.strand])
     if "associated_tss" not in tran.attributes.keys():
         tran.attributes["associated_tss"] = tss_name
     else:
