@@ -35,12 +35,15 @@ class Helper(object):
                 elif (data_type == "dir") and os.path.isdir(target):
                     shutil.rmtree(target)
 
-    def move_all_content(self, ref_folder, tar_folder, feature):
+    def move_all_content(self, ref_folder, tar_folder, features):
         for file_ in os.listdir(ref_folder):
             move = False
-            if (feature is not None) and (feature in file_):
+            if (features is not None):
                 move = True
-            elif (feature is None):
+                for feature in features:
+                    if (feature not in file_):
+                        move = False
+            elif (features is None):
                 move = True
             if move:
                 os.rename(os.path.join(ref_folder, file_), 
@@ -48,7 +51,8 @@ class Helper(object):
 
     def remove_tmp(self, folder):
         if folder is not False:
-            shutil.rmtree(os.path.join(folder, "tmp"))
+            if os.path.isdir(os.path.join(folder, "tmp")):
+                shutil.rmtree(os.path.join(folder, "tmp"))
             self.remove_all_content(folder, "_folder", "dir")
 
     def remove_wigs(self, wigs):
