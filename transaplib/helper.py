@@ -68,6 +68,8 @@ class Helper(object):
             if for_wig_type is None:
                 if feature in data:
                     file_ = data[:-1 * len(feature)]
+                    print(file_)
+                    print(prefix)
                     if prefix == file_:
                         detect = True
                         return os.path.join(datas, data)
@@ -88,8 +90,8 @@ class Helper(object):
     def check_make_folder(self, path, folder):
         path = self.check_path(path)
         if folder in os.listdir(path):
-            shutil.rmtree(path + folder)
-        os.mkdir(path + folder)
+            shutil.rmtree(os.path.join(path, folder))
+        os.mkdir(os.path.join(path, folder))
 
     def sort_gff(self, gff_file, out_file):
         gffs = []
@@ -133,7 +135,7 @@ class Helper(object):
             list_.add(gff.attributes[type_])
     
     def check_uni_attributes(self, gff_file):
-        print("Checking gff file of " + gff_file)
+        print("Checking gff file of {0}".format(gff_file))
         gffs = []
         for entry in self.gff3parser.entries(open(gff_file)):
             gffs.append(entry)
@@ -150,15 +152,15 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Error: There are repeat ID " + \
-                                  gff.attributes["ID"] + " in gff file!!!")
+                            print("Error: There are repeat ID {0} in gff file!!!".format(
+                                  gff.attributes["ID"]))
                             sys.exit(1)
                         else:
                             self._add_element(ids, "ID", gff)
                     if "locus_tag" in gff.attributes.keys():
                         if gff.attributes["locus_tag"] in ids:
-                            print("Warning: There are repeat locus_tag " + \
-                                  gff.attributes["locus_tag"] + " in gff file!!!")
+                            print("Warning: There are repeat locus_tag {0} in gff file!!!".format(
+                                  gff.attributes["locus_tag"]))
                         else:
                             self._add_element(locus_tags, "locus_tag", gff)
             pre_gff = copy.copy(gff)
