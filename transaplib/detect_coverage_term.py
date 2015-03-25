@@ -202,6 +202,7 @@ def compare_term(term, terms):
                 break
     else:
         terms.append(term)
+    return terms
 
 def first_term(strand, term, detect_terms, detect):
     if (strand == "+"):
@@ -293,14 +294,14 @@ def print2file(num, term, coverage, parent, out, out_t, method, table_best, cuto
     print_table(term, cutoff_coverage, out_t, table_best)
     out_t.write("\n")
 
-def print_detect_undetect(terms, num, out, out_t, table_best, cutoff_coverage):
+def print_detect_undetect(terms, num, out, out_t, table_best, cutoff_coverage, detect):
     for term in terms:
         if term["strand"] == "+":
-            print2file(num, term, "True", term["parent_p"], out, 
+            print2file(num, term, detect, term["parent_p"], out, 
                        out_t, term["method"], table_best, cutoff_coverage)
             num += 1
         else:
-            print2file(num, term, "True", term["parent_m"], out, 
+            print2file(num, term, detect, term["parent_m"], out, 
                        out_t, term["method"], table_best, cutoff_coverage)
             num += 1
     return num
@@ -309,12 +310,12 @@ def term_validation(pre_term, term, detect, detect_terms, out, out_t,
                     table_best, num, cutoff_coverage):
     if pre_term["name"] != term["name"]:
         if detect is True:
-            num = print_detect_undetect(detect_terms["detect"], num, out, 
-                                        out_t, table_best, cutoff_coverage)
+            num = print_detect_undetect(detect_terms["detect"], num, out, out_t, 
+                                        table_best, cutoff_coverage, "True")
             detect = False
         else:
-            num = print_detect_undetect(detect_terms["undetect"], num, out, 
-                                        out_t, table_best, cutoff_coverage)
+            num = print_detect_undetect(detect_terms["undetect"], num, out, out_t, 
+                                        table_best, cutoff_coverage, "False")
         detect_terms["detect"] = []
         detect_terms["undetect"] = []
         detect = first_term(term["strand"], term, detect_terms, detect)
@@ -322,18 +323,22 @@ def term_validation(pre_term, term, detect, detect_terms, out, out_t,
         if term["strand"] == "+":
             if (term["detect_p"]):
                 detect = True
-                compare_term(term, detect_terms["detect"])
+                detect_terms["detect"] = compare_term(
+                                         term, detect_terms["detect"])
             else:
                 if detect is False:
-                    compare_term(term, detect_terms["undetect"])
+                    detect_terms["undetect"] = compare_term(
+                                               term, detect_terms["undetect"])
         else:
             if (term["detect_m"]):
                 detect = True
-                compare_term(term, detect_terms["detect"])
+                detect_terms["detect"] = compare_term(
+                                         term, detect_terms["detect"])
             else:
                 if detect is False:
-                    compare_term(term, detect_terms["undetect"])
-    return num
+                    detect_terms["undetect"] = compare_term(
+                                               term, detect_terms["undetect"])
+    return (num, detect)
 
 def print_term(terms, out, out_t, table_best, cutoff_coverage):
     first = True
@@ -347,15 +352,17 @@ def print_term(terms, out, out_t, table_best, cutoff_coverage):
                 pre_term = term
                 detect = first_term(term["strand"], term, detect_terms, detect)
             else:
-                num = term_validation(pre_term, term, detect, detect_terms, out, 
+                data = term_validation(pre_term, term, detect, detect_terms, out, 
                                       out_t, table_best, num, cutoff_coverage)
+                num = data[0]
+                detect = data[1]
                 pre_term = term
     if detect is True:
         num = print_detect_undetect(detect_terms["detect"], num, out, out_t, 
-                                    table_best, cutoff_coverage)
+                                    table_best, cutoff_coverage, "True")
     else:
         num = print_detect_undetect(detect_terms["undetect"], num, out, out_t, 
-                                    table_best, cutoff_coverage)
+                                    table_best, cutoff_coverage, "False")
 
 def read_data(gffs, tas, hps, seq, gff_file, tran_file, 
               tranterm_file, seq_file, term_table, fr_terms):
