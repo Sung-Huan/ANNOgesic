@@ -20,33 +20,33 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
         os.system("cp " + out_path + "/MasterTable_" + str(indexs["count"] + 1) + \
                   "/TSSpredator_" + str(indexs["count"] + 1) + ".gff " + \
                   out_path + "/best.gff")
-    print("_".join(["Current Parameter:step=%s", "height=%s", "reduction_height=%s", \
-                    "factor=%s", "reduction_factor=%s", "base_height=%s"]) %
-         (str(indexs["step"] - cores + 1  + indexs["count"]),
-          str(list_num[-1 * cores + indexs["count"]]["height"]),
-          str(list_num[-1 * cores + indexs["count"]]["re_height"]),
-          str(list_num[-1 * cores + indexs["count"]]["factor"]),
-          str(list_num[-1 * cores + indexs["count"]]["re_factor"]),
-          str(list_num[-1 * cores + indexs["count"]]["base_height"])))
-    print("Current:TP=%s\tTP_rate=%s\tFP=%s\tFP_rate=%s\tFN=%s\tMissing_ratio=%s" %
-          (stat_value["tp"], stat_value["tp_rate"], stat_value["fp"], \
+    print("_".join(["Current Parameter:step={0}", "height={1}", "reduction_height={2}", \
+                    "factor={3}", "reduction_factor={4}", "base_height={5}"]).format(
+          indexs["step"] - cores + 1  + indexs["count"],
+          list_num[-1 * cores + indexs["count"]]["height"],
+          list_num[-1 * cores + indexs["count"]]["re_height"],
+          list_num[-1 * cores + indexs["count"]]["factor"],
+          list_num[-1 * cores + indexs["count"]]["re_factor"],
+          list_num[-1 * cores + indexs["count"]]["base_height"]))
+    print("Current:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
+           stat_value["tp"], stat_value["tp_rate"], stat_value["fp"],
            stat_value["fp_rate"], stat_value["fn"], stat_value["missing_ratio"]))
-    print("Best Parameter:height=%s\treduction_height=%s\tfactor=%s\treduction_factor=%s\tbase_height=%s" %
-         (str(best_para["height"]),
-          str(best_para["re_height"]),
-          str(best_para["factor"]),
-          str(best_para["re_factor"]),
-          str(best_para["base_height"])))
-    print("Best:TP=%s\tTP_rate=%s\tFP=%s\tFP_rate=%s\tFN=%s\tMissing_ratio=%s" %
-          (best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
+    print("Best Parameter:height={0}\treduction_height={1}\tfactor={2}\treduction_factor={3}\tbase_height={4}".format(
+          best_para["height"],
+          best_para["re_height"],
+          best_para["factor"],
+          best_para["re_factor"],
+          best_para["base_height"]))
+    print("Best:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
+          best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
     best_out = open(out_path + "/best.csv", "w")
     para_line = "_".join(["he", str(best_para["height"]),
                           "rh", str(best_para["re_height"]),
                           "fa", str(best_para["factor"]),
                           "rf", str(best_para["re_factor"]),
                           "bh", str(best_para["base_height"])])
-    best_out.write("%s\tTP=%s\tTP_rate=%s\tFP=%s\tFP_rate=%s\tFN=%s\tMissing_ratio=%s\t" %
-                  (para_line, best["tp"], best["tp_rate"], best["fp"],
+    best_out.write("{0}\tTP={1}\tTP_rate={2}\tFP={3}\tFP_rate={4}\tFN={5}\tMissing_ratio={6}\t".format(
+                   para_line, best["tp"], best["tp_rate"], best["fp"],
                    best["fp_rate"], best["fn"], best["missing_ratio"]))
     best_out.close()
     indexs["count"] += 1
@@ -84,7 +84,7 @@ def comparison(manuals, predicts):
             if (manual.strand == predict.strand) and \
                (manual.seq_id == predict.seq_id):
                 if (manual.start == predict.start) or \
-                   (math.fabs(manual.start - predict.start) <=2):
+                   (math.fabs(manual.start - predict.start) <= 2):
                     overlap = True
                     overlap_num += 1
                     predict.attributes["print"] = True
@@ -118,14 +118,14 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path, out, manu
                          "bh", str(para_list[count]["base_height"])])
         num_predict = read_predict_manual_gff(gff_file, gene_length, predicts)
         overlap_num = comparison(manuals, predicts)
-        out.write("%s\t%s\tTP\t%s\tTP_rate\t%s\t" % \
-                 (str(total_step), para, str(overlap_num),
-                 str(float(overlap_num) / float(num_manual))))
-        out.write("FP\t%s\tFP_rate\t%s\tFN\t%s\tmissing_ratio\t%s\n" % \
-                (str(num_predict - overlap_num),
-                 str(float(num_predict - overlap_num) / float(int(gene_length) - num_manual)),
-                 str(num_manual - overlap_num),
-                 str(float(num_manual - overlap_num) / float(num_manual))))
+        out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
+                  total_step, para, overlap_num,
+                  float(overlap_num) / float(num_manual)))
+        out.write("FP\t{0}\tFP_rate\t{1}\tFN\{2}\tmissing_ratio\t{3}\n".format(
+                  num_predict - overlap_num,
+                  float(num_predict - overlap_num) / float(int(gene_length) - num_manual),
+                  num_manual - overlap_num,
+                  float(num_manual - overlap_num) / float(num_manual)))
         stats.append({"tp": overlap_num, "tp_rate": float(overlap_num) / float(num_manual),
                       "fp": num_predict - overlap_num,
                       "fp_rate": float(num_predict - overlap_num) / float(gene_length - num_manual),
@@ -138,17 +138,17 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path, out, manu
 
 def convert2gff(cores, out_path, strain, gff_files, tss_pro):
     for core in range(1, cores+1):
-        output_folder = out_path + "/MasterTable_" + str(core)
-        gff_file = output_folder + "/TSSpredator_" + str(core) + ".gff"
-        Converter().Convert_Mastertable2gff(output_folder + "/MasterTable.tsv",
+        output_folder = os.path.join(out_path, "_".join(["MasterTable", str(core)]))
+        gff_file = os.path.joinn(output_folder, "_".join(["TSSpredator", str(core) + ".gff"]))
+        Converter().Convert_Mastertable2gff(os.path.join(output_folder, "MasterTable.tsv"),
                                           "TSSpredator", tss_pro, strain, gff_file)
         gff_files.append(gff_file)
 
 def run_TSSpredator(tsspredator_path, config_file):
         folders = config_file.split("/")
         out_path = "/".join(folders[:-1])
-        out = open(out_path + "/log.txt", "w")
-        err = open(out_path + "/err.txt", "w")
+        out = open(os.path.join(out_path, "log.txt"), "w")
+        err = open(os.path.join(out_path, "err.txt"), "w")
         p = Popen(["java", "-Xmx2G", "-jar",
                tsspredator_path, config_file], stdout=out)
         return p
@@ -179,8 +179,8 @@ def print_lib(lib_num, lib_list, out, wig_folder, prefix):
                 cond_list.append(lib)
         cond_sort_list = sorted(cond_list, key=lambda k: k['replicate'])
         for cond in cond_sort_list:
-            out.write("%s_%s%s = %s/%s\n" %
-                     (prefix, str(cond["condition"]), cond["replicate"],
+            out.write("{0}_{1}{2} = {3}/{4}\n".format(
+                      prefix, cond["condition"], cond["replicate"],
                       wig_folder, cond["wig"]))
 
 def assign_dict(lib_datas):
@@ -220,7 +220,7 @@ def import_lib(libs, wig_folder, project_strain_name, rep_set, lib_dict,
                  (lib_datas[4] == "-"):
                 lib_dict["nm"].append(assign_dict(lib_datas))
         for num_id in range(1, lib_num+1):
-            out.write("annotation_%s = %s\n" % (str(num_id), gff))
+            out.write("annotation_{0} = {1}\n".format(num_id, gff))
         if program.lower() == "tss":
             print_lib(lib_num, lib_dict["fm"], out, wig_folder, "fivePrimeMinus")
             print_lib(lib_num, lib_dict["fp"], out, wig_folder,"fivePrimePlus")
@@ -259,11 +259,11 @@ def gen_config(para_list, out_path, core, libs, wig, project_strain,
     out.write("maxTSSinClusterDistance = 3\n")
     out.write("maxUTRlength = 300\n")
     out.write("min5primeToNormalFactor = 2\n")
-    out.write("minCliffFactor = %s\n" % str(para_list["factor"]))
-    out.write("minCliffFactorDiscount = %s\n" % str(para_list["re_factor"]))
-    out.write("minCliffHeight = %s\n" % str(para_list["height"]))
-    out.write("minCliffHeightDiscount = %s\n" % str(para_list["re_height"]))
-    out.write("minNormalHeight = %s\n" % str(para_list["base_height"]))
+    out.write("minCliffFactor = {0}\n".format(para_list["factor"]))
+    out.write("minCliffFactorDiscount = {0}\n".format(para_list["re_factor"]))
+    out.write("minCliffHeight = %s\n".format(para_list["height"]))
+    out.write("minCliffHeightDiscount = {0}\n".format(para_list["re_height"]))
+    out.write("minNormalHeight = %s\n".format(para_list["base_height"]))
     out.write("minNumRepMatches = 1\n")
     out.write("minPlateauLength = 0\n")
     out.write("mode = cond\n")
@@ -274,12 +274,13 @@ def gen_config(para_list, out_path, core, libs, wig, project_strain,
     elif (program.lower() == "processing_site"):
         print_lib(lib_num, lib_dict["fm"], out, wig, "normalMinus")
         print_lib(lib_num, lib_dict["fp"], out, wig,"normalPlus")
-    out.write("numReplicates = %s\n" % str(len(rep_set)))
-    out.write("numberOfDatasets = %s\n" % lib_num)
-    out.write("outputDirectory = %s\n" % (out_path + "/MasterTable_" + str(core)))
+    out.write("numReplicates = {0}\n".format(len(rep_set)))
+    out.write("numberOfDatasets = {0}\n".format(lib_num))
+    out.write("outputDirectory = {0}\n".format(
+              os.path.join(out_path, "_".join(["MasterTable", core]))))
     for prefix_id in range(len(output_prefix)):
-        out.write("outputPrefix_%s = %s\n" % (str(prefix_id + 1), output_prefix[prefix_id]))
-    out.write("projectName = %s\n" % project_strain)
+        out.write("outputPrefix_{0} = {1}\n".format(prefix_id + 1, output_prefix[prefix_id]))
+    out.write("projectName = {0}\n".format(project_strain))
     out.write("superGraphCompatibility = igb\n")
     out.write("texNormPercentile = 0.5\n")
     out.write("writeGraphs = 0\n")
@@ -657,21 +658,21 @@ def start_data(out_path, current_para, best_para, indexs, max_num):
     return list_num
 
 def extend_data(out_path, best, best_para, step):
-    print("extend step from %s" % step)
-    print("\t".join(["Best Parameter:height=%s", "reduction_height=%s", \
-                     "factor=%s", "reduction_factor=%s", "base_height=%s"]) %
-         (str(best_para["height"]),
-          str(best_para["re_height"]),
-          str(best_para["factor"]),
-          str(best_para["re_factor"]),
-          str(best_para["base_height"])))
-    print("Best:TP=%s\tTP_rate=%s\tFP=%s\tFP_rate=%s\tFN=%s\tMissing_ratio=%s" %
-          (best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
+    print("extend step from {0}".format(step))
+    print("\t".join(["Best Parameter:height={0}", "reduction_height={1}",
+                     "factor={2}", "reduction_factor={3}", "base_height={4}"]).format(
+          best_para["height"],
+          best_para["re_height"],
+          best_para["factor"],
+          best_para["re_factor"],
+          best_para["base_height"]))
+    print("Best:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
+          best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
     current_para = best_para.copy()
     return current_para
 
 def load_stat_csv(out_path, list_num, best, best_para, indexs):
-    fh = open(out_path + "/stat.csv", "r")
+    fh = open(os.path.join(out_path, "stat.csv"), "r")
     first_line = True
     line_num = 0
     for row in csv.reader(fh, delimiter="\t"):
@@ -706,7 +707,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs):
     return (line_num, best, best_para)
 
 def reload_data(out_path, list_num, best, best_para, indexs):
-    fh = open(out_path + "/stat.csv", "r")
+    fh = open(os.path.join(out_path, "stat.csv"), "r")
     first_line = True
     change_para = False
     indexs["switch"] = 1
@@ -723,7 +724,7 @@ def reload_data(out_path, list_num, best, best_para, indexs):
     fh.close()
     new_line = 0
     new_stat = open("tmp.csv", "w")
-    with open(out_path + "/stat.csv", "r") as fh:
+    with open(os.path(out_path, "stat.csv"), "r") as fh:
         for line in fh:
             new_line += 1
             line = line.strip()
@@ -731,7 +732,7 @@ def reload_data(out_path, list_num, best, best_para, indexs):
                 break
             else:
                 new_stat.write(line + "\n")
-    os.system("mv tmp.csv " + out_path + "/stat.csv")
+    os.rename("tmp.csv", os.path.join(out_path, "stat.csv"))
     return (best_para, best)
 
 def get_gene_length(fasta, strain):
@@ -776,12 +777,12 @@ def Optimization(tsspredator_path, height, reduction_height, factor,
     best_para = datas[1]
     current_para = datas[2]
     indexs = datas[3]
-    out_path = output_folder + "/optimized_TSSpredator"
+    out_path = os.path.join(output_folder, "optimized_TSSpredator")
     files = os.listdir(output_folder)
     if gene_length is False:
         gene_length = get_gene_length(fasta, project_strain)
     if "optimized_TSSpredator" not in files:
-        call(["mkdir", out_path])
+        os.mkdir(out_path)
     else:
         if ("stat.csv" in os.listdir(out_path)):
             list_num = []
@@ -789,10 +790,10 @@ def Optimization(tsspredator_path, height, reduction_height, factor,
             best_para = datas[0]
             best = datas[1]
             current_para = extend_data(out_path, best, best_para, indexs["step"])
-            stat_out = open(out_path + "/stat.csv", "a")
+            stat_out = open(os.path.join(out_path, "stat.csv"), "a")
         else:
             list_num = []
-            stat_out = open(out_path + "/stat.csv", "w")
+            stat_out = open(os.path.join(out_path, "stat.csv"), "w")
     optimization_process(indexs, current_para, list_num, max_num, best_para, steps, 
                          cores, out_path, tsspredator_path, stat_out, best, libs, wig, 
                          project_strain, fasta, output_prefix, gff, program, gene_length, manual)
