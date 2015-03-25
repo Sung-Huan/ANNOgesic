@@ -97,39 +97,29 @@ class Controller(object):
 
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
-        tsspredator = TSSpredator()
         if self._args.compute_program == "TSS":
-            tsspredator.run_TSSpredator(
-                    self._args.TSSpredator_path,
-                    self._paths.tsspredator_input_folder, 
-                    self._args.fasta_folder, self._args.annotation_folder,
-                    self._args.wig_folder, self._args.lib, 
-                    self._args.output_prefix,
-                    self._args.height, self._args.height_reduction,
-                    self._args.factor, self._args.factor_reduction,
-                    self._args.base_height, self._args.replicate_match,
-                    self._paths.tsspredator_folder,
-                    self._args.project_path, self._args.statistics,
-                    self._args.validate_gene, self._args.merge_manual,
-                    self._args.compare_transcript_assembly, self._args.fuzzy,
-                    self._args.utr_length, self._args.cluster, self._args.length)
+            project_creator.create_subfolders(self._paths.required_folders("TSS"))
+            out_folder = self._paths.tsspredator_folder
         elif self._args.compute_program == "processing_site":
-            tsspredator.run_processing_site(
-                    self._args.TSSpredator_path,
-                    self._paths.tsspredator_input_folder,
-                    self._args.fasta_folder, self._args.annotation_folder,
-                    self._args.wig_folder, self._args.lib,
-                    self._args.output_prefix,
-                    self._args.height, self._args.height_reduction,
-                    self._args.factor, self._args.factor_reduction,
-                    self._args.base_height, self._args.replicate_match,
-                    self._paths.processing_site_folder,
-                    self._args.project_path, self._args.statistics,
-                    self._args.merge_manual, self._args.cluster,
-                    self._args.utr_length, self._args.length)
+            out_folder = self._paths.processing_site_folder
+            project_creator.create_subfolders(self._paths.required_folders("processing"))
         else:
             print("Error:No such program!!!!")
             sys.exit()
+        tsspredator = TSSpredator()
+        tsspredator.run_TSSpredator(
+                      self._args.TSSpredator_path, self._args.compute_program,
+                      self._paths.tsspredator_input_folder, 
+                      self._args.fasta_folder, self._args.annotation_folder,
+                      self._args.wig_folder, self._args.lib, 
+                      self._args.output_prefix,
+                      self._args.height, self._args.height_reduction,
+                      self._args.factor, self._args.factor_reduction,
+                      self._args.base_height, self._args.replicate_match,
+                      out_folder, self._args.project_path, self._args.statistics,
+                      self._args.validate_gene, self._args.merge_manual,
+                      self._args.compare_transcript_assembly, self._args.fuzzy,
+                      self._args.utr_length, self._args.cluster, self._args.length)
     
     def optimize(self):
         """opimize TSSpredator"""
