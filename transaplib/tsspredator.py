@@ -2,6 +2,7 @@
 from Bio import SeqIO
 import os	
 import sys
+import shutil
 from subprocess import call, Popen
 from transaplib.helper import Helper
 from transaplib.multiparser import Multiparser
@@ -34,14 +35,14 @@ class TSSpredator(object):
                     cond_list.append(lib)
             cond_sort_list = sorted(cond_list, key=lambda k: k['replicate'])
             for cond in cond_sort_list:
-                out.write("%s_%s%s = %s%s\n" % 
-                         (prefix, str(cond["condition"]), cond["replicate"],
-                          wig_folder, cond["wig"]))
+                out.write("{0}_{1}{2} = {3}\n".format(
+                          prefix, cond["condition"], cond["replicate"],
+                          os.path.join(wig_folder, cond["wig"])))
 
     def _start_to_run(self, tsspredator_path, config_file, out_path, prefix):
         print("Running TSSpredator for " + prefix)
-        out = open(out_path + "/log.txt", "w")
-        err = open(out_path + "/err.txt", "w")
+        out = open(os.path.join(out_path, "log.txt"), "w")
+        err = open(os.path.join(out_path, "err.txt"), "w")
         call(["java",  "-jar", tsspredator_path, 
               config_file], stdout=out ,stderr=err)
         out.close()
@@ -50,7 +51,7 @@ class TSSpredator(object):
     def _import_lib(self, libs, wig_folder, project_strain_name, rep_set, lib_dict,
                     out, gff, program, list_num_id, fasta):
         lib_num = 0
-        print(program)
+        print("Runniun {0} now...".format(program))
         for lib in libs:
             lib_datas = lib.split(":")
             if lib_datas[0].endswith(".wig") is not True:
@@ -78,18 +79,18 @@ class TSSpredator(object):
                  (lib_datas[4] == "-"):
                 lib_dict["nm"].append(self._assign_dict(lib_datas))
         for num_id in range(1, lib_num+1):
-            out.write("annotation_%s = %s\n" % (str(num_id), gff))
+            out.write("annotation_{0} = {1}\n".format(num_id, gff))
         if program == "TSS":
             self._print_lib(lib_num, lib_dict["fm"], out, wig_folder, "fivePrimeMinus")
-            self._print_lib(lib_num, lib_dict["fp"], out, wig_folder,"fivePrimePlus")
+            self._print_lib(lib_num, lib_dict["fp"], out, wig_folder, "fivePrimePlus")
         elif program == "processing_site":
             self._print_lib(lib_num, lib_dict["nm"], out, wig_folder, "fivePrimeMinus")
-            self._print_lib(lib_num, lib_dict["np"], out, wig_folder,"fivePrimePlus")
+            self._print_lib(lib_num, lib_dict["np"], out, wig_folder, "fivePrimePlus")
         else:
             print("Error: Wrong program name!!!")
             sys.exit()
         for num_id in range(1, lib_num+1):
-            out.write("genome_%s = %s\n" % (str(num_id), fasta))
+            out.write("genome_{0} = {1}\n".format(num_id, fasta))
         for num_id in range(1, lib_num+1):
             list_num_id.append(str(num_id))
         return (lib_num, num_id)
@@ -101,10 +102,9 @@ class TSSpredator(object):
                     program, repmatch, cluster, utr_length):
         lib_dict = {"fp": [], "fm": [], "nm": [], "np": []}
         rep_set = set()
-        out_path =  out_folder + "/MasterTables/MasterTable_" + project_strain_name
-        if "MasterTable_" + project_strain_name in os.listdir(out_folder + "/MasterTables"):
-            call(["rm", "-rf", out_path])
-        call(["mkdir", out_path])
+        master_folder = "MasterTable_" + project_strain_name
+        out_path =  os.path.join(out_folder, "MasterTables", master_folder)
+        self.helper.check_make_folder(os.path.join(out_folder, "MasterTables"), master_folder)
         out = open(config_file, "w")
         out.write("TSSinClusterSelectionMethod = HIGHEST\n")
         out.write("allowedCompareShift = 1\n")
@@ -119,15 +119,15 @@ class TSSpredator(object):
         out.write("maxASutrLength = 100\n")
         out.write("maxGapLengthInGene = 500\n")
         out.write("maxNormalTo5primeFactor = 1.5\n")
-        out.write("maxTSSinClusterDistance = %s\n" % str(cluster + 1))
-        out.write("maxUTRlength = {}\n".format(utr_length))
+        out.write("maxTSSinClusterDistance = {0}\n".format(cluster + 1))
+        out.write("maxUTRlength = {0}\n".format(utr_length))
         out.write("min5primeToNormalFactor = 2\n")
-        out.write("minCliffFactor = %s\n" % factor)
-        out.write("minCliffFactorDiscount = %s\n" % factor_reduction)
-        out.write("minCliffHeight = %s\n" %height)
-        out.write("minCliffHeightDiscount = %s\n" % height_reduction)
-        out.write("minNormalHeight = %s\n" % base_height)
-        out.write("minNumRepMatches = %s\n" % repmatch)
+        out.write("minCliffFactor = {0}\n".format(factor))
+        out.write("minCliffFactorDiscount = {0}\n".format(factor_reduction))
+        out.write("minCliffHeight = {0}\n".format(height))
+        out.write("minCliffHeightDiscount = {0}\n".format(height_reduction))
+        out.write("minNormalHeight = {0}\n".format(base_height))
+        out.write("minNumRepMatches = {0}\n".format(repmatch))
         out.write("minPlateauLength = 0\n")
         out.write("mode = cond\n")
         out.write("normPercentile = 0.9\n")
@@ -137,12 +137,12 @@ class TSSpredator(object):
         else:
             self._print_lib(lib_num, lib_dict["fm"], out, wig_folder,"normalMinus")
             self._print_lib(lib_num, lib_dict["fp"], out, wig_folder,"normalPlus")
-        out.write("numReplicates = %s\n" % str(len(rep_set)))
-        out.write("numberOfDatasets = %s\n" % lib_num)
-        out.write("outputDirectory = %s\n" % out_path)
+        out.write("numReplicates = {0}\n".format(len(rep_set)))
+        out.write("numberOfDatasets = {0}\n".format(lib_num))
+        out.write("outputDirectory = {0}\n".format(out_path))
         for prefix_id in range(len(output_prefixs)):
-            out.write("outputPrefix_%s = %s\n" % (str(prefix_id + 1), output_prefixs[prefix_id]))
-        out.write("projectName = %s\n" % project_strain_name)
+            out.write("outputPrefix_{0} = {1}\n".format(prefix_id + 1, output_prefixs[prefix_id]))
+        out.write("projectName = {0}\n".format(project_strain_name))
         out.write("superGraphCompatibility = igb\n")
         out.write("texNormPercentile = 0.5\n")
         out.write("writeGraphs = 0\n")
@@ -151,35 +151,36 @@ class TSSpredator(object):
 
     def _convert_gff(self, prefixs, gff_outfolder, out_folder, feature):
         for prefix in prefixs:
-            gff_f = open(gff_outfolder + prefix + "_" + feature + ".gff", "w")
-            out_path = out_folder + "/MasterTables/MasterTable_" + prefix
+            out_file = os.path.join(gff_outfolder, "_".join([prefix, feature]) + ".gff")
+            gff_f = open(out_file, "w")
+            out_path = os.path.join(out_folder, "MasterTables", 
+                       "_".join(["MasterTable", prefix]))
             if "MasterTable.tsv" not in os.listdir(out_path):
-                print("Error:there is not MasterTable file in " + out_path)
+                print("Error:there is not MasterTable file in {0}".format(out_path))
                 print("Please check config.ini")
             else:
                 self.converter.Convert_Mastertable2gff(
-                                out_path + "/MasterTable.tsv",
-                                "TSSpredator", feature, prefix,
-                                gff_outfolder + prefix + "_" + feature + ".gff")
+                                os.path.join(out_path, "MasterTable.tsv"),
+                                "TSSpredator", feature, prefix, out_file)
             gff_f.close()
 
     def _merge_manual(self, tsss, gffs, gff_outfolder, manual, wig_path,
                       out_folder, cluster, feature, length, libs):
-        call(["mkdir", "tmp_TSS"])
+        self.helper.check_make_folder(os.getcwd(), "tmp_TSS")
         for tss in tsss:
             for gff in os.listdir(gffs):
                 if (gff[:-4] == tss) and (".gff" in gff):
                     break
-            predict = gff_outfolder + tss + "_" + feature + ".gff"
+            predict = os.path.join(gff_outfolder, "_".join([tss, feature]) + ".gff")
             print("Running merge and classify manual ....")
             stat_file = "stat_compare_TSSpredator_manual_" + tss + ".csv"
             Merge_manual_predict_TSS(predict, manual, stat_file, 
-                                     "tmp_TSS/" + tss + "_" + feature + ".gff",
-                                     gffs + "/" + gff, cluster, length, libs,
-                                     wig_path, feature)
-            call(["mv", stat_file, out_folder + "/statistics/" + tss])
-        os.system("mv tmp_TSS/*.gff " + gff_outfolder)
-        call(["rm", "-rf", "tmp_TSS"])
+                            os.path.join("tmp_TSS", "_".join([tss, feature]) + ".gff"),
+                            os.path.join(gffs, gff), cluster, length, libs,
+                            wig_path, feature)
+            os.rename(stat_file, os.path.join(out_folder, "statistics", tss, stat_file))
+        self.helper.move_all_content("tmp_TSS", gff_outfolder, [".gff"])
+        shutil.rmtree("tmp_TSS")
 
     def _validate(self, tsss, gffs, utr_length, out_folder, gff_outfolder, stat_outfolder):
         print("Running validation of annotation....")
@@ -187,47 +188,52 @@ class TSSpredator(object):
             for gff in os.listdir(gffs):
                 if (gff[:-4] == tss) and (".gff" in gff):
                     break
-            stat_file = stat_outfolder + tss + "/stat_gene_vali_" + tss + ".csv"
-            out_cds_file = out_folder + "/tmp.gff"
-            compare_file = gff_outfolder + tss + "_TSS.gff"
-            Validate_gff(compare_file, gffs + "/" + gff, stat_file, out_cds_file, utr_length)
-            call(["mv", out_cds_file, gffs + "/" + gff])
+            stat_file = os.path.join(stat_outfolder, tss, 
+                        "".join(["stat_gene_vali_", tss, ".csv"]))
+            out_cds_file = os.path.join(out_folder, "tmp.gff")
+            compare_file = os.path.join(gff_outfolder, "_".join([tss, "TSS.gff"]))
+            Validate_gff(compare_file, os.path.join(gffs, gff), 
+                         stat_file, out_cds_file, utr_length)
+            os.rename(out_cds_file, os.path.join(gffs, gff))
 
     def _compare_TA(self, TA_files, gffs, tsss, stat_outfolder, gff_outfolder, fuzzy):
         detect = False
         print("Running compare transcript assembly and TSS ...")
         self.multiparser._parser_gff(TA_files, "transcript")
-        self.multiparser._combine_gff(gffs, TA_files + "/tmp", None, "transcript")
+        self.multiparser._combine_gff(gffs, os.path.join(TA_files, "tmp"), None, "transcript")
         for tss in tsss:
-            stat_out = stat_outfolder + tss + "/stat_compare_TSS_Transcriptome_assembly_" + tss + ".csv"
-            for ta in os.listdir(TA_files + "/tmp"):
+            stat_out = os.path.join(stat_outfolder, tss, 
+                       "".join(["stat_compare_TSS_Transcriptome_assembly_", tss, ".csv"]))
+            for ta in os.listdir(os.path.join(TA_files, "tmp")):
                 filename = ta.split("_transcript")
                 if (filename[0] == tss) and (filename[1] == ".gff"):
                     detect = True
                     break
-            compare_file = gff_outfolder + tss + "_TSS.gff"
+            compare_file = os.path.join(gff_outfolder, "_".join([tss, "TSS.gff"]))
             if detect:
-                Stat_TA_TSS(TA_files + "/tmp/" + ta, compare_file, 
+                Stat_TA_TSS(os.path.join(TA_files, "tmp", ta), compare_file, 
                             stat_out, "tmp_ta_tss", "tmp_tss", fuzzy)
                 self.helper.sort_gff("tmp_tss", compare_file)
-                self.helper.sort_gff("tmp_ta_tss", TA_files + "/" + ta)
-                call(["rm", "tmp_tss"])
-                call(["rm", "tmp_ta_tss"])
+                self.helper.sort_gff("tmp_ta_tss", os.path.join(TA_files, ta))
+                os.remove("tmp_tss")
+                os.remove("tmp_ta_tss")
                 detect = False
 
     def _stat_TSS(self, tsss, manual, gff_outfolder, 
                   stat_outfolder, feature):
         print("Running statistaics.....")
         for tss in tsss:
-            compare_file = gff_outfolder + tss + "_" + feature + ".gff"
+            compare_file = os.path.join(gff_outfolder, 
+                           "_".join([tss, feature]) + ".gff")
             Stat_TSSpredator(compare_file, feature, 
-                             "".join([stat_outfolder + tss + \
-                                      "/stat_" + feature + \
-                                      "_class_" + tss + ".csv"]))
-            os.system("mv " + feature + "_class*.png " + stat_outfolder + tss)
+                             os.path.join(stat_outfolder, tss, 
+                             "_".join(["stat", feature, "class", tss]) + ".csv"))
+            self.helper.move_all_content(os.getcwd(), 
+                        os.path.join(stat_outfolder, tss), ["_class", ".png"])
             #### generate venn diagram
             Plot_Venn(compare_file, feature)
-            os.system("mv " + feature + "_venn*.png " + stat_outfolder + tss)
+            self.helper.move_all_content(os.getcwd(),
+                        os.path.join(stat_outfolder, tss), ["_venn", ".png"])
 
     def _set_gen_config(self, fasta_path, gff_path, feature, input_folder,
                         out_folder, libs, wig_path, height, factor,
@@ -246,109 +252,112 @@ class TSSpredator(object):
                             break
                     if detect is True:
                         prefixs.append(prefix)
-                        config = input_folder + "/config_" + prefix + ".ini"
+                        config = os.path.join(input_folder, "_".join(["config", prefix]) + ".ini")
                         self._gen_config(prefix, out_folder,
-                                         libs, gff_path + gff, wig_path,
-                                         fasta_path + fasta, height,
+                                         libs, os.path.join(gff_path, gff), wig_path,
+                                         os.path.join(fasta_path, fasta), height,
                                          factor, height_reduction, factor_reduction,
                                          base_height, output_prefixs, config, feature, 
                                          repmatch, cluster, utr_length)
         return prefixs
 
-    def run_TSSpredator(self, tsspredator_path, input_folder, fastas, gffs, 
+    def run_TSSpredator(self, tsspredator_path, program, input_folder, fastas, gffs, 
                         wig_folder, libs, output_prefixs, height, height_reduction, 
                         factor, factor_reduction, base_height, repmatch, out_folder, 
                         project_path, stat, validate, manual, TA_files, fuzzy, 
                         utr_length, cluster, nt_length):
         ####  First of all, generate config file for running.
-#        for gff in os.listdir(gffs):
-#            if gff.endswith(".gff"):
-#                self.helper.check_uni_attributes(gffs + "/" + gff)
-        gff_outfolder = out_folder + "/gffs/"
-        os.system("rm -rf " + gff_outfolder + "*")
+        for gff in os.listdir(gffs):
+            if gff.endswith(".gff"):
+                self.helper.check_uni_attributes(os.path.join(gffs, gff))
+        gff_outfolder = os.path.join(out_folder, "gffs")
+        self.helper.check_make_folder(out_folder, "gffs")
         self.multiparser._parser_fasta(fastas)
         self.multiparser._parser_gff(gffs, None)
         self.multiparser._parser_wig(wig_folder)
-        gff_path = gffs + "/tmp/"
-        wig_path = wig_folder + "/tmp/"
-        fasta_path = fastas + "/tmp/"
-        stat_outfolder = out_folder + "/statistics/"
-        merge_wigs = os.getcwd() + "/merge_wigs"
-        prefixs = self._set_gen_config(fasta_path, gff_path, "TSS", input_folder, 
+        gff_path = os.path.join(gffs, "tmp")
+        wig_path = os.path.join(wig_folder, "tmp")
+        fasta_path = os.path.join(fastas, "tmp")
+        stat_outfolder = os.path.join(out_folder, "statistics")
+        prefixs = self._set_gen_config(fasta_path, gff_path, program, input_folder, 
                                        out_folder, libs, wig_path, height, factor,
                                        height_reduction, factor_reduction, utr_length, 
                                        base_height, output_prefixs, repmatch, cluster)
         #### After generating config file, we can start to run TSSpredator.
         for prefix in prefixs:
-            out_path = out_folder + "/MasterTables/MasterTable_" + prefix
-            config_file = input_folder + "/config_" + prefix + ".ini"
+            out_path = os.path.join(out_folder, "MasterTables", 
+                                    "_".join(["MasterTable", prefix]))
+            config_file = os.path.join(input_folder, "_".join(["config", prefix]) + ".ini")
             self._start_to_run(tsspredator_path, config_file, out_path, prefix)
-        self._convert_gff(prefixs, gff_outfolder, out_folder, "TSS")
+        if program == "processing_site":
+            program = "processing"
+        self._convert_gff(prefixs, gff_outfolder, out_folder, program)
         #### based on the original file to merge the information of strains.
-        self.multiparser._combine_gff(gffs, gff_outfolder, None, "TSS")
-        tsss = []
-        for tss in os.listdir(gff_outfolder):
-            if tss.endswith(".gff"):
-                self.helper.check_make_folder(stat_outfolder, tss.replace("_TSS.gff", ""))
-                tsss.append(tss.replace("_TSS.gff", ""))
+        self.multiparser._combine_gff(gffs, gff_outfolder, None, program)
+        datas = []
+        for gff in os.listdir(gff_outfolder):
+            if gff.endswith(".gff"):
+                self.helper.check_make_folder(stat_outfolder, 
+                            gff.replace("".join(["_", program, ".gff"]), ""))
+                datas.append(gff.replace("".join(["_", program, ".gff"]), ""))
         if manual is not False:
             self.multiparser._combine_wig(gffs, wig_path, None)
-            self._merge_manual(tsss, gffs, gff_outfolder, manual, wig_folder,
-                               out_folder, cluster, "TSS", nt_length, libs)
+            self._merge_manual(datas, gffs, gff_outfolder, manual, wig_folder,
+                               out_folder, cluster, program, nt_length, libs)
         if stat is not False:
-             self._stat_TSS(tsss, manual, gff_outfolder, stat_outfolder, "TSS")
+             self._stat_TSS(datas, manual, gff_outfolder, stat_outfolder, program)
         if validate is not False:
-            self._validate(tsss, gffs, utr_length, out_folder, gff_outfolder, stat_outfolder)
+            self._validate(datas, gffs, utr_length, out_folder, gff_outfolder, stat_outfolder)
         if TA_files is not False:
-            self._compare_TA(TA_files, gffs, tsss, stat_outfolder, gff_outfolder, fuzzy)
+            self._compare_TA(TA_files, gffs, datas, stat_outfolder, gff_outfolder, fuzzy)
         #### Remove temperary folders and files.
-#        print("Remove temperary files and folders...")
-#        self.helper.remove_tmp(fastas)
-#        self.helper.remove_tmp(gffs)
-#        self.helper.remove_tmp(wig_folder)
-#        self.helper.remove_tmp(TA_files)
-    def run_processing_site(self, tsspredator_path, input_folder, fastas, 
-                            gffs, wig_folder, libs, output_prefixs, height, 
-                            height_reduction, factor, factor_reduction, 
-                            base_height, repmatch, out_folder, project_path, 
-                            stat, manual, cluster, utr_length, nt_length):
-        #### First of all, generate config file for running.
+        print("Remove temperary files and folders...")
+        self.helper.remove_tmp(fastas)
+        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(wig_folder)
+        self.helper.remove_tmp(TA_files)
+#    def run_processing_site(self, tsspredator_path, input_folder, fastas, 
+#                            gffs, wig_folder, libs, output_prefixs, height, 
+#                            height_reduction, factor, factor_reduction, 
+#                            base_height, repmatch, out_folder, project_path, 
+#                            stat, manual, cluster, utr_length, nt_length):
+#        #### First of all, generate config file for running.
 #        for gff in os.listdir(gffs):
 #            if gff.endswith(".gff"):
-#                self.helper.check_uni_attributes(gffs + "/" + gff)
-        self.multiparser._parser_fasta(fastas)
-        self.multiparser._parser_gff(gffs, None)
-        self.multiparser._parser_wig(wig_folder)
-        gff_path = gffs + "/tmp/"
-        wig_path = wig_folder + "/tmp/"
-        fasta_path = fastas + "/tmp/"
-        gff_outfolder = out_folder + "/gffs/"
-        stat_outfolder = out_folder + "/statistics/"
-        prefixs = self._set_gen_config(fasta_path, gff_path, 
-                                       "processing_site", input_folder,
-                                       out_folder, libs, wig_path, 
-                                       height, factor, height_reduction, 
-                                       factor_reduction, utr_length, base_height,
-                                       output_prefixs, repmatch, cluster)
-        #### After generating config file, we can start to run TSSpredator.
-        for prefix in prefixs:
-            out_path = out_folder + "/MasterTables/MasterTable_" + prefix
-            config_file = input_folder + "/config_" + prefix + ".ini"
-            self._start_to_run(tsspredator_path, config_file, out_path, prefix)
-        self._convert_gff(prefixs, gff_outfolder, out_folder, "processing")
-        #### based on the original file to merge the information of strains.
-        self.multiparser._combine_gff(gffs, gff_outfolder, None, "processing")
-        processings = []
-        for processing in os.listdir(gff_outfolder):
-            if ".gff" in processing:
-                self.helper.check_make_folder(stat_outfolder, processing.replace("_processing.gff", ""))
-                processings.append(processing.replace("_processing.gff", ""))
-        if manual is not False:
-            self._merge_manual(processings, gffs, gff_outfolder, manual, wig_folder,
-                               out_folder, cluster, "processing", nt_length, libs)
-        if stat is not False:
-            self._stat_TSS(processings, manual, gff_outfolder, stat_outfolder, "processing")
-        #### Remove temperary folders and files.
+#                self.helper.check_uni_attributes(os.path.join(gffs, gff))
+#        self.multiparser._parser_fasta(fastas)
+#        self.multiparser._parser_gff(gffs, None)
+#        self.multiparser._parser_wig(wig_folder)
+#        gff_path = os.path.join(gffs, "tmp")
+#        wig_path = os.path.join(wig_folder, "tmp")
+#        fasta_path = os.path.join(fasta, "tmp")
+#        gff_outfolder = os.path.join(out_folder, "gffs")
+#        stat_outfolder = os.path.join(out_folder, "statistics")
+#        prefixs = self._set_gen_config(fasta_path, gff_path, 
+#                                       "processing_site", input_folder,
+#                                       out_folder, libs, wig_path, 
+#                                       height, factor, height_reduction, 
+#                                       factor_reduction, utr_length, base_height,
+#                                       output_prefixs, repmatch, cluster)
+#        #### After generating config file, we can start to run TSSpredator.
+#        for prefix in prefixs:
+#            out_path = os.path.join(out_folder, "MasterTables", "_".join(["MasterTable", prefix]))
+#            config_file = os.path.join(input_folder, "_".join(["config", prefix]) + ".ini"))
+#            self._start_to_run(tsspredator_path, config_file, out_path, prefix)
+#        self._convert_gff(prefixs, gff_outfolder, out_folder, "processing")
+#        #### based on the original file to merge the information of strains.
+#        self.multiparser._combine_gff(gffs, gff_outfolder, None, "processing")
+#        processings = []
+#        for processing in os.listdir(gff_outfolder):
+#            if ".gff" in processing:
+#                self.helper.check_make_folder(stat_outfolder, processing.replace("_processing.gff", ""))
+#                processings.append(processing.replace("_processing.gff", ""))
+#        if manual is not False:
+#            self._merge_manual(processings, gffs, gff_outfolder, manual, wig_folder,
+#                               out_folder, cluster, "processing", nt_length, libs)
+#        if stat is not False:
+#            self._stat_TSS(processings, manual, gff_outfolder, stat_outfolder, "processing")
+#        #### Remove temperary folders and files.
 #        print("Remove temperary files and folders...")
 #        self.helper.remove_tmp(fastas)
 #        self.helper.remove_tmp(gffs)
