@@ -7,12 +7,12 @@ import csv
 from transaplib.gff3 import Gff3Parser
 
 def print_stat(feature, num, out):
-    if num["all_" + feature] != 0:
-        out.write("The number of " + feature + " which is start from TSS: %s (%s)\n" %
-                 (str(num[feature]), str(float(num[feature] / float(num["all_" + feature])))))
+    if num["_".join(["all", feature])] != 0:
+        out.write("The number of {0} which is start from TSS: {1} ({2})\n".format(
+                  feature, num[feature], float(num[feature]) / float(num["_".join(["all", feature])])))
     else:
-        out.write("The number of " + feature + " which is start from TSS: %s (%s)\n" %
-                 (str(num[feature]), "NA"))
+        out.write("The number of {0} which is start from TSS: {1} ({2})\n".format(
+                  feature, num[feature], "NA"))
 
 def read_gff(gffs, tsss, gff_file, tss_file):
     gff_parser = Gff3Parser()
@@ -112,6 +112,3 @@ def Validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length):
             num_strain[gff.seq_id]["all_rRNA"] += 1
         compare_tss(tsss, gff, utr_length, num_all, num_strain)
     print_file(gffs, out_cds_file, stat_file, num_all, num_strain)
-
-if __name__ == "__main__":
-    main()
