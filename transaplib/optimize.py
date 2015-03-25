@@ -13,7 +13,7 @@ def Optimize_TSS(tsspredator_path, fasta, gff, wigs, manual, output_folder,
                  max_factor_reduction, max_base_height, utr_length, libs, 
                  replicate_name, cluster, length, core, program, replicate, steps):
     Multiparser()._parser_wig(wigs)
-    wig_path = wigs + "/tmp/"
+    wig_path = os.path.join(wigs, "tmp")
     Helper().check_uni_attributes(gff)
     Optimization(tsspredator_path, max_height, max_height_reduction, max_factor,
                  max_factor_reduction, max_base_height, output_folder, core,
