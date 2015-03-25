@@ -74,7 +74,8 @@ class Transcript_Assembly(object):
             for tss in os.listdir(tss_folder):
                 filename = tss.split("_TSS")
                 if (filename[0] == ta) and (tss.endswith(".gff")):
-                    Stat_TA_TSS(ta_file, tss_folder + tss, stat_tss_out, "tmp_ta_tss", "tmp_tss", fuzzy)
+                    Stat_TA_TSS(ta_file, os.path.join(tss_folder, tss), 
+                                stat_tss_out, "tmp_ta_tss", "tmp_tss", fuzzy)
                     os.remove(ta_file)
                     os.remove(os.path.join(tss_folder, tss))
                     self.helper.sort_gff("tmp_ta_tss", ta_file)
@@ -92,7 +93,7 @@ class Transcript_Assembly(object):
                            "".join(["stat_compare_Transcriptome_assembly_CDS_", ta, ".csv"]))
             for gff in os.listdir(cds_folder):
                 if (gff[:-4] == ta) and (gff.endswith(".gff")):
-                    cds_file = cds_folder + gff
+                    cds_file = os.path.join(cds_folder, gff)
                     Stat_TA_GFF(ta_file, cds_file, stat_gff_out, "tmp_ta_gff", "tmp_gff_ta")
                     os.remove(ta_file)
                     os.remove(os.path.join(cds_path, gff))
@@ -127,7 +128,7 @@ class Transcript_Assembly(object):
 
     def _for_one_wig(self, type_, wigs, tex, height, width, tolerance, support,
                          out_folder, libs, gff_outfolder):
-        print("Computing " + type_ + " wig files....")
+        print("Computing {0} wig files....".format(type_))
         folder = wigs.split("/")
         folder = "/".join(folder[:-1])
         merges = os.path.join(folder, "merge_wigs")
@@ -232,7 +233,7 @@ class Transcript_Assembly(object):
             self.helper.check_make_folder(os.path.join(os.getcwd(), "tmp_tran"))
             for ta in os.listdir(tran_path):
                 if ta.endswith(".gff"):
-                    if os.path.getsize(tran_path + ta) != 0:
+                    if os.path.getsize(os.path(tran_path, ta)) != 0:
                         tas.append(ta.replace("_transcript.gff", ""))
             self._post_modify(tas, gffs, tran_path, length, gff_outfolder)
         self._compare_TSS_CDS(compare_TSS, compare_CDS, gff_outfolder, stat_path, fuzzy, tas)
