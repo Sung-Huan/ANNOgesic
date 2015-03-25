@@ -185,13 +185,13 @@ class Terminator(object):
                         table_best, gffs):
         for prefix in prefixs:
             ### get intergenic seq, sec
-            print("Extracting seq of " + prefix)
-            out_seq = open("inter_seq_" + prefix, "w")
-            Intergenic_seq(fasta_path + prefix + ".fa", 
-                           tran_path + prefix + "_transcript.gff", 
-                           merge_path + prefix + ".gff", 
-                           "inter_seq_" + prefix)
-            print("Computing secondray structure of " + prefix)
+#            print("Extracting seq of " + prefix)
+#            out_seq = open("inter_seq_" + prefix, "w")
+#            Intergenic_seq(fasta_path + prefix + ".fa", 
+#                           tran_path + prefix + "_transcript.gff", 
+#                           merge_path + prefix + ".gff", 
+#                           "inter_seq_" + prefix)
+#            print("Computing secondray structure of " + prefix)
 #            self.helper.check_make_folder(os.getcwd() + "/", "tmp")
 #            pre_cwd = os.getcwd()
 #            os.chdir(os.getcwd() + "/tmp")
@@ -201,7 +201,7 @@ class Terminator(object):
 #            ### detect poly U/T tail of terminators and coverage decreasing.
 #            Poly_T("inter_seq_" + prefix, "inter_sec_" + prefix, 
 #                   merge_path + prefix + ".gff", fuzzy, "term_candidates_" + prefix)
-            print("detection of terminator")
+#            print("detection of terminator")
             Detect_coverage("term_candidates_" + prefix, merge_path + prefix + ".gff", 
                             tran_path + prefix + "_transcript.gff",
                             fasta_path + prefix + ".fa",
@@ -254,6 +254,7 @@ class Terminator(object):
                      term_outfolder + "express/" + prefix + "_term")
                 call(["mv", term_outfolder + "detect/" + prefix + "_term.csv", csv_outfolder + "detect/"])
                 call(["mv", term_outfolder + "express/" + prefix + "_term.csv", csv_outfolder + "express/"])
+                call(["rm", term_outfolder + "all_candidates/" + prefix + "_term_all.gff"])
 
     def _check_gff_file(self, folder):
         for file_ in os.listdir(folder):
