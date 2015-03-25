@@ -126,7 +126,7 @@ class Paths(object):
         self.processing_screenshot_folder = "%s/screenshots" % (
             self.processing_base_folder)
         self.processing_Master_folder = "%s/MasterTables" % (
-            self.tsspredator_base_folder)
+            self.processing_base_folder)
 
     def _set_transterm_folder_names(self):
         self.transterm_base_folder = "%s/terminator" % self.output_folder
@@ -318,23 +318,6 @@ class Paths(object):
                     self.required_wig_folders() +
                     self.required_bam_folders() + 
                     self.required_output_folders(folder_type))
-#                self.required_output_folders() +
-#                self.required_target_folders() +
-#                self.required_tsspredator_folders() +
-#                self.required_transterm_folders() + 
-#                self.required_processing_folders() +
-#                self.required_transcript_assembly_folders() +
-#                self.required_utr_folders() +
-#                self.required_srna_folders() +
-#                self.required_sorf_folders() +
-#                self.required_operon_folders() + 
-#                self.required_circrna_folders() +
-#                self.required_goterm_folders() +
-#                self.required_starget_folders() +
-#                self.required_snp_folders() +
-#                self.required_ppi_folders() + 
-#                self.required_sublocal_folders() + 
-#                self.required_ribos_folders())
 
     def required_base_folders(self):
         return [self.input_folder, self.output_folder]
@@ -377,22 +360,6 @@ class Paths(object):
                        "riboswitch": [self.ribos_output_folder] + self.required_ribos_folders()}
         return folder_dict[folder_type]
 
-#        if folder_type == "get_target_fasta":
-#            return [self.target_folder] + \
-#                    self.required_target_folders()
-#        elif folder_type
-#        return [self.target_folder, self.ratt_folder,
-#                self.tsspredator_folder, self.utr_folder,
-#                self.transterm_folder,
-#                self.transcript_assembly_output_folder,
-#                self.processing_site_folder,
-#                self.srna_folder, self.sorf_folder,
-#                self.promoter_output_folder,
-#                self.operon_output_folder, self.circrna_output_folder,
-#                self.goterm_output_folder, self.starget_output_folder,
-#                self.snp_output_folder, self.ppi_output_folder,
-#                self.sublocal_output_folder, self.ribos_output_folder]
-
     def required_reference_input_folders(self):
         return [self.ref_annotation_folder, self.ref_fasta_folder]
 
@@ -415,7 +382,7 @@ class Paths(object):
                 self.transtermhp_folder, self.term_to_table_folder]
     def required_processing_folders(self):
         return [self.processing_to_gff_folder, self.processing_statistics_folder,
-                self.processing_screenshot_folder, self.processing_Master_folder]
+                self.processing_Master_folder]
     def required_transcript_assembly_folders(self):
         return [self.transcript_gff_folder, self.transcript_stat_folder]
 
