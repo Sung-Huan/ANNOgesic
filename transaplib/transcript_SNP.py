@@ -9,20 +9,6 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
-#__author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
-#__email__ = "sung-huan.yu@uni-wuerzburg.de"
-#
-#parser = argparse.ArgumentParser()
-#parser.add_argument("-t","--transcript_file", default=False, help="input transcript file")
-#parser.add_argument("-f","---fasta_file",help="input genome fasta file")
-#parser.add_argument("-s","--snp_file", help="input snp table")
-#parser.add_argument("-op","--out_snp", help="output prefix name of snp table")
-#parser.add_argument("-q","--quality", default=20, type=float, help="the min quality which consider a real snp")
-#parser.add_argument("-os","--out_seq", help="output prefix name of sequence fasta file which applied snp information and quality")
-#parser.add_argument("-d","--read_depth", default=-5, type=int, help="the minimum read depth, below to it will be excluded.")
-#parser.add_argument("-r","--indel_fraction", default=0.5, type=float, help="the fraction of Maximum read depth support the indel.")
-#parser.add_argument("-b","--bam_number", type=int, help="the number of BAM files.")
-#args = parser.parse_args()
 
 def plot_bar(cutoffs, labels, strain, out_snp):
     name = []
@@ -71,7 +57,7 @@ def row_in_list(row):
 def gen_ref(snps, pos, refs, num, same):
     if num == 1:
         for snp in snps:
-            refs.append(str(pos) + ":" + snp["alt"])
+            refs.append(":".join([str(pos), snp["alt"]]))
     else:
         new_refs = []
         for snp in snps:
@@ -81,16 +67,18 @@ def gen_ref(snps, pos, refs, num, same):
     return refs
 
 def change(snp, seq):
+    start_point = snp["pos"] - 1 + seq["num_mod"]
+    end_point = snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]
     if len(snp["ref"]) == len(snp["alt"]):
-        if seq["seq"][snp["pos"] - 1 + seq["num_mod"]: snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]].upper() == snp["ref"].upper():
-            seq["seq"] = seq["seq"][:snp["pos"] - 1 + seq["num_mod"]] + snp["alt"].lower() + seq["seq"][snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]:]
+        if seq["seq"][start_point: end_point].upper() == snp["ref"].upper():
+            seq["seq"] = seq["seq"][:start_point] + snp["alt"].lower() + seq["seq"][end_point:]
     if len(snp["ref"]) > len(snp["alt"]):
-        if seq["seq"][snp["pos"] - 1 + seq["num_mod"]: snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]].upper() == snp["ref"].upper():
-            seq["seq"] = seq["seq"][:snp["pos"] - 1 + seq["num_mod"]] + snp["alt"].lower() + seq["seq"][snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]:]
+        if seq["seq"][start_point: end_point].upper() == snp["ref"].upper():
+            seq["seq"] = seq["seq"][:start_point] + snp["alt"].lower() + seq["seq"][end_point:]
             seq["num_mod"] = seq["num_mod"] - (len(snp["ref"]) - len(snp["alt"]))
     if len(snp["ref"]) < len(snp["alt"]):
-        if seq["seq"][snp["pos"] - 1 + seq["num_mod"]: snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]].upper() == snp["ref"].upper():
-            seq["seq"] = seq["seq"][:snp["pos"] - 1 + seq["num_mod"]] + snp["alt"].lower() + seq["seq"][snp["pos"] - 1 + len(snp["ref"]) + seq["num_mod"]:]
+        if seq["seq"][start_point: end_point].upper() == snp["ref"].upper():
+            seq["seq"] = seq["seq"][:start_point] + snp["alt"].lower() + seq["seq"][end_point:]
             seq["num_mod"] = seq["num_mod"] - (len(snp["ref"]) - len(snp["alt"]))
 
 def import_data(max_quals, snps, snp_file, read_depth, bam_number, indel_fraction):
@@ -220,20 +208,20 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init, mod_seqs, ou
         out_ref.write("\t".join([str(key), "_".join(paths), "1", "All", mod_seq_init["genome"]]) + "\n")
     if len(mod_seqs) == 0:
         out_fasta = open("_".join([out_seq, mod_seq_init["genome"], str(key), "1.fa"]), "w")
-        out_fasta.write(">%s\n" % (mod_seq_init["genome"]))
+        out_fasta.write(">{0}\n".format(mod_seq_init["genome"]))
         for nt in mod_seq_init["seq"]:
             num_nt += 1
-            out_fasta.write("%s" % (nt))
+            out_fasta.write("{0}".format(nt))
             if num_nt % 60 == 0:
                 out_fasta.write("\n")
     else:
         for seq in mod_seqs:
             num_nt = 0
             out_fasta = open("_".join([out_seq, seq["genome"], str(key), str(num_seq)]) + ".fa", "w")
-            out_fasta.write(">%s\n" % (seq["genome"]))
+            out_fasta.write(">{0}\n".format(seq["genome"]))
             for nt in seq["seq"]:
                 num_nt += 1
-                out_fasta.write("%s" % (nt))
+                out_fasta.write("{0}".format(nt))
                 if num_nt % 60 == 0:
                     out_fasta.write("\n")
             num_seq += 1    
@@ -268,19 +256,19 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
                     depth = 40
                 else:
                     depth = 5 * bam_number
-                out_stat.write("Read depth should be higher than %s:\n" % str(depth))
+                out_stat.write("Read depth should be higher than {0}:\n".format(depth))
             else:
-                out_stat.write("Read depth should be higher than %s:\n" % str(read_depth))
+                out_stat.write("Read depth should be higher than {0}:\n".format(read_depth))
             out_stat.write("The fraction of Maximum read depth of insertion or deletion ")
-            out_stat.write("should be higher than %s:\n" % str(indel_fraction))
+            out_stat.write("should be higher than {0}:\n".format(indel_fraction))
             for cutoff in cutoffs:
                 if quality <= (num_cutoff - 10):
                     num_quality = num_quality + cutoff
-                out_stat.write("the number of QUAL which is between %s and %s = %s\n" %
-                              (str(num_cutoff - 10), str(num_cutoff), str(cutoff)))
+                out_stat.write("the number of QUAL which is between {0} and {1} = {2}\n".format(
+                               num_cutoff - 10, num_cutoff, cutoff))
                 num_cutoff = num_cutoff + 10
-            out_stat.write("the total numbers of QUAL which is higher than %s = %s\n" %
-                          (str(quality), str(num_quality)))
+            out_stat.write("the total numbers of QUAL which is higher than {0} = {1}\n".format(
+                           quality, num_quality))
             plot_bar(cutoffs, labels, strain, out_snp)
             printed = False
 
