@@ -2,10 +2,10 @@ main(){
     PATH_FILE=$(pwd)
     PYTHON_PATH=python3.4
     STRAINS=Staphylococcus_aureus_HG003
-    TRANSAP_PATH=/home/silas/Transap/Transap.py
+    TRANSAP_PATH=/home/silas/ANNO/Transap.py
     TRANSAP_FOLDER=Transap
     FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795
-    BIN_PATH=/home/silas/Transap/bin
+    BIN_PATH=/home/silas/ANNO/bin_bak
     ID_MAPPING_SOURCE=ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
 
     #######################################################################################################################
@@ -81,16 +81,15 @@ main(){
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
-#    SNP_calling_reference
+    SNP_calling_reference
 #    TSS_prediction
 #    color_png_TSS
 #    Transcriptome_assembly
 #    Terminator_prediction
 #    processing_site_prediction
 #    color_png_processing_site
-    utr_detection
+#    utr_detection
 #    sRNA_detection
-#    sORF_detection
 #    promoter_detection
 #    CircRNA_detection
 #    Go_term
@@ -101,7 +100,6 @@ main(){
 #    Subcellular_localization
 #    riboswitch
 #    Optimize_TSSpredator
-#    gen_screenshot
 }
 
 
@@ -134,52 +132,51 @@ get_input_files(){
 }
 
 get_target_fasta(){
-    if [ -f $COMBINE_FASTA ]
-    then
-        rm $COMBINE_FASTA
-    fi
     $PYTHON_PATH $TRANSAP_PATH \
         get_target_fasta \
         -r $TRANSAP_FOLDER/input/reference/fasta \
-	-o test1:test1,Staphylococcus_aureus_HG003 \
-           Staphylococcus_aureus_HG003:Staphylococcus_aureus_HG003 \
+	-o Staphylococcus_aureus_HG003:Staphylococcus_aureus_HG003 \
         -m $TRANSAP_FOLDER/input/mutation_table/Combined_table_Berscheid_and_Schuster.csv \
         $TRANSAP_FOLDER
 }
 
 annotation_transfer(){
     # instead of using "source"
-    . $PAGIT_HOME/sourceme.pagit
-    if [ -f $COMBINE_GFF ]
-    then
-        rm $COMBINE_GFF
-    fi
+#    . $PAGIT_HOME/sourceme.pagit
+#    if [ -f $COMBINE_GFF ]
+#    then
+#        rm $COMBINE_GFF
+#    fi
+# --PAGIT_path /home/silas/Transap/tools/PAGIT \
     $PYTHON_PATH $TRANSAP_PATH \
         annotation_transfer \
-        -tr test1:test Staphylococcus_aureus_HG003:NC_007795.1 \
+        -tr Staphylococcus_aureus_HG003:NC_007795.1 \
         -re $TRANSAP_FOLDER/input/reference/annotation \
         -rf $TRANSAP_FOLDER/input/reference/fasta \
         -tf $TRANSAP_FOLDER/output/target/fasta \
         -e chromosome \
 	-t Strain \
 	-g \
+	--RATT_path /home/silas/Transap_bak/tools/ratt-code \
         $TRANSAP_FOLDER
 }
 
 SNP_calling_reference(){
     $PYTHON_PATH $TRANSAP_PATH \
-         snp_calling \
+         snp \
         -p 1 2 3 \
         -t reference \
         -nw $TRANSAP_FOLDER/input/BAMs/BAMs_map_reference/tex_notex \
         -f $TRANSAP_FOLDER/input/reference/fasta \
-	-b 28 \
+        --samtools_path /home/silas/Transap/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
+        --bcftools_path /home/silas/Transap/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/bcftools \
         $TRANSAP_FOLDER
 }
 
 TSS_prediction(){
     $PYTHON_PATH $TRANSAP_PATH \
-        run_tsspredator \
+        tsspredator \
+        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
         -w $TRANSAP_FOLDER/input/wigs/tex_notex \
         -f $TRANSAP_FOLDER/output/target/fasta \
         -g $TRANSAP_FOLDER/output/target/annotation \
@@ -207,9 +204,9 @@ TSS_prediction(){
 	-m $TRANSAP_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
         -s \
         -v \
-        -ta $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
         $TRANSAP_FOLDER
 }
+#-ta $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
 
 color_png_TSS(){
     $PYTHON_PATH $TRANSAP_PATH \
@@ -221,7 +218,7 @@ color_png_TSS(){
 
 Transcriptome_assembly(){
     $PYTHON_PATH $TRANSAP_PATH \
-        transcript_assembly \
+        Transcript_Assembly \
         -nw $TRANSAP_FOLDER/input/wigs/tex_notex \
 	-fw $TRANSAP_FOLDER/input/wigs/fragment \
         -tl $tex_notex_libs \
@@ -240,7 +237,8 @@ Transcriptome_assembly(){
 
 Terminator_prediction(){
     $PYTHON_PATH $TRANSAP_PATH \
-        terminator \
+        Terminator \
+        --TransTermHP_folder /home/silas/Transap/tools/transterm_hp_v2.09 \
         -f $TRANSAP_FOLDER/output/target/fasta \
         -g $TRANSAP_FOLDER/output/target/annotation \
         -s \
@@ -252,13 +250,15 @@ Terminator_prediction(){
         -te 2 \
         -r 1 \
         -tb \
+	-sr srna_test \
         $TRANSAP_FOLDER
 }
 
 processing_site_prediction()
 {
     $PYTHON_PATH $TRANSAP_PATH \
-        run_tsspredator \
+        tsspredator \
+        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
         -w $TRANSAP_FOLDER/input/wigs/tex_notex \
         -f $TRANSAP_FOLDER/output/target/fasta \
         -g $TRANSAP_FOLDER/output/target/annotation \
@@ -300,18 +300,18 @@ color_png_processing_site(){
 
 utr_detection(){
     $PYTHON_PATH $TRANSAP_PATH \
-        utr_detection \
+        UTR_detection \
         -g $TRANSAP_FOLDER/output/target/annotation \
 	-t $TRANSAP_FOLDER/output/TSS/gffs \
         -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-	-e $TRANSAP_FOLDER/output/terminator/gff3/detect \
+	-e $TRANSAP_FOLDER/output/terminator/gffs \
         $TRANSAP_FOLDER
 }
 
 sRNA_detection(){
     $PYTHON_PATH $TRANSAP_PATH \
-        srna_detection \
-        -d 1 2 3 4 5 \
+        sRNA_detection \
+        -d 1 2 3 4 \
         -g $TRANSAP_FOLDER/output/target/annotation \
         -t $TRANSAP_FOLDER/output/TSS/gffs \
         -p $TRANSAP_FOLDER/output/processing_site/gffs \
@@ -319,7 +319,6 @@ sRNA_detection(){
         -fw $TRANSAP_FOLDER/input/wigs/fragment \
         -tw $TRANSAP_FOLDER/input/wigs/tex_notex \
         -f $TRANSAP_FOLDER/output/target/fasta \
-	-O $TRANSAP_FOLDER/output/sORF/gffs/best \
         -m \
         -u \
         -sd $TRANSAP_FOLDER/input/database/sRNA_database \
@@ -332,37 +331,21 @@ sRNA_detection(){
         $TRANSAP_FOLDER
 }
 
-sORF_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        sorf_detection \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -t $TRANSAP_FOLDER/output/TSS/gffs \
-        -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-        -fw $TRANSAP_FOLDER/input/wigs/fragment \
-        -tw $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -f $TRANSAP_FOLDER/output/target/fasta \
-	-s $TRANSAP_FOLDER/output/sRNA/gffs/best \
-        -tl $tex_notex_libs \
-        -fl $frag_libs \
-        -te 2 \
-        -r 1 \
-	-u \
-        $TRANSAP_FOLDER
-}
-
 promoter_detection(){
     $PYTHON_PATH $TRANSAP_PATH \
-        promoter \
+        Promoter \
         -t $TRANSAP_FOLDER/output/TSS/gffs \
         -f $TRANSAP_FOLDER/output/target/fasta \
 	-w 50 51 45 2-10 \
 	-p 10 \
+	-g $TRANSAP_FOLDER/output/TSS/gffs \
         $TRANSAP_FOLDER
 }
 
 CircRNA_detection(){
     $PYTHON_PATH $TRANSAP_PATH \
-        circrna \
+        CircRNA \
+	-a \
         -f $TRANSAP_FOLDER/output/target/fasta \
         -p 10 \
 	-g $TRANSAP_FOLDER/output/target/annotation \
@@ -372,14 +355,14 @@ CircRNA_detection(){
 
 Go_term(){
     $PYTHON_PATH $TRANSAP_PATH \
-        go_term \
+        Go_term \
         -g $TRANSAP_FOLDER/output/target/annotation\
         $TRANSAP_FOLDER
 }
 
 sRNA_target(){
     $PYTHON_PATH $TRANSAP_PATH \
-         srna_target \
+         sRNA_target \
         -g $TRANSAP_FOLDER/output/target/annotation \
         -f $TRANSAP_FOLDER/output/target/fasta \
         -r $TRANSAP_FOLDER/output/sRNA/gffs/best \
@@ -389,7 +372,7 @@ sRNA_target(){
 
 operon_detection(){
     $PYTHON_PATH $TRANSAP_PATH \
-         operon \
+         Operon \
         -g $TRANSAP_FOLDER/output/target/annotation \
         -t $TRANSAP_FOLDER/output/TSS/gffs \
         -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
@@ -403,7 +386,7 @@ operon_detection(){
 
 SNP_calling_target(){
     $PYTHON_PATH $TRANSAP_PATH \
-         snp_calling \
+         SNP_calling \
 	-t target \
 	-p 1 2 3 \
 	-nw $TRANSAP_FOLDER/input/BAMs/BAMs_map_target/tex_notex \
@@ -414,7 +397,7 @@ SNP_calling_target(){
 
 PPI_network(){
     $PYTHON_PATH $TRANSAP_PATH \
-         ppi_network \
+         PPI_network \
         -s all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
         -p $TRANSAP_FOLDER/output/target/annotation \
         -d $TRANSAP_FOLDER/input/database/species.v9.1.txt \
@@ -446,7 +429,8 @@ riboswitch(){
 
 Optimize_TSSpredator(){
     $PYTHON_PATH $TRANSAP_PATH \
-         optimize_tsspredator \
+         optimize_TSSpredator \
+        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
         -w $TRANSAP_FOLDER/input/wigs/tex_notex \
         -fs $TRANSAP_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
         -g $TRANSAP_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
@@ -466,27 +450,10 @@ Optimize_TSSpredator(){
            pMEM_t0 \
            pMEM_t1 \
            pMEM_t2 \
-        -m $TRANSAP_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_105000.gff \
-        -le 105000 \
-        -c 8 \
-        -r Processing_site \
+        -m $TRANSAP_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff  \
+        -c 6 \
 	-rm 1 \
         $TRANSAP_FOLDER
 }
 
-gen_screenshot(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         screenshot \
-	-mg $TRANSAP_FOLDER/output/transcript/gffs/Staphylococcus_aureus_HG003_transcript.gff \
-        -sg $TRANSAP_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
-	    $TRANSAP_FOLDER/output/TSS/gffs/Staphylococcus_aureus_HG003_TSS.gff \
-            $TRANSAP_FOLDER/output/TSS/gffs/Staphylococcus_aureus_HG003_TSS.gff \
-	-f $TRANSAP_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
-	-o $TRANSAP_FOLDER/output/sORF/screenshots \
-	-fl $frag_libs \
-	-tl $tex_notex_libs \
-        -fw $TRANSAP_FOLDER/input/wigs/fragment \
-        -tw $TRANSAP_FOLDER/input/wigs/tex_notex \
-    $TRANSAP_FOLDER
-}
 main
