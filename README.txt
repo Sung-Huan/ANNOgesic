@@ -7,22 +7,25 @@ These modules are:
     get_input_files    
     get_target_fasta
     annotation_transfer
-    TSS_prediction
+    tss_prediction
     color_png_TSS
-    Transcriptome_assembly
-    Terminator_prediction
+    transcriptome_assembly
+    terminator_prediction
     cleavage_site_prediction
     color_png_cleavage_site
     utr_detection
-    sRNA_detection
+    sran_detection
     promoter_detection
-    CircRNA_detection
-    Go_term
-    sRNA_target
+    circRNA_detection
+    go_term
+    srna_target
     operon_detection
-    SNP_calling
-    PPI_network
-    Subcellular_localization
+    snp_calling
+    ppi_network
+    subcellular_localization
+    sorf_detection
+    riboswitch
+    gen_screenshot
 
 
 run.sh is a bash script for running Transap
