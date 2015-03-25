@@ -134,7 +134,7 @@ def plot(types, file_type, feature_name, total_types, tss_num):
                 tss_types[tss_type] = 0
             text(xy, tss_type, tss_types[tss_type], plt)
         plt.axis('off')
-        plt.savefig(file_type + "_venn_" + strain + ".png")
+        plt.savefig("_".join([file_type, "_venn_", strain + ".png"]))
 
 def Plot_Venn(tss_file, file_type):
     if file_type == "processing":
