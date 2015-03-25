@@ -58,17 +58,17 @@ def stat(tsss, strain, feature_name, out_stat, file_type):
          len(tss_type["Orphan"]), num_tss, num_tss_more, 
          strain, feature_name, file_type)
     out_stat.write(strain + ":\n")
-    out_stat.write("total number of %s (if one %s belong to two class, it count two times) = %s\n" % \
-                  (feature_name, feature_name, str(num_tss_more)))
-    out_stat.write("total number of unique %s (if one %s belong to two class, it count only one time) = %s\n" % \
-                  (feature_name, feature_name, str(num_tss)))
+    out_stat.write("total number of {0} (if one {1} belong to two class, it count two times) = {2}\n".format(
+                   feature_name, feature_name, num_tss_more))
+    out_stat.write("total number of unique {0} (if one {1} belong to two class, it count only one time) = {2}\n".format(
+                   feature_name, feature_name, num_tss))
     for it in range(1,5):
         for tss in itertools.combinations(tss_type.keys(), it):
             union = []
             for key in tss:
                 union = list(set(tss_type[key]) | set(union))
-            out_stat.write("%s = %s (%s)\n" % \
-                          ('-'.join(tss), str(len(union)), str(float(len(union))/float(num_tss))))
+            out_stat.write("{0} = {1} ({2})\n".format(
+                           '-'.join(tss), len(union), float(len(union))/float(num_tss)))
     out_stat.write("\n")
 
 def Stat_TSSpredator(tss_file, file_type, stat_file):
