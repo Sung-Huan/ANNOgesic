@@ -6,6 +6,8 @@ import math
 import csv
 from transaplib.gff3 import Gff3Parser
 import transaplib.parser_wig as par
+from transaplib.helper import Helper
+
 
 def get_primary_locus_tag(tss):
     tsss = []
@@ -176,9 +178,9 @@ def remove_primary(tss, tss_entry):
 
 def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
     if cds_pos == "NA":
-        utr = tss_type + "_" + "NA"
+        utr = "_".join([tss_type, "NA"])
     else:
-        utr = tss_type + "_" + str(int(math.fabs(cds_pos - tss.start)))
+        utr = "_".join([tss_type, str(int(math.fabs(cds_pos - tss.start)))])
     if len(tss_entry) != 0:
         tss_dict = tss_entry[1]
         tss_dict_types = tss_dict["type"].split(" ")
@@ -303,27 +305,24 @@ def is_utr(pos1, pos2, length):
     if (pos1 - pos2 <= length):
         return True
 
+def print_all_unique(out, overlap_num, nums):
+    out.write("the number of overlap between TSSpredator and manual = {0} ".format(overlap_num))
+    out.write("(overlap of all TSSpredator = {0}, ".format(
+              float(overlap_num) / (float(nums["tss_p"]) + float(overlap_num))))
+    out.write("overlap of all manual = {0})\n".format(
+              float(overlap_num) / (float(nums["tss_m"]) + float(overlap_num))))
+    out.write("the number of unique in TSSpredator = {0} ({1})\n".format(
+              nums["tss_p"], float(nums["tss_p"]) / (float(nums["tss_p"]) + float(overlap_num))))
+    out.write("the number of unique in manual = {0} ({1})\n".format(
+              nums["tss_m"], float(nums["tss_m"]) / (float(nums["tss_m"]) + float(overlap_num))))
+
 def print_stat(num_strain, stat_file, overlap_num, nums):
     out = open(stat_file, "w")
     if len(num_strain.keys()) == 1:
-        out.write("the number of overlap between TSSpredator and manual = %s (overlap of all TSSpredator = %s, overlap of all manual = %s)\n" % \
-                (str(overlap_num), \
-                 str(float(overlap_num) / (float(nums["tss_p"])+float(overlap_num))), \
-                 str(float(overlap_num) / (float(nums["tss_m"])+float(overlap_num)))))
-        out.write("the number of unique in TSSpredator = %s (%s)\n" % \
-                (str(nums["tss_p"]), str(float(nums["tss_p"]) / (float(nums["tss_p"])+float(overlap_num)))))
-        out.write("the number of unique in manual = %s (%s)\n" % \
-                (str(nums["tss_m"]), str(float(nums["tss_m"]) / (float(nums["tss_m"])+float(overlap_num)))))
+        print_all_unique(out, overlap_num, nums)
     else:
         out.write("All strains: \n" )
-        out.write("the number of overlap between TSSpredator and manual = %s (overlap of all TSSpredator = %s, overlap of all manual = %s)\n" % \
-            (str(overlap_num), \
-             str(float(overlap_num) / (float(nums["tss_p"])+float(overlap_num))), \
-             str(float(overlap_num) / (float(nums["tss_m"])+float(overlap_num)))))
-        out.write("the number of unique in TSSpredator = %s (%s)\n" % \
-            (str(nums["tss_p"]), str(float(nums["tss_p"]) / (float(nums["tss_p"])+float(overlap_num)))))
-        out.write("the number of unique in manual = %s (%s)\n" % \
-            (str(nums["tss_m"]), str(float(nums["tss_m"]) / (float(nums["tss_m"])+float(overlap_num)))))
+        print_all_unique(out, overlap_num, nums)
         for strain in num_strain.keys():
             if (num_strain[strain]["tsspredator"] == 0) and \
                (num_strain[strain]["overlap"] == 0):
@@ -331,29 +330,31 @@ def print_stat(num_strain, stat_file, overlap_num, nums):
                 perc_tsspredator_uni = "NA"
             else:
                 perc_tsspredator = str(float(num_strain[strain]["overlap"]) / (
-                                   float(num_strain[strain]["tsspredator"]) + float(num_strain[strain]["overlap"])))
+                                   float(num_strain[strain]["tsspredator"]) + \
+                                   float(num_strain[strain]["overlap"])))
                 perc_tsspredator_uni = str(float(num_strain[strain]["tsspredator"]) / (
-                                   float(num_strain[strain]["tsspredator"]) + float(num_strain[strain]["overlap"])))
+                                   float(num_strain[strain]["tsspredator"]) + \
+                                   float(num_strain[strain]["overlap"])))
             if (num_strain[strain]["manual"] == 0) and \
                (num_strain[strain]["overlap"] == 0):
                 perc_manual = "NA"
                 perc_manual_uni = "NA"
             else:
                 perc_manual = str(float(num_strain[strain]["overlap"]) / (
-                                  float(num_strain[strain]["manual"]) + float(num_strain[strain]["overlap"])))
+                                  float(num_strain[strain]["manual"]) + \
+                                  float(num_strain[strain]["overlap"])))
                 perc_manual_uni = str(float(num_strain[strain]["manual"]) / (
-                                  float(num_strain[strain]["manual"]) + float(num_strain[strain]["overlap"])))
+                                  float(num_strain[strain]["manual"]) + \
+                                  float(num_strain[strain]["overlap"])))
             out.write(strain + ": \n")
-            out.write("the number of overlap between TSSpredator and manual = %s (overlap of all TSSpredator = %s, overlap of all manual = %s)\n" % \
-                    (str(num_strain[strain]["overlap"]), \
-                     perc_tsspredator,
-                     perc_manual))
-            out.write("the number of unique in TSSpredator = %s (%s)\n" % \
-                    (str(num_strain[strain]["tsspredator"]),
-                     perc_tsspredator_uni))
-            out.write("the number of unique in manual = %s (%s)\n" % \
-                    (str(num_strain[strain]["manual"]),
-                     perc_manual_uni))
+            out.write("the number of overlap between TSSpredator and manual = {0} ".format(
+                      num_strain[strain]["overlap"]))
+            out.write("(overlap of all TSSpredator = {0}, ".format(perc_tsspredator))
+            out.write("overlap of all manual = {0})\n".format(perc_manual))
+            out.write("the number of unique in TSSpredator = {0} ({1})\n".format(
+                      num_strain[strain]["tsspredator"], perc_tsspredator_uni))
+            out.write("the number of unique in manual = {0} ({1})\n".format(
+                      num_strain[strain]["manual"], perc_manual_uni))
 
 def read_wig(wigs, filename, strand):
     wig_parser = par.parser_wig()
@@ -396,9 +397,9 @@ def read_gff(tsss, cdss, genes, TSS_predict_file, TSS_manual_file, gff_file):
 
 def read_libs(input_libs, libs, wig_folder, program):
     if "merge_forward.wig" in os.listdir(os.getcwd()):
-        os.system("rm merge_forward.wig")
+        os.remove("merge_forward.wig")
     if "merge_reverse.wig" in os.listdir(os.getcwd()):
-        os.system("rm merge_reverse.wig")
+        os.remove("merge_reverse.wig")
     if program == "TSS":
         type_ = "tex"
     elif program == "processing":
@@ -406,9 +407,9 @@ def read_libs(input_libs, libs, wig_folder, program):
     for lib in input_libs:
         datas = lib.split(":")
         if (datas[1] == type_) and (datas[4] == "+"):
-            os.system("cat " + wig_folder + "/" + datas[0] + " >> merge_forward.wig")
+            Helper().merge_file(wig_folder, datas[0], os.getcwd(), "merge_forward.wig")
         elif (datas[1] ==type_) and (datas[4] == "-"):
-            os.system("cat " + wig_folder + "/" + datas[0] + " >> merge_reverse.wig")
+            Helper().merge_file(wig_folder, datas[0], os.getcwd(), "merge_reverse.wig")
 
 def intersection(tsss, cluster, num_strain, nums, length):
     overlap = False
@@ -471,9 +472,9 @@ def print_file(final_tsss, program, out_gff):
         tss.attributes["ID"] = program.lower() + str(num_final)
         num_final += 1
         if program == "TSS":
-            tss.attributes["Name"] = "TSS:" + str(tss.start) + "_" + tss.strand
+            tss.attributes["Name"] = "TSS:" + "_".join([str(tss.start), tss.strand])
         else:
-            tss.attributes["Name"] = "Processing:" + str(tss.start) + "_" + str(tss.strand)
+            tss.attributes["Name"] = "Processing:" + "_".join([str(tss.start), tss.strand])
         tss.attribute_string = ";".join(
             ["=".join(items) for items in tss.attributes.items()])
         out.write("\t".join([str(field) for field in [
