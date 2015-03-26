@@ -65,22 +65,21 @@ class Helper(object):
     def get_correct_file(self, datas, feature, prefix, for_wig_type):
         detect = False
         for data in os.listdir(datas):
-            if for_wig_type is None:
-                if feature in data:
-                    file_ = data[:-1 * len(feature)]
-                    print(file_)
-                    print(prefix)
-                    if prefix == file_:
-                        detect = True
+            if os.path.isfile(os.path.join(datas, data)):
+                if for_wig_type is None:
+                    if feature in data:
+                        file_ = data[:-1 * len(feature)]
+                        if prefix == file_:
+                            detect = True
+                            return os.path.join(datas, data)
+                else:
+                    filename = data.split("_STRAIN_")
+                    if ("reverse" in data) and ("forward" in data):
+                        print("Error: Unclear wig file. It is reverse or forward!!!")
+                        sys.exit()
+                    elif (prefix == filename[-1][:-1 * len(feature)]) and \
+                         (for_wig_type in data):
                         return os.path.join(datas, data)
-            else:
-                filename = data.split("_STRAIN_")
-                if ("reverse" in data) and ("forward" in data):
-                    print("Error: Unclear wig file. It is reverse or forward!!!")
-                    sys.exit()
-                elif (prefix == filename[-1][:-1 * len(feature)]) and \
-                     (for_wig_type in data):
-                    return os.path.join(datas, data)
         if detect:
             detect = False
         else:

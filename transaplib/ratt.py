@@ -19,7 +19,7 @@ class RATT(object):
 
     def _convert_to_pttrnt(self, gffs, fastas):
         for gff in os.listdir(gffs):
-            if "gff" in gff:
+            if gff.endswith(".gff"):
                 gff = os.path.join(gffs, gff)
                 filename = gff.split("/")
                 prefix = filename[-1][:-4]
@@ -66,7 +66,6 @@ class RATT(object):
         print("Running RATT...")
         for data in datas:
             out = open(os.path.join(output_path, "ratt_log.txt"), "w+")
-#            call([".", pagit_folder + "/sourceme.pagit"])
             call([os.path.join(ratt_path, "start.ratt.sh"),
                   os.path.join(ref_embls, data["ref_id"] + "_embl"),
                   os.path.join(tar_fastas, "tmp", data["target_id"] + ".fa"),
