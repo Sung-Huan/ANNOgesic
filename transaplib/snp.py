@@ -108,11 +108,11 @@ class SNP_calling(object):
             if frag_bams is not False:
                 num_frag = self._import_bam(frag_bams, bams)
         num_bam = num_normal + num_frag
-        print("Merge BAM files now ...")
+#        print("Merge BAM files now ...")
 #        command = (" ".join([samtools_path, "merge", 
 #                   os.path.join(out_folder, "whole_reads.bam"), " ".join(bams)]))
 #        os.system(command)
-        print("Sort BAM file now ...")
+#        print("Sort BAM file now ...")
 #        command = (" ".join([samtools_path, "sort", 
 #                   os.path.join(out_folder, "whole_reads.bam"),
 #                   os.path.join(out_folder, "whole_reads_sorted")]))
@@ -151,10 +151,6 @@ class SNP_calling(object):
         bam_number = self._merge_bams(normal_bams, frag_bams, samtools_path, out_folder)
         seq_names = self._get_genome_name(samtools_path, out_folder)
         #### running SNP calling
-        if depth is False:
-            depth = -5
-        else:
-            depth = int(depth)
         if ("1" not in program ) and \
            ("2" not in program) and \
            ("3" not in program):

@@ -30,29 +30,27 @@ def row_in_list(row):
     frac = -1
     info = ""
     filt = "."
+    snps = {"strain": None, "pos": -1, "id": "", "ref": "",
+            "alt": "", "qual": -1, "filter": "", "info": "",
+            "depth": -1, "all_info": "", "indel": -1, "frac": -1}
     if len(row) >= 8:
+        snps = {"strain": row[0], "pos": int(row[1]), "id": row[2], 
+                "ref":row[3], "alt":row[4], "qual": float(row[5]), 
+                "filter": filt, "info": "", "depth": -1, 
+                "all_info": "\t".join(row), "indel": -1, "frac": -1}
         infos = row[7].split(";")
         for info in infos:
+            snps["info"] = info
             datas = info.split("=")
             if datas[0] == "DP":
-                read_depth = int(datas[1])
+                snps["depth"] = int(datas[1])
             if datas[0] == "IDV":
-                indel = int(datas[1])
+                snps["indel"] = int(datas[1])
             if datas[0] == "IMF":
-                frac = float(datas[1])
-        return {"strain": row[0], "pos": int(row[1]),
-                "id": row[2], "ref": row[3],
-                "alt": row[4], "qual": float(row[5]),
-                "filter": filt, "info": info,
-                "depth": read_depth, "all_info": "\t".join(row),
-                "indel": indel, "frac": frac}
+                snps["frac"] = float(datas[1])
+        return snps
     else:
-        return {"strain": None, "pos": -1,
-                "id": "", "ref": "",
-                "alt": "", "qual": -1,
-                "filter": "", "info": "",
-                "depth": -1, "all_info": "",
-                "indel": -1, "frac": -1}
+        return snps
 
 def gen_ref(snps, pos, refs, num, same):
     if num == 1:
@@ -97,7 +95,7 @@ def import_data(max_quals, snps, snp_file, read_depth, bam_number, indel_fractio
                     max_quals[snp["strain"]] = snp["qual"]
                 if snp["qual"] > max_quals["All_strain"]:
                     max_quals["All_strain"] = snp["qual"]
-                if read_depth == -5:
+                if read_depth is False:
                     depth = 5 * bam_number
                     if depth > 40:
                         depth = 40
@@ -251,7 +249,7 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
             num_cutoff = 10
             num_quality = 0
             out_stat.write(strain + ":\n")
-            if read_depth is -5:
+            if read_depth is False:
                 if 5 * bam_number > 40:
                     depth = 40
                 else:
