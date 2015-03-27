@@ -9,10 +9,11 @@ from transaplib.lib_reader import Read_libs, Read_wig
 
 
 def import_data(row):
-    return{"method": "forward_reverse", "strain": row[0], "start": int(row[1]), "end": int(row[2]),
-           "name": row[3], "miss": int(row[4]), "loop": int(row[5]), "diff": [],
-           "length": int(row[6]), "r_stem": int(row[7]), "strand": row[8],
-           "l_stem": int(row[9]), "parent_p": row[10], "parent_m": row[11], "ut": int(row[12]), 
+    return{"method": "forward_reverse", "strain": row[0], "start": int(row[1]), 
+           "end": int(row[2]), "name": row[3], "miss": int(row[4]), 
+           "loop": int(row[5]), "diff": [], "length": int(row[6]), 
+           "r_stem": int(row[7]), "strand": row[8], "l_stem": int(row[9]), 
+           "parent_p": row[10], "parent_m": row[11], "ut": int(row[12]), 
            "print": False, "detect_p": False, "detect_m": False, "express": "False"}
 
 def compare_gff(term, gffs, seq):
@@ -73,7 +74,8 @@ def compare_ta(terms, tas, gffs, seq):
         if (start == -1):
             term["conflict"] = True
         else:
-            term["express"] = check_overlap(term["strain"], term["strand"], start, end, tas)
+            term["express"] = check_overlap(term["strain"], term["strand"], 
+                                            start, end, tas)
 
 def compare_transtermhp(hps, fr_terms, terms):
     for term in fr_terms:
@@ -81,9 +83,11 @@ def compare_transtermhp(hps, fr_terms, terms):
         for hp in hps:
             if (hp.seq_id == term["strain"]) and \
                (hp.strand == term["strand"]):
-                if ((hp.start < term["start"]) and (hp.end > term["start"]) and (hp.end < term["end"])) or \
+                if ((hp.start < term["start"]) and (hp.end > term["start"]) and \
+                    (hp.end < term["end"])) or \
                    ((hp.start > term["start"]) and (hp.end < term["end"])) or \
-                   ((hp.start > term["start"]) and (hp.start < term["end"]) and (hp.end > term["end"])) or \
+                   ((hp.start > term["start"]) and (hp.start < term["end"]) and \
+                    (hp.end > term["end"])) or \
                    ((hp.start < term["start"]) and (hp.end > term["end"])):
                     if hp.start < term["start"]:
                         term["start"] = hp.start
@@ -92,7 +96,7 @@ def compare_transtermhp(hps, fr_terms, terms):
                     hp.attributes["print"] = True
                     detect = True
         if detect:
-            term["method"] = term["method"] + "&" + "TransTermHP"
+            term["method"] = "&".join([term["method"], "TransTermHP"])
         terms.append(term)
     for hp in hps:
         if "print" not in hp.attributes.keys():
@@ -240,16 +244,16 @@ def print_table(term, cutoff_coverage, out_t, table_best):
             for cond, datas in term["datas"].items():
                 for data in datas:
                     if first:
-                        out_t.write("%s(diff=%s;high=%s;low=%s)" % (
+                        out_t.write("{0}(diff={1};high={2};low={3})".format(
                                     data["track"], data["diff"], 
                                     data["high"], data["low"]))
                         first = False
                     else:
-                        out_t.write(";%s(diff=%s;high=%s;low=%s)" % (
+                        out_t.write(";{0}(diff={1};high={2};low={3})".format(
                                     data["track"], data["diff"], 
                                     data["high"], data["low"]))
         else:
-            out_t.write("%s(diff=%s;high=%s;low=%s)" % (term["diff"]["track"], 
+            out_t.write("{0}(diff={1};high={2};low={3})".format(term["diff"]["track"], 
                         term["diff_cover"], term["diff"]["high"], term["diff"]["low"]))
     elif (term["express"] == "True") and \
          (term["diff_cover"] == -1):
@@ -263,19 +267,17 @@ def print2file(num, term, coverage, parent, out, out_t, method, table_best, cuto
     name='Term_%0*d' % (5, num)
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
-        out_t.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t" % \
-                   (term["strain"], name, term["start"], term["end"], term["strand"],
-                    ";".join(term["detect_num"].keys()), 
-                    ";".join(term["detect_num"].values())))
+        out_t.write("\t".join([term["strain"], name, str(term["start"]), 
+                              str(term["end"]), term["strand"],
+                              ";".join(term["detect_num"].keys()), 
+                              ";".join(term["detect_num"].values()), ""]))
     else:
-        out_t.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t" % \
-                   (term["strain"], name, term["start"], term["end"], term["strand"],
-                    "NA", "NA"))
+        out_t.write("\t".join([term["strain"], name, str(term["start"]), 
+                              str(term["end"]), term["strand"], "NA", "NA"]))
     if (term["express"] == "True") and (term["diff_cover"] != -1):
         if (term["diff"]["high"] >= cutoff_coverage):
-            diff = ("%s(high:%s,low:%s)" % (term["diff"]["track"], 
-                                            term["diff"]["high"], 
-                                            term["diff"]["low"]))
+            diff = ("{0}(high:{1},low:{2})".format(
+                    term["diff"]["track"], term["diff"]["high"], term["diff"]["low"]))
             attribute_string = get_attribute_string(num, name, parent, 
                                                     diff, term, coverage)
         elif (term["diff"]["high"] < cutoff_coverage):

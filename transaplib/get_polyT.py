@@ -19,8 +19,8 @@ def get_feature(cds):
     elif "protein_id" in cds.attributes.keys():
         feature = cds.attributes["protein_id"]
     else:
-        feature = cds.feature + ":" + str(cds.start) + "-" + \
-                  str(cds.end) + "_" + cds.strand
+        feature = "".join([cds.feature, ":", str(cds.start),
+                           "-", str(cds.end), "_", cds.strand])
     return feature
 
 def filter_term(cands, terms):
@@ -95,13 +95,17 @@ def detect_candidates(seq, sec, cands, name, strain, start, end, parent_p, paren
                 check_sec(sec, term_features, detects, nts)
                 if detects["conflict"] is False:
                     total_length = (nts) - (nts - term_features["st_pos"] + 1) + 1
-                    term_features["l_stem"] = total_length - term_features["r_stem"] - term_features["loop"]
+                    term_features["l_stem"] = total_length - term_features["r_stem"] - \
+                                              term_features["loop"]
                     if (total_length <= 60) and (term_features["loop"] <= 10) and \
                        (term_features["loop"] >= 3) and \
-                       (((term_features["r_stem"] + term_features["l_stem"] - term_features["real_miss"]) / 2) >= 4):
+                       (((term_features["r_stem"] + term_features["l_stem"] - \
+                          term_features["real_miss"]) / 2) >= 4):
                         if strand == "+":
-                            import_candidate(cands, term_features, strain, start + (nts - term_features["st_pos"]) - 10, 
-                                             start + nts - 1 + 10, ut, name, total_length, strand, parent_p, parent_m)
+                            import_candidate(cands, term_features, strain, 
+                                             start + (nts - term_features["st_pos"]) - 10, 
+                                             start + nts - 1 + 10, ut, name, total_length, 
+                                             strand, parent_p, parent_m)
                         else:
                             import_candidate(cands, term_features, strain, end - (nts - 1) - 10, 
                                              end - (nts - term_features["st_pos"]) + 10, 
@@ -133,9 +137,9 @@ def parents(terms, cdss):
         if "tran" in term["parent_m"]:
             tmp_m = check_parent(cdss, term, detects, "-", -1 * 250, "parent_m")
         if detects["parent_p"] is True:
-            term["parent_p"] = term["parent_p"] + "," + tmp_p
+            term["parent_p"] = ",".join(term["parent_p"], tmp_p)
         if detects["parent_m"] is True:
-            term["parent_m"] = term["parent_m"] + "," + tmp_m
+            term["parent_m"] = ",".join(term["parent_m"], tmp_m)
 
 def read_gff(cdss, genome, seq_file, gff_file):
     for entry in Gff3Parser().entries(open(gff_file)):

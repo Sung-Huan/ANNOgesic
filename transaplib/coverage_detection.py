@@ -84,7 +84,7 @@ def exchange_start_end(poss, cover):
     if poss["end"] < cover["final_end"]:
         poss["end"] = cover["final_end"]
 
-def Repliate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
+def Replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
                         tex_notex, replicates, type_, median, coverages, utr_type):
     srna_datas = {"best": 0, "high": 0, "low": 0, "pos": -1,
                   "track": "", "detail": [], "conds": {}}

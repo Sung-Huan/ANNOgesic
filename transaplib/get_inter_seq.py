@@ -14,8 +14,8 @@ def get_feature(cds, file_type):
     else:
         if file_type != "tran":
             file_type = cds.feature
-        feature = file_type + ":" + str(cds.start) + "-" + \
-                  str(cds.end) + "_" + cds.strand
+        feature = "".join([file_type, ":", str(cds.start),
+                  "-", str(cds.end), "_", cds.strand])
     return feature
 
 def import_data(f1, f2, start, end, file_type):
@@ -80,8 +80,9 @@ def get_inter(features, inters, seq, file_type):
         pre_strain = feature1.seq_id
 
 def import_merge(id_, strain, start, end, parent_p, parent_m):
-    return {"ID": "inter_" + str(id_), "strain": strain, "start": start, "end": end,
-            "parent_p": parent_p, "parent_m": parent_m, "print": False}
+    return {"ID": "_".join(["inter_" + str(id_)]), "strain": strain, 
+            "start": start, "end": end, "parent_p": parent_p, 
+            "parent_m": parent_m, "print": False}
 
 def get_overlap_inters(inter1, inter2, merges, id_):
     if (inter1["end"] < inter2["end"]) and \
@@ -124,12 +125,14 @@ def merge_inter(inters1, inters2):
             if (inter1["strain"] == inter2["strain"]):
                 id_ = get_overlap_inters(inter1, inter2, merges, id_)
         if inter1["print"] is not True:
-            merges.append(import_merge(id_, inter1["strain"], inter1["start"], inter1["end"], inter1["parent_p"], inter1["parent_m"]))
+            merges.append(import_merge(id_, inter1["strain"], inter1["start"], 
+                          inter1["end"], inter1["parent_p"], inter1["parent_m"]))
             inter1["print"] = True
             id_ += 1
     for inter2 in inters2:
         if inter2["print"] is not True:
-            merges.append(import_merge(id_, inter2["strain"], inter2["start"], inter2["end"], inter2["parent_p"], inter2["parent_m"]))
+            merges.append(import_merge(id_, inter2["strain"], inter2["start"], 
+                          inter2["end"], inter2["parent_p"], inter2["parent_m"]))
             inter2["print"] = True
             id_ += 1
     sort_merges = sorted(merges, key = lambda x: (x["strain"], x["start"]))
