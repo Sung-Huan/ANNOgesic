@@ -151,6 +151,7 @@ class Controller(object):
 
     def transtermhp(self):
         """Run TransTermHP for detecting terminators."""
+        project_creator.create_subfolders(self._paths.required_folders("terminator"))
         terminator = Terminator()
         if self._args.TransTermHP_folder is None:
             print("Please assign the folder where you install TransTermHP.")
