@@ -28,7 +28,13 @@ class Helper(object):
 
     def remove_all_content(self, folder, feature, data_type):
         for file_ in os.listdir(folder):
-            if feature in file_:
+            remove = False
+            if feature is None:
+                remove = True
+            else:
+                if feature in file_:
+                    remove = True
+            if remove:
                 target = os.path.join(folder, file_)
                 if (data_type == "file") and os.path.isfile(target):
                     os.remove(target)
@@ -59,7 +65,8 @@ class Helper(object):
         if wigs is not False:
             folder = wigs.split("/")
             folder = "/".join(folder[:-1])
-            shutil.rmtree(os.path.join(folder, "merge_wigs"))
+            if os.path.isdir(os.path.join(folder, "merge_wigs")):
+                shutil.rmtree(os.path.join(folder, "merge_wigs"))
         self.remove_tmp(wigs)
 
     def get_correct_file(self, datas, feature, prefix, for_wig_type):

@@ -173,7 +173,7 @@ def Gen_sRNA_table(sRNA_gff, sRNA_table, nr_blast, sRNA_blast,
                          "track/coverage", "secondary_energy_change", 
                          "UTR_derived/Intergenic", "confliction of sORF",
                          "nr_hit_number", "sRNA_hit_number", "nr_hit_top3|ID|e-value", 
-                         "sRNA_hit|strain|ID|e-value"]) + "\nn")
+                         "sRNA_hit|e-value"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
     finals = compare(srnas, srna_tables, nr_blasts, srna_blasts)

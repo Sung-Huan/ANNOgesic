@@ -168,6 +168,7 @@ class Controller(object):
 
     def transcript(self):
         """Run Transcriptome assembly."""
+        project_creator.create_subfolders(self._paths.required_folders("transcript_assembly"))
         transcript = Transcript_Assembly()
         transcript.run_Transcript_Assembly(
                 self._args.project_path, self._args.bin_path,

@@ -5,7 +5,7 @@ import matplotlib.pyplot
 import pylab
 import sys
 
-def Plot_mountain_plot(input_file, output_name)
+def Plot_mountain_plot(input_file, output_name):
     poss = []
     values = []
     check = 0

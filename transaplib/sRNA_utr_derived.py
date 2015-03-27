@@ -5,7 +5,7 @@ import sys
 import csv
 import math
 from transaplib.gff3 import Gff3Parser
-from transaplib.coverage_detection import Coverage_comparison, Repliate_comparison
+from transaplib.coverage_detection import Coverage_comparison, Replicate_comparison
 from transaplib.lib_reader import Read_wig, Read_libs
 
 
@@ -55,6 +55,7 @@ def get_terminal(cdss, inters, seq, type_):
                               "", "Term", "NA", None))
 
 def get_cover_5utr(num, fuzzy_end, cover_sets, poss, decrease):
+    go_out = False
     if (num == fuzzy_end) or \
        (cover_sets["5utr"] == 0) or \
        ((cover["coverage"] > cover_sets["5utr"]) and \
@@ -63,7 +64,7 @@ def get_cover_5utr(num, fuzzy_end, cover_sets, poss, decrease):
             poss["end"] = cover["pos"]
         elif inter["strand"] == "-":
             poss["start"] = cover["pos"]
-        break
+        go_out = True
     elif (cover["coverage"] <= cover_sets["5utr"]):
         if (cover["coverage"] / cover_sets["5utr"]) >= (decrease / 2):
             num += 1
@@ -74,7 +75,7 @@ def get_cover_5utr(num, fuzzy_end, cover_sets, poss, decrease):
     elif (cover["coverage"] > cover_sets["5utr"]) and \
          ((cover["coverage"] / cover_sets["5utr"]) <= (1 + decrease)):
         num += 1
-    return num
+    return (num, go_out)
 
 def check_import_srna_covers(checks, covers, poss, end, start, type_, 
                              interCDS_type, inter, srna_covers, cond, track):
@@ -122,7 +123,7 @@ def get_coverage(wigs, inter, start, end, type_, interCDS_type, fuzzy, fuzzy_end
                     for cover in covers:
                         cover_sets["total"] = cover_sets["total"] + cover["coverage"]
                         checks["first"] = Coverage_comparison(cover, cover_sets, 
-                                          poss, checks["first"]i, inter["strand"])
+                                          poss, checks["first"], inter["strand"])
                         if (checks["first"] is not True) and (cover_sets["high"] > 0):
                             if (type_ == "5utr") or ((type_ == "interCDS") and \
                                (interCDS_type == "TSS")):
@@ -131,7 +132,10 @@ def get_coverage(wigs, inter, start, end, type_, interCDS_type, fuzzy, fuzzy_end
                                     checks["detect_5utr"] = True
                                     cover_sets["5utr"] = cover["coverage"]
                         if detect_5utr:
-                            num = get_cover_5utr(num, fuzzy_end, cover_sets, poss, decrease)
+                            datas = get_cover_5utr(num, fuzzy_end, cover_sets, poss, decrease)
+                            num = datas[0]
+                            if datas[1] is True:
+                                break
                     check_import_srna_covers(checks, covers, poss, end, start, type_,
                                              interCDS_type, inter, srna_covers, cond, track)
     return (srna_covers)
@@ -266,7 +270,7 @@ def run_utr_detection(wigs, inter, start, end, utr_type, utrs, tsss,
             utrs.append(import_data(inter["strand"], inter["strain"], start, end, 
                         utr_type, "NA", "NA", covers))
 
-def classify_utr(inter, ta, wig_fs, wig_rs, utrs. tsss, pros, srnas,
+def classify_utr(inter, ta, wig_fs, wig_rs, utrs, tsss, pros, srnas,
                  Max_len, min_len, fuzzy):
     if len(pros) != 0:
         pros = sorted(pros, key=lambda k: (k.seq_id, k.start))

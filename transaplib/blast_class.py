@@ -18,8 +18,8 @@ def plus_data(id_name, name, e_value, srna, strain):
 
 def import_data(srnas, row):
     srnas.append({"strain": row[0], "name": row[1], "strand": row[2],
-                  "start": row[3], "end": row[4], "blast": row[5],
-                  "ori_strain": row[6], "ID": row[7], "e": row[8]})
+                  "start": row[3], "end": row[4], "ID": row[5],
+                  "e": row[6]})
 
 def read_file(sRNA_file):
     fh = open(sRNA_file, "r")

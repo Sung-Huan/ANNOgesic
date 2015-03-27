@@ -10,13 +10,14 @@ from transaplib.lib_reader import Read_wig, Read_libs
 
 def get_differential_cover(fuzzy_end, num, checks, cover_set, 
                            poss, cover, decrease):
+    go_out = False
     if checks["detect_diff"]:
         if (num == fuzzy_end) or \
            (cover_diff == 0) or \
            ((cover["coverage"] > cover_sets["diff"]) and \
             (cover["coverage"] / cover_sets["diff"]) > (1 + decrease)):
             poss["stop_point"] = cover["pos"]
-            break
+            go_out = True
         elif (cover["coverage"] <= cover_sets["diff"]):
             if (cover["coverage"] / cover_sets["diff"]) <= (decrease / 2):
                 num += 1
@@ -32,6 +33,7 @@ def get_differential_cover(fuzzy_end, num, checks, cover_set,
            (cover_sets["low"] > -1):
             checks["detect_diff"] = True
             cover_sets["diff"] = cover["coverage"]
+    return go_out
 
 def get_best(wigs, strain, strand, start, end, type_, 
              decrease, cutoff_coverage, fuzzy_end):
@@ -66,8 +68,10 @@ def get_best(wigs, strain, strand, start, end, type_,
                                     poss["stop_point"] = cover["pos"]
                                     break
                             if type_ == "differential":
-                                get_differential_cover(fuzzy_end, num, checks, 
-                                               cover_set, poss, cover, decrease)
+                                go_out = get_differential_cover(fuzzy_end, num, checks, 
+                                                      cover_set, poss, cover, decrease)
+                                if go_out is True:
+                                    break
                     avg = cover_sets["total"] / float(end - start + 1)
                     if avg > float(cutoff_coverage):
                         srna_covers[cond].append({"track": track, "high": cover_sets["high"], 
@@ -78,7 +82,7 @@ def get_best(wigs, strain, strand, start, end, type_,
 def get_attribute_string(srna_datas, tss, num, name):
     attribute_string = ";".join(
                     ["=".join(items) for items in (["ID", "srna" + num],
-                     ["Name", "sRNA_candidates_" + name])
+                     ["Name", "sRNA_candidates_" + name])])
     with_tss = "=".join(["with_TSS", tss])
     if srna_datas is None:
         if tss != "NA":
@@ -166,7 +170,7 @@ def detect_wig_pos(wigs, ta, start, end, nums, output, tss, template_texs,
             if ((end - srna_datas["pos"]) >= min_len) and \
                ((end - srna_datas["pos"]) <= Max_len):
                 string = ("\t".join([str(field) for field in [
-                          ta.seq_id, ta.source, "sRNA", str(srna_datas["pos"),
+                          ta.seq_id, ta.source, "sRNA", str(srna_datas["pos"]),
                           str(end), ".", ta.strand, "."]]))
                 print_file(string, nums, tss, output, 
                            out_table, srna_datas, table_best)
@@ -382,7 +386,7 @@ def Intergenic_sRNA(gff_file, Tran_file, TSS_file, fuzzy, Max_len, min_len,
     out_table = open(output_table, "w")
     output.write("##gff-version 3\n")
     for ta in tas:
-        compare_ta_cds(cdss, ta, detects):
+        compare_ta_cds(cdss, ta, detects)
         if detects["overlap"]:
             detects["overlap"] = False
             continue

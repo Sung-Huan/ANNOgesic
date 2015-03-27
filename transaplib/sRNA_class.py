@@ -129,7 +129,7 @@ def print_stat_title(checks, out_stat, strain, srna_datas, index, energy, hit_nr
     else:
         out_stat.write("\n")
     if checks["limit"] is True:
-        break
+        return class_num
     elif strain == "all":
         out_stat.write("All strains:\n")
         if len(strains) <= 2:
@@ -194,6 +194,8 @@ def Classify_sRNA(sRNA_file, out_folder, energy, hit_nr_num, out_stat_file):
         srna_class = {}
         class_num = print_stat_title(checks, out_stat, strain, srna_datas, 
                                 index, energy, hit_nr_num)
+        if checks["limit"] is True:
+            break
         import_data(class_num, srna_class, srna_datas, index, 
                     num_srna, strain, checks["utr"], checks["inter"])
         for type_, srna in num_srna.items():

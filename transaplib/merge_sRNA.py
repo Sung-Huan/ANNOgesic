@@ -243,7 +243,7 @@ def get_tss_pro(type_, srna):
 
 def Merge_sRNA_table(sRNA_file, inter_table, utr_table, wig_f_file, wig_r_file,
                      wig_folder, input_libs, tex_notex, replicates, table_best,
-                     out_file)
+                     out_file):
     wigs_f = {}
     wigs_r = {}
     libs = []

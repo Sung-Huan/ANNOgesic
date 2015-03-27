@@ -71,9 +71,9 @@ def detect_sRNA(line, blast_f, out_t, blasts, prefix):
     print_ = False
     blasts["name"] = ""
     if line[0] == ">":
-        data = line.split("|")
-        data[0] = data[0].replace(">", "")
-        blasts["name"] = data[2]
+#        data = line.split("|")
+#        data[0] = data[0].replace(">", "")
+        blasts["name"] = line[1:]
         blasts["hit_num"] += 1
         for line in blast_f:
             if "Expect =" in line:
@@ -81,8 +81,8 @@ def detect_sRNA(line, blast_f, out_t, blasts, prefix):
                 print_ = True
                 break
     if print_:
-        out_t.write("%s\t%s\t%s\t%s\t%s\n" % \
-                   (prefix, data[2], data[1], data[0], e_value))
+        out_t.write("%s\t%s\t%s\n" % \
+                   (prefix, line[1:], e_value))
         blasts["blast"] = True
     return blast_datas
 
@@ -101,11 +101,11 @@ def read_gff(sRNA_file):
         srnas.append(entry)
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))
 
-def print_gff(database, out_f, srna.info, srna_hit, nr_hit):
+def print_file(database, out_f, info, srna_hit, nr_hit):
     if database == "sRNA":
-        out_f.write("%s;sRNA_hit=%s\n" % (srna.info, srna_hit))
+        out_f.write("%s;sRNA_hit=%s\n" % (info, srna_hit))
     elif database == "nr":
-        out_f.write("%s;nr_hit=%s\n" % (srna.info, nr_hit))
+        out_f.write("%s;nr_hit=%s\n" % (info, nr_hit))
 
 def Extract_blast(blast_result, sRNA_file, output_file, output_table, database):
     out_f = open(args.output_file, "w")
