@@ -441,13 +441,13 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     UTR_parser.add_argument(
-        "--annotation_folder", "-g",
+        "--annotation_folder", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder.")
     UTR_parser.add_argument(
-        "--TSS_folder", "-t", 
+        "--TSS_folder", "-t", default="Transap/output/TSS/gffs",
         help="The path of TSS folder.")
     UTR_parser.add_argument(
-        "--transcript_assembly_folder", "-a", 
+        "--transcript_assembly_folder", "-a", default="Transap/output/transcriptome_assembly/gffs",
         help="The path of transcriptome assembly folder.")
     UTR_parser.add_argument(
         "--terminator_folder", "-e", default=False,
@@ -479,10 +479,10 @@ def main():
         "Please assign the number of type you want to import, i.e. 1 2 4 - means it used TSS, energy and blast result to detect sRNA. "
         "Besides these information, it will also consider the sequence length of sRNA.")
     sRNA_parser.add_argument(
-        "--transcript_assembly_folder", "-a",
+        "--transcript_assembly_folder", "-a", default="Transap/output/transcriptome_assembly/gffs",
         help="The path of transcriptome assembly folder.")
     sRNA_parser.add_argument(
-        "--annotation_folder", "-g",
+        "--annotation_folder", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder.")
     sRNA_parser.add_argument(
         "--TSS_folder", "-t", default=False,
@@ -598,10 +598,10 @@ def main():
         "--UTR_derived_sORF", "-u", default=False, action="store_true",
         help="If you want to detect UTR derived sORF, please turn it on.")
     sORF_parser.add_argument(
-        "--transcript_assembly_folder", "-a",
+        "--transcript_assembly_folder", "-a", default="Transap/output/transcriptome_assembly/gffs",
         help="The path of transcriptome assembly folder.")
     sORF_parser.add_argument(
-        "--annotation_folder", "-g",
+        "--annotation_folder", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder.")
     sORF_parser.add_argument(
         "--TSS_folder", "-t", default=False,
@@ -672,10 +672,10 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     promoter_parser.add_argument(
-        "--fasta_folder", "-f",
+        "--fasta_folder", "-f", default="Transap/output/target/fasta",
         help="please assign the path of gemonic fasta file. ")
     promoter_parser.add_argument(
-        "--TSS_folder", "-t",
+        "--TSS_folder", "-t", default="Transap/output/TSS/gffs",
         help="The path of TSS gff file.")
     promoter_parser.add_argument(
         "--num_motif", "-n", default=10,
@@ -709,22 +709,22 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     operon_parser.add_argument(
-        "--TSS_folder", "-t",
+        "--TSS_folder", "-t", default="Transap/output/TSS/gffs",
         help="The path of TSS gff folder.")
     operon_parser.add_argument(
-        "--annotation_folder", "-g",
+        "--annotation_folder", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder.")
     operon_parser.add_argument(
-        "--transcript_folder", "-a",
+        "--transcript_folder", "-a", default="Transap/output/transcriptome_assembly/gffs",
         help="The path of transcript assembly gff folder.")
     operon_parser.add_argument(
-        "--UTR5_folder", "-u5",
+        "--UTR5_folder", "-u5", default="Transap/output/UTR/5UTR/gffs",
         help="The path of 5'UTR gff folder.")
     operon_parser.add_argument(
-        "--UTR3_folder", "-u3",
+        "--UTR3_folder", "-u3", default="Transap/output/UTR/3UTR/gffs",
         help="The path of 3'UTR gff folder.")
     operon_parser.add_argument(
-        "--term_folder", "-e", default=False,
+        "--term_folder", "-e", default=False, default="Transap/output/terminator/detect",
         help="The path of terminator gff folder.")
     operon_parser.add_argument(
         "--TSS_fuzzy", "-tf", default=3, type=int,
@@ -767,10 +767,10 @@ def main():
         "--process", "-p", default=10, type=int,
         help="How many processes for --align.  ")
     circrna_parser.add_argument(
-        "--fasta_path", "-f",
+        "--fasta_path", "-f", default="Transap/output/target/fasta",
         help="The genome fasta path. ")
     circrna_parser.add_argument(
-        "--annotation_path", "-g",
+        "--annotation_path", "-g", default="Transap/output/target/annotation",
         help="The path of the folder of annotation gff files.")
     circrna_parser.add_argument(
         "--convert_to_gff", "-cg", default=False, action="store_true",
@@ -787,7 +787,7 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     goterm_parser.add_argument(
-        "--annotation_path", "-g",
+        "--annotation_path", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder. ")
     goterm_parser.add_argument(
         "--UniProt_id", "-u", default=False,
@@ -802,13 +802,13 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     starget_parser.add_argument(
-        "--annotation_path", "-g",
+        "--annotation_path", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder. ")
     starget_parser.add_argument(
-        "--fasta_path", "-f",
+        "--fasta_path", "-f", default="Transap/output/target/fasta",
         help="The path of genome fasta folder. ")
     starget_parser.add_argument(
-        "--sRNA_path", "-r",
+        "--sRNA_path", "-r", default="Transap/output/sRNA/gffs",
         help="The path of sRNA gff folder. ")
     starget_parser.add_argument(
         "--program", "-p", default="both",
@@ -892,7 +892,7 @@ def main():
              "1: calculate with BAQ, 2: calculate without BAQ, 3: calculate with extend BAQ. "
              "You can assign more than 1 program. For example: 1 2 3")
     snp_parser.add_argument(
-        "--fasta_path", "-f",
+        "--fasta_path", "-f", default="Transap/output/target/fasta",
         help="The path of fasta folder. ")
     snp_parser.add_argument(
         "--normal_bam_path", "-nw", default=False,
@@ -921,7 +921,7 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     ppi_parser.add_argument(
-        "--ptt_path", "-p",
+        "--ptt_path", "-p", default="Transap/output/target/annotation",
         help="the path of .ptt annotation folder. ")
     ppi_parser.add_argument(
         "--proteinID_strains", "-s", nargs="+",
@@ -965,10 +965,10 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     sub_local_parser.add_argument(
-        "--gff_path", "-g",
+        "--gff_path", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder. ")
     sub_local_parser.add_argument(
-        "--fasta_path", "-f",
+        "--fasta_path", "-f", default="Transap/output/target/fasta",
         help="The path of fasta folder. ")
     sub_local_parser.add_argument(
         "--bacteria_type", "-b",
@@ -988,10 +988,10 @@ def main():
         "--riboswitch_ID", "-i",
         help="the path of the riboswitch ID of Rfam. ")
     ribos_parser.add_argument(
-        "--gff_path", "-g",
+        "--gff_path", "-g", default="Transap/output/target/annotation",
         help="The path of annotation gff folder. ")
     ribos_parser.add_argument(
-        "--fasta_path", "-f",
+        "--fasta_path", "-f", default="Transap/output/target/fasta",
         help="The path of fasta folder. ")
     ribos_parser.add_argument(
         "--Rfam", "-R",
@@ -1017,7 +1017,7 @@ def main():
         "--side_gffs", "-sg", default=False, nargs="+",
         help="If you have more than one gff want to plot, please assign here. ")
     screen_parser.add_argument(
-        "--fasta", "-f",
+        "--fasta", "-f", default="Transap/output/target/fasta",
         help="The path of genome fasta folder. ")
     screen_parser.add_argument(
         "--frag_wig_folder", "-fw", default=False,

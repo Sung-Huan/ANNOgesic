@@ -53,7 +53,7 @@ class Paths(object):
         self.target_folder = "%s/target" % self.output_folder
         self.ratt_folder = "%s/annotation_transfer" % self.output_folder
         self.tsspredator_folder = "%s/TSS" % self.output_folder
-        self.utr_folder = "%s/utr" % self.output_folder
+        self.utr_folder = "%sUTR" % self.output_folder
         self.transterm_folder = "%s/terminator" % self.output_folder
         self.transcript_assembly_output_folder = "%s/transcriptome_assembly" % self.output_folder
         self.processing_site_folder = "%s/processing_site" % self.output_folder
@@ -140,7 +140,7 @@ class Paths(object):
             self.transterm_base_folder)
 
     def _set_utr_folder_names(self):
-        self.utr_base_folder = "%s/utr" % self.output_folder
+        self.utr_base_folder = "%s/UTR" % self.output_folder
         self.utr5_folder = "%s/5UTR" % (
             self.utr_base_folder)
         self.utr3_folder = "%s/3UTR" % (
