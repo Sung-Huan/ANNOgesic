@@ -154,7 +154,6 @@ def read_file(TSS_file, tsss, GFF_file, cdss, genes,
 
 
 def get_5utr_from_TSSpredator(tss, genes, cdss, check_utr, cds_name):
-    print(tss)
     if ("Primary" in tss.attributes["type"]) or \
        ("Secondary" in tss.attributes["type"]):
         for gene in genes:
@@ -167,7 +166,6 @@ def get_5utr_from_TSSpredator(tss, genes, cdss, check_utr, cds_name):
                        (tss_type[index] == "Secondary"):
                         locus_tag = ass_gene[index]
                 if gene.attributes["locus_tag"] == locus_tag:
-                    print("aaa")
                     for cds in cdss:
                         if "Parent" in cds.attributes.keys():
                             if gene.attributes["ID"] == cds.attributes["Parent"]:
@@ -187,7 +185,11 @@ def get_5utr_from_TSSpredator(tss, genes, cdss, check_utr, cds_name):
                                     near_cds = cds
                                     cds_name = get_feature(cds, cds_name)
                                     check_utr = True
-    utr_datas = {"check": check_utr, "cds_name": cds_name, "near_cds": near_cds, "locus": locus_tag}
+        utr_datas = {"check": check_utr, "cds_name": cds_name, 
+                     "near_cds": near_cds, "locus": locus_tag}
+    else:
+        utr_datas = {"check": False, "cds_name": None, 
+                     "near_cds": None, "locus": None}
     return (utr_datas)
 
 def get_5utr_from_other(tss, genes, cdss, check_utr, cds_name):
