@@ -184,6 +184,7 @@ class Controller(object):
                 self._args.Tex_treated_libs, self._args.fragmented_libs)
     def utr_detection(self):
         """Run UTR detection."""
+        project_creator.create_subfolders(self._paths.required_folders("utr"))
         utr = UTR_detection()
         utr.run_UTR_detection(
                 self._args.bin_path,
@@ -195,9 +196,11 @@ class Controller(object):
 
     def srna_detection(self):
         """sRNA_detection."""
+        project_creator.create_subfolders(self._paths.required_folders("srna"))
         srna = sRNA_detection()
         srna.run_sRNA_detection(
-                self._args.bin_path, self._paths.srna_folder,
+                self._args.Vienna_package_folder, self._args.blast_plus_folder,
+                self._args.ps2pdf14_path, self._paths.srna_folder,
                 self._args.UTR_derived_sRNA,
                 self._args.annotation_folder, self._args.TSS_folder,
                 self._args.transcript_assembly_folder,
@@ -239,9 +242,10 @@ class Controller(object):
 
     def meme(self):
         """promoter detectopn"""
+        project_creator.create_subfolders(self._paths.required_folders("promoter"))
         meme = MEME()
         meme.run_MEME(
-                self._args.bin_path, self._paths.promoter_input_folder,
+                self._args.MEME_path, self._paths.promoter_input_folder,
                 self._paths.promoter_output_folder, self._args.tex_libs,
                 self._args.TSS_folder, self._args.fasta_folder, 
                 self._args.num_motif, self._args.motif_width, 

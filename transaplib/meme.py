@@ -57,7 +57,7 @@ class MEME(object):
     def _check_gff(self, gffs):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
-                self.helper.check_uni_attributes(os.path(gffs, gff))
+                self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
     def _move_and_merge_fasta(self, input_path, prefix):
         if "tmp/all_type.fa" in os.listdir("tmp"):
@@ -76,13 +76,12 @@ class MEME(object):
         os.remove("tmp/tmp_all.fa")
         out_prefix = os.path.join(input_path, prefix)
         os.rename("tmp/primary.fa", "_".join([out_prefix, "allstrain_primary.fa"]))
-        os.system("tmp/secondary.fa", "_".join([out_prefix, "allstrain_secondary.fa"]))
-        os.system("tmp/internal.fa", "_".join([out_prefix, "allstrain_internal.fa"]))
-        os.system("tmp/antisense.fa", "_".join([out_prefix, "allstrain_antisense.fa"]))
-        os.system("tmp/orphan.fa", "_".join([out_prefix, "allstrain_orphan.fa"]))
-        os.system("tmp/all_type.fa", "_".join([out_prefix, "allstrain_all_types.fa"]))
-        os.system("tmp/without_orphan.fa", "_".join([out_prefix, "allstrain_without_orphan.fa"]))
-        shutil.rmtree("tmp")
+        os.rename("tmp/secondary.fa", "_".join([out_prefix, "allstrain_secondary.fa"]))
+        os.rename("tmp/internal.fa", "_".join([out_prefix, "allstrain_internal.fa"]))
+        os.rename("tmp/antisense.fa", "_".join([out_prefix, "allstrain_antisense.fa"]))
+        os.rename("tmp/orphan.fa", "_".join([out_prefix, "allstrain_orphan.fa"]))
+        os.rename("tmp/all_type.fa", "_".join([out_prefix, "allstrain_all_types.fa"]))
+        os.rename("tmp/without_orphan.fa", "_".join([out_prefix, "allstrain_without_orphan.fa"]))
 
     def _split_fasta_by_strain(self, input_path):
         for fasta in os.listdir(input_path):
@@ -109,11 +108,11 @@ class MEME(object):
                               "".join([filename[0], strain, filename[-1]])))
         out.close()
 
-    def run_MEME(self, bin_path, input_folder, output_folder, input_libs, tsss,
-                 fastas, num_motif, widths, parallel, source, wigs, gffs, meme_path):
+    def run_MEME(self, meme_path, input_folder, output_folder, input_libs, tsss,
+                 fastas, num_motif, widths, parallel, source, wigs, gffs):
         self.multiparser._parser_fasta(fastas)
         self.multiparser._parser_gff(tsss, "TSS")
-        self._check_gff(gffs)
+#        self._check_gff(gffs)
         self._check_gff(tsss)
         tss_path = os.path.join(tsss, "tmp")
         self.multiparser._combine_gff(fastas, tss_path, "fasta", "TSS")    
@@ -123,7 +122,7 @@ class MEME(object):
         for tss in os.listdir(tss_path): ### generate fasta file which is based on the TSS types.
             prefix = tss.replace("_TSS.gff", "")
             prefixs.append(prefix)
-            self.helper.check_make_folder(out_folder, prefix)
+            self.helper.check_make_folder(output_folder, prefix)
             out_path = os.path.join(output_folder, prefix)
             self.helper.check_make_folder(input_folder, prefix)
             input_path = os.path.join(input_folder, prefix)
@@ -133,6 +132,9 @@ class MEME(object):
                 Upstream(os.path.join(tss_path, tss), os.path.join(fastas, fasta), 
                          gffs, source, wigs, input_libs, None)
             else:
+                if (gffs is False) or (wigs is False) or (input_libs is False):
+                    print("Error:please assign proper annotation, tex +/- wig folder and tex treated libs!!!")
+                    sys.exit()
                 self.multiparser._parser_gff(gffs, None)
                 gff_path = os.path.join(gffs, "tmp")
                 self.multiparser._combine_gff(fastas, gff_path, "fasta", None)
@@ -158,7 +160,8 @@ class MEME(object):
                     else:
                         self._run_normal_motif(meme_path, input_path, out_path,
                                         filename, width, parallel, num_motif, fasta)
-        self._remove_tmp(fastas)
-        self._remove_tmp(tsss)
-        self._remove_tmp(gffs)
-        self._remove_tmp(wigs)
+        self.helper.remove_tmp(fastas)
+        self.helper.remove_tmp(tsss)
+        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(wigs)
+        shutil.rmtree("tmp")

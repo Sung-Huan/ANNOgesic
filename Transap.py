@@ -469,6 +469,15 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     sRNA_parser.add_argument(
+        "--Vienna_package_folder",
+        help="please assign the folder of Vienna package.")
+    sRNA_parser.add_argument(
+        "--blast_plus_folder",
+        help="please assign the folder of blast+ which include blastn, blastx, makeblastdb.")
+    sRNA_parser.add_argument(
+        "--ps2pdf14_path", default="ps2pdf14",
+        help="please assign the path of ps2pdf14.")
+    sRNA_parser.add_argument(
         "--UTR_derived_sRNA", "-u", default=False, action="store_true",
         help="If you want to detect UTR derived sRNA, please turn it on.")
     sRNA_parser.add_argument(
@@ -672,6 +681,9 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     promoter_parser.add_argument(
+        "--MEME_path", default="meme",
+        help="path of MEME")
+    promoter_parser.add_argument(
         "--fasta_folder", "-f", default="Transap/output/target/fasta",
         help="please assign the path of gemonic fasta file. ")
     promoter_parser.add_argument(
@@ -724,7 +736,7 @@ def main():
         "--UTR3_folder", "-u3", default="Transap/output/UTR/3UTR/gffs",
         help="The path of 3'UTR gff folder.")
     operon_parser.add_argument(
-        "--term_folder", "-e", default=False, default="Transap/output/terminator/detect",
+        "--term_folder", "-e", default=False,
         help="The path of terminator gff folder.")
     operon_parser.add_argument(
         "--TSS_fuzzy", "-tf", default=3, type=int,
