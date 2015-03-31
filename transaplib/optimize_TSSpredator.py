@@ -17,9 +17,6 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
         indexs["change"] = False
         best = stat_value
         best_para = list_num[-1 * cores + indexs["count"]].copy()
-#        os.system("cp " + out_path + "/MasterTable_" + str(indexs["count"] + 1) + \
-#                  "/TSSpredator_" + str(indexs["count"] + 1) + ".gff " + \
-#                  out_path + "/best.gff")
     print("_".join(["Current Parameter:step={0}", "height={1}", "reduction_height={2}", \
                     "factor={3}", "reduction_factor={4}", "base_height={5}"]).format(
           indexs["step"] - cores + 1  + indexs["count"],
@@ -319,7 +316,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
             run_TSSpredator_paralle(config_files, tsspredator_path, processes)###
             convert2gff(cores, out_path, project_strain, gff_files, program)
 #            print(len(list_num))
-            stat_values = compare_manual_predict(len(list_num), list_num[-1 * cores:], 
+            stat_values = compare_manual_predict(indexs["step"], list_num[-1 * cores:], 
                                                  gff_files, out_path, stat_out, manual, 
                                                  cores, gene_length)
 #            print(stat_values)
@@ -632,9 +629,10 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para, ste
             print("The number of steps may be enough..., it may not be able to find more parameters...\n")
             sys.exit()
         best_para = datas[1]
-        best = datas[2]
         if datas[0]:
             break
+        else:
+            best = datas[2]
         indexs["length"] = len(list_num)
         features["pre_feature"] = features["feature"]
         indexs["step"] += 1
@@ -724,7 +722,7 @@ def reload_data(out_path, list_num, best, best_para, indexs):
     fh.close()
     new_line = 0
     new_stat = open("tmp.csv", "w")
-    with open(os.path(out_path, "stat.csv"), "r") as fh:
+    with open(os.path.join(out_path, "stat.csv"), "r") as fh:
         for line in fh:
             new_line += 1
             line = line.strip()
