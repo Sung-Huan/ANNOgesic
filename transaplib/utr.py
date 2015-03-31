@@ -42,8 +42,8 @@ class UTR_detection(object):
                 print("computing 3'UTR of {0} .....".format(prefix))
                 Detect_3UTR(tran, os.path.join(gffs, gff), term, fuzzy,
                             os.path.join(utr3_path, "gffs", "_".join([prefix, "3UTR.gff"])))
-                os.helper.move_all_content(os.getcwd(), os.path.join(utr5_path, "statistics"), "_5utr_length.png")
-                os.helper.move_all_content(os.getcwd(), os.path.join(utr3_path, "statistics"), "_3utr_length.png")
+                self.helper.move_all_content(os.getcwd(), os.path.join(utr5_path, "statistics"), "_5utr_length.png")
+                self.helper.move_all_content(os.getcwd(), os.path.join(utr3_path, "statistics"), "_3utr_length.png")
 
     def run_UTR_detection(self, bin_path, tsss, gffs, trans, terms, 
                           fuzzy, out_folder, source):
@@ -69,7 +69,7 @@ class UTR_detection(object):
         detect = False
         self._compute_utr(gffs, utr5_path, utr3_path, tss_path, 
                           tran_path, source, terms, fuzzy)
-        self.helper._remove_tmp(gffs)
-        self.helper._remove_tmp(tsss)
-        self.helper._remove_tmp(trans)
-        self.helper._remove_tmp(terms)
+        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(tsss)
+        self.helper.remove_tmp(trans)
+        self.helper.remove_tmp(terms)

@@ -27,7 +27,7 @@ def plot(utr, utr_pri, utr_sec, filename, source, utr_type):
         plt.xlabel("3'UTR_length")
     plt.savefig(filename)
 
-def get_feature(cds, cds_name):
+def get_feature(cds):
     if "protein_id" in cds.attributes.keys():
         cds_name = cds.attributes["protein_id"]
     elif "locus_tag" in cds.attributes.keys():
@@ -90,7 +90,7 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas,
         else:
             attribute_string = ";".join(
                  ["=".join(items) for items in [("ID", "_".join(["utr5", str(num_utr)])),
-                  ("Name", "_".joinn(["5'UTR", name_utr])), ("length", length),
+                  ("Name", "_".join(["5'UTR", name_utr])), ("length", str(length)),
                   ("associated_cds", cds_name),
                   ("associated_gene", locus_tag),
                   ("associated_tss","".join(["TSS:", str(tss.start), "_", tss.strand]))]])
@@ -107,7 +107,7 @@ def detect_cds(cdss, gene):
                 detect = True
                 near_cds = cds
                 check_utr = True
-                cds_name = get_feature(cds, cds_name)
+                cds_name = get_feature(cds)
         else:
             if "locus_tag" in cds.attributes.keys():
                 if gene.attributes["locus_tag"] == cds.attributes["locus_tag"]:
@@ -120,7 +120,7 @@ def detect_cds(cdss, gene):
                 if (gene.start >= cds.start) and \
                    (gene.end <= cds.end):
                     near_cds = cds
-                    cds_name = get_feature(cds, cds_name)
+                    cds_name = get_feature(cds)
                     check_utr = True
                     detect = True
     if detect is False:
@@ -171,7 +171,7 @@ def get_5utr_from_TSSpredator(tss, genes, cdss, check_utr, cds_name):
                             if gene.attributes["ID"] == cds.attributes["Parent"]:
                                 near_cds = cds
                                 check_utr = True
-                                cds_name = get_feature(cds, cds_name)
+                                cds_name = get_feature(cds)
                         else:
                             if "locus_tag" in cds.attributes.keys():
                                 if gene.attributes["locus_tag"] == cds.attributes["locus_tag"]:
@@ -183,10 +183,14 @@ def get_5utr_from_TSSpredator(tss, genes, cdss, check_utr, cds_name):
                                 if (gene.start >= cds.start) and \
                                    (gene.end <= cds.end):
                                     near_cds = cds
-                                    cds_name = get_feature(cds, cds_name)
+                                    cds_name = get_feature(cds)
                                     check_utr = True
-        utr_datas = {"check": check_utr, "cds_name": cds_name, 
-                     "near_cds": near_cds, "locus": locus_tag}
+        if check_utr:
+            utr_datas = {"check": check_utr, "cds_name": cds_name, 
+                         "near_cds": near_cds, "locus": locus_tag}
+        else:
+            utr_datas = {"check": False, "cds_name": None,
+                     "near_cds": None, "locus": None}
     else:
         utr_datas = {"check": False, "cds_name": None, 
                      "near_cds": None, "locus": None}
@@ -220,7 +224,12 @@ def get_5utr_from_other(tss, genes, cdss, check_utr, cds_name):
                 cds_name = datas[1]
                 check_utr = datas[2]
                 break
-    utr_datas = {"check": check_utr, "cds_name": cds_name, "near_cds": near_cds, "locus": locus_tag}
+    if check_utr:
+        utr_datas = {"check": check_utr, "cds_name": cds_name, 
+                     "near_cds": near_cds, "locus": locus_tag}
+    else:
+        utr_datas = {"check": False, "cds_name": None, 
+                     "near_cds": None, "locus": None}
     return (utr_datas)
 
 def Detect_5UTR(TSS_file, GFF_file, TA_file, source, out_file):
