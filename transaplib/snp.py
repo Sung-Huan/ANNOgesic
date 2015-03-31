@@ -72,7 +72,7 @@ class SNP_calling(object):
                   "--ignore-RG"], stdout=out_bcf)
             call([bcftools_path, "call", "tmp_bcf",
                   "-vmO", "v", "-o", out_raw_prefix + "_extend_BAQ.vcf"])
-            self.helper.check_make_folder(os.path.join(seq_path, "extend_BAQ", prefix))
+            self.helper.check_make_folder(os.path.join(seq_path, "extend_BAQ"), prefix)
             self._transcript_SNP(fasta_file, out_raw_prefix + "_extend_BAQ.vcf",
                                  out_table_prefix + "_extend_BAQ", quality,
                                  os.path.join(seq_path, "extend_BAQ", prefix),
@@ -93,8 +93,8 @@ class SNP_calling(object):
         return (detect, prefix)
 
     def _merge_bams(self, normal_bams, frag_bams, samtools_path, out_folder):
-#        if "whole_reads.bam" in os.listdir(out_folder):
-#            self.helper.remove_all_content(out_folder, "whole_read", "file")
+        if "whole_reads.bam" in os.listdir(out_folder):
+            self.helper.remove_all_content(out_folder, "whole_read", "file")
         bams = []
         num_normal = 0
         num_frag = 0
@@ -108,15 +108,15 @@ class SNP_calling(object):
             if frag_bams is not False:
                 num_frag = self._import_bam(frag_bams, bams)
         num_bam = num_normal + num_frag
-#        print("Merge BAM files now ...")
-#        command = (" ".join([samtools_path, "merge", 
-#                   os.path.join(out_folder, "whole_reads.bam"), " ".join(bams)]))
-#        os.system(command)
-#        print("Sort BAM file now ...")
-#        command = (" ".join([samtools_path, "sort", 
-#                   os.path.join(out_folder, "whole_reads.bam"),
-#                   os.path.join(out_folder, "whole_reads_sorted")]))
-#        os.system(command)
+        print("Merge BAM files now ...")
+        command = (" ".join([samtools_path, "merge", 
+                   os.path.join(out_folder, "whole_reads.bam"), " ".join(bams)]))
+        os.system(command)
+        print("Sort BAM file now ...")
+        command = (" ".join([samtools_path, "sort", 
+                   os.path.join(out_folder, "whole_reads.bam"),
+                   os.path.join(out_folder, "whole_reads_sorted")]))
+        os.system(command)
         return num_bam
 
     def _modify_header(self, fastas):
