@@ -84,7 +84,7 @@ class Terminator(object):
                 self._combine_annotation(combine_file, files)
             elif file_type == "srna":
                 files = [os.path.join(gff_path, prefix + ".ptt"),
-                         os.path.join(gff_pat, prefix + ".rnt"),
+                         os.path.join(gff_path, prefix + ".rnt"),
                          os.path.join(srna_path, "_".join([prefix, "sRNA.rnt"]))]
                 self._combine_annotation(combine_file, files)
         return combine_path
@@ -119,7 +119,7 @@ class Terminator(object):
                     for file_ in os.listdir(out_path):
                         if file_.endswith(".bag"):
                             out_file = os.path.join("tmp_transterm", 
-                                                    "_".join(prefix, "transtermhp.gff"))
+                                                    "_".join([prefix, "transtermhp.gff"]))
                             self.converter.Convert_TransTermHP2gff(
                                                     os.path.join(out_path, file_), out_file)
         self.multiparser._combine_gff(gffs, "tmp_transterm", None, "transtermhp")
@@ -139,9 +139,15 @@ class Terminator(object):
             merge_wigs = os.path.join(folder, "merge_wigs")
             self.helper.check_make_folder(folder, "merge_wigs")
             for wig in os.listdir(tex_wigs):
-                shutil.copy(os.path.join(tex_wigs, wig), merge_wigs)
+                if os.path.isdir(os.path.join(tex_wigs, wig)):
+                    pass
+                else:
+                    shutil.copy(os.path.join(tex_wigs, wig), merge_wigs)
             for wig in os.listdir(frag_wigs):
-                shutil.copy(os.path.join(frag_wigs, wig), merge_wigs)
+                if os.path.isdir(os.path.join(frag_wigs, wig)):
+                    pass
+                else:
+                    shutil.copy(os.path.join(frag_wigs, wig), merge_wigs)
         elif (tex_wigs is not False):
             merge_wigs = tex_wigs
         elif (frag_wigs is not False):
@@ -178,17 +184,22 @@ class Terminator(object):
                 os.rename("tmp.gff", os.path.join(term_outfolder, gff))
                 prefix = gff.replace("_term.gff", "")
                 new_gff = os.path.join(term_outfolder, "all_candidates", "_".join([prefix, "term_all.gff"]))
-                out = open(out_file, "w")
+                csv_file = os.path.join(os.path.join(csv_outfolder, "all_candidates", 
+                                        "_".join([prefix, "term.csv"])))
+                out = open(new_gff, "w")
                 out.write("##gff-version 3\n")
-                self.helper.merge_file(term_outfolder, gff, 
-                                       os.path.join(term_outfolder, "all_candidates"), 
+                out.close()
+                self.helper.merge_file(term_outfolder, gff, os.path.join(term_outfolder, "all_candidates"), 
                                        "_".join([prefix, "term_all.gff"]))
                 os.remove(os.path.join(term_outfolder, gff))
                 pre_strain = ""
                 if "_".join([prefix, "term.csv"]) in os.listdir(
                                                      os.path.join(csv_outfolder, "all_candidates")):
-                    os.remove(os.path.join(csv_outfolder, "all_candidates", 
-                                           "_".join([prefix, "term.csv"])))
+                    os.remove(csv_file)
+                out_csv = open(csv_file, "w")
+                out_csv.write("\t".join(["strain", "name", "start", "end", "strand",
+                                         "detect", "coverage_detail"]) + "\n")
+                out_csv.close()
                 for entry in self.gff_parser.entries(open(new_gff)):
                     if entry.seq_id != pre_strain:
                         self.helper.merge_file("tmp_term_table", "_".join([entry.seq_id, "term_raw.csv"]),
@@ -199,13 +210,13 @@ class Terminator(object):
     def _compute_intersection_forward_reverse(self, RNAfold_path, prefixs, tran_path, 
                         merge_path, fasta_path, cutoff_coverage, fuzzy, wig_path, merge_wigs, 
                         libs, tex_notex, replicates, decrease, term_outfolder, csv_outfolder,
-                        table_best, gffs):
+                        table_best, gffs, out_folder):
         for prefix in prefixs:
-            tmp_seq = "_".join(["inter_seq", prefix])
-            tmp_sec = "_".join(["inter_sec", prefix])
+            tmp_seq = os.path.join(out_folder, "_".join(["inter_seq", prefix]))
+            tmp_sec = os.path.join(out_folder, "_".join(["inter_sec", prefix]))
             ### get intergenic seq, sec
             print("Extracting seq of {0}".format(prefix))
-            out_seq = open("_".join(["inter_seq", prefix]), "w")
+            out_seq = open(tmp_seq, "w")
             Intergenic_seq(os.path.join(fasta_path, prefix + ".fa"), 
                            os.path.join(tran_path, "_".join([prefix, "transcript.gff"])), 
                            os.path.join(merge_path, prefix + ".gff"), tmp_seq)
@@ -219,9 +230,9 @@ class Terminator(object):
             shutil.rmtree("tmp")
             ### detect poly U/T tail of terminators and coverage decreasing.
             Poly_T(tmp_seq, tmp_sec, os.path.join(merge_path, prefix + ".gff"), 
-                   fuzzy, "_".join(["term_candidates", prefix]))
+                   fuzzy, os.path.join(out_folder, "_".join(["term_candidates", prefix])))
             print("detection of terminator")
-            Detect_coverage("_".join(["term_candidates", prefix]), 
+            Detect_coverage(os.path.join(out_folder, "_".join(["term_candidates", prefix])), 
                             os.path.join(merge_path, prefix + ".gff"), 
                             os.path.join(tran_path, "_".join([prefix, "transcript.gff"])),
                             os.path.join(fasta_path, prefix + ".fa"),
@@ -238,10 +249,10 @@ class Terminator(object):
         self.multiparser._combine_gff(gffs, term_outfolder, None, "term")
         self._move_file(term_outfolder, csv_outfolder)
 
-    def _remove_tmp_file(self, gffs, fastas, sRNAs, tex_wigs, frag_wigs, term_outfolder):
+    def _remove_tmp_file(self, gffs, fastas, sRNAs, tex_wigs, frag_wigs, term_outfolder, out_folder):
         self.helper.remove_tmp(gffs)
         self.helper.remove_tmp(fastas)
-        if sRNA is not False:
+        if sRNAs is not False:
             self.helper.remove_tmp(sRNAs)
         self.helper.remove_tmp(tex_wigs)
         self.helper.remove_tmp(frag_wigs)
@@ -249,12 +260,17 @@ class Terminator(object):
         shutil.rmtree("tmp_transterm")
         shutil.rmtree("tmp_term_table")
         shutil.rmtree("tmp_merge_gff")
+        self.helper.remove_all_content(out_folder, "inter_seq_", "file")
+        self.helper.remove_all_content(out_folder, "inter_sec_", "file")
+        self.helper.remove_all_content(out_folder, "term_candidates_", "file")
+
 
     def _compute_stat(self, term_outfolder, csv_outfolder, stat, out_folder):
         new_prefixs = []
         for gff in os.listdir(os.path.join(term_outfolder, "all_candidates")):
             if gff.endswith("_term_all.gff"):
                 out_tmp = open("tmp.gff", "w")
+                out_tmp.write("##gff-version 3\n")
                 new_prefix = gff.replace("_term_all.gff", "")
                 new_prefixs.append(gff.replace("_term_all.gff", ""))
                 num = 0
@@ -329,6 +345,6 @@ class Terminator(object):
         ### Second, running the cross regions of forward and reverese strand. 
         self._compute_intersection_forward_reverse(RNAfold_path, prefixs, tran_path, merge_path, 
                         fasta_path, cutoff_coverage, fuzzy, wig_path, merge_wigs, libs, tex_notex, 
-                        replicates, decrease, term_outfolder, csv_outfolder, table_best, gffs)
+                        replicates, decrease, term_outfolder, csv_outfolder, table_best, gffs, out_folder)
         self._compute_stat(term_outfolder, csv_outfolder, stat, out_folder)
-        self._remove_tmp_file(gffs, fastas, sRNAs, tex_wigs, frag_wigs, term_outfolder)
+        self._remove_tmp_file(gffs, fastas, sRNAs, tex_wigs, frag_wigs, term_outfolder, out_folder)

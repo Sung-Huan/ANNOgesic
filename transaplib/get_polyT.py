@@ -137,9 +137,9 @@ def parents(terms, cdss):
         if "tran" in term["parent_m"]:
             tmp_m = check_parent(cdss, term, detects, "-", -1 * 250, "parent_m")
         if detects["parent_p"] is True:
-            term["parent_p"] = ",".join(term["parent_p"], tmp_p)
+            term["parent_p"] = ",".join([term["parent_p"], tmp_p])
         if detects["parent_m"] is True:
-            term["parent_m"] = ",".join(term["parent_m"], tmp_m)
+            term["parent_m"] = ",".join([term["parent_m"], tmp_m])
 
 def read_gff(cdss, genome, seq_file, gff_file):
     for entry in Gff3Parser().entries(open(gff_file)):

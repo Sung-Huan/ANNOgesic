@@ -98,10 +98,10 @@ def Stat(term_gff, term_table, stat, output_decrease, output_expression):
     out_td = open(output_decrease + ".csv", "w")
     fh = open(term_table, "r");
     for row in csv.reader(fh, delimiter="\t"):
-        if (row[8] != "NA") and (row[8] != "No_coverage_decreasing"):
+        if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
             out_td.write("\t".join(row) + "\n")
             out_te.write("\t".join(row) + "\n")
-        if (row[8] == "No_coverage_decreasing"):
+        if (row[-1] == "No_coverage_decreasing"):
             out_te.write("\t".join(row) + "\n")
     for entry in Gff3Parser().entries(open(term_gff)):
         terms.append(entry) 

@@ -284,7 +284,7 @@ class Multiparser(object):
                                 else:
                                     out.close()
                                     out_t.close()
-                                out = open("".join([out_path, filename[:-4], 
+                                out = open("".join([os.path.join(out_path, filename[:-4]), 
                                            "_STRAIN_", strain[1], ".wig"]), "w")
                                 out_t = open("".join([os.path.join(wig_folder, "tmp", filename[:-4]), 
                                              "_STRAIN_", strain[1], ".wig"]), "w")

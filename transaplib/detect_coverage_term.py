@@ -268,12 +268,10 @@ def print2file(num, term, coverage, parent, out, out_t, method, table_best, cuto
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
         out_t.write("\t".join([term["strain"], name, str(term["start"]), 
-                              str(term["end"]), term["strand"],
-                              ";".join(term["detect_num"].keys()), 
-                              ";".join(term["detect_num"].values()), ""]))
+                              str(term["end"]), term["strand"], ""]))
     else:
         out_t.write("\t".join([term["strain"], name, str(term["start"]), 
-                              str(term["end"]), term["strand"], "NA", "NA"]))
+                              str(term["end"]), term["strand"]]))
     if (term["express"] == "True") and (term["diff_cover"] != -1):
         if (term["diff"]["high"] >= cutoff_coverage):
             diff = ("{0}(high:{1},low:{2})".format(
