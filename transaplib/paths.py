@@ -53,7 +53,7 @@ class Paths(object):
         self.target_folder = "%s/target" % self.output_folder
         self.ratt_folder = "%s/annotation_transfer" % self.output_folder
         self.tsspredator_folder = "%s/TSS" % self.output_folder
-        self.utr_folder = "%sUTR" % self.output_folder
+        self.utr_folder = "%s/UTR" % self.output_folder
         self.transterm_folder = "%s/terminator" % self.output_folder
         self.transcript_assembly_output_folder = "%s/transcriptome_assembly" % self.output_folder
         self.processing_site_folder = "%s/processing_site" % self.output_folder
