@@ -251,7 +251,7 @@ class Converter(object):
                              str(tss.super_pos), ".", tss.super_strand, ".",
                              attribute_string]) + "\n")
     
-    def Convert_gff2rntptt(self, gff_file, fasta_file, ptt_file, rnt_file, 
+    def convert_gff2rntptt(self, gff_file, fasta_file, ptt_file, rnt_file, 
                            sRNA_input_file, sRNA_output_file):
         genes = []
         rnas = []
@@ -282,7 +282,7 @@ class Converter(object):
         else:
             print("Error: lack sRNA input gff file or the name sRNA output rnt file\n")
 
-    def Convert_embl2gff(self, embl_file, gff_file):
+    def convert_embl2gff(self, embl_file, gff_file):
         info = "Wrong"
         out = open(gff_file, "w")
         out.write("##gff-version 3\n")
@@ -291,7 +291,7 @@ class Converter(object):
             for pos in info["pos"]:
                 out.write(("{0}\tRefseq\t{1}\t{2}\t{3}\t.\t{4}\t.\t{5}\n").format(
                           id_name, info["source"], pos["start"], pos["end"], info["strand"], line))
-    def Convert_Mastertable2gff(self, tss_file, method, tss_pro, strain, gff_file):
+    def convert_mastertable2gff(self, tss_file, method, tss_pro, strain, gff_file):
         temps = {"tss": 0, "strand": "#"}
         nums = {"tss": 0, "tss_uni": 0, "class": 1}
         check_print = False
@@ -327,7 +327,7 @@ class Converter(object):
                         nums["tss_uni"] += 1
                     tss_features = {"tss_types": [], "locus_tags": [], "utr_lengths": []}
         tss_fh.close()
-    def Convert_TransTermHP2gff(self, transterm_file, gff_file):
+    def convert_transtermhp2gff(self, transterm_file, gff_file):
         out = open(gff_file, "w")
         out.write("##gff-version 3\n")
         num = 0
@@ -368,7 +368,7 @@ class Converter(object):
             out.write(";ID=term{0};Name=terminator_{1}\n".format(num, name))
             num += 1
     
-    def Convert_circ2gff(self, circ_file, depth, start_ratio, end_ratio, out_all, out_filter):
+    def convert_circ2gff(self, circ_file, depth, start_ratio, end_ratio, out_all, out_filter):
         circs = []
         out_a = open(out_all, "w")
         out_f = open(out_filter, "w")
@@ -403,21 +403,13 @@ class Converter(object):
                             circ["strain"], "segemehl", "circRNA", str(circ["start"]),
                             str(circ["end"]), ".",circ["strand"], ".", attribute_string]]) + "\n")
 
-    def Convert_gbk2embl(self, input_folder, annotation_files):
+    def convert_gbk2embl(self, input_folder):
         """Convert gbk to embl."""
         print("Convert gbk to embl...")
-        for annotation_file in os.listdir(annotation_files):
+        for annotation_file in os.listdir(input_folder):
             if annotation_file[-3:] == "gbk":
                 gbk_file = annotation_file
-                embl_folder = gbk_file[0:-4] + "_embl"
-                if embl_folder in os.listdir(input_folder):
-                    shutil.rmtree(os.path.join(input_folder, embl_folder))
-                os.mkdir(os.path.join(input_folder, embl_folder))
                 embl_file = gbk_file[0:-3] + "embl"
-                gbk = open(os.path.join(input_folder, gbk_file), "rU")
-                embl = open(os.path.join(input_folder, embl_folder, embl_file), "w")
-                gbk_entry = SeqIO.parse(gbk, "genbank")
-                count = SeqIO.write(gbk_entry, embl, "embl")
-                gbk.close()
-                embl.close()
+                gbk_entry = SeqIO.parse(os.path.join(input_folder, gbk_file), "genbank")
+                count = SeqIO.write(gbk_entry, os.path.join(input_folder, embl_file), "embl")
                 print("Converted %i records" % count)
