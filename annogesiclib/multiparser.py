@@ -60,7 +60,8 @@ class Multiparser(object):
                         filename = ".".join((tar.split("."))[:-1])
                         for file_ in files:
                             if filename == file_:
-                                self.helper.merge_file(tar_folder, tar, tar_folder, self.tmp_fa)
+                                self.helper.merge_file(os.path.join(tar_folder, tar), 
+                                                       os.path.join(tar_folder, self.tmp_fa))
                                 change = True
                 if change:
                     change = False
@@ -112,10 +113,12 @@ class Multiparser(object):
                             if ("forward" in tar) and ("reverse" in tar):
                                 print("Error: Unclear wig file. It is reverse or forward!!!")
                             elif ("forward" in tar):
-                                self.helper.merge_file(tar_folder, tar, tar_folder, self.tmp_wig_forward)
+                                self.helper.merge_file(os.path.join(tar_folder, tar), 
+                                                       os.path.join(tar_folder, self.tmp_wig_forward))
                                 change_f = True
                             elif ("reverse" in tar):
-                                self.helper.merge_file(tar_folder, tar, tar_folder, self.tmp_wig_reverse)
+                                self.helper.merge_file(os.path.join(tar_folder, tar), 
+                                                       os.path.join(tar_folder, self.tmp_wig_reverse))
                                 change_r = True
                 if change_f and change_r:
                     change_f = False
@@ -170,7 +173,8 @@ class Multiparser(object):
                 for tar in os.listdir(tar_folder):
                     for file_ in files:
                         if (".gff" in tar) and (file_ + tar_feature == tar[:-4]):
-                            self.helper.merge_file(tar_folder, tar, tar_folder, self.tmp_gff)
+                            self.helper.merge_file(os.path.join(tar_folder, tar), 
+                                                   os.path.join(tar_folder, self.tmp_gff))
                             change = True
                 if change:
                     change = False

@@ -24,8 +24,8 @@ class SNP_calling(object):
         self.table_folder = os.path.join(out_folder, file_type, "SNP_table")
         self.raw_folder = os.path.join(out_folder, file_type, "SNP_raw_outputs")
         self.tmp_bcf = os.path.join(out_folder, "tmp_bcf")
-        if "whole_reads.bam" in os.listdir(out_folder):
-            self.helper.remove_all_content(out_folder, "whole_read", "file")
+#        if "whole_reads.bam" in os.listdir(out_folder):
+#           self.helper.remove_all_content(out_folder, "whole_read", "file")
         self.whole_bam = os.path.join(out_folder, "whole_reads.bam")
         self.sort_bam = os.path.join(out_folder, "whole_reads_sorted.bam")
         self.header = os.path.join(out_folder, "header")
@@ -62,7 +62,7 @@ class SNP_calling(object):
             out_vcf = "_".join([out_raw_prefix, self.with_baq + ".vcf"])
             call([bcftools_path , "call", self.tmp_bcf,
                   "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(os.path.join(seq_path, self.with_baq), prefix)
+            self.helper.check_make_folder(os.path.join(seq_path, self.with_baq, prefix))
             self._transcript_snp(fasta_file, out_vcf,
                                  "_".join([out_table_prefix, self.with_baq]), quality,
                                  os.path.join(seq_path, self.with_baq, prefix),
@@ -77,7 +77,7 @@ class SNP_calling(object):
             out_vcf = "_".join([out_raw_prefix, self.without_baq + ".vcf"])
             call([bcftools_path, "call", self.tmp_bcf,
                   "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(os.path.join(seq_path, self.without_baq), prefix)
+            self.helper.check_make_folder(os.path.join(seq_path, self.without_baq, prefix))
             self._transcript_snp(fasta_file, out_vcf,
                                  "_".join([out_table_prefix, self.without_baq]), quality,
                                  os.path.join(seq_path, self.without_baq, prefix),
@@ -92,7 +92,7 @@ class SNP_calling(object):
             out_vcf = "_".join([out_raw_prefix, self.extend_baq + ".vcf"])
             call([bcftools_path, "call", self.tmp_bcf,
                   "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(os.path.join(seq_path, self.extend_baq), prefix)
+            self.helper.check_make_folder(os.path.join(seq_path, self.extend_baq, prefix))
             self._transcript_snp(fasta_file, out_vcf,
                                  "_".join([out_table_prefix, self.extend_baq]), quality,
                                  os.path.join(seq_path, self.extend_baq, prefix),
@@ -127,13 +127,13 @@ class SNP_calling(object):
                 num_frag = self._import_bam(frag_bams, bams)
         num_bam = num_normal + num_frag
         print("Merge BAM files now ...")
-        command = (" ".join([samtools_path, "merge", 
-                   self.whole_bam, " ".join(bams)]))
-        os.system(command)
+#        command = (" ".join([samtools_path, "merge", 
+#                   self.whole_bam, " ".join(bams)]))
+#        os.system(command)
         print("Sort BAM file now ...")
-        command = (" ".join([samtools_path, "sort", 
-                   self.whole_bam, self.sort_bam.replace(".bam", "")]))
-        os.system(command)
+#        command = (" ".join([samtools_path, "sort", 
+#                   self.whole_bam, self.sort_bam.replace(".bam", "")]))
+#        os.system(command)
         return num_bam
 
     def _modify_header(self, fastas):

@@ -99,7 +99,10 @@ def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
         detect_num = check_tex(template_texs, covers, cutoff_coverage, 
                                srna_datas["detail"], tex_notex, detect_num, 
                                type_, tmp_poss, median, coverages, utr_type)
-        if detect_num >= replicates:
+        if ((detect_num >= replicates["tex"]) and \
+           ("texnotex" in cond)) or \
+           ((detect_num >= replicates["frag"]) and \
+           ("frag" in cond)):
             if type_ == "sRNA_utr_derived":
                 tmp_poss["all_start"].append(tmp_poss["start"])
                 tmp_poss["all_end"].append(tmp_poss["end"])

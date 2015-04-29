@@ -8,7 +8,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
-
+import numpy as np
 
 def _import_uniprot_data(entry, name_list, feature):
     ref_name = entry.attributes[feature]
@@ -48,73 +48,96 @@ def retrieve_uniprot(database_file, gff_file, out_file):
                     out.write("\t".join([gff.seq_id, gff.strand, str(gff.start),
                                    str(gff.end), uni_lines[3], uni_lines[6]]) + "\n")
 
-def _get_label(class_, classes, percent, num):
-    if percent >= 3:
-        name = ""
-        if len(class_) > 30:
-            num_word = 0
-            first = True
-            words = class_.split(" ")
-            for word in words:
-                num_word = num_word + len(word)
-                if num_word > 30:
-                    name = name + "\n" + word
-                    num_word = len(word)
-                else:
-                    if first:
-                        first = False
-                        name = word
-                    else:
-                        name = " ".join([name, word])
-        else:
-            name = class_
-        classes.append(("{0} {1} ({2}%)").format(name, num, round(percent, 2)))
+#def _get_label(class_, classes, percent, num):
+#    if percent >= 3:
+#        name = ""
+#        if len(class_) > 30:
+#            num_word = 0
+#            first = True
+#            words = class_.split(" ")
+#            for word in words:
+#                num_word = num_word + len(word)
+#                if num_word > 30:
+#                    name = name + "\n" + word
+#                    num_word = len(word)
+#                else:
+#                    if first:
+#                        first = False
+#                        name = word
+#                    else:
+#                        name = " ".join([name, word])
+#        else:
+#            name = class_
+#        classes.append(("{0} {1} ({2}%)").format(name, num, round(percent, 2)))
+#
+#def _random_color(count, colors, color, color_elements):
+#    while True:
+#        color_index = random.randint(0, 5)
+#        if count % 3 == 0:
+#            color = color[:4] + color_elements[color_index]
+#        elif count % 3 == 1:
+#            color = color_elements[color_index] + color[2:]
+#        elif count % 3 == 2:
+#            color = color[:2] + color_elements[color_index] + color[4:]
+#        if (color != "000000") and (color != "FFFFFF") and \
+#           ("#" + color not in colors):
+#            colors.append("#" + color)
+#            break
+#    return color
+#
+#def _plot(total_nums, strain, filename, total, out_folder):
+#    color_elements = ["FF", "CC", "99", "66", "33", "00"]
+#    classes = []
+#    nums = []
+#    explode = []
+#    colors = []
+#    color = "FFFFFF"
+#    ini_color = ["FFFF99", "99FFCC", "FFCCCC", "CCFF66", "FFCC33", "CC99FF"]
+#    fig = plt.figure(figsize=(12, 6))
+#    plt.subplot(121)
+#    count = 0
+#    sort_total_nums = sorted(total_nums.items(), key = lambda x: (x[1]), reverse=True)
+#    for total_num in sort_total_nums:
+#        class_ = total_num[0]
+#        num = total_num[1]
+#        if class_ != "total":
+#            percent = (float(num) / float(total)) * 100
+#            _get_label(class_, classes, percent, num)
+#            nums.append(num)
+#            explode.append(0)
+#            if count <= 5:
+#                colors.append("#" + ini_color[count])
+#            else:
+#                color = _random_color(count, colors, color, color_elements)
+#            count += 1
+#    plt.pie(nums, explode=explode, colors=colors, startangle=90)
+#    plt.axis('equal')
+#    plt.legend(classes, bbox_to_anchor=(1.7, 0.5), loc=10, shadow=True, prop={'size':15})
+#    plt.savefig(os.path.join(out_folder, "_".join([strain, filename + ".png"])))
+#    plt.clf()
 
-def _random_color(count, colors, color, color_elements):
-    while True:
-        color_index = random.randint(0, 5)
-        if count % 3 == 0:
-            color = color[:4] + color_elements[color_index]
-        elif count % 3 == 1:
-            color = color_elements[color_index] + color[2:]
-        elif count % 3 == 2:
-            color = color[:2] + color_elements[color_index] + color[4:]
-        if (color != "000000") and (color != "FFFFFF") and \
-           ("#" + color not in colors):
-            colors.append("#" + color)
-            break
-    return color
-
-def _plot(total_nums, strain, filename, total, out_folder):
-    color_elements = ["FF", "CC", "99", "66", "33", "00"]
+def plot(total_nums, strain, filename, total, out_folder):
+    sort_total_nums = sorted(total_nums.items(), key = lambda x: (x[1]), reverse=True)
     classes = []
     nums = []
-    explode = []
-    colors = []
-    color = "FFFFFF"
-    ini_color = ["FFFF99", "99FFCC", "FFCCCC", "CCFF66", "FFCC33", "CC99FF"]
-    fig = plt.figure(figsize=(12, 6))
-    plt.subplot(121)
-    count = 0
-    sort_total_nums = sorted(total_nums.items(), key = lambda x: (x[1]), reverse=True)
+    width = 0.4
+    fig = plt.figure(figsize=(16, 12))
     for total_num in sort_total_nums:
         class_ = total_num[0]
         num = total_num[1]
         if class_ != "total":
             percent = (float(num) / float(total)) * 100
-            _get_label(class_, classes, percent, num)
-            nums.append(num)
-            explode.append(0)
-            if count <= 5:
-                colors.append("#" + ini_color[count])
-            else:
-                color = _random_color(count, colors, color, color_elements)
-            count += 1
-    plt.pie(nums, explode=explode, colors=colors, startangle=90)
-    plt.axis('equal')
-    plt.legend(classes, bbox_to_anchor=(1.7, 0.5), loc=10, shadow=True, prop={'size':15})
+            if percent >= 3:
+                classes.append(class_)
+                nums.append(num)
+    ind = np.arange(len(nums))
+    rects1 = plt.bar(ind, nums, width,  color='#FF9999')
+    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=20)
+    plt.ylabel('Amount', fontsize=16)
+    plt.xlim([0, len(nums) + 1])
+    plt.xticks(ind+width, classes, rotation=45, fontsize=16, ha='right')
+    plt.tight_layout(3, None, None, None)
     plt.savefig(os.path.join(out_folder, "_".join([strain, filename + ".png"])))
-    plt.clf()
 
 def _import_obo(filename, obos):
     start = False
@@ -153,11 +176,11 @@ def _print_file(classes, total_nums, out_folder, stat):
         if (strain == "All_strain") and len(classes) <= 2:
             printed = False
         if printed:
-            _plot(total_nums[strain], strain, "three_roots", 
+            plot(total_nums[strain], strain, "three_roots", 
                   total_nums[strain]["total"], out_folder)
             out_stat.write("{0}:\n".format(strain))
             for origin, types in datas.items():
-                _plot(types, strain, origin, total_nums[strain][origin], out_folder)
+                plot(types, strain, origin, total_nums[strain][origin], out_folder)
                 out_stat.write("\t{0}: {1}(percentage in total: {2})\n".format(
                                origin, total_nums[strain][origin],
                                float(total_nums[strain][origin]) / float(total_nums[strain]["total"])))

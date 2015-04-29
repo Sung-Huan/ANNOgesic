@@ -8,67 +8,42 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
+import numpy as np
 
-def get_num_class_color(subs, nums, classes, explode, total, unknown, ini_color,
-                        color_elements, color, colors):
-    count = 0
+def plot(subs, total, unknown, strain, prefix_name):
+    nums = []
+    nums_no_unknown = []
+    classes = []
+    classes_no_unknown = []
+    width = 0.4
     for local, num in subs.items():
         if local == "Unknown":
             tmp_unknown = [local, num]
         else:
-            nums["all"].append((float(num) / float(total)) * 100)
-            nums["no_unknown"].append((float(num) / float(total - unknown)) * 100)
-            classes["all"].append(("{0} {1} ({2}{3})").format(
-                    local, num, round((float(num) / float(total)) * 100, 2), "%"))
-            classes["no_unknown"].append(("{0} {1} ({2}{3})").format(
-                    local, num, round((float(num) / float(total - unknown)) * 100, 2), "%"))
-            explode["no_unknown"].append(0)
-        explode["all"].append(0)
-        if count <= 5:
-            colors.append("#" + ini_color[count])
-        else:
-            while True:
-                color_index = random.randint(0, 5)
-                if count % 3 == 0:
-                    color = color[:4] + color_elements[color_index]
-                elif count % 3 == 1:
-                    color = color_elements[color_index] + color[2:]
-                elif count % 3 == 2:
-                    color = color[:2] + color_elements[color_index] + color[4:]
-                if (color != "000000") and (color != "FFFFFF") and \
-                   ("#" + color not in colors):
-                    colors.append("#" + color)
-                    break
-        count += 1
-    nums.append((float(tmp_unknown[1]) / float(total)) * 100)
-    classes.append(("{0} {1} ({2}{3})").format(
-                    tmp_unknown[0], tmp_unknown[1],
-                    round((float(tmp_unknown[1]) / float(total)) * 100, 2), "%"))
-
-def plot(subs, total, unknown, strain, prefix_name):
-    color_elements = ["FF", "CC", "99", "66", "33", "00"]
-    colors = []
-    nums = {"all": [], "no_unknown": []}
-    classes = {"all": [], "no_unknown": []}
-    explode = {"all": [], "no_unknown": []}
-    color = "FFFFFF"
-    ini_color = ["FFCCCC", "FFFF99", "99FFCC", "CCFF66", "FFCC33", "CC99FF"]
-    get_num_class_color(subs, nums, classes, explode, total, unknown, ini_color,
-                        color_elements, color, colors)
-    fig = plt.figure(figsize=(12, 10))
-    plt.subplot(221)
-    plt.pie(nums, explode=explode, colors=colors, startangle=90)
-    plt.axis('equal')
-    plt.title("Subcellualr localization with Unknown\n", fontsize="16")
-    plt.legend(classes, bbox_to_anchor=(1.7, 0.5), loc=10, shadow=True, prop={'size':16})
-    plt.subplot(223)
-    plt.pie(nums_no_unknown, explode=explode_no_unknown, colors=colors, startangle=90)
-    plt.axis('equal')
-    plt.title("Subcellualr localization without Unknown\n", fontsize="16")
-    plt.legend(classes_no_unknown, bbox_to_anchor=(1.7, 0.5), loc=10, shadow=True, prop={'size':16})
+            nums.append(num)
+            nums_no_unknown.append(num)
+            classes.append(local)
+            classes_no_unknown.append(local)
+    nums.append(tmp_unknown[1])
+    classes.append(tmp_unknown[0])
+    fig = plt.figure(figsize=(12, 16))
+    plt.subplot(211)
+    ind = np.arange(len(nums))
+    rects1 = plt.bar(ind, nums, width,  color='#FF9999')
+    plt.title('Subcellular localization with Unknown\n', fontsize=16)
+    plt.ylabel('Amount', fontsize=16)
+    plt.xlim([0, len(nums) + 1])
+    plt.xticks(ind+width, classes, rotation=40, fontsize=16, ha='right')
+    plt.tight_layout(2, None, None, None)
+    plt.subplot(212)
+    ind = np.arange(len(nums_no_unknown))
+    rects1 = plt.bar(ind, nums_no_unknown, width,  color='#FF9999')
+    plt.title('Subcellular localization without Unknown\n', fontsize=16)
+    plt.ylabel('Amount', fontsize=16)
+    plt.xlim([0, len(nums_no_unknown) + 1])
+    plt.xticks(ind+width, classes_no_unknown, rotation=40, fontsize=16, ha='right')
+    plt.tight_layout(2, None, None, None)
     plt.savefig("_".join([prefix_name, strain + ".png"]))
-    plt.clf()
-    plt.cla()
 
 def read_table(psortb_file, subs, total_nums, unknown_nums):
     pre_strain = ""
@@ -94,8 +69,8 @@ def read_table(psortb_file, subs, total_nums, unknown_nums):
             subs["all_strain"][row[5]] += 1
             total_nums["all_strain"] += 1
 
-def print_file_and_plot(sub, total_nums, unknown_nums, strain, out_stat):
-    plot(subs[strain], total_nums[strain], unknown_nums[strain], strain)
+def print_file_and_plot(sub, total_nums, unknown_nums, strain, out_stat, prefix_name):
+    plot(sub, total_nums[strain], unknown_nums[strain], strain, prefix_name)
     out_stat.write(strain + ":\n")
     out_stat.write("Total with Unknown is {0}; Total_wihout_Unknown is {1}\n".format(
                    total_nums[strain], total_nums[strain] - unknown_nums[strain]))
@@ -118,7 +93,9 @@ def stat_sublocal(psortb_file, prefix_name, stat_file):
     read_table(psortb_file, subs, total_nums, unknown_nums)
     out_stat = open(stat_file, "w")
     if len(subs) > 2:
-        print_file_and_plot(sub["all_strain"], total_nums, unknown_nums, "all_strain", out_stat)
+        print_file_and_plot(sub["all_strain"], total_nums, unknown_nums, 
+                            "all_strain", out_stat, prefix_name)
     for strain, sub in subs.items():
         if strain != "all_strain":
-            print_file_and_plot(sub, total_nums, unknown_nums, strain, out_stat)
+            print_file_and_plot(sub, total_nums, unknown_nums, strain, 
+                                out_stat, prefix_name)

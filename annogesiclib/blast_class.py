@@ -6,20 +6,24 @@ import csv
 from annogesiclib.gff3 import Gff3Parser
 
 
-def plus_data(id_name, name, e_value, srna, strain):
-    if name not in srna[strain].keys():
-        srna[strain][name] = {"id_name": [], "num": 1, "e": []}
-        srna[strain][name]["id_name"].append(id_name)
-        srna[strain][name]["e"].append(e_value)
-    else:
-        srna[strain][name]["id_name"].append(id_name)
-        srna[strain][name]["e"].append(e_value)
-        srna[strain][name]["num"] += 1
+#def plus_data(id_name, name, e_value, srna, strain):
+#    if name not in srna[strain].keys():
+#        srna[strain][name] = {"id_name": [], "num": 1, "e": []}
+#        srna[strain][name]["id_name"].append(id_name)
+#        srna[strain][name]["e"].append(e_value)
+#    else:
+#        srna[strain][name]["id_name"].append(id_name)
+#        srna[strain][name]["e"].append(e_value)
+#        srna[strain][name]["num"] += 1
 
 def import_data(srnas, row):
+    datas = row[5].split("|")
+    if len(datas) != 3:
+        print("Error: The format of sRNA database is wrong!!!")
+        sys.exit()
     srnas.append({"strain": row[0], "name": row[1], "strand": row[2],
-                  "start": row[3], "end": row[4], "ID": row[5],
-                  "e": row[6]})
+                  "start": row[3], "end": row[4], "ID": datas[0],
+                  "blast_strain": datas[1], "srna_name": datas[2], "e": row[6]})
 
 def read_file(sRNA_file, repeats):
     fh = open(sRNA_file, "r")
@@ -76,16 +80,21 @@ def blast_class(sRNA_file, out_file):
         if srna["strain"] != pre_strain:
             nums[srna["strain"]] = {}
             pre_strain = srna["strain"]
-        if srna["blast"] not in nums[srna["strain"]].keys(): 
-            nums[srna["strain"]][srna["blast"]] = {"num": 1, "ID": [], "e": []}
-            nums["total"][srna["blast"]] = {"num": 1, "ID": [], "e": []}
+        if srna["srna_name"].lower() not in nums[srna["strain"]].keys():
+            srna_name = srna["srna_name"].lower()
+            nums[srna["strain"]][srna_name] = {"num": 1, "name": [], "e": [], 
+                                                               "blast_strain": [], "ID": []}
+            nums["total"][srna_name] = {"num": 1, "name": [], "e": [], 
+                                                        "blast_strain": [], "ID": []}
         else:
-            nums[srna["strain"]][srna["blast"]]["num"] += 1
-            nums["total"][srna["blast"]]["num"] += 1
-        nums[srna["strain"]][srna["blast"]]["ID"].append(srna["ID"])
-        nums[srna["strain"]][srna["blast"]]["e"].append(srna["e"])
-        nums["total"][srna["blast"]]["ID"].append(srna["ID"])
-        nums["total"][srna["blast"]]["e"].append(srna["e"])
+            nums[srna["strain"]][srna_name]["num"] += 1
+            nums["total"][srna_name]["num"] += 1
+        nums[srna["strain"]][srna_name]["ID"].append(srna["ID"])
+        nums[srna["strain"]][srna_name]["e"].append(srna["e"])
+        nums[srna["strain"]][srna_name]["blast_strain"].append(srna["blast_strain"])
+        nums["total"][srna_name]["ID"].append(srna["ID"])
+        nums["total"][srna_name]["e"].append(srna["e"])
+        nums["total"][srna_name]["blast_strain"].append(srna["blast_strain"])
     if len(nums) > 1:
         out.write("All strain:\n")
         out.write("sRNA_name\tamount\n")

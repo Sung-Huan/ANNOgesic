@@ -5,6 +5,29 @@ import sys
 import csv
 from annogesiclib.gff3 import Gff3Parser
 
+def import_psortb(seq_name, psortbs, local_name, local_score, type_, results):
+    seq_datas = seq_name.split("__")
+    seq_id = seq_datas[0]
+    features = seq_datas[1].split("_")
+    prot_id = "_".join(features[:-3])
+    if type_ == "multi":
+        psortbs.append({"seq_id": seq_datas[0],
+                        "protein_id": prot_id,
+                        "strand": features[-3],
+                        "start": int(features[-2]),
+                        "end": int(features[-1]),
+                        "local": "/".join(local_name),
+                        "score": "/".join(local_score)})
+    else:
+        psortbs.append({"seq_id": seq_datas[0],
+                        "protein_id": prot_id,
+                        "strand": features[-3],
+                        "start": int(features[-2]),
+                        "end": int(features[-1]),
+                        "local": results[0],
+                        "score": results[-1]})
+    return {"datas": seq_datas, "features": features, "prot_id": prot_id}
+
 def get_results(line, scores, local_name, local_score,
                 psortbs, out_p, seq_name):
     if len(line) == 0:
@@ -28,28 +51,16 @@ def get_results(line, scores, local_name, local_score,
         for high_score in high_scores:
             local_name.append(high_score["local"])
             local_score.append(str(high_score["score"]))
-        seq_datas = seq_name.split("__")
-        psortbs.append({"seq_id": seq_datas[0],
-                        "protein_id": seq_datas[1],
-                        "strand": seq_datas[2],
-                        "start": int(seq_datas[3]),
-                        "end": int(seq_datas[4]),
-                        "local": "/".join(local_name),
-                        "score": "/".join(local_score)})
-        out_p.write("\t".join(["\t".join(seq_datas),
+        seq_datas = import_psortb(seq_name, psortbs, local_name, local_score, "multi", results)
+        out_p.write("\t".join([seq_datas["datas"][0], seq_datas["prot_id"],
+                               "\t".join(seq_datas["features"][-3:]),
                                "/".join(local_name),
                                "/".join(local_score)]) + "\n")
     else:
         results = line.split(" ")
-        seq_datas = seq_name.split("__")
-        psortbs.append({"seq_id": seq_datas[0],
-                        "protein_id": seq_datas[1],
-                        "strand": seq_datas[2],
-                        "start": int(seq_datas[3]),
-                        "end": int(seq_datas[4]),
-                        "local": results[0],
-                        "score": results[-1]})
-        out_p.write("\t".join(["\t".join(seq_datas),
+        seq_datas = import_psortb(seq_name, psortbs, None, None, "unique", results)
+        out_p.write("\t".join([seq_datas["datas"][0], seq_datas["prot_id"],
+                               "\t".join(seq_datas["features"][-3:]),
                                results[0], results[-1]]) + "\n")
 
 def get_information(psortb_table, detects, psortbs, out_p):
@@ -77,7 +88,7 @@ def get_information(psortb_table, detects, psortbs, out_p):
             if line.startswith("Localization Scores:"):
                 detects["score"] = True
 
-def print_gff(merge_gff, gffs, psortbs, out_m):
+def print_gff(gffs, psortbs, out_m):
     for gff in gffs:
         detect = False
         for psortb in psortbs:
@@ -105,7 +116,7 @@ def print_gff(merge_gff, gffs, psortbs, out_m):
 
 def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge):
     gffs = []
-    if merge_gff is not None:
+    if merge_gff:
         if out_merge is None:
             print("Error: Please assign a name of output merged annotation file. ")
             sys.exit()
@@ -113,9 +124,11 @@ def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge):
         for entry in Gff3Parser().entries(open(merge_gff)):
             gffs.append(entry)
         gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+    else:
+        out_m = None
     detects = {"score": False, "result": False}
     psortbs = []
     out_p = open(out_psortb, "w")
     get_information(psortb_table, detects, psortbs, out_p)
-    if merge_gff is not False:
+    if merge_gff:
         print_gff(gffs, psortbs, out_m)

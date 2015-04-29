@@ -61,13 +61,13 @@ def check_pos(cover, check_point, checks):
        (cover["pos"] <= max(check_point["srna_start"], check_point["srna_end"])):
         checks["srna"] = True
 
-def set_cover_and_point(inter, covers, ori_start, ori_end, fuzzy, fuzzy_end, 
+def set_cover_and_point(inter, covers, ori_start, ori_end, fuzzy_end, 
                         start, end, check_point):
     if inter["strand"] == "-":
-        covers = reversed(covers[ori_start - fuzzy - 2 - \
-                          fuzzy_end: ori_end + fuzzy + 1])
-        check_point["srna_start"] = end + fuzzy + 1
-        check_point["srna_end"] = start - fuzzy - 2 - fuzzy_end
+        covers = reversed(covers[ori_start - 2 - \
+                          fuzzy_end: ori_end + 1])
+        check_point["srna_start"] = end + 1
+        check_point["srna_end"] = start - 2 - fuzzy_end
         check_point["utr_start"] = ori_end
         check_point["utr_end"] = ori_start
     elif inter["strand"] == "+":
@@ -78,7 +78,7 @@ def set_cover_and_point(inter, covers, ori_start, ori_end, fuzzy, fuzzy_end,
         check_point["utr_end"] = ori_end
     return covers
 
-def get_coverage(wigs, inter, start, end, type_, interCDS_type, fuzzy, fuzzy_end, decrease,
+def get_coverage(wigs, inter, start, end, type_, interCDS_type, fuzzy_end, decrease,
                  ori_start, ori_end):
     srna_finals = ""
     srna_covers = {}
@@ -97,7 +97,7 @@ def get_coverage(wigs, inter, start, end, type_, interCDS_type, fuzzy, fuzzy_end
                     check_point = {"srna_start": 0, "srna_end": 0, "utr_start": 0, "utr_end": 0}
                     num = 0
                     covers = set_cover_and_point(inter, covers, ori_start, ori_end, 
-                                                fuzzy, fuzzy_end, start, end, check_point)
+                                                 fuzzy_end, start, end, check_point)
                     for cover in covers:
                         checks["srna"] = False
                         checks["utr"] = False
@@ -172,7 +172,7 @@ def check_import_srna_covers(checks, final_poss, end, start, type_, cover_sets,
                                       "final_end": final_poss["end"]})
 
 def detect_3utr_pro(pros, inter, srnas, start, end, utrs, wigs, feature, name, 
-                    utr_type, fuzzy, fuzzy_end, decrease, min_len, Max_len):
+                    utr_type, fuzzys, fuzzy_end, decrease, min_len, Max_len):
     for pro in pros:
         if (pro.seq_id == inter["strain"]) and \
            (pro.strand == inter["strand"]):
@@ -182,8 +182,8 @@ def detect_3utr_pro(pros, inter, srnas, start, end, utrs, wigs, feature, name,
                     if ((end - pro.start) >= min_len) and \
                        ((end - pro.start) <= Max_len):
                         covers = get_coverage(wigs, inter, pro.start, end, 
-                                              utr_type, "NA", fuzzy, 
-                                              fuzzy_end, decrease, start, end)
+                                              utr_type, "NA", fuzzy_end, decrease, 
+                                              start, end)
                         utrs.append(import_data(inter["strand"], inter["strain"], 
                                     pro.start, end, utr_type, feature, name, covers))
                         srnas.append(import_data(inter["strand"], inter["strain"], 
@@ -194,18 +194,18 @@ def detect_3utr_pro(pros, inter, srnas, start, end, utrs, wigs, feature, name,
                     if ((pro.start - start) >= min_len) and \
                        ((pro.start - start) <= Max_len):
                         covers = get_coverage(wigs, inter, start, pro.start, utr_type, 
-                                              "NA", fuzzy, fuzzy_end, decrease, start, end)
+                                              "NA", fuzzy_end, decrease, start, end)
                         utrs.append(import_data(inter["strand"], inter["strain"], start,
                                     pro.start, utr_type, feature, name, covers))
                         srnas.append(import_data(inter["strand"], inter["strain"], start, 
                                      pro.start, "3utr", "cleavage", 
                                      "Cleavage:" + "_".join([str(pro.start), pro.strand]), 
                                      covers))
-            if (pro.start > end + fuzzy):
+            if (pro.start > end + fuzzys[utr_type]):
                 break
 
 def detect_interCDS_twopro(pros, inter, srnas, start, end, utrs, wigs, feature, name, 
-                           utr_type, fuzzy, fuzzy_end, decrease, min_len, Max_len):
+                           utr_type, fuzzy_end, decrease, min_len, Max_len):
     poss = []
     for pro in pros:
         if (pro.seq_id == inter["strain"]) and \
@@ -221,7 +221,7 @@ def detect_interCDS_twopro(pros, inter, srnas, start, end, utrs, wigs, feature, 
             if ((pos.start - pre_pos.start) >= min_len) and \
                ((pos.start - pre_pos.start) <= Max_len):
                 covers = get_coverage(wigs, inter, pre_pos.start, pos.start, utr_type, 
-                                      "two_pro", fuzzy, fuzzy_end, decrease, start, end)
+                                      "two_pro", fuzzy_end, decrease, start, end)
                 utrs.append(import_data(inter["strand"], inter["strain"], 
                             pre_pos.start, pos.start, utr_type, feature, name, covers))
                 srnas.append(import_data(inter["strand"], inter["strain"], 
@@ -232,13 +232,12 @@ def detect_interCDS_twopro(pros, inter, srnas, start, end, utrs, wigs, feature, 
         pre_pos = pos
 
 def detect_normal(diff, wigs, inter, start, end, utr_type, feature, name, tss, 
-                  pros, utrs, srnas, fuzzy, fuzzy_end, decrease, min_len, Max_len,
+                  pros, utrs, srnas, fuzzy_end, decrease, min_len, Max_len,
                   ori_start, ori_end):
     if (diff >= min_len) and \
        (diff <= Max_len):
         covers = get_coverage(wigs, inter, start, end, utr_type, 
-                              "TSS", fuzzy, fuzzy_end, decrease,
-                              ori_start, ori_end)
+                              "TSS", fuzzy_end, decrease, ori_start, ori_end)
         utrs.append(import_data(inter["strand"], inter["strain"], start, end,
                     utr_type, feature, name, covers))
         srnas.append(import_data(inter["strand"], inter["strain"], start,
@@ -255,7 +254,7 @@ def detect_normal(diff, wigs, inter, start, end, utr_type, feature, name, tss,
                        ((pro.start - start) <= Max_len):
                         if inter["strand"] == "+":
                             covers = get_coverage(wigs, inter, tss.start, pro.start, utr_type, 
-                                         "TSS", fuzzy, fuzzy_end, decrease, ori_start, ori_end)
+                                         "TSS", fuzzy_end, decrease, ori_start, ori_end)
                             utrs.append(import_data(inter["strand"], inter["strain"], tss.start,
                                         pro.start, utr_type, feature, name, covers))
                             srnas.append(import_data(inter["strand"], inter["strain"], tss.start,
@@ -263,7 +262,7 @@ def detect_normal(diff, wigs, inter, start, end, utr_type, feature, name, tss,
                                          "TSS:" + "_".join([str(tss.start), tss.strand]), covers))
                         else:
                             covers = get_coverage(wigs, inter, pro.start, tss.start, utr_type, 
-                                         "TSS", fuzzy, fuzzy_end, decrease, ori_start, ori_end)
+                                         "TSS", fuzzy_end, decrease, ori_start, ori_end)
                             utrs.append(import_data(inter["strand"], inter["strain"], pro.start,
                                         tss.start, utr_type, feature, name, covers))
                             srnas.append(import_data(inter["strand"], inter["strain"], pro.start,
@@ -271,104 +270,104 @@ def detect_normal(diff, wigs, inter, start, end, utr_type, feature, name, tss,
                                          "TSS:" + "_".join([str(tss.start), tss.strand]), covers))
 
 def detect_utr(srnas, tsss, pros, start, end, inter, utr_type, utrs, wigs, 
-               feature, name, fuzzy, fuzzy_end, decrease, min_len, Max_len):
+               feature, name, fuzzys, fuzzy_end, decrease, min_len, Max_len):
     for tss in tsss:
         if (tss.seq_id == inter["strain"]) and \
            (tss.strand == inter["strand"]):
             if (tss.strand == "+"):
-                if (utr_type == "5utr") or (utr_type == "interCDS"):
-                    start_fuzzy = start - fuzzy
-                else:
-                    start_fuzzy = start
+#                if (utr_type == "5utr") or (utr_type == "interCDS"):
+#                    start_fuzzy = start - fuzzys[utr_type]
+#                else:
+#                    start_fuzzy = start
+                start_fuzzy = start - fuzzys[utr_type]
                 if (tss.start >= start_fuzzy) and \
                    (tss.start <= end):
                     detect_normal((end - tss.start), wigs, inter, tss.start, end, 
                                   utr_type, feature, name, tss, pros, utrs, srnas,
-                                  fuzzy, fuzzy_end, decrease, min_len, Max_len,
-                                  start, end)
+                                  fuzzy_end, decrease, min_len, Max_len, start, end)
                 elif tss.start > end:
                     break
             else:
-                if (utr_type == "5utr") or (utr_type == "interCDS"):
-                    end_fuzzy = end + fuzzy
-                else:
-                    end_fuzzy = end
+                end_fuzzy = end + fuzzys[utr_type]
+#                if (utr_type == "5utr") or (utr_type == "interCDS"):
+#                    end_fuzzy = end + fuzzy
+#                else:
+#                    end_fuzzy = end
                 if (tss.start >= start) and \
                    (tss.start <= end_fuzzy):
                     detect_normal((tss.start - start), wigs, inter, start, tss.start, 
                                   utr_type, feature, name, tss, pros, utrs, srnas,
-                                  fuzzy, fuzzy_end, decrease, min_len, Max_len,
-                                  start, end)
+                                  fuzzy_end, decrease, min_len, Max_len, start, end)
                 if tss.start > end_fuzzy:
                     break
     if (utr_type == "3utr") and (len(pros) != 0):
         detect_3utr_pro(pros, inter, srnas, start, end, utrs, wigs, feature, name, 
-                        utr_type, fuzzy, fuzzy_end, decrease, min_len, Max_len)
+                        utr_type, fuzzys, fuzzy_end, decrease, min_len, Max_len)
     if (utr_type == "interCDS") and (len(pros) != 0):
         detect_interCDS_twopro(pros, inter, srnas, start, end, utrs, wigs, feature, name,
-                               utr_type, fuzzy, fuzzy_end, decrease, min_len, Max_len)
+                               utr_type, fuzzy_end, decrease, min_len, Max_len)
 
 def run_utr_detection(wigs, inter, start, end, utr_type, utrs, tsss, 
-                      pros, srnas, feature, name, fuzzy, fuzzy_end, 
+                      pros, srnas, feature, name, fuzzys, fuzzy_end, 
                       decrease, min_len, Max_len):
     if end - start >= 0:
         if (utr_type == "3utr") or (utr_type == "5utr") or (utr_type == "interCDS"):
             detect_utr(srnas, tsss, pros, start, end, inter, utr_type, utrs, 
-                       wigs, feature, name, fuzzy, fuzzy_end, decrease,
+                       wigs, feature, name, fuzzys, fuzzy_end, decrease,
                        min_len, Max_len)
         else:
             covers = get_coverage(wigs, inter, start, end, utr_type, 
-                                  "NA", fuzzy, fuzzy_end, decrease, start, end)
+                                  "NA", fuzzy_end, decrease, start, end)
             utrs.append(import_data(inter["strand"], inter["strain"], start, end, 
                         utr_type, feature, name, covers))
 
 def class_utr(inter, ta, utrs, srnas, tsss, pros, wig_fs, wig_rs,
-              fuzzy, fuzzy_end, decrease, min_len, Max_len):
+              fuzzys, fuzzy_end, decrease, min_len, Max_len):
     if inter["strand"] == "+":
         if (inter["start"] <= ta.end) and \
            (inter["end"] >= ta.end) and \
            (ta.start <= inter["start"]):
             run_utr_detection(wig_fs, inter, inter["start"] + 1, ta.end, "3utr", 
-                              utrs, tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end, 
+                              utrs, tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end, 
                               decrease, min_len, Max_len, )
         elif (inter["start"] <= ta.start) and \
              (inter["end"] >= ta.start) and \
              (ta.end >= inter["end"]):
             run_utr_detection(wig_fs, inter, ta.start, inter["end"] - 1, "5utr", 
-                              utrs, tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end, 
+                              utrs, tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end, 
                               decrease, min_len, Max_len)
         elif (inter["start"] <= ta.start) and \
              (inter["end"] >= ta.end):
             run_utr_detection(wig_fs, inter, ta.start, ta.end, "inter", utrs,
-                              tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end,
+                              tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end,
                               decrease, min_len, Max_len)
         elif (inter["start"] >= ta.start) and \
              (inter["end"] <= ta.end):
             run_utr_detection(wig_fs, inter, inter["start"] + 1, inter["end"] - 1, "interCDS", utrs,
-                              tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end,
+                              tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end,
                               decrease, min_len, Max_len)
     else:
         if (inter["start"] <= ta.end) and \
            (inter["end"] >= ta.end) and \
            (ta.start <= inter["start"]):
             run_utr_detection(wig_rs, inter, inter["start"] + 1, ta.end, "5utr", 
-                              utrs, tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end, 
+                              utrs, tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end, 
                               decrease, min_len, Max_len)
         elif (inter["start"] <= ta.start) and \
              (inter["end"] >= ta.start) and \
              (ta.end >= inter["end"]):
             run_utr_detection(wig_rs, inter, ta.start, inter["end"] - 1, "3utr", 
-                              utrs, tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end, 
+                              utrs, tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end, 
                               decrease, min_len, Max_len)
         elif (inter["start"] <= ta.start) and \
              (inter["end"] >= ta.end):
             run_utr_detection(wig_rs, inter, ta.start, ta.end, "inter", utrs,
-                              tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end,
+                              tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end,
                               decrease, min_len, Max_len)
         elif (inter["start"] >= ta.start) and \
              (inter["end"] <= ta.end):
             run_utr_detection(wig_rs, inter, inter["start"] + 1, inter["end"] - 1, "interCDS", utrs,
-                              tsss, pros, srnas, "NA", "NA", fuzzy, fuzzy_end,
+                              tsss, pros, srnas, "NA", "NA", fuzzys, fuzzy_end,
                               decrease, min_len, Max_len)
 
 def median_score(lst):
@@ -467,6 +466,7 @@ def get_utr_coverage(utrs, covers, template_texs, tex_notex):
     first = True
     for utr in utrs:
         best_cover = -1
+        avgs = []
         for cond, utr_covers in utr["datas"].items():
             total = 0
             detect_num = 0
@@ -489,8 +489,17 @@ def get_utr_coverage(utrs, covers, template_texs, tex_notex):
                     total = total + cover["ori_avg"]
             if detect_num != 0:
                 avg = total / float(detect_num)
-                if (avg < best_cover) or (best_cover == -1):
-                    best_cover = avg
+                avgs.append(avg)
+#                if (avg > best_cover) or (best_cover == -1):
+#                    best_cover = avg
+        sortedavg = sorted(avgs)
+        len_avg = len(avgs)
+        index = (len_avg - 1) // 2
+        if len_avg != 0:
+            if (len_avg % 2):
+                best_cover = sortedavg[index]
+            else:
+                best_cover = (sortedavg[index] + sortedavg[index + 1]) / 2
         if best_cover != -1:
             if first:
                 covers[utr["strain"]] = {"3utr": [], "5utr": [], "interCDS": [], "inter": [], "total": []}
@@ -542,7 +551,7 @@ def set_median(covers, mediandict):
                                        "mean": mean_score(cover["total"])}
 
 def utr_derived_srna(gff_file, ta_file, tss_file, wig_f_file, wig_r_file, pro_file, 
-                     Max_len, min_len, fuzzy, fuzzy_end, seq_file, wig_folder, 
+                     Max_len, min_len, fuzzys, fuzzy_end, seq_file, wig_folder, 
                      input_libs, tex_notex, replicates, output_file, output_table, 
                      table_best, decrease, utr3_coverage, utr5_coverage, interCDS_coverage):
     cdss = []
@@ -581,7 +590,7 @@ def utr_derived_srna(gff_file, ta_file, tss_file, wig_f_file, wig_r_file, pro_fi
             if (inter["strain"] == ta.seq_id) and \
                (inter["strand"] == ta.strand):
                 class_utr(inter, ta, utrs, srnas, tsss, pros, wig_fs, wig_rs,
-                          fuzzy, fuzzy_end, decrease, min_len, Max_len)
+                          fuzzys, fuzzy_end, decrease, min_len, Max_len)
     covers = {}
     get_utr_coverage(utrs, covers, texs, tex_notex)
     mediandict = {}

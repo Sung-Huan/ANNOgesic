@@ -3,6 +3,7 @@
 import os
 import sys
 import csv
+from copy import deepcopy
 from annogesiclib.gff3 import Gff3Parser
 
 
@@ -21,10 +22,10 @@ def import_data(row, type_):
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]), "hits": row[5]}
     elif type_ == "sRNA":
-        if len(row) == 9:
+        if len(row) == 7:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]),
-                    "hits": "|".join(row[5:9])}
+                    "hits": "|".join(row[5:6])}
         elif len(row) == 6:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]), "hits": row[5]}
@@ -37,7 +38,7 @@ def merge_info(blasts):
         if first:
             repeat = 0
             first = False
-            pre_blast = blast.copy()
+            pre_blast = deepcopy(blast)
         else:
             if (pre_blast["strain"] == blast["strain"]) and \
                (pre_blast["strand"] == blast["strand"]) and \
@@ -53,7 +54,7 @@ def merge_info(blasts):
     finals.append(pre_blast)
     return finals
 
-def compare_srna_table(srna_tables, srna, final):
+def compare_srna_table(srna_tables, srna, final, min_len, Max_len):
     for table in srna_tables:
         tsss = []
         pros = []
@@ -75,8 +76,8 @@ def compare_srna_table(srna_tables, srna, final):
                         pros.append(int(data.split(":")[1][:-2]))
             for tss in tsss:
                 for pro in pros:
-                    if ((pro - tss) >= args.min_len) and \
-                       ((pro - tss) <= args.Max_len):
+                    if ((pro - tss) >= min_len) and \
+                       ((pro - tss) <= Max_len):
                         cands.append("-".join([str(tss), str(pro)]))
             final["candidates"] = ";".join(cands)
             if ("tex" in table["conds"]) and \
@@ -97,7 +98,7 @@ def compare_blast(blasts, srna, final, hit):
             final[hit] = blast["hits"]
     return final
 
-def compare(srnas, srna_tables, nr_blasts, srna_blasts):
+def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len):
     finals = []
     for srna in srnas:
         final = {}
@@ -119,7 +120,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts):
                 final["utr"] = "3'UTR_derived"
             elif srna.attributes["UTR_type"] == "interCDS":
                 final["utr"] = "interCDS"
-        final = compare_srna_table(srna_tables, srna, final)
+        final = compare_srna_table(srna_tables, srna, final, min_len, Max_len)
         final = compare_blast(nr_blasts, srna, final, "nr_hit")
         final = compare_blast(srna_blasts, srna, final, "sRNA_hit")
         finals.append(final)
@@ -176,7 +177,7 @@ def gen_srna_table(sRNA_gff, sRNA_table, nr_blast, sRNA_blast,
                          "sRNA_hit|e-value"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
-    finals = compare(srnas, srna_tables, nr_blasts, srna_blasts)
+    finals = compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len)
     sort_finals = sorted(finals, key = lambda x: (x["avg"]), reverse=True)
     print_file(sort_finals, out)
 

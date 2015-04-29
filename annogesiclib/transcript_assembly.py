@@ -9,23 +9,24 @@ def check_tex_conds(tracks, libs, texs, check_tex, conds, tex_notex):
     for track in tracks:
         for lib in libs:
             if lib["name"] == track:
+                index = "_".join([lib["cond"], lib["type"]])
                 if len(texs) != 0:
                     for key, num in texs.items():
                         if track in key:
                             if (texs[key] >= tex_notex) and \
                                (key not in check_tex):
                                 check_tex.append(key)
-                                if lib["cond"] not in conds.keys():
-                                    conds[lib["cond"]] = 1
+                                if index not in conds.keys():
+                                    conds[index] = 1
                                 else:
-                                    conds[lib["cond"]] += 1
+                                    conds[index] += 1
                 else:
-                    if lib["cond"] not in conds.keys():
-                        conds[lib["cond"]] = 1
+                    if index not in conds.keys():
+                        conds[index] = 1
                     else:
-                        conds[lib["cond"]] += 1
+                        conds[index] += 1
 
-def elongation(covers, height, template_texs, libs, rep, 
+def elongation(covers, height, template_texs, libs, reps, 
                tex_notex, strand, trans, strain):
     first = True
     best_cover = 0
@@ -49,7 +50,8 @@ def elongation(covers, height, template_texs, libs, rep,
                             texs[key] += 1
             check_tex_conds(tracks, libs, texs, check_tex, conds, tex_notex)
             for cond, num in conds.items():
-                if num >= rep:
+                if ((num >= reps["tex"]) and ("tex" in cond)) or \
+                   ((num >= reps["frag"]) and ("frag" in cond)):
                     trans[strain].append({"strand": strand, "pos": pre_wig["pos"], 
                                           "coverage": best_cover, "cond": num})
             best_cover = 0
@@ -66,13 +68,13 @@ def elongation(covers, height, template_texs, libs, rep,
     return (best_cover, conds, tracks, texs)
 
 def transfer_to_tran(wigs, trans, height, libs, template_texs, strand,
-                     replicate, tex_notex):
+                     replicates, tex_notex):
     for strain, covers in wigs.items():
         if strain not in trans:
             trans[strain] = []
         sort_covers = sorted(covers, key=lambda k: (k["pos"], k["cond"]))
         datas = elongation(sort_covers, height, template_texs, libs, 
-                           replicate, tex_notex, strand, trans, strain)
+                           replicates, tex_notex, strand, trans, strain)
         best_cover = datas[0]
         conds = datas[1]
         tracks = datas[2]
@@ -85,14 +87,16 @@ def transfer_to_tran(wigs, trans, height, libs, template_texs, strand,
     for track in tracks:
         for lib in libs:
             if lib["name"] == track:
+                index = "_".join([lib["cond"], lib["type"]])
                 if len(texs) != 0:
                     if texs[lib["name"]] >= tex_notex:
-                        if lib["cond"] not in conds.keys():
-                            conds[lib["cond"]] = 1
+                        if index not in conds.keys():
+                            conds[index] = 1
                         else:
-                            conds[lib["cond"]] += 1
+                            conds[index] += 1
     for cond, num in conds.items():
-        if num >= replicate_supported:
+        if ((num >= reps["tex"]) and ("tex" in cond)) or \
+           ((num >= reps["frag"]) and ("frag" in cond)):
             trans[strain].append({"strand": strand, "pos": wig["pos"], "coverage": best_cover, "cond": num})
 
 def print_transcript(trans, strand, tolerance, width, out):
@@ -169,6 +173,7 @@ def assembly(wig_f_file, wig_r_file, height, width, tolerance,
     libs = []
     conds = []
     out = open(out_file, "w")
+    out.write("##gff-version 3\n")
     for lib in input_lib:
         datas = lib.split(":")
         if datas[2] not in conds:

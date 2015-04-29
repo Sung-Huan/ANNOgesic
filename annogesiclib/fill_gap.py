@@ -79,6 +79,7 @@ def fill_gap(gff_file, ta_file, type_, output):
             genes.append(entry)
     gff_f.close()
     out = open(output, "w")
+    out.write("##gff-version 3\n")
     if type_ == "overlap":
         overlap(tas, genes, print_list, out)
     elif type_ == "uni":
@@ -122,6 +123,7 @@ def longer_ta(TA_file, length, out_file):
                     ta_1.end = ta_2.end
     first = True
     out = open(out_file, "w")
+    out.write("##gff-version 3\n")
     num = 0
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
     for ta in tas:

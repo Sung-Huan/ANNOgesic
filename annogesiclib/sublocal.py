@@ -13,14 +13,22 @@ from annogesiclib.stat_sublocal import stat_sublocal
 
 class Sub_Local(object):
 
-    def __init__(self):
+    def __init__(self, gffs, fastas, out_folder):
         self.multiparser = Multiparser()
         self.helper = Helper()
         self.fixer = Format_Fixer()
+        self.gff_path = os.path.join(gffs, "tmp")
+        self.fasta_path = os.path.join(fastas, "tmp")
+        self.tmp_path = os.path.join(out_folder, "tmp")
+        self.stat_path = os.path.join(out_folder, "statistics")
+        self.tmp_result = os.path.join(out_folder, "tmp_results")
+        self.psortb_result = os.path.join(out_folder, "psortb_results")
+        self.endfix_table = "table.csv"
+        self.endfix_raw = "raw.txt"
 
-    def _get_protein_seq(fasta_path, gff, tmp_path, gff_path, emboss_path):
+    def _get_protein_seq(self, fasta_path, gff, tmp_path, gff_path, emboss_path):
         prefix = gff.replace(".gff", "")
-        fasta = self.helpe.get_correct_file(fasta_path, ".fa", prefix, None)
+        fasta = self.helper.get_correct_file(fasta_path, ".fa", prefix, None)
         dna_seq_file = os.path.join(tmp_path, "_".join([prefix, "dna.fa"]))
         print("Generate CDS fasta files of {0}".format(prefix))
         self.helper.get_cds_seq(os.path.join(gff_path, gff), 
@@ -35,15 +43,14 @@ class Sub_Local(object):
     def _run_psortb(self, prefix, out_folder, gram, psortb_path, tmp_path):
         print("Running psortb of {0}".format(prefix))
         out_err = open(os.path.join(out_folder, "tmp_log"), "w")
-        tmp_psortb_path = os.path.join(out_folder, "tmp_results")
-        out_raw = open(os.path.join(tmp_psortb_path, 
-                       "_".join([prefix, "raw.txt"])), "w")
+        out_raw = open(os.path.join(self.tmp_result, 
+                       "_".join([prefix, self.endfix_raw])), "w")
         prot_seq_file = os.path.join(tmp_path, "_".join([prefix, "protein.fa"]))
         if gram == "positive":
-            call([psortb_path, "-p", protein_seq_file], 
+            call([psortb_path, "-p", prot_seq_file], 
                   stdout=out_raw, stderr=out_err)
         elif gram == "negative":
-            call([psortb_path, "-n", protein_seq_file], 
+            call([psortb_path, "-n", prot_seq_file], 
                   stdout=out_raw, stderr=out_err)
         else:
             print("Error:It is not a proper bacteria type - {0}!!".format(gram))
@@ -52,55 +59,47 @@ class Sub_Local(object):
     def _extract_result(self, merge, tmp_psortb_path, prefix, gff_file):
         if merge is True:
             print("Merge to gff...")
-            extract_psortb(os.path.join(tmp_psortb_path, "_".join([prefix, "raw.txt"])),
-                           os.path.join(tmp_psortb_path, "_".join([prefix, "table.csv"])),
+            extract_psortb(os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
+                           os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_table])),
                            gff_file, os.path.join(prefix + ".gff"))
             os.rename(prefix + ".gff", gff_file)
         else:
-            extract_psortb(os.path.join(tmp_psortb_path, "_".join([prefix, "raw.txt"])),
-                           os.path.join(tmp_psortb_path, "_".join([prefix, "table.csv"])),
+            extract_psortb(os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
+                           os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_table])),
                            None, None)
 
-    def _merge_and_stat(gffs, out_folder, tmp_psortb_path, stat_path):
+    def _merge_and_stat(self, gffs, out_folder, tmp_psortb_path, stat_path):
         for folder in os.listdir(gffs):
             if folder.endswith(".gff_folder"):
                 prefix = folder.replace(".gff_folder", "")
-                self.helper.check_make_folder(
-                            os.path.join(out_folder, "psortb_results"), prefix)
-                merge_table = os.path.join(out_folder, "psortb_results", prefix, 
-                                           "_".join([prefix, "table.csv"]))
+                self.helper.check_make_folder(os.path.join(self.psortb_result, prefix))
+                merge_table = os.path.join(self.psortb_result, prefix, 
+                                           "_".join([prefix, self.endfix_table]))
                 for gff in os.listdir(os.path.join(gffs, folder)):
                     result = self.helper.get_correct_file(tmp_psortb_path, 
-                                         "_raw.txt", gff.replace(".gff", ""), None)
-                    shutil.copy(result, os.path.join(out_folder, "psortb_results", prefix))
+                                         "_" + self.endfix_raw, gff.replace(".gff", ""), None)
+                    shutil.copy(result, os.path.join(self.psortb_result, prefix))
                     result = self.helper.get_correct_file(tmp_psortb_path, 
-                                         "_table.csv", gff.replace(".gff", ""), None)
-                    self.merge_file(tmp_psortb_path, "_raw.txt", gff.replace(".gff", ""),
-                                    os.path.join(out_folder, "psortb_results", prefix),
-                                    "_".join([prefix, "table.csv"]))
-                self.helper.check_make_folder(stat_path, prefix) ## statistics
+                                         "_" + self.endfix_table, gff.replace(".gff", ""), None)
+                    self.helper.merge_file(result, merge_table)
+                self.helper.check_make_folder(os.path.join(stat_path, prefix)) ## statistics
                 stat_sublocal(merge_table, os.path.join(stat_path, prefix, prefix), 
                               os.path.join(stat_path, prefix, 
                               "_".join(["stat", prefix, "sublocal.csv"])))
 
-    def run_sub_local(self, bin_path, gffs, fastas, gram, merge, out_folder,
-                      emboss_path, psortb_path):
+    def run_sub_local(self, psortb_path, gffs, fastas, gram, merge, emboss_path, out_folder):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
         self.multiparser._parser_gff(gffs, None)
         self.multiparser._parser_fasta(fastas)
-        gff_path = os.path.join(gffs, "tmp")
-        fasta_path = os.path.join(fastas, "tmp")
-        tmp_path = os.path.join(out_folder, "tmp")
-        stat_path = os.path.join(out_folder, "statistics")
-        self.helper.check_make_folder(out_folder, "tmp")
-        self.helper.check_make_folder(out_folder, "tmp_results")
-        for gff in os.listdir(gff_path):
-            prefix = self._get_protein_seq(fasta_path, gff, tmp_path, gff_path, emboss_path)
-            self._run_psortb(prefix, out_folder, gram, psortb_path, tmp_path)
-            self._extract_result(merge, tmp_psortb_path, prefix, os.path.join(gff_path, gff))
-        self._merge_and_stat(gffs, out_folder, tmp_psortb_path, stat_path)
+        self.helper.check_make_folder(self.tmp_path)
+        self.helper.check_make_folder(self.tmp_result)
+        for gff in os.listdir(self.gff_path):
+            prefix = self._get_protein_seq(self.fasta_path, gff, self.tmp_path, self.gff_path, emboss_path)
+            self._run_psortb(prefix, out_folder, gram, psortb_path, self.tmp_path)
+            self._extract_result(merge, self.tmp_result, prefix, os.path.join(self.gff_path, gff))
+        self._merge_and_stat(gffs, out_folder, self.tmp_result, self.stat_path)
         self.helper.remove_tmp(fastas)
         self.helper.remove_tmp(gffs)
         self.helper.remove_all_content(out_folder, "tmp", "dir")

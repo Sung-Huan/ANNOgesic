@@ -40,7 +40,7 @@ def import_ribo(line, ribos, seq_name):
                                       "e": e, "seq_name": seq_name, 
                                       "start": end, "end": start})
 
-def print_file(ribos, out_t, out_s, seq_name):
+def print_file(ribos, out_t, out_s, seq_name, seqs):
     if len(ribos) != 0:
         for rbs in ribos:
             if rbs["detect"] == "!":
@@ -57,7 +57,7 @@ def print_file(ribos, out_t, out_s, seq_name):
 def regenerate_seq(align_file, seq_file, out_table, out_seq):
     hit = False
     seqs = []
-    out_t = open(out_talbe, "w")
+    out_t = open(out_table, "w")
     out_s = open(out_seq, "w")
     read_file(seq_file, seqs)
     with open(align_file, "r") as a_h:
@@ -77,7 +77,7 @@ def regenerate_seq(align_file, seq_file, out_table, out_seq):
                     import_ribo(line, ribos, seq_name)
                 if line.startswith("Hit alignments:"):
                     hit = False
-                    print_file(ribos, out_t, out_s, seq_name)
+                    print_file(ribos, out_t, out_s, seq_name, seqs)
 
 def compare_first_result(ribos, firsts, seq_name, out, extras):
     if len(ribos) != 0:

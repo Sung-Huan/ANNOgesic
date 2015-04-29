@@ -75,3 +75,5 @@ class UTR_detection(object):
         self.helper.remove_tmp(tsss)
         self.helper.remove_tmp(trans)
         self.helper.remove_tmp(terms)
+        self.helper.remove_tmp(self.utr5_path)
+        self.helper.remove_tmp(self.utr3_path)

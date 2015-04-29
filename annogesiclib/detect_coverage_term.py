@@ -117,7 +117,10 @@ def compare_replicates(term_covers, template_texs, cond, tex_notex, replicates):
     detect = False
     detect_num = check_tex(template_texs, term_covers, 0, term_datas, tex_notex,
                            detect_num, "terminator", None, None, None, None)
-    if detect_num >= replicates:
+    if ((detect_num >= replicates["tex"]) and \
+       ("texnotex" in cond)) or \
+       ((detect_num >= replicates["frag"]) and \
+       ("frag" in cond)):
         detect = True
         for term in term_datas:
             if (len(diff) == 0) or (diff_cover < term["diff"]):
@@ -175,7 +178,8 @@ def get_coverage(term, wigs, strand, template_texs, fuzzy, decrease, replicates,
                         diff_cover = datas[1]
                         diff = datas[2]
     for cond, num in detect_nums.items():
-        if num >= replicates:
+        if (("texnotex" in cond) and (num >= replicates["tex"])) or \
+           (("frag" in cond) and (num >= replicates["frag"])):
             if strand == "+":
                 term["detect_p"] = True
             else:

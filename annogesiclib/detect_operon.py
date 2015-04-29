@@ -70,12 +70,13 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
             if jump_tss:
                 break
         else:
-            if data.feature == "gene":
+            if feature == "gene":
                 if (ta.strand == data.strand) and \
                    (ta.seq_id == data.seq_id) and \
                    (ta.start <= data.start) and \
                    (ta.end >= data.end):
                     features["num"] += 1
+                    features["detect"] = True
                     datas.append(data)
                 elif (ta.seq_id == data.seq_id) and \
                      (data.start > ta.end):
@@ -171,7 +172,7 @@ def print_file(ta, operons, out, Operon_ID, whole_operon, tsss, terms, genes, wh
                                  str(terms["num_feature"]), str(num_sub_gene), str(genes["num_feature"]),
                                  ", ".join(sub_gene), ", ".join(whole_gene)]) + "\n")
 
-def operon(TA_file, TSS_file, terminator_file, GFF_file, tss_fuzzy, term_fuzzy, min_length, out_file):
+def operon(TA_file, TSS_file, GFF_file, terminator_file, tss_fuzzy, term_fuzzy, min_length, out_file):
     out = open(out_file, "w")
     out.write("Operon_ID\tstrain\tOperon_position\tstrand\tNumber_of_suboperon\t")
     out.write("Position_of_suboperon\tStart_with_TSS\tNumber_of_TSS\t")

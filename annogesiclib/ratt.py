@@ -22,6 +22,9 @@ class RATT(object):
         self.ratt_log = os.path.join(output_path, "ratt_log.txt")
         self.tar_tmp = os.path.join(tar_fastas, "tmp")
         self.out_gff_tmp = os.path.join(gff_outfolder, "tmp")
+        self.tmp_gff = os.path.join(gff_outfolder, "tmp.gff")
+        self.tmp_ptt = os.path.join(gff_outfolder, "tmp.ptt")
+        self.tmp_rnt = os.path.join(gff_outfolder, "tmp.rnt")
 
     def _convert_to_pttrnt(self, gffs, fastas):
         for gff in os.listdir(gffs):
@@ -56,10 +59,6 @@ class RATT(object):
         self.format_fixer.fix_ratt(output_file, name[1], "tmp_gff")            
         os.rename("tmp_gff", output_file)
         shutil.copy(output_file, os.path.join(gff_outfolder, filename))
-
-    def _move_annotation(self, ref_folder, ref, tar_folder, tar):
-        os.rename(os.path.join(ref_folder, ref), 
-                  os.path.join(tar_folder, tar))
 
     def _parser_embl_gbk(self, files, ref_embls):
         self.helper.check_make_folder(self.gbk)
@@ -153,12 +152,12 @@ class RATT(object):
                 for gff in os.listdir(gff_outfolder):
                     for file_ in files:
                         if (".gff" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(gff_outfolder, gff, gff_outfolder, "tmp.gff")
+                            self.helper.merge_file(os.path.join(gff_outfolder, gff), self.tmp_gff)
                         if (".ptt" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(gff_outfolder, gff, gff_outfolder, "tmp.ptt")
+                            self.helper.merge_file(os.path.join(gff_outfolder, gff), self.tmp_ptt)
                         if (".rnt" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(gff_outfolder, gff, gff_outfolder, "tmp.rnt")
-                self._move_annotation(gff_outfolder, "tmp.gff", self.out_gff_tmp, prefix + ".gff")
-                self._move_annotation(gff_outfolder, "tmp.ptt", self.out_gff_tmp, prefix + ".ptt")
-                self._move_annotation(gff_outfolder, "tmp.rnt", self.out_gff_tmp, prefix + ".rnt")
+                            self.helper.merge_file(os.path.join(gff_outfolder, gff), self.tmp_rnt)
+                os.rename(self.tmp_gff, os.path.join(self.out_gff_tmp, prefix + ".gff"))
+                os.rename(self.tmp_ptt, os.path.join(self.out_gff_tmp, prefix + ".ptt"))
+                os.rename(self.tmp_rnt, os.path.join(self.out_gff_tmp, prefix + ".rnt"))
         self._remove_files(gff_outfolder, tar_fastas, out_gbk) 

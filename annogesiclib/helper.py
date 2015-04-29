@@ -14,10 +14,8 @@ class Helper(object):
     def __init__(self):
         self.gff3parser = Gff3Parser()
 
-    def merge_file(self, ref_folder, ref, tar_folder, tar):
-        os.system(" ".join(["cat",
-                  os.path.join(ref_folder, ref), ">>",
-                  os.path.join(tar_folder, tar)]))
+    def merge_file(self, ref, tar):
+        os.system(" ".join(["cat", ref, ">>", tar]))
 
     def remove_all_content(self, folder, feature, data_type):
         for file_ in os.listdir(folder):
@@ -116,6 +114,7 @@ class Helper(object):
             rev_seq = seq[(int(start)-1):int(end)]
             fasta = self._reverse_seq(rev_seq)
             return fasta
+
     def _reverse_seq(self, rev_seq):
         fasta=""
         for base in rev_seq[::-1]:
@@ -200,13 +199,13 @@ class Helper(object):
                 cdss.append(entry)
         cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
         for entry in cdss:
-            cds = extract_seq.extract_gene(seq, entry.start, entry.end, entry.strand)
+            cds = self.extract_gene(seq, entry.start, entry.end, entry.strand)
             if "protein_id" in entry.attributes.keys():
                 protein_id = entry.attributes["protein_id"]
             elif "locus_tag" in entry.attributes.keys():
                 protein_id = entry.attributes["locus_tag"]
             else:
                 protein_id = entry.attributes["ID"]
-            out.write("_".join([">" + entry.seq_id, protein_id, entry.strand, 
+            out.write("_".join([">" + entry.seq_id + "_", protein_id, entry.strand, 
                                 str(entry.start), str(entry.end)]) + "\n")
-            out.write(cds.info + "\n")
+            out.write(cds + "\n")

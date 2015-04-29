@@ -16,16 +16,16 @@ class MEME(object):
         self.helper = Helper()
         self.tss_path = os.path.join(tsss, "tmp")
         self.gff_path = os.path.join(gffs, "tmp")
-        self.all_type = "all_type.fa"
-        self.tmp_all = "tmp_all.py"
-        self.pri = "primary.fa"
-        self.sec = "secondary.fa"
-        self.inter = "internal.fa"
-        self.anti = "antisense.fa"
-        self.orph = "orphan.fa"
-        self.all_no_orph = "without_orphan.fa"
-        self.tmp_fa = "tmp.fa"
         self.tmp_folder = os.path.join(os.getcwd(), "tmp")
+        self.pri = os.path.join(self.tmp_folder, "primary.fa")
+        self.sec = os.path.join(self.tmp_folder, "secondary.fa")
+        self.inter = os.path.join(self.tmp_folder, "internal.fa")
+        self.anti = os.path.join(self.tmp_folder, "antisense.fa")
+        self.orph = os.path.join(self.tmp_folder, "orphan.fa")
+        self.all_no_orph = "without_orphan.fa"
+        self.tmp_fa = os.path.join(self.tmp_folder, "tmp.fa")
+        self.all_type = "all_type.fa"
+        self.tmp_all = os.path.join(self.tmp_folder, "tmp_all.py")
 
     def _run_normal_motif(self, meme_path, input_path, out_path,
                           filename, width, parallel, num_motif, fasta):
@@ -73,43 +73,30 @@ class MEME(object):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
     def _move_and_merge_fasta(self, input_path, prefix):
+        all_type = os.path.join(self.tmp_folder, self.all_type)
+        all_no_orph = os.path.join(self.tmp_folder, self.all_no_orph)
         if self.all_type in os.listdir(self.tmp_folder):
-            os.remove(os.path.join(self.tmp_folder, self.all_type))
+            os.remove(all_type)
         if self.all_no_orph in os.listdir(self.tmp_folder):
-            os.remove(os.path.join(self.tmp_folder, self.all_no_orph))
-        shutil.copyfile(os.path.join(self.tmp_folder, self.pri), 
-                        os.path.join(self.tmp_fa))
-        self.helper.merge_file(self.tmp_folder, self.sec, 
-                               self.tmp_folder, self.tmp_fa)
-        self.helper.merge_file(self.tmp_folder, self.inter, 
-                               self.tmp_folder, self.tmp_fa)
-        self.helper.merge_file(self.tmp_folder, self.anti, 
-                               self.tmp_folder, self.tmp_fa)
-        shutil.copyfile(os.path.join(self.tmp_folder, self.tmp_fa), 
-                        os.path.join(self.tmp_folder, self.tmp_all))
-        self.helper.merge_file(self.tmp_folder, self.orph, 
-                               self.tmp_folder, self.tmp_all)
-        del_repeat_fasta(os.path.join(self.tmp_folder, self.tmp_fa), 
-                         os.path.join(self.tmp_folder, self.all_no_orph))
-        del_repeat_fasta(os.path.join(self.tmp_folder, self.tmp_all), 
-                         os.path.join(self.tmp_folder, self.all_type))
-        os.remove(os.path.join(self.tmp_folder, self.tmp_fa))
-        os.remove(os.path.join(self.tmp_folder, self.tmp_all))
+            os.remove(all_no_orph)
+        shutil.copyfile(self.pri, self.tmp_fa)
+        self.helper.merge_file(self.sec, self.tmp_fa)
+        self.helper.merge_file(self.inter, self.tmp_fa)
+        self.helper.merge_file(self.anti, self.tmp_fa)
+        shutil.copyfile(self.tmp_fa, self.tmp_all)
+        self.helper.merge_file(self.orph, self.tmp_all)
+        del_repeat_fasta(self.tmp_fa, all_no_orph)
+        del_repeat_fasta(self.tmp_all, all_type)
+        os.remove(self.tmp_fa)
+        os.remove(self.tmp_all)
         out_prefix = os.path.join(input_path, prefix)
-        os.rename(os.path.join(self.tmp_folder, self.pri), 
-                  "_".join([out_prefix, "allstrain_primary.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.sec), 
-                  "_".join([out_prefix, "allstrain_secondary.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.inter), 
-                  "_".join([out_prefix, "allstrain_internal.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.anti), 
-                  "_".join([out_prefix, "allstrain_antisense.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.orph), 
-                  "_".join([out_prefix, "allstrain_orphan.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.all_type), 
-                  "_".join([out_prefix, "allstrain_all_types.fa"]))
-        os.rename(os.path.join(self.tmp_folder, self.all_no_orph), 
-                  "_".join([out_prefix, "allstrain_without_orphan.fa"]))
+        os.rename(self.pri, "_".join([out_prefix, "allstrain_primary.fa"]))
+        os.rename(self.sec, "_".join([out_prefix, "allstrain_secondary.fa"]))
+        os.rename(self.inter, "_".join([out_prefix, "allstrain_internal.fa"]))
+        os.rename(self.anti, "_".join([out_prefix, "allstrain_antisense.fa"]))
+        os.rename(self.orph, "_".join([out_prefix, "allstrain_orphan.fa"]))
+        os.rename(all_type, "_".join([out_prefix, "allstrain_all_types.fa"]))
+        os.rename(all_no_orph, "_".join([out_prefix, "allstrain_without_orphan.fa"]))
 
     def _split_fasta_by_strain(self, input_path):
         for fasta in os.listdir(input_path):

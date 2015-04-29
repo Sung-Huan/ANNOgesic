@@ -17,23 +17,30 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
         indexs["change"] = False
         best = stat_value
         best_para = list_num[-1 * cores + indexs["count"]].copy()
-    print("_".join(["Current Parameter:step={0}", "height={1}", "reduction_height={2}", \
-                    "factor={3}", "reduction_factor={4}", "base_height={5}"]).format(
+    print("_".join(["Current Parameter:step={0}", "height={1}", "reduction_height={2}",
+                    "factor={3}", "reduction_factor={4}", "base_height={5}", 
+                    "enrichment_factor={6}", "processing_factor={7}"]).format(
           indexs["step"] - cores + 1  + indexs["count"],
           list_num[-1 * cores + indexs["count"]]["height"],
           list_num[-1 * cores + indexs["count"]]["re_height"],
           list_num[-1 * cores + indexs["count"]]["factor"],
           list_num[-1 * cores + indexs["count"]]["re_factor"],
-          list_num[-1 * cores + indexs["count"]]["base_height"]))
+          list_num[-1 * cores + indexs["count"]]["base_height"],
+          list_num[-1 * cores + indexs["count"]]["enrichment"],
+          list_num[-1 * cores + indexs["count"]]["processing"]))
     print("Current:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
            stat_value["tp"], stat_value["tp_rate"], stat_value["fp"],
            stat_value["fp_rate"], stat_value["fn"], stat_value["missing_ratio"]))
-    print("Best Parameter:height={0}\treduction_height={1}\tfactor={2}\treduction_factor={3}\tbase_height={4}".format(
+    print("\t".join(["Best Parameter:height={0}", "reduction_height={1}", "factor={2}", 
+                     "reduction_factor={3}", "base_height={4}", "enrichment_factor={5}",
+                     "processing_factor={6}"]).format(
           best_para["height"],
           best_para["re_height"],
           best_para["factor"],
           best_para["re_factor"],
-          best_para["base_height"]))
+          best_para["base_height"],
+          best_para["enrichment"],
+          best_para["processing"]))
     print("Best:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
           best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
     best_out = open(out_path + "/best.csv", "w")
@@ -41,7 +48,9 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
                           "rh", str(best_para["re_height"]),
                           "fa", str(best_para["factor"]),
                           "rf", str(best_para["re_factor"]),
-                          "bh", str(best_para["base_height"])])
+                          "bh", str(best_para["base_height"]),
+                          "ef", str(best_para["enrichment"]),
+                          "pf", str(best_para["processing"])])
     best_out.write("{0}\tTP={1}\tTP_rate={2}\tFP={3}\tFP_rate={4}\tFN={5}\tMissing_ratio={6}\t".format(
                    para_line, best["tp"], best["tp_rate"], best["fp"],
                    best["fp_rate"], best["fn"], best["missing_ratio"]))
@@ -54,66 +63,83 @@ def scoring_function(best, stat_value, indexs):
     indexs["change"] = False
     if (stat_value["tp_rate"] - best["tp_rate"]) >= 0.1:
         indexs["change"] = True
+        print("case1")
     elif (best["tp_rate"] - stat_value["tp_rate"]) <= 0.1:
         if (best["tp_rate"] <= stat_value["tp_rate"]) and \
            (best["fp_rate"] >= stat_value["fp_rate"]):
             indexs["change"] = True
+            print("case2")
         elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and \
-             (stat_value["fp_rate"] - best["fp_rate"] <= 0.0001):
+             (stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
             indexs["change"] = True
-        elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.005) and \
-             (best["fp_rate"] - stat_value["fp_rate"] >= 0.0001):
+            print("case3")
+        elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and \
+             (best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
             indexs["change"] = True
+            print("case4")
         else:
             tp_diff = float(best["tp"] - stat_value["tp"])
             if tp_diff > 0:
                 if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
                     indexs["change"] = True
+                    print("case5")
             elif tp_diff < 0:
                 tp_diff = tp_diff * -1
                 if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
                     indexs["change"] = True
+                    print("case6")
 
 def comparison(manuals, predicts):
     overlap_num = 0
+    re_num = 0
     for manual in manuals:
         for predict in predicts:
             if (manual.strand == predict.strand) and \
                (manual.seq_id == predict.seq_id):
                 if (manual.start == predict.start) or \
                    (math.fabs(manual.start - predict.start) <= 2):
+#                    if predict.attributes["print"]:
+#                        pass
+#                    else:
                     overlap = True
                     overlap_num += 1
                     predict.attributes["print"] = True
                     break
     return overlap_num
 
-def read_predict_manual_gff(gff_file, gene_length, gffs):
+def read_predict_manual_gff(gff_file, gene_length, gffs, cluster):
     num = 0
     fh = open(gff_file, "r")
     for entry in Gff3Parser().entries(fh):
         if (entry.start <= int(gene_length)):
+#            if (entry.seq_id != pre.seq_id) or \
+#               (entry.strand != pre.strand) or \
+#               (math.fabs(entry.start - pre.start) >= cluster):
             num += 1
             entry.attributes["print"] = False
             gffs.append(entry)
+#        pre = entry
     return num
 
-def compare_manual_predict(total_step, para_list, gff_files, out_path, out, manual, cores, gene_length):
+def compare_manual_predict(total_step, para_list, gff_files, out_path, 
+                           out, manual, cores, gene_length, cluster):
     manuals = []
     manual_fh = open(manual, "r")
     stats = []
     gff_parser = Gff3Parser()
     count = 0
-    total_step = total_step - int(cores)
-    num_manual = read_predict_manual_gff(manual, gene_length, manuals)
+    total_step = total_step - int(cores) + 1
+    num_manual = read_predict_manual_gff(manual, gene_length, manuals, cluster)
     for gff_file in gff_files:
         predicts = []
         para = "_".join(["he", str(para_list[count]["height"]),
                          "rh", str(para_list[count]["re_height"]),
                          "fa", str(para_list[count]["factor"]),
                          "rf", str(para_list[count]["re_factor"]),
-                         "bh", str(para_list[count]["base_height"])])
-        num_predict = read_predict_manual_gff(gff_file, gene_length, predicts)
+                         "bh", str(para_list[count]["base_height"]),
+                         "ef", str(para_list[count]["enrichment"]),
+                         "pf", str(para_list[count]["processing"])])
+        num_predict = read_predict_manual_gff(gff_file, gene_length, predicts, cluster)
         overlap_num = comparison(manuals, predicts)
         out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
                   total_step, para, overlap_num,
@@ -137,7 +163,7 @@ def convert2gff(cores, out_path, strain, gff_files, tss_pro):
     for core in range(1, cores+1):
         output_folder = os.path.join(out_path, "_".join(["MasterTable", str(core)]))
         gff_file = os.path.join(output_folder, "_".join(["TSSpredator", str(core) + ".gff"]))
-        Converter().Convert_Mastertable2gff(os.path.join(output_folder, "MasterTable.tsv"),
+        Converter().convert_mastertable2gff(os.path.join(output_folder, "MasterTable.tsv"),
                                           "TSSpredator", tss_pro, strain, gff_file)
         gff_files.append(gff_file)
 
@@ -234,7 +260,7 @@ def import_lib(libs, wig_folder, project_strain_name, rep_set, lib_dict,
         return lib_num
 
 def gen_config(para_list, out_path, core, libs, wig, project_strain,
-               fasta, output_prefix, gff, program):
+               fasta, output_prefix, gff, program, cluster):
     files = os.listdir(out_path)
     if "MasterTable_" + str(core) not in files:
         call(["mkdir", out_path + "/MasterTable_" + str(core)])
@@ -252,10 +278,10 @@ def gen_config(para_list, out_path, core, libs, wig, project_strain,
     out.write(",".join(list_num_id) + "\n")
     out.write("maxASutrLength = 100\n")
     out.write("maxGapLengthInGene = 500\n")
-    out.write("maxNormalTo5primeFactor = 1.5\n")
-    out.write("maxTSSinClusterDistance = 3\n")
+    out.write("maxNormalTo5primeFactor = {0}\n".format(para_list["processing"]))
+    out.write("maxTSSinClusterDistance = {0}\n".format(cluster + 1))
     out.write("maxUTRlength = 300\n")
-    out.write("min5primeToNormalFactor = 2\n")
+    out.write("min5primeToNormalFactor = {0}\n".format(para_list["enrichment"]))
     out.write("minCliffFactor = {0}\n".format(para_list["factor"]))
     out.write("minCliffFactorDiscount = {0}\n".format(para_list["re_factor"]))
     out.write("minCliffHeight = {0}\n".format(para_list["height"]))
@@ -287,7 +313,7 @@ def gen_config(para_list, out_path, core, libs, wig, project_strain,
 
 def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_path, 
                      tsspredator_path, stat_out, best_para, current_para, gene_length, wig, 
-                     project_strain, fasta, output_prefix, gff, program, libs, manual, best):
+                     project_strain, fasta, output_prefix, gff, program, libs, manual, best, cluster):
     if indexs["step"] >= steps + int(cores):
         return (True, best_para)
     elif len(list_num) == indexs["length"]:
@@ -306,11 +332,12 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
             gff_files = []
             for para in list_num[-1 * cores:]:
                 index += 1
-                print(str(para["height"]) + "_" + str(para["re_height"]) + "_" + \
-                      str(para["factor"]) + "_" + str(para["re_factor"]) + "_" + \
-                      str(para["base_height"]))
+                print("_".join([str(para["height"]), str(para["re_height"]),
+                      str(para["factor"]), str(para["re_factor"]),
+                      str(para["base_height"]), str(para["enrichment"]),
+                      str(para["processing"])]))
                 config_files.append(gen_config(para, out_path, index, libs, wig,
-                                       project_strain, fasta, output_prefix, gff, program))
+                                    project_strain, fasta, output_prefix, gff, program, cluster))
             indexs["count"] = 0
             processes = []
             run_TSSpredator_paralle(config_files, tsspredator_path, processes)###
@@ -318,7 +345,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
 #            print(len(list_num))
             stat_values = compare_manual_predict(indexs["step"], list_num[-1 * cores:], 
                                                  gff_files, out_path, stat_out, manual, 
-                                                 cores, gene_length)
+                                                 cores, gene_length, cluster)
 #            print(stat_values)
             for stat_value in stat_values:
                 if indexs["first"]:
@@ -452,9 +479,9 @@ def small_change(max_num, num_type, compare, list_num, best_num, best_para):
 
 def run_small_change_part(seeds, features, indexs, current_para, best_para, list_num, max_num):
     while True:
-        seeds["seed"] = random.randint(0, 4)
+        seeds["seed"] = random.randint(0, 6)
         if seeds["seed"] in seeds["pre_seed"]:
-            if len(seeds["pre_seed"]) == 5:
+            if len(seeds["pre_seed"]) == 7:
                 indexs["switch"] += 1
                 features["pre_feature"] = features["feature"]
                 break
@@ -482,6 +509,14 @@ def run_small_change_part(seeds, features, indexs, current_para, best_para, list
         current_para["base_height"] = small_change(max_num["base_height"], "base_height",
                                                    best_para["base_height"], list_num,
                                                    best_para["base_height"], best_para)
+    elif seeds["seed"] == 5:
+        current_para["enrichment"] = small_change(max_num["enrichment"], "enrichment",
+                                                   best_para["enrichment"], list_num,
+                                                   best_para["enrichment"], best_para)
+    elif seeds["seed"] == 6:
+        current_para["processing"] = small_change(max_num["processing"], "processing",
+                                                   best_para["processing"], list_num,
+                                                   best_para["processing"], best_para)
     return current_para
 
 def gen_large_random(max_num, num_type, compare, list_num, origin_num,
@@ -492,7 +527,7 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
         step += 1
         if step >= 1000000:
             return best_para
-        seed = random.randint(0, 4)
+        seed = random.randint(0, 6)
         if num_type == index_large[seed]:
             continue
         if num_type == "base_height":
@@ -537,11 +572,12 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
 
 def run_large_change_part(seeds, features, indexs, current_para, max_num, best_para,
                           list_num):
-    index_large = {0: "height", 1: "re_height", 2: "factor", 3: "re_factor", 4:"base_height"}
+    index_large = {0: "height", 1: "re_height", 2: "factor", 3: "re_factor", 
+                   4:"base_height", 5: "enrichment", 6: "processing"}
     while True:
-        seeds["seed"] = random.randint(0, 4)
+        seeds["seed"] = random.randint(0, 6)
         if seeds["seed"] in seeds["pre_seed"]:
-            if len(seeds["pre_seed"]) == 5:
+            if len(seeds["pre_seed"]) == 7:
                 features["pre_feature"] = features["feature"]
                 indexs["switch"] += 1
                 break
@@ -564,6 +600,12 @@ def run_large_change_part(seeds, features, indexs, current_para, max_num, best_p
     elif seeds["seed"] == 4:
         current_para = gen_large_random(max_num, "base_height", best_para["base_height"], list_num,
                                         best_para["base_height"], best_para, index_large, indexs)
+    elif seeds["seed"] == 5:
+        current_para = gen_large_random(max_num, "enrichment", best_para["enrichment"], list_num,
+                                        best_para["enrichment"], best_para, index_large, indexs)
+    elif seeds["seed"] == 6:
+        current_para = gen_large_random(max_num, "processing", best_para["processing"], list_num,
+                                        best_para["processing"], best_para, index_large, indexs)
     return current_para
 
 def run_random_part(current_para, list_num, max_num, steps, indexs):
@@ -573,6 +615,8 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
         current_para["re_height"] = round(random.uniform(0.1, max_num["re_height"]), 1)
         current_para["factor"] = round(random.uniform(0.1, max_num["factor"]), 1)
         current_para["re_factor"] = round(random.uniform(0.1, max_num["re_factor"]), 1)
+        current_para["enrichment"] = round(random.uniform(0.1, max_num["enrichment"]), 1)
+        current_para["processing"] = round(random.uniform(0.1, max_num["processing"]), 1)
         current_para["base_height"] = round(random.uniform(0.001, max_num["base_height"]), 3)
         if (current_para["height"] > current_para["re_height"]) and \
            (current_para["factor"] > current_para["re_factor"]) and \
@@ -587,7 +631,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 
 def optimization_process(indexs, current_para, list_num, max_num, best_para, steps, cores, 
                          out_path, tsspredator_path, stat_out, best, libs, wig, project_strain, 
-                         fasta, output_prefix, gff, program, gene_length, manual):
+                         fasta, output_prefix, gff, program, gene_length, manual, cluster):
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed" : 0}
     tests = {"test1": [], "test2": ""}
@@ -623,7 +667,7 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para, ste
         if current_para is not None:
             datas = run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_path,
                                      tsspredator_path, stat_out, best_para, current_para, gene_length, wig, 
-                                     project_strain, fasta, output_prefix, gff, program, libs, manual, best)
+                                     project_strain, fasta, output_prefix, gff, program, libs, manual, best, cluster)
             tmp_step = 0
         if tmp_step >= 2:
             print("The number of steps may be enough..., it may not be able to find more parameters...\n")
@@ -645,6 +689,8 @@ def start_data(out_path, current_para, best_para, indexs, max_num):
         current_para["re_height"] = round(random.uniform(0.1, max_num["re_height"]), 1)
         current_para["factor"] = round(random.uniform(0.1, max_num["factor"]), 1)
         current_para["re_factor"] = round(random.uniform(0.1, max_num["re_factor"]), 1)
+        current_para["enrichment"] = round(random.uniform(0.1, max_num["enrichment"]), 1)
+        current_para["processing"] = round(random.uniform(0.1, max_num["processing"]), 1)
         current_para["base_height"] = round(random.uniform(0.001, max_num["base_height"]), 3)
         best_para = current_para.copy()
         if (current_para["height"] > current_para["re_height"]) and \
@@ -652,18 +698,22 @@ def start_data(out_path, current_para, best_para, indexs, max_num):
             break
     list_num = [{"height": current_para["height"], "re_height": current_para["re_height"],
                  "factor": current_para["factor"], "re_factor": current_para["re_factor"],
-                 "base_height": current_para["base_height"]}]
+                 "base_height": current_para["base_height"], "enrichment": current_para["enrichment"],
+                 "processing": current_para["processing"]}]
     return list_num
 
 def extend_data(out_path, best, best_para, step):
     print("extend step from {0}".format(step))
     print("\t".join(["Best Parameter:height={0}", "reduction_height={1}",
-                     "factor={2}", "reduction_factor={3}", "base_height={4}"]).format(
+                     "factor={2}", "reduction_factor={3}", "base_height={4}",
+                     "enrichment_factor={5}", "processing_factor={6}"]).format(
           best_para["height"],
           best_para["re_height"],
           best_para["factor"],
           best_para["re_factor"],
-          best_para["base_height"]))
+          best_para["base_height"],
+          best_para["enrichment"],
+          best_para["processing"]))
     print("Best:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
           best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
     current_para = best_para.copy()
@@ -683,7 +733,9 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs):
                              "re_height": float(paras[3]),
                              "factor": float(paras[5]),
                              "re_factor": float(paras[7]),
-                             "base_height": float(paras[9])})
+                             "base_height": float(paras[9]),
+                             "enrichment": float(paras[11]),
+                             "processing": float(paras[13])})
             if first_line:
                 first_line = False
                 indexs["change"] = True
@@ -694,7 +746,9 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs):
                              "re_height": float(paras[3]),
                              "factor": float(paras[5]),
                              "re_factor": float(paras[7]),
-                             "base_height": float(paras[9]),}
+                             "base_height": float(paras[9]),
+                             "enrichment": float(paras[11]),
+                             "processing": float(paras[13])}
                 best["tp"] = float(row[3])
                 best["tp_rate"] = float(row[5])
                 best["fp"] = float(row[7])
@@ -748,29 +802,33 @@ def get_gene_length(fasta, strain):
                     seq = seq + line
     return len(seq)
 
-def initiate(height, reduction_height, factor, reduction_factor, base_height):
+def initiate(height, reduction_height, factor, reduction_factor, base_height, enrichment, processing):
     max_num = {"height": height, "re_height": reduction_height,
                "factor": factor, "re_factor": reduction_factor,
-               "base_height": base_height}
+               "base_height": base_height, "enrichment": enrichment,
+               "processing": processing}
     best_para = {"height": 0, "re_height": 0,
                  "factor": 0, "re_factor": 0,
-                 "base_height": 0}
+                 "base_height": 0, "enrichment": 0,
+                 "processing": 0}
     current_para = {"height": 0, "re_height": 0,
                     "factor": 0, "re_factor": 0,
-                    "base_height": 0}
+                    "base_height": 0, "enrichment": 0,
+                    "processing": 0}
     indexs = {"switch": 0, "extend": False, "exist": False, "step": 0,
               "first": True, "num": 0, "length": 0, "change": False,
               "count": 0}
     return (max_num, best_para, current_para, indexs)
 
 def optimization(tsspredator_path, height, reduction_height, factor, 
-                 reduction_factor, base_height, output_folder, cores,
-                 wig, project_strain, fasta, output_prefix, steps, gff,
-                 program, manual, libs, gene_length):
+                 reduction_factor, base_height, enrichment, processing, 
+                 output_folder, cores, wig, project_strain, fasta, output_prefix, 
+                 steps, gff, program, manual, libs, gene_length, cluster):
     pre_seed = []
     best = {}
     pre_feature = ""
-    datas = initiate(height, reduction_height, factor, reduction_factor, base_height)
+    datas = initiate(height, reduction_height, factor, reduction_factor, 
+                     base_height, enrichment, processing)
     max_num = datas[0]
     best_para = datas[1]
     current_para = datas[2]
@@ -780,6 +838,8 @@ def optimization(tsspredator_path, height, reduction_height, factor,
     stat_file = os.path.join(out_path, "stat.csv")
     if gene_length is False:
         gene_length = get_gene_length(fasta, project_strain)
+    else:
+        gene_length = int(gene_length)
     if "optimized_TSSpredator" not in files:
         os.mkdir(out_path)
         list_num = []
@@ -792,9 +852,10 @@ def optimization(tsspredator_path, height, reduction_height, factor,
             best = datas[1]
             current_para = extend_data(out_path, best, best_para, indexs["step"])
             stat_out = open(stat_file, "a")
+            indexs["first"] = False
         else:
             list_num = []
             stat_out = open(stat_file, "w")
-    optimization_process(indexs, current_para, list_num, max_num, best_para, steps, 
-                         cores, out_path, tsspredator_path, stat_out, best, libs, wig, 
-                         project_strain, fasta, output_prefix, gff, program, gene_length, manual)
+    optimization_process(indexs, current_para, list_num, max_num, best_para, steps, cores, 
+                         out_path, tsspredator_path, stat_out, best, libs, wig, project_strain, 
+                         fasta, output_prefix, gff, program, gene_length, manual, cluster)

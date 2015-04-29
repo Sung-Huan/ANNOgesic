@@ -73,9 +73,20 @@ def import_stat(rfams, ribo, stats, strain):
             else:
                 stats[strain][rfam["class"]] += 1
 
+def print_number(stats, repeat, out, strain):
+    out.write("Total number of potential riboswitch are {0}\n".format(
+               stats[strain]["total"]))
+    out.write("The number of potential riboswitch which have overlap region with others are {0}\n".format(
+              repeat))
+    out.write("riboswitch_type\tnumbers\n")
+    for type_, num in stats[strain].items():
+        if type_ != "total":
+            out.write("{0}\t{1}\n".format(type_, num))
+
 def print_stat(stats, out_stat, overlaps):
     out = open(out_stat, "w")
     print_file = False
+    repeat = 0
     if len(stats) > 2:
         out.write("All strains:\n")
         print_file = True
@@ -83,23 +94,19 @@ def print_stat(stats, out_stat, overlaps):
             for over in overs:
                 datas = over.split(";")
                 repeat = repeat + len(datas)
-    else:
-        for strain, datas in stats.items():
-            if strain != "total":
-                print_file = True
-                out.write("{0}:\n".format(strain))
-                for over in overlaps[strain]:
-                    datas = over.split(";")
-                    repeat = repeat + len(datas)
+        print_number(stats, repeat, out, "total")
+#    else:
+    for strain, datas in stats.items():
+        repeat = 0
+        if strain != "total":
+            print_file = True
+            out.write("{0}:\n".format(strain))
+            for over in overlaps[strain]:
+                datas = over.split(";")
+                repeat = repeat + len(datas)
+            print_number(stats, repeat, out, strain)
+            print_strain = strain
     if print_file:
-        out.write("Total number of potential riboswitch are {0}\n".format(
-                   stats["total"]["total"]))
-        out.write("The number of potential riboswitch which have overlap region with others are {0}\n".format(
-                  repeat))
-        out.write("riboswitch_type\tnumbers\n")
-        for type_, num in stats["total"].items():
-            if type_ != "total":
-                out.write("{0}\t{1}".format(type_, num))
         count = 1
         if len(stats) > 2:
             for strain, overs in overlaps.items():
@@ -110,7 +117,7 @@ def print_stat(stats, out_stat, overlaps):
                     for data in datas:
                         out.write("\t{0}\n".format(data))
         else:
-            for over in overlaps[strain]:
+            for over in overlaps[print_strain]:
                 datas = over.split(";")
                 out.write("\noverlap candidates set {0}:\n".format(count))
                 count += 1

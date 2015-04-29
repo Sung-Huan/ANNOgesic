@@ -11,7 +11,7 @@ from annogesiclib.sRNA_utr_derived import utr_derived_srna
 from annogesiclib.merge_sRNA import merge_srna_table, merge_srna_gff
 from annogesiclib.extract_sRNA_info import extract_energy, extract_blast
 from annogesiclib.plot_mountain import plot_mountain_plot
-from annogesiclib.sRNA_class import classify_sRNA
+from annogesiclib.sRNA_class import classify_srna
 from annogesiclib.gen_srna_output import gen_srna_table, gen_best_srna
 from annogesiclib.blast_class import blast_class
 from annogesiclib.compare_sRNA_sORF import srna_sorf_comparison
@@ -38,6 +38,15 @@ class sRNA_detection(object):
         self.utr_table_prefix = os.path.join(out_folder, "tmp_utrsrna_table")
         self.normal_table_prefix = os.path.join(out_folder, "tmp_normal_table")
         self.basic_prefix = os.path.join(out_folder, "tmp_basic")
+        self.energy_prefix = os.path.join(out_folder, "tmp_energy")
+        self.tmp_nr = os.path.join(out_folder, "tmp_nr")
+        self.tmp_srna = os.path.join(out_folder, "tmp_sRNA")
+        self.table_output = os.path.join(out_folder, "tables")
+        self.stat_path = os.path.join(out_folder, "statistics")
+        self.all_gff = os.path.join(self.gff_output, "all_candidates")
+        self.best_gff = os.path.join(self.gff_output, "best")
+        self.all_table = os.path.join(self.table_output, "all_candidates")
+        self.best_table = os.path.join(self.table_output, "best")
 
     def _check_folder_exist(self, folder):
         if folder:
@@ -124,18 +133,18 @@ class sRNA_detection(object):
             if (pros is None):
                 print("Warning: lack Processing site files for UTR derived sRNA detection!!!") 
                 print("it may effect the results!!!!")
-#        self._check_gff(gffs)
-#        self._check_gff(trans)
+        self._check_gff(gffs)
+        self._check_gff(trans)
         if tsss is not False:
-#            self._check_gff(tsss)
+            self._check_gff(tsss)
             self.multiparser._parser_gff(tsss, "TSS")
             self.multiparser._combine_gff(gffs, self.tss_path, None, "TSS")
         if pros is not False:
-#            self._check_gff(pros)
+            self._check_gff(pros)
             self.multiparser._parser_gff(pros, "processing")
             self.multiparser._combine_gff(gffs, self.pro_path, None, "processing")
         if sORF is not False:
-#            self._check_gff(sORF)
+            self._check_gff(sORF)
             self.multiparser._parser_gff(sORF, "TSS")
             self.multiparser._combine_gff(gffs, self.sorf_path, None, "sORF")
         if utr_srna or ("2" in import_info) or \
@@ -177,7 +186,7 @@ class sRNA_detection(object):
     def _run_program(self, gff_path, import_info, tran_path, tss_path, pro_path, 
                      wig_path, max_len, min_len, coverage, merge_wigs, libs, tex_notex, 
                      replicates, table_best, decrease_inter, decrease_utr, fuzzy_inter, 
-                     fuzzy_utr, fuzzy_tss, utr5_coverage, utr3_coverage, interCDS_coverage,
+                     fuzzy_utr, fuzzy_tsss, utr5_coverage, utr3_coverage, interCDS_coverage,
                      out_folder, utr_srna, fasta_path):
         prefixs = []
         for gff in os.listdir(gff_path):
@@ -186,18 +195,18 @@ class sRNA_detection(object):
                 prefixs.append(prefix)
                 print("Running sRNA detection of {0}....".format(prefix))
                 tran = self.helper.get_correct_file(tran_path, "_transcript.gff", prefix, None)
-#                self._run_normal(import_info, tss_path, prefix, gff_path,
-#                                 gff, tran, fuzzy_tss, max_len, min_len, wig_path, coverage,
-#                                 merge_wigs, libs, tex_notex, replicates, table_best,
-#                                 decrease_inter, fuzzy_inter, out_folder)
+                self._run_normal(import_info, tss_path, prefix, gff_path,
+                                 gff, tran, fuzzy_tsss["inter"], max_len, min_len, wig_path, coverage,
+                                 merge_wigs, libs, tex_notex, replicates, table_best,
+                                 decrease_inter, fuzzy_inter, out_folder)
                 if utr_srna:
                     print("Running UTR derived sRNA detection of {0}....".format(prefix))
                     tss = self.helper.get_correct_file(tss_path, "_TSS.gff", prefix, None)
                     pro = self.helper.get_correct_file(pro_path, "_processing.gff", prefix, None)
-#                    self._run_utrsrna(gff_path, gff, tran, fuzzy_tss, merge_wigs, max_len, min_len, 
-#                                      wig_path, prefix, tss, pro, fasta_path, libs, tex_notex, 
-#                                      replicates, table_best, decrease_utr, fuzzy_utr, utr5_coverage, 
-#                                      utr3_coverage, interCDS_coverage, out_folder)
+                    self._run_utrsrna(gff_path, gff, tran, fuzzy_tsss, merge_wigs, max_len, min_len, 
+                                      wig_path, prefix, tss, pro, fasta_path, libs, tex_notex, 
+                                      replicates, table_best, decrease_utr, fuzzy_utr, utr5_coverage, 
+                                      utr3_coverage, interCDS_coverage, out_folder)
                     if "median" in os.listdir(os.getcwd()):
                         os.remove("median")
                     # merge intergenic and UTR derived sRNA   #
@@ -230,7 +239,7 @@ class sRNA_detection(object):
             detect = False
             seq_file = os.path.join(out_folder, "_".join(["sRNA_seq", prefix]))
             sec_file = os.path.join(out_folder, "_".join(["sRNA_2d", prefix]))
-            self.helper.get_seq(os.path.join(out_folder, "_".join(["tmp_basic", prefix])), 
+            self.helper.get_seq("_".join([self.basic_prefix, prefix]), 
                                 os.path.join(fasta_path, fasta), seq_file)
         else:
             print("Error:There is not fasta file of {0}".format(prefix))
@@ -244,8 +253,8 @@ class sRNA_detection(object):
         tmp_dot_path = os.path.join(main_path, dot_path)
         os.system(" ".join(["cat", seq_file, "|", os.path.join(vienna_path, "Progs", "RNAfold"),
                             "-p", ">", sec_file]))
-        extract_energy(os.path.join(main_path, out_folder, "_".join(["tmp_basic", prefix])), 
-                       sec_file, os.path.join(main_path, out_folder, "_".join(["tmp_energy", prefix])))
+        extract_energy(os.path.join(main_path, "_".join([self.basic_prefix, prefix])), 
+                       sec_file, os.path.join(main_path, "_".join([self.energy_prefix, prefix])))
         for ps in os.listdir(os.getcwd()):
             new_ps = ps.replace("|", "_")
             os.rename(ps, new_ps)
@@ -284,16 +293,16 @@ class sRNA_detection(object):
             print("Generating mountain plot of {0}....".format(prefix))
             for dot_file in os.listdir(tmp_paths["tmp"]):
                 if dot_file.endswith("dp.ps"):
-                    out = open(os.path.join(tmp_paths["tmp"], "mountain.txt"), "w")
+                    moun_txt = os.path.join(tmp_paths["tmp"], "mountain.txt")
+                    out = open(moun_txt, "w")
                     moun_file = dot_file.replace("dp.ps", "mountain.pdf")
                     print("Generating {0}".format(moun_file))
                     call(["perl", os.path.join(vienna_path, "Utils", "mountain.pl"), 
                           os.path.join(tmp_paths["tmp"], dot_file)], stdout=out)
-                    plot_mountain_plot(os.path.join(tmp_paths["tmp"], "mountain.txt"), 
-                                       moun_file)
+                    plot_mountain_plot(moun_txt, moun_file)
                     os.rename(moun_file, os.path.join(tmp_moun_path, prefix, moun_file))
                     out.close()
-                    os.remove(os.path.join(tmp_paths["tmp"], "mountain.txt"))
+                    os.remove(moun_txt)
 
     def _compute_2d_and_energy(self, out_folder, prefixs, fasta_path, vienna_path, 
                                mountain, ps2pdf14_path):
@@ -312,8 +321,8 @@ class sRNA_detection(object):
             self.helper.remove_all_content(os.getcwd(), ".ps", "file")
             self.helper.remove_all_content(os.getcwd(), "ss.pdf", "file")
             os.chdir(tmp_paths["main"])
-            os.rename(os.path.join(out_folder, "_".join(["tmp_energy", prefix])), 
-                      os.path.join(out_folder, "_".join(["tmp_basic", prefix])))
+            os.rename("_".join([self.energy_prefix, prefix]), 
+                      "_".join([self.basic_prefix, prefix]))
             shutil.rmtree(os.path.join(out_folder, "tmp_srna"))
 
     def _blast(self, database, database_format, data_type, out_folder, blast_path,
@@ -326,7 +335,7 @@ class sRNA_detection(object):
             for prefix in prefixs:
                 blast_file = os.path.join(out_folder, "blast_result_and_misc",
                              "_".join([database_type, "blast", prefix + ".txt"]))
-                srna_file = os.path.join(out_folder, "_".join(["tmp_basic", prefix]))
+                srna_file = "_".join([self.basic_prefix, prefix])
                 out_file = os.path.join(out_folder, "_".join(["tmp", database_type, prefix]))
                 print("Running Blast of {0}".format(prefix))
                 seq_file = os.path.join(out_folder, "_".join(["sRNA_seq", prefix]))
@@ -346,42 +355,50 @@ class sRNA_detection(object):
                 print("classifying sRNA of {0}".format(prefix))
                 class_gff = os.path.join(gff_output, "for_class")
                 class_table = os.path.join(table_output, "for_class")
-                self.helper.check_make_folder(class_table, prefix)
-                self.helper.check_make_folder(class_gff, prefix)
+                self.helper.check_make_folder(os.path.join(class_table, prefix))
+                self.helper.check_make_folder(os.path.join(class_gff, prefix))
                 class_gff = os.path.join(class_gff, prefix)
                 class_table = os.path.join(class_table, prefix)
                 self.helper.check_make_folder(class_table)
                 self.helper.check_make_folder(class_gff)
                 out_stat = os.path.join(stat_path, "_".join(["stat_sRNA_class", prefix + ".csv"]))
-                classify_srna(os.path.join(gff_output, "all_candidates", "_".join([prefix, "sRNA.gff"])), 
-                              class_gff, energy, hit_nr_num, out_stat)
+                classify_srna(os.path.join(self.all_gff, "_".join([prefix, "sRNA.gff"])), 
+                              class_gff, energy, nr_hit_num, out_stat)
                 for srna in os.listdir(class_gff):
                     out_table = os.path.join(class_table, srna.replace(".gff", ".csv"))
+                    print(os.path.join(class_gff, srna))
                     gen_srna_table(os.path.join(class_gff, srna), 
-                                   os.path.join(out_folder, "_".join(["tmp_merge_table", prefix])), 
-                                   os.path.join(out_folder, "_".join(["tmp_nr", prefix + ".csv"])), 
-                                   os.path.join(out_folder, "_".join(["tmp_sRNA", prefix + ".csv"])),
+                                   "_".join([self.merge_table_prefix, prefix]), 
+                                   "_".join([self.tmp_nr, prefix + ".csv"]), 
+                                   "_".join([self.tmp_srna, prefix + ".csv"]),
                                    max_len, min_len, out_table)
 
     def _get_best_result(self, prefixs, gff_output, table_output, energy, nr_hit_num,
                          all_hit, best_sORF, max_len, min_len):
         for prefix in prefixs:
-            best_gff = os.path.join(gff_output, "best", "_".join([prefix, "sRNA.gff"]))
-            best_table = os.path.join(table_output, "best", "_".join([prefix, "sRNA.csv"]))
-            gen_best_srna(os.path.join(gff_output, "all_candidates", "_".join([prefix, "sRNA.gff"])), 
+            best_gff = os.path.join(self.best_gff, "_".join([prefix, "sRNA.gff"]))
+            best_table = os.path.join(self.best_table, "_".join([prefix, "sRNA.csv"]))
+            gen_best_srna(os.path.join(self.all_gff, "_".join([prefix, "sRNA.gff"])), 
                           all_hit, energy, nr_hit_num, best_sORF, best_gff)
-            gen_srna_table(os.path.join(gff_output, "best", "_".join([prefix, "sRNA.gff"])),
-                           os.path.join(out_folder, "_".join(["tmp_merge_table", prefix])),
-                           os.path.join(out_folder, "_".join(["tmp_nr", prefix + ".csv"])),
-                           os.path.join(out_folder, "_".join(["tmp_sRNA", prefix + ".csv"])),
+            gen_srna_table(os.path.join(self.best_gff, "_".join([prefix, "sRNA.gff"])),
+                           "_".join([self.merge_table_prefix, prefix]),
+                           "_".join([self.tmp_nr, prefix + ".csv"]),
+                           "_".join([self.tmp_srna, prefix + ".csv"]),
                            max_len, min_len, best_table)
 
-    def _remove_file(self, out_folder, fastas, gffs, wigs, tsss, trans, pros, sORF):
+    def _remove_file(self, out_folder, fastas, gffs, frag_wigs, tex_wigs, 
+                     tsss, trans, pros, sORF, merge_wigs):
         self.helper.remove_all_content(out_folder, "tmp_", "dir")
-        shutil.rmtree(os.path.join(out_folder, "merge_wigs"))
+        self.helper.remove_all_content(out_folder, "tmp_", "file")
+        shutil.rmtree(self.merge_wigs)
         self.helper.remove_tmp(fastas)
         self.helper.remove_tmp(gffs)
-        self.helper.remove_tmp(wigs)
+        if frag_wigs:
+            self.helper.remove_tmp(frag_wigs)
+        if tex_wigs:
+            self.helper.remove_tmp(tex_wigs)
+        if (frag_wigs) and (tex_wigs):
+            shutil.rmtree(merge_wigs)
         self.helper.remove_tmp(trans)
         if tsss is not False:
             self.helper.remove_tmp(tsss)
@@ -393,39 +410,47 @@ class sRNA_detection(object):
     def _filter_srna(self, import_info, out_folder, prefixs, fasta_path, vienna_path, mountain,
                      ps2pdf14_path, nr_database, database_format, blast_path, srna_database,
                      stat_path, sorf_path):
-#        if "2" in import_info:
-#            self._compute_2d_and_energy(out_folder, prefixs, fasta_path, vienna_path,
-#                                        mountain, ps2pdf14_path)
-#        if "3" in import_info:
-#            self._blast(nr_database, database_format, "prot", out_folder, blast_path,
-#                        prefixs, fasta_path, "blastx", "nr")
+        if "2" in import_info:
+            self._compute_2d_and_energy(out_folder, prefixs, fasta_path, vienna_path,
+                                        mountain, ps2pdf14_path)
+        if "3" in import_info:
+            self._blast(nr_database, database_format, "prot", out_folder, blast_path,
+                        prefixs, fasta_path, "blastx", "nr")
         if "4" in import_info:
             self._blast(srna_database, database_format, "nucl", out_folder, blast_path,
                         prefixs, fasta_path, "blastn", "sRNA")
-#            for prefix in prefixs:
-#                out_srna_blast = os.path.join(stat_path, "_".join(["stat_sRNA_blast_class",
-#                                              prefix + ".csv"]))
-#                blast_class(os.path.join(out_folder, "_".join(["tmp_sRNA", prefix + ".csv"])),
-#                                         out_srna_blast)
-#        if "5" in import_info:
-#            if "_".join([prefix, "sORF.gff"]) in os.listdir(sorf_path):
-#                tmp_srna = os.path.join(out_folder, "".join(["tmp_srna_sorf", prefix]))
-#                tmp_sorf = os.path.join(out_folder, "".join(["tmp_sorf_srna", prefix]))
-#                srna_sorf_comparison(os.path.join(out_folder, "_".join(["tmp_basic", prefix])),
-#                                     os.path.join(sorf_path, "_".join([prefix, "sORF.gff"])),
-#                                     tmp_srna, tmp_sorf)
-#                os.remove(tmp_sorf)
-#                os.rename(tmp_srna, os.path.join(out_folder, "_".join(["tmp_basic", prefix])))
+            for prefix in prefixs:
+                out_srna_blast = os.path.join(stat_path, "_".join(["stat_sRNA_blast_class",
+                                              prefix + ".csv"]))
+                blast_class("_".join([self.tmp_srna, prefix + ".csv"]), out_srna_blast)
+        if "5" in import_info:
+            if "_".join([prefix, "sORF.gff"]) in os.listdir(sorf_path):
+                tmp_srna = os.path.join(out_folder, "".join(["tmp_srna_sorf", prefix]))
+                tmp_sorf = os.path.join(out_folder, "".join(["tmp_sorf_srna", prefix]))
+                srna_sorf_comparison("_".join([self.basic_prefix, prefix]),
+                                     os.path.join(sorf_path, "_".join([prefix, "sORF.gff"])),
+                                     tmp_srna, tmp_sorf)
+                os.remove(tmp_sorf)
+                os.rename(tmp_srna, "_".join([self.basic_prefix, prefix]))
 
     def run_srna_detection(self, vienna_path, blast_path, ps2pdf14_path, out_folder, utr_srna, 
-                           gffs, tsss, trans, fuzzy_tss, import_info, tex_wigs, frag_wigs, pros, 
-                           fastas, mountain, database_format, srna_database, nr_database, energy, 
-                           coverage, utr5_coverage, utr3_coverage, interCDS_coverage, max_len, min_len, 
-                           tlibs, flibs, replicates, tex_notex, table_best, decrease_inter, decrease_utr, 
-                           fuzzy_inter, fuzzy_utr, nr_hits_num, sORF, all_hit, best_sORF):
-        gff_output = os.path.join(out_folder, "gffs")
-        table_output = os.path.join(out_folder, "tables")
-        stat_path = os.path.join(out_folder, "statistics")
+                           gffs, tsss, trans, fuzzy_inter_tss, fuzzy_5utr_tss, fuzzy_3utr_tss, 
+                           fuzzy_intercds_tss, import_info, tex_wigs, frag_wigs, pros, fastas, 
+                           mountain, database_format, srna_database, nr_database, energy, coverage, 
+                           utr5_coverage, utr3_coverage, interCDS_coverage, max_len, min_len, 
+                           tlibs, flibs, replicates_tex, replicates_frag, tex_notex, table_best, decrease_inter, 
+                           decrease_utr, fuzzy_inter, fuzzy_utr, nr_hits_num, sORF, all_hit, best_sORF):
+        if (replicates_tex) and (replicates_frag):
+            replicates = {"tex": int(replicates_tex), "frag": int(replicates_frag)}
+        elif replicates_tex:
+            replicates = {"tex": int(replicates_tex), "frag": -1}
+        elif replicates_frag:
+            replicates = {"tex": -1, "frag": int(replicates_frag)}
+        else:
+            print("Error:No replicates number assign!!!")
+            sys.exit()
+        fuzzy_tsss = {"5utr": fuzzy_5utr_tss, "3utr": fuzzy_3utr_tss, 
+                      "interCDS": fuzzy_intercds_tss, "inter": fuzzy_inter_tss}
         self.multiparser._parser_gff(gffs, None)
         paths = self._check_necessary_file(gffs, trans, tex_wigs, frag_wigs, utr_srna, 
                                            tsss, pros, sORF, import_info, fastas)
@@ -438,24 +463,24 @@ class sRNA_detection(object):
         libs = self._merge_libs(tlibs, flibs)
         prefixs = self._run_program(gffs, import_info, self.tran_path, self.tss_path, self.pro_path, wig_path, 
                                     max_len, min_len, coverage, merge_wigs, libs, tex_notex, replicates, 
-                                    table_best, decrease_inter, decrease_utr, fuzzy_inter, fuzzy_utr, fuzzy_tss, 
+                                    table_best, decrease_inter, decrease_utr, fuzzy_inter, fuzzy_utr, fuzzy_tsss, 
                                     utr5_coverage, utr3_coverage, interCDS_coverage, out_folder, utr_srna,
                                     self.fasta_path)
-#        self._filter_srna(import_info, out_folder, prefixs, fasta_path, vienna_path, mountain,
-#                     ps2pdf14_path, nr_database, database_format, blast_path, srna_database,
-#                     stat_path, sorf_path)
-#        for prefix in prefixs:
-#            shutil.copyfile(os.path.join(out_folder, "_".join(["tmp_basic", prefix])),
-#                            os.path.join(gff_output, "all_candidates", "_".join([prefix, "sRNA.gff"])))
-#        for prefix in prefixs:
-#            out_table = os.path.join(table_output, "all_candidates", "_".join([prefix, "sRNA.csv"]))
-#            gen_srna_table(os.path.join(gff_output, "all_candidates", "_".join([prefix, "sRNA.gff"])),
-#                           os.path.join(out_folder, "_".join(["tmp_merge_table", prefix])),
-#                           os.path.join(out_folder, "_".join(["tmp_nr", prefix + ".csv"])),
-#                           os.path.join(out_folder, "_".join(["tmp_sRNA", prefix + ".csv"])),
-#                           max_len, min_len, out_table)
-#        self._class_srna(import_info, prefixs, gff_output, table_output, stat_path,
-#                         energy, nr_hit_num, max_len, min_len)
-#        self._get_best_result(prefixs, gff_output, table_output, energy, nr_hit_num,
-#                              all_hit, best_sORF, max_len, min_len)
-#        self._remove_file(out_folder, fastas, gffs, wigs, tsss, trans, pros, sORF)
+        self._filter_srna(import_info, out_folder, prefixs, self.fasta_path, vienna_path, mountain,
+                     ps2pdf14_path, nr_database, database_format, blast_path, srna_database,
+                     self.stat_path, self.sorf_path)
+        for prefix in prefixs:
+            shutil.copyfile("_".join([self.basic_prefix, prefix]),
+                            os.path.join(self.all_gff, "_".join([prefix, "sRNA.gff"])))
+        for prefix in prefixs:
+            out_table = os.path.join(self.all_table, "_".join([prefix, "sRNA.csv"]))
+            gen_srna_table(os.path.join(self.all_gff, "_".join([prefix, "sRNA.gff"])),
+                           "_".join([self.merge_table_prefix, prefix]),
+                           "_".join([self.tmp_nr, prefix + ".csv"]),
+                           "_".join([self.tmp_srna, prefix + ".csv"]),
+                           max_len, min_len, out_table)
+        self._class_srna(import_info, prefixs, self.gff_output, self.table_output, self.stat_path,
+                         energy, nr_hits_num, max_len, min_len)
+        self._get_best_result(prefixs, self.gff_output, self.table_output, energy, nr_hits_num,
+                              all_hit, best_sORF, max_len, min_len)
+        self._remove_file(out_folder, fastas, gffs, frag_wigs, tex_wigs, tsss, trans, pros, sORF, merge_wigs)

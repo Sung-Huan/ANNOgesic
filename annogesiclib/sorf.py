@@ -111,10 +111,30 @@ class sORF_detection(object):
                 os.rename(os.path.join(gff_output, "all_candidates", "_".join([prefix, "sORF_best.csv"])), \
                           os.path.join(table_output, "best", "_".join([prefix, "sORF.csv"])))
 
+    def _remove_tmp(self, out_folder, fastas, gffs, tsss, trans, sRNAs, tex_wigs, frag_wigs):
+        self.helper.remove_all_content(out_folder, ".gff", "file")
+        self.helper.remove_tmp(fastas)
+        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(tsss)
+        self.helper.remove_tmp(trans)
+        self.helper.remove_tmp(sRNAs)
+        self.helper.remove_wig(tex_wigs)
+        self.helper.remove_wig(frag_wigs)
+
     def run_sorf_detection(self, bin_path, out_folder, utr_detect, trans, gffs, tsss, utr_length, 
                            min_len, max_len, tex_wigs, frag_wigs, cutoff_inter, cutoff_5utr, 
                            cutoff_3utr, cutoff_interCDS, fastas, tlibs, flibs, tex_notex, 
-                           replicate, table_best, sRNAs, start_coden, stop_coden, condition):
+                           replicates_tex, replicates_frag, table_best, sRNAs, start_coden, 
+                           stop_coden, condition):
+        if (replicates_tex) and (replicates_frag):
+            replicates = {"tex": int(replicates_tex), "frag": int(replicates_frag)}
+        elif replicates_tex:
+            replicates = {"tex": int(replicates_tex), "frag": -1}
+        elif replicates_frag:
+            replicates = {"tex": -1, "frag": int(replicates_frag)}
+        else:
+            print("Error:No replicates number assign!!!")
+            sys.exit()
         paths = self._check_necessary_files(gffs, trans, tex_wigs, frag_wigs, utr_detect, tsss, sRNAs)
         tss_path = paths[0]
         srna_path = paths[1]
@@ -148,16 +168,8 @@ class sORF_detection(object):
         for sorf in os.listdir(gff_output + "all_candidates"): # stat
             print("statistics of {0}".format(sorf))
             if sorf.endswith("_sORF.gff"):
-                stat(os.path.join(gff_output, "all_candidates", sorf),
+                cstat(os.path.join(gff_output, "all_candidates", sorf),
                      os.path.join(out_folder, "statistics", 
                                   "_".join(["stat", sorf.replace(".gff", ".csv")])), 
                      utr_detect)
-        # remove temperary files #
-        os.system("rm " + out_folder + "/*.gff")
-        self.helper.remove_tmp(fastas)
-        self.helper.remove_tmp(gffs)
-        self.helper.remove_tmp(tsss)
-        self.helper.remove_tmp(trans)
-        self.helper.remove_tmp(sRNAs)
-        self.helper.remove_wig(tex_wigs)
-        self.helper.remove_wig(frag_wigs)
+        self._remove_tmp(out_folder, fastas, gffs, tsss, trans, sRNAs, tex_wigs, frag_wigs)

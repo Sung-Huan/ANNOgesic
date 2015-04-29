@@ -407,9 +407,11 @@ def read_libs(input_libs, libs, wig_folder, program):
     for lib in input_libs:
         datas = lib.split(":")
         if (datas[1] == type_) and (datas[4] == "+"):
-            Helper().merge_file(wig_folder, datas[0], os.getcwd(), "merge_forward.wig")
+            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+                                os.path.join(os.getcwd(), "merge_forward.wig"))
         elif (datas[1] ==type_) and (datas[4] == "-"):
-            Helper().merge_file(wig_folder, datas[0], os.getcwd(), "merge_reverse.wig")
+            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+                                os.path.join(os.getcwd(), "merge_reverse.wig"))
 
 def intersection(tsss, cluster, num_strain, nums, length):
     overlap = False
@@ -420,8 +422,11 @@ def intersection(tsss, cluster, num_strain, nums, length):
                (tss_p.seq_id == tss_m.seq_id):
                 if (tss_p.start == tss_m.start) or \
                    (math.fabs(tss_p.start - tss_m.start) <= cluster):
-                    overlap = True
-                    tss_m.attributes["print"] = True
+                    if tss_m.attributes["print"]:
+                        pass
+                    else:
+                        tss_m.attributes["print"] = True
+                        overlap = True
                     break
         if tss_p.seq_id not in num_strain.keys():
             num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0, "manual": 0}

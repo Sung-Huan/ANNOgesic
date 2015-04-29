@@ -1,3 +1,2 @@
-import shutil
-import os
-os.rename("test", "test1/test")
+a = "1234567"
+print a[:-4]

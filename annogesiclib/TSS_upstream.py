@@ -371,9 +371,11 @@ def read_libs(input_libs, libs, wig_folder):
     for lib in input_libs:
         datas = lib.split(":")
         if (datas[1] == "tex") and (datas[4] == "+"):
-            Helper().merge_file(wig_folder, datas[0], "tmp", "merge_forward.wig")
+            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+                                os.path.join("tmp", "merge_forward.wig"))
         elif (datas[1] == "tex") and (datas[4] == "-"):
-            Helper().merge_file(wig_folder, datas[0], "tmp", "merge_reverse.wig")
+            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+                                os.path.join("tmp", "merge_reverse.wig"))
 
 def upstream(TSS_file, fasta_file, gff_file, source, wig_folder, input_libs, out_class):
     files = {"pri": open("tmp/primary.fa", "w"), "sec": open("tmp/secondary.fa", "w"),

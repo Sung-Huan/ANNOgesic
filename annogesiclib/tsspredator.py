@@ -21,7 +21,10 @@ class TSSpredator(object):
         self.converter = Converter()
         self.master = os.path.join(out_folder, "MasterTables")
         self.tmp_tss = "tmp_TSS"
-        self.tmp_ta = os.path.join(TA_files, "tmp")
+        if TA_files:
+            self.tmp_ta = os.path.join(TA_files, "tmp")
+        else:
+            self.tmp_ta = None
         self.tmp_ta_tss = "tmp_ta_tss"
         self.tmp_tss_ta = "tmp_tss"
         self.gff_path = os.path.join(gffs, "tmp")
@@ -90,10 +93,10 @@ class TSSpredator(object):
                 lib_dict["nm"].append(self._assign_dict(lib_datas))
         for num_id in range(1, lib_num+1):
             out.write("annotation_{0} = {1}\n".format(num_id, gff))
-        if program == "TSS":
+        if program.lower() == "tss":
             self._print_lib(lib_num, lib_dict["fm"], out, wig_folder, "fivePrimeMinus")
             self._print_lib(lib_num, lib_dict["fp"], out, wig_folder, "fivePrimePlus")
-        elif program == "processing_site":
+        elif program.lower() == "processing_site":
             self._print_lib(lib_num, lib_dict["nm"], out, wig_folder, "fivePrimeMinus")
             self._print_lib(lib_num, lib_dict["np"], out, wig_folder, "fivePrimePlus")
         else:
@@ -105,11 +108,10 @@ class TSSpredator(object):
             list_num_id.append(str(num_id))
         return (lib_num, num_id)
 
-    def _gen_config(self, project_strain_name, out_folder,
-                    libs, gff, wig_folder, fasta, height,
-                    factor, height_reduction, factor_reduction,
-                    base_height, output_prefixs, config_file, 
-                    program, repmatch, cluster, utr_length):
+    def _gen_config(self, project_strain_name, out_folder, libs, gff, wig_folder, 
+                    fasta, height, factor, height_reduction, factor_reduction,
+                    enrichment_factor, processing_factor, base_height, output_prefixs, 
+                    config_file, program, repmatch, cluster, utr_length):
         lib_dict = {"fp": [], "fm": [], "nm": [], "np": []}
         rep_set = set()
         master_folder = "MasterTable_" + project_strain_name
@@ -128,10 +130,10 @@ class TSSpredator(object):
         out.write(",".join(list_num_id) + "\n")
         out.write("maxASutrLength = 100\n")
         out.write("maxGapLengthInGene = 500\n")
-        out.write("maxNormalTo5primeFactor = 1.5\n")
+        out.write("maxNormalTo5primeFactor = {0}\n".format(processing_factor))
         out.write("maxTSSinClusterDistance = {0}\n".format(cluster + 1))
         out.write("maxUTRlength = {0}\n".format(utr_length))
-        out.write("min5primeToNormalFactor = 2\n")
+        out.write("min5primeToNormalFactor = {0}\n".format(enrichment_factor))
         out.write("minCliffFactor = {0}\n".format(factor))
         out.write("minCliffFactorDiscount = {0}\n".format(factor_reduction))
         out.write("minCliffHeight = {0}\n".format(height))
@@ -141,7 +143,7 @@ class TSSpredator(object):
         out.write("minPlateauLength = 0\n")
         out.write("mode = cond\n")
         out.write("normPercentile = 0.9\n")
-        if program == "TSS":
+        if program.lower() == "tss":
             self._print_lib(lib_num, lib_dict["nm"], out, wig_folder,"normalMinus")
             self._print_lib(lib_num, lib_dict["np"], out, wig_folder,"normalPlus")
         else:
@@ -245,7 +247,8 @@ class TSSpredator(object):
                         os.path.join(self.stat_outfolder, tss), ["_venn", ".png"])
 
     def _set_gen_config(self, feature, input_folder, out_folder, libs, height, factor,
-                        height_reduction, factor_reduction, utr_length, base_height, 
+                        height_reduction, factor_reduction, enrichment_factor, 
+                        processing_factor, utr_length, base_height, 
                         output_prefixs, repmatch, cluster):
         prefixs = []
         detect = False
@@ -265,15 +268,16 @@ class TSSpredator(object):
                                          libs, os.path.join(self.gff_path, gff), self.wig_path,
                                          os.path.join(self.fasta_path, fasta), height,
                                          factor, height_reduction, factor_reduction,
-                                         base_height, output_prefixs, config, feature, 
+                                         enrichment_factor, processing_factor, base_height, 
+                                         output_prefixs, config, feature, 
                                          repmatch, cluster, utr_length)
         return prefixs
 
     def run_tsspredator(self, tsspredator_path, program, input_folder, fastas, gffs, 
                         wig_folder, libs, output_prefixs, height, height_reduction, 
-                        factor, factor_reduction, base_height, repmatch, out_folder, 
-                        project_path, stat, validate, manual, TA_files, fuzzy, 
-                        utr_length, cluster, nt_length):
+                        factor, factor_reduction, base_height, enrichment_factor,
+                        processing_factor, repmatch, out_folder, project_path, stat, 
+                        validate, manual, TA_files, fuzzy, utr_length, cluster, nt_length):
         ####  First of all, generate config file for running.
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
@@ -283,14 +287,15 @@ class TSSpredator(object):
         self.multiparser._parser_gff(gffs, None)
         self.multiparser._parser_wig(wig_folder)
         prefixs = self._set_gen_config(program, input_folder, out_folder, libs, height, 
-                                       factor, height_reduction, factor_reduction, utr_length, 
+                                       factor, height_reduction, factor_reduction, 
+                                       enrichment_factor, processing_factor, utr_length, 
                                        base_height, output_prefixs, repmatch, cluster)
         #### After generating config file, we can start to run TSSpredator.
         for prefix in prefixs:
             out_path = os.path.join(self.master, "_".join(["MasterTable", prefix]))
             config_file = os.path.join(input_folder, "_".join(["config", prefix]) + ".ini")
             self._start_to_run(tsspredator_path, config_file, out_path, prefix)
-        if program == "processing_site":
+        if program.lower() == "processing_site":
             program = "processing"
         self._convert_gff(prefixs, out_folder, program)
         #### based on the original file to merge the information of strains.
