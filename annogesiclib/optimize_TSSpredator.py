@@ -11,12 +11,13 @@ import time
 import signal
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.converter import Converter
+import copy
 
 def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs):
     if indexs["change"]:
         indexs["change"] = False
         best = stat_value
-        best_para = list_num[-1 * cores + indexs["count"]].copy()
+        best_para = copy.deepcopy(list_num[-1 * cores + indexs["count"]])
     print("_".join(["Current Parameter:step={0}", "height={1}", "reduction_height={2}",
                     "factor={3}", "reduction_factor={4}", "base_height={5}", 
                     "enrichment_factor={6}", "processing_factor={7}"]).format(
@@ -351,7 +352,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
                 if indexs["first"]:
                     indexs["first"] = False
                     best = stat_value
-                    best_para = list_num[-1 * cores + indexs["count"]].copy()
+                    best_para = copy.deepcopy(list_num[-1 * cores + indexs["count"]])
                 else:
                     scoring_function(best, stat_value, indexs)
                 datas = compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
@@ -361,7 +362,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
             indexs["switch"] += 1
             stat_values = []
             indexs["num"] = 0
-        current_para = best_para.copy()
+        current_para = copy.deepcopy(best_para)
     return (False, best_para, best)
 
 def minus_process(num_type, new_para, max_num, best_num, actions, list_num, compare):
@@ -384,20 +385,23 @@ def minus_process(num_type, new_para, max_num, best_num, actions, list_num, comp
                 new_para[num_type] = float('%.3f' % new_para[num_type])
                 continue
             else:
-                list_num.append(new_para.copy())
+                list_num.append(copy.deepcopy(new_para))
                 return new_para[num_type]
     else:
         new_para[num_type] = new_para[num_type] - 0.1
         new_para[num_type] = float('%.1f' % new_para[num_type])
+#        print(num_type)
         while True:
             if new_para[num_type] <= 0.0:
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 2
                 actions["minus"] = True
+#                print("EEE")
                 break
             elif (new_para in list_num):
                 new_para[num_type] = new_para[num_type] - 0.1
                 new_para[num_type] = float('%.1f' % new_para[num_type])
+#                print("FFF")
                 continue
             elif ((num_type == "factor") or \
                  (num_type == "height")) and \
@@ -405,9 +409,15 @@ def minus_process(num_type, new_para, max_num, best_num, actions, list_num, comp
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 2
                 actions["minus"] = True
+#                print(new_para[num_type])
+#                print(compare)
+#                print("GGG")
                 break
             else:
-                list_num.append(new_para.copy())
+                list_num.append(copy.deepcopy(new_para))
+#                print(new_para[num_type])
+#                print(compare)
+#                print("HHH")
                 return new_para[num_type]
     return None
 
@@ -426,20 +436,23 @@ def plus_process(num_type, new_para, max_num, best_num, actions, list_num, compa
                 new_para[num_type] = float('%.3f' % new_para[num_type])
                 continue
             else:
-                list_num.append(new_para.copy())
+                list_num.append(copy.deepcopy(new_para))
                 return new_para[num_type]
     else:
         new_para[num_type] = new_para[num_type] + 0.1
         new_para[num_type] = float('%.1f' % new_para[num_type])
+#        print(num_type)
         while True:
             if new_para[num_type] >= max_num:
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 1
                 actions["plus"] = True
+#                print("AAA")
                 break
             elif (new_para in list_num):
                 new_para[num_type] = new_para[num_type] + 0.1
                 new_para[num_type] = float('%.1f' % new_para[num_type])
+#                print("BBB")
                 continue
             elif ((num_type == "re_factor") or \
                  (num_type == "re_height")) and \
@@ -447,14 +460,21 @@ def plus_process(num_type, new_para, max_num, best_num, actions, list_num, compa
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 1
                 actions["plus"] = True
+#                print(new_para[num_type])
+#                print(compare)
+#                print("CCC")
                 break
             else:
-                list_num.append(new_para.copy())
+                list_num.append(copy.deepcopy(new_para))
+#                print(new_para[num_type])
+#                print(compare)
+#                print("DDD")
                 return new_para[num_type]
     return None
 
 def small_change(max_num, num_type, compare, list_num, best_num, best_para):
-    new_para = best_para.copy()
+#    print("s")
+    new_para = copy.deepcopy(best_para)
     actions = {"plus": False, "minus": False}
     step = 0
     if new_para[num_type] >= max_num:
@@ -519,10 +539,42 @@ def run_small_change_part(seeds, features, indexs, current_para, best_para, list
                                                    best_para["processing"], best_para)
     return current_para
 
+def check_fit(num_type, index_large, seed, number, number_par, compare):
+    if ((num_type == "height") and (index_large[seed] == "re_height")) or \
+       ((num_type == "factor") and (index_large[seed] == "re_factor")):
+        if number <= number_par:
+#            print("AAA")
+            return False
+    elif ((num_type == "re_factor") and (index_large[seed] == "factor")) or \
+         ((num_type == "re_height") and (index_large[seed] == "height")):
+        if number >= number_par:
+#            print("BBB")
+            return False
+    elif ((num_type == "factor") or \
+          (num_type == "height")) and \
+         (number <= float(compare)):
+#        print("CCC")
+        return False
+    elif ((num_type == "re_factor") or \
+          (num_type == "re_height")) and \
+         (number >= float(compare)):
+#        print("DDD")
+        return False
+    elif ((index_large[seed] == "factor") or \
+          (index_large[seed] == "height")) and \
+         (number_par <= float(compare)):
+        return False
+    elif ((index_large[seed] == "re_factor") or \
+          (index_large[seed] == "re_height")) and \
+         (number_par >= float(compare)):
+        return False
+    return True
+
 def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                      best_para, index_large, indexs):
-    new_para = best_para.copy()
+    new_para = copy.deepcopy(best_para)
     step = 0
+#    print("l")
     while True:
         step += 1
         if step >= 1000000:
@@ -546,29 +598,23 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
             number_par = round(random.uniform(0.1, max_num[index_large[seed]]), 1)
             number_par = '%.1f' % number_par
             number_par = float(number_par)
-        if ((num_type == "height") and (index_large[seed] == "re_height")) or \
-           ((num_type == "factor") and (index_large[seed] == "re_factor")):
-            if number <= number_par:
-                continue
-        elif ((num_type == "re_factor") and (index_large[seed] == "factor")) or \
-             ((num_type == "re_height") and (index_large[seed] == "height")):
-            if number >= number_par:
-                continue
-        elif ((num_type == "factor") or \
-              (num_type == "height")) and \
-             (number <= float(compare)):
-            continue
-        elif ((num_type == "re_factor") or \
-              (num_type == "re_height")) and \
-             (number >= float(compare)):
-            continue
-        new_para[num_type] = number
-        new_para[index_large[seed]] = number_par
-        if new_para in list_num:
+#        print(num_type + "_" + str(number))
+#        print(index_large[seed] + "_" + str(number_par))
+#        print(compare)
+        fit = check_fit(num_type, index_large, seed, number, number_par, compare)
+        if fit is False:
             continue
         else:
-            list_num.append(new_para.copy())
-            return new_para
+            new_para[num_type] = number
+            new_para[index_large[seed]] = number_par
+            if new_para in list_num:
+#                print("EEE")
+                continue
+            else:
+#                print("FFF")
+#                print(new_para)
+                list_num.append(copy.deepcopy(new_para))
+                return new_para
 
 def run_large_change_part(seeds, features, indexs, current_para, max_num, best_para,
                           list_num):
@@ -610,6 +656,7 @@ def run_large_change_part(seeds, features, indexs, current_para, max_num, best_p
 
 def run_random_part(current_para, list_num, max_num, steps, indexs):
     tmp_random_step = 0
+#    print("r")
     while True:
         current_para["height"] = round(random.uniform(0.1, max_num["height"]), 1)
         current_para["re_height"] = round(random.uniform(0.1, max_num["re_height"]), 1)
@@ -621,7 +668,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
         if (current_para["height"] > current_para["re_height"]) and \
            (current_para["factor"] > current_para["re_factor"]) and \
            (current_para not in list_num):
-            list_num.append(current_para.copy())
+            list_num.append(copy.deepcopy(current_para))
             break
         tmp_random_step += 1
         if tmp_random_step >= steps:
@@ -680,6 +727,8 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para, ste
         indexs["length"] = len(list_num)
         features["pre_feature"] = features["feature"]
         indexs["step"] += 1
+        if indexs["step"] >= steps:
+            break
 
 def start_data(out_path, current_para, best_para, indexs, max_num):
     indexs["step"] = 0
@@ -692,7 +741,7 @@ def start_data(out_path, current_para, best_para, indexs, max_num):
         current_para["enrichment"] = round(random.uniform(0.1, max_num["enrichment"]), 1)
         current_para["processing"] = round(random.uniform(0.1, max_num["processing"]), 1)
         current_para["base_height"] = round(random.uniform(0.001, max_num["base_height"]), 3)
-        best_para = current_para.copy()
+        best_para = copy.deepcopy(current_para)
         if (current_para["height"] > current_para["re_height"]) and \
            (current_para["factor"] > current_para["re_factor"]):
             break
@@ -716,7 +765,7 @@ def extend_data(out_path, best, best_para, step):
           best_para["processing"]))
     print("Best:TP={0}\tTP_rate={1}\tFP={2}\tFP_rate={3}\tFN={4}\tMissing_ratio={5}".format(
           best["tp"], best["tp_rate"], best["fp"], best["fp_rate"], best["fn"], best["missing_ratio"]))
-    current_para = best_para.copy()
+    current_para = copy.deepcopy(best_para)
     return current_para
 
 def load_stat_csv(out_path, list_num, best, best_para, indexs):
