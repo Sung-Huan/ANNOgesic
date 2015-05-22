@@ -184,9 +184,9 @@ def gen_srna_table(sRNA_gff, sRNA_table, nr_blast, sRNA_blast,
 def print_best(detect, out, srna):
     no_print = False
     for value in detect.values():
-        if value is False:
+        if not value:
             no_print = True
-    if no_print is False:
+    if not no_print:
         out.write(srna.info + "\n")
 
 def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out_file):
@@ -205,7 +205,8 @@ def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out
             if srna.attributes["with_TSS"] != "NA":
                  detect["TSS"] = True
             elif (srna.source == "UTR_derived"):
-                if ("3utr" in srna.attributes["UTR_type"]) and \
+                if (("3utr" in srna.attributes["UTR_type"]) or \
+                    ("interCDS" in srna.attributes["UTR_type"])) and \
                    (srna.attributes["with_cleavage"] != "NA"):
                     detect["TSS"] = True
         else:
@@ -223,14 +224,14 @@ def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out
         else:
             detect["sORF"] = True
         if ("sRNA_hit" in srna.attributes.keys()) and \
-           (all_sRNA_hit is True):
+           (all_sRNA_hit):
             if (srna.attributes["sRNA_hit"] != "NA"):
                 for key in detect.keys():
                     detect[key] = True
             else:
                 count = 0
                 for value in detect.values():
-                    if value is True:
+                    if value:
                         count += 1
                 if count == 4:
                     detect["sRNA_hit"] = True

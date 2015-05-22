@@ -44,7 +44,7 @@ class Seq_Editer(object):
         for data in datas:
             seq = ""
             if (data["ref_id"] + ".fa") in os.listdir(fasta_folder):
-                filename = fasta_folder + "/" + data["ref_id"] + ".fa"
+                filename = os.path.join(fasta_folder, data["ref_id"] + ".fa")
                 with open (filename, "r") as fasta:
                     for line in fasta:
                         line = line.strip()
@@ -61,7 +61,7 @@ class Seq_Editer(object):
                 record = SeqRecord(Seq(seq_modifier.seq()))
                 record.id = data["target_id"]
                 record.description = ""
-                SeqIO.write(record, output_folder + "/" + record.id + ".fa", "fasta")
+                SeqIO.write(record, os.path.join(output_folder, record.id + ".fa"), "fasta")
 
     def modify_header(self, input_file):
         first = True
@@ -81,7 +81,7 @@ class Seq_Editer(object):
                     folder = "/".join(folder[:-1])
                     if (len(mod) == 5) and (line[0] == ">"):
                         new_header = ">%s" % (mod[3])
-                        print(folder + "/" + mod[3] + ".fa")
+                        print(os.path.join(folder, mod[3] + ".fa"))
                     elif (len(mod) != 5) and (line[0] == ">"):
                         new_header = line
                     elif (line[0] != ">"):

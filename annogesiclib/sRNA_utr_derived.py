@@ -275,10 +275,6 @@ def detect_utr(srnas, tsss, pros, start, end, inter, utr_type, utrs, wigs,
         if (tss.seq_id == inter["strain"]) and \
            (tss.strand == inter["strand"]):
             if (tss.strand == "+"):
-#                if (utr_type == "5utr") or (utr_type == "interCDS"):
-#                    start_fuzzy = start - fuzzys[utr_type]
-#                else:
-#                    start_fuzzy = start
                 start_fuzzy = start - fuzzys[utr_type]
                 if (tss.start >= start_fuzzy) and \
                    (tss.start <= end):
@@ -289,10 +285,6 @@ def detect_utr(srnas, tsss, pros, start, end, inter, utr_type, utrs, wigs,
                     break
             else:
                 end_fuzzy = end + fuzzys[utr_type]
-#                if (utr_type == "5utr") or (utr_type == "interCDS"):
-#                    end_fuzzy = end + fuzzy
-#                else:
-#                    end_fuzzy = end
                 if (tss.start >= start) and \
                    (tss.start <= end_fuzzy):
                     detect_normal((tss.start - start), wigs, inter, start, tss.start, 
@@ -399,7 +391,7 @@ def print_file(num, out_t, out, srna, start, end, srna_datas, table_best):
     out.write("\t".join([str(field) for field in [
               srna["strain"], srna["utr"], "UTR_sRNA", str(start),
               str(end), ".", srna["strand"], ".", attribute_string]]) + "\n")
-    if table_best is False:
+    if not table_best:
         first = True
         for data in srna_datas["detail"]:
             if first:
@@ -450,7 +442,7 @@ def read_data(cdss, tas, tsss, pros, seq, gff_file,
         tas.append(entry)
     for entry in gff_parser.entries(open(tss_file)):
         tsss.append(entry)
-    if pro_file is not False:
+    if pro_file is not None:
         for entry in gff_parser.entries(open(pro_file)):
             pros.append(entry)
     with open(seq_file, "r") as s_f:
@@ -467,54 +459,16 @@ def get_utr_coverage(utrs, covers, template_texs, tex_notex):
     for utr in utrs:
         best_cover = -1
         avgs = []
+        if utr["strain"] not in covers.keys():
+            covers[utr["strain"]] = {"3utr": {}, "5utr": {}, "interCDS": {}, "inter": {}, "total": {}}
         for cond, utr_covers in utr["datas"].items():
-            total = 0
-            detect_num = 0
-            check_texs = {}
-            texs = template_texs.copy()
-            for key, num in texs.items():
-                check_texs[key] = []
             for cover in utr_covers:
-                if (cover["type"] == "tex") or (cover["type"] == "notex"):
-                    for key, num in texs.items():
-                        if cover["track"] in key:
-                            texs[key] += 1
-                            check_texs[key].append(cover)
-                        if texs[key] == tex_notex:
-                            detect_num += 1
-                            total = total + ((cover["ori_avg"] + \
-                                    (check_texs[key][0]["ori_avg"])) / float(2))
-                elif (cover["type"] == "frag"):
-                    detect_num += 1
-                    total = total + cover["ori_avg"]
-            if detect_num != 0:
-                avg = total / float(detect_num)
-                avgs.append(avg)
-#                if (avg > best_cover) or (best_cover == -1):
-#                    best_cover = avg
-        sortedavg = sorted(avgs)
-        len_avg = len(avgs)
-        index = (len_avg - 1) // 2
-        if len_avg != 0:
-            if (len_avg % 2):
-                best_cover = sortedavg[index]
-            else:
-                best_cover = (sortedavg[index] + sortedavg[index + 1]) / 2
-        if best_cover != -1:
-            if first:
-                covers[utr["strain"]] = {"3utr": [], "5utr": [], "interCDS": [], "inter": [], "total": []}
-                covers[utr["strain"]][utr["utr"]].append(best_cover)
-                covers[utr["strain"]]["total"].append(best_cover)
-                first = False
-            else:
-                if pre_utr["strain"] != utr["strain"]:
-                    covers[utr["strain"]] = {"3utr": [], "5utr": [], "interCDS": [], "inter": [], "total": []}
-                    covers[utr["strain"]][utr["utr"]].append(best_cover)
-                    covers[utr["strain"]]["total"].append(best_cover)
-                else:
-                    covers[utr["strain"]][utr["utr"]].append(best_cover)
-                    covers[utr["strain"]]["total"].append(best_cover)
-            pre_utr = utr
+                if cover["track"] not in covers[utr["strain"]][utr["utr"]].keys():
+                    covers[utr["strain"]][utr["utr"]][cover["track"]] = []
+                if cover["track"] not in covers[utr["strain"]]["total"].keys():
+                    covers[utr["strain"]]["total"][cover["track"]] = []
+                covers[utr["strain"]][utr["utr"]][cover["track"]].append(cover["ori_avg"])
+                covers[utr["strain"]]["total"][cover["track"]].append(cover["ori_avg"])
 
 def get_inter(cdss, inters):
     for cds1 in cdss:
@@ -537,18 +491,15 @@ def mean_score(lst):
         return 0
 
 def set_median(covers, mediandict):
-    for strain, cover in covers.items():
+    for strain, utrs in covers.items():
+#        print(strain)
         mediandict[strain] = {"3utr": {}, "5utr": {}, "interCDS": {}, "inter": {}, "total": {}}
-        mediandict[strain]["3utr"] = {"median": median_score(cover["3utr"]), 
-                                      "mean": mean_score(cover["3utr"])}
-        mediandict[strain]["5utr"] = {"median": median_score(cover["5utr"]),
-                                      "mean": mean_score(cover["5utr"])}
-        mediandict[strain]["interCDS"] = {"median": median_score(cover["interCDS"]),
-                                          "mean": mean_score(cover["interCDS"])}
-        mediandict[strain]["inter"] = {"median": median_score(cover["inter"]), 
-                                       "mean": mean_score(cover["inter"])}
-        mediandict[strain]["total"] = {"median": median_score(cover["total"]),
-                                       "mean": mean_score(cover["total"])}
+        for utr, tracks in utrs.items():
+            for track, avgs in tracks.items():
+                if track not in mediandict[strain][utr].keys():
+                    mediandict[strain][utr][track] = {}
+                mediandict[strain][utr][track] = {"median": median_score(avgs),
+                                                  "mean": mean_score(avgs)}
 
 def utr_derived_srna(gff_file, ta_file, tss_file, wig_f_file, wig_r_file, pro_file, 
                      Max_len, min_len, fuzzys, fuzzy_end, seq_file, wig_folder, 
@@ -595,10 +546,6 @@ def utr_derived_srna(gff_file, ta_file, tss_file, wig_f_file, wig_r_file, pro_fi
     get_utr_coverage(utrs, covers, texs, tex_notex)
     mediandict = {}
     set_median(covers, mediandict)
-    out_m = open("median", "w")
-    for strain, types in mediandict.items():
-        for type_, cover in types.items():
-            out_m.write(";".join([strain, type_, str(cover)]) + "\n")
     if (len(mediandict) != 0):
         coverages = {"3utr": utr3_coverage, "5utr": utr5_coverage,
                      "interCDS": interCDS_coverage}

@@ -76,7 +76,7 @@ class Controller(object):
             if len(annotation_files) == 0:
                 sys.stdout.write("No gbk files!!\n")
             else:
-                Converter().convert_gbk2embl(self._paths.ref_annotation_folder, annotation_files)
+                Converter().convert_gbk2embl(self._paths.ref_annotation_folder)
     def get_target_fasta(self):
         """Get target fasta"""
         project_creator.create_subfolders(self._paths.required_folders("get_target_fasta"))
@@ -88,13 +88,14 @@ class Controller(object):
         """Run RATT to transfer annotation file from reference to target."""
         project_creator.create_subfolders(self._paths.required_folders("annotation_transfer"))
         ratt = RATT(self._args.ref_gbk, self._paths.ratt_folder,
-                    self._args.target_fasta, self._paths.tar_annotation_folder)
+                    self._args.target_fasta, self._args.ref_fasta,
+                    self._paths.tar_annotation_folder)
         ratt.annotation_transfer(self._args.RATT_path, self._args.PAGIT_folder, 
                                  self._args.element, self._args.transfer_type, 
                                  self._args.ref_gbk, self._args.target_fasta, 
                                  self._args.ref_fasta, self._paths.ratt_folder, 
-                                 self._args.convert_to_gff_rnt_ptt, self._args.combine_all_gff,
-                                 self._paths.tar_annotation_folder)
+                                 self._args.convert_to_gff_rnt_ptt,
+                                 self._paths.tar_annotation_folder, self._args.compare_pair)
 
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
@@ -123,7 +124,8 @@ class Controller(object):
                       out_folder, self._args.project_path, self._args.statistics,
                       self._args.validate_gene, self._args.merge_manual,
                       self._args.compare_transcript_assembly, self._args.fuzzy,
-                      self._args.utr_length, self._args.cluster, self._args.length)
+                      self._args.utr_length, self._args.cluster, self._args.length,
+                      self._args.re_check_orphan)
     
     def optimize(self):
         """opimize TSSpredator"""
@@ -147,14 +149,14 @@ class Controller(object):
                      self._args.output_prefix, self._args.cluster,
                      self._args.length, self._args.core, 
                      self._args.program, self._args.replicate_match,
-                     self._args.steps, self._args.cluster)
+                     self._args.steps)
 
     def color(self):
         """color the screenshots"""
         color = Color_PNG()
         color.generate_color_png(
-                self._args.bin_path, self._args.track_number, 
-                self._args.screenshot_type, self._paths.output_folder)
+                self._args.track_number, self._args.output_folder, 
+                self._args.ImageMagick_covert_path)
 
     def transtermhp(self):
         """Run TransTermHP for detecting terminators."""
@@ -171,7 +173,9 @@ class Controller(object):
                 self._args.sRNA, self._args.statistics, 
                 self._args.tex_wig_folder, self._args.frag_wig_folder, 
                 self._args.decrease, self._args.highest_coverage,
-                self._args.fuzzy, self._paths.transtermhp_folder,
+                self._args.fuzzy_detect_coverage, self._args.fuzzy_upstream_transcript,
+                self._args.fuzzy_downstream_transcript, self._args.fuzzy_upstream_cds,
+                self._args.fuzzy_downstream_cds, self._paths.transtermhp_folder,
                 self._args.tex_notex_libs, self._args.frag_libs,
                 self._args.tex_notex, self._args.replicates_tex,
                 self._args.replicates_frag, self._args.table_best)
@@ -186,8 +190,8 @@ class Controller(object):
                 self._args.sort_annotation, self._args.tex_notex,
                 self._args.length, self._args.annotation_folder, 
                 self._args.height, self._args.width, 
-                self._args.tolerance, self._args.replicates_tex,
-                self._args.replicates_frag,
+                self._args.tolerance, self._args.tolerance_coverage,
+                self._args.replicates_tex, self._args.replicates_frag,
                 self._paths.transcript_assembly_output_folder,
                 self._args.compare_TSS, self._args.compare_CDS, 
                 self._args.TSS_fuzzy, self._args.Tex_treated_libs, 
@@ -203,7 +207,7 @@ class Controller(object):
                 self._args.transcript_assembly_folder,
                 self._args.terminator_folder,
                 self._args.terminator_fuzzy, self._paths.utr_folder, 
-                self._args.TSS_source)
+                self._args.TSS_source, self._args.base_5UTR)
 
     def srna_detection(self):
         """sRNA_detection."""
@@ -229,7 +233,8 @@ class Controller(object):
                 self._args.max_length, self._args.min_length,
                 self._args.tex_notex_libs, self._args.frag_libs,
                 self._args.replicates_tex, self._args.replicates_tex, 
-                self._args.tex_notex,
+                self._args.tex_notex, self._args.blast_e_nr,
+                self._args.blast_e_srna,
                 self._args.table_best, self._args.decrease_intergenic,
                 self._args.decrease_utr, self._args.fuzzy_intergenic,
                 self._args.fuzzy_utr, self._args.cutoff_nr_hit,
@@ -238,10 +243,13 @@ class Controller(object):
 
     def sorf_detection(self):
         """sORF_detection."""
-        sorf = sORF_detection()
+        project_creator.create_subfolders(self._paths.required_folders("sorf"))
+        sorf = sORF_detection(self._args.TSS_folder, self._args.sRNA_folder,
+                              self._paths.sorf_folder, self._args.transcript_assembly_folder,
+                              self._args.fasta_folder)
         sorf.run_sorf_detection(
-                self._args.bin_path, self._paths.sorf_folder,
-                self._args.UTR_derived_sORF, self._args.transcript_assembly_folder,
+                self._paths.sorf_folder, self._args.UTR_derived_sORF, 
+                self._args.transcript_assembly_folder,
                 self._args.annotation_folder, self._args.TSS_folder,
                 self._args.utr_length,
                 self._args.min_length, self._args.max_length,
@@ -251,21 +259,23 @@ class Controller(object):
                 self._args.fasta_folder, self._args.tex_notex_libs,
                 self._args.frag_libs, self._args.tex_notex,
                 self._args.replicates_tex, self._args.replicates_frag,
-                self._args.table_best,
-                self._args.sRNA_folder, self._args.start_coden,
-                self._args.stop_coden, self._args.condition_best)
+                self._args.table_best, self._args.sRNA_folder, 
+                self._args.start_coden, self._args.stop_coden, 
+                self._args.condition_best, self._args.cutoff_background)
 
     def meme(self):
         """promoter detectopn"""
         project_creator.create_subfolders(self._paths.required_folders("promoter"))
-        meme = MEME(self._args.TSS_folder, self._args.annotation_folder)
+        meme = MEME(self._args.TSS_folder, self._args.annotation_folder,
+                    self._args.fasta_folder)
         meme.run_meme(
                 self._args.MEME_path, self._paths.promoter_input_folder,
                 self._paths.promoter_output_folder, self._args.tex_libs,
                 self._args.TSS_folder, self._args.fasta_folder, 
                 self._args.num_motif, self._args.motif_width, 
                 self._args.parallel, self._args.TSS_source, 
-                self._args.tex_wig_path, self._args.annotation_folder)
+                self._args.tex_wig_path, self._args.annotation_folder,
+                self._args.combine_all)
 
     def operon(self):
         """operon detection"""
@@ -304,9 +314,11 @@ class Controller(object):
 
     def srna_target(self):
         """sRNA target prediction"""
-        srnatarget = sRNA_target_prediction()
+        srnatarget = sRNA_target_prediction(self._paths.starget_output_folder, self._args.sRNA_path,
+                                            self._args.fasta_path, self._args.annotation_path)
+        project_creator.create_subfolders(self._paths.required_folders("srna_target"))
         srnatarget.run_srna_target_prediction(
-                self._args.vienna_path, self._args.annotation_path,
+                self._args.Vienna_folder, self._args.annotation_path,
                 self._args.fasta_path, self._args.sRNA_path,
                 self._args.query_sRNA, self._args.program, 
                 self._args.interaction_length, self._args.window_size_target, 
@@ -335,13 +347,10 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("ppi_network"))
         ppi = PPI_network(self._paths.ppi_output_folder)
         ppi.retrieve_ppi_network(
-            self._args.bin_path, self._args.ptt_path,
-            self._args.proteinID_strains,
-            self._args.without_strain_pubmed,
-            self._args.species_STRING,
-            self._args.score,
-            self._paths.ppi_output_folder,
-            self._args.node_size)
+            self._args.ptt_path, self._args.proteinID_strains,
+            self._args.without_strain_pubmed, self._args.species_STRING,
+            self._args.score, self._paths.ppi_output_folder,
+            self._args.node_size, self._args.query)
 
     def sublocal(self):
         """Subcellular Localization prediction"""
@@ -366,9 +375,9 @@ class Controller(object):
             self._args.fuzzy)
     def screen(self):
         """generate screenshot"""
-        screen = Screen()
-        screen.gen_screenshot(
-            self._args.bin_path, self._args.main_gff,
+        screen = Screen(self._args.output_folder, self._args.fasta)
+        screen.screenshot(
+            self._args.main_gff,
             self._args.side_gffs, self._args.fasta,
             self._args.frag_wig_folder, self._args.tex_wig_folder,
             self._args.height, self._args.tex_libs,

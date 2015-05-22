@@ -3,33 +3,26 @@ from Bio import SeqIO
 import os	
 import sys
 from subprocess import call
+from annogesiclib.gen_svg import gen_svg
+from annogesiclib.helper import Helper
+
 
 class Color_PNG(object):
 
-    def generate_color_png(self, bin_path, track_num, file_type, out_folder):
-        imagemagick_path = os.environ["IMAGEMAGICK_HOME"]
-        out_folder = out_folder + "/" + file_type + "/screenshots/"
-        if (file_type != "TSS") and \
-           (file_type != "processing_site"):
-            print("Error: " + file_type + " is not a proper type.")
-            print("Please assign TSS or processing_site.")
-            sys.exit()
+    def generate_color_png(self, track_num, out_folder, imagemagick_path):
+        out_folder = os.path.join(out_folder, "screenshots")
         for strain in os.listdir(out_folder):
-            if os.path.isdir(out_folder + strain):
+            if os.path.isdir(os.path.join(out_folder, strain)):
                 for strand in ["forward", "reverse"]:
-                    print("Running for " + strain + "_" + strand)
-                    out_path = out_folder + strain + "/" + strand + "/"
-                    #########################################
-                    # convert original png file to svg file #
-                    # and give color on it.                 #
-                    #########################################
-                    for screenshot in os.listdir(out_path):
+                    print("Running for {0}_{1}".format(strain, strand))
+                    out_path = os.path.join(out_folder, strain, strand)
+                    for screenshot in os.listdir(out_path):  # convert original png file to svg file and give color on it.
                         if screenshot.endswith(".png"):
-                            print("convert " + screenshot + " to svg and painting tracks now...")
+                            print("convert {0} to svg and painting tracks now...".format(screenshot))
                             svg_file = screenshot.replace(".png", ".svg")
-                            call([imagemagick_path + "/convert", out_path + screenshot,
-                                  out_path + svg_file])
-                            with open(out_path + svg_file, "r") as f_h:
+                            call([imagemagick_path, os.path.join(out_path, screenshot),
+                                  os.path.join(out_path, svg_file)])
+                            with open(os.path.join(out_path, svg_file), "r") as f_h:
                                 for line in f_h:
                                     line = line.strip()
                                     if line.startswith("<svg"):
@@ -37,20 +30,14 @@ class Color_PNG(object):
                                         height = line[-1].split("=")[-1][1:-2]
                                         width = line[1].split("=")[-1][1:-1]
                                         break
-                            call(["python", bin_path + "/gen_svg.py",
-                                  "-i", out_path + screenshot,
-                                  "-t", str(track_num),
-                                  "-he", str(height),
-                                  "-w", str(width)])
-                    ########################################
-                    # convert to png file again            #
-                    ########################################
-                    for screenshot in os.listdir(out_path):
+                            gen_svg(os.path.join(out_path, screenshot), 
+                                    track_num, height, width)
+                    for screenshot in os.listdir(out_path): # convert to png file again
                         if screenshot.endswith(".svg"):
-                            print("convert " + screenshot + " to png now...")
+                            print("convert {0} to png now...".format(screenshot))
                             png_file = screenshot.replace(".svg", ".png")
-                            print(out_path + png_file)
-                            call([imagemagick_path + "/convert",
-                                  "-background", "none", out_path + screenshot,
-                                  out_path + png_file])
-                    os.system("rm " + out_path + "*.svg")
+                            print(os.path.join(out_path, png_file))
+                            call([imagemagick_path, "-background", "none", 
+                                  os.path.join(out_path, screenshot),
+                                  os.path.join(out_path, png_file)])
+                    Helper().remove_all_content(out_path, ".svg", "file")

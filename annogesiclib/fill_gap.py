@@ -24,10 +24,10 @@ def uni(tas, genes, out):
         check = 0
 
 def overlap(tas, genes, print_list, out):
-    start_tmp=0
-    stop_tmp=0
-    printed = 0
-    check=0
+    start_tmp = 0
+    stop_tmp = 0
+    printed = False
+    check = False
     combine = False
     for gene in genes:
         start_tmp = 0
@@ -38,9 +38,9 @@ def overlap(tas, genes, print_list, out):
                 if ((ta.start < gene.start) and (ta.end > gene.start) and (ta.end < gene.end)) or \
                    ((ta.start > gene.start) and (ta.end < gene.end)) or \
                    ((ta.start > gene.start) and (ta.start < gene.end) and (ta.end > gene.end)):
-                    check = 1
+                    check = True
                     if ta in print_list:
-                        printed = 1
+                        printed = True
                     else:
                         print_list.append(ta)
                     tmp_ta = ta
@@ -52,16 +52,16 @@ def overlap(tas, genes, print_list, out):
                         if stop_tmp < ta.end:
                             stop_tmp = ta.end
                 if (ta.start > gene.end) and (start_tmp != 0):
-                    check = 0
+                    check = False
                     if combine or (printed != 1):
                         out.write("\t".join([str(field) for field in [ \
                                   ta.seq_id, ta.source, ta.feature, start_tmp, stop_tmp, \
                                   ta.score, ta.strand, ta.phase, ta.attribute_string]]) + "\n")
                     combine = False
-                    printed = 0
+                    printed = False
                     break
-        if (start_tmp != 0) and (check != 0):
-            if combine or (printed != True):
+        if (start_tmp != 0) and (check):
+            if combine or (not printed):
                 out.write('\t'.join([str(field) for field in [ \
                           ta.seq_id, ta.source, ta.feature, start_tmp, stop_tmp, \
                           ta.score, ta.strand, ta.phase, ta.attribute_string]]) + "\n")
@@ -75,7 +75,10 @@ def fill_gap(gff_file, ta_file, type_, output):
         tas.append(entry)
     ta_f.close()
     for entry in Gff3Parser().entries(gff_f):
-        if entry.feature == "gene":
+        if (entry.feature == "gene") or \
+           (entry.feature == "CDS") or \
+           (entry.feature == "rRNA") or \
+           (entry.feature == "tRNA"):
             genes.append(entry)
     gff_f.close()
     out = open(output, "w")

@@ -103,7 +103,7 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
                                    str(rbs["start"]), str(rbs["end"])])
                 if len(info) != 0:
                     out.write(info + "\n")
-                if same is False:
+                if not same:
                     if (len(extras) == 0):
                         extras.append(rbs)
                     else:
@@ -119,7 +119,7 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
                                         extra["end"] = rbs["end"]
                                 else:
                                     extras.append(rbs)
-                        if check is not True:
+                        if not check:
                             extras.append(rbs)
 
 def reextract_rbs(align_file, first_file, output_file):
@@ -157,6 +157,6 @@ def reextract_rbs(align_file, first_file, output_file):
             for extra in extras:
                 out.write("\t".join([extra["seq_name"], extra["name"], str(extra["e"]), str(extra["start"]), str(extra["end"])]) + "\n")
     for first in firsts:
-        if first["print"] is False:
+        if not first["print"]:
             out.write("\t".join(["|".join([first["seq_name"], str(first["pre_start"]), str(first["pre_end"])]), 
                                  first["acc"], str(first["e"]), str(first["start"]), str(first["end"])]) + "\n")

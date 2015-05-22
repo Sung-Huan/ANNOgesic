@@ -11,21 +11,22 @@ from annogesiclib.TSS_upstream import upstream, del_repeat_fasta
 
 class MEME(object):
 
-    def __init__(self, tsss, gffs):
+    def __init__(self, tsss, gffs, fastas):
         self.multiparser = Multiparser()
         self.helper = Helper()
         self.tss_path = os.path.join(tsss, "tmp")
         self.gff_path = os.path.join(gffs, "tmp")
         self.tmp_folder = os.path.join(os.getcwd(), "tmp")
-        self.pri = os.path.join(self.tmp_folder, "primary.fa")
-        self.sec = os.path.join(self.tmp_folder, "secondary.fa")
-        self.inter = os.path.join(self.tmp_folder, "internal.fa")
-        self.anti = os.path.join(self.tmp_folder, "antisense.fa")
-        self.orph = os.path.join(self.tmp_folder, "orphan.fa")
-        self.all_no_orph = "without_orphan.fa"
-        self.tmp_fa = os.path.join(self.tmp_folder, "tmp.fa")
-        self.all_type = "all_type.fa"
-        self.tmp_all = os.path.join(self.tmp_folder, "tmp_all.py")
+        self.fastas = {"pri": os.path.join(self.tmp_folder, "primary.fa"),
+                       "sec": os.path.join(self.tmp_folder, "secondary.fa"),
+                       "inter": os.path.join(self.tmp_folder, "internal.fa"),
+                       "anti": os.path.join(self.tmp_folder, "antisense.fa"),
+                       "orph": os.path.join(self.tmp_folder, "orphan.fa"),
+                       "all_no_orph": "without_orphan.fa", "all": "all_type.fa",
+                       "tmp_fa": os.path.join(self.tmp_folder, "tmp.fa"),
+                       "tmp_all": os.path.join(self.tmp_folder, "tmp_all.fa")}
+        self.all_fasta = os.path.join(fastas, "allfasta.fa")
+        self.all_tss = os.path.join(self.tss_path, "allfasta_TSS.gff")
 
     def _run_normal_motif(self, meme_path, input_path, out_path,
                           filename, width, parallel, num_motif, fasta):
@@ -73,28 +74,28 @@ class MEME(object):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
     def _move_and_merge_fasta(self, input_path, prefix):
-        all_type = os.path.join(self.tmp_folder, self.all_type)
-        all_no_orph = os.path.join(self.tmp_folder, self.all_no_orph)
-        if self.all_type in os.listdir(self.tmp_folder):
+        all_type = os.path.join(self.tmp_folder, self.fastas["all"])
+        all_no_orph = os.path.join(self.tmp_folder, self.fastas["all_no_orph"])
+        if self.fastas["all"] in os.listdir(self.tmp_folder):
             os.remove(all_type)
-        if self.all_no_orph in os.listdir(self.tmp_folder):
+        if self.fastas["all_no_orph"] in os.listdir(self.tmp_folder):
             os.remove(all_no_orph)
-        shutil.copyfile(self.pri, self.tmp_fa)
-        self.helper.merge_file(self.sec, self.tmp_fa)
-        self.helper.merge_file(self.inter, self.tmp_fa)
-        self.helper.merge_file(self.anti, self.tmp_fa)
-        shutil.copyfile(self.tmp_fa, self.tmp_all)
-        self.helper.merge_file(self.orph, self.tmp_all)
-        del_repeat_fasta(self.tmp_fa, all_no_orph)
-        del_repeat_fasta(self.tmp_all, all_type)
-        os.remove(self.tmp_fa)
-        os.remove(self.tmp_all)
+        shutil.copyfile(self.fastas["pri"], self.fastas["tmp_fa"])
+        self.helper.merge_file(self.fastas["sec"], self.fastas["tmp_fa"])
+        self.helper.merge_file(self.fastas["inter"], self.fastas["tmp_fa"])
+        self.helper.merge_file(self.fastas["anti"], self.fastas["tmp_fa"])
+        shutil.copyfile(self.fastas["tmp_fa"], self.fastas["tmp_all"])
+        self.helper.merge_file(self.fastas["orph"], self.fastas["tmp_all"])
+        del_repeat_fasta(self.fastas["tmp_fa"], all_no_orph)
+        del_repeat_fasta(self.fastas["tmp_all"], all_type)
+        os.remove(self.fastas["tmp_fa"])
+        os.remove(self.fastas["tmp_all"])
         out_prefix = os.path.join(input_path, prefix)
-        os.rename(self.pri, "_".join([out_prefix, "allstrain_primary.fa"]))
-        os.rename(self.sec, "_".join([out_prefix, "allstrain_secondary.fa"]))
-        os.rename(self.inter, "_".join([out_prefix, "allstrain_internal.fa"]))
-        os.rename(self.anti, "_".join([out_prefix, "allstrain_antisense.fa"]))
-        os.rename(self.orph, "_".join([out_prefix, "allstrain_orphan.fa"]))
+        os.rename(self.fastas["pri"], "_".join([out_prefix, "allstrain_primary.fa"]))
+        os.rename(self.fastas["sec"], "_".join([out_prefix, "allstrain_secondary.fa"]))
+        os.rename(self.fastas["inter"], "_".join([out_prefix, "allstrain_internal.fa"]))
+        os.rename(self.fastas["anti"], "_".join([out_prefix, "allstrain_antisense.fa"]))
+        os.rename(self.fastas["orph"], "_".join([out_prefix, "allstrain_orphan.fa"]))
         os.rename(all_type, "_".join([out_prefix, "allstrain_all_types.fa"]))
         os.rename(all_no_orph, "_".join([out_prefix, "allstrain_without_orphan.fa"]))
 
@@ -142,10 +143,44 @@ class MEME(object):
                         self._run_normal_motif(meme_path, input_path, out_path,
                                         filename, width, parallel, num_motif, fasta)
 
+    def _combine_file(self, source, gffs, fastas, wigs, input_libs, input_folder,
+                      output_folder, prefixs):
+        if source:
+            for tss in os.listdir(self.tss_path):
+                if tss.endswith("_TSS.gff"):
+                    self.helper.merge_file(os.path.join(self.tss_path, tss), self.all_tss)
+            for fasta in os.listdir(fastas):
+                if (fasta.endswith(".fa")) or \
+                   (fasta.endswith(".fna")) or \
+                   (fasta.endswith(".fasta")):
+                    self.helper.merge_file(os.path.join(fastas, fasta), self.all_fasta)
+        else:
+            for tss in os.listdir(os.path.join(output_folder, "TSS_class")):
+                if tss.endswith("_TSS.gff"):
+                    self.helper.merge_file(os.path.join(self.tss_path, tss), self.all_tss)
+            for fasta in os.listdir(fastas):
+                if (fasta.endswith(".fa")) or \
+                   (fasta.endswith(".fna")) or \
+                   (fasta.endswith(".fasta")):
+                    self.helper.merge_file(os.path.join(fastas, fasta), fasta_file)
+        print("generating fasta file of all fasta files")
+        prefixs.append("allfasta")
+        input_path = os.path.join(input_folder, "allfasta")
+        self.helper.check_make_folder(os.path.join(output_folder, "allfasta"))
+        self.helper.check_make_folder(os.path.join(input_folder, "allfasta"))
+        upstream(self.all_tss, self.all_fasta, gffs, True, wigs, input_libs, None)
+        self._move_and_merge_fasta(input_path, "allfasta")
+
     def run_meme(self, meme_path, input_folder, output_folder, input_libs, tsss,
-                 fastas, num_motif, widths, parallel, source, wigs, gffs):
+                 fastas, num_motif, widths, parallel, source, wigs, gffs, combine):
+        if "allfasta.fa" in os.listdir(fastas):
+            os.remove(self.all_fasta)
+            if "allfasta.fa_folder" in os.listdir(fastas):
+                shutil.rmtree(os.path.join(fastas, "allfasta.fa_folder"))
         self.multiparser._parser_fasta(fastas)
         self.multiparser._parser_gff(tsss, "TSS")
+        if "allfasta_TSS.gff" in os.listdir(self.tss_path):
+            os.remove(self.all_tss)
 #        self._check_gff(gffs)
 #        self._check_gff(tsss)
         self.multiparser._combine_gff(fastas, self.tss_path, "fasta", "TSS")    
@@ -160,12 +195,12 @@ class MEME(object):
             self.helper.check_make_folder(os.path.join(input_folder, prefix))
             input_path = os.path.join(input_folder, prefix)
             fasta = self._get_fasta_file(fastas, prefix)
-            if source is True:
+            if source:
                 print("generating fasta file of {0}".format(prefix))
                 upstream(os.path.join(self.tss_path, tss), os.path.join(fastas, fasta), 
                          gffs, source, wigs, input_libs, None)
             else:
-                if (gffs is False) or (wigs is False) or (input_libs is False):
+                if (gffs is None) or (wigs is None) or (input_libs is None):
                     print("Error:please assign proper annotation, tex +/- wig folder and tex treated libs!!!")
                     sys.exit()
                 self.multiparser._parser_gff(gffs, None)
@@ -173,13 +208,15 @@ class MEME(object):
                 if "TSS_class" not in os.listdir(output_folder):
                     os.mkdir(os.path.join(output_folder, "TSS_class"))
                 print("classifying TSS and extracting fasta of {0}".format(prefix))
-                print(os.path.join(self.tss_path, tss))
                 upstream(os.path.join(self.tss_path, tss), os.path.join(fastas, fasta),
                          os.path.join(self.gff_path, prefix + ".gff"), source, wigs, 
                          input_libs, os.path.join(output_folder, "TSS_class", 
                                                   "_".join([prefix, "TSS.gff"])))
             self._move_and_merge_fasta(input_path, prefix)
             self._split_fasta_by_strain(input_path)
+        if combine:
+            self._combine_file(source, gffs, fastas, wigs, input_libs, input_folder,
+                               output_folder, prefixs)
         self._run_program(prefixs, input_folder, output_folder, widths, 
                      meme_path, parallel, num_motif)
         self.helper.remove_tmp(fastas)

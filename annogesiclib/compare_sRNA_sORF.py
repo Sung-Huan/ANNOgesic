@@ -15,22 +15,26 @@ def print_file(datas, out, type_, feature):
             ["=".join(items) for items in data.attributes.items()])
         out.write("\t".join([data.info_without_attributes, data.attribute_string]) + "\n")
 
+def del_attributes(feature, entry):
+    attributes = {}
+    for key, value in entry.attributes.items():
+        if feature not in key:
+            attributes[key] = value
+    return attributes
+
 def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
     sorfs = []
     srnas = []
-    out_r = open(args.sRNA_out, "w")
-    out_o = open(args.sORF_out, "w")
-    gff_parser = gff3.Gff3Parser()
+    out_r = open(sRNA_out, "w")
+    out_o = open(sORF_out, "w")
     out_r.write("##gff-version 3\n")
     out_o.write("##gff-version 3\n")
-    for entry in gff_parser.entries(open(args.sRNA_file)):
-        if "sORF" in entry.attributes.keys():
-            del entry.attributes["sORF"]
+    for entry in Gff3Parser().entries(open(sRNA_file)):
+        entry.attributes = del_attributes("sORF", entry)
         srnas.append(entry)
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))    
-    for entry in gff_parser.entries(open(args.sORF_file)):
-        if "sRNA" in entry.attributes.keys():
-            del entry.attributes["sRNA"]
+    for entry in Gff3Parser().entries(open(sORF_file)):
+        entry.attributes = del_attributes("sRNA", entry)
         sorfs.append(entry)
     sorfs = sorted(sorfs, key=lambda k: (k.seq_id, k.start))
     for srna in srnas:
@@ -39,6 +43,7 @@ def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
                (srna.strand == sorf.strand):
                 if (srna.start <= sorf.start) and \
                    (srna.end >= sorf.end):
+                    print(sorf.attributes)
                     if "sORF" not in srna.attributes.keys():
                         srna.attributes["sORF"] = []
                     srna.attributes["sORF"].append("".join([sorf.attributes["ID"], ":",

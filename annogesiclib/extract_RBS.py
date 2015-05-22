@@ -69,7 +69,7 @@ def extract_seq(cdss, inters, seq):
     first = True
     helper = Helper()
     for cds in cdss:
-        if first is False:
+        if not first:
             if cds.seq_id != pre_cds.seq_id:
                 first = True
                 inter = helper.extract_gene(seq[cds.seq_id], 1, cds.start + 10, "+")

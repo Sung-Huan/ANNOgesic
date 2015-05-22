@@ -55,7 +55,7 @@ def get_inter(features, inters, seq, file_type):
             if feature1.strand == "-":
                 inters.append(import_data("terminal", feature1, 1, 
                                           feature1.start, file_type))
-            if first is not True:
+            if not first:
                 if pre_feature1.strand == "+":
                     inters.append(import_data(pre_feature1, "terminal", pre_feature1.start, 
                                               len(seq[pre_feature1.seq_id]), file_type))
@@ -124,13 +124,13 @@ def merge_inter(inters1, inters2):
         for inter2 in inters2:
             if (inter1["strain"] == inter2["strain"]):
                 id_ = get_overlap_inters(inter1, inter2, merges, id_)
-        if inter1["print"] is not True:
+        if not inter1["print"]:
             merges.append(import_merge(id_, inter1["strain"], inter1["start"], 
                           inter1["end"], inter1["parent_p"], inter1["parent_m"]))
             inter1["print"] = True
             id_ += 1
     for inter2 in inters2:
-        if inter2["print"] is not True:
+        if not inter2["print"]:
             merges.append(import_merge(id_, inter2["strain"], inter2["start"], 
                           inter2["end"], inter2["parent_p"], inter2["parent_m"]))
             inter2["print"] = True
@@ -151,7 +151,7 @@ def detect_confliction(gc, cdss, seq):
                    (cds.strand == "+"):
                     tmp_start = cds.end - 30
                     overlap = True
-            if overlap == False:
+            if not overlap:
                 tmp_start = gc["start"] - 80
         else:
             tmp_start = 1
@@ -199,7 +199,8 @@ def read_file(seq_file, seq, tran_file, tas, merges, gff_file, cdss):
     for entry in Gff3Parser().entries(open(gff_file)):
         if (entry.feature == "CDS") or \
            (entry.feature == "tRNA") or \
-           (entry.feature == "rRNA"):
+           (entry.feature == "rRNA") or \
+           (entry.feature == "sRNA"):
             cdss.append(entry)
             merges.append(entry)
 
@@ -209,15 +210,15 @@ def intergenic_seq(seq_file, tran_file, gff_file, out_file):
     cdss = []
     merges = []
     inter_tas = []
-    inter_cdss = []
+    inter_genes = []
     inter_merges = []
     out = open(out_file, "w")
     read_file(seq_file, seq, tran_file, tas, merges, gff_file, cdss)
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
     get_inter(tas, inter_tas, seq, "tran")
-    get_inter(cdss, inter_cdss, seq, "cds")
-    tmp_merges = merge_inter(inter_tas, inter_cdss)
+    get_inter(cdss, inter_genes, seq, "gene")
+    tmp_merges = merge_inter(inter_tas, inter_genes)
     merges = merge_inter(tmp_merges, inter_merges)
     first = True
     num = 0

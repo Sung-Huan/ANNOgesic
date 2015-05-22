@@ -57,7 +57,7 @@ class Sub_Local(object):
             sys.exit()
 
     def _extract_result(self, merge, tmp_psortb_path, prefix, gff_file):
-        if merge is True:
+        if merge:
             print("Merge to gff...")
             extract_psortb(os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
                            os.path.join(tmp_psortb_path, "_".join([prefix, self.endfix_table])),

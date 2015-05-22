@@ -1,6 +1,7 @@
 import os
 import sys
 from annogesiclib.helper import Helper
+from annogesiclib.gff3 import Gff3Parser
 
 def print_fasta(entry, seq, out):
     try:
@@ -14,7 +15,7 @@ def print_fasta(entry, seq, out):
         out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
                   entry.feature, entry.start, entry.end, entry.strand, seq))
 
-def read_file(seq_file, fastas, gff_file, cdss_f, cdss_r, genes):
+def read_file(seq_file, gff_file, cdss_f, cdss_r, genes):
     fastas = []
     with open (seq_file, "r") as seq_f:
         for line in seq_f:
@@ -33,15 +34,13 @@ def read_file(seq_file, fastas, gff_file, cdss_f, cdss_r, genes):
             genes.append(entry)
     return fasta
 
-def deal_cds_forward(cdss_f, target_folder, fasta, out, genes):
+def deal_cds_forward(cdss_f, target_folder, fasta, genes):
     pre_id = ""
-    first = True
     for cds in cdss_f:
         if cds.seq_id != pre_id:
             out = open(os.path.join(target_folder, 
-                       "_".join([entry.seq_id, "target.fa"])), "w")
+                       "_".join([cds.seq_id, "target.fa"])), "w")
             pre_id = cds.seq_id
-        first = False
         if (cds.start > 350):
             start = cds.start - 350
         else:
@@ -62,11 +61,12 @@ def deal_cds_forward(cdss_f, target_folder, fasta, out, genes):
                     break
         print_fasta(target, seq, out)
 
-def deal_cds_forward(cdss_r, target_folder, fasta, out, genes):
-    for cds in sort_cdss_r:
+def deal_cds_reverse(cdss_r, target_folder, fasta, genes):
+    pre_id = ""
+    for cds in cdss_r:
         if cds.seq_id != pre_id:
             out = open(os.path.join(target_folder, 
-                       "_".join([entry.seq_id, "target.fa"]), "a"))
+                       "_".join([cds.seq_id, "target.fa"])), "a")
             pre_id = cds.seq_id
         if (len(fasta) - cds.end > 350):
             end = cds.end + 350
@@ -92,8 +92,8 @@ def potential_target(gff_file, seq_file, target_folder):
     cdss_f = []
     cdss_r = []
     genes = []
-    fasta = read_file(seq_file, fastas, gff_file, cdss_f, cdss_r, genes)
+    fasta = read_file(seq_file, gff_file, cdss_f, cdss_r, genes)
     sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start))
-    deal_cds_forward(sort_cdss_f, target_folder, fasta, out, genes)
+    deal_cds_forward(sort_cdss_f, target_folder, fasta, genes)
     sort_cdss_r = sorted(cdss_r, reverse=True, key=lambda k: (k.seq_id, k.start))
-    deal_cds_reverse(sort_cdss_r, target_folder, fasta, out, genes)
+    deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes)

@@ -47,13 +47,13 @@ class Helper(object):
                           os.path.join(tar_folder, file_))
 
     def remove_tmp(self, folder):
-        if folder is not False:
+        if folder:
             if os.path.isdir(os.path.join(folder, "tmp")):
                 shutil.rmtree(os.path.join(folder, "tmp"))
             self.remove_all_content(folder, "_folder", "dir")
 
     def remove_wigs(self, wigs):
-        if wigs is not False:
+        if wigs:
             folder = wigs.split("/")
             folder = "/".join(folder[:-1])
             if os.path.isdir(os.path.join(folder, "merge_wigs")):
@@ -82,7 +82,7 @@ class Helper(object):
             detect = False
         else:
             print("Warning: no proper file - " + prefix + feature)
-            sys.exit()
+            return None
 
     def check_make_folder(self, folder):
         path = "/".join(folder.split("/")[:-1])
@@ -99,6 +99,7 @@ class Helper(object):
         g_f.close()
         sort_gffs = sorted(gffs, key = lambda x: (x.seq_id, x.start))
         out = open(out_file, "w")
+        out.write("##gff-version 3\n")
         for gff in sort_gffs:
             out.write("\t".join([str(field) for field in [
                         gff.seq_id, gff.source, gff.feature, gff.start,
@@ -118,13 +119,13 @@ class Helper(object):
     def _reverse_seq(self, rev_seq):
         fasta=""
         for base in rev_seq[::-1]:
-            if base == 'A':
+            if base.upper() == 'A':
                 fasta = fasta + 'T'
-            elif base == 'T':
+            elif base.upper() == 'T':
                 fasta = fasta + 'A'
-            elif base == 'C':
+            elif base.upper() == 'C':
                 fasta = fasta + 'G'
-            elif base == 'G':
+            elif base.upper() == 'G':
                 fasta = fasta + 'C'
         return fasta
 

@@ -20,7 +20,7 @@ class Operon_detection(object):
         self.utr5_path = os.path.join(utr5s, "tmp")
         self.utr3_path = os.path.join(utr3s, "tmp")
         self.table_path = os.path.join(output_folder, "tables")
-        if terms is not False:
+        if terms is not None:
 #            self._check_gff(terms, "term")
             self.term_path = os.path.join(terms, "tmp")
         else:
@@ -62,7 +62,7 @@ class Operon_detection(object):
         self.multiparser._combine_gff(gffs, self.utr5_path, None, "5UTR")
         self.multiparser._parser_gff(utr3s, "3UTR")
         self.multiparser._combine_gff(gffs, self.utr3_path, None, "3UTR")
-        if terms is not False:
+        if terms is not None:
 #            self._check_gff(terms, "term")
             self.multiparser._parser_gff(terms, "term")
             self.multiparser._combine_gff(gffs, self.term_path, None, "term")
@@ -100,7 +100,7 @@ class Operon_detection(object):
             if gff.endswith(".gff"):
                 prefixs.append(gff.replace(".gff", ""))
         self._detect_operon(prefixs, gffs, tss_fuzzy, term_fuzzy, length)
-        if stat is not False:
+        if stat:
             self._stat(self.table_path, stat_folder)
-        if combine_gff is not False:
+        if combine_gff:
             self._combine_gff(prefixs, output_folder, gffs, tss_fuzzy, term_fuzzy)

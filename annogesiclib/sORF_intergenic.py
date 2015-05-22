@@ -21,24 +21,23 @@ def get_type(inter, gffs):
                     utr3 = True
                 if inter["start"] - 1 == gff.end:
                     utr5 = True
-    if (utr3 is True) and (utr5 is True):
+    if utr3 and utr5:
         inter["source"] = "interCDS"
-    elif utr3 is True:
+    elif utr3:
         inter["source"] = "3utr"
-    elif utr5 is True:
+    elif utr5:
         inter["source"] = "5utr"
     else:
         inter["source"] = "intergenic"
 
 def read_gff(gff_file, tran_file, gffs, trans):
-    gff_parser = gff3.Gff3Parser()
-    for entry in gff_parser.entries(open(gff_file)):
+    for entry in Gff3Parser().entries(open(gff_file)):
         if (entry.feature == "CDS") or \
            (entry.feature == "rRNA") or \
            (entry.feature == "tRNA") or \
            (entry.feature == "sRNA"):
             gffs.append(entry)
-    for entry in gff_parser.entries(open(tran_file)):
+    for entry in Gff3Parser().entries(open(tran_file)):
         trans.append(entry)
 
 def compare_tran_cds(trans, gffs, inters):
@@ -65,14 +64,14 @@ def compare_tran_cds(trans, gffs, inters):
                          (gff.end < pos["end"]):
                         poss.append({"start": gff.end + 1, "end": pos["end"]})
                         pos["end"] = gff.start - 1
-            if exclude is False:
+            if not exclude:
                 inters.append({"strain": tran.seq_id, "strand": tran.strand,
                                "start": pos["start"], "end": pos["end"]})
 
 def get_intergenic(gff_file, tran_file, out_file, utr_detect):
     trans = []
     gffs = []
-    readd_gff(gff_file, tran_file, gffs, trans)
+    read_gff(gff_file, tran_file, gffs, trans)
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     trans = sorted(trans, key=lambda k: (k.seq_id, k.start))
     inters = []
@@ -84,7 +83,7 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect):
         name = '%0*d' % (5, num)
         if inter["source"] != "intergenic":
             source = "UTR_derived"
-            if args.utr_detect:
+            if utr_detect:
                 attribute_string = ";".join(
                        ["=".join(items) for items in (["ID", "sorf" + str(num)], \
                        ["Name", "sORF_" + name], ["UTR_type", inter["source"]])])

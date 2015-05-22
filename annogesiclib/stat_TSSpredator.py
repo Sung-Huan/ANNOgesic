@@ -35,8 +35,9 @@ def plot(pri, sec, anti, inter, orph, total, total_more, name, feature_name, fil
     plt.savefig(file_type + "_class_" + name + ".png")
     
 
-def stat(tsss, strain, feature_name, out_stat, file_type):
+def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
     tss_type = {"Primary": [], "Secondary": [], "Internal": [], "Antisense": [], "Orphan": []}
+    tss_libs = {}
     num_tss = 0
     num_tss_more = 0
     for entry in tsss:
@@ -51,6 +52,13 @@ def stat(tsss, strain, feature_name, out_stat, file_type):
             tss_type["Internal"].append(num_tss)
         if entry.attributes["type"].find("Orphan") != -1: 
             tss_type["Orphan"].append(num_tss)
+        if "libs" in entry.attributes.keys():
+            libs = entry.attributes["libs"].split("&")
+            for lib in libs:
+                if lib not in tss_libs.keys():
+                    tss_libs[lib] = 1
+                else:
+                    tss_libs[lib] += 1
     for key in tss_type.keys():
         num_tss_more = num_tss_more + len(tss_type[key])
     plot(len(tss_type["Primary"]), len(tss_type["Secondary"]), 
@@ -58,6 +66,11 @@ def stat(tsss, strain, feature_name, out_stat, file_type):
          len(tss_type["Orphan"]), num_tss, num_tss_more, 
          strain, feature_name, file_type)
     out_stat.write(strain + ":\n")
+    out_lib.write(strain + ":\n")
+    out_lib.write("total TSS are {0}\n".format(num_tss))
+    for tss_lib, lib_num in tss_libs.items():
+        out_lib.write(": ".join([tss_lib, str(lib_num)]))
+        out_lib.write(" ({0})\n".format(lib_num / num_tss))
     out_stat.write("total number of {0} (if one {1} belong to two class, it count two times) = {2}\n".format(
                    feature_name, feature_name, num_tss_more))
     out_stat.write("total number of unique {0} (if one {1} belong to two class, it count only one time) = {2}\n".format(
@@ -71,7 +84,7 @@ def stat(tsss, strain, feature_name, out_stat, file_type):
                            '-'.join(tss), len(union), float(len(union))/float(num_tss)))
     out_stat.write("\n")
 
-def stat_tsspredator(tss_file, file_type, stat_file):
+def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
     if file_type == "processing":
         feature_name = "processing site"
     else:
@@ -84,6 +97,7 @@ def stat_tsspredator(tss_file, file_type, stat_file):
     tsss_strain = {}
     pre_seq_id = ""
     out_stat = open(stat_file, "w")
+    out_lib = open(lib_file, "w")
     gff_parser = Gff3Parser()
     for entry in gff_parser.entries(open(tss_file)):    
         if entry.seq_id != pre_seq_id:
@@ -93,6 +107,6 @@ def stat_tsspredator(tss_file, file_type, stat_file):
         tsss.append(entry)
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
     if len(tsss_strain) > 1:
-        stat(tsss, "All_strains", feature_name, out_stat, file_type)
+        stat(tsss, "All_strains", feature_name, out_stat, file_type, out_lib)
     for strain in tsss_strain.keys():
-        stat(tsss_strain[strain], strain, feature_name, out_stat, file_type)
+        stat(tsss_strain[strain], strain, feature_name, out_stat, file_type, out_lib)

@@ -19,15 +19,15 @@ def create_dict(nums, strain, utr_detect):
 
 def plus_data(nums, strain, sorf_types, features, utr_detect):
     for sorf_type in sorf_types:
-        if ((utr_detect is False) and \
+        if ((not utr_detect) and \
            (sorf_type != "intergenic")) or \
-           (utr_detect is True):
+           (utr_detect):
             for feature in features:
                 nums[strain][sorf_type][feature] += 1
 
-def print_stat(nums, strain, out):
+def print_stat(nums, strain, out, utr_detect):
     out.write(strain + ":\n")
-    if args.utr_detect:
+    if utr_detect:
         out.write("\ttotal sORF in this strain are {}0\n".format(nums[strain]["all"]["all"]))
     for type_, features in nums[strain].items():
         out.write("\ttotal sORF of {0} sORF candidates are{1}".format(type_, nums[strain][type_]["all"]))
@@ -85,7 +85,7 @@ def stat(sORF_gff, stat_file, utr_detect):
     if len(nums) <= 2:
         for strain, types in nums.items():
             if strain != "total":
-                print_stat(nums, strain, out)
+                print_stat(nums, strain, out, utr_detect)
     else:
         for strain, types in nums.items():
-            print_stat(nums, strain, out)
+            print_stat(nums, strain, out, utr_detect)

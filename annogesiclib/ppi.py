@@ -21,12 +21,11 @@ class PPI_network(object):
         self.fig = os.path.join(out_folder, "figures")
         self.with_strain = "with_strain"
         self.without_strain = "without_strain"
-        self.tmp_log = "tmp.log"
-        self.tmp_action = "tmp_action.log"
-        self.tmp_pubmed = "tmp_pubmed.log"
-        self.tmp_specific = os.path.join(out_folder, "tmp_specific")
-        self.tmp_nospecific = os.path.join(out_folder, "tmp_nospecific")
-        self.tmp_wget_action = os.path.join(out_folder, "tmp_action")
+        self.tmp_files = {"log": "tmp_log", "action": "tmp_action.log",
+                          "pubmed": "tmp_pubmed.log", 
+                          "specific": os.path.join(out_folder, "tmp_specific"),
+                          "nospecific": os.path.join(out_folder, "tmp_nospecific"),
+                          "wget_action": os.path.join(out_folder, "tmp_action")}
 
     def _make_folder_no_exist(self, path, folder):
         if folder not in os.listdir(path):
@@ -36,35 +35,36 @@ class PPI_network(object):
         os.mkdir(os.path.join(path, strain))
         os.mkdir(os.path.join(path, strain, ptt))
 
-    def _wget_id(self, genes, strain_id, files):
-        detect_id = False
-        for gene in genes:
-            if gene["strain"] == strain_id["ptt"]:
-                print("Retrieving STRING ID for {0} of {1} -- {2}".format(
-                       gene["locus_tag"], strain_id["string"], strain_id["file"]))
-                id_source = "http://string-db.org/api/tsv/resolve?identifier={0}&species={1}".format(
-                             gene["locus_tag"], strain_id["string"])
-                call(["wget", id_source,
-                      "-O", os.path.join(files["id_list"], gene["locus_tag"])],
-                      stderr=files["id_log"])
-                time.sleep(3)
-                detect_id = True
+    def _wget_id(self, strain, locus, strain_id, files):
+        if strain == strain_id["ptt"]:
+            print("Retrieving STRING ID for {0} of {1} -- {2}".format(
+                   locus, strain_id["string"], strain_id["file"]))
+            id_source = "http://string-db.org/api/tsv/resolve?identifier={0}&species={1}".format(
+                         locus, strain_id["string"])
+            call(["wget", id_source,
+                  "-O", os.path.join(files["id_list"], locus)],
+                  stderr=files["id_log"])
+            time.sleep(3)
+            detect_id = True
         return detect_id
 
     def _retrieve_id(self, strain_id, query_id, genes, files):
+        detect_id = False
         if strain_id["protein"] == "all":
-            detect_id = self._wget_id(genes, strain_id, files)
+            for gene in genes:
+                detect_id = self._wget_id(gene["strain"], gene["locus_tag"], strain_id, files)
         else:
-            detect_id = self._wget_id(genes, strain_id, files)
-            if detect_id is False:
+            for gene in genes:
+                detect_id = self._wget_id(gene["strain"], gene["locus_tag"], strain_id, files)
+            if not detect_id:
                 print("Error:there is no {0} in {1}".format(strain["protein"], strain["file"]))
 
-    def _get_prefer_name(self, row_a, strain_id, files, genes):
+    def _get_prefer_name(self, row_a, strain_id, files, genes, querys):
         prefername = ""
         filename = row_a.split(".")
         if (filename[1] not in os.listdir(files["id_list"])) and \
-           (strain_id["protein"] != "all"):
-            self._retrieve_id(strain_id, filename[1], genes, files)
+           ((strain_id["protein"] != "all") or ("all" not in querys)):
+            self._wget_id(strain_id["ptt"], filename[1], strain_id, files)
         if filename[1] in os.listdir(files["id_list"]):
             id_h = open(os.path.join(files["id_list"], filename[1]), "r")
             for row_i in csv.reader(id_h, delimiter="\t"):
@@ -83,17 +83,17 @@ class PPI_network(object):
         out.write("strain\titem_id_a\titem_id_b\tmode\taction\ta_is_acting\t"
                    "STRING_action_score\tpubmed_id\tpubmed_score\n")
 
-    def _get_pubmed(self, row, out_folder, strain_id, mode, actor, score, 
-                    id_file, first_output, no_specific, ptt, genes, files, paths):
-        prefer1 = self._get_prefer_name(row[0], strain_id, files, genes)
-        prefer2 = self._get_prefer_name(row[1], strain_id, files, genes)
+    def _get_pubmed(self, row, out_folder, strain_id, mode, actor, score, id_file, 
+                    first_output, no_specific, ptt, genes, files, paths, querys):
+        prefer1 = self._get_prefer_name(row[0], strain_id, files, genes, querys)
+        prefer2 = self._get_prefer_name(row[1], strain_id, files, genes, querys)
         if (len(prefer1) > 0) and (len(prefer2) > 0): ## retrieve from PIE
             if no_specific:
                 pubmed_source = \
                 "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}".format(
                  prefer1, prefer2)
                 call(["wget", pubmed_source,
-                      "-O", self.tmp_nospecific],
+                      "-O", self.tmp_files["nospecific"]],
                       stderr=files["pubmed_log"])
                 time.sleep(3)
             strain_id["pie"] = "+".join(strain_id["pie"].split(" "))
@@ -101,20 +101,20 @@ class PPI_network(object):
             "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}+{2}".format(
              prefer1, prefer2, strain_id["pie"])
             call(["wget", pubmed_source,
-                  "-O", self.tmp_specific],
+                  "-O", self.tmp_files["specific"]],
                   stderr=files["pubmed_log"])
             time.sleep(3)
             row[2] = mode ### merge information
             row[4] = actor
             row[0] = prefer1
             row[1] = prefer2
-            self._merge_information(first_output, self.tmp_specific, 
+            self._merge_information(first_output, self.tmp_files["specific"], 
                                     files["all_specific"], files["best_specific"], row, score, 
                                     id_file, files["id_list"], "specific",
                                     os.path.join(paths["all"], self.with_strain), 
                                     os.path.join(paths["best"], self.with_strain), ptt)
             if no_specific:
-                self._merge_information(first_output, self.tmp_nospecific, 
+                self._merge_information(first_output, self.tmp_files["nospecific"], 
                                         files["all_nospecific"], files["best_nospecific"], row, 
                                         score, id_file, files["id_list"], "nospecific",
                                         os.path.join(paths["all"], self.without_strain), 
@@ -151,7 +151,7 @@ class PPI_network(object):
                         self._print_title(out_best, id_file, id_folder)
                     out_best.write("\t".join([ptt, "\t".join(row_a), "\t".join(row)]) + "\n")
             f_h.close()
-            if detect is False:
+            if not detect:
                 os.remove(os.path.join(best_folder, ptt, "_".join([row_a[0], row_a[1] + ".csv"])))
             out_all_single.close()
             out_best_single.close()
@@ -166,8 +166,35 @@ class PPI_network(object):
             out_all.write("\t".join([ptt, "\t".join(row_a), "NA", "NA"]) + "\n")
             out_all_single.close()
 
+    def _detect_protein(self, ptts, strain_id, querys):
+        fh = open(os.path.join(ptts, strain_id["file"]), "r")
+        genes = []
+        for row in csv.reader(fh, delimiter="\t"):
+            if (len(row) == 1) and \
+               ("-" in row[0]) and \
+               (".." in row[0]):
+                name = (row[0].split("-"))[0].strip()
+            if ("all" in querys):
+                if (len(row) > 1) and \
+                   (row[0] != "Location"):
+                    genes.append({"strain": name, "locus_tag": row[5]})
+            else:
+                for query in querys:
+                    datas = query.split(":")
+                    strain = datas[0]
+                    start = datas[1]
+                    end = datas[2]
+                    strand = datas[3]
+                    if (len(row) > 1) and \
+                       (row[0] != "Location") and \
+                       (name == strain) and (start == row[0].split("..")[0]) and \
+                       (end == row[0].split("..")[1]) and (strand == row[1]):
+                        genes.append({"strain": name, "locus_tag": row[5]})
+        fh.close()
+        return genes
+
     def _setup_folder_and_read_file(self, strain_id, pre_file, out_folder, ptts, no_specific,
-                                    files, paths):
+                                    files, paths, querys):
         if strain_id["file"].endswith(".ptt"):
             if strain_id["file"] != pre_file:
                 self.helper.check_make_folder("_".join([self.tmp_id, strain_id["file"]]))
@@ -195,22 +222,12 @@ class PPI_network(object):
                     files["all_nospecific"] = open(os.path.join(paths["all"], filename_nostrain), "w")
                     files["best_nospecific"] = open(os.path.join(paths["best"], filename_nostrain), "w")
                 files["id_list"] = "_".join([self.tmp_id, strain_id["file"]])
-                files["id_log"] = open(os.path.join(files["id_list"], self.tmp_log), "w")
-                files["action_log"] = open(os.path.join(out_folder, self.tmp_action), "w")
-                files["pubmed_log"] = open(os.path.join(out_folder, self.tmp_pubmed), "w")
+                files["id_log"] = open(os.path.join(files["id_list"], self.tmp_files["log"]), "w")
+                files["action_log"] = open(os.path.join(out_folder, self.tmp_files["action"]), "w")
+                files["pubmed_log"] = open(os.path.join(out_folder, self.tmp_files["pubmed"]), "w")
                 pre_file = strain_id["file"]
                 if strain_id["file"] in os.listdir(ptts):
-                    fh = open(os.path.join(ptts, strain_id["file"]), "r")
-                    genes = []
-                    for row in csv.reader(fh, delimiter="\t"):
-                        if (len(row) == 1) and \
-                           ("-" in row[0]) and \
-                           (".." in row[0]):
-                            name = (row[0].split("-"))[0].strip()
-                        elif (len(row) > 1) and \
-                             (row[0] != "Location"):
-                            genes.append({"strain": name, "locus_tag": row[5]})
-                    fh.close()
+                    genes = self._detect_protein(ptts, strain_id, querys)
             else:
                 self._make_folder_no_exist(os.path.join(paths["all"], self.with_strain), strain_id["ptt"])
                 self._make_folder_no_exist(os.path.join(paths["best"], self.with_strain), strain_id["ptt"])
@@ -234,20 +251,20 @@ class PPI_network(object):
                     action_source = "http://string-db.org/api/tsv/actions?identifier={0}&species={1}".format(
                                     row[0], row[1])
                     call(["wget", action_source,
-                          "-O", self.tmp_wget_action],
+                          "-O", self.tmp_files["wget_action"]],
                           stderr=files["action_log"])
                     time.sleep(3)
                     break
         t_h.close()
 
     def _retrieve_actions(self, files, out_folder, strain_id, paths, 
-                          score, no_specific, genes):
+                          score, no_specific, genes, querys):
         for id_file in os.listdir(files["id_list"]):
             if (strain_id["protein"] == id_file) or \
                (strain_id["protein"] == "all"):
-                if id_file != self.tmp_log:
+                if id_file != self.tmp_files["log"]:
                     self._wget_actions(files, id_file, strain_id, out_folder)
-                    a_h = open(self.tmp_wget_action, "r") # get prefer name of gene
+                    a_h = open(self.tmp_files["wget_action"], "r") # get prefer name of gene
                     pre_row = []
                     first = True
                     detect = False
@@ -272,8 +289,8 @@ class PPI_network(object):
                                    (row_a[1] != pre_row[1]):
                                     self._get_pubmed(pre_row, out_folder, strain_id, 
                                                      mode, actor, score, id_file, 
-                                                     first_output, no_specific, 
-                                                     strain_id["ptt"], genes, files, paths)
+                                                     first_output, no_specific, strain_id["ptt"], 
+                                                     genes, files, paths, querys)
                                     mode = row_a[2]
                                     actor = row_a[4]
                                 else:
@@ -285,7 +302,7 @@ class PPI_network(object):
                         self._get_pubmed(row_a, out_folder, strain_id, mode, 
                                          actor, score, id_file, first_output, 
                                          no_specific, strain_id["ptt"], genes,
-                                         files, paths)
+                                         files, paths, querys)
 
     def _plot(self, out_folder, score, size, no_specific):
         for folder in os.listdir(self.all_result): ## plot figure
@@ -301,8 +318,8 @@ class PPI_network(object):
                          score, os.path.join(self.fig, folder, self.without_strain),
                          size)
 
-    def retrieve_ppi_network(self, bin_path, ptts, strains, no_specific,
-                             species, score, out_folder, size):
+    def retrieve_ppi_network(self, ptts, strains, no_specific, species, 
+                             score, out_folder, size, querys):
         strain_ids = []
         genes = []
         paths = {}
@@ -319,7 +336,7 @@ class PPI_network(object):
                         "all": None, "best": None, "fig": None}
         for strain_id in strain_ids:
             genes = self._setup_folder_and_read_file(strain_id, pre_file, out_folder, 
-                                                     ptts, no_specific, files, paths)
+                                                ptts, no_specific, files, paths, querys)
             s_h = open(species, "r") ### get STRING id
             for row in csv.reader(s_h, delimiter="\t"):
                 if row[0] != "##":
@@ -333,7 +350,7 @@ class PPI_network(object):
                         break
             self._retrieve_id(strain_id, strain_id["protein"], genes, files)
             self._retrieve_actions(files, out_folder, strain_id, paths, 
-                                   score, no_specific, genes)
+                                   score, no_specific, genes, querys)
         self._plot(out_folder, score, size, no_specific)
-        self.helper.remove_all_content(os.path.join(out_folder), "tmp", "file")
-        self.helper.remove_all_content(os.path.join(out_folder), "tmp", "dir")
+#        self.helper.remove_all_content(os.path.join(out_folder), "tmp", "file")
+#        self.helper.remove_all_content(os.path.join(out_folder), "tmp", "dir")

@@ -19,4 +19,4 @@ def optimize_tss(tsspredator_path, fasta, gff, wigs, manual, output_folder,
     optimization(tsspredator_path, max_height, max_height_reduction, max_factor,
                  max_factor_reduction, max_base_height, max_enrichment, max_processing,
                  output_folder, core, wig_path, project_name, fasta, replicate_name, steps, gff,
-                 program, manual, libs, length)
+                 program, manual, libs, length, cluster)

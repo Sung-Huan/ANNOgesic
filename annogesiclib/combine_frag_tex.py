@@ -50,6 +50,7 @@ def combine(frag_file, tex_file, tolerance, output_file):
     norms = []
     finals = []
     out = open(output_file, "w")
+    out.write("##gff-version 3\n")
     fh = open(frag_file, "r")
     for entry in Gff3Parser().entries(fh):
         entry.attributes["print"] = False

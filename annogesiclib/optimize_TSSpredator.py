@@ -62,64 +62,94 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
 
 def scoring_function(best, stat_value, indexs):
     indexs["change"] = False
-    if (stat_value["tp_rate"] - best["tp_rate"]) >= 0.1:
-        indexs["change"] = True
-        print("case1")
-    elif (best["tp_rate"] - stat_value["tp_rate"]) <= 0.1:
-        if (best["tp_rate"] <= stat_value["tp_rate"]) and \
-           (best["fp_rate"] >= stat_value["fp_rate"]):
+    if (stat_value["tp_rate"] == best["tp_rate"]) and \
+       (stat_value["fp_rate"] == best["fp_rate"]):
+        pass
+    else:
+        if (stat_value["tp_rate"] - best["tp_rate"]) >= 0.1:
             indexs["change"] = True
-            print("case2")
-        elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and \
-             (stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
-            indexs["change"] = True
-            print("case3")
-        elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and \
-             (best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
-            indexs["change"] = True
-            print("case4")
-        else:
-            tp_diff = float(best["tp"] - stat_value["tp"])
-            if tp_diff > 0:
-                if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
-                    indexs["change"] = True
-                    print("case5")
-            elif tp_diff < 0:
-                tp_diff = tp_diff * -1
-                if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
-                    indexs["change"] = True
-                    print("case6")
+#            print("case1")
+        elif (best["tp_rate"] - stat_value["tp_rate"]) <= 0.1:
+            if (best["tp_rate"] <= stat_value["tp_rate"]) and \
+               (best["fp_rate"] >= stat_value["fp_rate"]):
+                indexs["change"] = True
+#                print("case2")
+            elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and \
+                 (stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
+                indexs["change"] = True
+#                print("case3")
+            elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and \
+                 (best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
+                indexs["change"] = True
+#                print("case4")
+            else:
+                tp_diff = float(best["tp"] - stat_value["tp"])
+                if tp_diff > 0:
+                    if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
+                        indexs["change"] = True
+#                        print("case5")
+                elif tp_diff < 0:
+                    tp_diff = tp_diff * -1
+                    if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
+                        indexs["change"] = True
+#                        print("case6")
 
-def comparison(manuals, predicts):
-    overlap_num = 0
-    re_num = 0
-    for manual in manuals:
-        for predict in predicts:
-            if (manual.strand == predict.strand) and \
-               (manual.seq_id == predict.seq_id):
-                if (manual.start == predict.start) or \
-                   (math.fabs(manual.start - predict.start) <= 2):
-#                    if predict.attributes["print"]:
-#                        pass
-#                    else:
+def check_overlap(overlap, pre_tss, nums, length, manual, predict, pre_pos):
+    if overlap:
+        if pre_tss:
+            pre_tss.attributes["print"] = True
+            tss = pre_tss
+        else:
+            tss = predict
+        if (tss.start <= int(length)):
+            if (pre_pos != -1):
+                if (tss.start - pre_pos != 0):
+                    nums["overlap"] += 1
+                else:
+                    nums["overlap"] += 1
+            else:
+                nums["overlap"] += 1
+        overlap = False
+        pre_pos = tss.start
+    else:
+        if (manual.start <= int(length)):
+            nums["manual"] += 1
+    return (overlap, pre_pos)
+
+def comparison(manuals, predicts, nums, length, cluster):
+    overlap = False
+    pre_pos = -1
+    for tss_m in manuals:
+        pre_tss = None
+        for tss_p in predicts:
+            if (tss_p.strand == tss_m.strand) and \
+               ((tss_p.seq_id == tss_m.seq_id) or \
+                ((tss_p.seq_id == tss_m.seq_id[:-2]) and \
+                (tss_m.seq_id[-2] == "."))):
+                if (tss_p.start == tss_m.start):
+                    tss_p.attributes["print"] = True
                     overlap = True
-                    overlap_num += 1
-                    predict.attributes["print"] = True
+                    pre_tss = None
                     break
-    return overlap_num
+                elif (math.fabs(tss_p.start - tss_m.start) <= cluster):
+                    overlap = True
+                    pre_tss = tss_p
+        datas = check_overlap(overlap, pre_tss, nums, length, tss_m, tss_p, pre_pos)
+        overlap = datas[0]
+        pre_pos = datas[1]
+    for tss_p in predicts:
+        if tss_p.attributes["print"] is False:
+            if (tss_p.start <= int(length)):
+                nums["predict"] += 1
 
 def read_predict_manual_gff(gff_file, gene_length, gffs, cluster):
     num = 0
     fh = open(gff_file, "r")
     for entry in Gff3Parser().entries(fh):
         if (entry.start <= int(gene_length)):
-#            if (entry.seq_id != pre.seq_id) or \
-#               (entry.strand != pre.strand) or \
-#               (math.fabs(entry.start - pre.start) >= cluster):
             num += 1
             entry.attributes["print"] = False
             gffs.append(entry)
-#        pre = entry
     return num
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path, 
@@ -132,6 +162,7 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
     total_step = total_step - int(cores) + 1
     num_manual = read_predict_manual_gff(manual, gene_length, manuals, cluster)
     for gff_file in gff_files:
+        nums = {"overlap": 0, "predict": 0, "manual": 0}
         predicts = []
         para = "_".join(["he", str(para_list[count]["height"]),
                          "rh", str(para_list[count]["re_height"]),
@@ -141,20 +172,20 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                          "ef", str(para_list[count]["enrichment"]),
                          "pf", str(para_list[count]["processing"])])
         num_predict = read_predict_manual_gff(gff_file, gene_length, predicts, cluster)
-        overlap_num = comparison(manuals, predicts)
+        comparison(manuals, predicts, nums, gene_length, cluster)
         out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
-                  total_step, para, overlap_num,
-                  float(overlap_num) / float(num_manual)))
+                  total_step, para, nums["overlap"],
+                  float(nums["overlap"]) / float(num_manual)))
         out.write("FP\t{0}\tFP_rate\t{1}\tFN\t{2}\tmissing_ratio\t{3}\n".format(
-                  num_predict - overlap_num,
-                  float(num_predict - overlap_num) / float(int(gene_length) - num_manual),
-                  num_manual - overlap_num,
-                  float(num_manual - overlap_num) / float(num_manual)))
-        stats.append({"tp": overlap_num, "tp_rate": float(overlap_num) / float(num_manual),
-                      "fp": num_predict - overlap_num,
-                      "fp_rate": float(num_predict - overlap_num) / float(gene_length - num_manual),
-                      "fn": num_manual - overlap_num,
-                      "missing_ratio": float(num_manual - overlap_num) / float(num_manual)})
+                  nums["predict"],
+                  float(nums["predict"]) / float(int(gene_length) - num_manual),
+                  nums["manual"],
+                  float(nums["manual"]) / float(num_manual)))
+        stats.append({"tp": nums["overlap"], "tp_rate": float(nums["overlap"]) / float(num_manual),
+                      "fp": nums["predict"],
+                      "fp_rate": float(nums["predict"]) / float(gene_length - num_manual),
+                      "fn": nums["manual"],
+                      "missing_ratio": float(nums["manual"]) / float(num_manual)})
         total_step += 1
         count += 1
     manual_fh.close()
@@ -227,6 +258,10 @@ def import_lib(libs, wig_folder, project_strain_name, rep_set, lib_dict,
                 if (filename[0] == lib_datas[0][:-4]) and \
                    (filename[1][:-4] == project_strain_name):
                     lib_datas[0] = wig
+                elif (filename[0] == lib_datas[0][:-4]) and \
+                     ("." == filename[1][-6]) and \
+                     (filename[1][:-6] == project_strain_name):
+                    lib_datas[0] = wig
             if int(lib_datas[2]) > lib_num:
                 lib_num = int(lib_datas[2])
             if lib_datas[3] not in rep_set:
@@ -264,11 +299,11 @@ def gen_config(para_list, out_path, core, libs, wig, project_strain,
                fasta, output_prefix, gff, program, cluster):
     files = os.listdir(out_path)
     if "MasterTable_" + str(core) not in files:
-        call(["mkdir", out_path + "/MasterTable_" + str(core)])
+        os.mkdir(os.path.join(out_pat, "MasterTable_" + str(core)))
     lib_dict = {"fp": [], "fm": [], "nm": [], "np": []}
     rep_set = set()
     list_num_id = []
-    filename = out_path + "/config_" + str(core) + ".ini"
+    filename = os.path.join(out_path, "config_" + str(core) + ".ini")
     out = open(filename, "w")
     out.write("TSSinClusterSelectionMethod = HIGHEST\n")
     out.write("allowedCompareShift = 1\n")
@@ -343,11 +378,9 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
             processes = []
             run_TSSpredator_paralle(config_files, tsspredator_path, processes)###
             convert2gff(cores, out_path, project_strain, gff_files, program)
-#            print(len(list_num))
             stat_values = compare_manual_predict(indexs["step"], list_num[-1 * cores:], 
                                                  gff_files, out_path, stat_out, manual, 
                                                  cores, gene_length, cluster)
-#            print(stat_values)
             for stat_value in stat_values:
                 if indexs["first"]:
                     indexs["first"] = False
@@ -358,7 +391,6 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f, out_
                 datas = compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
                 best_para = datas[0]
                 best = datas[1]
-#            print(best)
             indexs["switch"] += 1
             stat_values = []
             indexs["num"] = 0
@@ -390,18 +422,15 @@ def minus_process(num_type, new_para, max_num, best_num, actions, list_num, comp
     else:
         new_para[num_type] = new_para[num_type] - 0.1
         new_para[num_type] = float('%.1f' % new_para[num_type])
-#        print(num_type)
         while True:
             if new_para[num_type] <= 0.0:
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 2
                 actions["minus"] = True
-#                print("EEE")
                 break
             elif (new_para in list_num):
                 new_para[num_type] = new_para[num_type] - 0.1
                 new_para[num_type] = float('%.1f' % new_para[num_type])
-#                print("FFF")
                 continue
             elif ((num_type == "factor") or \
                  (num_type == "height")) and \
@@ -409,15 +438,9 @@ def minus_process(num_type, new_para, max_num, best_num, actions, list_num, comp
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 2
                 actions["minus"] = True
-#                print(new_para[num_type])
-#                print(compare)
-#                print("GGG")
                 break
             else:
                 list_num.append(copy.deepcopy(new_para))
-#                print(new_para[num_type])
-#                print(compare)
-#                print("HHH")
                 return new_para[num_type]
     return None
 
@@ -441,18 +464,15 @@ def plus_process(num_type, new_para, max_num, best_num, actions, list_num, compa
     else:
         new_para[num_type] = new_para[num_type] + 0.1
         new_para[num_type] = float('%.1f' % new_para[num_type])
-#        print(num_type)
         while True:
             if new_para[num_type] >= max_num:
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 1
                 actions["plus"] = True
-#                print("AAA")
                 break
             elif (new_para in list_num):
                 new_para[num_type] = new_para[num_type] + 0.1
                 new_para[num_type] = float('%.1f' % new_para[num_type])
-#                print("BBB")
                 continue
             elif ((num_type == "re_factor") or \
                  (num_type == "re_height")) and \
@@ -460,20 +480,13 @@ def plus_process(num_type, new_para, max_num, best_num, actions, list_num, compa
                 new_para[num_type] = best_num
                 actions["in_or_de"] = 1
                 actions["plus"] = True
-#                print(new_para[num_type])
-#                print(compare)
-#                print("CCC")
                 break
             else:
                 list_num.append(copy.deepcopy(new_para))
-#                print(new_para[num_type])
-#                print(compare)
-#                print("DDD")
                 return new_para[num_type]
     return None
 
 def small_change(max_num, num_type, compare, list_num, best_num, best_para):
-#    print("s")
     new_para = copy.deepcopy(best_para)
     actions = {"plus": False, "minus": False}
     step = 0
@@ -543,22 +556,18 @@ def check_fit(num_type, index_large, seed, number, number_par, compare):
     if ((num_type == "height") and (index_large[seed] == "re_height")) or \
        ((num_type == "factor") and (index_large[seed] == "re_factor")):
         if number <= number_par:
-#            print("AAA")
             return False
     elif ((num_type == "re_factor") and (index_large[seed] == "factor")) or \
          ((num_type == "re_height") and (index_large[seed] == "height")):
         if number >= number_par:
-#            print("BBB")
             return False
     elif ((num_type == "factor") or \
           (num_type == "height")) and \
          (number <= float(compare)):
-#        print("CCC")
         return False
     elif ((num_type == "re_factor") or \
           (num_type == "re_height")) and \
          (number >= float(compare)):
-#        print("DDD")
         return False
     elif ((index_large[seed] == "factor") or \
           (index_large[seed] == "height")) and \
@@ -574,7 +583,6 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                      best_para, index_large, indexs):
     new_para = copy.deepcopy(best_para)
     step = 0
-#    print("l")
     while True:
         step += 1
         if step >= 1000000:
@@ -598,9 +606,6 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
             number_par = round(random.uniform(0.1, max_num[index_large[seed]]), 1)
             number_par = '%.1f' % number_par
             number_par = float(number_par)
-#        print(num_type + "_" + str(number))
-#        print(index_large[seed] + "_" + str(number_par))
-#        print(compare)
         fit = check_fit(num_type, index_large, seed, number, number_par, compare)
         if fit is False:
             continue
@@ -608,11 +613,8 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
             new_para[num_type] = number
             new_para[index_large[seed]] = number_par
             if new_para in list_num:
-#                print("EEE")
                 continue
             else:
-#                print("FFF")
-#                print(new_para)
                 list_num.append(copy.deepcopy(new_para))
                 return new_para
 
@@ -656,7 +658,6 @@ def run_large_change_part(seeds, features, indexs, current_para, max_num, best_p
 
 def run_random_part(current_para, list_num, max_num, steps, indexs):
     tmp_random_step = 0
-#    print("r")
     while True:
         current_para["height"] = round(random.uniform(0.1, max_num["height"]), 1)
         current_para["re_height"] = round(random.uniform(0.1, max_num["re_height"]), 1)
@@ -692,7 +693,6 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para, ste
             if features["feature"] != features["pre_feature"]:
                 seeds["pre_seed "] = []
             current_para = run_random_part(current_para, list_num, max_num, steps, indexs)
-#            print(len(list_num))
             if current_para is None:
                 tmp_step += 1
         elif (indexs["switch"] % 3 == 1):
@@ -701,14 +701,12 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para, ste
                 seeds["pre_seed"] = []
             current_para = run_large_change_part(seeds, features, indexs, current_para,
                                           max_num, best_para, list_num)
-#            print(len(list_num))
         else:
             features["feature"] = "s"
             if features["feature"] != features["pre_feature"]:
                 seeds["pre_seed"]  = []
             current_para = run_small_change_part(seeds, features, indexs, current_para,
                                           best_para, list_num, max_num)
-#            print(len(list_num))
         diff_h = '%.1f' % (float(current_para["height"]) - float(current_para["re_height"]))
         diff_f = '%.1f' % (float(current_para["factor"]) - float(current_para["re_factor"]))
         if current_para is not None:
@@ -885,7 +883,7 @@ def optimization(tsspredator_path, height, reduction_height, factor,
     out_path = os.path.join(output_folder, "optimized_TSSpredator")
     files = os.listdir(output_folder)
     stat_file = os.path.join(out_path, "stat.csv")
-    if gene_length is False:
+    if gene_length is None:
         gene_length = get_gene_length(fasta, project_strain)
     else:
         gene_length = int(gene_length)

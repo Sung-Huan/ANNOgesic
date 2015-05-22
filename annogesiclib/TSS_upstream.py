@@ -119,20 +119,20 @@ def del_repeat(tsss):
         final_utrs = []
         final_genes = []
         for type_ in types:
-            if (type_ == "Primary") and (detect_pri is False):
+            if (type_ == "Primary") and (not detect_pri):
                 detect_pri = True
                 pri_utr = int(utrs[index].split("_")[1])
                 real_index = index
-            elif (type_ == "Primary") and (detect_pri is True):
+            elif (type_ == "Primary") and (detect_pri):
                 compare_utr = int(utrs[index].split("_")[1])
                 if compare_utr < pri_utr:
                     pri_utr = compare_utr
                     real_index = index
-            elif (type_ == "Secondary") and (detect_sec is False):
+            elif (type_ == "Secondary") and (not detect_sec):
                 detect_sec = True
                 sec_utr = int(utrs[index].split("_")[1])
                 real_index2 = index
-            elif (type_ == "Secondary") and (detect_sec is True):
+            elif (type_ == "Secondary") and (detect_sec):
                 compare_utr = int(utrs[index].split("_")[1])
                 if compare_utr < sec_utr:
                     sec_utr = compare_utr
@@ -144,12 +144,12 @@ def del_repeat(tsss):
                 final_utrs.append(utrs[index])
                 final_genes.append(genes[index])
             index += 1
-        if detect_pri is True:    
+        if detect_pri:    
             final_types.append(types[real_index])
             final_utrs.append(utrs[real_index])
             final_genes.append(genes[real_index])
         else:
-            if detect_sec is True:
+            if detect_sec:
                 final_types.append(types[real_index2])
                 final_utrs.append(utrs[real_index2])
                 final_genes.append(genes[real_index2])
@@ -231,7 +231,7 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
                 gene_ends["forward"] = gene.start
             elif (anti_ends["reverse"] != -1) and \
                  ((anti_ends["reverse"] - gene.start) < 0):
-                if (checks["int_anti"] is True) or (tss.start - anti_ends["reverse"]) > 0:
+                if (checks["int_anti"]) or (tss.start - anti_ends["reverse"]) > 0:
                     tss_entry = import_to_tss("Primary", gene.start, tss, locus_tag, tss_entry)
                     checks["orphan"] = False
                     gene_ends["forward"] = gene.start
@@ -263,7 +263,7 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
             if is_internal(gene.start, gene.end, tss.start, tss.strand):
                 checks["int_anti"] = True
             if (gene_ends["forward"] != -1) and (gene.start - gene_ends["forward"]) > 0:
-                if (detect_int_anti is not True) and \
+                if (not detect_int_anti) and \
                    (gene.start - tss.start) > 0:
                     tss_entry = remove_primary(tss, tss_entry)
         locus_tag = gene.attributes["locus_tag"]
@@ -283,7 +283,7 @@ def compare_tss_cds(tss, cdss, genes):
         else:
             tss_entry = diff_strand_tss_gene(gene, tss, anti_ends, 
                                              gene_ends, checks, tss_entry)
-    if checks["orphan"] is True:
+    if checks["orphan"]:
         tss_entry = import_to_tss("Orphan", "NA", tss, "NA", tss_entry)
     return tss_entry
 
@@ -327,7 +327,7 @@ def print_fasta(seq, tss, files, name):
 
 def read_wig(wigs, filename, strand):
     wig_parser = par_wig.parser_wig()
-    if filename is not False:
+    if filename:
         for entry in wig_parser.parser(filename, strand):
             if entry.strain not in wigs.keys():
                 strain = entry.strain
@@ -391,7 +391,7 @@ def upstream(TSS_file, fasta_file, gff_file, source, wig_folder, input_libs, out
     libs = {}
     tsss = read_data(tsss, seq, TSS_file, fasta_file)
     num_tss = 0
-    if source is False:
+    if not source:
         out = open(out_class, "w")
         out.write("##gff-version 3\n")
         read_gff(cdss, genes, gff_file)
@@ -399,14 +399,14 @@ def upstream(TSS_file, fasta_file, gff_file, source, wig_folder, input_libs, out
         genes = sorted(genes, key=lambda k: (k.seq_id, k.start))
     for tss in tsss:
         if source is True:
-            name = ">" + "_".join([str(tss.start), tss.strand, tss.seq_id])
+            name = ">" + "_".join([tss.seq_id, str(tss.start), tss.strand])
             print_fasta(seq, tss, files, name)
         else:
             tss_type = compare_tss_cds(tss, cdss, genes)
             tss.attributes = tss_type[1]
             tss.attribute_string = "".join([tss_type[0], ";ID=tss", str(num_tss)])
             num_tss += 1
-    if source is False:
+    if not source:
         read_libs(input_libs, libs, wig_folder)
         read_wig(wigs_f, "tmp/merge_forward.wig", "+")
         read_wig(wigs_r, "tmp/merge_reverse.wig", "-")

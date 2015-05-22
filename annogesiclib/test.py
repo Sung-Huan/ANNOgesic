@@ -1,2 +1,3 @@
-a = "1234567"
-print a[:-4]
+a = ["iaaaa", "aa", "bbb", "ee"]
+for index in range(0, 4):
+    print index

@@ -11,7 +11,7 @@ def read_libs(libs, texs, input_libs, wig_folder):
         datas = lib.split(":")
         for wig in os.listdir(wig_folder):
             if wig == datas[0]:
-                with open(wig_folder + "/" + wig, "r") as w_h:
+                with open(os.path.join(wig_folder, wig), "r") as w_h:
                     for line in w_h:
                         line = line.strip()
                         if line.startswith("track"):

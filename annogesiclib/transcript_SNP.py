@@ -43,12 +43,13 @@ def row_in_list(row):
         for info in infos:
             snps["info"] = info
             datas = info.split("=")
-            if datas[0] == "DP":
-                snps["depth"] = int(datas[1])
-            if datas[0] == "IDV":
-                snps["indel"] = int(datas[1])
-            if datas[0] == "IMF":
-                snps["frac"] = float(datas[1])
+            if len(datas) > 1:
+                if datas[0] == "DP":
+                    snps["depth"] = int(datas[1])
+                if datas[0] == "IDV":
+                    snps["indel"] = int(datas[1])
+                if datas[0] == "IMF":
+                    snps["frac"] = float(datas[1])
         return snps
     else:
         return snps
@@ -96,13 +97,13 @@ def import_data(max_quals, snps, snp_file, read_depth, bam_number, indel_fractio
                     max_quals[snp["strain"]] = snp["qual"]
                 if snp["qual"] > max_quals["All_strain"]:
                     max_quals["All_strain"] = snp["qual"]
-                if read_depth is False:
+                if read_depth is None:
                     depth = 5 * bam_number
                     if depth > 40:
                         depth = 40
                 else:
                     depth = read_depth
-                if snp["depth"] >= read_depth:
+                if snp["depth"] >= depth:
                     if snp["indel"] == -1:
                         snps.append(snp)
                     else:
@@ -250,7 +251,7 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
             num_cutoff = 10
             num_quality = 0
             out_stat.write(strain + ":\n")
-            if read_depth is False:
+            if read_depth is None:
                 if 5 * bam_number > 40:
                     depth = 40
                 else:

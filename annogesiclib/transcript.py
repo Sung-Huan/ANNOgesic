@@ -22,24 +22,24 @@ class Transcript_Assembly(object):
         self.gff_outfolder = os.path.join(out_folder, "gffs")
         self.tran_path = os.path.join(self.gff_outfolder, "tmp")
         self.stat_path = os.path.join(out_folder, "statistics")
-        self.tmp_gff = "tmp.gff"
-        self.tmp_tran = os.path.join(out_folder, "tmp_tran")
-        self.tmp_tss_ta = os.path.join(self.gff_outfolder, "tmp_tss_ta")
-        self.tmp_ta_tss = os.path.join(self.gff_outfolder, "tmp_ta_tss")
-        self.tmp_ta_gff = os.path.join(self.gff_outfolder, "tmp_ta_gff")
-        self.tmp_gff_ta = os.path.join(self.gff_outfolder, "tmp_gff_ta")
-        self.tmp_uni = os.path.join(self.gff_outfolder, "tmp_uni")
-        self.tmp_overlap = os.path.join(self.gff_outfolder, "tmp_overlap")
-        self.tmp_merge = "tmp_merge"
+        self.tmps = {"gff": "tmp.gff", "merge": "tmp_merge",
+                     "tran": os.path.join(out_folder, "tmp_tran"),
+                     "tss_ta": os.path.join(self.gff_outfolder, "tmp_tss_ta"),
+                     "ta_tss": os.path.join(self.gff_outfolder, "tmp_ta_tss"),
+                     "ta_gff": os.path.join(self.gff_outfolder, "tmp_ta_gff"),
+                     "gff_ta": os.path.join(self.gff_outfolder, "tmp_gff_ta"),
+                     "uni": os.path.join(self.gff_outfolder, "tmp_uni"),
+                     "overlap": os.path.join(self.gff_outfolder, "tmp_overlap")}
         self.frag = "transcript_assembly_fragment.gff"
         self.tex = "transcript_assembly_tex.gff"
         self.endfix_tran = "transcript.gff"
 
     def _compute_transcript(self, wig_f, wig_r, height, width, wig_folder, out_folder,
-                            tolerance, replicates, wig_type, strain, libs, tex):
+                            tolerance, replicates, wig_type, strain, libs, tex, low_cutoff):
         print("Computing transcript assembly for {0}...".format(strain))
         out = os.path.join(out_folder, "_".join([strain, wig_type]))
-        assembly(wig_f, wig_r, height, width, tolerance, wig_folder, tex, libs, replicates, out)
+        assembly(wig_f, wig_r, height, width, tolerance, low_cutoff, 
+                 wig_folder, tex, libs, replicates, out)
 
     def _combine_wigs(self, wig_folder, merges, out_wig, direct, strain):
         for wig in os.listdir(wig_folder):
@@ -51,7 +51,7 @@ class Transcript_Assembly(object):
                                            os.path.join(merges, out_wig))
 
     def _compute(self, merges, wig_folder, tex, height, width, tolerance, 
-                 replicates, out_folder, wig_type, libs):
+                 replicates, out_folder, wig_type, libs, low_cutoff):
         strains = []
         wigs = os.path.join(wig_folder, "tmp")
         for wig in os.listdir(wigs):
@@ -70,7 +70,7 @@ class Transcript_Assembly(object):
             r_file = os.path.join(merges, "_".join([strain, "reverse.wig"]))
             self._compute_transcript(f_file, r_file, height, width, 
                                      wig_folder, out_folder, tolerance, replicates,
-                                     wig_type, strain, libs, tex)
+                                     wig_type, strain, libs, tex, low_cutoff)
         return strains
 
     def _compare_TSS(self, tas, gff_outfolder, tss_path, stat_path, fuzzy):
@@ -87,13 +87,14 @@ class Transcript_Assembly(object):
                 filename = tss.split("_TSS")
                 if (filename[0] == ta) and (tss.endswith(".gff")):
                     stat_ta_tss(ta_file, os.path.join(tss_folder, tss), stat_tss_out, 
-                                self.tmp_ta_tss, self.tmp_tss_ta, fuzzy)
+                                self.tmps["ta_tss"], self.tmps["tss_ta"], fuzzy)
                     os.remove(ta_file)
                     os.remove(os.path.join(tss_folder, tss))
-                    self.helper.sort_gff(self.tmp_ta_tss, ta_file)
-                    self.helper.sort_gff(self.tmp_tss_ta, os.path.join(tss_path, tss))
-                    os.remove(self.tmp_tss_ta)
-                    os.remove(self.tmp_ta_tss)
+                    self.helper.sort_gff(self.tmps["ta_tss"], ta_file)
+                    self.helper.sort_gff(self.tmps["tss_ta"], os.path.join(tss_path, tss))
+                    os.remove(self.tmps["tss_ta"])
+                    os.remove(self.tmps["ta_tss"])
+
     def _compare_CDS(self, tas, gff_outfolder, cds_path, stat_path):
         self.multiparser._parser_gff(cds_path, None)
         self.multiparser._combine_gff(gff_outfolder, os.path.join(cds_path, "tmp"), "transcript", None)
@@ -107,31 +108,28 @@ class Transcript_Assembly(object):
                 if (gff[:-4] == ta) and (gff.endswith(".gff")):
                     cds_file = os.path.join(cds_folder, gff)
                     stat_ta_gff(ta_file, cds_file, stat_gff_out, 
-                                self.tmp_ta_gff, self.tmp_gff_ta)
+                                self.tmps["ta_gff"], self.tmps["gff_ta"])
                     os.remove(ta_file)
                     os.remove(os.path.join(cds_path, gff))
-                    self.helper.sort_gff(self.tmp_ta_gff, ta_file)
-                    self.helper.sort_gff(self.tmp_gff_ta, os.path.join(cds_path, gff))
-                    os.remove(self.tmp_ta_gff)
-                    os.remove(self.tmp_gff_ta)
+                    self.helper.sort_gff(self.tmps["ta_gff"], ta_file)
+                    self.helper.sort_gff(self.tmps["gff_ta"], os.path.join(cds_path, gff))
+                    os.remove(self.tmps["ta_gff"])
+                    os.remove(self.tmps["gff_ta"])
 
     def _compare_TSS_CDS(self, compare_TSS, compare_CDS, gff_outfolder, stat_path, fuzzy, tas):
-        if (compare_TSS is not False) and \
-           (compare_CDS is not False):
+        if compare_TSS is not None and compare_CDS is not None:
             self.multiparser._parser_gff(gff_outfolder, "transcript")
             self._compare_CDS(tas, gff_outfolder, compare_CDS, stat_path)
             self._compare_TSS(tas, gff_outfolder, compare_TSS, stat_path, fuzzy)
-        elif (compare_CDS is not False) and \
-             (compare_TSS is False):
+        elif compare_CDS is not None and compare_TSS is None:
             self.multiparser._parser_gff(gff_outfolder, "transcript")
             self._compare_CDS(tas, gff_outfolder, compare_CDS, stat_path)
-        elif (compare_CDS is False) and \
-             (compare_TSS is not False):
+        elif compare_CDS is None and compare_TSS is not None:
             self.multiparser._parser_gff(gff_outfolder, "transcript")
             self._compare_TSS(tas, gff_outfolder, compare_TSS, stat_path, fuzzy)
 
     def _for_one_wig(self, type_, wigs, tex, height, width, tolerance, replicates,
-                     out_folder, libs, gff_outfolder):
+                     out_folder, libs, gff_outfolder, low_cutoff):
         print("Computing {0} wig files....".format(type_))
         folder = wigs.split("/")
         folder = "/".join(folder[:-1])
@@ -140,7 +138,7 @@ class Transcript_Assembly(object):
         wig_path = os.path.join(wigs, "tmp")
         self.multiparser._parser_wig(wigs)
         strains = self._compute(merges, wigs, tex, height, width, tolerance, 
-                                replicates, out_folder, type_, libs)
+                                replicates, out_folder, type_, libs, low_cutoff)
         for strain in strains:
             out = os.path.join(gff_outfolder, 
                   "_".join([strain, "transcript_assembly", type_ + ".gff"]))
@@ -150,7 +148,7 @@ class Transcript_Assembly(object):
         return strains
 
     def _for_two_wigs(self, frag_wigs, tex_wigs, strains, gff_outfolder, tolerance):
-        if (frag_wigs is not False) and (tex_wigs is not False):
+        if (frag_wigs is not None) and (tex_wigs is not None):
             print("merge fragment and tex treat one ....")
             for strain in strains:
                 frag_gff = os.path.join(gff_outfolder,
@@ -173,13 +171,13 @@ class Transcript_Assembly(object):
                 os.remove(frag_gff)
                 os.remove(tex_gff)
         else:
-            if frag_wigs is not False:
+            if frag_wigs is not None:
                 for strain in strains:
                     frag_gff = os.path.join(gff_outfolder,
                            "_".join([strain, self.frag]))
                     final_gff = os.path.join(gff_outfolder, "_".join([strain, self.endfix_tran]))
                     os.rename(frag_gff, final_gff)
-            elif tex_wigs is not False:
+            elif tex_wigs is not None:
                 for strain in strains:
                     tex_gff = os.path.join(gff_outfolder,
                               "_".join([strain, self.tex]))
@@ -194,74 +192,78 @@ class Transcript_Assembly(object):
             print("Modifying {0} refering to {1}...".format(ta, gff))
             fill_gap(os.path.join(gffs, gff), 
                      os.path.join(tran_path, "_".join([ta, self.endfix_tran])),
-                     "overlap", self.tmp_overlap)
+                     "overlap", self.tmps["overlap"])
             fill_gap(os.path.join(gffs, gff), 
                      os.path.join(tran_path, "_".join([ta, self.endfix_tran])),
-                     "uni", self.tmp_uni)
-            tmp_merge = os.path.join(gff_outfolder, self.tmp_merge)
-            if self.tmp_merge in gff_outfolder:
+                     "uni", self.tmps["uni"])
+            tmp_merge = os.path.join(gff_outfolder, self.tmps["merge"])
+            if self.tmps["merge"] in gff_outfolder:
                 os.remove(tmp_merge)
-            self.helper.merge_file(self.tmp_overlap, tmp_merge)
-            self.helper.merge_file(self.tmp_uni, tmp_merge)
+            self.helper.merge_file(self.tmps["overlap"], tmp_merge)
+            self.helper.merge_file(self.tmps["uni"], tmp_merge)
             tmp_out = os.path.join(gff_outfolder, "_".join(["tmp", ta]))
             self.helper.sort_gff(tmp_merge, tmp_out)
-            os.remove(self.tmp_overlap)
-            os.remove(self.tmp_uni)
+            os.remove(self.tmps["overlap"])
+            os.remove(self.tmps["uni"])
             os.remove(tmp_merge)
             final_out = os.path.join(gff_outfolder, "_".join(["final", ta]))
             longer_ta(tmp_out, length, final_out)
-            os.rename(final_out, os.path.join(self.tmp_tran, "_".join([ta, self.endfix_tran])))
+            os.rename(final_out, os.path.join(self.tmps["tran"], "_".join([ta, self.endfix_tran])))
             os.remove(tmp_out)
         shutil.rmtree(gff_outfolder)
-        os.rename(self.tmp_tran, gff_outfolder)
+        os.rename(self.tmps["tran"], gff_outfolder)
 
     def _remove_file(self, frag_wigs, tex_wigs, gffs, compare_CDS, compare_TSS, out_folder):
-        if frag_wigs is not False:
+        if frag_wigs is not None:
             self.helper.remove_wigs(frag_wigs)
-        if tex_wigs is not False:
+        if tex_wigs is not None:
             self.helper.remove_wigs(tex_wigs)
-        if gffs is not False:
+        if gffs is not None:
             self.helper.remove_tmp(gffs)
-        if compare_CDS is not False:
+        if compare_CDS is not None:
             self.helper.remove_tmp(compare_CDS)
-        if compare_TSS is not False:
+        if compare_TSS is not None:
             self.helper.remove_tmp(compare_TSS)
         self.helper.remove_tmp(os.path.join(out_folder, "gffs"))
 
-    def run_transcript_assembly(self, project_path, bin_path, frag_wigs, tex_wigs, sort, 
-                                tex, length, gffs, height, width, tolerance, replicates_tex, 
-                                replicates_frag, out_folder, compare_TSS, compare_CDS, fuzzy, tlibs, flibs):
-        if (replicates_tex) and (replicates_frag):
+    def run_transcript_assembly(self, project_path, bin_path, frag_wigs, tex_wigs, sort, tex, 
+                                length, gffs, height, width, tolerance, low_cutoff, 
+                                replicates_tex, replicates_frag, out_folder, compare_TSS, 
+                                compare_CDS, fuzzy, tlibs, flibs):
+        if (replicates_tex is not None) and (
+            replicates_frag is not None):
             replicates = {"tex": int(replicates_tex), "frag": int(replicates_frag)}
-        elif replicates_tex:
+        elif replicates_tex is not None:
             replicates = {"tex": int(replicates_tex), "frag": -1}
-        elif replicates_frag:
+        elif replicates_frag is not None:
             replicates = {"tex": -1, "frag": int(replicates_frag)}
         else:
             print("Error:No replicates number assign!!!")
             sys.exit()
-        if (frag_wigs is False) and (tex_wigs is False):
+        if (frag_wigs is None) and (tex_wigs is None):
             print("Error: there is no wigs files!!!!\n")
             sys.exit()
-        if frag_wigs is not False:
-            strains = self._for_one_wig("fragment", frag_wigs, tex, height, width, tolerance, 
-                                        replicates, out_folder, flibs, self.gff_outfolder)
-        if tex_wigs is not False:
+        if frag_wigs is not None:
+            strains = self._for_one_wig("fragment", frag_wigs, tex, height, width, 
+                                        tolerance, replicates, out_folder, flibs, 
+                                        self.gff_outfolder, low_cutoff)
+        if tex_wigs is not None:
             strains = self._for_one_wig("tex", tex_wigs, tex, height, width, tolerance, 
-                                        replicates, out_folder, tlibs, self.gff_outfolder)
+                                        replicates, out_folder, tlibs, 
+                                        self.gff_outfolder, low_cutoff)
         self._for_two_wigs(frag_wigs, tex_wigs, strains, self.gff_outfolder, tolerance)
-        if gffs is not False:
-            if sort is True:
+        tas = []
+        if gffs is not None:
+            if sort:
                 for gff in os.listdir(gffs):
                     if gff.endswith(".gff"):
-                        self.helper.sort_gff(os.path.join(gffs, gff), self.tmp_gff)
-                        os.rename(self.tmp_gff, os.path.join(gffs, gff))
+                        self.helper.sort_gff(os.path.join(gffs, gff), self.tmps["gff"])
+                        os.rename(self.tmps["gff"], os.path.join(gffs, gff))
             self.multiparser._parser_gff(gffs, None)
             self.multiparser._combine_gff(gffs, os.path.join(gffs, "tmp"), None, None)
             self.multiparser._parser_gff(self.gff_outfolder, "transcript")
             self.multiparser._combine_gff(gffs, self.tran_path, None, "transcript")
-            tas = []
-            self.helper.check_make_folder(self.tmp_tran)
+            self.helper.check_make_folder(self.tmps["tran"])
             for ta in os.listdir(self.tran_path):
                 if ta.endswith(".gff"):
                     if os.path.getsize(os.path.join(self.tran_path, ta)) != 0:

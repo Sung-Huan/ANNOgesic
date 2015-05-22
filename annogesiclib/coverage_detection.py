@@ -28,13 +28,16 @@ def coverage_comparison(cover, cover_sets, poss, first, strand):
     return first
 
 def define_cutoff(coverages, median, utr_type):
+    cutoffs = {}
     if coverages[utr_type] == "median":
-        cutoff = median["median"]
+        for track, values in median.items():
+            cutoffs[track] = values["median"]
     elif coverages[utr_type] == "mean":
-        cutoff = median["mean"]
+        for track, values in median.items():
+            cutoffs[track] = values["mean"]
     else:
-        cutoff = float(coverages[utr_type])
-    return cutoff
+        cutoffs[track] = float(coverages[utr_type])
+    return cutoffs
 
 def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
               detect_num, type_, poss, median, coverages, utr_type):
@@ -45,10 +48,10 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
     for cover in covers:
         run_check_tex = False
         if type_ == "sRNA_utr_derived":
-            cutoff = define_cutoff(coverages, median, utr_type)
-            if cover["avg"] > cutoff:
+            cutoffs = define_cutoff(coverages, median, utr_type)
+            if cover["avg"] > cutoffs[cover["track"]]:
                 run_check_tex = True
-        if (type_ == "terminator") or (type_ == "merge_sRNA"):
+        elif (type_ == "terminator") or (type_ == "merge_sRNA"):
             run_check_tex = True
         else:
             if cover["avg"] > cutoff:

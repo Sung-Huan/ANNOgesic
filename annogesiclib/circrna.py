@@ -22,18 +22,13 @@ class CircRNA_detection(object):
         self.candidate_path = os.path.join(output_folder, "circRNA_tables")
         self.gff_folder = os.path.join(output_folder, "gffs")
         self.gff_path = os.path.join(gffs, "tmp")
-        self.splice_all_file = "splicesites_all.bed"
-        self.splice_file = "splicesites.bed"
-        self.splice_all = "splicesites_all"
-        self.splice = "splicesites"
-        self.trans_all_file = "transrealigned_all.bed"
-        self.trans_file = "transrealigned.bed"
-        self.trans_all = "transrealigned_all"
-        self.trans = "transrealigned"
-        self.whole_bam = "whole_reads.bam"
-        self.sort_bam = "whole_reads_sort"
-        if align is True:
-            if fastas is False:
+        self.splices = {"all_file": "splicesites_all.bed", "file": "splicesites.bed",
+                        "all": "splicesites_all", "splice": "splicesites"}
+        self.trans = {"all_file": "transrealigned_all.bed", "file": "transrealigned.bed",
+                      "all": "transrealigned_all", "trans": "transrealigned"}
+        self.bams = {"whole": "whole_reads.bam", "sort": "whole_reads_sort"}
+        if align:
+            if fastas is None:
                 print("Error: There is no genome fasta file!!!")
                 sys.exit()
             else:
@@ -44,17 +39,17 @@ class CircRNA_detection(object):
     def _wait_process(self, processes):
         for p in processes:
             p.wait()
-        if p.stdout:
-            p.stdout.close()
-        if p.stdin:
-            p.stdin.close()
-        if p.stderr:
-            p.stderr.close()
-        try:
-            p.kill()
-        except OSError:
-            pass
-        time.sleep(5)
+            if p.stdout:
+                p.stdout.close()
+            if p.stdin:
+                p.stdin.close()
+            if p.stderr:
+                p.stderr.close()
+            try:
+                p.kill()
+            except OSError:
+                pass
+            time.sleep(5)
 
     def _deal_zip_file(self, read_folder):
         for read in os.listdir(read_folder):
@@ -130,18 +125,18 @@ class CircRNA_detection(object):
     def _merge_sort_aligment_file(self, bam_files, samtools_path, sub_alignment_path, 
                                   convert_ones, tmp_reads, remove_ones):
         print("Merge all bam files....")
-        whole_bam = os.path.join(sub_alignment_path, self.whole_bam)
+        whole_bam = os.path.join(sub_alignment_path, self.bams["whole"])
         file_line = " ".join(bam_files)
         os.system(" ".join([samtools_path, "merge",
                             whole_bam, file_line]))
         print("Sort bam files....")
         call([samtools_path, "sort", whole_bam,
-              os.path.join(sub_alignment_path, self.sort_bam)])
-        os.remove(os.path.join(sub_alignment_path, self.whole_bam))
+              os.path.join(sub_alignment_path, self.bams["sort"])])
+        os.remove(os.path.join(sub_alignment_path, self.bams["whole"]))
         print("Convert whole reads bam file to sam file....")
         call([samtools_path, "view", "-h", "-o",
-              os.path.join(sub_alignment_path, self.sort_bam + ".sam"),
-              os.path.join(sub_alignment_path, self.sort_bam + ".bam")])
+              os.path.join(sub_alignment_path, self.bams["sort"] + ".sam"),
+              os.path.join(sub_alignment_path, self.bams["sort"] + ".bam")])
         for bam in convert_ones:
             os.remove(bam)
         for sam in remove_ones:
@@ -157,11 +152,11 @@ class CircRNA_detection(object):
         print("Running testrealign.x for {0}".format(prefix))
         command = " ".join([os.path.join(segemehl_path, "testrealign.x"),
                             "-d", os.path.join(fasta_path, prefix + ".fa"),
-                            "-q", os.path.join(sub_alignment_path, self.sort_bam + ".sam"),
+                            "-q", os.path.join(sub_alignment_path, self.bams["sort"] + ".sam"),
                             "-n"])
         os.system(command + " 2>" + err_log)
         self.helper.move_all_content(os.getcwd(), sub_splice_path, ".bed")
-        self.helper.remove_all_content(sub_alignment_path, self.sort_bam, "file")
+        self.helper.remove_all_content(sub_alignment_path, self.bams["sort"], "file")
 
     def _merge_bed(self, fastas, splice_path):
         tmp_prefixs = []
@@ -180,29 +175,29 @@ class CircRNA_detection(object):
                 tmp_prefixs.append(fasta_prefix)
                 self.helper.check_make_folder(os.path.join(os.getcwd(), fasta_prefix))
                 for header in headers:
-                    shutil.copyfile(os.path.join(splice_path, header, self.splice_file),
+                    shutil.copyfile(os.path.join(splice_path, header, self.splices["file"]),
                                     os.path.join(fasta_prefix, 
-                                    "_".join([self.splice, header + ".bed"])))
-                    shutil.copyfile(os.path.join(splice_path, header, self.trans_file),
+                                    "_".join([self.splices["splice"], header + ".bed"])))
+                    shutil.copyfile(os.path.join(splice_path, header, self.trans["file"]),
                                     os.path.join(fasta_prefix, 
-                                    "_".join([self.trans, header + ".bed"])))
-                out_splice = os.path.join(fasta_prefix, self.splice_all_file)
-                out_trans = os.path.join(fasta_prefix, self.trans_all_file)
+                                    "_".join([self.trans["trans"], header + ".bed"])))
+                out_splice = os.path.join(fasta_prefix, self.splices["all_file"])
+                out_trans = os.path.join(fasta_prefix, self.trans["all_file"])
                 if len(headers) > 1:
                     for file_ in os.listdir(fasta_prefix):
-                        if (self.splice in file_) and \
-                           (self.splice_all not in file_):
+                        if (self.splices["splice"] in file_) and \
+                           (self.splices["all"] not in file_):
                             self.helper.merge_file(os.path.join(fasta_prefix, file_),
                                                    out_splice)
-                        elif (self.trans in file_) and \
-                             (self.trans_all not in file_):
+                        elif (self.trans["trans"] in file_) and \
+                             (self.trans["all"] not in file_):
                             self.helper.merge_file(os.path.join(fasta_prefix, file_), 
                                                    out.trans)
                 else:
                     os.rename(os.path.join(fasta_prefix, 
-                              "_".join([self.splice, headers[0] + ".bed"])), out_splice)
+                              "_".join([self.splices["splice"], headers[0] + ".bed"])), out_splice)
                     os.rename(os.path.join(fasta_prefix,
-                              "_".join([self.trans, headers[0] + ".bed"])), out_trans)
+                              "_".join([self.trans["trans"], headers[0] + ".bed"])), out_trans)
         self.helper.remove_all_content(splice_path, None, "dir")
         return tmp_prefixs
 
@@ -213,15 +208,15 @@ class CircRNA_detection(object):
             shutil.copytree(prefix, os.path.join(splice_path, prefix))
             self.helper.check_make_folder(os.path.join(candidate_path, prefix))
             print("comparing with annotation of {0}".format(prefix))
-            if self.splice_all_file in os.listdir(os.path.join(splice_path, prefix)):
-                detect_circrna(os.path.join(splice_path, prefix, self.splice_all_file), 
+            if self.splices["all_file"] in os.listdir(os.path.join(splice_path, prefix)):
+                detect_circrna(os.path.join(splice_path, prefix, self.splices["all_file"]), 
                                os.path.join(gff_path, prefix + ".gff"), 
                                os.path.join(candidate_path, prefix, 
                                             "_".join(["circRNA", prefix + ".txt"])), 
                                start_ratio, end_ratio, 
                                os.path.join(stat_folder, 
                                             "_".join(["stat_circRNA", prefix + ".csv"])))
-                if convert is True:
+                if convert:
                     self.converter.convert_circ2gff(
                          os.path.join(candidate_path, prefix, 
                                       "_".join(["circRNA", prefix + ".txt"])), 
@@ -241,7 +236,7 @@ class CircRNA_detection(object):
         self.multiparser._parser_gff(gffs, None)
         self.multiparser._combine_gff(fastas, self.gff_path, "fasta", None)
         tmp_reads = []
-        if align is True:
+        if align:
             self.multiparser._parser_fasta(fastas)
             prefixs = []
             self._deal_zip_file(read_folder)

@@ -94,7 +94,6 @@ def stat(input_file, out_file):
                     plus_num(class_operon, row[1], "mono")
                 elif len(row[-1].split(",")) > 1:
                     plus_num(class_operon, row[1], "poly")
-                pre_id = row[0]
                 tmp_id = row[0]
     if len(operons) > 1:
         out.write("All strains:\n")

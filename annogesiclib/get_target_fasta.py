@@ -25,7 +25,7 @@ class Target_fasta(object):
         self.seq_editer.modify_seq(self.folders["tmp_ref"], mut_table, 
                                    self.folders["tmp_tar"])
         print("transfer to target fasta...")
-        if output is not False:
+        if output is not None:
             for file_ in output:
                 datas = file_.split(":")
                 filename = datas[0]

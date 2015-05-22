@@ -59,7 +59,7 @@ def compare_tran_tss(trans, tsss, fuzzy, stat, out):
                         check[0] = 1
                         detect = True
                         tss.attributes["detect"] = True
-        if detect is not True:
+        if not detect:
             stat["no_TSS"] += 1
             tran.attributes["associated_tss"] = "NA"
             check[1] = 1
@@ -242,7 +242,7 @@ def detect_tag_region(gffs, trans, stats, out_t, out_g):
         tran_type = []
         tran_type_string = ""
         detect = compare_ta_gff(gffs, tran, check, tran_type, detect, stats)
-        if (detect is not True):
+        if not detect:
             stats[tran.seq_id]["other"] += 1
             stats["All"]["other"] += 1
             check[4] = 1

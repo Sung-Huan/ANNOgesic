@@ -5,6 +5,7 @@ import re
 import itertools
 import math
 import shutil
+import copy
 from Bio import SeqIO
 from subprocess import call
 from collections import defaultdict
@@ -45,7 +46,10 @@ class Converter(object):
                             if "gene" in gene.attributes.keys():
                                 gene_tag = gene.attributes["gene"]
                             locus_tag = gene.attributes["locus_tag"]
-            product = entry.attributes["product"]
+            if "product" in entry.attributes.keys():
+                product = entry.attributes["product"]
+            else:
+                product = "-"
             out.write("\t".join([location, entry.strand, length,
                                  pid, gene_tag, locus_tag, "-", "-",
                                  product]) + "\n")
@@ -217,12 +221,12 @@ class Converter(object):
                 nums["tss"] += 1
             if (nums["class"] == 1):
                 tss_features["tss_types"].append(tss_type)
-                tss_features["utr_lengths"].append(tss_type+"_"+tss.utr_length)
+                tss_features["utr_lengths"].append(tss_type + "_" + tss.utr_length)
                 tss_features["locus_tags"].append(tss.locus_tag)
             else:
                 if tss_type not in tss_features["tss_types"]:
                     tss_features["tss_types"].append(tss_type)
-                    tss_features["utr_lengths"].append(tss_type+"_"+tss.utr_length)
+                    tss_features["utr_lengths"].append(tss_type + "_" + tss.utr_length)
                     tss_features["locus_tags"].append(tss.locus_tag)
             nums["class"] += 1
 
@@ -235,18 +239,20 @@ class Converter(object):
         nums["tss"] += 1
 
     def _print_tssfile(self, nums, tss_features, tss, tss_pro, 
-                       strain, method, out):
+                       strain, method, out, tss_libs):
         tss_pro = tss_pro[0].upper() + tss_pro[1:]
-        tss_merge_type = " ".join(tss_features["tss_types"])
-        utr_length = " ".join(tss_features["utr_lengths"])
-        merge_locus_tag = " ".join(tss_features["locus_tags"])
+        tss_merge_type = "&".join(tss_features["tss_types"])
+        utr_length = "&".join(tss_features["utr_lengths"])
+        merge_locus_tag = "&".join(tss_features["locus_tags"])
+        libs = "&".join(tss_libs)
         attribute_string = ";".join(
                           ["=".join(items) for items in (["Name", "".join([tss_pro, ":",
                                                           str(tss.super_pos), "_", tss.super_strand])],
                                                          ["ID", tss_pro.lower() + str(nums["tss_uni"])],
                                                          ["type", tss_merge_type],
                                                          ["UTR_length", str(utr_length)],
-                                                         ["associated_gene", merge_locus_tag])])
+                                                         ["associated_gene", merge_locus_tag],
+                                                         ["libs", libs])])
         out.write("\t".join([strain, method, tss_pro, str(tss.super_pos),
                              str(tss.super_pos), ".", tss.super_strand, ".",
                              attribute_string]) + "\n")
@@ -291,17 +297,39 @@ class Converter(object):
             for pos in info["pos"]:
                 out.write(("{0}\tRefseq\t{1}\t{2}\t{3}\t.\t{4}\t.\t{5}\n").format(
                           id_name, info["source"], pos["start"], pos["end"], info["strand"], line))
-    def convert_mastertable2gff(self, tss_file, method, tss_pro, strain, gff_file):
+
+    def _get_libs(self, tss_file):
+        tss_libs = {}
+        pre = {"pos": 0, "strand": "#"}
+        tss_fh = open(tss_file, "r")
+        for tss in self.tssparser.entries(tss_fh):
+            key = "_".join([str(tss.super_pos), tss.super_strand])
+            if (tss.super_pos == pre["pos"]) and \
+               (tss.super_strand == pre["strand"]):
+                if (tss.is_detected):
+                    tss_libs[key].append(tss.genome)
+            else:
+                if (tss.is_detected):
+                    tss_libs[key] = [tss.genome]
+                else:
+                    tss_libs[key] = []
+            pre = {"pos": tss.super_pos, "strand": tss.super_strand}
+        return tss_libs
+
+    def convert_mastertable2gff(self, tss_file, method, tss_pro, strain, out_gff):
         temps = {"tss": 0, "strand": "#"}
         nums = {"tss": 0, "tss_uni": 0, "class": 1}
+        pre = {"pos": 0, "strand": "#"}
         check_print = False
         utrs = {"total": [], "pri": [], "sec": []}
         tss_features = {"tss_types": [], "locus_tags": [], "utr_lengths": []}
         tss_index = defaultdict(lambda: 0)
-        tss_fh = open(tss_file, "r");
-        out = open(gff_file, "w")
+        tss_fh = open(tss_file, "r")
+        out = open(out_gff, "w")
         out.write("##gff-version 3\n")
+        tss_libs = self._get_libs(tss_file)
         for tss in self.tssparser.entries(tss_fh):
+            key = "_".join([str(tss.super_pos), tss.super_strand])
             if ((tss.super_pos == temps["tss"])) and \
                 (temps["strand"] == tss.super_strand) and \
                 (tss.class_count == 1):
@@ -322,15 +350,16 @@ class Converter(object):
                     if (tss.class_count == 1):
                         self._uni_tss_class(tss, utrs, tss_index, tss_features, nums)
                     if (check_print is False):
-                        self._print_tssfile(nums, tss_features, tss, tss_pro, strain, method, out)
+                        self._print_tssfile(nums, tss_features, tss, tss_pro, strain, method, out, tss_libs[key])
                         check_print = True
                         nums["tss_uni"] += 1
                     tss_features = {"tss_types": [], "locus_tags": [], "utr_lengths": []}
+            pre = {"pos": tss.super_pos, "strand": tss.super_strand}
         tss_fh.close()
+
     def convert_transtermhp2gff(self, transterm_file, gff_file):
         out = open(gff_file, "w")
         out.write("##gff-version 3\n")
-        num = 0
         terms = []
         for line in open(transterm_file):
             row = line[:-1].split()
@@ -359,6 +388,7 @@ class Converter(object):
                 })
             terms.append(entry)
         sort_terms = sorted(terms, key=lambda k: (k.seq_id, k.start))
+        num = 0
         for term in sort_terms:
             out.write("\t".join([str(field) for field in [
                                 term.seq_id, term.source, term.feature, term.start,

@@ -43,7 +43,7 @@ def get_overlap(pre_ribo, ribo, overlap, overlaps):
             if pre_ribo["info"] in over:
                 over = over + ";" + ribo["info"]
                 detect = True
-        if detect is False:
+        if not detect:
             overlaps[ribo["strain"]].append(pre_ribo["info"] + ";" + ribo["info"])
 
 def print_gff(num, ribo, out, stats, strain):
@@ -136,6 +136,7 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
     read_file(ribo_table, rfam_table, ribos, rfams)
     ribos = sorted(ribos, key = lambda x: (x["strain"], x["start_seq"]))
     out = open(gff_file, "w")
+    out.write("##gff-version 3\n")
     for ribo in ribos:
         overlap = False
         if ribo["strain"] != pre_strain:

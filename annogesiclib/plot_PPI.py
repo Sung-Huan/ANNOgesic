@@ -52,7 +52,7 @@ def best_assign_attributes(check_NA, G, ppi, pre_ppi, first, style):
         else:
             weight = ppi["score"] + ppi["below"] + 2
     G.add_edge(ppi["item_a"], ppi["item_b"], color=float(ppi["best"]), style=style, weight=weight)
-    if first is False:
+    if not first:
         if pre_ppi["best"] != ppi["best"]:
             check_NA["same_best"] = True
 
@@ -85,13 +85,13 @@ def modify_label(labels2, new_labels):
             new_labels[key] = value
 
 def plot_text(check_NA, plt, ppis, ppi, color_edge):
-    if (check_NA["best"] is True):
+    if check_NA["best"]:
         if len(ppis) < 2:
             plt.text(0.0, -0.1, 
                      " ".join(["the number of literatures supported is", str(ppi["best"])]), 
                      color='blue', verticalalignment='bottom', horizontalalignment='center', 
                      fontsize=12)
-        elif check_NA["same_best"] is False:
+        elif not check_NA["same_best"]:
             plt.text(0.0, -0.1, 
                      " ".join(["all numbers of literature supported are", str(ppi["best"])]), 
                      color='blue', verticalalignment='bottom', horizontalalignment='center', 
@@ -178,9 +178,11 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
     first = True
     scores = {"score": 0, "below": 0}
     center = {}
+    start = False
     fh = open(PPI_file, "r")
     print(PPI_file)
     for row in csv.reader(fh, delimiter="\t"):
+        start = True
         if row[0].startswith("Interaction"):
             if first:
                 pass
@@ -216,5 +218,8 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
                     score_compare(row[8], scores, cutoff_score, ppi)
                     ppi["best"] = row[8]
             pre_ppi = ppi
-    assign_score_below(pre_ppi, scores, ppis)
-    plot(ppis, center, pre_ppi["strain"], cutoff_score, node_size, out_folder)
+    if start:
+        assign_score_below(pre_ppi, scores, ppis)
+        plot(ppis, center, pre_ppi["strain"], cutoff_score, node_size, out_folder)
+    else:
+        print("No proper result can be retrieved...")

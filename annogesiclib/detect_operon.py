@@ -9,6 +9,16 @@ from annogesiclib.gff3 import Gff3Parser
 def import_to_operon(start, end, strand):
     return {"start": start, "end": end, "strand": strand}
 
+def get_gene_info(cds):
+    if "locus_tag" in cds.attributes.keys():
+        feature = cds.attributes["locus_tag"]
+    elif "protein_id" in cds.attributes.keys():
+        feature = cds.attributes["protein_id"]
+    else:
+        feature = "".join([cds.feature, ":", str(cds.start),
+                           "-", str(cds.end), "_", cds.strand])
+    return feature
+
 def get_term_feature(ta, data, term_fuzzy, features, datas,
                      ta_check_point, data_check_start, data_check_end):
     jump = False
@@ -19,11 +29,15 @@ def get_term_feature(ta, data, term_fuzzy, features, datas,
        ((ta_check_point >= data.start) and (ta_check_point <= data.end))):
         features["detect"] = True
     if (ta.strand == data.strand) and \
-       (ta.seq_id == data.seq_id) and \
-       (ta.start <= data_check_start) and \
-       (ta.end >= data_check_end):
-        features["num"] += 1
-        datas.append(data)
+       (ta.seq_id == data.seq_id):
+        if (ta.start <= data_check_start) and \
+           (ta.end >= data_check_end):
+            features["num"] += 1
+            datas.append(data)
+        elif (ta_check_point >= data.start) and \
+             (ta_check_point <= data.end):
+            features["num"] += 1
+            datas.append(data)
     elif (ta.seq_id == data.seq_id) and \
          (data.start - term_fuzzy > ta.end):
         jump = True
@@ -74,7 +88,11 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
                 if (ta.strand == data.strand) and \
                    (ta.seq_id == data.seq_id) and \
                    (ta.start <= data.start) and \
-                   (ta.end >= data.end):
+                   (ta.end >= data.end) and \
+                   ((data.feature == "CDS") or \
+                    (data.feature == "tRNA") or \
+                    (data.feature == "rRNA") or \
+                    (data.feature == "sRNA")):
                     features["num"] += 1
                     features["detect"] = True
                     datas.append(data)
@@ -102,14 +120,14 @@ def sub_operon(operons, strand, tsss, ta_pos, end, genes, min_length):
         else:
             for tss in tsss["data_list"]:
                 conflict = check_gene(genes, tss.start, strand)
-                if conflict is False:
+                if not conflict:
                     datas = _sub_operon(operons, strand, tss, ta_pos, first, operon_pos, min_length)
                     first = datas[1]
                     operon_pos = datas[0]
     else:
         for tss in tsss["data_list"]:
             conflict = check_gene(genes, tss.start, strand)
-            if conflict is False:
+            if not conflict:
                 datas = _sub_operon(operons, strand, tss, ta_pos, first, operon_pos, min_length)
                 first = datas[1]
                 operon_pos = datas[0]
@@ -151,6 +169,7 @@ def read_gff(TA_file, GFF_file, TSS_file, terminator_file,
 def print_file(ta, operons, out, Operon_ID, whole_operon, tsss, terms, genes, whole_gene):
     if len(operons) == 0:
         out.write("\t".join([Operon_ID, ta.seq_id, "-".join([str(whole_operon.start), str(whole_operon.end)]),
+
                              whole_operon.strand, str(len(operons)), "NA", str(tsss["with_feature"]),
                              str(tsss["num_feature"]), str(terms["with_feature"]), str(terms["num_feature"]),
                              "NA", str(genes["num_feature"]), "NA", ", ".join(whole_gene)]) + "\n")
@@ -191,7 +210,7 @@ def operon(TA_file, TSS_file, GFF_file, terminator_file, tss_fuzzy, term_fuzzy, 
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start))
-    if terminator_file is not False:
+    if terminator_file is not None:
         term_gffs = sorted(term_gffs, key=lambda k: (k.seq_id, k.start))
     for ta in tas:
         operons = []
@@ -203,7 +222,7 @@ def operon(TA_file, TSS_file, GFF_file, terminator_file, tss_fuzzy, term_fuzzy, 
             num_operon += 1
         genes = detect_features(ta, gffs, "gene", term_fuzzy, tss_fuzzy)
         tsss = detect_features(ta, tss_gffs, "tss", term_fuzzy, tss_fuzzy)
-        if terminator_file is False:
+        if terminator_file is None:
             terms = {"with_feature": "NA", "num_feature": "NA"}
         else:
             terms = detect_features(ta, term_gffs, "term", term_fuzzy, tss_fuzzy)
@@ -214,7 +233,7 @@ def operon(TA_file, TSS_file, GFF_file, terminator_file, tss_fuzzy, term_fuzzy, 
         Operon_ID = "Operon" + str(num_operon)
         if genes["num_feature"] != 0:
             for gene in genes["data_list"]:
-                whole_gene.append(gene.attributes["locus_tag"])
+                whole_gene.append(get_gene_info(gene))
         else:
             whole_gene.append("NA")
         if check_operon:

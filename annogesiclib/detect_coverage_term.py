@@ -55,27 +55,18 @@ def compare_gff(term, gffs, seq):
                    break
     return (seq_start, seq_end)
 
-def check_overlap(strain, strand, start, end, tas):
-    for ta in tas:
-        if (ta.seq_id == strain) and \
-           (ta.strand == strand):
-            if ((ta.start < start) and (ta.end > start) and (ta.end < end)) or \
-               ((ta.start > start) and (ta.end < end)) or \
-               ((ta.start > start) and (ta.start < end) and (ta.end > end)) or \
-               ((ta.start < start) and (ta.end > end)):
-                return "True"
-    return "False"
-
-def compare_ta(terms, tas, gffs, seq):
+def compare_ta(terms, tas, gffs, seq, fuzzy):
     for term in terms:
-        pos = compare_gff(term, gffs, seq)
-        start = pos[0]
-        end = pos[1]
-        if (start == -1):
-            term["conflict"] = True
-        else:
-            term["express"] = check_overlap(term["strain"], term["strand"], 
-                                            start, end, tas)
+        for ta in tas:
+            start = ta.start - fuzzy
+            end = ta.end + fuzzy
+            if (ta.seq_id == term["strain"]) and \
+               (ta.strand == term["strand"]):
+                if ((start < term["start"]) and (end > term["start"]) and (end < term["end"])) or \
+                   ((start > term["start"]) and (end < term["end"])) or \
+                   ((start > term["start"]) and (start < term["end"]) and (end > term["end"])) or \
+                   ((start < term["start"]) and (end > term["end"])):
+                    term["express"] = "True"
 
 def compare_transtermhp(hps, fr_terms, terms):
     for term in fr_terms:
@@ -244,7 +235,7 @@ def print_table(term, cutoff_coverage, out_t, table_best):
             out_t.write("True\t")
         else:
             out_t.write("False\t")
-        if table_best is not False:
+        if table_best:
             for cond, datas in term["datas"].items():
                 for data in datas:
                     if first:
@@ -313,7 +304,7 @@ def print_detect_undetect(terms, num, out, out_t, table_best, cutoff_coverage, d
 def term_validation(pre_term, term, detect, detect_terms, out, out_t, 
                     table_best, num, cutoff_coverage):
     if pre_term["name"] != term["name"]:
-        if detect is True:
+        if detect:
             num = print_detect_undetect(detect_terms["detect"], num, out, out_t, 
                                         table_best, cutoff_coverage, "True")
             detect = False
@@ -330,7 +321,7 @@ def term_validation(pre_term, term, detect, detect_terms, out, out_t,
                 detect_terms["detect"] = compare_term(
                                          term, detect_terms["detect"])
             else:
-                if detect is False:
+                if not detect:
                     detect_terms["undetect"] = compare_term(
                                                term, detect_terms["undetect"])
         else:
@@ -339,7 +330,7 @@ def term_validation(pre_term, term, detect, detect_terms, out, out_t,
                 detect_terms["detect"] = compare_term(
                                          term, detect_terms["detect"])
             else:
-                if detect is False:
+                if not detect:
                     detect_terms["undetect"] = compare_term(
                                                term, detect_terms["undetect"])
     return (num, detect)
@@ -350,18 +341,17 @@ def print_term(terms, out, out_t, table_best, cutoff_coverage):
     detect_terms = {"detect": [], "undetect": []}
     num = 0
     for term in terms:
-        if "conflict" not in term.items():
-            if first:
-                first = False
-                pre_term = term
-                detect = first_term(term["strand"], term, detect_terms, detect)
-            else:
-                data = term_validation(pre_term, term, detect, detect_terms, out, 
-                                      out_t, table_best, num, cutoff_coverage)
-                num = data[0]
-                detect = data[1]
-                pre_term = term
-    if detect is True:
+        if first:
+            first = False
+            pre_term = term
+            detect = first_term(term["strand"], term, detect_terms, detect)
+        else:
+            data = term_validation(pre_term, term, detect, detect_terms, out, 
+                                  out_t, table_best, num, cutoff_coverage)
+            num = data[0]
+            detect = data[1]
+            pre_term = term
+    if detect:
         num = print_detect_undetect(detect_terms["detect"], num, out, out_t, 
                                     table_best, cutoff_coverage, "True")
     else:
@@ -407,8 +397,7 @@ def compute_wig(wig_file, libs, terms, strand, wigs, texs, fuzzy,
     read_wig(wigs, wig_file, strand, libs)
     for term in terms:
         if (term["strand"] == strand) and \
-           (term["express"] == "True") and \
-           ("conflict" not in term.keys()):
+           (term["express"] == "True"):
             covers = get_coverage(term, wigs, strand, texs, fuzzy, 
                                   decrease, replicates, tex_notex)
             term = input_final_terms(term, covers)
@@ -433,7 +422,7 @@ def detect_coverage(term_table, gff_file, tran_file, seq_file, wig_f_file, wig_r
     hps = sorted(hps, key = lambda x: (x.seq_id, x.start))
     compare_transtermhp(hps, fr_terms, terms)
     terms = sorted(terms, key = lambda x: (x["strain"], x["start"]))
-    compare_ta(terms, tas, gffs, seq)
+    compare_ta(terms, tas, gffs, seq, fuzzy)
     read_libs(libs, texs, input_libs, wig_folder)
     compute_wig(wig_f_file, libs, terms, "+", wigs_f, texs, fuzzy, decrease, replicates, tex_notex)
     compute_wig(wig_r_file, libs, terms, "-", wigs_r, texs, fuzzy, decrease, replicates, tex_notex)

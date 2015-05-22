@@ -95,18 +95,21 @@ def blast_class(sRNA_file, out_file):
         nums["total"][srna_name]["ID"].append(srna["ID"])
         nums["total"][srna_name]["e"].append(srna["e"])
         nums["total"][srna_name]["blast_strain"].append(srna["blast_strain"])
-    if len(nums) > 1:
-        out.write("All strain:\n")
-        out.write("sRNA_name\tamount\n")
-        for blast, details in nums["total"].items():
-            out.write("{0}\t{1}\n".format(blast, details["num"]))
-    else:
-        for strain, srna_name in srna.items():
-            out.write(strain + ":\n")
+    if len(srnas) != 0:
+        if len(nums) > 1:
+            out.write("All strain:\n")
             out.write("sRNA_name\tamount\n")
-            for blast, details in srna_name.items():
-                srna_name = blast.split("_")
+            for blast, details in nums["total"].items():
                 out.write("{0}\t{1}\n".format(blast, details["num"]))
-    out.write("\nrepeat counting:\n")
-    for name, srna_name in repeats.items():
-        out.write("".join([name, ":", ";".join(srna_name)]) + "\n")
+        else:
+            for strain, srna_name in srna.items():
+                out.write(strain + ":\n")
+                out.write("sRNA_name\tamount\n")
+                for blast, details in srna_name.items():
+                    srna_name = blast.split("_")
+                    out.write("{0}\t{1}\n".format(blast, details["num"]))
+        out.write("\nrepeat counting:\n")
+        for name, srna_name in repeats.items():
+            out.write("".join([name, ":", ";".join(srna_name)]) + "\n")
+    else:
+        out.write("No sRNA candidates!!\n")

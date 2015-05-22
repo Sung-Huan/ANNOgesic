@@ -25,13 +25,11 @@ class Ribos(object):
         self.table_folder = os.path.join(out_folder, "tables")
         self.scan_folder = os.path.join(out_folder, "scan_Rfam")
         self.ribos_rfam = os.path.join(database, "Rfam_riboswitch.cm")
-        self.tmp_fasta = os.path.join(out_folder, "tmp_fasta")
-        self.tmp_scan = os.path.join(out_folder, "tmp_scan")
-        self.tmp_table = os.path.join(out_folder, "tmp_table")
-        self.endfix_csv = "RBS.csv"
-        self.endfix_txt = "RBS.txt"
-        self.endfix_rescan_txt = "RBS_rescan.txt"
-        self.endfix_rescan_csv = "RBS_rescan.csv"
+        self.tmp_files = {"fasta": os.path.join(out_folder, "tmp_fasta"),
+                          "scan": os.path.join(out_folder, "tmp_scan"),
+                          "table": os.path.join(out_folder, "tmp_table")}
+        self.suffixs = {"csv": "RBS.csv", "txt": "RBS.txt", 
+                        "re_txt": "RBS_rescan.txt", "re_csv": "RBS_rescan.csv"}
 
     def _scan_extract_Rfam(self, gff_path, seq_path, prefixs, fasta_path, out_folder,
                            infernal_path, database, re_scan):
@@ -43,30 +41,30 @@ class Ribos(object):
                 print("extracting seq of riboswitch candidates of {0}".format(prefix))
                 extract_potential_rbs(os.path.join(fasta_path, prefix + ".fa"), 
                                       os.path.join(gff_path, gff), first_seq) ### extract seq for scan
-                first_scan_file = os.path.join(self.tmp_scan,
-                                  "_".join([prefix, self.endfix_txt]))
+                first_scan_file = os.path.join(self.tmp_files["scan"],
+                                  "_".join([prefix, self.suffixs["txt"]]))
                 first_scan = open(first_scan_file, "w")
                 print("scanning Rfam for {0}".format(prefix))
                 call([os.path.join(infernal_path, "cmscan"), "--acc",
                       self.ribos_rfam, first_seq], stdout=first_scan) ### scan Rfam
                 first_scan.close()
                 sec_seq = os.path.join(seq_path, "_".join([prefix, "regenerate.fa"]))
-                first_table = os.path.join(self.tmp_table, 
-                                           "_".join([prefix, self.endfix_csv]))
+                first_table = os.path.join(self.tmp_files["table"], 
+                                           "_".join([prefix, self.suffixs["csv"]]))
                 #### generate the table of the first scan results and seq for scan second time
                 regenerate_seq(first_scan_file, first_seq, first_table, sec_seq)
-                if re_scan is False: #### if it doesn't run re_scan, delete the regenerate seq
+                if not re_scan: #### if it doesn't run re_scan, delete the regenerate seq
                     os.remove(sec_seq)
-                if re_scan is True: #### re-scanning
+                if re_scan: #### re-scanning
                     print("re-scanning of {0}".format(prefix))
-                    sec_scan_file = os.path.join(self.tmp_scan,
-                                    "_".join([prefix, self.endfix_rescan_txt]))
+                    sec_scan_file = os.path.join(self.tmp_files["scan"],
+                                    "_".join([prefix, self.suffixs["re_txt"]]))
                     sec_scan = open(sec_scan_file, "w")
                     call([os.path.join(infernal_path, "cmscan"), "--acc",
                           self.ribos_rfam, sec_seq], stdout=sec_scan)
                     sec_scan.close()
-                    sec_table = os.path.join(self.tmp_table,
-                                           "_".join([prefix, self.endfix_rescan_csv]))
+                    sec_table = os.path.join(self.tmp_files["table"],
+                                           "_".join([prefix, self.suffixs["re_csv"]]))
                     reextract_rbs(sec_scan_file, first_table, sec_table)
                     os.rename(sec_table, first_table)
         return prefixs
@@ -82,26 +80,26 @@ class Ribos(object):
                 for entry in self.gff_parser.entries(open(os.path.join(gffs, gff))):
                     if entry.seq_id != pre_strain:
                         if len(pre_strain) == 0:
-                            shutil.copyfile(os.path.join(self.tmp_table, 
-                                            "_".join([entry.seq_id, self.endfix_csv])),
+                            shutil.copyfile(os.path.join(self.tmp_files["table"], 
+                                            "_".join([entry.seq_id, self.suffixs["csv"]])),
                                             os.path.join(table_folder, 
-                                            "_".join([prefix, self.endfix_csv])))
+                                            "_".join([prefix, self.suffixs["csv"]])))
                         else:
-                            self.helper.merge_file(os.path.join(self.tmp_table,
-                                                   "_".join([entry.seq_id, self.endfix_csv])),
+                            self.helper.merge_file(os.path.join(self.tmp_files["table"],
+                                                   "_".join([entry.seq_id, self.suffixs["csv"]])),
                                                    os.path.join(table_folder, 
-                                                   "_".join([prefix, self.endfix_csv])))
-                        shutil.copy(os.path.join(self.tmp_scan, 
-                                    "_".join([entry.seq_id, self.endfix_txt])), 
+                                                   "_".join([prefix, self.suffixs["csv"]])))
+                        shutil.copy(os.path.join(self.tmp_files["scan"], 
+                                    "_".join([entry.seq_id, self.suffixs["txt"]])), 
                                     os.path.join(scan_folder, prefix))
                         if re_scan:
-                            shutil.copy(os.path.join(self.tmp_scan, 
-                                        "_".join([entry.seq_id, self.endfix_rescan_txt])), 
+                            shutil.copy(os.path.join(self.tmp_files["scan"], 
+                                        "_".join([entry.seq_id, self.suffixs["re_txt"]])), 
                                         os.path.join(scan_folder, prefix))
                         pre_strain = entry.seq_id
-                out_stat = os.path.join(stat_folder, "_".join(["stat", prefix, self.endfix_txt]))
+                out_stat = os.path.join(stat_folder, "_".join(["stat", prefix, self.suffixs["txt"]]))
                 print("compute statistics of {0}".format(prefix)) #### covert to gff and do statistics
-                stat_and_covert2gff(os.path.join(table_folder, "_".join([prefix, self.endfix_csv])), 
+                stat_and_covert2gff(os.path.join(table_folder, "_".join([prefix, self.suffixs["csv"]])), 
                                     ribos_id, 
                                     os.path.join(gff_outfolder, "_".join([prefix, "RBS.gff"])), 
                                     fuzzy, out_stat)
@@ -122,10 +120,10 @@ class Ribos(object):
         print("compressing Rfam...")
         call([os.path.join(infernal_path, "cmpress"), "-F", self.ribos_rfam])
         prefixs = []
-        self.helper.check_make_folder(self.tmp_fasta)
-        self.helper.check_make_folder(self.tmp_scan)
-        self.helper.check_make_folder(self.tmp_table)
-        prefixs = self._scan_extract_Rfam(self.gff_path, self.tmp_fasta, prefixs, self.fasta_path, 
+        self.helper.check_make_folder(self.tmp_files["fasta"])
+        self.helper.check_make_folder(self.tmp_files["scan"])
+        self.helper.check_make_folder(self.tmp_files["table"])
+        prefixs = self._scan_extract_Rfam(self.gff_path, self.tmp_files["fasta"], prefixs, self.fasta_path, 
                                           out_folder, infernal_path, database, re_scan)
         self._merge_results(gffs, self.scan_folder, out_folder, self.table_folder, self.stat_folder,
                             ribos_id, fuzzy, self.gff_outfolder, re_scan)  #### merge the results based on annotation files

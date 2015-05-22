@@ -24,6 +24,13 @@ def modify_attributes(pre_srna, srna, srna_type, input_type):
                 else:
                     srna.attributes["UTR_type"] = pre_srna.attributes["UTR_type"]
 
+def del_attributes(feature, entry):
+    attributes = {}
+    for key, value in entry.attributes.items():
+        if feature not in key:
+            attributes[key] = value
+    return attributes
+
 def detect_overlap(srna, pre_srna, srna_type, overlap):
     if (srna.seq_id == pre_srna.seq_id) and \
        (srna.strand == pre_srna.strand):
@@ -78,7 +85,10 @@ def merge_srna(srnas, final_srnas, srna_type):
         else:
             srna.attributes["lib_type"] = srna.source.replace("_and_", "&")
             srna.source = "intergenic"
-            if srna.attributes["with_TSS"] == "False":
+            if "with_TSS" in srna.attributes.keys():
+                if srna.attributes["with_TSS"] == "False":
+                    srna.attributes["with_TSS"] = "NA"
+            else:
                 srna.attributes["with_TSS"] = "NA"
         overlap = False
         insist = False
@@ -89,24 +99,26 @@ def merge_srna(srnas, final_srnas, srna_type):
             overlap = detect_overlap(srna, pre_srna, srna_type, overlap)
             if overlap:
                 pre_srna = modify_overlap(pre_srna, srna)
-            if overlap is not True:
+            if not overlap:
                 final_srnas.append(pre_srna)
                 pre_srna = srna
-    if overlap is not True:
+    if not overlap:
         final_srnas.append(srna)
 
 def read_gff(sRNA_file):
     datas = []
-    for entry in Gff3Parser().entries(open(sRNA_file)):
-        datas.append(entry)
-    datas = sorted(datas, key=lambda k: (k.seq_id, k.start))
+    if os.path.exists(sRNA_file):
+        for entry in Gff3Parser().entries(open(sRNA_file)):
+            datas.append(entry)
+        datas = sorted(datas, key=lambda k: (k.seq_id, k.start))
     return datas
 
 def read_table(table_file, file_type):
-    fh = open(table_file, "r")
     datas = []
-    for row in csv.reader(fh, delimiter='\t'):
-        datas.append(import_data(row, file_type))
+    if os.path.exists(table_file):
+        fh = open(table_file, "r")
+        for row in csv.reader(fh, delimiter='\t'):
+            datas.append(import_data(row, file_type))
     return datas
 
 def merge_srna_gff(sRNA_utr, sRNA_inter, out_file):
@@ -116,16 +128,18 @@ def merge_srna_gff(sRNA_utr, sRNA_inter, out_file):
     utrs = read_gff(sRNA_utr)
     inters = read_gff(sRNA_inter)
     num_srna = 0
-    merge_srna(utrs, srnas, "UTR")
-    merge_srna(inters, srnas, "inter")
+    if len(utrs) != 0:
+        merge_srna(utrs, srnas, "UTR")
+    if len(inters) != 0:
+        merge_srna(inters, srnas, "inter")
     sort_srnas = sorted(srnas, key = lambda x: (x.seq_id, x.start))
     for srna in sort_srnas:
         srna.attributes["ID"] = "srna" + str(num_srna)
         name = '%0*d' % (5, num_srna)
         srna.attributes["Name"] = "sRNA_candidate_" + str(name)
-        del srna.attributes["best_high_coverage"]
-        del srna.attributes["best_low_coverage"]
-        del srna.attributes["best_avg_coverage"]
+        srna.attributes = del_attributes("best_high_coverage", srna)
+        srna.attributes = del_attributes("best_low_coverage", srna)
+        srna.attributes = del_attributes("best_avg_coverage", srna)
         attribute_string = ";".join(
                           ["=".join(items) for items in srna.attributes.items()])
         srna.info_without_attributes = "\t".join([str(field) for field in [
@@ -161,7 +175,7 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs,
                       srna.strand, table["libs"], table["detect"], tss_pro,
                       table["avg"], table["high"], table["low"], table["detail"]))
             break
-    if detect is not True:
+    if not detect:
         if srna.strand == "+":
             covers = get_coverage(wigs_f, srna.seq_id, srna.strand, srna.start, srna.end)
         else:
@@ -175,7 +189,7 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs,
                        srna.strand, ";".join(srna_datas["conds"].keys()),
                        ";".join(srna_datas["conds"].values()), tss_pro,
                        srna_datas["best"], srna_datas["high"], srna_datas["low"]))
-            if table_best is False:
+            if not table_best:
                 first = True
                 for data in srna_datas["detail"]:
                     if first:

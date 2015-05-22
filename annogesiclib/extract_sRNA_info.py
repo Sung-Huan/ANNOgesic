@@ -24,7 +24,7 @@ def get_proteins(datas, nums, checks, proteins, blast_f):
             if ("hypothetical" in name) or \
                ("unknown" in name):
                 nums["hypo"] += 1
-            if checks["detect"] is False:
+            if not checks["detect"]:
                 for line in blast_f:
                     line = line.strip()
                     if "Expect =" in line:
@@ -51,7 +51,7 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
         nums = {"index": 0, "hypo": 0}
         proteins = []
         get_proteins(datas, nums, checks, proteins, blast_f)
-        if checks["print"] is True:
+        if checks["print"]:
             if float(nums["hypo"]) / float(len(proteins)) <= 0.5:
                 blasts["hit_num"] += 1
                 if blasts["hit_num"] <= 3:
@@ -87,7 +87,7 @@ def detect_sRNA(line, blast_f, out_t, blasts, prefix):
 def read_gff(sRNA_file, data_type):
     srnas = []
     srna_f = open(sRNA_file, "r")
-    print(data_type)
+#    print(data_type)
     for entry in Gff3Parser().entries(srna_f):
         attributes = {}
         for key, value in entry.attributes.items():
@@ -148,12 +148,14 @@ def extract_blast(blast_result, sRNA_file, output_file, output_table, database):
                                                     names.append(blasts["name"])
                                         elif database == "nr":
                                             detect_nr(line, blast_f, out_t, blasts, prefix)
-                                if blasts["blast"] is not True:
+                                if not blasts["blast"]:
                                     out_t.write("{0}\tNA\n".format(prefix))
                                     print_file(database, out_f, srna.info, "NA", "NA")
                                 else:
+#                                    print_file(database, out_f, srna.info,
+#                                               "&".join(names), blasts["hit_num"])
                                     print_file(database, out_f, srna.info,
-                                               "&".join(names), blasts["hit_num"])
+                                               len(names), blasts["hit_num"])
                                 blasts["hit_num"] = 0
                                 break
     out_f.close()
@@ -179,7 +181,7 @@ def extract_energy(sRNA_file, sec_file, out_file):
                          str(srna.end), srna.strand])) == structure[1:]):
                         check = True
                         get_length = True
-                if (check is True) and \
+                if (check) and \
                    ((structure[0] == "(") or (structure[0] == ")") or (structure[0] == ".")) and \
                    (structure[-1] == ")"):
                     check = False

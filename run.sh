@@ -2,18 +2,11 @@ main(){
     PATH_FILE=$(pwd)
     PYTHON_PATH=python3.4
     STRAINS=Staphylococcus_aureus_HG003
-    TRANSAP_PATH=/home/silas/ANNO/Transap.py
-    TRANSAP_FOLDER=Transap
+    ANNOGESIC_PATH=/home/silas/ANNOgesic/ANNOgesic.py
+    ANNOGESIC_FOLDER=ANNOgesic
     FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795
-    BIN_PATH=/home/silas/ANNO/bin_bak
     ID_MAPPING_SOURCE=ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
-
-    #######################################################################################################################
-    # if you have many GFF or FASTA files, you want to combine them to be one file.                                       #
-    # you can un-mark COMBINE_GFF, COMBINE_FASTA.                                                                         #
-    # Additionally, please give them a name.                                                                              #
-    # The name should be absolutive path.                                                                                 #
-    #######################################################################################################################
+    PAGIT_HOME=/home/silas/ANNOgesic/tools/PAGIT
     tex_notex_libs="TSB_OD_0.2_TEX_div_by_3598556.0_multi_by_3382258.0_reverse.wig:tex:1:a:- \
                    TSB_OD_0.5_TEX_div_by_4420442.0_multi_by_3382258.0_reverse.wig:tex:2:a:- \
                    TSB_OD_1_TEX_div_by_3956047.0_multi_by_3382258.0_reverse.wig:tex:3:a:- \
@@ -72,34 +65,31 @@ main(){
                    pMEM_t2_div_by_3382258.0_multi_by_3382258.0_forward.wig:notex:14:a:+"
     frag_libs="ID-001873-Staph_aureus_sample_mix_div_by_3162486.0_multi_by_3162486.0_forward.wig:frag:1:a:+ \
                ID-001873-Staph_aureus_sample_mix_div_by_3162486.0_multi_by_3162486.0_reverse.wig:frag:1:a:-"
-    
-
-#    COMBINE_GFF=/home/silas/Projects/2014-06-13-Sung-Huan-Yu-transcript_annotation_pipeline/Transap/output/target/annotation/all.gff
-#    COMBINE_FASTA=/home/silas/Projects/2014-06-13-Sung-Huan-Yu-transcript_annotation_pipeline/Transap/output/target/fasta/all.fasta
 
 #    set_up_analysis_folder
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
-    SNP_calling_reference
+#    SNP_calling_reference
 #    TSS_prediction
-#    color_png_TSS
 #    Transcriptome_assembly
 #    Terminator_prediction
 #    processing_site_prediction
-#    color_png_processing_site
 #    utr_detection
 #    sRNA_detection
+#    sORF_detection
 #    promoter_detection
 #    CircRNA_detection
 #    Go_term
-#    sRNA_target
+    sRNA_target
 #    operon_detection
 #    SNP_calling_target
 #    PPI_network
 #    Subcellular_localization
 #    riboswitch
 #    Optimize_TSSpredator
+#    gen_screenshot
+#    color_png
 }
 
 
@@ -114,72 +104,67 @@ create_folders(){
 }
 
 set_up_analysis_folder(){
-    if ! [ -d $TRANSAP_FOLDER ]
+    if ! [ -d $ANNOGESIC_FOLDER ]
     then
-        $PYTHON_PATH $TRANSAP_PATH create $TRANSAP_FOLDER
+        $PYTHON_PATH $ANNOGESIC_PATH create $ANNOGESIC_FOLDER
     fi
 }
 
 get_input_files(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
 	get_input_files \
 	-F $FTP_SOURCE \
 	-g \
 	-f \
 	-e \
 	-k \
-	$TRANSAP_FOLDER
+	$ANNOGESIC_FOLDER
 }
 
 get_target_fasta(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
         get_target_fasta \
-        -r $TRANSAP_FOLDER/input/reference/fasta \
+        -r $ANNOGESIC_FOLDER/input/reference/fasta \
 	-o Staphylococcus_aureus_HG003:Staphylococcus_aureus_HG003 \
-        -m $TRANSAP_FOLDER/input/mutation_table/Combined_table_Berscheid_and_Schuster.csv \
-        $TRANSAP_FOLDER
+        -m $ANNOGESIC_FOLDER/input/mutation_table/Combined_table_Berscheid_and_Schuster.csv \
+        $ANNOGESIC_FOLDER
 }
 
 annotation_transfer(){
     # instead of using "source"
-#    . $PAGIT_HOME/sourceme.pagit
-#    if [ -f $COMBINE_GFF ]
-#    then
-#        rm $COMBINE_GFF
-#    fi
-# --PAGIT_path /home/silas/Transap/tools/PAGIT \
-    $PYTHON_PATH $TRANSAP_PATH \
+    . $PAGIT_HOME/sourceme.pagit
+    $PYTHON_PATH $ANNOGESIC_PATH \
         annotation_transfer \
-        -tr Staphylococcus_aureus_HG003:NC_007795.1 \
-        -re $TRANSAP_FOLDER/input/reference/annotation \
-        -rf $TRANSAP_FOLDER/input/reference/fasta \
-        -tf $TRANSAP_FOLDER/output/target/fasta \
+        -re $ANNOGESIC_FOLDER/input/reference/annotation \
+        -rf $ANNOGESIC_FOLDER/input/reference/fasta/NC_007795.1.fa \
+        -tf $ANNOGESIC_FOLDER/output/target/fasta \
         -e chromosome \
 	-t Strain \
+	-p NC_007795.1:Staphylococcus_aureus_HG003 \
 	-g \
-	--RATT_path /home/silas/Transap_bak/tools/ratt-code \
-        $TRANSAP_FOLDER
+	--RATT_path /home/silas/ANNOgesic/tools/PAGIT/RATT \
+        $ANNOGESIC_FOLDER
 }
 
 SNP_calling_reference(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
          snp \
         -p 1 2 3 \
         -t reference \
-        -nw $TRANSAP_FOLDER/input/BAMs/BAMs_map_reference/tex_notex \
-        -f $TRANSAP_FOLDER/input/reference/fasta \
-        --samtools_path /home/silas/Transap/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
-        --bcftools_path /home/silas/Transap/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/bcftools \
-        $TRANSAP_FOLDER
+        -nw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta \
+        --samtools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
+        --bcftools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/bcftools \
+        $ANNOGESIC_FOLDER
 }
 
 TSS_prediction(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
         tsspredator \
-        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
-        -w $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -f $TRANSAP_FOLDER/output/target/fasta \
-        -g $TRANSAP_FOLDER/output/target/annotation \
+        --TSSpredator_path /home/silas/ANNOgesic/tools/TSSpredator_v1-04/TSSpredator.jar \
+        -w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
         -l $tex_notex_libs \
         -p TSB_OD_0.2 \
 	   TSB_OD_0.5 \
@@ -196,72 +181,66 @@ TSS_prediction(){
 	   pMEM_t1 \
 	   pMEM_t2 \
         -he 1.4 \
-	-rh 1.3 \
-	-fa 5.2 \
-	-rf 1.2 \
-	-bh 0.01 \
+        -rh 1.3 \
+        -fa 5.1 \
+        -rf 0.7 \
+        -bh 0.055 \
+	-ef 0.4 \
+	-pf 1.6 \
 	-rm 1 \
-	-m $TRANSAP_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
         -s \
+        -m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
         -v \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
-#-ta $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-
-color_png_TSS(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        color_png \
-	-s TSS \
-	-t 28 \
-        $TRANSAP_FOLDER
-}
+#-ta $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+#-m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
+#        -v \
 
 Transcriptome_assembly(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        Transcript_Assembly \
-        -nw $TRANSAP_FOLDER/input/wigs/tex_notex \
-	-fw $TRANSAP_FOLDER/input/wigs/fragment \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        transcript_assembly \
+        -nw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+	-fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -tl $tex_notex_libs \
         -fl $frag_libs \
-        -r 1 \
+        -rt 1 \
+	-rf 1 \
         -te 2 \
-	-ct $TRANSAP_FOLDER/output/TSS/gffs \
-        -cg $TRANSAP_FOLDER/output/target/annotation \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        $TRANSAP_FOLDER
+	-ct $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -cg $ANNOGESIC_FOLDER/output/target/annotation \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        $ANNOGESIC_FOLDER
 }
-#        -fw $TRANSAP_FOLDER/input/wigs/fragment \
-#        -g $TRANSAP_FOLDER/output/target/annotation \
-#        -ct $TRANSAP_FOLDER/output/TSS/gffs \
-#        -cg $TRANSAP_FOLDER/output/target/annotation \
 
 Terminator_prediction(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        Terminator \
-        --TransTermHP_folder /home/silas/Transap/tools/transterm_hp_v2.09 \
-        -f $TRANSAP_FOLDER/output/target/fasta \
-        -g $TRANSAP_FOLDER/output/target/annotation \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        terminator \
+        --TransTermHP_folder /home/silas/ANNOgesic/tools/transterm_hp_v2.09 \
+        --RNAfold_path /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs/RNAfold \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
         -s \
-        -fw $TRANSAP_FOLDER/input/wigs/fragment \
-        -tw $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
+        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         -tl $tex_notex_libs \
         -fl $frag_libs \
         -te 2 \
-        -r 1 \
+        -rt 1 \
+	-rf 1 \
         -tb \
-	-sr srna_test \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
 
 processing_site_prediction()
 {
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
         tsspredator \
-        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
-        -w $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -f $TRANSAP_FOLDER/output/target/fasta \
-        -g $TRANSAP_FOLDER/output/target/annotation \
+        --TSSpredator_path /home/silas/ANNOgesic/tools/TSSpredator_v1-04/TSSpredator.jar \
+        -w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
         -l $tex_notex_libs \
         -p TSB_OD_0.2 \
            TSB_OD_0.5 \
@@ -278,162 +257,190 @@ processing_site_prediction()
            pMEM_t1 \
            pMEM_t2 \
         -he 0.5 \
-        -rh 0.4 \
+        -rh 0.2 \
         -fa 2.1 \
-        -rf 0.1 \
+        -rf 1.4 \
 	-bh 0.0 \
+	-ef 4.7 \
+	-pf 2.5 \
 	-rm 1 \
 	-t processing_site \
 	-s \
-	-m $TRANSAP_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_105000.gff \
+	-m $ANNOGESIC_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_105000.gff \
         -le 105000 \
-        $TRANSAP_FOLDER
-}
-
-color_png_processing_site(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        color_png \
-        -s processing_site \
-        -t 28 \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
 
 utr_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        UTR_detection \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-	-t $TRANSAP_FOLDER/output/TSS/gffs \
-        -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-	-e $TRANSAP_FOLDER/output/terminator/gffs \
-        $TRANSAP_FOLDER
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        utr \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+	-t $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+	-e $ANNOGESIC_FOLDER/output/terminator/gffs/detect \
+        $ANNOGESIC_FOLDER
 }
 
 sRNA_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        sRNA_detection \
-        -d 1 2 3 4 \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -t $TRANSAP_FOLDER/output/TSS/gffs \
-        -p $TRANSAP_FOLDER/output/processing_site/gffs \
-        -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-        -fw $TRANSAP_FOLDER/input/wigs/fragment \
-        -tw $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -f $TRANSAP_FOLDER/output/target/fasta \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        srna \
+        -d 1 2 3 4 5 \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7 \
+	--blast_plus_folder /home/silas/ANNOgesic/tools \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -t $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -p $ANNOGESIC_FOLDER/output/processing_site/gffs \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+	-O $ANNOGESIC_FOLDER/output/sORF/gffs/best \
         -m \
         -u \
-        -sd $TRANSAP_FOLDER/input/database/sRNA_database \
-        -nd $TRANSAP_FOLDER/input/database/nr \
+	-fd \
+        -sd $ANNOGESIC_FOLDER/input/database/sRNA_database \
+        -nd $ANNOGESIC_FOLDER/input/database/nr \
         -tl $tex_notex_libs \
         -fl $frag_libs \
         -te 2 \
-        -r 1 \
+        -rt 1 \
+	-rf 1 \
         -ba \
-        $TRANSAP_FOLDER
+	-sb \
+        $ANNOGESIC_FOLDER
 }
 
+sORF_detection(){
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        sorf \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -t $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+        -tl $tex_notex_libs \
+        -fl $frag_libs \
+        -te 2 \
+        -rt 1 \
+	-rf 1 \
+        -u \
+        $ANNOGESIC_FOLDER
+}
+#-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
 promoter_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        Promoter \
-        -t $TRANSAP_FOLDER/output/TSS/gffs \
-        -f $TRANSAP_FOLDER/output/target/fasta \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        promoter \
+        -t $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
 	-w 50 51 45 2-10 \
 	-p 10 \
-	-g $TRANSAP_FOLDER/output/TSS/gffs \
-        $TRANSAP_FOLDER
+	-g $ANNOGESIC_FOLDER/output/TSS/gffs \
+        $ANNOGESIC_FOLDER
 }
 
 CircRNA_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        CircRNA \
-	-a \
-        -f $TRANSAP_FOLDER/output/target/fasta \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        circrna \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
         -p 10 \
-	-g $TRANSAP_FOLDER/output/target/annotation \
+	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-cg \
-	$TRANSAP_FOLDER	
+	-a \
+	--samtools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
+        --segemehl_folder /home/silas/ANNOgesic/tools/segemehl_0_1_9/segemehl \
+	$ANNOGESIC_FOLDER	
 }
 
 Go_term(){
-    $PYTHON_PATH $TRANSAP_PATH \
-        Go_term \
-        -g $TRANSAP_FOLDER/output/target/annotation\
-        $TRANSAP_FOLDER
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        go_term \
+        -g $ANNOGESIC_FOLDER/output/target/annotation\
+        $ANNOGESIC_FOLDER
 }
 
 sRNA_target(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         sRNA_target \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -f $TRANSAP_FOLDER/output/target/fasta \
-        -r $TRANSAP_FOLDER/output/sRNA/gffs/best \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         srna_target \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7 \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
+        -r $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
+        -q all \
         -p both \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
 
 operon_detection(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         Operon \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -t $TRANSAP_FOLDER/output/TSS/gffs \
-        -a $TRANSAP_FOLDER/output/transcriptome_assembly/gffs \
-	-u5 $TRANSAP_FOLDER/output/utr/5UTR/gffs \
-        -u3 $TRANSAP_FOLDER/output/utr/3UTR/gffs \
-	-e $TRANSAP_FOLDER/output/terminator/gffs \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         operon \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -t $ANNOGESIC_FOLDER/output/TSS/gffs \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+	-u5 $ANNOGESIC_FOLDER/output/UTR/5UTR/gffs \
+        -u3 $ANNOGESIC_FOLDER/output/UTR/3UTR/gffs \
+	-e $ANNOGESIC_FOLDER/output/terminator/gffs/detect \
 	-s \
 	-c \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
 
 SNP_calling_target(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         SNP_calling \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         snp \
 	-t target \
 	-p 1 2 3 \
-	-nw $TRANSAP_FOLDER/input/BAMs/BAMs_map_target/tex_notex \
-	-fw $TRANSAP_FOLDER/input/BAMs/BAMs_map_target/fragment \
-	-f $TRANSAP_FOLDER/output/target/fasta \
-        $TRANSAP_FOLDER
+	-nw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex \
+	-fw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/fragment \
+	-f $ANNOGESIC_FOLDER/output/target/fasta \
+        --samtools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
+        --bcftools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/bcftools \
+        $ANNOGESIC_FOLDER
 }
 
 PPI_network(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         PPI_network \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         ppi_network \
         -s all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
-        -p $TRANSAP_FOLDER/output/target/annotation \
-        -d $TRANSAP_FOLDER/input/database/species.v9.1.txt \
+        -p $ANNOGESIC_FOLDER/output/target/annotation \
+        -d $ANNOGESIC_FOLDER/input/database/species.v9.1.txt \
         -n \
+	-q Staphylococcus_aureus_HG003:1954999:1956240:- \
         -ns 4000 \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
 }
 
 Subcellular_localization(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
          subcellular_localization \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -f $TRANSAP_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
         -m \
         -b positive \
-        $TRANSAP_FOLDER
+        --Psortb_path /home/silas/ANNOgesic/tools/psortb/bin/psort \
+        --EMBOSS_transeq_path /home/silas/ANNOgesic/tools/EMBOSS-6.6.0/emboss/transeq \
+        $ANNOGESIC_FOLDER
 }
 
 riboswitch(){
-    $PYTHON_PATH $TRANSAP_PATH \
+    $PYTHON_PATH $ANNOGESIC_PATH \
          riboswitch \
-        -g $TRANSAP_FOLDER/output/target/annotation \
-        -f $TRANSAP_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -f $ANNOGESIC_FOLDER/output/target/fasta \
         -r \
-        -i $TRANSAP_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
-        -R $TRANSAP_FOLDER/input/database/Rfam/CMs/Rfam.cm \
-        $TRANSAP_FOLDER
+        -i $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
+        -R $ANNOGESIC_FOLDER/input/database/Rfam/CMs/Rfam.cm \
+	--infernal_path /home/silas/ANNOgesic/tools/infernal-1.1.1/src \
+        $ANNOGESIC_FOLDER
 }
 
 Optimize_TSSpredator(){
-    $PYTHON_PATH $TRANSAP_PATH \
-         optimize_TSSpredator \
-        --TSSpredator_path /home/silas/Transap/tools/TSSpredator_v1-04/TSSpredator.jar \
-        -w $TRANSAP_FOLDER/input/wigs/tex_notex \
-        -fs $TRANSAP_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
-        -g $TRANSAP_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         optimize_tsspredator \
+        --TSSpredator_path /home/silas/ANNOgesic/tools/TSSpredator_v1-04/TSSpredator.jar \
+        -w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -fs $ANNOGESIC_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
+        -g $ANNOGESIC_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
         -n Staphylococcus_aureus_HG003 \
 	-l $tex_notex_libs \
 	-p TSB_OD_0.2 \
@@ -450,10 +457,35 @@ Optimize_TSSpredator(){
            pMEM_t0 \
            pMEM_t1 \
            pMEM_t2 \
-        -m $TRANSAP_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff  \
-        -c 6 \
+        -m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff  \
+        -c 4 \
 	-rm 1 \
-        $TRANSAP_FOLDER
+        $ANNOGESIC_FOLDER
+}
+
+gen_screenshot(){
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         screenshot \
+        -mg $ANNOGESIC_FOLDER/output/sRNA/gffs/best/Staphylococcus_aureus_HG003_sRNA.gff \
+        -sg $ANNOGESIC_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
+            $ANNOGESIC_FOLDER/output/TSS/gffs/Staphylococcus_aureus_HG003_TSS.gff \
+            $ANNOGESIC_FOLDER/output/processing_site/gffs/Staphylococcus_aureus_HG003_processing.gff \
+        -f $ANNOGESIC_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
+        -o $ANNOGESIC_FOLDER/output/sRNA/screenshots \
+        -fl $frag_libs \
+        -tl $tex_notex_libs \
+        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+    $ANNOGESIC_FOLDER
+}
+
+color_png(){
+    $PYTHON_PATH $ANNOGESIC_PATH \
+        color_png \
+        -t 29 \
+	-f $ANNOGESIC_FOLDER/output/sRNA \
+	--ImageMagick_covert_path /home/silas/ANNOgesic/tools/ImageMagick-6.9.0-0/utilities/convert \
+        $ANNOGESIC_FOLDER
 }
 
 main

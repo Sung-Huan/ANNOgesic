@@ -27,7 +27,7 @@ def get_differential_cover(fuzzy_end, num, checks, cover_sets, poss, cover, decr
         elif (cover["coverage"] > cover_sets["diff"]) and \
              ((cover["coverage"] / cover_sets["diff"]) <= (1 + decrease)):
             num += 1
-    if (checks["first"] is not True) and (cover_sets["high"] > 0):
+    if (not checks["first"]) and (cover_sets["high"] > 0):
         if ((cover_sets["low"] / cover_sets["high"]) < decrease) and \
            (cover_sets["low"] > -1):
             checks["detect_diff"] = True
@@ -69,7 +69,7 @@ def get_best(wigs, strain, strand, start, end, type_,
                             if type_ == "differential":
                                 go_out = get_differential_cover(fuzzy_end, num, checks, 
                                                       cover_sets, poss, cover, decrease)
-                                if go_out is True:
+                                if go_out:
                                     break
                     avg = cover_sets["total"] / float(end - start + 1)
                     if avg > float(cutoff_coverage):
@@ -114,7 +114,7 @@ def print_file(string, nums, tss, output, out_table, srna_datas, table_best):
     else:
         if srna_datas["detail"] is not None:
             out_table.write(tss + "\t")
-            if table_best is False:
+            if not table_best:
                 first = True
                 for data in srna_datas["detail"]:
                     if first:
@@ -173,7 +173,7 @@ def detect_wig_pos(wigs, ta, start, end, nums, output, tss, template_texs,
 def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs, 
                   out_table, fuzzy, cutoff_coverage, tex_notex, replicates,
                   decrease, fuzzy_end, table_best, min_len, Max_len, detects):
-    if tsss is not False:
+    if len(tsss) != 0:
         for tss in tsss:
             if (tss.strand == ta.strand) and \
                (tss.seq_id == ta.seq_id):
@@ -207,7 +207,7 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                                            template_texs, out_table, cutoff_coverage, min_len, 
                                            Max_len, decrease, fuzzy_end, table_best, tex_notex,
                                            replicates)
-    if tsss is False:
+    if len(tsss) == 0:
         if (len(wigs_f) != 0) and (len(wigs_r) != 0):
             if ta.strand == "+":
                 num_uni = detect_wig_pos(wigs_f, ta, ta.start, ta.end, nums, output, "NA", 
@@ -268,7 +268,7 @@ def detect_include_TSS(nums, tsss, ta, wigs_f, wigs_r, output,out_table, templat
                                fuzzy_end, table_best)
                 if tss.end > ta.end + fuzzy:
                     break
-    if detects["uni_with_tss"] is not True:
+    if not detects["uni_with_tss"]:
         if (ta.strand == "+") and (len(wigs_f) != 0):
             get_coverage(ta.start, ta.end, ta.seq_id, wigs_f, "+", ta, nums, 
                          "False", output, template_texs, out_table, cutoff_coverage, 
@@ -294,7 +294,7 @@ def read_data(cdss, tsss, tas, wigs_f, wigs_r, gff_file, TSS_file, Tran_file):
            (entry.feature == "rRNA"):
             cdss.append(entry)
             num_cds += 1
-    if TSS_file is not False:
+    if TSS_file is not None:
         tss_f = open(TSS_file, "r")
         for entry in gff_parser.entries(tss_f):
             tsss.append(entry)
@@ -354,21 +354,21 @@ def check_sRNA_condition(ta, min_len, Max_len, tsss, wigs_f, wigs_r,
                 print_file(ta.info_without_attributes.replace("Transcript", "sRNA"),
                            nums, "NA", output, out_table, None, table_best)
     if ((ta.end - ta.start) > Max_len):
-        if (len(tsss) != 0) and (len(wigs_f) == 0) and (len(wigs_r) == 0):
-            detect_longer(tsss, ta, nums, output, False, False, texs, 
-                          out_table, fuzzy, cutoff_coverage, tex_notex, 
-                          replicates, decrease, fuzzy_end, table_best, 
-                          min_len, Max_len, detects)
-        elif (len(tsss) != 0) and (len(wigs_f) != 0) and (len(wigs_r) != 0):
-            detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, texs, 
-                          out_table, fuzzy, cutoff_coverage, tex_notex, 
-                          replicates, decrease, fuzzy_end, table_best, 
-                          min_len, Max_len, detects)
-        elif (len(tsss) == 0) and (len(wigs_f) != 0) and (len(wigs_r) != 0):
-            detect_longer(False, ta, nums, output, wigs_f, wigs_r, texs, 
-                          out_table, fuzzy, cutoff_coverage, tex_notex, 
-                          replicates, decrease, fuzzy_end, table_best, 
-                          min_len, Max_len, detects)
+#        if (len(tsss) != 0) and (len(wigs_f) == 0) and (len(wigs_r) == 0):
+#            detect_longer(tsss, ta, nums, output, None, None, texs, 
+#                          out_table, fuzzy, cutoff_coverage, tex_notex, 
+#                          replicates, decrease, fuzzy_end, table_best, 
+#                          min_len, Max_len, detects)
+#        elif (len(tsss) != 0) and (len(wigs_f) != 0) and (len(wigs_r) != 0):
+        detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, texs, 
+                      out_table, fuzzy, cutoff_coverage, tex_notex, 
+                      replicates, decrease, fuzzy_end, table_best, 
+                      min_len, Max_len, detects)
+#        elif (len(tsss) == 0) and (len(wigs_f) != 0) and (len(wigs_r) != 0):
+#            detect_longer(None, ta, nums, output, wigs_f, wigs_r, texs, 
+#                          out_table, fuzzy, cutoff_coverage, tex_notex, 
+#                          replicates, decrease, fuzzy_end, table_best, 
+#                          min_len, Max_len, detects)
 
 def intergenic_srna(gff_file, Tran_file, TSS_file, fuzzy, Max_len, min_len,
                     wig_f_file, wig_r_file, wig_folder, input_libs, tex_notex,
@@ -386,7 +386,8 @@ def intergenic_srna(gff_file, Tran_file, TSS_file, fuzzy, Max_len, min_len,
     read_wig(wigs_r, wig_r_file, "-", libs)
     nums = read_data(cdss, tsss, tas, wigs_f, wigs_r, gff_file, TSS_file, Tran_file)
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
-    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
+    if TSS_file is not None:
+        tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
     detects = {"overlap": False, "uni_with_tss": False}
     output = open(output_file, "w")        

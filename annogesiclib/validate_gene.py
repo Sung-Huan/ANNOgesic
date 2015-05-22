@@ -70,6 +70,7 @@ def compare_tss(tsss, gff, utr_length, num_all, num_strain):
 
 def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
     out_cds = open(out_cds_file, "w")
+    out_cds.write("##gff-version 3\n")
     for gff in gffs:
         attribute_string = ";".join(
             ["=".join(items) for items in gff.attributes.items()])
