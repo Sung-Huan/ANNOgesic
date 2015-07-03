@@ -1,20 +1,11 @@
 #!/usr/bin/python
 
-import os	
+"""for compute the statsitics of the results of sRNA blast"""
+
+import os
 import sys
 import csv
 from annogesiclib.gff3 import Gff3Parser
-
-
-#def plus_data(id_name, name, e_value, srna, strain):
-#    if name not in srna[strain].keys():
-#        srna[strain][name] = {"id_name": [], "num": 1, "e": []}
-#        srna[strain][name]["id_name"].append(id_name)
-#        srna[strain][name]["e"].append(e_value)
-#    else:
-#        srna[strain][name]["id_name"].append(id_name)
-#        srna[strain][name]["e"].append(e_value)
-#        srna[strain][name]["num"] += 1
 
 def import_data(srnas, row):
     datas = row[5].split("|")
@@ -25,21 +16,32 @@ def import_data(srnas, row):
                   "start": row[3], "end": row[4], "ID": datas[0],
                   "blast_strain": datas[1], "srna_name": datas[2], "e": row[6]})
 
-def read_file(sRNA_file, repeats):
-    fh = open(sRNA_file, "r")
+def import_srna(srnas, srna_names, pre):
+    srna_names.append(pre)
+    srna_names = sorted(srna_names, key=lambda x: (x[5]))
+    pre_name = ""
+    for srna_name in srna_names:
+        if pre_name != srna_name[5]:
+            import_data(srnas, srna_name)
+            pre_name = srna_name[5]
+
+def read_file(srna_file):
+    repeats = {}
+    srna_f = open(srna_file, "r")
     first = True
     srna_names = []
     srnas = []
-    for row in csv.reader(fh, delimiter="\t"):
+    pre = None
+    for row in csv.reader(srna_f, delimiter="\t"):
         if row[5] != "NA":
             if first:
                 first = False
             else:
-                if (row[0] == pre[0]) and \
-                   (row[1] == pre[1]) and \
-                   (row[2] == pre[2]) and \
-                   (row[3] == pre[3]) and \
-                   (row[4] == pre[4]):
+                if (row[0] == pre[0]) and (
+                    row[1] == pre[1]) and (
+                    row[2] == pre[2]) and (
+                    row[3] == pre[3]) and (
+                    row[4] == pre[4]):
                     srna_names.append(pre)
                     if row[5] != pre[5]:
                         if row[1] in repeats.keys():
@@ -50,48 +52,40 @@ def read_file(sRNA_file, repeats):
                             repeats[row[1]].append(pre[5])
                             repeats[row[1]].append(row[5])
                 else:
-                    srna_names.append(pre)
-                    srna_names = sorted(srna_names, key = lambda x: (x[5]))
-                    pre_name = ""
-                    for srna_name in srna_names:
-                        if pre_name != srna_name[5]:
-                            import_data(srnas, srna_name)
-                            pre_name = srna_name[5]
+                    import_srna(srnas, srna_names, pre)
                     srna_names = []
             pre = row
     if row[5] != "NA":
-        srna_names.append(pre)
-        srna_names = sorted(srna_names, key = lambda x: (x[5]))
-        pre_name = ""
-        for srna_name in srna_names:
-            if pre_name != srna_name[5]:
-                import_data(srnas, srna_name)
-    srnas = sorted(srnas, key = lambda x: (x["strain"]))
-    return srnas
+        import_srna(srnas, srna_names, pre)
+    srnas = sorted(srnas, key=lambda x: (x["strain"]))
+    srna_f.close()
+    return srnas, repeats
 
-def blast_class(sRNA_file, out_file):
+def blast_class(srna_file, out_file):
     nums = {}
     nums["total"] = {}
     pre_strain = ""
-    repeats = {}
-    srnas = read_file(sRNA_file, repeats)
+    srnas, repeats = read_file(srna_file)
     out = open(out_file, "w")
     for srna in srnas:
         if srna["strain"] != pre_strain:
             nums[srna["strain"]] = {}
+            repeats_key = []
             pre_strain = srna["strain"]
-        if srna["srna_name"].lower() not in nums[srna["strain"]].keys():
-            srna_name = srna["srna_name"].lower()
-            nums[srna["strain"]][srna_name] = {"num": 1, "name": [], "e": [], 
-                                                               "blast_strain": [], "ID": []}
-            nums["total"][srna_name] = {"num": 1, "name": [], "e": [], 
-                                                        "blast_strain": [], "ID": []}
+        if srna["srna_name"].lower() not in repeats_key:
+            srna_name = srna["srna_name"]
+            repeats_key.append(srna["srna_name"].lower())
+            nums[srna["strain"]][srna_name] = {"num": 1, "name": [], "e": [],
+                                               "blast_strain": [], "ID": []}
+            nums["total"][srna_name] = {"num": 1, "name": [], "e": [],
+                                        "blast_strain": [], "ID": []}
         else:
             nums[srna["strain"]][srna_name]["num"] += 1
             nums["total"][srna_name]["num"] += 1
         nums[srna["strain"]][srna_name]["ID"].append(srna["ID"])
         nums[srna["strain"]][srna_name]["e"].append(srna["e"])
-        nums[srna["strain"]][srna_name]["blast_strain"].append(srna["blast_strain"])
+        nums[srna["strain"]][srna_name]["blast_strain"].append(
+             srna["blast_strain"])
         nums["total"][srna_name]["ID"].append(srna["ID"])
         nums["total"][srna_name]["e"].append(srna["e"])
         nums["total"][srna_name]["blast_strain"].append(srna["blast_strain"])
@@ -113,3 +107,4 @@ def blast_class(sRNA_file, out_file):
             out.write("".join([name, ":", ";".join(srna_name)]) + "\n")
     else:
         out.write("No sRNA candidates!!\n")
+    out.close()

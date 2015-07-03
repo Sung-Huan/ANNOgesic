@@ -9,17 +9,18 @@ from Bio.Seq import Seq
 from annogesiclib.seqmodifier import SeqModifier
 
 
-class Seq_Editer(object):
+class SeqEditer(object):
 
     def _row_to_location(self, row):
-        return({"target_id": row[0], "ref_id": row[1], "datas": [{"ref_nt": row[2],
+        return({"target_id": row[0], "ref_id": row[1],
+                "datas": [{"ref_nt": row[2],
                 "tar_nt": row[4], "position": row[3]}]})
 
     def _import_data(self, mod_table_file, datas):
         first = True
         num_index = 0
         for row in csv.reader(open(mod_table_file), delimiter="\t"):
-            if row[0].startswith("target_id"):
+            if row[0].startswith("#"):
                 continue
             else:
                 if first:
@@ -30,14 +31,16 @@ class Seq_Editer(object):
                 else:
                     if (row[1] == pre_ref_id) and \
                        (row[0] == pre_tar_id):
-                        datas[num_index]["datas"].append({"ref_nt": row[2].strip(),
-                               "tar_nt": row[4].strip(), "position": row[3].strip()})
+                        datas[num_index]["datas"].append(
+                              {"ref_nt": row[2].strip(),
+                               "tar_nt": row[4].strip(),
+                               "position": row[3].strip()})
                     else:
                         datas.append(self._row_to_location(row))
                         num_index += 1
                         pre_ref_id = row[1].strip()
                         pre_tar_id = row[0].strip()
-    
+
     def modify_seq(self, fasta_folder, mod_table_file, output_folder):
         datas = []
         self._import_data(mod_table_file, datas)
@@ -45,7 +48,7 @@ class Seq_Editer(object):
             seq = ""
             if (data["ref_id"] + ".fa") in os.listdir(fasta_folder):
                 filename = os.path.join(fasta_folder, data["ref_id"] + ".fa")
-                with open (filename, "r") as fasta:
+                with open(filename, "r") as fasta:
                     for line in fasta:
                         line = line.strip()
                         if line[0] != ">":
@@ -53,15 +56,18 @@ class Seq_Editer(object):
                 seq_modifier = SeqModifier(seq)
                 for change in data["datas"]:
                     if change["ref_nt"] == "-":
-                        seq_modifier.insert(int(change["position"]), change["tar_nt"])
+                        seq_modifier.insert(
+                                     int(change["position"]), change["tar_nt"])
                     elif change["tar_nt"] == "-":
                         seq_modifier.remove(int(change["position"]))
                     else:
-                        seq_modifier.replace(int(change["position"]), change["tar_nt"])
+                        seq_modifier.replace(
+                                     int(change["position"]), change["tar_nt"])
                 record = SeqRecord(Seq(seq_modifier.seq()))
                 record.id = data["target_id"]
                 record.description = ""
-                SeqIO.write(record, os.path.join(output_folder, record.id + ".fa"), "fasta")
+                SeqIO.write(record, os.path.join(
+                            output_folder, record.id + ".fa"), "fasta")
 
     def modify_header(self, input_file):
         first = True

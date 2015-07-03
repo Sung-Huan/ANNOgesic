@@ -1,39 +1,21 @@
 #!/usr/bin/python
-from Bio import SeqIO
-import os	
-import sys
-import time
+
+import os
 import shutil
-from subprocess import call, Popen
 from annogesiclib.helper import Helper
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.gene_ontology import retrieve_uniprot, map2goslim
 
 
-class Go_term_finding(object):
+class GoTermFinding(object):
 
     def __init__(self, out_folder, gffs):
         self.multiparser = Multiparser()
-        self.helper = Helper()       
+        self.helper = Helper()
         self.out_path = os.path.join(out_folder, "Go_term_results")
         self.gff_path = os.path.join(gffs, "tmp")
         self.stat_path = os.path.join(out_folder, "statistics")
         self.all_strain = "all_strains_uniprot.csv"
-
-    def _wait_process(self, processes):
-        for p in processes:
-            p.wait()
-        if p.stdout:
-            p.stdout.close()
-        if p.stdin:
-            p.stdin.close()
-        if p.stderr:
-            p.stderr.close()
-        try:
-            p.kill()
-        except OSError:
-            pass
-        time.sleep(5)
 
     def _retrieve_go(self, gff_path, out_path, uniprot):
         prefixs = []
@@ -41,10 +23,10 @@ class Go_term_finding(object):
             prefix = gff.replace(".gff", "")
             prefixs.append(prefix)
             self.helper.check_make_folder(os.path.join(out_path, prefix))
-            out_file = os.path.join(out_path, prefix, "_".join([prefix, "uniprot.csv"]))
+            out_file = os.path.join(out_path, prefix,
+                                    "_".join([prefix, "uniprot.csv"]))
             print("extracting Go terms of {0} from UniProt...".format(prefix))
             retrieve_uniprot(uniprot, os.path.join(gff_path, gff), out_file)
-        return prefixs
 
     def _merge_files(self, gffs, out_path, out_folder):
         folders = []
@@ -64,18 +46,17 @@ class Go_term_finding(object):
                         os.remove(out_all)
                     for filename in filenames:
                         csv_file = "_".join([filename, "uniprot.csv"])
-                        self.helper.merge_file(os.path.join(out_path, filename, csv_file), 
-                                               out_all)
+                        self.helper.merge_file(os.path.join(out_path,
+                                               filename, csv_file), out_all)
                         shutil.copy(os.path.join(out_path, filename, csv_file),
                                     folder_path)
                 else:
-                    shutil.copyfile(os.path.join(out_path, filenames[0], 
+                    shutil.copyfile(os.path.join(out_path, filenames[0],
                                     "_".join([filenames[0], "uniprot.csv"])),
                                     out_all)
         self.helper.remove_all_content(out_path, None, "dir")
         self.helper.remove_all_content(out_path, None, "file")
         for folder in folders:
-            print(folder)
             folder_prefix = folder.split("/")[-1]
             os.rename(folder, os.path.join(out_path, folder_prefix))
 
@@ -87,20 +68,26 @@ class Go_term_finding(object):
             if "fig" not in os.listdir(strain_stat_path):
                 os.mkdir(fig_path)
             print("Computing statistics of {0}".format(folder))
-            map2goslim(goslim, go, os.path.join(out_path, folder, self.all_strain),
-                       os.path.join(strain_stat_path, "_".join(["stat", folder + ".csv"])),
+            map2goslim(goslim, go,
+                       os.path.join(out_path, folder, self.all_strain),
+                       os.path.join(strain_stat_path,
+                                    "_".join(["stat", folder + ".csv"])),
                        out_folder)
-            self.helper.move_all_content(out_folder, fig_path, "_three_roots.png")
-            self.helper.move_all_content(out_folder, fig_path, "_molecular_function.png")
-            self.helper.move_all_content(out_folder, fig_path, "_cellular_component.png")
-            self.helper.move_all_content(out_folder, fig_path, "_biological_process.png")
+            self.helper.move_all_content(out_folder, fig_path,
+                                         "_three_roots.png")
+            self.helper.move_all_content(out_folder, fig_path,
+                                         "_molecular_function.png")
+            self.helper.move_all_content(out_folder, fig_path,
+                                         "_cellular_component.png")
+            self.helper.move_all_content(out_folder, fig_path,
+                                         "_biological_process.png")
 
-    def run_go_term(self, bin_path, gffs, out_folder, uniprot, go, goslim):
-#        for gff in os.listdir(gffs):
-#            if gff.endswith(".gff"):
-#                self.helper.check_uni_attributes(os.path.join(gffs, gff))
-        self.multiparser._parser_gff(gffs, None)
-        prefixs = self._retrieve_go(self.gff_path, self.out_path, uniprot)
-        self._merge_files(gffs, self.out_path, out_folder) ## merge files based on gff file
+    def run_go_term(self, gffs, out_folder, uniprot, go, goslim):
+        for gff in os.listdir(gffs):
+            if gff.endswith(".gff"):
+                self.helper.check_uni_attributes(os.path.join(gffs, gff))
+        self.multiparser.parser_gff(gffs, None)
+        self._retrieve_go(self.gff_path, self.out_path, uniprot)
+        self._merge_files(gffs, self.out_path, out_folder)
         self._stat(self.out_path, self.stat_path, go, goslim, out_folder)
         self.helper.remove_tmp(gffs)

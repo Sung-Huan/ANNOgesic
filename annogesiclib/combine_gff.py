@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os        
+import os
 import sys
 import csv
 from annogesiclib.gff3 import Gff3Parser
@@ -8,10 +8,11 @@ from annogesiclib.gff3 import Gff3Parser
 
 def read_file(filename):
     datas = []
-    fh = open(filename, "r")
-    for entry in Gff3Parser().entries(fh):
+    f_h = open(filename, "r")
+    for entry in Gff3Parser().entries(f_h):
         datas.append(entry)
     datas = sorted(datas, key=lambda k: (k.seq_id, k.start))
+    f_h.close()
     return datas
 
 def del_attributes(entry):
@@ -19,7 +20,7 @@ def del_attributes(entry):
         del entry.attributes["Parent_tran"]
 
 def print_file(entry, tran, out):
-    out.write("".join([entry.info, ";Parent_tran=", 
+    out.write("".join([entry.info, ";Parent_tran=",
                        str(tran.attributes["ID"]), "\n"]))
     entry.attributes["print"] = True
 
@@ -59,7 +60,7 @@ def compare_tran_term(term, tran, out, fuzzy_term):
                      (term.end >= tran.start):
                     print_file(term, tran, out)
 
-def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file, 
+def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file,
                 term_file, fuzzy_tss, fuzzy_term, out_file):
     gffs = read_file(gff_file)
     trans = read_file(ta_file)
@@ -96,4 +97,4 @@ def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file,
     print_rest(utr3s, out)
     if term_file is not None:
         print_rest(terms, out)
-
+    out.close()

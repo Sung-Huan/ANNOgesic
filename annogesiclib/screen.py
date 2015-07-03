@@ -1,6 +1,6 @@
 #!/usr/bin/python
-from Bio import SeqIO
-import os	
+
+import os
 import sys
 from subprocess import call
 import shutil
@@ -36,16 +36,14 @@ class Screen(object):
             notex = "rn"
         for flib in texs:
             if (flib[1] == "tex"):
-                detect = False
                 lib_dict[tex].append(os.path.join(wig_path, flib[0]))
                 for nlib in texs:
                     if (nlib[1] == "notex") and \
                        (flib[2] == nlib[2]) and \
                        (flib[3] == nlib[3]):
-                        detect = True
                         lib_dict[notex].append(os.path.join(wig_path, nlib[0]))
 
-    def screenshot(self, main_gff, side_gffs, fasta, frag_wigs, 
+    def screenshot(self, main_gff, side_gffs, fasta, frag_wigs,
                    tex_wigs, height, tlibs, flibs, present, output_folder):
         lib_dict = {"ft": [], "fn": [], "rt": [], "rn": [], "ff": [], "rf": []}
         f_texs = []
@@ -61,8 +59,8 @@ class Screen(object):
                         f_texs.append(lib_datas)
                     else:
                         r_texs.append(lib_datas)
-            f_texs = sorted(f_texs, key = lambda x: (x[1], x[2], x[3]))
-            r_texs = sorted(r_texs, key = lambda x: (x[1], x[2], x[3]))
+            f_texs = sorted(f_texs, key=lambda x: (x[1], x[2], x[3]))
+            r_texs = sorted(r_texs, key=lambda x: (x[1], x[2], x[3]))
             self._import_libs(f_texs, "+", tex_wigs, lib_dict)
             self._import_libs(r_texs, "-", tex_wigs, lib_dict)
         if flibs is not None:
@@ -73,12 +71,17 @@ class Screen(object):
                     sys.exit()
                 else:
                     if lib_datas[-1] == "+":
-                        lib_dict["ff"].append(os.path.join(frag_wigs, lib_datas[0]))
+                        lib_dict["ff"].append(os.path.join(
+                                       frag_wigs, lib_datas[0]))
                     else:
-                        lib_dict["rf"].append(os.path.join(frag_wigs, lib_datas[0]))
-        gen_screenshot(main_gff, self.forward_file + ".txt", self.reverse_file + ".txt", output_folder, height,
-                       lib_dict["ft"], lib_dict["fn"], lib_dict["rt"], lib_dict["rn"], 
-                       lib_dict["ff"], lib_dict["rf"], fasta, side_gffs, present, self.strain)
+                        lib_dict["rf"].append(os.path.join(
+                                       frag_wigs, lib_datas[0]))
+        gen_screenshot(main_gff, self.forward_file + ".txt",
+                       self.reverse_file + ".txt", output_folder, height,
+                       lib_dict["ft"], lib_dict["fn"],
+                       lib_dict["rt"], lib_dict["rn"],
+                       lib_dict["ff"], lib_dict["rf"],
+                       fasta, side_gffs, present, self.strain)
         if (tlibs is None) and (flibs is None):
             print("Error: There are no wig file assigned!!!")
             sys.exit()

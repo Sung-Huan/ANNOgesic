@@ -1,13 +1,10 @@
 #!/usr/bin/python
 
-import os        
-import sys
 import csv
 
-class parser_splice(object):
-    def parser(self, input_file):
-        sh = open(input_file, "r");
-        for row in csv.reader(sh, delimiter="\t"):
+class SpliceParser(object):
+    def parser(self, splice_fh):
+        for row in csv.reader(splice_fh, delimiter="\t"):
             yield assign_value(row)
 
 class assign_value(object):
@@ -25,4 +22,5 @@ class assign_value(object):
         self.strand = row[5]
         self.info = ("\t".join(row))
     def __str__(self):
-        return "%s %s %s %s %s" % (self.strain, self.start, self.end, self.splice, self.strand)
+        return "{0} {1} {2} {3} {4}".format(
+               self.strain, self.start, self.end, self.splice, self.strand)

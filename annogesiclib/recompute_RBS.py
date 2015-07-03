@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os	
+import os
 import sys
 import csv
 
@@ -32,26 +32,26 @@ def import_ribo(line, ribos, seq_name):
                     end = int(data)
                 elif (num == 9):
                     if data == "+":
-                        ribos.append({"name": name, "detect": detect, 
-                                      "e": e, "seq_name": seq_name, 
+                        ribos.append({"name": name, "detect": detect,
+                                      "e": e, "seq_name": seq_name,
                                       "start": start, "end": end})
                     else:
-                        ribos.append({"name": name, "detect": detect, 
-                                      "e": e, "seq_name": seq_name, 
+                        ribos.append({"name": name, "detect": detect,
+                                      "e": e, "seq_name": seq_name,
                                       "start": end, "end": start})
 
 def print_file(ribos, out_t, out_s, seq_name, seqs):
     if len(ribos) != 0:
         for rbs in ribos:
             if rbs["detect"] == "!":
-                out_t.write("\t".join([seq_name, rbs["name"], str(rbs["e"]), 
+                out_t.write("\t".join([seq_name, rbs["name"], str(rbs["e"]),
                             str(rbs["start"]), str(rbs["end"])]) + "\n")
             for seq in seqs:
                 if rbs["seq_name"] == seq["name"]:
                     tags = seq["name"].split("|")
                     out_s.write(">" + "|".join(["|".join(tags[0:-2]),
-                                      str(int(tags[-2]) + rbs["start"] - 1),
-                                      str(int(tags[-2]) + rbs["end"] - 1)]) + "\n")
+                                str(int(tags[-2]) + rbs["start"] - 1),
+                                str(int(tags[-2]) + rbs["end"] - 1)]) + "\n")
                     out_s.write(seq["seq"][(rbs["start"] - 1): (rbs["end"])] + "\n")
 
 def regenerate_seq(align_file, seq_file, out_table, out_seq):
@@ -85,22 +85,23 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
             check = False
             same = False
             info = ""
-            best = ""
             if rbs["detect"] == "!":
                 for first in firsts:
                     if first["seq_name"] == "|".join(rbs["seq_name"].split("|")[0:4]):
                         same = True
-                        if (first["acc"] == rbs["name"]) and \
-                           (first["e"] > rbs["e"]):
+                        if (first["acc"] == rbs["name"]) and (
+                            first["e"] > rbs["e"]):
                             first["print"] = True
                             first["e"] = rbs["e"]
-                            out.write("\t".join([seq_name, rbs["name"], str(rbs["e"]), 
-                                      str(rbs["start"]), str(rbs["end"])]) + "\n")
+                            out.write("\t".join([seq_name, rbs["name"],
+                                      str(rbs["e"]), str(rbs["start"]),
+                                      str(rbs["end"])]) + "\n")
                             if len(info) != 0:
                                 info = ""
                         elif (first["acc"] != rbs["name"]):
-                            info = "\t".join([seq_name, rbs["name"], str(rbs["e"]), 
-                                   str(rbs["start"]), str(rbs["end"])])
+                            info = "\t".join([seq_name, rbs["name"],
+                                   str(rbs["e"]), str(rbs["start"]),
+                                   str(rbs["end"])])
                 if len(info) != 0:
                     out.write(info + "\n")
                 if not same:
@@ -127,13 +128,13 @@ def reextract_rbs(align_file, first_file, output_file):
     seqs = []
     extras = []
     out = open(output_file, "w")
-    fh = open(first_file, "r");
+    f_h = open(first_file, "r")
     firsts = []
-    pre_seq_name = ""
-    for row in csv.reader(fh, delimiter="\t"):
+    for row in csv.reader(f_h, delimiter="\t"):
         datas = row[0].split("|")
-        firsts.append({"seq_name": "|".join(datas[0:4]), "acc": row[1], "e": float(row[2]), 
-                       "start": int(row[3]), "end": int(row[4]), "print": False, 
+        firsts.append({"seq_name": "|".join(datas[0:4]), "acc": row[1],
+                       "e": float(row[2]), "start": int(row[3]),
+                       "end": int(row[4]), "print": False,
                        "pre_start": int(datas[4]), "pre_end": int(datas[5])})
     with open(align_file, "r") as a_h:
         for line in a_h:
@@ -155,8 +156,12 @@ def reextract_rbs(align_file, first_file, output_file):
                     compare_first_result(ribos, firsts, seq_name, out, extras)
         if len(extras) != 0:
             for extra in extras:
-                out.write("\t".join([extra["seq_name"], extra["name"], str(extra["e"]), str(extra["start"]), str(extra["end"])]) + "\n")
+                out.write("\t".join([extra["seq_name"], extra["name"],
+                          str(extra["e"]), str(extra["start"]),
+                          str(extra["end"])]) + "\n")
     for first in firsts:
         if not first["print"]:
-            out.write("\t".join(["|".join([first["seq_name"], str(first["pre_start"]), str(first["pre_end"])]), 
-                                 first["acc"], str(first["e"]), str(first["start"]), str(first["end"])]) + "\n")
+            out.write("\t".join(["|".join([first["seq_name"],
+                      str(first["pre_start"]), str(first["pre_end"])]),
+                      first["acc"], str(first["e"]), str(first["start"]),
+                      str(first["end"])]) + "\n")

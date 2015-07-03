@@ -101,14 +101,10 @@ def classify_terms(terms, nums, out_d, out_e, pre_strain):
                             "de_fr": 0, "de_hp": 0, "de_frhp": 0, "total": 0,
                             "total_de": 0, "total_ex": 0, "only_de_fr": 0, "only_de_hp": 0, 
                             "only_ex_fr": 0, "only_ex_hp": 0, "de_frhp": 0, "ex_frhp": 0}
-#            nums[strain] = {"fr": 0, "hp": 0, "frhp": 0, "ex_fr": 0, "ex_hp": 0,
-#                            "de_fr": 0, "de_hp": 0, "de_frhp": 0, "total": 0,
-#                            "total_de": 0, "only_fr": 0, "only_hp": 0, "express": 0}
         if term.attributes["coverage_decrease"] == "True":
             out_d.write(term.info + "\n")
         if term.attributes["express"] == "True":
             out_e.write(term.info + "\n")
-#            plus_num(nums, strain, "express")
         if term.source == "forward_reverse":
             plus_num(nums, strain, "total")
             plus_num(nums, strain, "fr")
@@ -156,6 +152,10 @@ def stat_term(term_gff, term_table, stat, output_decrease, output_expression):
     out_te = open(output_expression + ".csv", "w")
     out_td = open(output_decrease + ".csv", "w")
     fh = open(term_table, "r");
+#    print(term_gff)
+#    with open(term_gff) as fh:
+#        for line in fh:
+#            print(line)
     for row in csv.reader(fh, delimiter="\t"):
         if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
             out_td.write("\t".join(row) + "\n")

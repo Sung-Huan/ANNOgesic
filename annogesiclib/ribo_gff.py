@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os	
+import os
 import sys
 import csv
 
@@ -10,33 +10,40 @@ def import_data(row):
            "associate": datas[3], "start_seq": int(datas[4]),
            "end_seq": int(datas[5]), "rfam": row[1], "e": row[2],
            "start_align": int(row[3]), "end_align": int(row[4]),
-           "info": row[0]}
+           "info": row[0], "ID": datas[0]}
 
-def read_file(ribo_table, rfam_table, ribos, rfams):
-    fh = open(ribo_table, "r");
-    for row in csv.reader(fh, delimiter="\t"):
-        ribos.append(import_data(row))
-    rh = open(rfam_table, "r");
-    for row in csv.reader(rh, delimiter="\t"):
+def read_file(ribo_table, rfam_table):
+    ribos = []
+    rfams = []
+    f_h = open(ribo_table, "r");
+    for row in csv.reader(f_h, delimiter="\t"):
+        if not row[0].startswith("#"):
+            ribos.append(import_data(row))
+    r_h = open(rfam_table, "r");
+    for row in csv.reader(r_h, delimiter="\t"):
         rfams.append({"ID": row[0].strip(), "class": row[1].strip()})
+    ribos = sorted(ribos, key=lambda x: (x["strain"], x["start_seq"]))
+    return ribos, rfams
 
 def get_overlap(pre_ribo, ribo, overlap, overlaps):
     if (pre_ribo["strain"] == ribo["strain"]) and \
-       (pre_ribo["strand"] == ribo["strand"]):
-        if (pre_ribo["start_seq"] >= ribo["start_seq"]) and \
-           (pre_ribo["end_seq"] <= ribo["end_seq"]):
-            overlap = True
-        elif (pre_ribo["start_seq"] >= ribo["start_seq"]) and \
-             (pre_ribo["start_seq"] <= ribo["end_seq"]) and \
-             (pre_ribo["end_seq"] >= ribo["end_seq"]):
-            overlap = True
-        elif (pre_ribo["start_seq"] <= ribo["start_seq"]) and \
-             (pre_ribo["end_seq"] >= ribo["start_seq"]) and \
-             (pre_ribo["end_seq"] <= ribo["end_seq"]):
-            overlap = True
-        elif (pre_ribo["start_seq"] <= ribo["start_seq"]) and \
-             (pre_ribo["end_seq"] >= ribo["end_seq"]):
-            overlap = True
+       (pre_ribo["strand"] == ribo["strand"]) and \
+       (pre_ribo["ID"] == ribo["ID"]):
+        overlap = True
+#        if (pre_ribo["start_seq"] >= ribo["start_seq"]) and (
+#            pre_ribo["end_seq"] <= ribo["end_seq"]):
+#            overlap = True
+#        elif (pre_ribo["start_seq"] >= ribo["start_seq"]) and (
+#              pre_ribo["start_seq"] <= ribo["end_seq"]) and (
+#              pre_ribo["end_seq"] >= ribo["end_seq"]):
+#            overlap = True
+#        elif (pre_ribo["start_seq"] <= ribo["start_seq"]) and (
+#              pre_ribo["end_seq"] >= ribo["start_seq"]) and (
+#              pre_ribo["end_seq"] <= ribo["end_seq"]):
+#            overlap = True
+#        elif (pre_ribo["start_seq"] <= ribo["start_seq"]) and (
+#              pre_ribo["end_seq"] >= ribo["end_seq"]):
+#            overlap = True
     if overlap:
         detect = False
         for over in overlaps[ribo["strain"]]:
@@ -44,7 +51,8 @@ def get_overlap(pre_ribo, ribo, overlap, overlaps):
                 over = over + ";" + ribo["info"]
                 detect = True
         if not detect:
-            overlaps[ribo["strain"]].append(pre_ribo["info"] + ";" + ribo["info"])
+            overlaps[ribo["strain"]].append(
+                     pre_ribo["info"] + ";" + ribo["info"])
 
 def print_gff(num, ribo, out, stats, strain):
     name = '%0*d' % (5, num)
@@ -55,8 +63,9 @@ def print_gff(num, ribo, out, stats, strain):
                           ("Rfam_ID", ribo["rfam"]),
                           ("E_value", ribo["e"])]])
     out.write("\t".join([str(field) for field in [
-                    ribo["strain"], "Rfam", "riboswitch", str(ribo["start_seq"]),
-                    str(ribo["end_seq"]), ".", ribo["strand"], ".", attribute]]) + "\n")
+              ribo["strain"], "Rfam", "riboswitch", str(ribo["start_seq"]),
+              str(ribo["end_seq"]), ".", ribo["strand"],
+              ".", attribute]]) + "\n")
     stats["total"]["total"] += 1
     stats[strain]["total"] += 1
 
@@ -95,7 +104,6 @@ def print_stat(stats, out_stat, overlaps):
                 datas = over.split(";")
                 repeat = repeat + len(datas)
         print_number(stats, repeat, out, "total")
-#    else:
     for strain, datas in stats.items():
         repeat = 0
         if strain != "total":
@@ -125,18 +133,16 @@ def print_stat(stats, out_stat, overlaps):
                     out.write("\t{0}\n".format(data))
 
 def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
-    ribos = []
-    rfams = []
     stats = {}
     overlaps = {}
     repeat = 0
     pre_strain = ""
     stats["total"] = {"total": 0}
     num = 0
-    read_file(ribo_table, rfam_table, ribos, rfams)
-    ribos = sorted(ribos, key = lambda x: (x["strain"], x["start_seq"]))
+    ribos, rfams = read_file(ribo_table, rfam_table)
     out = open(gff_file, "w")
     out.write("##gff-version 3\n")
+    pre_gff = None
     for ribo in ribos:
         overlap = False
         if ribo["strain"] != pre_strain:
@@ -156,6 +162,19 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
         if (ribo["end_seq"] - (ribo["start_seq"] + ribo["end_align"])) > fuzzy:
             ribo["end_seq"] = ribo["start_seq"] + ribo["end_align"] + fuzzy
         import_stat(rfams, ribo, stats, strain)
-        print_gff(num, ribo, out, stats, strain)
-        num += 1
+        if pre_gff is not None:
+            if (pre_gff["strain"] == ribo["strain"]) and (
+                pre_gff["strand"] == ribo["strand"]) and (
+                pre_gff["start_seq"] == ribo["start_seq"]) and (
+                pre_gff["end_seq"] == ribo["end_seq"]):
+                pre_gff["rfam_name"] = "&".join([pre_gff["rfam_name"], ribo["rfam_name"]])
+                pre_gff["rfam"] = "&".join([pre_gff["rfam"], ribo["rfam"]])
+                pre_gff["e"] = "&".join([pre_gff["e"], ribo["e"]])
+            else:
+                print_gff(num, pre_gff, out, stats, strain)
+                num += 1
+                pre_gff = ribo
+        else:
+            pre_gff = ribo
+    print_gff(num, pre_gff, out, stats, strain)
     print_stat(stats, out_stat, overlaps)

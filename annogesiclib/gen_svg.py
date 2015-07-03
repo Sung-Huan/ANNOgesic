@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os        
+import os
 import sys
 import csv
 
@@ -35,7 +35,7 @@ def print_track(track_num, svg_out, figure_width):
         id_num += 1
 
 def gen_svg(input_png, track_num, figure_height, figure_width):
-    svg_out=open(input_png[:-4] + ".svg", "w")
+    svg_out = open(input_png[:-4] + ".svg", "w")
     svg_out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -68,7 +68,8 @@ def gen_svg(input_png, track_num, figure_height, figure_width):
      id="defs3059" />
   <image
 """)
-    svg_out.write("     xlink:href=\"file://{0}/{1}\"\n".format(os.getcwd(), input_png))
+    svg_out.write("     xlink:href=\"file://{0}/{1}\"\n".format(
+                  os.getcwd(), input_png))
     svg_out.write("""     width="100%"
      height="100%"
      preserveAspectRatio="xMidYMin meet"

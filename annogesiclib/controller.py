@@ -1,28 +1,27 @@
 import os
 import sys
-
 from annogesiclib.projectcreator import ProjectCreator
 from annogesiclib.paths import Paths
 from annogesiclib.get_input import get_file
 from annogesiclib.converter import Converter
-from annogesiclib.get_target_fasta import Target_fasta
+from annogesiclib.get_target_fasta import TargetFasta
 from annogesiclib.ratt import RATT
 from annogesiclib.tsspredator import TSSpredator
 from annogesiclib.optimize import optimize_tss
-from annogesiclib.color_png import Color_PNG
+from annogesiclib.color_png import ColorPNG
 from annogesiclib.terminator import Terminator
-from annogesiclib.transcript import Transcript_Assembly
-from annogesiclib.utr import UTR_detection
-from annogesiclib.srna import sRNA_detection
-from annogesiclib.sorf import sORF_detection
+from annogesiclib.transcript import TranscriptAssembly
+from annogesiclib.utr import UTRDetection
+from annogesiclib.srna import sRNADetection
+from annogesiclib.sorf import sORFDetection
 from annogesiclib.meme import MEME
-from annogesiclib.operon import Operon_detection
-from annogesiclib.circrna import CircRNA_detection
-from annogesiclib.goterm import Go_term_finding
-from annogesiclib.srna_target import sRNA_target_prediction
-from annogesiclib.snp import SNP_calling
-from annogesiclib.ppi import PPI_network
-from annogesiclib.sublocal import Sub_Local
+from annogesiclib.operon import OperonDetection
+from annogesiclib.circrna import CircRNADetection
+from annogesiclib.goterm import GoTermFinding
+from annogesiclib.srna_target import sRNATargetPrediction
+from annogesiclib.snp import SNPCalling
+from annogesiclib.ppi import PPINetwork
+from annogesiclib.sublocal import SubLocal
 from annogesiclib.ribos import Ribos
 from annogesiclib.screen import Screen
 
@@ -80,7 +79,7 @@ class Controller(object):
     def get_target_fasta(self):
         """Get target fasta"""
         project_creator.create_subfolders(self._paths.required_folders("get_target_fasta"))
-        target = Target_fasta(self._paths.tar_fasta_folder, self._args.ref_fasta_folder)
+        target = TargetFasta(self._paths.tar_fasta_folder, self._args.ref_fasta_folder)
         target.get_target_fasta(self._args.mutation_table,
                 self._paths.tar_fasta_folder, self._args.ref_fasta_folder,
                 self._args.output_format)
@@ -121,7 +120,7 @@ class Controller(object):
                       self._args.factor, self._args.factor_reduction,
                       self._args.base_height, self._args.enrichment_factor, 
                       self._args.processing_factor, self._args.replicate_match,
-                      out_folder, self._args.project_path, self._args.statistics,
+                      out_folder, self._args.statistics,
                       self._args.validate_gene, self._args.merge_manual,
                       self._args.compare_transcript_assembly, self._args.fuzzy,
                       self._args.utr_length, self._args.cluster, self._args.length,
@@ -153,12 +152,12 @@ class Controller(object):
 
     def color(self):
         """color the screenshots"""
-        color = Color_PNG()
+        color = ColorPNG()
         color.generate_color_png(
                 self._args.track_number, self._args.output_folder, 
                 self._args.ImageMagick_covert_path)
 
-    def transtermhp(self):
+    def terminator(self):
         """Run TransTermHP for detecting terminators."""
         project_creator.create_subfolders(self._paths.required_folders("terminator"))
         terminator = Terminator(self._args.annotation_folder, self._args.fasta_folder,
@@ -183,9 +182,8 @@ class Controller(object):
     def transcript(self):
         """Run Transcriptome assembly."""
         project_creator.create_subfolders(self._paths.required_folders("transcript_assembly"))
-        transcript = Transcript_Assembly(self._paths.transcript_assembly_output_folder)
+        transcript = TranscriptAssembly(self._paths.transcript_assembly_output_folder)
         transcript.run_transcript_assembly(
-                self._args.project_path, self._args.bin_path,
                 self._args.frag_wig_path, self._args.normal_wig_path, 
                 self._args.sort_annotation, self._args.tex_notex,
                 self._args.length, self._args.annotation_folder, 
@@ -199,10 +197,9 @@ class Controller(object):
     def utr_detection(self):
         """Run UTR detection."""
         project_creator.create_subfolders(self._paths.required_folders("utr"))
-        utr = UTR_detection(self._args.TSS_folder, self._args.transcript_assembly_folder,
+        utr = UTRDetection(self._args.TSS_folder, self._args.transcript_assembly_folder,
                             self._paths.utr_folder)
         utr.run_utr_detection(
-                self._args.bin_path,
                 self._args.TSS_folder, self._args.annotation_folder,
                 self._args.transcript_assembly_folder,
                 self._args.terminator_folder,
@@ -212,7 +209,7 @@ class Controller(object):
     def srna_detection(self):
         """sRNA_detection."""
         project_creator.create_subfolders(self._paths.required_folders("srna"))
-        srna = sRNA_detection(self._paths.srna_folder, self._args.TSS_folder,
+        srna = sRNADetection(self._paths.srna_folder, self._args.TSS_folder,
                               self._args.processing_site_folder, self._args.sORF, 
                               self._args.fasta_folder, self._args.transcript_assembly_folder)
         srna.run_srna_detection(
@@ -244,7 +241,7 @@ class Controller(object):
     def sorf_detection(self):
         """sORF_detection."""
         project_creator.create_subfolders(self._paths.required_folders("sorf"))
-        sorf = sORF_detection(self._args.TSS_folder, self._args.sRNA_folder,
+        sorf = sORFDetection(self._args.TSS_folder, self._args.sRNA_folder,
                               self._paths.sorf_folder, self._args.transcript_assembly_folder,
                               self._args.fasta_folder)
         sorf.run_sorf_detection(
@@ -280,7 +277,7 @@ class Controller(object):
     def operon(self):
         """operon detection"""
         project_creator.create_subfolders(self._paths.required_folders("operon"))
-        operon = Operon_detection(self._args.TSS_folder, self._args.transcript_folder,
+        operon = OperonDetection(self._args.TSS_folder, self._args.transcript_folder,
                                   self._args.UTR5_folder, self._args.UTR3_folder,
                                   self._paths.operon_output_folder, self._args.term_folder)
         operon.run_operon(
@@ -290,15 +287,16 @@ class Controller(object):
                 self._args.TSS_fuzzy, self._args.term_fuzzy,
                 self._args.min_length, self._args.statistics,
                 self._paths.operon_output_folder, self._args.combine_gff,
-                self._paths.operon_statistics_folder, self._args.bin_path)
+                self._paths.operon_statistics_folder)
     def circrna(self):
         """circRNA detection"""
         project_creator.create_subfolders(self._paths.required_folders("circrna"))
-        circ = CircRNA_detection(self._paths.circrna_output_folder, self._args.annotation_path,
+        circ = CircRNADetection(self._paths.circrna_output_folder, self._args.annotation_path,
                                  self._args.fasta_path, self._args.align)
         circ.run_circrna(
                 self._args.align, self._args.process, self._args.fasta_path,
-                self._args.annotation_path, self._paths.circrna_output_folder, 
+                self._args.annotation_path, self._args.normal_bam_path,
+                self._args.fragmented_bam_path,
                 self._paths.read_folder, self._paths.circrna_stat_folder, 
                 self._args.convert_to_gff, self._args.support_reads,
                 self._args.segemehl_folder, self._args.samtools_path,
@@ -306,15 +304,15 @@ class Controller(object):
     def goterm(self):
         """Go term discovery"""
         project_creator.create_subfolders(self._paths.required_folders("go_term"))
-        goterm = Go_term_finding(self._paths.goterm_output_folder, self._args.annotation_path)
+        goterm = GoTermFinding(self._paths.goterm_output_folder, self._args.annotation_path)
         goterm.run_go_term(
-                self._args.bin_path, self._args.annotation_path,
+                self._args.annotation_path,
                 self._paths.goterm_output_folder, self._args.UniProt_id,
                 self._args.go_obo, self._args.goslim_obo)
 
     def srna_target(self):
         """sRNA target prediction"""
-        srnatarget = sRNA_target_prediction(self._paths.starget_output_folder, self._args.sRNA_path,
+        srnatarget = sRNATargetPrediction(self._paths.starget_output_folder, self._args.sRNA_path,
                                             self._args.fasta_path, self._args.annotation_path)
         project_creator.create_subfolders(self._paths.required_folders("srna_target"))
         srnatarget.run_srna_target_prediction(
@@ -325,14 +323,14 @@ class Controller(object):
                 self._args.span_target, self._args.window_size_srna, 
                 self._args.span_srna, self._args.unstructured_region_RNAplex_target,
                 self._args.unstructured_region_RNAplex_srna,
-                self._args.unstructured_region_RNAup,
-                self._args.energy_threshold, self._args.duplex_distance,
-                self._args.top, self._paths.starget_output_folder, 
-                self._args.process_rnaplex, self._args.process_rnaup)
+                self._args.unstructured_region_RNAup, self._args.energy_threshold,
+                self._args.duplex_distance, self._args.top,
+                self._paths.starget_output_folder, self._args.process_rnaplex,
+                self._args.process_rnaup, self._args.continue_rnaup)
     def snp(self):
         """SNP transcript detection"""
         project_creator.create_subfolders(self._paths.required_folders("snp"))
-        snp = SNP_calling(self._args.bam_type, self._paths.snp_output_folder,
+        snp = SNPCalling(self._args.bam_type, self._paths.snp_output_folder,
                           self._args.fasta_path)
         snp.run_snp_calling(
                 self._args.samtools_path, self._args.bcftools_path,
@@ -345,7 +343,7 @@ class Controller(object):
     def ppi(self):
         """PPI network retrieve"""
         project_creator.create_subfolders(self._paths.required_folders("ppi_network"))
-        ppi = PPI_network(self._paths.ppi_output_folder)
+        ppi = PPINetwork(self._paths.ppi_output_folder)
         ppi.retrieve_ppi_network(
             self._args.ptt_path, self._args.proteinID_strains,
             self._args.without_strain_pubmed, self._args.species_STRING,
@@ -355,10 +353,11 @@ class Controller(object):
     def sublocal(self):
         """Subcellular Localization prediction"""
         project_creator.create_subfolders(self._paths.required_folders("subcellular_localization"))
-        sublocal = Sub_Local(self._args.gff_path, self._args.fasta_path, self._paths.sublocal_output_folder)
+        sublocal = SubLocal(self._args.gff_path, self._args.fasta_path, self._paths.sublocal_output_folder)
         sublocal.run_sub_local(
             self._args.Psortb_path, self._args.gff_path,
             self._args.fasta_path, self._args.bacteria_type,
+            self._args.difference_multi,
             self._args.merge_to_gff, self._args.EMBOSS_transeq_path,
             self._paths.sublocal_output_folder)
 
@@ -371,8 +370,9 @@ class Controller(object):
             self._args.infernal_path, self._args.riboswitch_ID,
             self._args.gff_path, self._args.fasta_path,
             self._args.Rfam, self._paths.ribos_output_folder,
-            self._args.re_scan, self._paths.database_folder,
-            self._args.fuzzy)
+            self._args.re_scan, self._args.e_value,
+            self._args.output_all,
+            self._paths.database_folder, self._args.fuzzy)
     def screen(self):
         """generate screenshot"""
         screen = Screen(self._args.output_folder, self._args.fasta)

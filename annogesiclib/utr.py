@@ -1,6 +1,6 @@
 #!/usr/bin/python
-from Bio import SeqIO
-import os	
+
+import os
 import sys
 from subprocess import call
 import annogesiclib.multiparser
@@ -9,7 +9,7 @@ from annogesiclib.detect_utr import detect_3utr, detect_5utr
 from annogesiclib.multiparser import Multiparser
 
 
-class UTR_detection(object):
+class UTRDetection(object):
 
     def __init__(self, tsss, trans, out_folder):
         self.helper = Helper()
@@ -31,27 +31,35 @@ class UTR_detection(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(folder, gff))
 
-    def _compute_utr(self, gffs, utr5_path, utr3_path, tss_path, tran_path, 
+    def _compute_utr(self, gffs, utr5_path, utr3_path, tss_path, tran_path,
                      source, terms, fuzzy, base_5utr):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
                 prefix = gff[:-4]
-                tss = self.helper.get_correct_file(tss_path, "_TSS.gff", prefix, None)
-                tran = self.helper.get_correct_file(tran_path, "_transcript.gff", prefix, None)
+                tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
+                                                   prefix, None)
+                tran = self.helper.get_correct_file(tran_path, "_transcript.gff",
+                                                    prefix, None)
                 if terms:
-                    term = self.helper.get_correct_file(os.path.join(terms, "tmp"), "_term.gff", prefix, None)
+                    term = self.helper.get_correct_file(
+                                os.path.join(terms, "tmp"), "_term.gff",
+                                prefix, None)
                 else:
                     term = None
                 print("computing 5'UTR of {0} .....".format(prefix))
-                detect_5utr(tss, os.path.join(gffs, gff), tran, source, base_5utr,
-                            os.path.join(utr5_path, "gffs", "_".join([prefix, "5UTR.gff"])))                
+                detect_5utr(tss, os.path.join(gffs, gff), tran, source,
+                            base_5utr, os.path.join(utr5_path, "gffs",
+                            "_".join([prefix, "5UTR.gff"])))
                 print("computing 3'UTR of {0} .....".format(prefix))
                 detect_3utr(tran, os.path.join(gffs, gff), term, fuzzy,
-                            os.path.join(utr3_path, "gffs", "_".join([prefix, "3UTR.gff"])))
-                self.helper.move_all_content(os.getcwd(), self.utr5_stat_path, "_5utr_length.png")
-                self.helper.move_all_content(os.getcwd(), self.utr3_stat_path, "_3utr_length.png")
+                            os.path.join(utr3_path, "gffs",
+                            "_".join([prefix, "3UTR.gff"])))
+                self.helper.move_all_content(os.getcwd(),
+                     self.utr5_stat_path, "_5utr_length.png")
+                self.helper.move_all_content(os.getcwd(),
+                     self.utr3_stat_path, "_3utr_length.png")
 
-    def run_utr_detection(self, bin_path, tsss, gffs, trans, terms, 
+    def run_utr_detection(self, tsss, gffs, trans, terms,
                           fuzzy, out_folder, source, base_5utr):
         self._check_folder(tsss)
         self._check_folder(gffs)
@@ -60,16 +68,16 @@ class UTR_detection(object):
         self._check_gff(gffs)
         self._check_gff(trans)
         self._check_gff(terms)
-        self.multiparser._parser_gff(gffs, None)
-        self.multiparser._parser_gff(tsss, "TSS")
-        self.multiparser._combine_gff(gffs, self.tss_path, None, "TSS")
-        self.multiparser._parser_gff(trans, "transcript")
-        self.multiparser._combine_gff(gffs, self.tran_path, None, "transcript")
+        self.multiparser.parser_gff(gffs, None)
+        self.multiparser.parser_gff(tsss, "TSS")
+        self.multiparser.combine_gff(gffs, self.tss_path, None, "TSS")
+        self.multiparser.parser_gff(trans, "transcript")
+        self.multiparser.combine_gff(gffs, self.tran_path, None, "transcript")
         if terms:
-            self.multiparser._parser_gff(terms, "term")
-            self.multiparser._combine_gff(gffs, os.path.join(terms, "tmp"), None, "term")
-        detect = False
-        self._compute_utr(gffs, self.utr5_path, self.utr3_path, self.tss_path, 
+            self.multiparser.parser_gff(terms, "term")
+            self.multiparser.combine_gff(gffs, os.path.join(terms, "tmp"),
+                                          None, "term")
+        self._compute_utr(gffs, self.utr5_path, self.utr3_path, self.tss_path,
                           self.tran_path, source, terms, fuzzy, base_5utr)
         self.helper.remove_tmp(gffs)
         self.helper.remove_tmp(tsss)

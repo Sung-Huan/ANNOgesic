@@ -39,7 +39,6 @@ class Paths(object):
         self.reference_input_folder = "%s/reference" % self.input_folder
         self.wig_folder = "%s/wigs" % self.input_folder
         self.mutation_table_folder = "%s/mutation_table" % self.input_folder
-        self.transcript_assembly_input_folder = "%s/transcriptome_assembly" % self.input_folder
         self.promoter_input_folder = "%s/promoter_analysis" % self.input_folder
         self.database_folder = "%s/database" % self.input_folder
         self.tsspredator_input_folder = "%s/TSSpredator" % self.input_folder
@@ -324,7 +323,7 @@ class Paths(object):
     def required_input_folders(self):
         return [self.reference_input_folder, self.wig_folder, 
                 self.mutation_table_folder, self.read_folder,
-		self.transcript_assembly_input_folder, self.bam_folder,
+		self.bam_folder,
 		self.promoter_input_folder, self.database_folder,
                 self.tsspredator_input_folder, self.manual_TSS_folder,
                 self.manual_pro_folder]
@@ -338,8 +337,6 @@ class Paths(object):
                         [self.tsspredator_folder] + self.required_tsspredator_folders(),
                        "processing":
                         [self.processing_site_folder] + self.required_processing_folders(),
-                       "optimize_tsspredator":
-                        [self.tsspredator_folder] + self.required_tsspredator_folders(),
                        "terminator":
                         [self.transterm_folder] + self.required_transterm_folders(),
                        "transcript_assembly":

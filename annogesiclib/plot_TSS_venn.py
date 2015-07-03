@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os	
+import os
 import sys
 import matplotlib as mpl
 mpl.use('Agg')
@@ -9,29 +9,29 @@ import numpy as np
 from annogesiclib.gff3 import Gff3Parser
 
 def ellipse(x, y, angle, face, al, plt):
-    ellipse= mpl.patches.Ellipse(xy=(x,y), width=0.8, height=0.3, 
-                                 angle=angle, facecolor=face, alpha=al)
-    plt.gca().add_artist(ellipse)
+    ellipse_ = mpl.patches.Ellipse(xy=(x, y), width=0.8, height=0.3,
+                                  angle=angle, facecolor=face, alpha=al)
+    plt.gca().add_artist(ellipse_)
     return plt
-    
+
 def line(x, y, angle, plt):
-    line = mpl.patches.Ellipse(xy=(x,y), width=0.8, height=0.3, 
-                               angle=angle, facecolor="none", 
+    line_ = mpl.patches.Ellipse(xy=(x, y), width=0.8, height=0.3,
+                               angle=angle, facecolor="none",
                                edgecolor="#000000", linewidth=3)
-    plt.gca().add_artist(line)
+    plt.gca().add_artist(line_)
     return plt
 
 def text_total(xy, tss_type, num, plt):
-    plt.text(xy[0], xy[1], tss_type, ha="center", 
+    plt.text(xy[0], xy[1], tss_type, ha="center",
              va="center", fontsize=15, fontweight='bold')
     if tss_type != "Orphan":
-        plt.text(xy[0], xy[1] - 0.05, str(num), ha="center", 
+        plt.text(xy[0], xy[1] - 0.05, str(num), ha="center",
                  va="center", fontsize=15, fontweight='bold')
 
 def text(xy, tss_type, num, plt):
-    if (tss_type == "Primary") or \
-       (tss_type == "Antisense") or \
-       (tss_type == "Antisense_Primary"):
+    if (tss_type == "Primary") or (
+        tss_type == "Antisense") or (
+        tss_type == "Antisense_Primary"):
         plt.text(xy[0], xy[1], str(num), fontsize=16, ha="center",
                  va="center", fontweight='bold', color="white")
     else:
@@ -44,7 +44,9 @@ def check_tss_class(total_types, strain, tss, tss_type):
     if tss_type in tss.attributes["type"]:
         total_types[strain][tss_type] += 1
 
-def import_types(tsss, types, total_types):
+def import_types(tsss):
+    types = {"all": {}}
+    total_types = {"all": {}}
     for strain, datas in tsss.items():
         if strain not in types.keys():
             types[strain] = {}
@@ -55,7 +57,7 @@ def import_types(tsss, types, total_types):
             check_tss_class(total_types, strain, tss, "Internal")
             check_tss_class(total_types, strain, tss, "Antisense")
             check_tss_class(total_types, strain, tss, "Orphan")
-            sorted_types = sorted(tss.attributes["type"].split(" "))
+            sorted_types = sorted(tss.attributes["type"].split("&"))
             ty = None
             for tss_type in sorted_types:
                 if ty is None:
@@ -66,9 +68,11 @@ def import_types(tsss, types, total_types):
             if ty not in types[strain].keys():
                 types[strain][ty] = 0
             types[strain][ty] += 1
+    return types, total_types
 
-
-def read_gff(tss_file, tsss, tss_num):
+def read_gff(tss_file):
+    tsss = {"all": []}
+    tss_num = {"all": 0}
     pre_strain = ""
     gff_parser = Gff3Parser()
     for entry in gff_parser.entries(open(tss_file)):
@@ -82,13 +86,14 @@ def read_gff(tss_file, tsss, tss_num):
         tss_num["all"] += 1
     for strain in tsss.keys():
         tsss[strain] = sorted(tsss[strain], key=lambda k: (k.seq_id, k.start))
+    return tsss, tss_num
 
 def plot(types, file_type, feature_name, total_types, tss_num):
     for strain, tss_types in types.items():
         if len(types.keys()) <= 2:
             if strain == "all":
                 continue
-        plt.figure(figsize=(12,6))
+        plt.figure(figsize=(12, 6))
         coordinate_total = {"Primary": (0.05, 0.85), "Secondary": (0.2, 0.95),
                             "Internal": (0.575, 0.95), "Antisense": (0.7, 0.85),
                             "Orphan":(0.8, 0.3)}
@@ -109,7 +114,8 @@ def plot(types, file_type, feature_name, total_types, tss_num):
         ellipse(0.38, 0.495, 70, "#13C139", 0.5, plt)
         ellipse(0.37, 0.495, -70, "#E8D632", 0.4, plt)
         circ = mpl.patches.Ellipse(xy=(0.8, 0.2), width=0.09, height=0.15,
-                                   facecolor='none', edgecolor="#000000", linewidth=3)
+                                   facecolor='none', edgecolor="#000000",
+                                   linewidth=3)
         plt.gca().add_artist(circ)
         line(0.25, 0.4, -70, plt)
         line(0.37, 0.495, -70, plt)
@@ -142,10 +148,8 @@ def plot_venn(tss_file, file_type):
         feature_name = "processing site"
     else:
         feature_name = "TSS"
-    tsss = {"all": []}
     types = {"all": {}}
-    tss_num = {"all": 0}
     total_types = {"all": {}}
-    read_gff(tss_file, tsss, tss_num)
-    import_types(tsss, types, total_types)
+    tsss, tss_num = read_gff(tss_file)
+    types, total_types = import_types(tsss)
     plot(types, file_type, feature_name, total_types, tss_num)

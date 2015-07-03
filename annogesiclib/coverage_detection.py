@@ -36,11 +36,13 @@ def define_cutoff(coverages, median, utr_type):
         for track, values in median.items():
             cutoffs[track] = values["mean"]
     else:
-        cutoffs[track] = float(coverages[utr_type])
+        for track, values in median.items():
+            cutoffs[track] = float(coverages[utr_type])
     return cutoffs
 
 def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
-              detect_num, type_, poss, median, coverages, utr_type):
+              type_, poss, median, coverages, utr_type):
+    detect_num = 0
     check_texs = {}
     texs = template_texs.copy()
     for key, num in texs.items():
@@ -49,7 +51,13 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
         run_check_tex = False
         if type_ == "sRNA_utr_derived":
             cutoffs = define_cutoff(coverages, median, utr_type)
-            if cover["avg"] > cutoffs[cover["track"]]:
+            if cover["track"] in cutoffs.keys():
+                if cover["avg"] > cutoffs[cover["track"]]:
+                    run_check_tex = True
+            else:
+                run_check_tex = True
+        elif type_ == "sORF":
+            if cover["avg"] > coverages[cover["track"]]:
                 run_check_tex = True
         elif (type_ == "terminator") or (type_ == "merge_sRNA"):
             run_check_tex = True
@@ -93,15 +101,20 @@ def exchange_start_end(poss, cover):
         poss["end"] = cover["final_end"]
 
 def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
-                         tex_notex, replicates, type_, median, coverages, utr_type):
+                         tex_notex, replicates, type_, median, coverages,
+                         utr_type, frag_detect):
     srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
                   "end": -1, "track": "", "detail": [], "conds": {}}
-    tmp_poss = {"start": -1, "end": -1, "pos": -1, "all_start": [], "all_end": []}
+    tmp_poss = {"start": -1, "end": -1, "pos": -1,
+                "all_start": [], "all_end": []}
+    output = False
     for cond, covers in srna_covers.items():
-        detect_num = 0
-        detect_num = check_tex(template_texs, covers, cutoff_coverage, 
-                               srna_datas["detail"], tex_notex, detect_num, 
+        detect_num = check_tex(template_texs, covers, cutoff_coverage,
+                               srna_datas["detail"], tex_notex,
                                type_, tmp_poss, median, coverages, utr_type)
+        if (((detect_num >= replicates["frag"]) and \
+            ("frag" in cond)) or (not (frag_detect))):
+            output = True
         if ((detect_num >= replicates["tex"]) and \
            ("texnotex" in cond)) or \
            ((detect_num >= replicates["frag"]) and \
@@ -111,10 +124,11 @@ def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
                 tmp_poss["all_end"].append(tmp_poss["end"])
             else:
                 if strand == "+":
-                    sort_datas = sorted(srna_datas["detail"], key=lambda k: (k["pos"]))
+                    sort_datas = sorted(srna_datas["detail"],
+                                        key=lambda k: (k["pos"]))
                 else:
-                    sort_datas = sorted(srna_datas["detail"], key=lambda k:
-                                        (k["pos"]), reverse=True)
+                    sort_datas = sorted(srna_datas["detail"],
+                                        key=lambda k: (k["pos"]), reverse=True)
                 srna_datas["pos"] = sort_datas[-1]["pos"]
             sort_datas = sorted(srna_datas["detail"], key=lambda k: (k["avg"]))
             avg = sort_datas[-1]["avg"]
@@ -131,4 +145,8 @@ def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
         else:
             srna_datas["start"] = -1
             srna_datas["end"] = -1
+        if not output:
+            srna_datas = None
+            srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
+                          "end": -1, "track": "", "detail": [], "conds": {}}
     return srna_datas

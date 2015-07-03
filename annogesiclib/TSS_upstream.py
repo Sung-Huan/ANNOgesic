@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os        
+import os
 import sys
 import csv
 import math
@@ -8,14 +8,16 @@ import shutil
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.TSSpredator import TSSPredatorReader
 from annogesiclib.helper import Helper
-import annogesiclib.parser_wig as par_wig
+from annogesiclib.parser_wig import WigParser
 
 
 def get_upstream(seq, tss, out, name):
     if tss.strand == "+":
-        fasta = Helper().extract_gene(seq, tss.start - 50, tss.start, tss.strand)
+        fasta = Helper().extract_gene(seq, tss.start - 50,
+                                      tss.start, tss.strand)
     else:
-        fasta = Helper().extract_gene(seq, tss.start, tss.start + 50, tss.strand)
+        fasta = Helper().extract_gene(seq, tss.start,
+                                      tss.start + 50, tss.strand)
     out.write("{0}\n{1}\n".format(name, fasta))
 
 def get_primary_locus_tag(tss):
@@ -55,17 +57,20 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
             tss_dict_types.append(tss_type)
             tss_dict_utrs.append(utr)
             tss_dict_tags.append(locus_tag)
-        tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), tss.strand]),
+        strand = Helper().get_strand_name(tss.strand)
+        tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), strand]),
                     "type": "&".join(tss_dict_types),
                     "UTR_length": "&".join(tss_dict_utrs),
                     "associated_gene": "&".join(tss_dict_tags)}
     else:
-        tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), tss.strand]),
+        strand = Helper().get_strand_name(tss.strand)
+        tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), strand]),
                     "type": tss_type,
                     "UTR_length": utr,
                     "associated_gene": locus_tag}
     tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
-                           "=".join(["associated_gene", tss_dict["associated_gene"]]),
+                           "=".join(["associated_gene",
+                                     tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
                            "=".join(["Name", tss_dict["Name"]])])
     return (tss_string, tss_dict)
@@ -78,7 +83,8 @@ def detect_coverage(wigs, tss, ref):
             tss_cover = 0
             ref_cover = 0
             for track, wig in tracks.items():
-                if tss.start <= len(wig):
+                if ((tss.start + 1) <= len(wig)) and (
+                    (ref.start + 1) <= len(wig)):
                     if tss.strand == "+":
                         diff_t = (wig[tss.start - 1]["coverage"] - \
                                 wig[tss.start - 2]["coverage"])
@@ -89,7 +95,6 @@ def detect_coverage(wigs, tss, ref):
                                 wig[tss.start]["coverage"])
                         diff_r = (wig[ref.start - 1]["coverage"] - \
                                 wig[ref.start]["coverage"])
-                        
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
     return (tss_cover, ref_cover)
@@ -144,7 +149,7 @@ def del_repeat(tsss):
                 final_utrs.append(utrs[index])
                 final_genes.append(genes[index])
             index += 1
-        if detect_pri:    
+        if detect_pri:
             final_types.append(types[real_index])
             final_utrs.append(utrs[real_index])
             final_genes.append(genes[real_index])
@@ -164,19 +169,19 @@ def fix_primary_type(tsss, wigs_f, wigs_r):
         if ("Primary" in tss.attributes["type"]):
             tss_entrys = get_primary_locus_tag(tss)
             for ref in tsss:
-                if (ref.seq_id == tss.seq_id) and \
-                   (ref.strand == tss.strand) and \
-                   (ref.start == tss.start):
+                if (ref.seq_id == tss.seq_id) and (
+                    ref.strand == tss.strand) and (
+                    ref.start == tss.start):
                     pass
                 else:
                     if ("Primary" in ref.attributes["type"]):
                         ref_entrys = get_primary_locus_tag(ref)
                         for tss_entry in tss_entrys:
                             for ref_entry in ref_entrys:
-                                if (tss_entry["locus"] == ref_entry["locus"]) and \
-                                   (tss_entry["type"] == "Primary") and \
-                                   (ref_entry["type"] == "Primary") and \
-                                   (tss.seq_id == ref.seq_id):
+                                if (tss_entry["locus"] == ref_entry["locus"]) and (
+                                    tss_entry["type"] == "Primary") and (
+                                    ref_entry["type"] == "Primary") and (
+                                    tss.seq_id == ref.seq_id):
                                     if tss.strand == "+":
                                         covers = detect_coverage(wigs_f, tss, ref)
                                     else:
@@ -210,12 +215,14 @@ def remove_primary(tss, tss_entry):
             final_utrs.append(utrs[index])
             final_genes.append(genes[index])
         index += 1
-    tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), tss.strand]),
+    strand = Helper().get_strand_name(tss.strand)
+    tss_dict = {"Name": "_".join(["TSS:" + str(tss.start), strand]),
                 "type": "&".join(final_types),
                 "UTR_length": "&".join(final_utrs),
                 "associated_gene": "&".join(final_genes)}
     tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
-                           "=".join(["associated_gene", tss_dict["associated_gene"]]),
+                           "=".join(["associated_gene",
+                                     tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
                            "=".join(["Name", tss_dict["Name"]])])
     return [tss_string, tss_dict]
@@ -224,21 +231,27 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
         locus_tag = gene.attributes["locus_tag"]
         if tss.strand == "+":
-            if ((anti_ends["reverse"] != -1) and (anti_ends["reverse"] - gene.start) > 0) or \
-               (anti_ends["reverse"] == -1):
-                tss_entry = import_to_tss("Primary", gene.start, tss, locus_tag, tss_entry)
+            if ((anti_ends["reverse"] != -1) and (
+                anti_ends["reverse"] - gene.start) > 0) or (
+                anti_ends["reverse"] == -1):
+                tss_entry = import_to_tss("Primary", gene.start, tss,
+                                          locus_tag, tss_entry)
                 checks["orphan"] = False
                 gene_ends["forward"] = gene.start
-            elif (anti_ends["reverse"] != -1) and \
-                 ((anti_ends["reverse"] - gene.start) < 0):
-                if (checks["int_anti"]) or (tss.start - anti_ends["reverse"]) > 0:
-                    tss_entry = import_to_tss("Primary", gene.start, tss, locus_tag, tss_entry)
+            elif (anti_ends["reverse"] != -1) and (
+                  (anti_ends["reverse"] - gene.start) < 0):
+                if (checks["int_anti"]) or (
+                    tss.start - anti_ends["reverse"]) > 0:
+                    tss_entry = import_to_tss("Primary", gene.start, tss,
+                                              locus_tag, tss_entry)
                     checks["orphan"] = False
                     gene_ends["forward"] = gene.start
         else:
-            if ((anti_ends["forward"] != -1) and (gene.end - anti_ends["forward"]) > 0) or \
-               (anti_ends["forward"] == -1):
-                tss_entry = import_to_tss("Primary", gene.end, tss, locus_tag, tss_entry)
+            if ((anti_ends["forward"] != -1) and (
+                gene.end - anti_ends["forward"]) > 0) or (
+                anti_ends["forward"] == -1):
+                tss_entry = import_to_tss("Primary", gene.end, tss,
+                                          locus_tag, tss_entry)
                 checks["orphan"] = False
                 gene_ends["reverse"] = gene.end
     if is_internal(gene.start, gene.end, tss.start, tss.strand):
@@ -252,7 +265,8 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         checks["int_anti"] = False
         if tss.strand == "-":
             anti_ends["forward"] = gene.start
-            if (gene_ends["reverse"] != -1) and (gene.start - gene_ends["reverse"]) > 0:
+            if (gene_ends["reverse"] != -1) and (
+                gene.start - gene_ends["reverse"]) > 0:
                 if is_internal(gene.start, gene.end, tss.start, tss.strand):
                     pass
                 else:
@@ -262,9 +276,9 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
             anti_ends["reverse"] = gene.end
             if is_internal(gene.start, gene.end, tss.start, tss.strand):
                 checks["int_anti"] = True
-            if (gene_ends["forward"] != -1) and (gene.start - gene_ends["forward"]) > 0:
-                if (not detect_int_anti) and \
-                   (gene.start - tss.start) > 0:
+            if (gene_ends["forward"] != -1) and (
+                gene.start - gene_ends["forward"]) > 0:
+                if (gene.start - tss.start) > 0:
                     tss_entry = remove_primary(tss, tss_entry)
         locus_tag = gene.attributes["locus_tag"]
         tss_entry = import_to_tss("Antisense", "NA", tss, locus_tag, tss_entry)
@@ -278,10 +292,10 @@ def compare_tss_cds(tss, cdss, genes):
     checks = {"orphan": True, "int_anti": None}
     for gene in genes:
         if gene.strand == tss.strand:
-            tss_entry = same_strand_tss_gene(gene, tss, anti_ends, 
+            tss_entry = same_strand_tss_gene(gene, tss, anti_ends,
                                              gene_ends, checks, tss_entry)
         else:
-            tss_entry = diff_strand_tss_gene(gene, tss, anti_ends, 
+            tss_entry = diff_strand_tss_gene(gene, tss, anti_ends,
                                              gene_ends, checks, tss_entry)
     if checks["orphan"]:
         tss_entry = import_to_tss("Orphan", "NA", tss, "NA", tss_entry)
@@ -296,15 +310,15 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
             return True
 
 def is_internal(cds_start, cds_end, tss_pos, strand):
-    if ((cds_start < tss_pos) and (cds_end > tss_pos)) or \
-       ((strand == "+") and (tss_pos == cds_end)) or \
-       ((strand == "-") and (tss_pos == cds_start)):
+    if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
+        (strand == "+") and (tss_pos == cds_end)) or (
+        (strand == "-") and (tss_pos == cds_start)):
         return True
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
-    if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or \
-       ((is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or \
-       (is_internal(cds_start, cds_end, tss_pos, strand)):
+    if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
+        (is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or (
+         is_internal(cds_start, cds_end, tss_pos, strand)):
         return True
 
 def is_utr(pos1, pos2, length):
@@ -325,10 +339,12 @@ def print_fasta(seq, tss, files, name):
             if "Orphan" in tss.attributes["type"]:
                 get_upstream(seq[key], tss, files["orph"], name)
 
-def read_wig(wigs, filename, strand):
-    wig_parser = par_wig.parser_wig()
+def read_wig(filename, strand):
+    wigs = {}
+    wig_parser = WigParser()
+    wig_fh = open(filename)
     if filename:
-        for entry in wig_parser.parser(filename, strand):
+        for entry in wig_parser.parser(wig_fh, strand):
             if entry.strain not in wigs.keys():
                 strain = entry.strain
                 wigs[strain] = {}
@@ -337,9 +353,12 @@ def read_wig(wigs, filename, strand):
             wigs[strain][entry.track].append({
                  "pos": entry.pos, "coverage": entry.coverage,
                  "strand": entry.strand})
+    wig_fh.close()
+    return wigs
 
-def read_data(tsss, seq, TSS_file, fasta_file):
-    t_f = open(TSS_file, "r")
+def read_data(tss_file, fasta_file):
+    seq = {}
+    t_f = open(tss_file, "r")
     for entry in Gff3Parser().entries(t_f):
         tsss.append(entry)
     with open(fasta_file, "r") as f_h:
@@ -351,9 +370,11 @@ def read_data(tsss, seq, TSS_file, fasta_file):
             else:
                 seq[seq_id] = seq[seq_id] + line
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
-    return tsss
+    return tsss, seq
 
-def read_gff(cdss, genes, gff_file):
+def read_gff(gff_file):
+    cdss = []
+    genes = []
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
         if (entry.feature == "CDS") or \
@@ -362,8 +383,12 @@ def read_gff(cdss, genes, gff_file):
             cdss.append(entry)
         if entry.feature == "gene":
             genes.append(entry)
+    cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
+    genes = sorted(genes, key=lambda k: (k.seq_id, k.start))
+    return cdss, genes
 
-def read_libs(input_libs, libs, wig_folder):
+def read_libs(input_libs, wig_folder):
+    libs = {}
     if "merge_forward.wig" in os.listdir(os.path.join(os.getcwd(), "tmp")):
         os.remove("tmp/merge_forward.wig")
     if "merge_reverse.wig" in os.listdir(os.path.join(os.getcwd(), "tmp")):
@@ -371,32 +396,26 @@ def read_libs(input_libs, libs, wig_folder):
     for lib in input_libs:
         datas = lib.split(":")
         if (datas[1] == "tex") and (datas[4] == "+"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+            Helper().merge_file(os.path.join(wig_folder, datas[0]),
                                 os.path.join("tmp", "merge_forward.wig"))
         elif (datas[1] == "tex") and (datas[4] == "-"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+            Helper().merge_file(os.path.join(wig_folder, datas[0]),
                                 os.path.join("tmp", "merge_reverse.wig"))
+    return libs
 
-def upstream(TSS_file, fasta_file, gff_file, source, wig_folder, input_libs, out_class):
-    files = {"pri": open("tmp/primary.fa", "w"), "sec": open("tmp/secondary.fa", "w"),
-             "inter": open("tmp/internal.fa", "w"), "anti": open("tmp/antisense.fa", "w"),
+def upstream(tss_file, fasta_file, gff_file, source, wig_folder,
+             input_libs, out_class):
+    files = {"pri": open("tmp/primary.fa", "w"),
+             "sec": open("tmp/secondary.fa", "w"),
+             "inter": open("tmp/internal.fa", "w"),
+             "anti": open("tmp/antisense.fa", "w"),
              "orph": open("tmp/orphan.fa", "w")}
-    tsss = []
-    tables = []
-    seq = {}
-    cdss = []
-    genes = []
-    wigs_f = {}
-    wigs_r = {}
-    libs = {}
-    tsss = read_data(tsss, seq, TSS_file, fasta_file)
+    tsss, seq = read_data(tsss, seq, tss_file, fasta_file)
     num_tss = 0
     if not source:
         out = open(out_class, "w")
         out.write("##gff-version 3\n")
-        read_gff(cdss, genes, gff_file)
-        cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
-        genes = sorted(genes, key=lambda k: (k.seq_id, k.start))
+        cdss, genes = read_gff(gff_file)
     for tss in tsss:
         if source is True:
             name = ">" + "_".join([tss.seq_id, str(tss.start), tss.strand])
@@ -407,9 +426,9 @@ def upstream(TSS_file, fasta_file, gff_file, source, wig_folder, input_libs, out
             tss.attribute_string = "".join([tss_type[0], ";ID=tss", str(num_tss)])
             num_tss += 1
     if not source:
-        read_libs(input_libs, libs, wig_folder)
-        read_wig(wigs_f, "tmp/merge_forward.wig", "+")
-        read_wig(wigs_r, "tmp/merge_reverse.wig", "-")
+        libs = read_libs(input_libs, wig_folder)
+        wigs_f = read_wig("tmp/merge_forward.wig", "+")
+        wigs_f = read_wig("tmp/merge_reverse.wig", "-")
         sort_tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
         final_tsss = fix_primary_type(sort_tsss, wigs_f, wigs_r)
         for tss in final_tsss:
@@ -452,4 +471,4 @@ def del_repeat_fasta(input_file, out_file):
                     data[seq_id] = data[seq_id] + line
     for strain, fasta in data.items():
         out.write(">" + strain + "\n")
-        out.write(fasta + "\n") 
+        out.write(fasta + "\n")

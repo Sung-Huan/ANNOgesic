@@ -1,6 +1,5 @@
 #!/usr/bin/python
-from Bio import SeqIO
-import os	
+import os
 import sys
 import time
 import shutil
@@ -11,7 +10,7 @@ from annogesiclib.converter import Converter
 from annogesiclib.circRNA import detect_circrna
 
 
-class CircRNA_detection(object):
+class CircRNADetection(object):
 
     def __init__(self, output_folder, gffs, fastas, align):
         self.multiparser = Multiparser()
@@ -22,9 +21,11 @@ class CircRNA_detection(object):
         self.candidate_path = os.path.join(output_folder, "circRNA_tables")
         self.gff_folder = os.path.join(output_folder, "gffs")
         self.gff_path = os.path.join(gffs, "tmp")
-        self.splices = {"all_file": "splicesites_all.bed", "file": "splicesites.bed",
+        self.splices = {"all_file": "splicesites_all.bed",
+                        "file": "splicesites.bed",
                         "all": "splicesites_all", "splice": "splicesites"}
-        self.trans = {"all_file": "transrealigned_all.bed", "file": "transrealigned.bed",
+        self.trans = {"all_file": "transrealigned_all.bed",
+                      "file": "transrealigned.bed",
                       "all": "transrealigned_all", "trans": "transrealigned"}
         self.bams = {"whole": "whole_reads.bam", "sort": "whole_reads_sort"}
         if align:
@@ -52,31 +53,68 @@ class CircRNA_detection(object):
             time.sleep(5)
 
     def _deal_zip_file(self, read_folder):
+        tmp_reads = []
         for read in os.listdir(read_folder):
             if read.endswith(".bz2"):
                 mod_read = read.replace(".bz2", "")
-                if (".fa" not in mod_read) and \
-                   (".fasta" not in mod_read) and \
-                   (".fna" not in mod_read):
+                if (".fa" not in mod_read) and (
+                    ".fasta" not in mod_read) and (
+                    ".fna" not in mod_read):
                     mod_read = mod_read + ".fa"
                 read_out = open(os.path.join(read_folder, mod_read), "w")
                 tmp_reads.append(os.path.join(read_folder, mod_read))
                 print(" ".join(["unzip", read]))
-                call(["bzcat", os.path.join(read_folder, read)], stdout=read_out)
+                call(["bzcat", os.path.join(read_folder, read)],
+                      stdout=read_out)
+                read_out.close()
+            elif read.endswith(".gz"):
+                mod_read = read.replace(".gz", "")
+                if (".fa" not in mod_read) and (
+                    ".fasta" not in mod_read) and (
+                    ".fna" not in mod_read):
+                    mod_read = mod_read + ".fa"
+                read_out = open(os.path.join(read_folder, mod_read), "w")
+                tmp_reads.append(os.path.join(read_folder, mod_read))
+                print(" ".join(["unzip", read]))
+                call(["zcat", os.path.join(read_folder, read)],
+                      stdout=read_out)
+                read_out.close()
+        return tmp_reads
 
-    def _align(self, fasta_path, segemehl_path, prefixs, 
+    def _run_segemehl_fasta_index(self, segemehl_path, fasta_path,
+                                  index, fasta):
+        call([os.path.join(segemehl_path, "segemehl.x"),
+              "-x", os.path.join(fasta_path, index),
+              "-d", os.path.join(fasta_path, fasta)])
+
+    def _run_segemehl_align(self, segemehl_path, fasta_path,
+                            index, fasta, read_folder, read,
+                            sam_file, log_file):
+        out = open(os.path.join(alignment_path,
+                   fasta_prefix, sam_file), "w")
+        log = open(os.path.join(alignment_path,
+                   fasta_prefix, log_file), "w")
+        p = Popen([os.path.join(segemehl_path, "segemehl.x"),
+                   "-i", os.path.join(fasta_path, index),
+                   "-d", os.path.join(fasta_path, fasta),
+                   "-q", os.path.join(read_folder, read), "-S"],
+                   stdout=out, stderr=log)
+        return p
+
+    def _align(self, fasta_path, segemehl_path,
                alignment_path, read_folder, cores):
+        prefixs = []
+        align_files = []
         for fasta in os.listdir(fasta_path):
             index = fasta.replace(".fa", ".idx")
-            call([os.path.join(segemehl_path, "segemehl.x"),
-                  "-x", os.path.join(fasta_path, index),
-                  "-d", os.path.join(fasta_path, fasta)])
+            self._run_segemehl_fasta_index(segemehl_path, fasta_path,
+                                           index, fasta)
             processes = []
             num_process = 0
             fasta_prefix = fasta.replace(".fa", "")
             prefixs.append(fasta_prefix)
-            self.helper.check_make_folder(os.path.join(alignment_path, fasta_prefix))
-            align_files = []
+            self.helper.check_make_folder(os.path.join(
+                                alignment_path, fasta_prefix))
             for read in os.listdir(read_folder):
                 num_process += 1
                 if read.endswith(".fa") or \
@@ -88,55 +126,67 @@ class CircRNA_detection(object):
                     log_file = "_".join([read_prefix, fasta_prefix + ".log"])
                     align_files.append("_".join([read_prefix, fasta_prefix]))
                     print("mapping {0}".format(sam_file))
-                    out = open(os.path.join(alignment_path, fasta_prefix, sam_file), "w")
-                    log = open(os.path.join(alignment_path, fasta_prefix, log_file), "w")
-                    p = Popen([os.path.join(segemehl_path, "segemehl.x"),
-                               "-i", os.path.join(fasta_path, index),
-                               "-d", os.path.join(fasta_path, fasta),
-                               "-q", os.path.join(read_folder, read), "-S"], 
-                               stdout=out, stderr=log)
+                    p = self._run_segemehl_align(segemehl_path, fasta_path,
+                            index, fasta, read_folder, read, sam_file, log_file)
                     processes.append(p)
                     if num_process == cores:
                         self._wait_process(processes)
                         num_process = 0
             self._wait_process(processes)
-        return align_files
+        return align_files, prefixs
 
-    def _convert_sam2bam(self, sub_alignment_path, samtools_path, 
-                         convert_ones, bam_files, align_files, remove_ones):
+    def _run_samtools_convert_bam(self, samtools_path, out_bam, pre_sam):
+        call([samtools_path, "view", "-bS", pre_sam, "-o", out_bam])
+
+    def _convert_sam2bam(self, sub_alignment_path, samtools_path, align_files):
+        bam_files = []
+        convert_ones = []
+        remove_ones = []
         for sam in os.listdir(sub_alignment_path):
+            pre_sam = os.path.join(sub_alignment_path, sam)
             if sam.endswith(".sam"):
                 bam_file = sam.replace(".sam", ".bam")
                 print("Convert {0} to {1}".format(sam, bam_file))
                 out_bam = os.path.join(sub_alignment_path, bam_file)
-                call([samtools_path, "view", "-bS", 
-                      os.path.join(sub_alignment_path, sam), "-o", out_bam])
-                bam_files.append(os.path.join(sub_alignment_path, bam_file))
+                self._run_samtools_convert_bam(samtools_path, sam, out_bam)
+                bam_files.append(out_bam)
                 if align_files:
                     if bam_file.replace(".bam", "") not in align_files:
-                        convert_ones.append(os.path.join(sub_alignment_path, bam_file))
+                        convert_ones.append(out_bam)
                     else:
-                        remove_ones.append(os.path.join(sub_alignment_path, sam))
+                        remove_ones.append(pre_sam)
             elif sam.endswith(".bam"):
-                bam_files.append(os.path.join(sub_alignment_path, sam))
+                if (pre_sam not in convert_ones) and (pre_sam not in remove_ones):
+                    bam_files.append(pre_sam)
             elif sam.endswith(".log"):
-                os.remove(os.path.join(sub_alignment_path, sam))
+                os.remove(pre_sam)
+        return bam_files, convert_ones, remove_ones
 
-    def _merge_sort_aligment_file(self, bam_files, samtools_path, sub_alignment_path, 
-                                  convert_ones, tmp_reads, remove_ones):
+    def _run_samtools_merge_sort(self, samtools_path, sub_alignment_path, bam_files):
         print("Merge all bam files....")
         whole_bam = os.path.join(sub_alignment_path, self.bams["whole"])
-        file_line = " ".join(bam_files)
-        os.system(" ".join([samtools_path, "merge",
-                            whole_bam, file_line]))
+        if len(bam_files) <= 1:
+            shutil.copyfile(bam_files[0], whole_bam)
+        else:
+            file_line = " ".join(bam_files)
+            os.system(" ".join([samtools_path, "merge",
+                                whole_bam, file_line]))
         print("Sort bam files....")
         call([samtools_path, "sort", whole_bam,
               os.path.join(sub_alignment_path, self.bams["sort"])])
         os.remove(os.path.join(sub_alignment_path, self.bams["whole"]))
+
+    def _run_samtools_convert_sam(self, samtools_path, sub_alignment_path):
         print("Convert whole reads bam file to sam file....")
         call([samtools_path, "view", "-h", "-o",
               os.path.join(sub_alignment_path, self.bams["sort"] + ".sam"),
               os.path.join(sub_alignment_path, self.bams["sort"] + ".bam")])
+
+    def _merge_sort_aligment_file(self, bam_files, samtools_path,
+                                  sub_alignment_path, convert_ones,
+                                  tmp_reads, remove_ones):
+        self._run_samtools_merge_sort(samtools_path, sub_alignment_path, bam_files)
+        self._run_samtools_convert_sam(samtools_path, sub_alignment_path)
         for bam in convert_ones:
             os.remove(bam)
         for sam in remove_ones:
@@ -145,18 +195,21 @@ class CircRNA_detection(object):
             for read in tmp_reads:
                 os.remove(read)
 
-    def _run_testrealign(self, splice_path, prefix, segemehl_path, fasta_path, sub_alignment_path):
+    def _run_testrealign(self, splice_path, prefix, segemehl_path,
+                         fasta_path, sub_alignment_path):
         self.helper.check_make_folder(os.path.join(splice_path, prefix))
         sub_splice_path = os.path.join(splice_path, prefix)
         err_log = os.path.join(sub_splice_path, prefix + ".log")
         print("Running testrealign.x for {0}".format(prefix))
         command = " ".join([os.path.join(segemehl_path, "testrealign.x"),
                             "-d", os.path.join(fasta_path, prefix + ".fa"),
-                            "-q", os.path.join(sub_alignment_path, self.bams["sort"] + ".sam"),
+                            "-q", os.path.join(sub_alignment_path,
+                                  self.bams["sort"] + ".sam"),
                             "-n"])
         os.system(command + " 2>" + err_log)
         self.helper.move_all_content(os.getcwd(), sub_splice_path, ".bed")
-        self.helper.remove_all_content(sub_alignment_path, self.bams["sort"], "file")
+        self.helper.remove_all_content(sub_alignment_path,
+                                       self.bams["sort"], "file")
 
     def _merge_bed(self, fastas, splice_path):
         tmp_prefixs = []
@@ -173,100 +226,146 @@ class CircRNA_detection(object):
                 filename = fasta.split(".")
                 fasta_prefix = filename[0]
                 tmp_prefixs.append(fasta_prefix)
-                self.helper.check_make_folder(os.path.join(os.getcwd(), fasta_prefix))
+                self.helper.check_make_folder(os.path.join(
+                                              os.getcwd(), fasta_prefix))
                 for header in headers:
-                    shutil.copyfile(os.path.join(splice_path, header, self.splices["file"]),
-                                    os.path.join(fasta_prefix, 
-                                    "_".join([self.splices["splice"], header + ".bed"])))
-                    shutil.copyfile(os.path.join(splice_path, header, self.trans["file"]),
-                                    os.path.join(fasta_prefix, 
-                                    "_".join([self.trans["trans"], header + ".bed"])))
-                out_splice = os.path.join(fasta_prefix, self.splices["all_file"])
-                out_trans = os.path.join(fasta_prefix, self.trans["all_file"])
+                    shutil.copyfile(os.path.join(splice_path, header,
+                                    self.splices["file"]),
+                                    os.path.join(fasta_prefix,
+                                    "_".join([self.splices["splice"],
+                                              header + ".bed"])))
+                    shutil.copyfile(os.path.join(splice_path, header,
+                                    self.trans["file"]),
+                                    os.path.join(fasta_prefix,
+                                    "_".join([self.trans["trans"],
+                                              header + ".bed"])))
+                out_splice = os.path.join(fasta_prefix,
+                                          self.splices["all_file"])
+                out_trans = os.path.join(fasta_prefix,
+                                         self.trans["all_file"])
                 if len(headers) > 1:
                     for file_ in os.listdir(fasta_prefix):
                         if (self.splices["splice"] in file_) and \
                            (self.splices["all"] not in file_):
-                            self.helper.merge_file(os.path.join(fasta_prefix, file_),
-                                                   out_splice)
+                            self.helper.merge_file(os.path.join(
+                                    fasta_prefix, file_), out_splice)
                         elif (self.trans["trans"] in file_) and \
                              (self.trans["all"] not in file_):
-                            self.helper.merge_file(os.path.join(fasta_prefix, file_), 
-                                                   out.trans)
+                            self.helper.merge_file(os.path.join(
+                                    fasta_prefix, file_), out_trans)
                 else:
-                    os.rename(os.path.join(fasta_prefix, 
-                              "_".join([self.splices["splice"], headers[0] + ".bed"])), out_splice)
                     os.rename(os.path.join(fasta_prefix,
-                              "_".join([self.trans["trans"], headers[0] + ".bed"])), out_trans)
+                              "_".join([self.splices["splice"],
+                              headers[0] + ".bed"])), out_splice)
+                    os.rename(os.path.join(fasta_prefix,
+                              "_".join([self.trans["trans"],
+                              headers[0] + ".bed"])), out_trans)
         self.helper.remove_all_content(splice_path, None, "dir")
         return tmp_prefixs
 
-    def _stat_and_gen_gff(self, tmp_prefixs, gff_folder, splice_path, candidate_path, gff_path,
-                          stat_folder, support, convert, start_ratio, end_ratio):
+    def _stat_and_gen_gff(self, tmp_prefixs, gff_folder, splice_path,
+                          candidate_path, gff_path, stat_folder, support,
+                          convert, start_ratio, end_ratio):
         for prefix in tmp_prefixs:
             self.helper.check_make_folder(os.path.join(gff_folder, prefix))
             shutil.copytree(prefix, os.path.join(splice_path, prefix))
             self.helper.check_make_folder(os.path.join(candidate_path, prefix))
             print("comparing with annotation of {0}".format(prefix))
-            if self.splices["all_file"] in os.listdir(os.path.join(splice_path, prefix)):
-                detect_circrna(os.path.join(splice_path, prefix, self.splices["all_file"]), 
-                               os.path.join(gff_path, prefix + ".gff"), 
-                               os.path.join(candidate_path, prefix, 
-                                            "_".join(["circRNA", prefix + ".txt"])), 
-                               start_ratio, end_ratio, 
-                               os.path.join(stat_folder, 
-                                            "_".join(["stat_circRNA", prefix + ".csv"])))
+            if self.splices["all_file"] in os.listdir(os.path.join(
+                                                      splice_path, prefix)):
+                detect_circrna(os.path.join(splice_path, prefix,
+                                            self.splices["all_file"]),
+                               os.path.join(gff_path, prefix + ".gff"),
+                               os.path.join(candidate_path, prefix,
+                                            "_".join(["circRNA",
+                                                      prefix + ".txt"])),
+                               start_ratio, end_ratio,
+                               os.path.join(stat_folder,
+                                            "_".join(["stat_circRNA",
+                                                      prefix + ".csv"])))
                 if convert:
                     self.converter.convert_circ2gff(
-                         os.path.join(candidate_path, prefix, 
-                                      "_".join(["circRNA", prefix + ".txt"])), 
-                         support, start_ratio, end_ratio, 
-                         os.path.join(gff_folder, prefix, "_".join([prefix, "circRNA_all.gff"])), 
-                         os.path.join(gff_folder, prefix, "_".join([prefix, "circRNA_best.gff"])))
+                         os.path.join(candidate_path, prefix,
+                                      "_".join(["circRNA", prefix + ".txt"])),
+                         support, start_ratio, end_ratio,
+                         os.path.join(gff_folder, prefix,
+                                      "_".join([prefix, "circRNA_all.gff"])),
+                         os.path.join(gff_folder, prefix,
+                                      "_".join([prefix, "circRNA_best.gff"])))
 
-    def run_circrna(self, align, cores, fastas, gffs, output_folder, read_folder, 
-                    stat_folder, convert, support, segemehl_path, samtools_path,
-                    start_ratio, end_ratio):
+    def _assign_merge_bam_folder(self, normal_bams, frag_bams):
+        remove_frags = []
+        bam_files = []
+        if (normal_bams is not None) and (frag_bams is not None):
+            for frag in os.listdir(frag_bams):
+                if frag.endswith(".bam"):
+                    shutil.copyfile(os.path.join(frag_bams, frag),
+                                    os.path.join(normal_bams, frag))
+                    remove_frags.append(frag)
+            merge_folder = normal_bams
+        elif (normal_bams is not None):
+            merge_folder = normal_bams
+        elif (frag_bams is not None):
+            merge_folder = frag_bams
+        else:
+            print("Error: please assign bam folder or do alignment!!")
+            sys.exit()
+        for bam in os.listdir(merge_folder):
+            if bam.endswith(".bam"):
+                bam_files.append(os.path.join(merge_folder, bam))
+        return merge_folder, remove_frags, bam_files
+
+    def run_circrna(self, align, cores, fastas, gffs, normal_bams, frag_bams,
+                    read_folder, stat_folder, convert, support, segemehl_path,
+                    samtools_path, start_ratio, end_ratio):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
         if segemehl_path is None:
             print("Error: please assign segemehl folder!!")
             sys.exit()
-        self.multiparser._parser_gff(gffs, None)
-        self.multiparser._combine_gff(fastas, self.gff_path, "fasta", None)
+        self.multiparser.parser_gff(gffs, None)
+        self.multiparser.combine_gff(fastas, self.gff_path, "fasta", None)
         tmp_reads = []
         if align:
-            self.multiparser._parser_fasta(fastas)
-            prefixs = []
-            self._deal_zip_file(read_folder)
-            align_files = self._align(self.fasta_path, segemehl_path, prefixs, 
+            self.multiparser.parser_fasta(fastas)
+            tmp_reads = self._deal_zip_file(read_folder)
+            align_files, prefixs = self._align(self.fasta_path, segemehl_path,
                                       self.alignment_path, read_folder, cores)
         else:
-            self.multiparser._parser_fasta(fastas)
+            self.multiparser.parser_fasta(fastas)
             prefixs = []
             for fasta in os.listdir(self.fasta_path):
                 fasta_prefix = fasta.replace(".fa", "")
                 prefixs.append(fasta_prefix)
+            merge_folder, remove_frag, bam_files = self._assign_merge_bam_folder(
+                                                   normal_bams, frag_bams)
             align_files = None
         for prefix in prefixs:
-            sub_alignment_path = os.path.join(self.alignment_path, prefix)
-            bam_files = []
-            convert_ones = []
-            remove_ones = []
-            self._convert_sam2bam(sub_alignment_path, samtools_path, convert_ones, 
-                                  bam_files, align_files, remove_ones)
-            self._merge_sort_aligment_file(bam_files, samtools_path, sub_alignment_path, 
-                                           convert_ones, tmp_reads, remove_ones)
-            self._run_testrealign(self.splice_path, prefix, segemehl_path, 
+            if align:
+                sub_alignment_path = os.path.join(self.alignment_path, prefix)
+                bam_files, convert_ones, remove_ones = self._convert_sam2bam(
+                                                   sub_alignment_path,
+                                                   samtools_path, align_files)
+            else:
+                sub_alignment_path = merge_folder
+                convert_ones = []
+                remove_ones = []
+            self._merge_sort_aligment_file(bam_files, samtools_path,
+                                           sub_alignment_path, convert_ones,
+                                           tmp_reads, remove_ones)
+            self._run_testrealign(self.splice_path, prefix, segemehl_path,
                                   self.fasta_path, sub_alignment_path)
-        tmp_prefixs = self._merge_bed(fastas, self.splice_path) ## based on fasta file
-        self.multiparser._parser_gff(gffs, None)
-        self.multiparser._combine_gff(fastas, self.gff_path, "fasta", None)
-        self._stat_and_gen_gff(tmp_prefixs, self.gff_folder, self.splice_path, 
-                               self.candidate_path, self.gff_path,
-                               stat_folder, support, convert, start_ratio, end_ratio)
+        tmp_prefixs = self._merge_bed(fastas, self.splice_path)
+        self.multiparser.parser_gff(gffs, None)
+        self.multiparser.combine_gff(fastas, self.gff_path, "fasta", None)
+        self._stat_and_gen_gff(tmp_prefixs, self.gff_folder, self.splice_path,
+                               self.candidate_path, self.gff_path,stat_folder,
+                               support, convert, start_ratio, end_ratio)
         self.helper.remove_tmp(fastas)
         self.helper.remove_tmp(gffs)
         for tmp_prefix in tmp_prefixs:
             shutil.rmtree(tmp_prefix)
+        if (not align) and (len(remove_frag) != 0):
+            for frag in remove_frag:
+                os.remove(os.path.join(merge_folder, frag))

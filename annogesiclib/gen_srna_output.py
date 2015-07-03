@@ -16,7 +16,7 @@ def import_data(row, type_):
     elif type_ == "nr":
         if len(row) == 8:
             return {"strain": row[0], "name": row[1], "strand": row[2],
-                    "start": int(row[3]), "end": int(row[4]), 
+                    "start": int(row[3]), "end": int(row[4]),
                     "hits": "|".join(row[5:8])}
         elif len(row) == 6:
             return {"strain": row[0], "name": row[1], "strand": row[2],
@@ -33,20 +33,19 @@ def import_data(row, type_):
 def merge_info(blasts):
     first = True
     finals = []
-    detect = False
     for blast in blasts:
         if first:
             repeat = 0
             first = False
             pre_blast = deepcopy(blast)
         else:
-            if (pre_blast["strain"] == blast["strain"]) and \
-               (pre_blast["strand"] == blast["strand"]) and \
-               (pre_blast["start"] == blast["start"]) and \
-               (pre_blast["end"] == blast["end"]) and \
-               (repeat < 3):
-                pre_blast["hits"] = ";".join([pre_blast["hits"], blast["hits"]])
-                repeat += 1
+            if (pre_blast["strain"] == blast["strain"]) and (
+                pre_blast["strand"] == blast["strand"]) and (
+                pre_blast["start"] == blast["start"]) and (
+                pre_blast["end"] == blast["end"]):
+                if (repeat < 2):
+                    pre_blast["hits"] = ";".join([pre_blast["hits"], blast["hits"]])
+                    repeat += 1
             else:
                 repeat = 0
                 finals.append(pre_blast)
@@ -54,15 +53,15 @@ def merge_info(blasts):
     finals.append(pre_blast)
     return finals
 
-def compare_srna_table(srna_tables, srna, final, min_len, Max_len):
+def compare_srna_table(srna_tables, srna, final, min_len, max_len):
     for table in srna_tables:
         tsss = []
         pros = []
         cands = []
-        if (table["strain"] == srna.seq_id) and \
-           (table["strand"] == srna.strand) and \
-           (table["start"] == srna.start) and \
-           (table["end"] == srna.end):
+        if (table["strain"] == srna.seq_id) and (
+            table["strand"] == srna.strand) and (
+            table["start"] == srna.start) and (
+            table["end"] == srna.end):
             final = dict(final, **table)
             datas = table["tss_pro"].split(";")
             tsss.append(table["start"])
@@ -76,12 +75,12 @@ def compare_srna_table(srna_tables, srna, final, min_len, Max_len):
                         pros.append(int(data.split(":")[1][:-2]))
             for tss in tsss:
                 for pro in pros:
-                    if ((pro - tss) >= min_len) and \
-                       ((pro - tss) <= Max_len):
+                    if ((pro - tss) >= min_len) and (
+                        (pro - tss) <= max_len):
                         cands.append("-".join([str(tss), str(pro)]))
             final["candidates"] = ";".join(cands)
-            if ("tex" in table["conds"]) and \
-               ("frag" in table["conds"]):
+            if ("tex" in table["conds"]) and (
+                "frag" in table["conds"]):
                 final["type"] = "TEX+/-;Fragmented"
             elif ("tex" in table["conds"]):
                 final["type"] = "TEX+/-"
@@ -91,14 +90,14 @@ def compare_srna_table(srna_tables, srna, final, min_len, Max_len):
 
 def compare_blast(blasts, srna, final, hit):
     for blast in blasts:
-        if (srna.seq_id == blast["strain"]) and \
-           (srna.strand == blast["strand"]) and \
-           (srna.start == blast["start"]) and \
-           (srna.end == blast["end"]):
+        if (srna.seq_id == blast["strain"]) and (
+            srna.strand == blast["strand"]) and (
+            srna.start == blast["start"]) and (
+            srna.end == blast["end"]):
             final[hit] = blast["hits"]
     return final
 
-def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len):
+def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
     finals = []
     for srna in srnas:
         final = {}
@@ -110,7 +109,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len):
         else:
             final["sORF"] = "NA"
         if srna.source == "intergenic":
-                final["utr"] = "Intergenic"
+            final["utr"] = "Intergenic"
         else:
             if "&" in srna.attributes["UTR_type"]:
                 final["utr"] = "5'UTR_derived;3'UTR_derived"
@@ -120,7 +119,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len):
                 final["utr"] = "3'UTR_derived"
             elif srna.attributes["UTR_type"] == "interCDS":
                 final["utr"] = "interCDS"
-        final = compare_srna_table(srna_tables, srna, final, min_len, Max_len)
+        final = compare_srna_table(srna_tables, srna, final, min_len, max_len)
         final = compare_blast(nr_blasts, srna, final, "nr_hit")
         final = compare_blast(srna_blasts, srna, final, "sRNA_hit")
         finals.append(final)
@@ -128,57 +127,59 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len):
 
 def print_file(finals, out):
     for final in finals:
-        out.write("\t".join([final["strain"], final["name"], str(final["start"]),
-                             str(final["end"]), final["strand"], final["tss_pro"],
-                             final["candidates"], final["type"], str(final["avg"]),
-                             str(final["high"]), str(final["low"]), final["track"],
-                             final["energy"], final["utr"], final["sORF"], final["nr_hit_num"],
-                             final["sRNA_hit_num"], final["nr_hit"], final["sRNA_hit"]]) + "\n")
+        out.write("\t".join([
+                  final["strain"], final["name"], str(final["start"]),
+                  str(final["end"]), final["strand"], final["tss_pro"],
+                  final["candidates"], final["type"], str(final["avg"]),
+                  str(final["high"]), str(final["low"]), final["track"],
+                  final["energy"], final["utr"], final["sORF"],
+                  final["nr_hit_num"], final["sRNA_hit_num"],
+                  final["nr_hit"], final["sRNA_hit"]]) + "\n")
 
-def read_table(sRNA_table, nr_blast, sRNA_blast,
-               srna_tables, nr_blasts, srna_blasts):
-    fh = open(sRNA_table, "r")
-    for row in csv.reader(fh, delimiter='\t'):
+def read_table(srna_table_file, nr_blast, srna_blast_file):
+    srna_tables = []
+    nr_blasts = []
+    srna_blasts = []
+    f_h = open(srna_table_file, "r")
+    for row in csv.reader(f_h, delimiter='\t'):
         srna_tables.append(import_data(row, "gff"))
-    fh.close()
-    fh = open(nr_blast, "r")
-    for row in csv.reader(fh, delimiter='\t'):
+    f_h.close()
+    f_h = open(nr_blast, "r")
+    for row in csv.reader(f_h, delimiter='\t'):
         nr_blasts.append(import_data(row, "nr"))
-    fh.close()
-    fh = open(sRNA_blast, "r")
-    for row in csv.reader(fh, delimiter='\t'):
+    f_h.close()
+    f_h = open(srna_blast_file, "r")
+    for row in csv.reader(f_h, delimiter='\t'):
         srna_blasts.append(import_data(row, "sRNA"))
-    fh.close()
+    f_h.close()
+    return srna_tables, nr_blasts, srna_blasts
 
-def read_gff(sRNA_gff):
+def read_gff(srna_gff):
     srnas = []
-    for entry in Gff3Parser().entries(open(sRNA_gff)):
+    for entry in Gff3Parser().entries(open(srna_gff)):
         srnas.append(entry)
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))
     return srnas
 
-def gen_srna_table(sRNA_gff, sRNA_table, nr_blast, sRNA_blast, 
-                   Max_len, min_len, out_file):
-    srna_tables = []
-    nr_blasts = []
-    srna_blasts = []
-    finals = []
-    srnas = read_gff(sRNA_gff)
-    read_table(sRNA_table, nr_blast, sRNA_blast,
-               srna_tables, nr_blasts, srna_blasts)
+def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
+                   max_len, min_len, out_file):
+    srnas = read_gff(srna_gff)
+    srna_tables, nr_blasts, srna_blasts = read_table(srna_table_file,
+                                          nr_blast, srna_blast_file)
     out = open(out_file, "w")
-    out.write("\t".join(["strain", "name", "start", "end", "strand", 
+    out.write("\t".join(["strain", "name", "start", "end", "strand",
                          "TSS/Cleavage_site", "candidates",
-                         "lib_type", "best_avg_coverage", 
+                         "lib_type", "best_avg_coverage",
                          "best_highest_coverage", "best_lower_coverage",
-                         "track/coverage", "secondary_energy_change", 
+                         "track/coverage", "secondary_energy_change",
                          "UTR_derived/Intergenic", "confliction of sORF",
-                         "nr_hit_number", "sRNA_hit_number", "nr_hit_top3|ID|e-value", 
-                         "sRNA_hit|e-value"]) + "\n")
+                         "nr_hit_number", "sRNA_hit_number",
+                         "nr_hit_top3|ID|e-value", "sRNA_hit|e-value"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
-    finals = compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, Max_len)
-    sort_finals = sorted(finals, key = lambda x: (x["avg"]), reverse=True)
+    finals = compare(srnas, srna_tables, nr_blasts,
+                     srna_blasts, min_len, max_len)
+    sort_finals = sorted(finals, key=lambda x: (x["avg"]), reverse=True)
     print_file(sort_finals, out)
 
 def print_best(detect, out, srna):
@@ -189,12 +190,13 @@ def print_best(detect, out, srna):
     if not no_print:
         out.write(srna.info + "\n")
 
-def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out_file):
-    srnas = read_gff(sRNA_file)
+def gen_best_srna(srna_file, all_srna_hit, energy, hit_nr_num,
+                  compare_sorf, out_file):
+    srnas = read_gff(srna_file)
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
     for srna in srnas:
-        detect = {"energy": False, "TSS": False, "nr_hit": False, 
+        detect = {"energy": False, "TSS": False, "nr_hit": False,
                   "sRNA_hit": False, "sORF": False}
         if "2d_energy" in srna.attributes.keys():
             if float(srna.attributes["2d_energy"]) < energy:
@@ -203,28 +205,27 @@ def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out
             detect["energy"] = True
         if "with_TSS" in srna.attributes.keys():
             if srna.attributes["with_TSS"] != "NA":
-                 detect["TSS"] = True
+                detect["TSS"] = True
             elif (srna.source == "UTR_derived"):
-                if (("3utr" in srna.attributes["UTR_type"]) or \
-                    ("interCDS" in srna.attributes["UTR_type"])) and \
-                   (srna.attributes["with_cleavage"] != "NA"):
+                if (("3utr" in srna.attributes["UTR_type"]) or (
+                     "interCDS" in srna.attributes["UTR_type"])) and (
+                     srna.attributes["with_cleavage"] != "NA"):
                     detect["TSS"] = True
         else:
             detect["TSS"] = True
         if "nr_hit" in srna.attributes.keys():
-            if (srna.attributes["nr_hit"] == "NA") or \
-               (int(srna.attributes["nr_hit"]) <= hit_nr_num):
+            if (srna.attributes["nr_hit"] == "NA") or (
+                int(srna.attributes["nr_hit"]) <= hit_nr_num):
                 detect["nr_hit"] = True
         else:
             detect["nr_hit"] = True
-        if (compare_sORF):
+        if (compare_sorf):
             if ("sORF" in srna.attributes.keys()):
                 if srna.attributes["sORF"] == "NA":
                     detect["sORF"] = True
         else:
             detect["sORF"] = True
-        if ("sRNA_hit" in srna.attributes.keys()) and \
-           (all_sRNA_hit):
+        if ("sRNA_hit" in srna.attributes.keys()) and (all_srna_hit):
             if (srna.attributes["sRNA_hit"] != "NA"):
                 for key in detect.keys():
                     detect[key] = True
@@ -238,3 +239,4 @@ def gen_best_srna(sRNA_file, all_sRNA_hit, energy, hit_nr_num, compare_sORF, out
         else:
             detect["sRNA_hit"] = True
         print_best(detect, out, srna)
+    out.close()

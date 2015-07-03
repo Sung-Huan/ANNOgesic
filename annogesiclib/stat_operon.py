@@ -1,11 +1,8 @@
 #!/usr/bin/python
 
-import os        
-import sys
+import os
 import csv
 import itertools
-from collections import defaultdict
-
 
 def _boolean(data):
     if data == "False":
@@ -23,7 +20,7 @@ def row_to_location(row):
         nosub = False
     tss = _boolean(row[6])
     term = _boolean(row[8])
-    return {"have no sub-operons": nosub, "have sub-operons": sub, 
+    return {"have no sub-operons": nosub, "have sub-operons": sub,
             "start with tss": tss, "stop with terminator": term}
 
 def plus_num(num_total, strain, type_):
@@ -37,7 +34,7 @@ def print_stat(operons, total_num, class_operon, out):
     out.write("Total number of Operons is {0}\n".format(total_num))
     out.write("The sub operon and features:\n")
     for operon in operons:
-        for it in range(1,5):
+        for it in range(1, 5):
             for features in itertools.combinations(operon.keys(), it):
                 check_key = 0
                 for key in features:
@@ -59,31 +56,35 @@ def print_stat(operons, total_num, class_operon, out):
                   key, value, float(value) / float(total_num)))
     out.write("mono/polycistronic:\n")
     out.write("\tno associated with CDS: {0} ({0})\n".format(
-              class_operon["na"], float(class_operon["na"]) / float(class_operon["total"])))
+              class_operon["na"],
+              float(class_operon["na"]) / float(class_operon["total"])))
     out.write("\tmonocistronic: {0} ({1})\n".format(
-              class_operon["mono"], float(class_operon["mono"]) / float(class_operon["total"])))
+              class_operon["mono"],
+              float(class_operon["mono"]) / float(class_operon["total"])))
     out.write("\tpolycistronic: {0} ({1})\n".format(
-              class_operon["poly"], float(class_operon["poly"]) / float(class_operon["total"])))
+              class_operon["poly"],
+              float(class_operon["poly"]) / float(class_operon["total"])))
 
 def stat(input_file, out_file):
     out = open(out_file, "w")
     operons = {}
     operons_all = []
     tmp_id = ""
-    fh = open(input_file, "r")
+    f_h = open(input_file, "r")
     pre_seq_id = ""
     total_num = {}
     total_num_all = 0
     class_operon = {}
     class_operon["total"] = {"na": 0, "mono": 0, "poly":0, "total": 0}
-    for row in csv.reader(fh, delimiter="\t"):
+    for row in csv.reader(f_h, delimiter="\t"):
         if row[0] != "Operon_ID":
             if row[0] != tmp_id:
                 if pre_seq_id != row[1]:
                     pre_seq_id = row[1]
                     operons[row[1]] = []
                     total_num[row[1]] = 0
-                    class_operon[row[1]] = {"na": 0, "mono": 0, "poly":0, "total": 0}
+                    class_operon[row[1]] = {"na": 0, "mono": 0,
+                                            "poly":0, "total": 0}
                 operons[row[1]].append(row_to_location(row))
                 operons_all.append(row_to_location(row))
                 total_num[row[1]] += 1
@@ -100,4 +101,5 @@ def stat(input_file, out_file):
         print_stat(operons_all, total_num_all, class_operon["total"], out)
     for strain in operons.keys():
         out.write("\n" + strain + ":\n")
-        print_stat(operons[strain], total_num[strain], class_operon[strain], out)
+        print_stat(operons[strain], total_num[strain],
+                   class_operon[strain], out)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os    
+import os
 import sys
 import random
 import csv
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
 
-def _import_uniprot_data(entry, name_list, feature):
+def import_uniprot_data(entry, name_list, feature):
     ref_name = entry.attributes[feature]
     if ref_name not in name_list:
         name_list.add(ref_name)
@@ -23,33 +23,47 @@ def retrieve_uniprot(database_file, gff_file, out_file):
                          "protein_id", "Go_term"]) + "\n")
     for entry in Gff3Parser().entries(open(gff_file)):
         if entry.feature == "CDS":
-            if ("Name" in entry.attributes.keys()) and \
-               ("protein_id" in entry.attributes.keys()):
+            if ("Name" in entry.attributes.keys()) and (
+                "protein_id" in entry.attributes.keys()):
                 if entry.attributes["Name"] == entry.attributes["protein_id"]:
-                    _import_uniprot_data(entry, name_list, "Name")
+                    import_uniprot_data(entry, name_list, "Name")
                 else:
-                    _import_uniprot_data(entry, name_list, "Name")
-                    _import_uniprot_data(entry, name_list, "protein_id")
+                    import_uniprot_data(entry, name_list, "Name")
+                    import_uniprot_data(entry, name_list, "protein_id")
             elif ("Name" in entry.attributes.keys()):
-                _import_uniprot_data(entry, name_list, "Name")
+                import_uniprot_data(entry, name_list, "Name")
             elif ("protein_id" in entry.attributes.keys()):
-                _import_uniprot_data(entry, name_list, "protein_id")
-            else:
-                ref_name = ''
+                import_uniprot_data(entry, name_list, "protein_id")
             gffs.append(entry)
-    idmapping = open(database_file,"r")
+    idmapping = open(database_file, "r")
+    gos = []
     for uni_id in idmapping:
         uni_line = uni_id.rstrip("\n")
         uni_lines = uni_line.split("\t")
         if uni_lines[3] in name_list:
+            detect = False
             for gff in gffs:
-                if (uni_lines[3] == gff.attributes["Name"]) or \
-                   (uni_lines[3] == gff.attributes["protein_id"]):
-                    out.write("\t".join([gff.seq_id, gff.strand, str(gff.start),
-                                   str(gff.end), uni_lines[3], uni_lines[6]]) + "\n")
+                if ("Name" in gff.attributes.keys()):
+                    if (uni_lines[3] == gff.attributes["Name"]):
+                        detect = True 
+                if ("protein_id" in gff.attributes.keys()):
+                    if (uni_lines[3] == gff.attributes["protein_id"]):
+                        detect = True
+                if detect:
+                    detect = False
+                    gos.append({"strain": gff.seq_id, "strand": gff.strand,
+                                 "start": gff.start, "end": gff.end,
+                                 "protein_id": uni_lines[3], "go": uni_lines[6]})
+    gos = sorted(gos, key=lambda x: (x["strain"], x["start"]))
+    for go in gos:
+        out.write("\t".join([go["strain"], go["strand"], str(go["start"]),
+                  str(go["end"]), go["protein_id"], go["go"]]) + "\n")
+    out.close()
+    idmapping.close()
 
 def plot(total_nums, strain, filename, total, out_folder):
-    sort_total_nums = sorted(total_nums.items(), key = lambda x: (x[1]), reverse=True)
+    sort_total_nums = sorted(total_nums.items(),
+                             key=lambda x: (x[1]), reverse=True)
     classes = []
     nums = []
     width = 0.4
@@ -63,7 +77,7 @@ def plot(total_nums, strain, filename, total, out_folder):
                 classes.append(class_)
                 nums.append(num)
     ind = np.arange(len(nums))
-    rects1 = plt.bar(ind, nums, width,  color='#FF9999')
+    rects1 = plt.bar(ind, nums, width, color='#FF9999')
     plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=20)
     plt.ylabel('Amount', fontsize=16)
     plt.xlim([0, len(nums) + 1])
@@ -71,7 +85,8 @@ def plot(total_nums, strain, filename, total, out_folder):
     plt.tight_layout(3, None, None, None)
     plt.savefig(os.path.join(out_folder, "_".join([strain, filename + ".png"])))
 
-def _import_obo(filename, obos):
+def import_obo(filename):
+    obos = []
     start = False
     with open(filename, "r") as o_h:
         for line in o_h:
@@ -91,38 +106,43 @@ def _import_obo(filename, obos):
                         obo["is_a"].append(datas[1].strip())
                     else:
                         obo[datas[0]] = datas[1].strip()
+    return obos
 
-def _import_class_name(slim_obo, classes, strain):
+def import_class(slim_obo, classes, strain):
     if slim_obo["name"] not in classes[strain][slim_obo["namespace"]]:
         classes[strain][slim_obo["namespace"]][slim_obo["name"]] = 0
     classes[strain][slim_obo["namespace"]][slim_obo["name"]] += 1
 
-def _import_total_num(slim_obo, total_nums, strain):
+def import_total(slim_obo, total_nums, strain):
     total_nums[strain][slim_obo["namespace"]] += 1
     total_nums[strain]["total"] += 1
 
-def _print_file(classes, total_nums, out_folder, stat):
+def print_file(classes, total_nums, out_folder, stat):
     out_stat = open(stat, "w")
     printed = True
     for strain, datas in classes.items():
         if (strain == "All_strain") and len(classes) <= 2:
             printed = False
         if printed:
-            plot(total_nums[strain], strain, "three_roots", 
+            plot(total_nums[strain], strain, "three_roots",
                   total_nums[strain]["total"], out_folder)
             out_stat.write("{0}:\n".format(strain))
             for origin, types in datas.items():
-                plot(types, strain, origin, total_nums[strain][origin], out_folder)
+                plot(types, strain, origin,
+                     total_nums[strain][origin], out_folder)
                 out_stat.write("\t{0}: {1}(percentage in total: {2})\n".format(
                                origin, total_nums[strain][origin],
-                               float(total_nums[strain][origin]) / float(total_nums[strain]["total"])))
+                               float(total_nums[strain][origin]) / \
+                               float(total_nums[strain]["total"])))
                 for type_, num in types.items():
                     out_stat.write("\t\t{0}: {1}(percentage in {2}: {3})\n".format(
-                                   type_, num, origin, float(num) / float(total_nums[strain][origin])))
+                                   type_, num, origin, float(num) / \
+                                   float(total_nums[strain][origin])))
         else:
             printed = True
+    out_stat.close()
 
-def _initiate_dict(classes, total_nums, index):
+def initiate_dict(classes, total_nums, index):
     classes[index] = {"biological_process": {},
                       "cellular_component": {},
                       "molecular_function": {}}
@@ -131,7 +151,7 @@ def _initiate_dict(classes, total_nums, index):
                          "molecular_function": 0,
                          "total": 0}
 
-def _compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
+def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
     detect = False
     for strain, go_ids in gos.items():
         for go_id in go_ids:
@@ -142,9 +162,9 @@ def _compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
                         if "is_a" in term_obo.keys():
                             for is_a in term_obo["is_a"]:
                                 go_a = is_a.split(" ! ")
-                                if (go_a[1] != "biological_process") and \
-                                   (go_a[1] != "cellular_component") and \
-                                   (go_a[1] != "molecular_function"):
+                                if (go_a[1] != "biological_process") and (
+                                    go_a[1] != "cellular_component") and (
+                                    go_a[1] != "molecular_function"):
                                     target_terms.append(go_a[0])
                         elif ("is_obsolete" in term_obo.keys()):
                             if term_obo["is_obsolete"] == "true":
@@ -153,10 +173,12 @@ def _compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
                             for target_term in target_terms:
                                 if target_term == slim_obo["id"]:
                                     detect = True
-                                    _import_class_name(slim_obo, classes, strain)
-                                    _import_class_name(slim_obo, classes, "All_strain")
-                                    _import_total_num(slim_obo, total_nums, strain)
-                                    _import_total_num(slim_obo, total_nums, "All_strain")
+                                    import_class(slim_obo, classes, strain)
+                                    import_class(slim_obo, classes,
+                                                 "All_strain")
+                                    import_total(slim_obo, total_nums, strain)
+                                    import_total(slim_obo, total_nums,
+                                                 "All_strain")
                         break
                 if detect:
                     detect = False
@@ -164,12 +186,9 @@ def _compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
 
 def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     gos = {}
-    term_obos = []
-    slim_obos = []
     classes = {}
     total_nums = {}
-    _initiate_dict(classes, total_nums, "All_strain")
-    detect = False
+    initiate_dict(classes, total_nums, "All_strain")
     pre_strain = ""
     g_h = open(go_table, "r")
     print("load go tabel")
@@ -177,14 +196,15 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
         if row[0] != "strain":
             if row[0] != pre_strain:
                 gos[row[0]] = []
-                _initiate_dict(classes, total_nums, row[0])
+                initiate_dict(classes, total_nums, row[0])
             go_terms = row[-1].split("; ")
             gos[row[0]] = gos[row[0]] + go_terms
             pre_strain = row[0]
     print("load obo file")
-    _import_obo(term_file, term_obos)
-    _import_obo(slim_file, slim_obos)
+    term_obos = import_obo(term_file)
+    slim_obos = import_obo(slim_file)
     print("start mapping")
-    _compare_go_slim(gos, term_obos, slim_obos, classes, total_nums)
+    compare_go_slim(gos, term_obos, slim_obos, classes, total_nums)
     print("statistics and ploting...")
-    _print_file(classes, total_nums, out_folder, stat)
+    print_file(classes, total_nums, out_folder, stat)
+    g_h.close()

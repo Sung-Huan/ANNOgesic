@@ -1,11 +1,9 @@
 #!/usr/bin/python
 
-import os        
-import sys
+import os
 import math
-import csv
 from annogesiclib.gff3 import Gff3Parser
-import annogesiclib.parser_wig as par
+from annogesiclib.parser_wig import WigParser
 from annogesiclib.helper import Helper
 
 
@@ -28,8 +26,9 @@ def detect_coverage(wigs, tss, ref):
         if strain == tss.seq_id:
             tss_cover = 0
             ref_cover = 0
-            for track, wig in tracks.items():
-                if tss.start <= len(wig):
+            for wig in tracks.values():
+                if ((tss.start + 1) <= len(wig)) and (
+                    (ref.start + 1) <= len(wig)):
                     if tss.strand == "+":
                         diff_t = (wig[tss.start - 1]["coverage"] - \
                                 wig[tss.start - 2]["coverage"])
@@ -42,7 +41,7 @@ def detect_coverage(wigs, tss, ref):
                                 wig[ref.start]["coverage"])
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
-    return (tss_cover, ref_cover)
+    return tss_cover, ref_cover
 
 def fix_attributes(tss, tss_entry):
     index = 0
@@ -105,7 +104,6 @@ def del_repeat(tsss):
         tss.attributes["associated_gene"] = "&".join(finals["genes"])
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
-    num_man = 0
     for tss in tsss:
         if ("Primary" in tss.attributes["type"]):
             tss_entrys = get_primary_locus_tag(tss)
@@ -119,16 +117,16 @@ def fix_primary_type(tsss, wigs_f, wigs_r):
                         ref_entrys = get_primary_locus_tag(ref)
                         for tss_entry in tss_entrys:
                             for ref_entry in ref_entrys:
-                                if (tss_entry["locus"] == ref_entry["locus"]) and \
-                                   (tss_entry["type"] == "Primary") and \
-                                   (ref_entry["type"] == "Primary") and \
-                                   (tss.seq_id == ref.seq_id):
+                                if (tss_entry["locus"] == ref_entry["locus"]) and (
+                                    tss_entry["type"] == "Primary") and (
+                                    ref_entry["type"] == "Primary") and (
+                                    tss.seq_id == ref.seq_id):
                                     if tss.strand == "+":
-                                        covers = detect_coverage(wigs_f, tss, ref)
+                                        tss_cover, ref_cover = detect_coverage(
+                                                               wigs_f, tss, ref)
                                     else:
-                                        covers = detect_coverage(wigs_r, tss, ref)
-                                    tss_cover = covers[0]
-                                    ref_cover = covers[1]
+                                        tss_cover, ref_cover = detect_coverage(
+                                                               wigs_r, tss, ref)
                                     if tss_cover < ref_cover:
                                         fix_attributes(tss, tss_entry)
                                     elif tss_cover > ref_cover:
@@ -171,7 +169,8 @@ def remove_primary(tss, tss_entry):
                 "UTR_length": "&".join(final_utrs),
                 "associated_gene": "&".join(final_genes)}
     tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
-                           "=".join(["associated_gene", tss_dict["associated_gene"]]),
+                           "=".join(["associated_gene",
+                                     tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
                            "=".join(["Name", tss_dict["Name"]])])
     return [tss_string, tss_dict]
@@ -209,7 +208,8 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
                     "UTR_length": utr,
                     "associated_gene": locus_tag}
     tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
-                           "=".join(["associated_gene", tss_dict["associated_gene"]]),
+                           "=".join(["associated_gene",
+                                     tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
                            "=".join(["Name", tss_dict["Name"]])])
     return (tss_string, tss_dict)
@@ -218,21 +218,27 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
         locus_tag = gene.attributes["locus_tag"]
         if tss.strand == "+":
-            if ((anti_ends["reverse"] != -1) and (anti_ends["reverse"] - gene.start) > 0) or \
-               (anti_ends["reverse"] == -1):
-                tss_entry = import_to_tss("Primary", gene.start, tss, locus_tag, tss_entry)
+            if ((anti_ends["reverse"] != -1) and (
+                 anti_ends["reverse"] - gene.start) > 0) or (
+                anti_ends["reverse"] == -1):
+                tss_entry = import_to_tss("Primary", gene.start, tss,
+                                          locus_tag, tss_entry)
                 checks["orphan"] = False
                 gene_ends["forward"] = gene.start
-            elif (anti_ends["reverse"] != -1) and \
-                 ((anti_ends["reverse"] - gene.start) < 0):
-                if (checks["int_anti"] is True) or (tss.start - anti_ends["reverse"]) > 0:
-                    tss_entry = import_to_tss("Primary", gene.start, tss, locus_tag, tss_entry)
+            elif (anti_ends["reverse"] != -1) and (
+                  (anti_ends["reverse"] - gene.start) < 0):
+                if (checks["int_anti"] is True) or (
+                    tss.start - anti_ends["reverse"]) > 0:
+                    tss_entry = import_to_tss("Primary", gene.start, tss,
+                                              locus_tag, tss_entry)
                     checks["orphan"] = False
                     gene_ends["forward"] = gene.start
         else:
-            if ((anti_ends["forward"] != -1) and (gene.end - anti_ends["forward"]) > 0) or \
-               (anti_ends["forward"] == -1):
-                tss_entry = import_to_tss("Primary", gene.end, tss, locus_tag, tss_entry)
+            if ((anti_ends["forward"] != -1) and (
+                 gene.end - anti_ends["forward"]) > 0) or (
+                anti_ends["forward"] == -1):
+                tss_entry = import_to_tss("Primary", gene.end, tss,
+                                          locus_tag, tss_entry)
                 checks["orphan"] = False
                 gene_ends["reverse"] = gene.end
     if is_internal(gene.start, gene.end, tss.start, tss.strand):
@@ -246,7 +252,8 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         checks["int_anti"] = False
         if tss.strand == "-":
             anti_ends["forward"] = gene.start
-            if (gene_ends["reverse"] != -1) and (gene.start - gene_ends["reverse"]) > 0:
+            if (gene_ends["reverse"] != -1) and (
+                gene.start - gene_ends["reverse"]) > 0:
                 if is_internal(gene.start, gene.end, tss.start, tss.strand):
                     pass
                 else:
@@ -256,9 +263,9 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
             anti_ends["reverse"] = gene.end
             if is_internal(gene.start, gene.end, tss.start, tss.strand):
                 checks["int_anti"] = True
-            if (gene_ends["forward"] != -1) and (gene.start - gene_ends["forward"]) > 0:
-                if (detect_int_anti is not True) and \
-                   (gene.start - tss.start) > 0:
+            if (gene_ends["forward"] != -1) and (
+                gene.start - gene_ends["forward"]) > 0:
+                if (gene.start - tss.start) > 0:
                     tss_entry = remove_primary(tss, tss_entry)
         locus_tag = gene.attributes["locus_tag"]
         tss_entry = import_to_tss("Antisense", "NA", tss, locus_tag, tss_entry)
@@ -272,10 +279,10 @@ def compare_tss_cds(tss, cdss, genes):
     checks = {"orphan": True, "int_anti": None}
     for gene in genes:
         if gene.strand == tss.strand:
-            tss_entry = same_strand_tss_gene(gene, tss, anti_ends, 
+            tss_entry = same_strand_tss_gene(gene, tss, anti_ends,
                                  gene_ends, checks, tss_entry)
         else:
-            tss_entry = diff_strand_tss_gene(gene, tss, anti_ends, 
+            tss_entry = diff_strand_tss_gene(gene, tss, anti_ends,
                                  gene_ends, checks, tss_entry)
     if checks["orphan"] == True:
         tss_entry = import_to_tss("Orphan", "NA", tss, "NA", tss_entry)
@@ -290,15 +297,15 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
             return True
 
 def is_internal(cds_start, cds_end, tss_pos, strand):
-    if ((cds_start < tss_pos) and (cds_end > tss_pos)) or \
-       ((strand == "+") and (tss_pos == cds_end)) or \
-       ((strand == "-") and (tss_pos == cds_start)):
+    if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
+        (strand == "+") and (tss_pos == cds_end)) or (
+        (strand == "-") and (tss_pos == cds_start)):
         return True
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
-    if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or \
-       ((is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or \
-       (is_internal(cds_start, cds_end, tss_pos, strand)):
+    if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
+        (is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or (
+         is_internal(cds_start, cds_end, tss_pos, strand)):
         return True
 
 def is_utr(pos1, pos2, length):
@@ -306,17 +313,22 @@ def is_utr(pos1, pos2, length):
         return True
 
 def print_all_unique(out, overlap_num, nums):
-    if ((nums["tss_p"] != 0) or (overlap_num != 0)) and \
-       ((nums["tss_m"] != 0) or (overlap_num != 0)):
-        out.write("the number of overlap between TSSpredator and manual = {0} ".format(overlap_num))
+    if ((nums["tss_p"] != 0) or (overlap_num != 0)) and (
+        (nums["tss_m"] != 0) or (overlap_num != 0)):
+        out.write("the number of overlap between TSSpredator and manual = {0} ".format(
+                  overlap_num))
         out.write("(overlap of all TSSpredator = {0}, ".format(
-                  float(overlap_num) / (float(nums["tss_p"]) + float(overlap_num))))
+                  float(overlap_num) / \
+                  (float(nums["tss_p"]) + float(overlap_num))))
         out.write("overlap of all manual = {0})\n".format(
-                  float(overlap_num) / (float(nums["tss_m"]) + float(overlap_num))))
+                  float(overlap_num) / \
+                  (float(nums["tss_m"]) + float(overlap_num))))
         out.write("the number of unique in TSSpredator = {0} ({1})\n".format(
-                  nums["tss_p"], float(nums["tss_p"]) / (float(nums["tss_p"]) + float(overlap_num))))
+                  nums["tss_p"], float(nums["tss_p"]) / \
+                  (float(nums["tss_p"]) + float(overlap_num))))
         out.write("the number of unique in manual = {0} ({1})\n".format(
-                  nums["tss_m"], float(nums["tss_m"]) / (float(nums["tss_m"]) + float(overlap_num))))
+                  nums["tss_m"], float(nums["tss_m"]) / \
+                  (float(nums["tss_m"]) + float(overlap_num))))
     else:
         out.write("No TSS candidates which be predicted by TSSpredator.")
 
@@ -325,7 +337,7 @@ def print_stat(num_strain, stat_file, overlap_num, nums):
     if len(num_strain.keys()) == 1:
         print_all_unique(out, overlap_num, nums)
     else:
-        out.write("All strains: \n" )
+        out.write("All strains: \n")
         print_all_unique(out, overlap_num, nums)
         for strain in num_strain.keys():
             if (num_strain[strain]["tsspredator"] == 0) and \
@@ -336,34 +348,39 @@ def print_stat(num_strain, stat_file, overlap_num, nums):
                 perc_tsspredator = str(float(num_strain[strain]["overlap"]) / (
                                    float(num_strain[strain]["tsspredator"]) + \
                                    float(num_strain[strain]["overlap"])))
-                perc_tsspredator_uni = str(float(num_strain[strain]["tsspredator"]) / (
+                perc_tsspredator_uni = str(
+                                   float(num_strain[strain]["tsspredator"]) / (
                                    float(num_strain[strain]["tsspredator"]) + \
                                    float(num_strain[strain]["overlap"])))
-            if (num_strain[strain]["manual"] == 0) and \
-               (num_strain[strain]["overlap"] == 0):
+            if (num_strain[strain]["manual"] == 0) and (
+                num_strain[strain]["overlap"] == 0):
                 perc_manual = "NA"
                 perc_manual_uni = "NA"
             else:
                 perc_manual = str(float(num_strain[strain]["overlap"]) / (
                                   float(num_strain[strain]["manual"]) + \
                                   float(num_strain[strain]["overlap"])))
-                perc_manual_uni = str(float(num_strain[strain]["manual"]) / (
+                perc_manual_uni = str(
+                                  float(num_strain[strain]["manual"]) / (
                                   float(num_strain[strain]["manual"]) + \
                                   float(num_strain[strain]["overlap"])))
             out.write(strain + ": \n")
             out.write("the number of overlap between TSSpredator and manual = {0} ".format(
                       num_strain[strain]["overlap"]))
-            out.write("(overlap of all TSSpredator = {0}, ".format(perc_tsspredator))
+            out.write("(overlap of all TSSpredator = {0}, ".format(
+                      perc_tsspredator))
             out.write("overlap of all manual = {0})\n".format(perc_manual))
             out.write("the number of unique in TSSpredator = {0} ({1})\n".format(
                       num_strain[strain]["tsspredator"], perc_tsspredator_uni))
             out.write("the number of unique in manual = {0} ({1})\n".format(
                       num_strain[strain]["manual"], perc_manual_uni))
 
-def read_wig(wigs, filename, strand):
-    wig_parser = par.parser_wig()
+def read_wig(filename, strand):
+    wigs = {}
+    wig_parser = WigParser()
     if filename:
-        for entry in wig_parser.parser(filename, strand):
+        wig_fh = open(filename)
+        for entry in wig_parser.parser(wig_fh, strand):
             if entry.strain not in wigs.keys():
                 strain = entry.strain
                 wigs[strain] = {}
@@ -372,11 +389,16 @@ def read_wig(wigs, filename, strand):
             wigs[strain][entry.track].append({
                  "pos": entry.pos, "coverage": entry.coverage,
                  "strand": entry.strand})
+        wig_fh.close()
+    return wigs
 
-def read_gff(tsss, cdss, genes, TSS_predict_file, TSS_manual_file, gff_file):
+def read_gff(tss_predict_file, tss_manual_file, gff_file):
+    tsss = {"tsss_p":[], "tsss_m": [], "merge": []}
+    cdss = []
+    genes = []
     gff_parser = Gff3Parser()
-    tssp_fh = open(TSS_predict_file, "r")
-    tssm_fh = open(TSS_manual_file, "r")
+    tssp_fh = open(tss_predict_file, "r")
+    tssm_fh = open(tss_manual_file, "r")
     g_f = open(gff_file, "r")
     for entry in gff_parser.entries(tssp_fh):
         entry.attributes["print"] = False
@@ -390,17 +412,18 @@ def read_gff(tsss, cdss, genes, TSS_predict_file, TSS_manual_file, gff_file):
     tssm_fh.close()
     tsss["tsss_m"] = sorted(tsss["tsss_m"], key=lambda k: (k.seq_id, k.start))
     for entry in gff_parser.entries(g_f):
-        if (entry.feature == "CDS") or \
-           (entry.feature == "rRNA") or \
-           (entry.feature == "tRNA"):
+        if (entry.feature == "CDS") or (
+            entry.feature == "rRNA") or (
+            entry.feature == "tRNA"):
             cdss.append(entry)
         if entry.feature == "gene":
             genes.append(entry)
     g_f.close()
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start))
+    return tsss, cdss, genes
 
-def read_libs(input_libs, libs, wig_folder, program):
+def merge_libs(input_libs, wig_folder, program):
     if "merge_forward.wig" in os.listdir(os.getcwd()):
         os.remove("merge_forward.wig")
     if "merge_reverse.wig" in os.listdir(os.getcwd()):
@@ -412,13 +435,13 @@ def read_libs(input_libs, libs, wig_folder, program):
     for lib in input_libs:
         datas = lib.split(":")
         if (datas[1] == type_) and (datas[4] == "+"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+            Helper().merge_file(os.path.join(wig_folder, datas[0]),
                                 os.path.join(os.getcwd(), "merge_forward.wig"))
-        elif (datas[1] ==type_) and (datas[4] == "-"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]), 
+        elif (datas[1] == type_) and (datas[4] == "-"):
+            Helper().merge_file(os.path.join(wig_folder, datas[0]),
                                 os.path.join(os.getcwd(), "merge_reverse.wig"))
 
-def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num, 
+def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
                   tss_m, tss_p, tsss, pre_pos, cdss, genes):
     if overlap:
         if pre_tss:
@@ -426,7 +449,6 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
             tss = pre_tss
         else:
             tss = tss_p
-        name='%0*d' % (5, nums["tss"])
         tss.attribute_string = define_attributes(tss)
         tss.source = "TSSpredator_manual"
         if (not length) or \
@@ -447,7 +469,6 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
         pre_pos = tss.start
     else:
         if tss_m.seq_id == tss_p.seq_id:
-            name='%0*d' % (5, nums["tss"])
             tss_m.source = "manual"
             tss_entry = compare_tss_cds(tss_m, cdss, genes)
             tss_m.attributes = tss_entry[1]
@@ -460,7 +481,8 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
                 nums["tss"] += 1
     return (overlap, pre_pos, overlap_num)
 
-def intersection(tsss, cluster, num_strain, nums, length, cdss, genes):
+def intersection(tsss, cluster, nums, length, cdss, genes):
+    num_strain = {}
     overlap = False
     overlap_num = 0
     pre_pos = -1
@@ -481,16 +503,16 @@ def intersection(tsss, cluster, num_strain, nums, length, cdss, genes):
                     pre_tss = tss_p
         if start:
             if tss_p.seq_id not in num_strain.keys():
-                num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0, "manual": 0}
-            datas = check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num, 
-                                  tss_m, tss_p, tsss, pre_pos, cdss, genes)
+                num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                            "manual": 0}
+            datas = check_overlap(overlap, pre_tss, nums, length, num_strain,
+                          overlap_num, tss_m, tss_p, tsss, pre_pos, cdss, genes)
             overlap = datas[0]
             pre_pos = datas[1]
             overlap_num = datas[2]
     if start:
         for tss_p in tsss["tsss_p"]:
             if not tss_p.attributes["print"]:
-                name='%0*d' % (5, nums["tss"])
                 tss_p.attribute_string = define_attributes(tss_p)
                 tsss["merge"].append(tss_p)
                 if (not length) or \
@@ -498,7 +520,7 @@ def intersection(tsss, cluster, num_strain, nums, length, cdss, genes):
                     num_strain[tss_p.seq_id]["tsspredator"] += 1
                     nums["tss"] += 1
                     nums["tss_p"] += 1
-    return overlap_num
+    return overlap_num, num_strain
 
 def print_file(final_tsss, program, out_gff):
     num_final = 0
@@ -510,9 +532,11 @@ def print_file(final_tsss, program, out_gff):
         tss.attributes["ID"] = program.lower() + str(num_final)
         num_final += 1
         if program == "TSS":
-            tss.attributes["Name"] = "TSS:" + "_".join([str(tss.start), tss.strand])
+            tss.attributes["Name"] = "TSS:" + "_".join(
+                                              [str(tss.start), tss.strand])
         else:
-            tss.attributes["Name"] = "Processing:" + "_".join([str(tss.start), tss.strand])
+            tss.attributes["Name"] = "Processing:" + "_".join(
+                                              [str(tss.start), tss.strand])
         tss.attribute_string = ";".join(
             ["=".join(items) for items in tss.attributes.items()])
         out.write("\t".join([str(field) for field in [
@@ -520,23 +544,16 @@ def print_file(final_tsss, program, out_gff):
                              tss.end, tss.score, tss.strand, tss.phase,
                              tss.attribute_string]]) + "\n")
 
-def merge_manual_predict_tss(TSS_predict_file, TSS_manual_file,
-                             stat_file, out_gff, gff_file, cluster, 
+def merge_manual_predict_tss(tss_predict_file, tss_manual_file,
+                             stat_file, out_gff, gff_file, cluster,
                              length, input_libs, wig_folder, program):
-    tsss = {"tsss_p":[], "tsss_m": [], "merge": []}
-    cdss = []
-    genes = []
-    utrs = {"total": [], "pri": [], "sec": []}
-    num_strain = {}
     nums = {"tss_p": 0, "tss_m": 0, "tss": 0}
-    wigs_f = {}
-    wigs_r = {}
-    libs = []
-    read_libs(input_libs, libs, wig_folder, program)
-    read_wig(wigs_f, "merge_forward.wig", "+")
-    read_wig(wigs_r, "merge_reverse.wig", "-")
-    read_gff(tsss, cdss, genes, TSS_predict_file, TSS_manual_file, gff_file)
-    overlap_num = intersection(tsss, cluster, num_strain, nums, length, cdss, genes)
+    merge_libs(input_libs, wig_folder, program)
+    wigs_f = read_wig("merge_forward.wig", "+")
+    wigs_r = read_wig("merge_reverse.wig", "-")
+    tsss, cdss, genes = read_gff(tss_predict_file, tss_manual_file, gff_file)
+    overlap_num, num_strain = intersection(tsss, cluster, nums,
+                                           length, cdss, genes)
     sort_tsss = sorted(tsss["merge"], key=lambda k: (k.seq_id, k.start))
     final_tsss = fix_primary_type(sort_tsss, wigs_f, wigs_r)
     print_file(final_tsss, program, out_gff)

@@ -2,7 +2,6 @@
 
 import os
 import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
 
 def get_type(inter, gffs):
@@ -30,7 +29,9 @@ def get_type(inter, gffs):
     else:
         inter["source"] = "intergenic"
 
-def read_gff(gff_file, tran_file, gffs, trans):
+def read_gff(gff_file, tran_file):
+    trans = []
+    gffs = []
     for entry in Gff3Parser().entries(open(gff_file)):
         if (entry.feature == "CDS") or \
            (entry.feature == "rRNA") or \
@@ -39,8 +40,12 @@ def read_gff(gff_file, tran_file, gffs, trans):
             gffs.append(entry)
     for entry in Gff3Parser().entries(open(tran_file)):
         trans.append(entry)
+    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+    trans = sorted(trans, key=lambda k: (k.seq_id, k.start))
+    return gffs, trans
 
-def compare_tran_cds(trans, gffs, inters):
+def compare_tran_cds(trans, gffs):
+    inters = []
     for tran in trans:
         poss = [{"start": tran.start, "end": tran.end}]
         for pos in poss:
@@ -67,15 +72,11 @@ def compare_tran_cds(trans, gffs, inters):
             if not exclude:
                 inters.append({"strain": tran.seq_id, "strand": tran.strand,
                                "start": pos["start"], "end": pos["end"]})
+    return inters
 
 def get_intergenic(gff_file, tran_file, out_file, utr_detect):
-    trans = []
-    gffs = []
-    read_gff(gff_file, tran_file, gffs, trans)
-    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
-    trans = sorted(trans, key=lambda k: (k.seq_id, k.start))
-    inters = []
-    compare_tran_cds(trans, gffs, inters)
+    gffs, trans = read_gff(gff_file, tran_file)
+    inters = compare_tran_cds(trans, gffs)
     num = 0
     out = open(out_file, "w")
     for inter in inters:
@@ -85,12 +86,14 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect):
             source = "UTR_derived"
             if utr_detect:
                 attribute_string = ";".join(
-                       ["=".join(items) for items in (["ID", "sorf" + str(num)], \
-                       ["Name", "sORF_" + name], ["UTR_type", inter["source"]])])
+                       ["=".join(items) for items in (["ID", "sorf" + str(num)],
+                       ["Name", "sORF_" + name],
+                       ["UTR_type", inter["source"]])])
         else:
             source = "intergenic"
             attribute_string = ";".join(
-                   ["=".join(items) for items in (["ID", "sorf" + str(num)], ["Name", "sORF_" + name])])
+                   ["=".join(items) for items in (
+                   ["ID", "sorf" + str(num)], ["Name", "sORF_" + name])])
         if ((source == "UTR_derived") and (utr_detect)) or \
            (source == "intergenic"):
             out.write("\t".join([str(field) for field in [

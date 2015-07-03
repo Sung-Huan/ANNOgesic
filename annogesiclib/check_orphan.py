@@ -5,24 +5,25 @@ import sys
 import csv
 import math
 import shutil
+from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
-import annogesiclib.parser_wig as par_wig
+from annogesiclib.parser_wig import WigParser
 
 def read_gff(gff_file, features):
     gffs = []
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
-        if (entry.feature in features):
+        if entry.feature in features:
             gffs.append(entry)
-    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))    
+    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     return gffs
 
 def is_primary(cds_start, cds_end, tss_pos, strand):
     if strand == "+":
-        if (is_utr(cds_start, tss_pos, 300) and (cds_start >= tss_pos)):
+        if is_utr(cds_start, tss_pos, 300) and (cds_start >= tss_pos):
             return True
     else:
-        if (is_utr(tss_pos, cds_end, 300) and (cds_end <= tss_pos)):
+        if is_utr(tss_pos, cds_end, 300) and (cds_end <= tss_pos):
             return True
 
 def is_internal(cds_start, cds_end, tss_pos, strand):
@@ -38,42 +39,30 @@ def is_antisense(cds_start, cds_end, tss_pos, strand):
         return True
 
 def is_utr(pos1, pos2, length):
-    if (pos1 - pos2 <= length):
+    if pos1 - pos2 <= length:
         return True
 
 def get_attributes(tss, cds):
-#    re = False
     if tss.attributes["associated_gene"] == "orphan":
         if "locus_tag" in cds.attributes.keys():
-#            if (cds.attributes["locus_tag"] == "SEPS") or \
-#               (cds.attributes["locus_tag"] == "SEPSxxxx"): ####
-#                re = True ####
-#            else: ####
             tss.attributes["associated_gene"] = cds.attributes["locus_tag"]
         else:
-            tss.attributes["associated_gene"] = cds.feature + ":" + str(cds.start) + "-" + \
-                                                str(cds.end) + "_" + cds.strand
-#        if re: ###
-#            re = False
-#            tss.attributes["associated_gene"] = cds.feature + ":" + str(cds.start) + "-" + \
-#                                                str(cds.end) + "_" + cds.strand
+            strand = Helper().get_strand_name(cds.strand)
+            tss.attributes["associated_gene"] = cds.feature + ":" + \
+                                                str(cds.start)  + "-" + \
+                                                str(cds.end) + "_" + strand
     else:
         if "locus_tag" in cds.attributes.keys():
-#            if (cds.attributes["locus_tag"] == "SEPS") or \
-#               (cds.attributes["locus_tag"] == "SEPSxxxx"): ####
-#                re = True ####
-#            else: ####
-            tss.attributes["associated_gene"] = "&".join([tss.attributes["associated_gene"],
-                                                          cds.attributes["locus_tag"]])
+            tss.attributes["associated_gene"] = "&".join([
+                                        tss.attributes["associated_gene"],
+                                        cds.attributes["locus_tag"]])
         else:
-            tss.attributes["associated_gene"] = "&".join([tss.attributes["associated_gene"],
-                                                cds.feature + ":" + str(cds.start) + "-" + \
-                                                str(cds.end) + "_" + cds.strand])
-#        if re: ###
-#            re = False
-#            tss.attributes["associated_gene"] = "&".join([tss.attributes["associated_gene"],
-#                                                cds.feature + ":" + str(cds.start) + "-" + \
-#                                                str(cds.end) + "_" + cds.strand])
+            strand = Helper().get_strand_name(cds.strand)
+            tss.attributes["associated_gene"] = "&".join([
+                                        tss.attributes["associated_gene"],
+                                        cds.feature + ":" + \
+                                        str(cds.start) + "-" + \
+                                        str(cds.end) + "_" + strand])
 
 def detect_coverage(wigs, tss, ref):
     tss_cover = -1
@@ -82,8 +71,9 @@ def detect_coverage(wigs, tss, ref):
         if strain == tss.seq_id:
             tss_cover = 0
             ref_cover = 0
-            for track, wig in tracks.items():
-                if tss.start <= len(wig):
+            for wig in tracks.values():
+                if ((tss.start + 1) <= len(wig)) and (
+                    (ref.start + 1) <= len(wig)):
                     if tss.strand == "+":
                         diff_t = (wig[tss.start - 1]["coverage"] - \
                                 wig[tss.start - 2]["coverage"])
@@ -94,10 +84,9 @@ def detect_coverage(wigs, tss, ref):
                                 wig[tss.start]["coverage"])
                         diff_r = (wig[ref.start - 1]["coverage"] - \
                                 wig[ref.start]["coverage"])
-
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
-    return (tss_cover, ref_cover)
+    return tss_cover, ref_cover
 
 def del_repeat(tsss):
     for tss in tsss:
@@ -177,48 +166,47 @@ def get_primary_locus_tag(tss):
     return tsss
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
-    num_man = 0
     for tss in tsss:
-        num_auto = 0
-        if ("Primary" in tss.attributes["type"]):
+        if "Primary" in tss.attributes["type"]:
             tss_entrys = get_primary_locus_tag(tss)
             for ref in tsss:
-                if (ref.seq_id == tss.seq_id) and \
-                   (ref.strand == tss.strand) and \
-                   (ref.start == tss.start):
+                if (ref.seq_id == tss.seq_id) and (
+                    ref.strand == tss.strand) and (
+                    ref.start == tss.start):
                     pass
                 else:
-                    if ("Primary" in ref.attributes["type"]):
+                    if "Primary" in ref.attributes["type"]:
                         ref_entrys = get_primary_locus_tag(ref)
                         for tss_entry in tss_entrys:
                             for ref_entry in ref_entrys:
-                                if (tss_entry["locus"] == ref_entry["locus"]) and \
-                                   (tss_entry["type"] == "Primary") and \
-                                   (ref_entry["type"] == "Primary") and \
-                                   (tss.seq_id == ref.seq_id):
+                                if (tss_entry["locus"] == ref_entry["locus"]) and (
+                                    tss_entry["type"] == "Primary") and (
+                                    ref_entry["type"] == "Primary") and (
+                                    tss.seq_id == ref.seq_id):
                                     if tss.strand == "+":
-                                        covers = detect_coverage(wigs_f, tss, ref)
+                                        tss_cover, ref_cover = detect_coverage(
+                                                               wigs_f, tss, ref)
                                     else:
-                                        covers = detect_coverage(wigs_r, tss, ref)
-                                    tss_cover = covers[0]
-                                    ref_cover = covers[1]
+                                        tss_cover, ref_cover = detect_coverage(
+                                                               wigs_r, tss, ref)
                                     if tss_cover < ref_cover:
                                         fix_attributes(tss, tss_entry)
                                     elif tss_cover > ref_cover:
                                         fix_attributes(ref, ref_entry)
                                     elif tss_cover == ref_cover:
-                                        if (tss_entry["utr"] < ref_entry["utr"]):
+                                        if tss_entry["utr"] < ref_entry["utr"]:
                                             fix_attributes(ref, ref_entry)
-                                        elif (tss_entry["utr"] > ref_entry["utr"]):
+                                        elif tss_entry["utr"] > ref_entry["utr"]:
                                             fix_attributes(tss, tss_entry)
     del_repeat(tsss)
     return tsss
 
 def read_wig(filename, strand):
     wigs = {}
-    wig_parser = par_wig.parser_wig()
+    wig_parser = WigParser()
     if filename:
-        for entry in wig_parser.parser(filename, strand):
+        wig_fh = open(filename)
+        for entry in wig_parser.parser(wig_fh, strand):
             if entry.strain not in wigs.keys():
                 strain = entry.strain
                 wigs[strain] = {}
@@ -227,7 +215,68 @@ def read_wig(filename, strand):
             wigs[strain][entry.track].append({
                  "pos": entry.pos, "coverage": entry.coverage,
                  "strand": entry.strand})
+        wig_fh.close()
     return wigs
+
+def get_attributes_int_anti(tss, cds, type_):
+    if tss.attributes["type"] != "Orphan":
+        tss.attributes["type"] = "&".join(
+                [tss.attributes["type"], type_])
+        tss.attributes["UTR_length"] = "&".join(
+                [tss.attributes["UTR_length"],
+                 type_ + "_NA"])
+    else:
+        tss.attributes["type"] = type_
+        tss.attributes["UTR_length"] = type_ + "_NA"
+    get_attributes(tss, cds)
+
+def compare_cds_check_orphan(tsss, cdss):
+    for tss in tsss:
+        if tss.attributes["type"] == "Orphan":
+            for cds in cdss:
+                if (tss.seq_id == cds.seq_id) and \
+                   (tss.strand == cds.strand):
+                    if is_primary(cds.start, cds.end, tss.start, tss.strand):
+                        if tss.attributes["type"] != "Orphan":
+                            tss.attributes["type"] = "&".join(
+                                    [tss.attributes["type"], "Primary"])
+                            if tss.strand == "+":
+                                tss.attributes["UTR_length"] = "&".join(
+                                        [tss.attributes["UTR_length"],
+                                         "Primary_" + str(cds.start - tss.start)])
+                            else:
+                                tss.attributes["UTR_length"] = "&".join(
+                                        [tss.attributes["UTR_length"],
+                                         "Primary_" + str(tss.start - cds.end)])
+                        else:
+                            tss.attributes["type"] = "Primary"
+                            if tss.strand == "+":
+                                tss.attributes["UTR_length"] = "Primary_" + str(
+                                                            cds.start - tss.start)
+                            else:
+                                tss.attributes["UTR_length"] = "Primary_" + str(
+                                                            tss.start - cds.end)
+                        get_attributes(tss, cds)
+                    if is_internal(cds.start, cds.end, tss.start, tss.strand):
+                        if "locus_tag" in cds.attributes.keys():
+                            if cds.attributes["locus_tag"] not in tss.attributes["associated_gene"]:
+                                get_attributes_int_anti(tss, cds, "Internal")
+                        else:
+                            strand = Helper().get_strand_name(cds.strand)
+                            if "".join([cds.feature, ":", str(cds.start),
+                               "-", str(cds.end), "_", strand]) not in tss.attributes["associated_gene"]:
+                                get_attributes_int_anti(tss, cds, "Internal")
+                            
+                    if is_antisense(cds.start, cds.end, tss.start, tss.strand):
+                        if "locus_tag" in cds.attributes.keys():
+                            if cds.attributes["locus_tag"] not in tss.attributes["associated_gene"]:
+                                get_attributes_int_anti(tss, cds, "Antisense")
+                        else:
+                            strand = Helper().get_strand_name(cds.strand)
+                            if "".join([cds.feature, ":", str(cds.start),
+                               "-", str(cds.end), "_", strand]) not in tss.attributes["associated_gene"]:
+                                get_attributes_int_anti(tss, cds, "Antisense")
+                            
 
 def check_orphan(tss_file, gff_file, wig_f_file, wig_r_file, out_gff):
     cdss = read_gff(gff_file, ["CDS", "tRNA", "rRNA"])
@@ -236,50 +285,12 @@ def check_orphan(tss_file, gff_file, wig_f_file, wig_r_file, out_gff):
     wigs_r = read_wig(wig_r_file, "-")
     out = open(out_gff, "w")
     out.write("##gff-version 3\n")
-    for tss in tsss:
-        if tss.attributes["type"] == "Orphan":
-            for cds in cdss:
-                if (tss.seq_id == cds.seq_id) and \
-                   (tss.strand == cds.strand):
-                    if is_primary(cds.start, cds.end, tss.start, tss.strand):
-                        if tss.attributes["type"] != "Orphan":
-                            tss.attributes["type"] = "&".join([tss.attributes["type"], "Primary"])
-                            if tss.strand == "+":
-                                tss.attributes["UTR_length"] = "&".join([tss.attributes["UTR_length"], 
-                                                               "Primary_" + str(cds.start - tss.start)])
-                            else:
-                                tss.attributes["UTR_length"] = "&".join([tss.attributes["UTR_length"], 
-                                                               "Primary_" + str(tss.start - cds.end)])
-                        else:
-                            tss.attributes["type"] = "Primary"
-                            if tss.strand == "+":
-                                tss.attributes["UTR_length"] = "Primary_" + str(cds.start - tss.start)
-                            else:
-                                tss.attributes["UTR_length"] = "Primary_" + str(tss.start - cds.end)
-                        get_attributes(tss, cds)
-                    if is_internal(cds.start, cds.end, tss.start, tss.strand):
-                        if tss.attributes["type"] != "Orphan":
-                            tss.attributes["type"] = "&".join([tss.attributes["type"], "Internal"])
-                            tss.attributes["UTR_length"] = "&".join([tss.attributes["UTR_length"],
-                                                               "Internal_NA"])
-                        else:
-                            tss.attributes["type"] = "Internal"
-                            tss.attributes["UTR_length"] = "Internal_NA"
-                        get_attributes(tss, cds)
-                    if is_antisense(cds.start, cds.end, tss.start, tss.strand):
-                        if tss.attributes["type"] != "Orphan":
-                            tss.attributes["type"] = "&".join([tss.attributes["type"], "Antisense"])
-                            tss.attributes["UTR_length"] = "&".join([tss.attributes["UTR_length"],
-                                                               "Antisense_NA"])
-                        else:
-                            tss.attributes["type"] = "Antisense"
-                            tss.attributes["UTR_length"] = "Antisense_NA"
-                        get_attributes(tss, cds)
+    compare_cds_check_orphan(tsss, cdss)
     final_tsss = fix_primary_type(tsss, wigs_f, wigs_r)
     for tss in final_tsss:
-            tss.attribute_string = ";".join(
-                ["=".join(items) for items in tss.attributes.items()])
-            out.write("\t".join([str(field) for field in [
-                            tss.seq_id, tss.source, tss.feature, tss.start,
-                            tss.end, tss.score, tss.strand, tss.phase,
-                            tss.attribute_string]]) + "\n")
+        tss.attribute_string = ";".join(
+            ["=".join(items) for items in tss.attributes.items()])
+        out.write("\t".join([str(field) for field in [
+                        tss.seq_id, tss.source, tss.feature, tss.start,
+                        tss.end, tss.score, tss.strand, tss.phase,
+                        tss.attribute_string]]) + "\n")

@@ -1,14 +1,16 @@
 #!/usr/bin/python
-from Bio import SeqIO
-import os	
+import os
 import sys
-from annogesiclib.seq_editer import Seq_Editer
+from annogesiclib.seq_editer import SeqEditer
 
 
-def get_file(FTP, input_folder, files_type):
+def wget(input_folder, ftp, files_type):
+    os.system(" ".join(["wget", "-cP", input_folder, ftp + "/*" + files_type]))
+
+def get_file(ftp, input_folder, files_type):
     """Download required files from FTP."""
     detect = False
-    os.system(" ".join(["wget", "-cP", input_folder, FTP + "/*" + files_type]))
+    wget(input_folder, ftp, files_type)
     for file_ in os.listdir(input_folder):
         input_file = os.path.join(input_folder, file_)
         if (file_[-3:] == "fna"):
@@ -33,7 +35,7 @@ def get_file(FTP, input_folder, files_type):
             if line[0] != file_[:-4]:
                 name = line[0]
                 os.rename(input_file, os.path.join(input_folder, name + ".gff"))
-        elif (file_[-3:] == "gbk"): 
+        elif (file_[-3:] == "gbk"):
             with open("/".join([input_folder, file_]), "r") as g_f:
                 for line in g_f:
                     if line[0:7] == "VERSION":
@@ -47,4 +49,4 @@ def get_file(FTP, input_folder, files_type):
             if change:
                 os.rename(input_file, os.path.join(input_folder, filename))
                 change = False
-            Seq_Editer().modify_header(os.path.join(input_folder, filename))
+            SeqEditer().modify_header(os.path.join(input_folder, filename))

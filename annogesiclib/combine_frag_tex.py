@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os        
+import os
 import sys
 import csv
 from annogesiclib.gff3 import Gff3Parser
@@ -17,7 +17,8 @@ def print_file(data, out, name, num):
     attributes = {}
     attributes["ID"] = "tran" + str(num)
     attributes["Name"] = "Tran_" + name
-    attribute_string = ";".join(["=".join(items) for items in attributes.items()])
+    attribute_string = ";".join(["=".join(items) \
+                       for items in attributes.items()])
     out.write("\t".join([str(field) for field in [
                         data.seq_id, data.source, data.feature, data.start,
                         data.end, data.score, data.strand, data.phase,
@@ -51,16 +52,16 @@ def combine(frag_file, tex_file, tolerance, output_file):
     finals = []
     out = open(output_file, "w")
     out.write("##gff-version 3\n")
-    fh = open(frag_file, "r")
-    for entry in Gff3Parser().entries(fh):
+    f_h = open(frag_file, "r")
+    for entry in Gff3Parser().entries(f_h):
         entry.attributes["print"] = False
         frags.append(entry)
-    fh.close()
-    nh = open(tex_file, "r")
-    for entry in Gff3Parser().entries(nh):
+    f_h.close()
+    n_h = open(tex_file, "r")
+    for entry in Gff3Parser().entries(n_h):
         entry.attributes["print"] = False
         norms.append(entry)
-    nh.close()
+    n_h.close()
     sort_frags = sorted(frags, key=lambda k: (k.seq_id, k.start))
     sort_norms = sorted(norms, key=lambda k: (k.seq_id, k.start))
     for frag in sort_frags:
@@ -81,7 +82,8 @@ def combine(frag_file, tex_file, tolerance, output_file):
             continue
         overlap = False
         for ref in sort_finals:
-             overlap = compare(tar, ref, overlap, tolerance)
-        name='%0*d' % (5, num)
+            overlap = compare(tar, ref, overlap, tolerance)
+        name = '%0*d' % (5, num)
         print_file(tar, out, name, num)
         num += 1
+    out.close()

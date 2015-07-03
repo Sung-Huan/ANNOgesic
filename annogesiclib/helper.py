@@ -2,10 +2,9 @@
 
 import os
 import sys
-import csv
 import copy
 import shutil
-from subprocess import call
+import csv
 from annogesiclib.gff3 import Gff3Parser
 
 
@@ -14,8 +13,50 @@ class Helper(object):
     def __init__(self):
         self.gff3parser = Gff3Parser()
 
+    def get_strand_name(self, strand):
+        name = ""
+        if strand == "+":
+            name = "f"
+        else:
+            name = "r"
+        return name
+
+    def _fix_break_line(self, tar, prefix):
+        tmp_out = open("tmp_file", "w")
+        first = True
+        with open(tar) as fh:
+            for line in fh:
+                line = line.strip()
+                if (prefix == ">"):
+                    if (prefix in line) and (first):
+                        first = False
+                    elif (prefix in line) and (not first) and (
+                          not line.startswith(prefix)):
+                        line = line.replace(prefix, "\n" + prefix)
+                else:
+                    row = line.split("\t")
+                    if (len(row) > 9):
+                        for strain in prefix:
+                            if strain in line:
+                                line = line.replace(strain, "\n" + strain)
+                                break
+                tmp_out.write(line + "\n")
+        tmp_out.close()
+        os.remove(tar)
+        os.rename("tmp_file", tar)
+
     def merge_file(self, ref, tar):
         os.system(" ".join(["cat", ref, ">>", tar]))
+        if tar.endswith(".fa"):
+            self._fix_break_line(tar, ">")
+        elif tar.endswith(".gff"):
+            strains = []
+            fh = open(ref, "r")
+            for row in csv.reader(fh, delimiter='\t'):
+                if row[0] not in strains:
+                    strains.append(row[0])
+            fh.close()
+            self._fix_break_line(tar, strains)
 
     def remove_all_content(self, folder, feature, data_type):
         for file_ in os.listdir(folder):
@@ -43,7 +84,7 @@ class Helper(object):
             elif (features is None):
                 move = True
             if move:
-                os.rename(os.path.join(ref_folder, file_), 
+                os.rename(os.path.join(ref_folder, file_),
                           os.path.join(tar_folder, file_))
 
     def remove_tmp(self, folder):
@@ -73,10 +114,10 @@ class Helper(object):
                 else:
                     filename = data.split("_STRAIN_")
                     if ("reverse" in data) and ("forward" in data):
-                        print("Error: Unclear wig file. It is reverse or forward!!!")
+                        print("Error: assign reverse or forward wigs!!!")
                         sys.exit()
-                    elif (prefix == filename[-1][:-1 * len(feature)]) and \
-                         (for_wig_type in data):
+                    elif (prefix == filename[-1][:-1 * len(feature)]) and (
+                          for_wig_type in data):
                         return os.path.join(datas, data)
         if detect:
             detect = False
@@ -97,7 +138,7 @@ class Helper(object):
         for entry in self.gff3parser.entries(g_f):
             gffs.append(entry)
         g_f.close()
-        sort_gffs = sorted(gffs, key = lambda x: (x.seq_id, x.start))
+        sort_gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
         out = open(out_file, "w")
         out.write("##gff-version 3\n")
         for gff in sort_gffs:
@@ -117,7 +158,7 @@ class Helper(object):
             return fasta
 
     def _reverse_seq(self, rev_seq):
-        fasta=""
+        fasta = ""
         for base in rev_seq[::-1]:
             if base.upper() == 'A':
                 fasta = fasta + 'T'
@@ -129,20 +170,20 @@ class Helper(object):
                 fasta = fasta + 'C'
         return fasta
 
-    
     def _add_element(self, list_, type_, gff):
         if type_ in gff.attributes.keys():
             list_.add(gff.attributes[type_])
-    
+
     def check_uni_attributes(self, gff_file):
         print("Checking gff file of {0}".format(gff_file))
         gffs = []
         for entry in self.gff3parser.entries(open(gff_file)):
             gffs.append(entry)
-        gffs = sorted(gffs, key = lambda x: (x.seq_id, x.start))
+        gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
         first = True
         ids = set()
         locus_tags = set()
+        pre_gff = None
         for gff in gffs:
             if first:
                 first = False
@@ -152,14 +193,14 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Error: There are repeat ID {0} in gff file!!!".format(
+                            print("Error: repeat ID {0} in gff file!!!".format(
                                   gff.attributes["ID"]))
                             sys.exit(1)
                         else:
                             self._add_element(ids, "ID", gff)
                     if "locus_tag" in gff.attributes.keys():
                         if gff.attributes["locus_tag"] in ids:
-                            print("Warning: There are repeat locus_tag {0} in gff file!!!".format(
+                            print("Warning:repeat locus_tag {0} in gff file!!!".format(
                                   gff.attributes["locus_tag"]))
                         else:
                             self._add_element(locus_tags, "locus_tag", gff)
@@ -187,10 +228,12 @@ class Helper(object):
                 id_ = entry.attributes["ID"]
             else:
                 id_ = entry.feature + str(num)
-            out.write(">{0}|{1}|{2}|{3}|{4}\n{5}\n".format(id_, entry.seq_id, entry.start, 
-                                                           entry.end, entry.strand, gene))
+            out.write(">{0}|{1}|{2}|{3}|{4}\n{5}\n".format(
+                      id_, entry.seq_id, entry.start,
+                      entry.end, entry.strand, gene))
             num += 1
         gff_f.close()
+        out.close()
     def get_cds_seq(self, gff_file, fasta_file, out_file):
         seq = self._read_fasta(fasta_file)
         out = open(out_file, "w")
@@ -207,6 +250,7 @@ class Helper(object):
                 protein_id = entry.attributes["locus_tag"]
             else:
                 protein_id = entry.attributes["ID"]
-            out.write("_".join([">" + entry.seq_id + "_", protein_id, entry.strand, 
-                                str(entry.start), str(entry.end)]) + "\n")
+            out.write("_".join([">" + entry.seq_id, "_" + protein_id,
+                      entry.strand, str(entry.start), str(entry.end)]) + "\n")
             out.write(cds + "\n")
+        out.close()
