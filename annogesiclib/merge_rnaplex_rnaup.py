@@ -29,14 +29,15 @@ def print_rank_one(srnas, out, feature, gffs, srna_gffs, top):
                             name = srna_infos[0]
                             srna_info = srna_infos[1]
                             target_info = get_target_info(gffs, target["target"])
-                            out.write("\t".join([name, str(srna_info.seq_id),
-                                      str(srna_info.start), str(srna_info.end),
-                                      srna_info.strand, target["target"],
-                                      str(target_info.start),
-                                      str(target_info.end),
-                                      target_info.strand, method,
-                                      str(target["energy"]),
-                                      str(target["rank"])]) + "\n")
+                            if srna_info is not None:
+                                out.write("\t".join([name, str(srna_info.seq_id),
+                                          str(srna_info.start), str(srna_info.end),
+                                          srna_info.strand, target["target"],
+                                          str(target_info.start),
+                                          str(target_info.end),
+                                          target_info.strand, method,
+                                          str(target["energy"]),
+                                          str(target["rank"])]) + "\n")
 
 def read_table(gffs, rnaplex, rnaup):
     srnas = {"RNAup": {}, "RNAplex": {}}
@@ -98,6 +99,7 @@ def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info):
 
 def get_srna_name(gffs, srna):
     detect_name = False
+    srna_info = None
     for gff in gffs:
         if (gff.attributes["ID"] == srna) and \
            ("Name" in gff.attributes.keys()):
@@ -105,6 +107,8 @@ def get_srna_name(gffs, srna):
             detect_name = True
             srna_info = gff
             break
+        elif (gff.attributes["ID"] == srna):
+            srna_info = gff
     if not detect_name:
         name = srna
     return (name, srna_info)
