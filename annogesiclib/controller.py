@@ -24,6 +24,7 @@ from annogesiclib.ppi import PPINetwork
 from annogesiclib.sublocal import SubLocal
 from annogesiclib.ribos import Ribos
 from annogesiclib.screen import Screen
+from annogesiclib.expression import Expression
 
 project_creator = ProjectCreator()
 class Controller(object):
@@ -96,6 +97,15 @@ class Controller(object):
                                  self._args.convert_to_gff_rnt_ptt,
                                  self._paths.tar_annotation_folder, self._args.compare_pair)
 
+    def expression(self):
+        """Run gene expression analysis."""
+        expression = Expression(self._args.annotation_folder)
+        expression.gene_expression(self._args.tex_notex_libs, self._args.frag_libs,
+                                   self._args.tex_notex, self._args.replicates_tex,
+                                   self._args.replicates_frag, self._args.tex_wig_folder,
+                                   self._args.frag_wig_folder, self._args.cutoff_overlap_tex,
+                                   self._args.cutoff_overlap_frag, self._args.cutoff_coverage,
+                                   self._args.annotation_folder, self._args.features)
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
         if self._args.compute_program.lower() == "tss":

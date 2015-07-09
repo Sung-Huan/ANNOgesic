@@ -83,22 +83,51 @@ def get_best(wigs, strain, strand, start, end, type_,
                                                   "type": cover["type"]})
     return srna_covers
 
-def get_attribute_string(srna_datas, tss, num, name):
+def get_attribute_string(srna_datas, tss_pro, num, name):
     attribute_string = ";".join(
                     ["=".join(items) for items in (["ID", "srna" + str(num)],
                      ["Name", "_".join(["sRNA_candidates", name])])])
+    datas = tss_pro.split(";")
+    tss = ""
+    pro = ""
+    for data in datas:
+        if "TSS" in data:
+            if len(tss) == 0:
+                tss = tss + data
+            else:
+                tss = ";".join([tss, data])
+        elif "Cleavage" in data:
+            if len(pro) == 0:            
+                pro = pro + data
+            else:
+                pro = ";".join([pro, data])
+    if len(tss) == 0:
+        tss = "NA"
+    if len(pro) == 0:
+        pro = "NA"
     with_tss = "=".join(["with_TSS", tss])
+    with_pro = "=".join(["with_cleavage", pro])
     if srna_datas is None:
-        if tss != "NA":
+        if (tss != "NA") and (pro != "NA"):
+            attribute_string = ";".join([attribute_string, with_tss, with_pro])
+        elif (tss != "NA"):
             attribute_string = ";".join([attribute_string, with_tss])
+        elif (pro != "NA"):
+            attribute_string = ";".join([attribute_string, with_pro])
     else:
         srna_data_string = ";".join(
                 ["=".join(items) for items in (
                  ["best_avg_coverage", str(srna_datas["best"])],
                  ["best_high_coverage", str(srna_datas["high"])],
                  ["best_low_coverage", str(srna_datas["low"])])])
-        if tss != "NA":
+        if (tss != "NA") and (pro != "NA"):
+            attribute_string = ";".join([attribute_string, with_tss, with_pro,
+                                         srna_data_string])
+        elif (tss != "NA"):
             attribute_string = ";".join([attribute_string, with_tss,
+                                         srna_data_string])
+        elif (pro != "NA"):
+            attribute_string = ";".join([attribute_string, with_pro,
                                          srna_data_string])
         else:
             attribute_string = ";".join([attribute_string, srna_data_string])
@@ -152,36 +181,122 @@ def get_coverage(start, end, strain, wigs, strand, ta, nums, tss,
     if srna_datas["best"] != 0:
         print_file(string, nums, tss, output, out_table, srna_datas, table_best)
 
+def check_pro(pros, ta, start, end, min_len, max_len, srna_datas, type_,
+              cutoff_coverage, wigs, decrease, fuzzy_end, template_texs,
+              tex_notex, replicates):
+    pro_pos = -1
+    detect_pro = "NA"
+    for pro in pros:
+        if (pro.seq_id == ta.seq_id) and (
+            pro.strand == ta.strand):
+            if ta.strand == "+":
+                if (pro.start >= ta.start) and (pro.start <= ta.end) and (
+                    (pro.start - start) >= min_len) and (
+                    (pro.start - start) <= max_len):
+                    pro_pos = pro.start
+                    detect_pro = "".join(["Cleavage:", str(pro.start),
+                                 "_", pro.strand])
+                if pro.start > ta.end:
+                    break
+            if ta.strand == "-":
+                if (pro.start >= ta.start) and (pro.start <= ta.end) and (
+                    (end - pro.start) >= min_len) and (
+                    (end - pro.start) <= max_len):
+                    pro_pos = pro.start
+                    detect_pro = "".join(["Cleavage:", str(pro.start),
+                                 "_", pro.strand])
+                    break
+                if pro.start > ta.end:
+                    break
+    new_srna_datas = None
+    if ta.strand == "+":
+        if ((type_ == "within") and (srna_datas["pos"] < pro_pos)) or (
+            (type_ == "longer") and (pro_pos != -1)):
+            srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, pro_pos,
+                          "total", decrease, cutoff_coverage, fuzzy_end)
+            new_srna_datas = replicate_comparison(srna_covers, template_texs,
+                            ta.strand, cutoff_coverage, tex_notex,
+                            replicates, "normal", None, None, None, False)
+            if new_srna_datas["best"] <= cutoff_coverage:
+                new_srna_datas = None
+    else:
+        if ((type_ == "within") and (srna_datas["pos"] > pro_pos)) or (
+            (type_ == "longer") and (pro_pos != -1)):
+            srna_covers = get_best(wigs, ta.seq_id, ta.strand, pro_pos, end,
+                          "total", decrease, cutoff_coverage, fuzzy_end)
+            new_srna_datas = replicate_comparison(srna_covers, template_texs,
+                            ta.strand, cutoff_coverage, tex_notex,
+                            replicates, "normal", None, None, None, False)
+            if new_srna_datas["best"] <= cutoff_coverage:
+                new_srna_datas = None
+    return pro_pos, new_srna_datas, detect_pro
+
+def exchange_to_pro(srna_datas, min_len, max_len, pros, ta, start, end, nums,
+                    cutoff_coverage, output, out_table, table_best, wigs,
+                    decrease, fuzzy_end, template_texs, tex_notex, replicates):
+    detect = False
+    if ((srna_datas["pos"] - start) >= min_len) and (
+        (srna_datas["pos"] - start) <= max_len):
+        pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
+                                  min_len, max_len, srna_datas, "within",
+                                  cutoff_coverage, wigs, decrease,
+                                  fuzzy_end, template_texs, tex_notex,
+                                  replicates)
+        if pro_datas is not None:
+            srna_datas = pro_datas
+            srna_datas["pos"] = pro_pos
+            detect = True
+        else:
+            if srna_datas["best"] > cutoff_coverage:
+                detect = True
+    else:
+        pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
+                                  min_len, max_len, srna_datas, "longer",
+                                  cutoff_coverage, wigs, decrease,
+                                  fuzzy_end, template_texs, tex_notex,
+                                  replicates)
+        if pro_datas is not None:
+            srna_datas = pro_datas
+            srna_datas["pos"] = pro_pos
+            detect = True
+    return detect, srna_datas, pro
+
 def detect_wig_pos(wigs, ta, start, end, nums, output, tss, template_texs,
                    out_table, cutoff_coverage, min_len, max_len, decrease,
-                   fuzzy_end, table_best, tex_notex, replicates):
+                   fuzzy_end, table_best, tex_notex, replicates, pros):
     srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, end,
                            "differential", decrease, cutoff_coverage,
                            fuzzy_end)
     srna_datas = replicate_comparison(srna_covers, template_texs, ta.strand,
                                       cutoff_coverage, tex_notex, replicates,
                                       "normal", None, None, None, False)
-    if srna_datas["best"] > cutoff_coverage:
-        if ta.strand == "+":
-            if ((srna_datas["pos"] - start) >= min_len) and (
-                (srna_datas["pos"] - start) <= max_len):
-                string = ("\t".join([str(field) for field in [
-                          ta.seq_id, ta.source, "sRNA", str(start),
-                          str(srna_datas["pos"]), ".", ta.strand, "."]]))
-                print_file(string, nums, tss, output,
-                           out_table, srna_datas, table_best)
-        else:
-            if ((end - srna_datas["pos"]) >= min_len) and (
-                (end - srna_datas["pos"]) <= max_len):
-                string = ("\t".join([str(field) for field in [
-                          ta.seq_id, ta.source, "sRNA", str(srna_datas["pos"]),
-                          str(end), ".", ta.strand, "."]]))
-                print_file(string, nums, tss, output,
-                           out_table, srna_datas, table_best)
+    detect, srna_datas, pro = exchange_to_pro(srna_datas, min_len, max_len,
+                              pros, ta, start, end, nums, cutoff_coverage,
+                              output, out_table, table_best, wigs, decrease,
+                              fuzzy_end, template_texs, tex_notex, replicates)
+    if ta.strand == "+":
+        if detect:
+            string = ("\t".join([str(field) for field in [
+                      ta.seq_id, ta.source, "sRNA", str(start),
+                      str(srna_datas["pos"]), ".", ta.strand, "."]]))
+            if pro != "NA":
+                tss = ";".join([tss, pro])
+            print_file(string, nums, tss, output,
+                       out_table, srna_datas, table_best)
+    else:
+        if detect:
+            string = ("\t".join([str(field) for field in [
+                      ta.seq_id, ta.source, "sRNA", str(srna_datas["pos"]),
+                      str(end), ".", ta.strand, "."]]))
+            if pro != "NA":
+                tss = ";".join([tss, pro])
+            print_file(string, nums, tss, output,
+                       out_table, srna_datas, table_best)
 
 def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                   out_table, fuzzy, cutoff_coverage, tex_notex, replicates,
-                  decrease, fuzzy_end, table_best, min_len, max_len, detects):
+                  decrease, fuzzy_end, table_best, min_len, max_len,
+                  detects, pros):
     if len(tsss) != 0:
         for tss in tsss:
             if (tss.strand == ta.strand) and (
@@ -201,7 +316,7 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                                                    "_", tss.strand]),
                                   template_texs, out_table, cutoff_coverage,
                                   min_len, max_len, decrease, fuzzy_end,
-                                  table_best, tex_notex, replicates)
+                                  table_best, tex_notex, replicates, pros)
                 else:
                     compare_ta_tss(tss.end, ta.start, ta.end + fuzzy, min_len,
                         max_len, wigs_r, nums, ta, tss, output, out_table,
@@ -217,19 +332,19 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                                                    "_", tss.strand]),
                                   template_texs, out_table, cutoff_coverage,
                                   min_len, max_len, decrease, fuzzy_end,
-                                  table_best, tex_notex, replicates)
+                                  table_best, tex_notex, replicates, pros)
     if len(tsss) == 0:
         if (len(wigs_f) != 0) and (len(wigs_r) != 0):
             if ta.strand == "+":
                 num_uni = detect_wig_pos(wigs_f, ta, ta.start, ta.end, nums,
                           output, "NA", template_texs, out_table,
                           cutoff_coverage, min_len, max_len, decrease,
-                          fuzzy_end, table_best, tex_notex, replicates)
+                          fuzzy_end, table_best, tex_notex, replicates, pros)
             else:
                 num_uni = detect_wig_pos(wigs_r, ta, ta.start, ta.end, nums,
                           output, "NA", template_texs, out_table,
                           cutoff_coverage, min_len, max_len, decrease,
-                          fuzzy_end, table_best, tex_notex, replicates)
+                          fuzzy_end, table_best, tex_notex, replicates, pros)
 
 def compare_ta_tss(tss_pos, ta_start, ta_end, min_len, max_len, wigs, nums,
                    ta, tss, output, out_table, template_texs, detects, diff,
@@ -298,13 +413,15 @@ def detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output, out_table,
             print_file(ta.info_without_attributes.replace("Transcript", "sRNA"),
                        nums, "False", output, out_table, None, table_best)
 
-def read_data(gff_file, tss_file, tran_file):
+def read_data(gff_file, tss_file, tran_file, pro_file):
     cdss = []
     tas = []
     tsss = []
+    pros = []
     num_cds = 0
     num_tss = 0
     num_ta = 0
+    num_pro = 0
     gff_parser = Gff3Parser()
     g_f = open(gff_file, "r")
     for entry in gff_parser.entries(g_f):
@@ -319,15 +436,21 @@ def read_data(gff_file, tss_file, tran_file):
         for entry in gff_parser.entries(tss_f):
             tsss.append(entry)
             num_tss += 1
+        tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
+    if pro_file is not None:
+        pro_f = open(pro_file, "r")
+        for entry in gff_parser.entries(pro_f):
+            pros.append(entry)
+            num_pro += 1
+        pros = sorted(pros, key=lambda k: (k.seq_id, k.start))
     for entry_ta in gff_parser.entries(open(tran_file)):
         tas.append(entry_ta)
         num_ta += 1
-    nums = {"cds": num_cds, "tss": num_tss, "ta": num_ta, "uni": 0}
+    nums = {"cds": num_cds, "tss": num_tss, "ta": num_ta,
+            "pro": num_pro, "uni": 0}
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
-    if tss_file is not None:
-        tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
-    return nums, cdss, tas, tsss
+    return nums, cdss, tas, tsss, pros
 
 def compare_ta_cds(cdss, ta, detects):
     for cds in cdss:
@@ -352,7 +475,7 @@ def compare_ta_cds(cdss, ta, detects):
                 detects["overlap"] = True
                 break
 
-def check_srna_condition(ta, min_len, max_len, tsss, wigs_f, wigs_r,
+def check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
                          nums, output, out_table, texs, fuzzy, detects,
                          cutoff_coverage, tex_notex, replicates,
                          decrease, fuzzy_end, table_best):
@@ -381,16 +504,17 @@ def check_srna_condition(ta, min_len, max_len, tsss, wigs_f, wigs_r,
         detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, texs,
                       out_table, fuzzy, cutoff_coverage, tex_notex,
                       replicates, decrease, fuzzy_end, table_best,
-                      min_len, max_len, detects)
+                      min_len, max_len, detects, pros)
 
-def intergenic_srna(gff_file, tran_file, tss_file, fuzzy, max_len, min_len,
-                    wig_f_file, wig_r_file, wig_folder, input_libs, tex_notex,
-                    replicates, output_file, output_table, table_best,
-                    decrease, fuzzy_end, cutoff_coverage):
+def intergenic_srna(gff_file, tran_file, tss_file, pro_file, fuzzy, max_len,
+                    min_len, wig_f_file, wig_r_file, wig_folder, input_libs,
+                    tex_notex, replicates, output_file, output_table,
+                    table_best, decrease, fuzzy_end, cutoff_coverage):
     libs, texs = read_libs(input_libs, wig_folder)
     wigs_f = read_wig(wig_f_file, "+", libs)
     wigs_r = read_wig(wig_r_file, "-", libs)
-    nums, cdss, tas, tsss= read_data(gff_file, tss_file, tran_file)
+    nums, cdss, tas, tsss, pros = read_data(gff_file, tss_file,
+                                            tran_file, pro_file)
     detects = {"overlap": False, "uni_with_tss": False}
     output = open(output_file, "w")
     out_table = open(output_table, "w")
@@ -401,7 +525,7 @@ def intergenic_srna(gff_file, tran_file, tss_file, fuzzy, max_len, min_len,
             detects["overlap"] = False
             continue
         else:
-            check_srna_condition(ta, min_len, max_len, tsss, wigs_f, wigs_r,
+            check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
                                  nums, output, out_table, texs, fuzzy, detects,
                                  cutoff_coverage, tex_notex, replicates,
                                  decrease, fuzzy_end, table_best)

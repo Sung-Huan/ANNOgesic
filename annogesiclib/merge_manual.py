@@ -272,7 +272,7 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         checks["orphan"] = False
     return tss_entry
 
-def compare_tss_cds(tss, cdss, genes):
+def compare_tss_gene(tss, genes):
     tss_entry = []
     gene_ends = {"forward": -1, "reverse": -1}
     anti_ends = {"forward": -1, "reverse": -1}
@@ -470,7 +470,7 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
     else:
         if tss_m.seq_id == tss_p.seq_id:
             tss_m.source = "manual"
-            tss_entry = compare_tss_cds(tss_m, cdss, genes)
+            tss_entry = compare_tss_gene(tss_m, genes)
             tss_m.attributes = tss_entry[1]
             tss_m.attribute_string = tss_entry[0]
             tsss["merge"].append(tss_m)

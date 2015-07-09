@@ -135,9 +135,9 @@ class RATT(object):
                     if os.path.isdir(filename):
                         shutil.rmtree(filename)
 
-    def annotation_transfer(self, ratt_path, pagit_folder, element,
-                            transfer_type, ref_embls, tar_fastas, ref_fastas,
-                            output_path, convert, gff_outfolder, pairs):
+    def annotation_transfer(self, ratt_path, pagit_folder, element, transfer_type,
+                            ref_embls, tar_fastas, ref_fastas, output_path,
+                            convert, gff_outfolder, pairs):
         self.multiparser.parser_fasta(tar_fastas)
         self.multiparser.parser_fasta(ref_fastas)
         out_gbk = self._convert_embl(ref_embls)

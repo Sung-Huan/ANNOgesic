@@ -66,7 +66,7 @@ def main():
 
     # run RATT
     RATT_parser = subparsers.add_parser(
-        "annotation_transfer", help="Run RATT to transfer the annotation files from reference to target")
+        "annotation_transfer", help="Run RATT to transfer the annotation files from reference to target.")
     RATT_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
@@ -101,6 +101,54 @@ def main():
         "--convert_to_gff_rnt_ptt", "-g", default=False, action="store_true",
         help="Do you want to convert to gff, rnt and ptt? Default is False")
     RATT_parser.set_defaults(func=run_RATT)
+    # gene expression analysis
+    expression_parser = subparsers.add_parser(
+        "expression_analysis", help="Run gene expression analysis to compare which CDS expressed in which libraries ")
+    expression_parser.add_argument(
+        "project_path", default=".", nargs="?",
+        help="Path of the project folder. If none is given the current "
+        "directory is used.")
+    expression_parser.add_argument(
+        "-g","--annotation_folder", 
+        help="The folder of annotation file which you want to analyze.")
+    expression_parser.add_argument(
+        "-tl","--tex_notex_libs", default=None, nargs="+", help="Library name of tex and notex library.")
+    expression_parser.add_argument(
+        "-fl","--frag_libs", default=None, nargs="+", help="Library name of fragment library.")
+    expression_parser.add_argument(
+        "-te","--tex_notex", default=2, type=int,
+        help="For tex +/- library, expressing CDS should be detected by both or just one.(1 or 2)")
+    expression_parser.add_argument(
+        "-rt","--replicates_tex", default=None,
+        help="how many replicates should detect the same expressing CDS of tex +/- library.")
+    expression_parser.add_argument(
+        "-rf","--replicates_frag", default=None,
+        help="how many replicates should detect the same expressing CDS of fragmented library.")
+    expression_parser.add_argument(
+        "--tex_wig_folder", "-tw", default=None,
+        help="If you want to compute --compute_express_rate, please assign the folder of TEX+/- wigge files.")
+    expression_parser.add_argument(
+        "--frag_wig_folder", "-fw", default=None,
+        help="If you want to compute --compute_express_rate, please assign the folder of fragmented wigge files.")
+    expression_parser.add_argument(
+        "--cutoff_overlap_tex", "-ot", default="all",
+        help="This value is for decision of CDS expressed or not in TEX+/- library. If the expressed nts more than this value, "
+        "it will consider the CDS is expressed. You can assign by percentage or nucleotide. ex: "
+        "p_0.5 means the percentage of expressed nts should higher 0.5. n_100 means there should be 100 nts expressed. "
+        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS expressed.")
+    expression_parser.add_argument(
+        "--cutoff_overlap_frag", "-of", default="all",
+        help="This value is for decision of CDS expressed or not in fragmented library. If the expressed nts more than this value, "
+        "it will consider the CDS is expressed. You can assign by percentage or nucleotide. ex: "
+        "p_0.5 means the percentage of expressed nts should higher 0.5. n_100 means there should be 100 nts expressed. "
+        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS expressed.")
+    expression_parser.add_argument(
+        "--cutoff_coverage", "-c", default=5, type=float,
+        help="If the coverage is higher than this value, it will consider the nt is expressing")
+    expression_parser.add_argument(
+        "--features", "-f", nargs="+",
+        help="The features which you want to compute, ex: CDS tRNA")
+    expression_parser.set_defaults(func=run_expression)
     # Parameters of TSSpredator
     TSSpredator_parser = subparsers.add_parser(
         "tsspredator", help="Run TSSpredator to predict TSSs or processing sites.")
@@ -535,7 +583,7 @@ def main():
         help="If you want to import TSS information, please assign the path of gff folder of TSS.")
     sRNA_parser.add_argument(
         "--processing_site_folder", "-p", default=None,
-        help="If you want to import processing site information (only for UTR derived sRNA), please assign the path of gff folder of processing site.")
+        help="If you want to import processing site information, please assign the path of gff folder of processing site.")
     sRNA_parser.add_argument(
         "--TSS_intergenic_fuzzy", "-ft", default=2, type=int,
         help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for intergenic."
@@ -1132,7 +1180,7 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     ribos_parser.add_argument(
-        "--infernal_path", "-if",
+        "--infernal_path", "-if", default="",
         help="Please assign the folder of Infernal(where is cmscan cmsearch located).")
     ribos_parser.add_argument(
         "--riboswitch_ID", "-i",
@@ -1222,6 +1270,9 @@ def get_target_fasta(controller):
 
 def run_RATT(controller):
     controller.ratt()
+
+def run_expression(controller):
+    controller.expression()
 
 def multiparser(controller):
     controller.multiparser()
