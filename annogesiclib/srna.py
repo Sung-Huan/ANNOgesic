@@ -89,7 +89,7 @@ class sRNADetection(object):
         call([os.path.join(blast_path, "makeblastdb"), "-in", database,
               "-dbtype", type_, "-out", db_file], stderr=err)
 
-    def _run_normal(self, import_info, tss_path, prefix, gff_path,
+    def _run_normal(self, import_info, tss_path, pro_path, prefix, gff_path,
                     gff, tran, fuzzy_tss, max_len, min_len, wig_path, coverage,
                     merge_wigs, libs, tex_notex, replicates, table_best,
                     decrease_inter, fuzzy_inter, out_folder):
@@ -98,7 +98,12 @@ class sRNADetection(object):
                                                prefix, None)
         else:
             tss = None
-        intergenic_srna(os.path.join(gff_path, gff), tran, tss, fuzzy_tss,
+        if pro_path is not None:
+            pro = self.helper.get_correct_file(pro_path,
+                              "_processing.gff", prefix, None)
+        else:
+            pro = None
+        intergenic_srna(os.path.join(gff_path, gff), tran, tss, pro, fuzzy_tss,
                         max_len, min_len, os.path.join(wig_path,
                         "_".join([prefix, "forward.wig"])),
                         os.path.join(wig_path,
@@ -189,9 +194,9 @@ class sRNADetection(object):
             libs = flibs
         return libs
 
-    def _run_program(self, gff_path, import_info, tran_path, tss_path,
-                     pro_path, wig_path, max_len, min_len, coverage, merge_wigs,
-                     libs, tex_notex, replicates, table_best, decrease_inter,
+    def _run_program(self, gff_path, import_info, tran_path, tss_path, pro_path,
+                     wig_path, max_len, min_len, coverage, merge_wigs, libs,
+                     tex_notex, replicates, table_best, decrease_inter,
                      decrease_utr, fuzzy_inter, fuzzy_utr, fuzzy_tsss,
                      utr5_coverage, utr3_coverage, intercds_coverage,
                      out_folder, utr_srna, fasta_path):
@@ -209,11 +214,11 @@ class sRNADetection(object):
                 merge_table = "_".join([self.prefixs["merge_table"], prefix])
                 utr_table = "_".join([self.prefixs["utr_table"], prefix])
                 normal_table = "_".join([self.prefixs["normal_table"], prefix])
-                self._run_normal(import_info, tss_path, prefix, gff_path,
-                                 gff, tran, fuzzy_tsss["inter"], max_len,
-                                 min_len, wig_path, coverage, merge_wigs, libs,
-                                 tex_notex, replicates, table_best,
-                                 decrease_inter, fuzzy_inter, out_folder)
+                self._run_normal(import_info, tss_path, pro_path, prefix,
+                                 gff_path, gff, tran, fuzzy_tsss["inter"],
+                                 max_len, min_len, wig_path, coverage,
+                                 merge_wigs, libs, tex_notex, replicates,
+                                 table_best, decrease_inter, fuzzy_inter, out_folder)
                 if utr_srna:
                     print("Running UTR derived sRNA detection of {0}...".format(
                           prefix))
