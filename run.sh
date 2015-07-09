@@ -70,6 +70,7 @@ main(){
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
+    expression_analysis
 #    SNP_calling_reference
 #    TSS_prediction
 #    Transcriptome_assembly
@@ -81,7 +82,7 @@ main(){
 #    promoter_detection
 #    CircRNA_detection
 #    Go_term
-    sRNA_target
+#    sRNA_target
 #    operon_detection
 #    SNP_calling_target
 #    PPI_network
@@ -136,13 +137,27 @@ annotation_transfer(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         annotation_transfer \
         -re $ANNOGESIC_FOLDER/input/reference/annotation \
-        -rf $ANNOGESIC_FOLDER/input/reference/fasta/NC_007795.1.fa \
+        -rf $ANNOGESIC_FOLDER/input/reference/fasta \
         -tf $ANNOGESIC_FOLDER/output/target/fasta \
         -e chromosome \
 	-t Strain \
 	-p NC_007795.1:Staphylococcus_aureus_HG003 \
 	-g \
 	--RATT_path /home/silas/ANNOgesic/tools/PAGIT/RATT \
+        $ANNOGESIC_FOLDER
+}
+
+expression_analysis(){
+    $PYTHON_PATH $ANNOGESIC_PATH \
+         expression_analysis \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -tl $tex_notex_libs \
+        -fl $frag_libs \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
+        -f CDS tRNA rRNA \
+        -rt 1 \
+        -rf 1 \
         $ANNOGESIC_FOLDER
 }
 
@@ -319,6 +334,7 @@ sORF_detection(){
         -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
+	-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
         -tl $tex_notex_libs \
         -fl $frag_libs \
         -te 2 \
@@ -427,7 +443,7 @@ riboswitch(){
          riboswitch \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
-        -r \
+	-r \
         -i $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
         -R $ANNOGESIC_FOLDER/input/database/Rfam/CMs/Rfam.cm \
 	--infernal_path /home/silas/ANNOgesic/tools/infernal-1.1.1/src \
@@ -439,8 +455,8 @@ Optimize_TSSpredator(){
          optimize_tsspredator \
         --TSSpredator_path /home/silas/ANNOgesic/tools/TSSpredator_v1-04/TSSpredator.jar \
         -w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
-        -fs $ANNOGESIC_FOLDER/output/target/fasta/Staphylococcus_aureus_HG003.fa \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/Staphylococcus_aureus_HG003.gff \
+        -fs $ANNOGESIC_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
         -n Staphylococcus_aureus_HG003 \
 	-l $tex_notex_libs \
 	-p TSB_OD_0.2 \
