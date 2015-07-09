@@ -97,6 +97,7 @@ def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info):
                    str(srna_up["rank"])])
 
 def get_srna_name(gffs, srna):
+    detect_name = False
     for gff in gffs:
         if (gff.attributes["ID"] == srna) and \
            ("Name" in gff.attributes.keys()):
