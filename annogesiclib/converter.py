@@ -168,7 +168,9 @@ class Converter(object):
                     name[0] = name[0].replace("ID", "")
                     if "SV" in name[1]:
                         version = name[1].split(" ")[-1]
-                    id_name = ".".join([name[0].strip(), version.strip()])
+                        id_name = ".".join([name[0].strip(), version.strip()])
+                    else:
+                        id_name = name[0].strip()
                 if (row[0:2] == "FT"):
                     if row[5] != " ":
                         note_name = row[5:9]
