@@ -1,5 +1,11 @@
 from mock_gff3 import Create_generator
 
+def convert_dict(line_list):
+    datas = {}
+    for data in line_list:
+        datas[data] = data
+    return datas
+
 def gen_file(out_file, content):
     with open(out_file, "w") as fh:
         fh.write(content)

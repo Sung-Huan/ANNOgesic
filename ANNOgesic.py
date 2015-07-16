@@ -72,11 +72,11 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     RATT_parser.add_argument(
-        "--PAGIT_folder", default=home_path + "/PAGIT",
-        help="Path of the PAGIT folder. If your PAGIT folder is not located at " + home_path + "/PAGIT, please assign here.")
+        "--PAGIT_folder", default="/tools/PAGIT",
+        help="Path of the PAGIT folder. If your PAGIT folder is not located at /tools/PAGIT, please assign here.")
     RATT_parser.add_argument(
-        "--RATT_path", default=home_path + "/PAGIT/RATT",
-        help="Path of the RATT folder. If your RATT folder is not located at " + home_path + "/PAGIT/RATT, please assign here.")
+        "--RATT_path", default="start.ratt.sh",
+        help="Path of the RATT folder. If your RATT folder is not located at /tools/PAGIT/RATT, please assign here.")
     RATT_parser.add_argument(
         "--compare_pair", "-p", nargs="+",
         help="Please assign the name of pairs. ex. $REF.fa:$TAR.fa. "
@@ -248,6 +248,21 @@ def main():
     TSSpredator_parser.add_argument(
         "--re_check_orphan", "-ro", default=False, action="store_true",
         help="If your annotation file lack information of gene or locus_tag, please turn it on. Default is False")
+    TSSpredator_parser.add_argument(
+        "--overlap_feature", "-of", default="both",
+        help="If processing site and TSS are overlap, you can keep \"TSS\" or \"processing_site\" or \"both\". "
+        "Default is both.")
+    TSSpredator_parser.add_argument(
+        "--reference_gff_folder", "-rg", default=None,
+        help="For overlap_feature, if you want to only keep \"TSS\" or \"processing_site\", "
+        "please assign the reference_gff_folder. If you are running TSS, please assign the folder of processing site. "
+        "If you are running processing_site, please assign the folder of TSS. If you want to keep \"both\" at overlap position, "
+        "please don't assign anything.")
+    TSSpredator_parser.add_argument(
+        "--remove_low_expression", "-rl", default=False, action="store_true",
+        help="If you want to remove low expressed TSS/processing site, please turn it one. "
+        "And please assign the file of manual detection. Please Be ATTENTION: this parameter may remove some True positive, too. "
+        "So, please make sure you want to use it.")
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
     # Parameter of opimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
@@ -373,8 +388,11 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     Terminator_parser.add_argument(
-        "--TransTermHP_folder",
-        help="Please assign the path of the folder of TransTermHP.")
+        "--TransTermHP_path", default="transterm",
+        help="Please assign the path of transterm in TransTermHP.")
+    Terminator_parser.add_argument(
+        "--expterm_path", default="expterm.dat",
+        help="Please assign the paht of your expterm.dat.")
     Terminator_parser.add_argument(
         "--RNAfold_path", default="RNAfold",
         help="If you want to assign the path of RNAfold, please assign here.")
@@ -554,10 +572,10 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     sRNA_parser.add_argument(
-        "--Vienna_folder",
+        "--Vienna_folder", default="",
         help="Please assign the folder of Vienna package.")
     sRNA_parser.add_argument(
-        "--blast_plus_folder",
+        "--blast_plus_folder", default="",
         help="Please assign the folder of blast+ which include blastn, blastx, makeblastdb.")
     sRNA_parser.add_argument(
         "--ps2pdf14_path", default="ps2pdf14",
@@ -891,7 +909,7 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     circrna_parser.add_argument(
-        "--segemehl_folder", "-sg",
+        "--segemehl_folder", "-sg", default="",
         help="Please assign the folder of segemehl.")
     circrna_parser.add_argument(
         "--samtools_path", "-st", default="samtools",
@@ -965,7 +983,7 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     starget_parser.add_argument(
-        "--Vienna_folder",
+        "--Vienna_folder", default="",
         help="Please assign the folder of Vienna package.")
     starget_parser.add_argument(
         "--annotation_path", "-g", default="ANNOgesic/output/target/annotation",

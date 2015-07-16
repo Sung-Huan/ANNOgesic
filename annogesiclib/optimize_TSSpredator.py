@@ -61,7 +61,7 @@ def compute_stat(stat_value, best, best_para, cores, list_num, out_path, indexs)
     indexs["count"] += 1
     return (best_para, best)
 
-def scoring_function(best, stat_value, indexs):
+def scoring_function(best, stat_value, indexs, num_manual):
     indexs["change"] = False
     if (stat_value["tp_rate"] == best["tp_rate"]) and (
         stat_value["fp_rate"] == best["fp_rate"]):
@@ -73,21 +73,21 @@ def scoring_function(best, stat_value, indexs):
             if (best["tp_rate"] <= stat_value["tp_rate"]) and (
                 best["fp_rate"] >= stat_value["fp_rate"]):
                 indexs["change"] = True
-            elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and (
-                  stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
-                indexs["change"] = True
-            elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and (
-                  best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
-                indexs["change"] = True
-            else:
-                tp_diff = float(best["tp"] - stat_value["tp"])
-                if tp_diff > 0:
-                    if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
-                        indexs["change"] = True
-                elif tp_diff < 0:
-                    tp_diff = tp_diff * -1
-                    if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
-                        indexs["change"] = True
+            elif num_manual > 100:
+                if (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and (
+                      stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
+                    indexs["change"] = True
+                elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and (
+                      best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
+                    indexs["change"] = True
+            tp_diff = float(best["tp"] - stat_value["tp"])
+            if tp_diff > 0:
+                if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
+                    indexs["change"] = True
+            elif tp_diff < 0:
+                tp_diff = tp_diff * -1
+                if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
+                    indexs["change"] = True
 
 def check_overlap(overlap, pre_tss, nums, length, manual, predict, pre_pos):
     if overlap:
@@ -138,28 +138,27 @@ def comparison(manuals, predicts, nums, length, cluster):
             if (tss_p.start <= int(length)):
                 nums["predict"] += 1
 
-def read_predict_manual_gff(gff_file, gene_length, gffs, cluster):
+def read_predict_manual_gff(gff_file, gene_length, cluster):
     num = 0
+    gffs = []
     f_h = open(gff_file, "r")
     for entry in Gff3Parser().entries(f_h):
         if (entry.start <= int(gene_length)):
             num += 1
             entry.attributes["print"] = False
             gffs.append(entry)
-    return num
+    return num, gffs
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path,
                            out, manual, cores, gene_length, cluster):
-    manuals = []
     manual_fh = open(manual, "r")
     stats = []
     gff_parser = Gff3Parser()
     count = 0
     total_step = total_step - int(cores) + 1
-    num_manual = read_predict_manual_gff(manual, gene_length, manuals, cluster)
+    num_manual, manuals = read_predict_manual_gff(manual, gene_length, cluster)
     for gff_file in gff_files:
         nums = {"overlap": 0, "predict": 0, "manual": 0}
-        predicts = []
         para = "_".join(["he", str(para_list[count]["height"]),
                          "rh", str(para_list[count]["re_height"]),
                          "fa", str(para_list[count]["factor"]),
@@ -167,8 +166,8 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                          "bh", str(para_list[count]["base_height"]),
                          "ef", str(para_list[count]["enrichment"]),
                          "pf", str(para_list[count]["processing"])])
-        num_predict = read_predict_manual_gff(gff_file,
-                      gene_length, predicts, cluster)
+        num_predict, predicts = read_predict_manual_gff(gff_file,
+                                gene_length, cluster)
         comparison(manuals, predicts, nums, gene_length, cluster)
         out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
                   total_step, para, nums["overlap"],
@@ -352,7 +351,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f,
                      out_path, tsspredator_path, stat_out, best_para,
                      current_para, gene_length, wig, project_strain, fasta,
                      output_prefix, gff, program, libs, manual, best, cluster,
-                     utr, replicate_num):
+                     utr, replicate_num, num_manual):
     if indexs["step"] >= steps + int(cores):
         return (True, best_para)
     elif len(list_num) == indexs["length"]:
@@ -392,7 +391,7 @@ def run_tss_and_stat(indexs, steps, cores, list_num, seeds, diff_h, diff_f,
                     best = stat_value
                     best_para = copy.deepcopy(list_num[-1 * cores + indexs["count"]])
                 else:
-                    scoring_function(best, stat_value, indexs)
+                    scoring_function(best, stat_value, indexs, num_manual)
                 datas = compute_stat(stat_value, best, best_para,
                                      cores, list_num, out_path, indexs)
                 best_para = datas[0]
@@ -719,7 +718,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
         steps, cores, out_path, tsspredator_path, stat_out, best, libs, wig,
         project_strain, fasta, output_prefix, gff, program, gene_length,
-        manual, cluster, utr, replicate_num):
+        manual, cluster, utr, replicate_num, num_manual):
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed" : 0}
     tests = {"test1": [], "test2": ""}
@@ -755,7 +754,8 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
                         diff_h, diff_f, out_path, tsspredator_path, stat_out,
                         best_para, current_para, gene_length, wig,
                         project_strain, fasta, output_prefix, gff, program,
-                        libs, manual, best, cluster, utr, replicate_num)
+                        libs, manual, best, cluster, utr, replicate_num,
+                        num_manual)
             tmp_step = 0
         if tmp_step >= 2:
             print("The number of steps may be enough..., it may not be able to find more parameters...\n")
@@ -820,7 +820,7 @@ def extend_data(out_path, best, best_para, step):
     current_para = copy.deepcopy(best_para)
     return current_para
 
-def load_stat_csv(out_path, list_num, best, best_para, indexs):
+def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
     f_h = open(os.path.join(out_path, "stat.csv"), "r")
     first_line = True
     line_num = 0
@@ -841,7 +841,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs):
                 first_line = False
                 indexs["change"] = True
             else:
-                scoring_function(best, prev_stat, indexs)
+                scoring_function(best, prev_stat, indexs, num_manual)
             if indexs["change"]:
                 best_para = {"height": float(paras[1]),
                              "re_height": float(paras[3]),
@@ -859,12 +859,13 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs):
             indexs["step"] = int(row[0]) + 1
     return (line_num, best, best_para)
 
-def reload_data(out_path, list_num, best, best_para, indexs):
+def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
     first_line = True
     change_para = False
     indexs["switch"] = 1
     indexs["exist"] = True
-    datas = load_stat_csv(out_path, list_num, best, best_para, indexs)
+    datas = load_stat_csv(out_path, list_num, best, best_para, indexs,
+                          num_manual)
     line_num = datas[0]
     best = datas[1]
     best_para = datas[2]
@@ -940,6 +941,7 @@ def optimization(tsspredator_path, height, reduction_height, factor,
         gene_length = get_gene_length(fasta, project_strain)
     else:
         gene_length = int(gene_length)
+    num_manual, manuals = read_predict_manual_gff(manual, gene_length, cluster)
     if "optimized_TSSpredator" not in files:
         os.mkdir(out_path)
         list_num = []
@@ -947,7 +949,8 @@ def optimization(tsspredator_path, height, reduction_height, factor,
     else:
         if ("stat.csv" in os.listdir(out_path)):
             list_num = []
-            datas = reload_data(out_path, list_num, best, best_para, indexs)
+            datas = reload_data(out_path, list_num, best, best_para, indexs,
+                                num_manual)
             best_para = datas[0]
             best = datas[1]
             current_para = extend_data(out_path, best, best_para, indexs["step"])
@@ -960,4 +963,4 @@ def optimization(tsspredator_path, height, reduction_height, factor,
                          steps, cores, out_path, tsspredator_path, stat_out,
                          best, libs, wig, project_strain, fasta, output_prefix,
                          gff, program, gene_length, manual, cluster, utr,
-                         replicate_num)
+                         replicate_num, num_manual)

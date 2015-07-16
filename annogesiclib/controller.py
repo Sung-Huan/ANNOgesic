@@ -134,7 +134,8 @@ class Controller(object):
                       self._args.validate_gene, self._args.merge_manual,
                       self._args.compare_transcript_assembly, self._args.fuzzy,
                       self._args.utr_length, self._args.cluster, self._args.length,
-                      self._args.re_check_orphan)
+                      self._args.re_check_orphan, self._args.overlap_feature,
+                      self._args.reference_gff_folder, self._args.remove_low_expression)
     
     def optimize(self):
         """opimize TSSpredator"""
@@ -173,10 +174,11 @@ class Controller(object):
         terminator = Terminator(self._args.annotation_folder, self._args.fasta_folder,
                                 self._args.transcript_folder, self._paths.transterm_folder,
                                 self._args.sRNA)
-        if self._args.TransTermHP_folder is None:
+        if self._args.TransTermHP_path is None:
             print("Please assign the folder where you install TransTermHP.")
         terminator.run_terminator(
-                self._args.TransTermHP_folder, self._args.RNAfold_path,
+                self._args.TransTermHP_path, self._args.expterm_path,
+                self._args.RNAfold_path,
                 self._paths.transterm_folder, self._args.fasta_folder, 
                 self._args.annotation_folder, self._args.transcript_folder, 
                 self._args.sRNA, self._args.statistics, 

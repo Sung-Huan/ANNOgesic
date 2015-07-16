@@ -119,7 +119,7 @@ class Terminator(object):
                 self._combine_annotation(combine_file, files)
 
     def _run_TransTermHP(self, TransTermHP_path, combine_path,
-                         fasta_path, hp_folder):
+                         fasta_path, hp_folder, expterm_path):
         self.helper.check_make_folder(self.tmps["transterm"])
         for file_ in os.listdir(combine_path):
             if ".ptt" in file_:
@@ -133,8 +133,7 @@ class Terminator(object):
                 self.helper.check_make_folder(out_path)
                 out = open(os.path.join(out_path,
                            "_".join([prefix, "terminators.txt"])), "w")
-                call([os.path.join(TransTermHP_path, "transterm"), "-p",
-                      os.path.join(TransTermHP_path, "expterm.dat"),
+                call([TransTermHP_path, "-p", expterm_path,
                       fasta, os.path.join(combine_path, file_), "--t2t-perf",
                       os.path.join(out_path,
                       "_".join([prefix,
@@ -362,11 +361,12 @@ class Terminator(object):
             if file_.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(folder, file_))
 
-    def run_terminator(self, TransTermHP_path, RNAfold_path, out_folder, fastas,
-                       gffs, trans, sRNAs, stat, tex_wigs, frag_wigs, decrease,
-                       cutoff_coverage, fuzzy, fuzzy_up_ta, fuzzy_down_ta,
-                       fuzzy_up_cds, fuzzy_down_cds, hp_folder, tlibs, flibs,
-                       tex_notex, replicates_tex, replicates_frag, table_best):
+    def run_terminator(self, TransTermHP_path, expterm_path, RNAfold_path,
+                       out_folder, fastas, gffs, trans, sRNAs, stat, tex_wigs,
+                       frag_wigs, decrease, cutoff_coverage, fuzzy, fuzzy_up_ta,
+                       fuzzy_down_ta, fuzzy_up_cds, fuzzy_down_cds, hp_folder,
+                       tlibs, flibs, tex_notex, replicates_tex, replicates_frag,
+                       table_best):
         if (replicates_tex is not None) and (replicates_frag is not None):
             replicates = {"tex": int(replicates_tex),
                           "frag": int(replicates_frag)}
@@ -392,7 +392,7 @@ class Terminator(object):
                                  self.fasta_path, sRNAs, file_types)
         self._combine_ptt_rnt(self.gff_path, file_types, self.srna_path)
         self._run_TransTermHP(TransTermHP_path, self.combine_path,
-                              self.fasta_path, hp_folder)
+                              self.fasta_path, hp_folder, expterm_path)
         self._convert_to_gff(prefixs, hp_folder, gffs)
         lib_datas = self._combine_libs_wigs(tlibs, flibs, tex_wigs, frag_wigs)
         merge_wigs = lib_datas[0]

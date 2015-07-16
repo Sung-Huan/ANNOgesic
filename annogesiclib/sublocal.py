@@ -35,8 +35,9 @@ class SubLocal(object):
         self.helper.get_cds_seq(os.path.join(gff_path, gff),
                                 fasta, dna_seq_file)
         print("transfer DNA seq to protein seq of {0}".format(prefix))
-        call([emboss_path, "-sequence", dna_seq_file,
-              "-outseq", "tmp", "-trim"])
+        self.helper.translation(dna_seq_file, "tmp")
+#        call([emboss_path, "-sequence", dna_seq_file,
+#              "-outseq", "tmp", "-trim"])
         prot_seq_file = os.path.join(tmp_path, "_".join([prefix, "protein.fa"]))
         self.fixer.fix_emboss("tmp", prot_seq_file)
         os.remove("tmp")

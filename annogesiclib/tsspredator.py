@@ -14,6 +14,8 @@ from annogesiclib.validate_gene import validate_gff
 from annogesiclib.stat_TA_comparison import stat_ta_tss
 from annogesiclib.check_orphan import check_orphan
 from annogesiclib.TSS_upstream import upstream
+from annogesiclib.filter_TSS_pro import filter_tss_pro
+from annogesiclib.filter_low_expression import filter_low_expression
 
 class TSSpredator(object):
 
@@ -290,17 +292,22 @@ class TSSpredator(object):
                               repmatch, cluster, utr_length)
         return prefixs
 
+    def _merge_wigs(self, wig_folder, prefix):
+        self.helper.check_make_folder(os.path.join(os.getcwd(),
+                                      self.tmps["tmp"]))
+        for wig_file in os.listdir(wig_folder):
+            if ("forward" in wig_file) and (prefix in wig_file) and (
+                os.path.isfile(os.path.join(wig_folder, wig_file))):
+                Helper().merge_file(os.path.join(wig_folder, wig_file),
+                                    os.path.join("tmp", "merge_forward.wig"))
+            if ("reverse" in wig_file) and (prefix in wig_file) and (
+                os.path.isfile(os.path.join(wig_folder, wig_file))):
+                Helper().merge_file(os.path.join(wig_folder, wig_file),
+                                    os.path.join("tmp", "merge_reverse.wig"))
+
     def _check_orphan(self, prefixs, wig_folder, program, gffs):
         for prefix in prefixs:
-            self.helper.check_make_folder(os.path.join(os.getcwd(),
-                                          self.tmps["tmp"]))
-            for wig_file in os.listdir(wig_folder):
-                if ("forward" in wig_file) and (prefix in wig_file):
-                    Helper().merge_file(os.path.join(wig_folder, wig_file),
-                                        os.path.join("tmp", "merge_forward.wig"))
-                if ("reverse" in wig_file) and (prefix in wig_file):
-                    Helper().merge_file(os.path.join(wig_folder, wig_file),
-                                        os.path.join("tmp", "merge_reverse.wig"))
+            self._merge_wigs(wig_folder, prefix)
             tmp_tss = os.path.join(self.tmps["tmp"],
                                    "_".join([prefix, program + ".gff"]))
             pre_tss = os.path.join(self.gff_outfolder,
@@ -321,11 +328,56 @@ class TSSpredator(object):
         if "merge_reverse.wig" in os.listdir(os.getcwd()):
             os.remove("merge_reverse.wig")
 
+    def _deal_with_overlap(self, out_folder, overlap, references, program, cluster):
+        if overlap.lower() == "both":
+            pass
+        else:
+            print("Comparing TSS and Processing site...")
+            if program.lower() == "tss":
+                for tss in os.listdir(out_folder):
+                    if tss.endswith("_TSS.gff"):
+                        ref = self.helper.get_correct_file(references, "_processing.gff",
+                                          tss.replace("_TSS.gff", ""), None)
+                        filter_tss_pro(os.path.join(out_folder, tss), 
+                                       ref, overlap, cluster)
+            elif program.lower() == "processing_site":
+                for tss in os.listdir(out_folder):
+                    if tss.endswith("_processing.gff"):
+                        ref = self.helper.get_correct_file(references, "_TSS.gff",
+                                          tss.replace("_processing.gff", ""), None)
+                        filter_tss_pro(os.path.join(out_folder, tss),
+                                       ref, overlap, cluster)
+
+    def _low_expression(self, nt_length, cluster, manual, input_libs,
+                        gff_folder, program, wig_folder):
+        prefix = None
+        self._merge_wigs(wig_folder, "wig")
+        for gff in os.listdir(gff_folder):
+            if (program.lower() == "tss") and (gff.endswith("_TSS.gff")):
+                prefix = gff.replace("_TSS.gff", "")
+            elif (program.lower() == "processing") and (
+                  gff.endswith("_processing.gff")):
+                prefix = gff.replace("_processing.gff", "")
+            if prefix:
+                out = open(os.path.join(self.stat_outfolder, prefix,
+                           "_".join(["stat", prefix, "low_expression_cutoff.csv"])), "w")
+                out.write("\t".join(["strain", "cutoff_coverage"]) + "\n")
+                cutoff = filter_low_expression(os.path.join(gff_folder, gff),
+                                    manual,
+                                    "tmp/merge_forward.wig", "tmp/merge_reverse.wig",
+                                    input_libs, wig_folder, cluster, nt_length,
+                                    "tmp/without_low_expression.gff")
+                out.write("\t".join([prefix, str(cutoff)]) + "\n")
+                os.remove(os.path.join(gff_folder, gff))
+                os.rename("tmp/without_low_expression.gff", os.path.join(gff_folder, gff))
+                prefix = None
+
     def run_tsspredator(self, tsspredator_path, program, input_folder, fastas,
             gffs, wig_folder, libs, output_prefixs, height, height_reduction,
             factor, factor_reduction, base_height, enrichment_factor,
             processing_factor, repmatch, out_folder, stat, validate, manual,
-            ta_files, fuzzy, utr_length, cluster, nt_length, check_orphan):
+            ta_files, fuzzy, utr_length, cluster, nt_length, check_orphan,
+            overlap_feature, references, remove_low_expression):
         ####  First of all, generate config file for running.
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
@@ -362,10 +414,15 @@ class TSSpredator(object):
                 self.helper.check_make_folder(
                      os.path.join(self.stat_outfolder, gff_folder))
                 datas.append(gff_folder)
+        if remove_low_expression:
+            self._low_expression(nt_length, cluster, manual, libs,
+                self.gff_outfolder, program, wig_folder)
         if manual is not None:
             self.multiparser.combine_wig(gffs, self.wig_path, None)
             self._merge_manual(datas, gffs, manual, wig_folder, out_folder,
                                cluster, program, nt_length, libs)
+        self._deal_with_overlap(self.gff_outfolder, overlap_feature, references,
+                                program, cluster)
         if stat:
             self._stat_tss(datas, manual, program)
         if validate:

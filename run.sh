@@ -70,7 +70,7 @@ main(){
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
-    expression_analysis
+#    expression_analysis
 #    SNP_calling_reference
 #    TSS_prediction
 #    Transcriptome_assembly
@@ -82,7 +82,7 @@ main(){
 #    promoter_detection
 #    CircRNA_detection
 #    Go_term
-#    sRNA_target
+    sRNA_target
 #    operon_detection
 #    SNP_calling_target
 #    PPI_network
@@ -143,7 +143,7 @@ annotation_transfer(){
 	-t Strain \
 	-p NC_007795.1:Staphylococcus_aureus_HG003 \
 	-g \
-	--RATT_path /home/silas/ANNOgesic/tools/PAGIT/RATT \
+	--RATT_path /home/silas/ANNOgesic/tools/PAGIT/RATT/start.ratt.sh \
         $ANNOGESIC_FOLDER
 }
 
@@ -231,8 +231,8 @@ Transcriptome_assembly(){
 Terminator_prediction(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         terminator \
-        --TransTermHP_folder /home/silas/ANNOgesic/tools/transterm_hp_v2.09 \
-        --RNAfold_path /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs/RNAfold \
+        --TransTermHP_folder /home/silas/ANNOgesic/tools/transterm_hp_v2.09/transterm \
+        --expterm_path /home/silas/ANNOgesic/tools/transterm_hp_v2.09/expterm.dat \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -s \

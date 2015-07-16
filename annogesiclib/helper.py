@@ -5,6 +5,8 @@ import sys
 import copy
 import shutil
 import csv
+from Bio.Seq import Seq
+from Bio.Alphabet import generic_dna
 from annogesiclib.gff3 import Gff3Parser
 
 
@@ -254,3 +256,14 @@ class Helper(object):
                       entry.strand, str(entry.start), str(entry.end)]) + "\n")
             out.write(cds + "\n")
         out.close()
+
+    def translation(self, dna_file, protein_file):
+        out = open(protein_file, "w")
+        with open(dna_file) as d_h:
+            for seq in d_h:
+                seq = seq.strip()
+                if seq.startswith(">"):
+                    out.write(seq + "\n")
+                else:
+                    dna = Seq(seq, generic_dna)
+                    out.write(str(dna.translate()) + "\n")

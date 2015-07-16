@@ -119,8 +119,8 @@ class RATT(object):
             tar = pair.split(":")[1]
             out = open(self.ratt_log, "w+")
             print(tar)
-            call([os.path.join(ratt_path, "start.ratt.sh"),
-                  self.embl, os.path.join(self.tmp_files["tar"], tar + ".fa"),
+            call([ratt_path, self.embl,
+                  os.path.join(self.tmp_files["tar"], tar + ".fa"),
                   element, transfer_type,
                   os.path.join(self.tmp_files["ref"], ref + ".fa")],
                   stdout=out, stderr=DEVNULL)

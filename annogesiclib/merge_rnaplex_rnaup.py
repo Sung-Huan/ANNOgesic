@@ -109,6 +109,7 @@ def get_srna_name(gffs, srna):
             break
         elif (gff.attributes["ID"] == srna):
             srna_info = gff
+            break
     if not detect_name:
         name = srna
     return (name, srna_info)
@@ -143,7 +144,8 @@ def print_title(out):
                          "target_end", "target_strand", "method",
                          "energy", "rank", "methon", "energy", "rank"]) + "\n")
 
-def merge_base_rnaplex(srnas, srna_gffs, top, gffs, overlaps, merges):
+def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
+    overlaps = []
     for srna, srna_plexs in srnas["RNAplex"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
         name = srna_datas[0]
@@ -174,6 +176,7 @@ def merge_base_rnaplex(srnas, srna_gffs, top, gffs, overlaps, merges):
                                              srna_plex,
                                              srna_up, target_info)
                                 srna_plex["print"] = True
+    return overlaps
 
 def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
     for srna, srna_ups in srnas["RNAup"].items():
@@ -197,7 +200,6 @@ def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
 def merge_srna_target(rnaplex, rnaup, top, out_rnaplex, out_rnaup, output,
                       out_overlap, srna_gff_file, annotation_gff):
     merges = []
-    overlaps = []
     srna_gffs = read_gff(srna_gff_file)
     gffs = read_gff(annotation_gff)
     srnas = read_table(srna_gffs, rnaplex, rnaup)
@@ -213,7 +215,7 @@ def merge_srna_target(rnaplex, rnaup, top, out_rnaplex, out_rnaup, output,
         print_title(out_m)
         print_title(out_o)
         print("Merging now...")
-        merge_base_rnaplex(srnas, srna_gffs, top, gffs, overlaps, merges)
+        overlaps = merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges)
         merge_base_rnaup(srnas, srna_gffs, top, gffs, merges)
         print_file(merges, out_m)
         print_file(overlaps, out_o)
