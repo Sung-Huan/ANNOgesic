@@ -295,8 +295,7 @@ class sRNADetection(object):
                 dot_file = file_.replace("ss.ps", "dp.ps")
                 rel_file = file_.replace("ss.ps", "rss.ps")
                 print("replot {0}".format(file_))
-                os.system(" ".join(["perl",
-                          os.path.join(vienna_util, "relplot.pl"),
+                os.system(" ".join([os.path.join(vienna_util, "relplot.pl"),
                           os.path.join(tmp_paths["tmp"], file_),
                           os.path.join(tmp_paths["tmp"], dot_file),
                           ">", os.path.join(tmp_paths["tmp"], rel_file)]))
@@ -327,8 +326,7 @@ class sRNADetection(object):
                     out = open(moun_txt, "w")
                     moun_file = dot_file.replace("dp.ps", "mountain.pdf")
                     print("Generating {0}".format(moun_file))
-                    call(["perl",
-                          os.path.join(vienna_util, "mountain.pl"),
+                    call([os.path.join(vienna_util, "mountain.pl"),
                           os.path.join(tmp_paths["tmp"], dot_file)], stdout=out)
                     plot_mountain_plot(moun_txt, moun_file)
                     os.rename(moun_file,
