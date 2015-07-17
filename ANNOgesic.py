@@ -837,7 +837,7 @@ def main():
         help="What kinds of stop coden TTA/TAG/TGA you want to use.")
     sORF_parser.add_argument(
         "--condition_best", "-c", default="TSS",
-        help="For generating the result of best sORF, please assign which information you want to consider (TSS/sRNA/both). default is TSS")
+        help="For generating the result of best sORF, please assign which information you want to consider (TSS/sRNA/both). default is TSS.")
     sORF_parser.set_defaults(func=run_sORF_detection)
     # Parameters of promoter detection
     promoter_parser = subparsers.add_parser(
