@@ -804,8 +804,8 @@ def main():
         "--cutoff_background", "-cub",default=5, type=float,
         help="The cutoff of minimal coverage of all sORF candidates. Default is 5.")
     sORF_parser.add_argument(
-        "--fasta_folder", "-f", default=None,
-        help="If you want to import secondary structure information, please assign the path of fasta folder. ")
+        "--fasta_folder", "-f", default="ANNOgesic/output/target/fasta",
+        help="The folder of fasta file. ")
     sORF_parser.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs="+", 
         help="Library name of tex and notex library. The format is: "
