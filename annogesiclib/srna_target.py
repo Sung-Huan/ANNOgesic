@@ -40,7 +40,7 @@ class sRNATargetPrediction(object):
                        unstr_region, seq_path, prefix, out_path):
         current = os.getcwd()
         os.chdir(out_path)
-        command = " ".join([vienna_path + "/Progs/RNAplfold",
+        command = " ".join([os.path.join(vienna_path, "RNAplfold"),
                             "-W", str(win_size),
                             "-L", str(span),
                             "-u", str(unstr_region),
@@ -191,7 +191,7 @@ class sRNATargetPrediction(object):
                                   "_".join([prefix, "RNAplex",
                                             str(num_process) + ".txt"])), "w")
                     num_process += 1
-                    p = Popen([os.path.join(vienna_path, "Progs", "RNAplex"),
+                    p = Popen([os.path.join(vienna_path, "RNAplex"),
                                "-q", os.path.join(srna_seq_path,
                                "_".join([self.tmps["tmp"], prefix, "sRNA.fa"])),
                                "-t", os.path.join(target_seq_path, seq),
@@ -228,7 +228,7 @@ class sRNATargetPrediction(object):
                            "w")
             in_up = open(os.path.join(out_folder,
                          "".join([self.tmps["tmp"], str(index), ".fa"])), "r")
-            p = Popen([os.path.join(vienna_path, "Progs", "RNAup"),
+            p = Popen([os.path.join(vienna_path, "RNAup"),
                        "-u", str(unstr_region_rnaup),
                        "-o", "--interaction_first"],
                        stdin=in_up, stdout=out_tmp_up, stderr=out_err)

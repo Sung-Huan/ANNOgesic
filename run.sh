@@ -166,7 +166,7 @@ SNP_calling_reference(){
          snp \
         -p 1 2 3 \
         -t reference \
-        -nw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex \
+        -tw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex \
         -f $ANNOGESIC_FOLDER/input/reference/fasta \
         --samtools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
         --bcftools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/bcftools \
@@ -300,7 +300,8 @@ sRNA_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         srna \
         -d 1 2 3 4 5 \
-        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7 \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Progs \
+        --Vienna_utils /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Utils \
 	--blast_plus_folder /home/silas/ANNOgesic/tools \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs \
@@ -378,7 +379,7 @@ Go_term(){
 sRNA_target(){
     $PYTHON_PATH $ANNOGESIC_PATH \
          srna_target \
-        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7 \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Progs \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
         -r $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
@@ -406,7 +407,7 @@ SNP_calling_target(){
          snp \
 	-t target \
 	-p 1 2 3 \
-	-nw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex \
+	-tw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex \
 	-fw $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/fragment \
 	-f $ANNOGESIC_FOLDER/output/target/fasta \
         --samtools_path /home/silas/ANNOgesic/tools/samtools-bcftools-htslib-1.0_x64-linux/bin/samtools \
@@ -417,7 +418,7 @@ SNP_calling_target(){
 PPI_network(){
     $PYTHON_PATH $ANNOGESIC_PATH \
          ppi_network \
-        -s all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
+        -s Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
         -p $ANNOGESIC_FOLDER/output/target/annotation \
         -d $ANNOGESIC_FOLDER/input/database/species.v9.1.txt \
         -n \
@@ -434,7 +435,6 @@ Subcellular_localization(){
         -m \
         -b positive \
         --Psortb_path /home/silas/ANNOgesic/tools/psortb/bin/psort \
-        --EMBOSS_transeq_path /home/silas/ANNOgesic/tools/EMBOSS-6.6.0/emboss/transeq \
         $ANNOGESIC_FOLDER
 }
 

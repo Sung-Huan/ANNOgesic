@@ -76,10 +76,10 @@ def main():
         help="Path of the PAGIT folder. If your PAGIT folder is not located at /tools/PAGIT, please assign here.")
     RATT_parser.add_argument(
         "--RATT_path", default="start.ratt.sh",
-        help="Path of the RATT folder. If your RATT folder is not located at /tools/PAGIT/RATT, please assign here.")
+        help="Path of the start.ratt.sh file of RATT folder. Default is start.ratt.sh.")
     RATT_parser.add_argument(
         "--compare_pair", "-p", nargs="+",
-        help="Please assign the name of pairs. ex. $REF.fa:$TAR.fa. "
+        help="Please assign the name of pairs. ex. $REFERENCE.fa:$TARGET.fa. "
         "ATTENTION:please make sure the ref name is the same as embl file. ")
     RATT_parser.add_argument(
         "--element", "-e",
@@ -90,7 +90,7 @@ def main():
     RATT_parser.add_argument(
         "--ref_gbk", "-re", default="ANNOgesic/input/reference/annotation",
         help="The folder which stores every reference embl folders."
-        "If you have no embl file, you can assign the folder of genbank.")
+        "If you have no embl folder, you can assign the folder of genbank.")
     RATT_parser.add_argument(
         "--ref_fasta", "-rf",
         help="The folder of reference fasta files.")
@@ -103,7 +103,7 @@ def main():
     RATT_parser.set_defaults(func=run_RATT)
     # gene expression analysis
     expression_parser = subparsers.add_parser(
-        "expression_analysis", help="Run gene expression analysis to compare which CDS expressed in which libraries ")
+        "expression_analysis", help="Run gene expression analysis to compare which CDS is expressing in which libraries ")
     expression_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
@@ -112,36 +112,40 @@ def main():
         "-g","--annotation_folder", 
         help="The folder of annotation file which you want to analyze.")
     expression_parser.add_argument(
-        "-tl","--tex_notex_libs", default=None, nargs="+", help="Library name of tex and notex library.")
+        "-tl","--tex_notex_libs", default=None, nargs="+",
+        help="Library name of tex and notex library. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     expression_parser.add_argument(
-        "-fl","--frag_libs", default=None, nargs="+", help="Library name of fragment library.")
+        "-fl","--frag_libs", default=None, nargs="+",
+        help="Library name of fragment library. The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     expression_parser.add_argument(
         "-te","--tex_notex", default=2, type=int,
         help="For tex +/- library, expressing CDS should be detected by both or just one.(1 or 2)")
     expression_parser.add_argument(
         "-rt","--replicates_tex", default=None,
-        help="how many replicates should detect the same expressing CDS of tex +/- library.")
+        help="The expressing CDS of tex +/- library should be detected more than this number of replicates.")
     expression_parser.add_argument(
         "-rf","--replicates_frag", default=None,
-        help="how many replicates should detect the same expressing CDS of fragmented library.")
+        help="The expressing CDS of fragmented library should be detected more than this number of replicates.")
     expression_parser.add_argument(
         "--tex_wig_folder", "-tw", default=None,
-        help="If you want to compute --compute_express_rate, please assign the folder of TEX+/- wigge files.")
+        help="The folder of TEX+/- wigge files.")
     expression_parser.add_argument(
         "--frag_wig_folder", "-fw", default=None,
-        help="If you want to compute --compute_express_rate, please assign the folder of fragmented wigge files.")
+        help="The folder of fragmented wigge files.")
     expression_parser.add_argument(
         "--cutoff_overlap_tex", "-ot", default="all",
-        help="This value is for decision of CDS expressed or not in TEX+/- library. If the expressed nts more than this value, "
-        "it will consider the CDS is expressed. You can assign by percentage or nucleotide. ex: "
-        "p_0.5 means the percentage of expressed nts should higher 0.5. n_100 means there should be 100 nts expressed. "
-        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS expressed.")
+        help="This value is for decision of CDS which is expressing or not in TEX+/- library. If the expressing nts more than this value, "
+        "it will consider the CDS is expressing one. You can assign by percentage or nucleotide. ex: "
+        "p_0.5 means the percentage of expressing nts should higher 0.5. n_100 means there should be 100 nts which are expressing. "
+        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS which is expressing.")
     expression_parser.add_argument(
         "--cutoff_overlap_frag", "-of", default="all",
-        help="This value is for decision of CDS expressed or not in fragmented library. If the expressed nts more than this value, "
-        "it will consider the CDS is expressed. You can assign by percentage or nucleotide. ex: "
-        "p_0.5 means the percentage of expressed nts should higher 0.5. n_100 means there should be 100 nts expressed. "
-        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS expressed.")
+        help="This value is for decision of CDS which is expressing or not in fragmented library. If the expressing nts more than this value, "
+        "it will consider the CDS is expressing. You can assign by percentage or nucleotide. ex: "
+        "p_0.5 means the percentage of expressing nts should higher 0.5. n_100 means there should be 100 nts which are expressing. "
+        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS which is expressing.")
     expression_parser.add_argument(
         "--cutoff_coverage", "-c", default=5, type=float,
         help="If the coverage is higher than this value, it will consider the nt is expressing")
@@ -203,8 +207,8 @@ def main():
         "--base_height", "-bh", default=0,
         help="This is the minimal number of reads should be mapped on TSS. Default is 0.0")
     TSSpredator_parser.add_argument(
-        "--replicate_match", "-rm",
-        help="The TSS candidates should match to how many number of the replicates")
+        "--replicate_match", "-rm", default=1,
+        help="The TSS candidates should match to how many number of the replicates. Default is 1.")
     TSSpredator_parser.add_argument(
         "--utr_length", "-u", default=300, type=int,
         help="The length of UTR. It is for Primary and Secondary definition. Default is 300")
@@ -217,7 +221,7 @@ def main():
         help="The output prefix of all conditions.")
     TSSpredator_parser.add_argument(
         "--merge_manual", "-m", default=None,
-        help="If you have gff file of manual checked TSS, you can use this function to merge manual ones and predicted ones.")
+        help="If you have gff file of manual checked TSS, you can use this function to merge manual checked ones and predicted ones.")
     TSSpredator_parser.add_argument(
         "--statistics", "-s", default=False, action="store_true",
         help="Doing statistics for TSS candidates. "
@@ -225,29 +229,30 @@ def main():
     TSSpredator_parser.add_argument(
         "--validate_gene", "-v", default=False, action="store_true",
         help="Using TSS candidates to validate genes in annotation file. "
-        "it will store in statistics folder. "
-        "It also will output a gff file of annotation informatiom which only start from TSSs. "
-        "The gff file will store in the folder - annotation_with_TSS. Default is False")
+        "it will store in statistics folder. Default is False")
     TSSpredator_parser.add_argument(
         "--compute_program", "-t", default="TSS",
         help="Which program do you want to predict. (TSS or processing_site)")
     TSSpredator_parser.add_argument(
         "--compare_transcript_assembly", "-ta", default=None,
-        help="Compare with transcriptome assembly")
+        help="If you want to compare with transcriptome assembly, please assign the folder of gff file of transcript assembly."
+        "Default is False. ")
     TSSpredator_parser.add_argument(
         "--fuzzy", "-fu", default=5, type=int,
         help="The fuzzy for comparing TSS and transcript assembly. Default is 5")
     TSSpredator_parser.add_argument(
         "--cluster", "-c", default=2, type=int,
-        help="This number if for compare manual detected TSS and prediced one. "
-        "If the position between manual one and predicted one is smaller or equal than this value, "
+        help="This number is for compare manual detected TSS and prediced one. "
+        "If the position between manual checked one and predicted one is smaller or equal than this value, "
         "It will only print one of them. Default is 2")
     TSSpredator_parser.add_argument(
         "--length", "-le", default=None,
-        help="The length that you want to compare with manual check for statistics. ")
+        help="The length that you want to compare with manual check for statistics. If you want to compare whole genome, "
+        "please don't turn it on. The default is comparing whole genome")
     TSSpredator_parser.add_argument(
         "--re_check_orphan", "-ro", default=False, action="store_true",
-        help="If your annotation file lack information of gene or locus_tag, please turn it on. Default is False")
+        help="If your annotation file lack information of gene or locus_tag, you can turn it on. "
+        "It will try to compare with CDS. Default is False")
     TSSpredator_parser.add_argument(
         "--overlap_feature", "-of", default="both",
         help="If processing site and TSS are overlap, you can keep \"TSS\" or \"processing_site\" or \"both\". "
@@ -257,35 +262,35 @@ def main():
         help="For overlap_feature, if you want to only keep \"TSS\" or \"processing_site\", "
         "please assign the reference_gff_folder. If you are running TSS, please assign the folder of processing site. "
         "If you are running processing_site, please assign the folder of TSS. If you want to keep \"both\" at overlap position, "
-        "please don't assign anything.")
+        "please don't turn it on.")
     TSSpredator_parser.add_argument(
-        "--remove_low_expression", "-rl", default=False, action="store_true",
-        help="If you want to remove low expressed TSS/processing site, please turn it one. "
-        "And please assign the file of manual detection. Please Be ATTENTION: this parameter may remove some True positive, too. "
-        "So, please make sure you want to use it.")
+        "--remove_low_expression", "-rl", default=None,
+        help="If you want to remove low expressed TSS/processing site, please assign the file of manual checked gff file here. "
+        "Please Be ATTENTION: this parameter may remove some True positive, too. "
+        "So, please make sure you want to do it.")
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
     # Parameter of opimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
         "optimize_tsspredator", help="Optimize TSSpredator based on (partial)manual detect one.")
     op_TSSpredator_parser.add_argument(
-        "--TSSpredator_path", default="TSSpredator.jar",
-        help="If you want to assign the path of TSSpredator, please assign here.")
-    op_TSSpredator_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     op_TSSpredator_parser.add_argument(
+        "--TSSpredator_path", default="TSSpredator.jar",
+        help="If you want to assign the path of TSSpredator, please assign here.")
+    op_TSSpredator_parser.add_argument(
         "--fasta_file", "-fs",
-        help="Path of the target fasta file.")
+        help="Path of one target fasta file which you want to opimize it.")
     op_TSSpredator_parser.add_argument(
         "--annotation_file", "-g",
-        help="Path of the target gff file.")
+        help="Path of one target gff file which you want to opimize it.")
     op_TSSpredator_parser.add_argument(
         "--wig_folder", "-w", default="ANNOgesic/input/wigs/tex_notex",
         help="The folder of the wig folder.")
     op_TSSpredator_parser.add_argument(
         "--manual", "-m",
-        help="The file of manual check gff file.")
+        help="The file of manual checked gff file.")
     op_TSSpredator_parser.add_argument(
         "--strain_name", "-n",
         help="The name of the strain you want to optimize.")
@@ -348,24 +353,22 @@ def main():
         help="The length of nts for running optimization."
         "Default is compare whole genome")
     op_TSSpredator_parser.add_argument(
-        "--core", "-c", type=int,
-        help="How many paralle running do you want to use.")
+        "--core", "-c", type=int, default=4,
+        help="How many paralle running do you want to use. Default is 4")
     op_TSSpredator_parser.add_argument(
         "--program", "-r", default="TSS",
         help="The type which you want to run TSSpredator (TSS or Processing_site). Default is TSS")
     op_TSSpredator_parser.add_argument(
-        "--replicate_match", "-rm",
-        help="The TSS candidates should match to how many number of the replicates")
+        "--replicate_match", "-rm", default=1,
+        help="The TSS candidates should match to how many number of the replicates. Default is 1")
     op_TSSpredator_parser.add_argument(
         "--steps", "-s", default=4000, type=int,
-        help="How many steps do you want to run.")
+        help="How many steps do you want to run. Default is 4000 runs.")
     op_TSSpredator_parser.set_defaults(func=optimize_TSSpredator)
     # Parameter of generating color png
     color_parser = subparsers.add_parser(
         "color_png", help="Generating color screenshots of TSS or processing site. "
-        "It only works after running batch script. "
-        "If the color bands are not located at the proper positions, "
-        "Please increase --figure_height. ")
+        "It only works after running batch script. ")
     color_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
@@ -392,10 +395,10 @@ def main():
         help="Please assign the path of transterm in TransTermHP.")
     Terminator_parser.add_argument(
         "--expterm_path", default="expterm.dat",
-        help="Please assign the paht of your expterm.dat.")
+        help="Please assign the path of your expterm.dat.")
     Terminator_parser.add_argument(
         "--RNAfold_path", default="RNAfold",
-        help="If you want to assign the path of RNAfold, please assign here.")
+        help="If you want to assign the path of RNAfold of Vienna package, please assign here.")
     Terminator_parser.add_argument(
         "--fasta_folder", "-f", default="ANNOgesic/output/target/fasta",
         help="The path of fasta folder.")
@@ -404,28 +407,28 @@ def main():
         help="The path of annotation gff folder.")
     Terminator_parser.add_argument(
         "--transcript_folder", "-a", default="ANNOgesic/output/transcriptome_assembly/gffs",
-        help="The path of transcript gff folder.")
+        help="The path of the folder which store gff files of transcript assembly.")
     Terminator_parser.add_argument(
         "--sRNA", "-sr", default=None,
-        help="If you want to include sRNA information, please assign the gff file of sRNA.")
+        help="If you want to include sRNA information, please assign the folder of gff files of sRNA.")
     Terminator_parser.add_argument(
         "--statistics", "-s", default=False, action="store_true",
         help="Doing statistics for TransTermHP. "
         "the name of statistics file is - stat_terminator_$STRAIN_NAME.csv.")
     Terminator_parser.add_argument(
         "--tex_wig_folder", "-tw", default=None,
-        help="If you want to use tex +/- libraries, please assign fragmented wig folder.")
+        help="If you want to use tex +/- libraries, please assign tex +/- wig folder.")
     Terminator_parser.add_argument(
         "--frag_wig_folder", "-fw", default=None,
         help="If you want to use fragmented libraries, please assign fragmented wig folder.")
     Terminator_parser.add_argument(
         "--decrease", "-d", default=0.5, type=float,
         help="If the (lowest coverage / highest coverage) in the terminator is smaller than this number, "
-        "it will consider this terminator have dramatic coverage decrease in it. (this only for statistics)")
+        "it will consider this terminator have dramatic coverage decrease in it.")
     Terminator_parser.add_argument(
         "--fuzzy_detect_coverage", "-fc", default=30, type=int,
         help="It will elongate the number of nt(you assign here) from both terminal site. "
-        "If it can found the coverage dramatic decrease, it will consider the terminator have dramatic coverage decrease in it.")
+        "If it can found the coverage dramatic decrease within this range, it will consider the terminator have dramatic coverage decrease in it.")
     Terminator_parser.add_argument(
         "--fuzzy_upstream_transcript", "-fut", default=30, type=int,
         help="If the candidates are upstream of transcript and the distance between the end of gene and terminator candidate is within this number, "
@@ -445,18 +448,22 @@ def main():
         help="If the highest coverage of the region of terminator is below to this number, "
         "the terminator will be classify to non-detect.")
     Terminator_parser.add_argument(
-        "-tl","--tex_notex_libs", default=None, nargs="+", help="Library name of tex and notex library.")
+        "-tl","--tex_notex_libs", default=None, nargs="+",
+        help="Library name of tex and notex library. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Terminator_parser.add_argument(
-        "-fl","--frag_libs", default=None, nargs="+", help="Library name of fragment library.")
+        "-fl","--frag_libs", default=None, nargs="+", 
+        help="Library name of fragment library. The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Terminator_parser.add_argument(
         "-te","--tex_notex", default=2, type=int,
         help="For tex +/- library, terminators should be detected by both or just one.(1/2)")
     Terminator_parser.add_argument(
         "-rt","--replicates_tex", default=None,
-        help="how many replicates should detect the same terminator of tex +/- library.")
+        help="The terminator of tex +/- library should be detected more than this number of replicates.")
     Terminator_parser.add_argument(
-        "-rf","--replicates_frag", default=None, 
-        help="how many replicates should detect the same terminator of fragmented library.")
+        "-rf","--replicates_frag", default=None,
+        help="The terminator of fragmented library should be detected more than this number of replicates.")
     Terminator_parser.add_argument(
         "-tb","--table_best", default=False, action="store_true",
         help="Output sRNA table only most decreasing track")
@@ -473,7 +480,7 @@ def main():
         "--annotation_folder", "-g", default=None,
         help="It is for comparing transcript assembly and annotation gff file. "
         "It can use annotation gff file as reference and modify transcript assembly file. "
-        "If you don't want to do it, you don't need to turn it on.")
+        "If you want to do it, please assign the annotation gff folder. Otherwise, don't turn it on.")
     Transcript_parser.add_argument(
         "--sort_annotation", "-s", default=False, action="store_true",
         help="The annotation gff files in annotation folder are sorted or not. "
@@ -482,6 +489,7 @@ def main():
         "--length", "-l", default=20, type=int,
         help="The minimum width of region to be a transcript. It is for refer to annotation file. "
         "If you want to compare with annotation files, it will be the final output. "
+        "If you don't want to compare with annotation files, --width would be the length for the final output. "
         "The default is 20.")
     Transcript_parser.add_argument(
         "--normal_wig_path", "-nw", default=None,
@@ -497,10 +505,11 @@ def main():
         "--width", "-w", default=20, type=int,
         help="The minimum width of region to be a transcript. It is for without annotation to be reference. "
         "If you don't want to compare with annotation files (--length), it will be the final output. "
+        "Otherwise, --length would be the length of transcript for the final output."
         "The default is 20.")
     Transcript_parser.add_argument(
         "--tolerance", "-t", default=5, type=int,
-        help="This number indicates how willing the algorithm is to ignore a temporary drop below either cut-off. "
+        help="This number indicates how willing the algorithm is to ignore a temporary drop below this number. "
         "The default is 5.")
     Transcript_parser.add_argument(
         "--tolerance_coverage", "-tc", default=0, type=int,
@@ -517,25 +526,27 @@ def main():
         help="If you use tex +/- libraries to run transcript assembly, please assign the tex +/- should both consider or just one. (1 or 2). Default is 2")
     Transcript_parser.add_argument(
         "--compare_TSS", "-ct", default=None,
-        help="Compare with TSS. Please assign TSS folder.")
+        help="If you want to compare with TSS, please assign TSS folder.")
     Transcript_parser.add_argument(
         "--compare_CDS", "-cg", default=None,
-        help="Compare with annotation gff file. Please assign annotation folder.")
+        help="If you want to compare with annotation file, please assign annotation folder.")
     Transcript_parser.add_argument(
         "--TSS_fuzzy", "-fu", default=5, type=int,
         help="The fuzzy for comparing TSS and transcript assembly. Default is 5")
     Transcript_parser.add_argument(
         "--Tex_treated_libs", "-tl", nargs="+", default=None,
-        help="Input of tex +/- library.")
+        help="Input of tex +/- library. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Transcript_parser.add_argument(
         "--fragmented_libs", "-fl", nargs="+", default=None,
-        help="Input of fragmented library.")
+        help="Input of fragmented library. The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     
     Transcript_parser.set_defaults(func=run_Transcript_Assembly)
 
     # Parameter of UTR detection
     UTR_parser = subparsers.add_parser(
-        "utr", help="Run UTR detection to detecting 5'UTR and 3'UTR.")
+        "utr", help="Run UTR detection to detect 5'UTR and 3'UTR.")
     UTR_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
@@ -554,11 +565,11 @@ def main():
         help="If you want to add the information of terminator, you can assign the path of terminator folder here.")
     UTR_parser.add_argument(
         "--terminator_fuzzy", "-f", default=30, type=int,
-        help="If the distance(nt) of between terminator and the end of transcript assembly belows to this value, "
+        help="If the distance(nt) between terminator and the end of transcript assembly belows to this value, "
         "it will assign the terminator associated with the 3'UTR.")
     UTR_parser.add_argument(
         "--TSS_source", "-s", default=True, action="store_false",
-        help="If you generate TSS from other method, please turn it on.")
+        help="If you generate TSS from other method not from ANNOgesic, please turn it on.")
     UTR_parser.add_argument(
         "--base_5UTR", "-b", default="both",
         help="Which kind of information that you want to use for generating 5'UTR. TSS/transcript/both. Default is both.")
@@ -566,14 +577,19 @@ def main():
 
     # Parameter of sRNA detectopn
     sRNA_parser = subparsers.add_parser(
-        "srna", help="Run sRNA detection to detecting sRNA candidates.")
+        "srna", help="Run sRNA detection to detect sRNA candidates.")
     sRNA_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     sRNA_parser.add_argument(
         "--Vienna_folder", default="",
-        help="Please assign the folder of Vienna package.")
+        help="Please assign the folder of Vienna package. "
+        "It should include RNAfold.")
+    sRNA_parser.add_argument(
+        "--Vienna_utils", default="",
+        help="Please assign the folder of Utils of Vienna package. "
+        "It should include relplot.pl and mountain.pl.")
     sRNA_parser.add_argument(
         "--blast_plus_folder", default="",
         help="Please assign the folder of blast+ which include blastn, blastx, makeblastdb.")
@@ -582,11 +598,11 @@ def main():
         help="Please assign the path of ps2pdf14.")
     sRNA_parser.add_argument(
         "--UTR_derived_sRNA", "-u", default=False, action="store_true",
-        help="If you want to detect UTR derived sRNA, please turn it on.")
+        help="If you want to detect UTR derived sRNA, please turn it on. Default is False.")
     sRNA_parser.add_argument(
         "--import_info", "-d", nargs="+",
-        help="There are several types of information you can import to detect sRNA: "
-        "TSS(1), energy of secondary structure(2), blast to nr(3), blast to sRNA (4), sORF(5), "
+        help="There are several types of information you can import to detect and filter sRNA: "
+        "TSS(1), energy of secondary structure(2), blast to nr(3), blast to sRNA(4), sORF(5), "
         "without any information, only detect sRNA (without any information) by transcriptome assembly(6)."
         "Please assign the number of type you want to import, i.e. 1 2 4 - means it used TSS, energy and blast result to detect sRNA. "
         "Besides these information, it will also consider the sequence length of sRNA.")
@@ -598,34 +614,36 @@ def main():
         help="The path of annotation gff folder.")
     sRNA_parser.add_argument(
         "--TSS_folder", "-t", default=None,
-        help="If you want to import TSS information, please assign the path of gff folder of TSS.")
+        help="If you want to import TSS information, please assign the path of gff folder of TSS. "
+        "If you want to detect UTR derived sRNA, you must assign the folder of TSS.")
     sRNA_parser.add_argument(
         "--processing_site_folder", "-p", default=None,
-        help="If you want to import processing site information, please assign the path of gff folder of processing site.")
+        help="If you want to import processing site information, please assign the path of gff folder of processing site."
+        "If you want to detect UTR derived sRNA, you must assign the folder of processing site.")
     sRNA_parser.add_argument(
         "--TSS_intergenic_fuzzy", "-ft", default=2, type=int,
         help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for intergenic."
         "The default number is 2.")
     sRNA_parser.add_argument(
         "--TSS_5UTR_fuzzy", "-f5", default=2, type=int,
-        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for 5'UTR."
+        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for 5'UTR of UTR derived sRNA."
         "The default number is 2.")
     sRNA_parser.add_argument(
         "--TSS_3UTR_fuzzy", "-f3", default=10, type=int,
-        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for 3'UTR."
+        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for 3'UTR of UTR derived sRNA."
         "The default number is 10.")
     sRNA_parser.add_argument(
         "--TSS_interCDS_fuzzy", "-fc", default=10, type=int,
-        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for interCDS."
+        help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for interCDS derived sRNA."
         "The default number is 10.")
     sRNA_parser.add_argument(
         "--min_length", "-lm",default=30,
         help="Please assign the minium length of sRNA. "
-        "It will classify sRNA candidates based on the value.")
+        "It will classify sRNA candidates based on the value. Default is 30.")
     sRNA_parser.add_argument(
         "--max_length", "-lM",default=500,
         help="Please assign the maxium length of sRNA. "
-        "It will classify sRNA candidates based on the value.")
+        "It will classify sRNA candidates based on the value. Default is 500.")
     sRNA_parser.add_argument(
         "--tex_wig_folder", "-tw", default=None,
         help="The path of tex+/- wig folder.")
@@ -652,14 +670,14 @@ def main():
         help="If you want to import secondary structure information, please assign the path of fasta folder. ")
     sRNA_parser.add_argument(
         "--cutoff_energy", "-e", default=0, type=float,
-        help="If you want to import secondary structure information, please assign the cutoff of energy. "
-        "It will classify sRNA candidates based on the value.")    
+        help="If you want to import secondary structure information, please assign the cutoff of folding energy. "
+        "It will classify sRNA candidates based on the value. Default is 0.")
     sRNA_parser.add_argument(
         "--mountain_plot", "-m", default=False, action="store_true",
-        help="If you want to generate mountain plots of sRNA candidates, please turn it on. ")
+        help="If you want to generate mountain plots of sRNA candidates, please turn it on. Default is False.")
     sRNA_parser.add_argument(
         "--database_format", "-fd", default=False, action="store_true",
-        help="If you already format your database, you don't need to turn it on.")
+        help="If you already format your database, you don't need to turn it on. Default is False")
     sRNA_parser.add_argument(
         "--sRNA_database_path", "-sd", default=None,
         help="If you want to import blast results of sRNA, please assign the path of sRNA database.")
@@ -671,35 +689,39 @@ def main():
         help="If the sRNA database which you used are the same format as our default sRNA database, "
         "you can run sRNA_blast_stat for do statistics of the result of sRNA blast."
         "If your format is not the same as our default database, please don't turn it on. "
-        "The format is ID|strain|srna_name")
+        "Out default format of header is ID|strain|srna_name")
     sRNA_parser.add_argument(
-        "--tex_notex_libs", "-tl", default=None, nargs="+", help="library name of tex and notex library.")
+        "--tex_notex_libs", "-tl", default=None, nargs="+",
+        help="library name of tex and notex library. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sRNA_parser.add_argument(
-        "--frag_libs", "-fl", default=None, nargs="+", help="library name of fragment library.")
+        "--frag_libs", "-fl", default=None, nargs="+",
+        help="library name of fragment library. The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sRNA_parser.add_argument(
         "--tex_notex", "-te", default=2, type=int,
-        help="For tex +/- library, sRNA candidates should be detected by both or just one.(1/2)")
+        help="For tex +/- library, sRNA candidates should be detected by both or just one.(1/2) Default is 2.")
     sRNA_parser.add_argument(
         "--replicates_tex", "-rt", default=None, 
-        help="How many replicates should detect the same sRNA candidates. (tex +/-)")
+        help="The sRNA of tex +/- library should be detected more than this number of replicates.")
     sRNA_parser.add_argument(
         "--replicates_frag", "-rf", default=None, 
-        help="How many replicates should detect the same sRNA candidates. (fragmented)")
+        help="The sRNA of fragmented library should be detected more than this number of replicates.")
     sRNA_parser.add_argument(
         "--table_best", "-tb", default=False, action="store_true",
-        help="The output table of sRNA candidates only print the best track.")
+        help="The output table of sRNA candidates only print the best track. Default is False")
     sRNA_parser.add_argument(
         "--decrease_intergenic","-di", default=0.5, type=float,
         help="If the intergenic region is longer than the max_length, it will based on coverage to check the sRNA candidates. "
              "If the ratio of lowest coverage of intergenic region and the highest coverage of intergenic region is smaller than this number, "
              "it will consider the the point of lowest coverage to be end of sRNA. If the length of sRNA candidate is properly, "
-             "it also assign to be one of sRNA candidates.")
+             "it also assign the transcript to be one of sRNA candidates. Default is 0.5.")
     sRNA_parser.add_argument(
         "--decrease_utr","-du", default=0.5, type=float,
         help="If the kind of utr derived is 5'UTR, you have to consider the end of it's end."
              "If the ratio of lowest coverage of it and the highest coverage of it is smaller than this number, "
              "it will consider the the point of lowest coverage to be end of sRNA. If the length of sRNA candidate is properly, "
-             "it also assign to be one of sRNA candidates.")
+             "it also assign the transcript to be one of sRNA candidates. Default is 0.5.")
     sRNA_parser.add_argument(
         "--fuzzy_intergenic", "-fi", default=10, type=int,
         help="If the situation is like decrease_intergenic mentioned, the value would be fuzzy between the end of sRNA")
@@ -723,22 +745,22 @@ def main():
         "--best_with_all_sRNAhit", "-ba", default=False, action="store_true",
         help="When you want to generate the files which store the best sRNA candidates, "
              "it should include all the sRNA candidates which can find the homology from blast sRNA database no matter other information(ex. TSS, blast in nr...)."
-             "Please turn it on. Or it will just select the the best candidates based on all filter conditions.")
+             "Please turn it on. Or it will just select the the best candidates based on all filter conditions. Default is False.")
     sRNA_parser.add_argument(
         "--best_without_sORF_candidate", "-bs", default=False, action="store_true",
         help="If you want to generate the files which store the best sRNA candidates excluded all the sRNA candidates which also can be detected by sORF file."
-             "Please turn it on. Or it will just select the the best candidates based on all filter conditions.")
+             "Please turn it on. Or it will just select the the best candidates based on all filter conditions. Default is False.")
     sRNA_parser.set_defaults(func=run_sRNA_detection)
     # Parameters of small ORF
     sORF_parser = subparsers.add_parser(
-        "sorf", help="Run sORF detection to detecting sORF candidates which has expression.")
+        "sorf", help="Run sORF detection to detect sORF candidates which has expression.")
     sORF_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     sORF_parser.add_argument(
         "--UTR_derived_sORF", "-u", default=False, action="store_true",
-        help="If you want to detect UTR derived sORF, please turn it on.")
+        help="If you want to detect UTR derived sORF, please turn it on. Default is False.")
     sORF_parser.add_argument(
         "--transcript_assembly_folder", "-a", default="ANNOgesic/output/transcriptome_assembly/gffs",
         help="The path of transcriptome assembly folder.")
@@ -755,11 +777,11 @@ def main():
     sORF_parser.add_argument(
         "--min_length", "-lm",default=30,
         help="Please assign the minium length of sORF. "
-        "It will classify sORF candidates based on the value.")
+        "It will classify sORF candidates based on the value. Default is 30.")
     sORF_parser.add_argument(
         "--max_length", "-lM",default=500,
         help="Please assign the maxium length of sORF. "
-        "It will classify sORF candidates based on the value.")
+        "It will classify sORF candidates based on the value. Default is 500.")
     sORF_parser.add_argument(
         "--tex_wig_folder", "-tw", default=None,
         help="The path of tex+/- wig folder.")
@@ -768,16 +790,16 @@ def main():
         help="The path of fragment wig folder.")
     sORF_parser.add_argument(
         "--cutoff_intergenic_coverage", "-ci",default=5, type=float,
-        help="The cutoff of minimal coverage of sORF candidates.")
+        help="The cutoff of minimal coverage of intergenic sORF candidates.")
     sORF_parser.add_argument(
         "--cutoff_5utr_coverage", "-cu5",default="median",
-        help="The cutoff of minimal coverage of sORF candidates. You also can assign median or mean. Default is median.")
+        help="The cutoff of minimal coverage of 5'UTR derived sORF candidates. You also can assign median or mean. Default is median.")
     sORF_parser.add_argument(
         "--cutoff_3utr_coverage", "-cu3",default="median",
-        help="The cutoff of minimal coverage of sORF candidates. You also can assign median or mean. Default is median.")
+        help="The cutoff of minimal coverage of 3'UTR derived sORF candidates. You also can assign median or mean. Default is median.")
     sORF_parser.add_argument(
         "--cutoff_interCDS_coverage", "-cuf",default="median",
-        help="The cutoff of minimal coverage of inter CDS sORF candidates. You also can assign median or mean. Default is median.")
+        help="The cutoff of minimal coverage of interCDS derived sORF candidates. You also can assign median or mean. Default is median.")
     sORF_parser.add_argument(
         "--cutoff_background", "-cub",default=5, type=float,
         help="The cutoff of minimal coverage of all sORF candidates. Default is 5.")
@@ -785,33 +807,37 @@ def main():
         "--fasta_folder", "-f", default=None,
         help="If you want to import secondary structure information, please assign the path of fasta folder. ")
     sORF_parser.add_argument(
-        "--tex_notex_libs", "-tl", default=None, nargs="+", help="Library name of tex and notex library.")
+        "--tex_notex_libs", "-tl", default=None, nargs="+", 
+        help="Library name of tex and notex library. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sORF_parser.add_argument(
-        "--frag_libs", "-fl", default=None, nargs="+", help="Library name of fragment library.")
+        "--frag_libs", "-fl", default=None, nargs="+", 
+        help="Library name of fragment library The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -)..")
     sORF_parser.add_argument(
         "--tex_notex", "-te", default=2, type=int,
-        help="For tex +/- library, sORF candidates should be detected by both or just one.(1/2)")
+        help="For tex +/- library, sORF candidates should be detected by both or just one.(1/2) Default is 2.")
     sORF_parser.add_argument(
         "--replicates_tex", "-rt", default=None, 
-        help="How many replicates should detect the same sORF candidates. (tex +/-)")
+        help="The sORF of tex +/- library should be detected more than this number of replicates.")
     sORF_parser.add_argument(
         "--replicates_frag", "-rf", default=None, 
-        help="How many replicates should detect the same sORF candidates. (fragmented)")
+        help="The sORF of fragmented library should be detected more than this number of replicates.")
     sORF_parser.add_argument(
         "--table_best", "-tb", default=False, action="store_true",
-        help="The output table of sORF candidates only print the best track.")
+        help="The output table of sORF candidates only print the best track. Default is False.")
     sORF_parser.add_argument(
         "--sRNA_folder", "-s", default=None,
         help="If you want to compare sORF and sRNA, please assign the path of sORF gff folder.")
     sORF_parser.add_argument(
         "--start_coden", "-ac", default=["ATG"], nargs="+", 
-        help="What kinds of start coden ATG/GTG/TTG")
+        help="What kinds of start coden ATG/GTG/TTG you want to use.")
     sORF_parser.add_argument(
         "--stop_coden", "-oc", default=["TTA", "TAG", "TGA"], nargs="+", 
-        help="What kinds of stop coden TTA/TAG/TGA")
+        help="What kinds of stop coden TTA/TAG/TGA you want to use.")
     sORF_parser.add_argument(
         "--condition_best", "-c", default="TSS",
-        help="For generate the result of best sORF, please assign which information you want to consider (TSS/sRNA/both). default is TSS")
+        help="For generating the result of best sORF, please assign which information you want to consider (TSS/sRNA/both). default is TSS")
     sORF_parser.set_defaults(func=run_sORF_detection)
     # Parameters of promoter detection
     promoter_parser = subparsers.add_parser(
@@ -825,10 +851,10 @@ def main():
         help="path of MEME")
     promoter_parser.add_argument(
         "--fasta_folder", "-f", default="ANNOgesic/output/target/fasta",
-        help="Please assign the path of gemonic fasta file. ")
+        help="Please assign the folder of gemonic fasta file. ")
     promoter_parser.add_argument(
         "--TSS_folder", "-t", default="ANNOgesic/output/TSS/gffs",
-        help="The path of TSS gff file.")
+        help="The folder of TSS gff file.")
     promoter_parser.add_argument(
         "--num_motif", "-n", default=10,
         help="How many of motifs you want to produce.")
@@ -836,7 +862,7 @@ def main():
         "--motif_width", "-w", nargs="+",
         help="Motif length - it will refer the value to find the motif. "
         "if you want to detect a range of width, you can insert \"-\" between two values. "
-        "for example, 2-10. ")
+        "for example, 50 2-10. It means the range of width which you want to detect is 50 and within 2 to 10. ")
     promoter_parser.add_argument(
         "--parallel", "-p", default=4,
         help="How many process you want to use to run paralle.")
@@ -845,7 +871,9 @@ def main():
         help="If you generate TSS from other method, please turn it on.")
     promoter_parser.add_argument(
         "--tex_libs", "-tl", default=None, nargs="+", 
-        help="Library name of tex+/- library. If your TSS is not from ANNOgesic, please assign the libs of tex+/- too.")
+        help="Library name of tex+/- library. If your TSS is not from ANNOgesic, please assign the libs of tex+/- too."
+        "The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     promoter_parser.add_argument(
         "--tex_wig_path", "-tw", default=None,
         help="The path of tex+/- wig folder. If your TSS is not from ANNOgesic, please assign the wig path too.")
@@ -854,7 +882,7 @@ def main():
         help="The path of annotation gff folder. If your TSS is not from ANNOgesic, please assign the annotation gff path too.")
     promoter_parser.add_argument(
         "--combine_all", "-c", default=False, action="store_true",
-        help="If you want to combine all TSS in TSS output folder to generate a overall promoter motif, please turn it on.")
+        help="If you want to combine all TSS in TSS output folder to generate a overall promoter motif, please turn it on. Default is False.")
     promoter_parser.set_defaults(func=run_MEME)
     # Parameters of operon detection
     operon_parser = subparsers.add_parser(
@@ -880,7 +908,7 @@ def main():
         help="The path of 3'UTR gff folder.")
     operon_parser.add_argument(
         "--term_folder", "-e", default=None,
-        help="The path of terminator gff folder.")
+        help="If you want to import the information of terminator, please assign the path of terminator gff folder.")
     operon_parser.add_argument(
         "--TSS_fuzzy", "-tf", default=5, type=int,
         help="The fuzzy for comparing TSS and transcript assembly. "
@@ -895,11 +923,11 @@ def main():
         "The default number is 20.")
     operon_parser.add_argument(
         "--statistics", "-s", default=False, action="store_true",
-        help="Doing statistics for Operon analysis. "
+        help="Doing statistics for Operon analysis. Default is False."
         "The name of statistics file is - stat_operon_$STRAIN_NAME.csv.")
     operon_parser.add_argument(
         "--combine_gff", "-c", default=False, action="store_true",
-        help="Convert the operon and all features you assigned to one gff file. ")
+        help="Convert the operon and all features you assigned to one gff file. Default is False.")
     operon_parser.set_defaults(func=run_operon)
     # Parameters of CircRNA detection
     circrna_parser = subparsers.add_parser(
@@ -913,17 +941,16 @@ def main():
         help="Please assign the folder of segemehl.")
     circrna_parser.add_argument(
         "--samtools_path", "-st", default="samtools",
-        help="Please assign the samtools path.")
+        help="Please assign the path of samtools.")
     circrna_parser.add_argument(
         "--align", "-a", default=False, action="store_true",
-        help="Using segemehl to align read (turn on splice detection). "
+        help="Using segemehl to align read (included splice detection). "
         "If you already usd segemehl with -S to align your reads, "
         "you can skip this step, don't need to turn it on. "
-        "But remember put your results in ANNOgesic/output/CircRNA/segemehl_align. "
         "Please be attention, it only use default parameters of segemehl to align your reads. "
         "Moreover, it will align all read files in ANNOgesic/input/reads. "
         "If you want to run some specific functions of segemehl, "
-        "please run it seperately and copy the files to ANNOgesic/output/CircRNA/segemehl_align.")
+        "please run it seperately.")
     circrna_parser.add_argument(
         "--normal_bam_path", "-nb", default=None,
         help="If you already has Bam files, Please assign the normal Bam path or fragmented_Bam_path.")
@@ -932,25 +959,25 @@ def main():
         help="If you already has Bam files, Please assign the fragmented Bam path or normal Bam path.")
     circrna_parser.add_argument(
         "--process", "-p", default=10, type=int,
-        help="How many processes for --align.  ")
+        help="How many parallels processes for --align.  ")
     circrna_parser.add_argument(
         "--fasta_path", "-f", default="ANNOgesic/output/target/fasta",
-        help="The genome fasta path. ")
+        help="The folder of genome fasta. ")
     circrna_parser.add_argument(
         "--annotation_path", "-g", default="ANNOgesic/output/target/annotation",
-        help="The path of the folder of annotation gff files.")
+        help="The folder of annotation gff files.")
     circrna_parser.add_argument(
         "--convert_to_gff", "-cg", default=False, action="store_true",
         help="If you want to convert circRNA candidates to gff file, please turnn it on.")
     circrna_parser.add_argument(
         "--support_reads", "-s", default=5, type=int,
-        help="If you want to convert circRNA candidates to gff file, please also assign the cut off of supported reads.")
+        help="If you want to convert circRNA candidates to gff file, please also assign the cut off of supported reads. Default is 5.")
     circrna_parser.add_argument(
         "--start_ratio", "-sr", default=0.25, type=float, 
-        help="The ratio of (read support circ / all read) at starting point. The ratio of candidates should higher than this cutoff.")
+        help="The ratio of (read support circ / all read) at starting point. The ratio of candidates should higher than this cutoff. Default is 0.25.")
     circrna_parser.add_argument(
         "--end_ratio", "-er", default=0.25, type=float, 
-        help="The ratio of (read support circ / all read) at end point. The ratio of candidates should higher than this cutoff.")
+        help="The ratio of (read support circ / all read) at end point. The ratio of candidates should higher than this cutoff. Default is 0.25")
     circrna_parser.set_defaults(func=run_circrna)
     # Parameters of Go term
     goterm_parser = subparsers.add_parser(
@@ -984,7 +1011,7 @@ def main():
         "directory is used.")
     starget_parser.add_argument(
         "--Vienna_folder", default="",
-        help="Please assign the folder of Vienna package.")
+        help="Please assign the folder of Vienna package. It should include RNAplfold, RNAup and RNAplex.")
     starget_parser.add_argument(
         "--annotation_path", "-g", default="ANNOgesic/output/target/annotation",
         help="The path of annotation gff folder. ")
@@ -1008,57 +1035,57 @@ def main():
     starget_parser.add_argument(
         "--window_size_target", "-wt", default=240, type=int,
         help="Only work when --program is RNAplex or both. "
-        "Average the pair probabilities over windows of given size. "
+        "Average the pair probabilities over windows of given size for RNAplex. "
         "Default is 240. ")
     starget_parser.add_argument(
         "--span_target", "-st", default=160, type=int,
         help="Only work when --program is RNAplex or both. "
-        "Set the maximum allowed separation of a base pair to span. "
+        "Set the maximum allowed separation of a base pair to span for RNAplex. "
         "Default is 160. ")
     starget_parser.add_argument(
         "--window_size_srna", "-ws", default=30, type=int,
         help="Only work when --program is RNAplex or both. "
-        "Average the pair probabilities over windows of given size. "
+        "Average the pair probabilities over windows of given size for RNAplex. "
         "Default is 30. ")
     starget_parser.add_argument(
         "--span_srna", "-ss", default=30, type=int,
         help="Only work when --program is RNAplex or both. "
-        "Set the maximum allowed separation of a base pair to span. "
-        "Defaults to winsize if parameter is omitted. ")
+        "Set the maximum allowed separation of a base pair to span for RNAplex. "
+        "Default is 30. ")
     starget_parser.add_argument(
         "--unstructured_region_RNAplex_target", "-ut", default=30, type=int,
         help="Only work when --program is RNAplex or both. "
         "Compute the mean probability that regions of "
-        "length 1 to a given length are unpaired. Default is 30. ")
+        "length 1 to a given length are unpaired for RNAplex. Default is 30. ")
     starget_parser.add_argument(
         "--unstructured_region_RNAplex_srna", "-us", default=30, type=int,
         help="Only work when --program is RNAplex or both. "
         "Compute the mean probability that regions of "
-        "length 1 to a given length are unpaired. Default is 30. ")
+        "length 1 to a given length are unpaired for RNAplex. Default is 30. ")
     starget_parser.add_argument(
         "--unstructured_region_RNAup", "-uu", default=30, type=int,
         help="Only work when --program is RNAup or both. "
         "Compute the mean probability that regions of "
-        "length 1 to a given length are unpaired. Default is 30. ")
+        "length 1 to a given length are unpaired for RNAplex. Default is 30. ")
     starget_parser.add_argument(
         "--energy_threshold", "-e", default=-8, type=float,
         help="Only work when --program is RNAplex or both. "
-        "Minimal energy for a duplex to be returned. "
+        "Minimal energy for a duplex to be returned for RNAplex. "
         "Default is -8. ")
     starget_parser.add_argument(
         "--duplex_distance", "-d", default=20, type=int,
         help="Only work when --program is RNAplex or both. "
-        "Distance between target 3' ends of two consecutive duplexes. "
+        "Distance between target 3' ends of two consecutive duplexes for RNAplex. "
         "Default is 20. ")
     starget_parser.add_argument(
         "--top", "-t", default=20, type=int,
         help="The output file only include top one(default is 20). ")
     starget_parser.add_argument(
         "--process_rnaplex", "-pp", default=5, type=int,
-        help="How many processes for running RNAplex prediction. ")
+        help="How many parallel processes for running RNAplex prediction. ")
     starget_parser.add_argument(
         "--process_rnaup", "-pu", default=20, type=int,
-        help="How many processes for running RNAup prediction. ")
+        help="How many parallel processes for running RNAup prediction. ")
     starget_parser.add_argument(
         "--continue_rnaup", "-cr", default=False, action="store_true",
         help="RNAup will take a long time for running if you want to compute a lot of sRNA. "
@@ -1080,23 +1107,23 @@ def main():
     snp_parser.add_argument(
         "--bam_type", "-t",
         help="Please assign the type of BAM. "
-             "If your BAM file is mapping to reference genome and you want to know the difference between refenece genome and target genome, plase keyin 'reference'. "
-             "If your BAM file already mapped to target genome and you want to check the genome sequence has SNP or not, please keyin 'target'")
+        "If your BAM file is mapping to reference genome and you want to know the difference between refenece genome and target genome, plase keyin 'reference'. "
+        "If your BAM file already mapped to target genome and you want to check the genome sequence has SNP or not, please keyin 'target'")
     snp_parser.add_argument(
         "--program", "-p", nargs="+",
-        help="Please assign the program for detect SNP of transcript: "
-             "1: calculate with BAQ, 2: calculate without BAQ, 3: calculate with extend BAQ. "
-             "You can assign more than 1 program. For example: 1 2 3")
+        help="Please assign the program for detecting SNP of transcript: "
+        "1: calculate with BAQ, 2: calculate without BAQ, 3: calculate with extend BAQ. "
+        "You can assign more than 1 program. For example: 1 2 3")
     snp_parser.add_argument(
         "--fasta_path", "-f", default="ANNOgesic/output/target/fasta",
         help="The path of fasta folder. ")
     snp_parser.add_argument(
-        "--normal_bam_path", "-nw", default=None,
-        help="The path of normal wig folder. If you want to use tex treated and untreated bam files, "
+        "--tex_bam_path", "-tw", default=None,
+        help="The path of tex+/- wig folder. If you want to use tex treated and untreated bam files, "
              "please assign the path. Or it will not combine the bam files")
     snp_parser.add_argument(
         "--frag_bam_path", "-fw", default=None,
-        help="The path of fragment wig folder. If you want to use tex treated and untreated bam files, "
+        help="The path of fragmented wig folder. If you want to use fragmented bam files, "
              "please assign the path. Or it will not combine the bam files")
     snp_parser.add_argument(
         "--quality", "-q", default=20, type=int,
@@ -1124,31 +1151,29 @@ def main():
         help="This is for assigning protein Id which you want to predict. "
              "In order to retrieve the data from STRING and Pubmed, you also have to assign the similar reference. "
              "For example, if you want to run all proteins in Staphylococcus aureus HG003, "
-             "you can assign the strain_comparison like "
-             "all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus 8325\":\"Staphylococcus aureus\". "
-             "or all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"93061\":\"Staphylococcus aureus\". "
-             "or all:Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus NCTC 8325\":\"Staphylococcus aureus\". "
-             "(ptt_name:STRING_name:Pubmed_name). "
-             "First one is the locus tag of ptt. If you want to run all proteins, just assign 'all'. "
-             "Therefore, if you want to run SAOUHSC_00001, just replace SAOUHSC_00001 to all like previous example. "
-             "Second one is the ptt file name. Third one is the seq name in ptt files. "
-             "Fourth one is for STRING database, and the fourth one is for Pubmed. "
+             "you can assign the it like "
+             "Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus 8325\":\"Staphylococcus aureus\". "
+             "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"93061\":\"Staphylococcus aureus\". "
+             "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus NCTC 8325\":\"Staphylococcus aureus\". "
+             "(ptt_filename:strain_ptt:STRING_name:Pubmed_name). "
+             "First one is the ptt file name. Second one is the seq name in ptt files. "
+             "Third one is for STRING database, and the fourth one is for Pubmed. "
              "Of course, you can run the script for several strains at the same time. "
              "Before running it, please check the species file which located in ANNOgesic/input/database ."
-             "If you didn't download the file, you can download it by yourself or use get_package_database. "
+             "If you didn't download the file, please download it. "
              "You can use taxon_id, STRING_name_compact or official_name_NCBI to represent STRING_name."
              "BE CAREFUL, if the name which you assigned has spaces, please put \"\" at two ends. "
              "For the name of Pubmed, you can assign the name not so specific. "
              "If you assign a specific name, it may not be able to find the related literatures.")
     ppi_parser.add_argument(
         "--without_strain_pubmed", "-n", default=False, action="store_true",
-        help="If you want to retrieve pubmed without assign any strains, please turn it on. ")
+        help="If you want to retrieve pubmed without assign any strains, please turn it on. Default is False.")
     ppi_parser.add_argument(
         "--species_STRING", "-d",
         help="Please assign the path of species file of STRING.")
     ppi_parser.add_argument(
         "--score", "-ps", default=0.0, type=float,
-        help="Please assign the threadhold of score. The value is from -1 to 1")
+        help="Please assign the cutoff of score. The value is from -1 to 1")
     ppi_parser.add_argument(
         "--node_size", "-ns", default=4000, type=int,
         help="Please size of the nodes in figure, default is 4000.")
@@ -1168,9 +1193,6 @@ def main():
     sub_local_parser.add_argument(
         "--Psortb_path", default="psort",
         help="If you want to assign the path of Psortb, please assign here.")
-    sub_local_parser.add_argument(
-        "--EMBOSS_transeq_path", default="transeq",
-        help="If you want to assign the path of transeq in EMBOSS, please assign here.")
     sub_local_parser.add_argument(
         "--gff_path", "-g", default="ANNOgesic/output/target/annotation",
         help="The path of annotation gff folder. ")
@@ -1199,7 +1221,7 @@ def main():
         "directory is used.")
     ribos_parser.add_argument(
         "--infernal_path", "-if", default="",
-        help="Please assign the folder of Infernal(where is cmscan cmsearch located).")
+        help="Please assign the folder of Infernal(where is cmscan and cmsearch located).")
     ribos_parser.add_argument(
         "--riboswitch_ID", "-i",
         help="The path of the riboswitch ID of Rfam. ")
@@ -1214,17 +1236,18 @@ def main():
         help="The path of Rfam CM database. ")
     ribos_parser.add_argument(
         "--re_scan", "-r", default=False, action="store_true",
-        help="Based on the results of first scaning, it will modify the input of sequence and re scan again. ")
+        help="Based on the results of first scaning, it will modify the input of sequence and re scan again. "
+        "Default is False.")
     ribos_parser.add_argument(
         "--e_value", "-e", default=0.001, type=float,
-        help="The cutoff of e value. ")
+        help="The cutoff of e value. Default si 0.001.")
     ribos_parser.add_argument(
         "--output_all", "-o", default=False, action="store_true",
         help="One sequence may fit multiple riboswitches. If you want to output all of them, please turn it on. "
         "Or it will only print the best one.")
     ribos_parser.add_argument(
         "--fuzzy", "-z", default=10, type=int,
-        help="It will extend some nts of 3' ans 5' end. ")
+        help="It will extend some nts of 3' ans 5' end. Default is 10.")
     ribos_parser.set_defaults(func=Ribos)
     # Parameters of generate screenshots
     screen_parser = subparsers.add_parser(
@@ -1235,10 +1258,10 @@ def main():
         "directory is used.")
     screen_parser.add_argument(
         "--main_gff", "-mg",
-        help="It will based on the position of this gff file to generate screenshot. ")
+        help="Screenshot will based on the position of main_gff file to generate screenshot. ")
     screen_parser.add_argument(
         "--side_gffs", "-sg", default=None, nargs="+",
-        help="If you have more than one gff want to plot, please assign here. ")
+        help="If you have more than one gff want to plot together, please assign here. ")
     screen_parser.add_argument(
         "--fasta", "-f", default="ANNOgesic/output/target/fasta",
         help="The path of genome fasta folder. ")
@@ -1250,13 +1273,15 @@ def main():
         help="If you want to include the information of tex treated wig file, please assign the folder. ")
     screen_parser.add_argument(
         "--height", "-he", default=1500, type=int,
-        help="You can assign the height of screenshot. ")
+        help="You can assign the height of screenshot. Default is 1500.")
     screen_parser.add_argument(
         "--tex_libs", "-tl", default=None, nargs="+",
-        help="If you want to include the tex+/- library, please assign here.")
+        help="If you want to include the tex treated wig file, please also assign proper format here. The format is: "
+        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     screen_parser.add_argument(
         "--frag_libs", "-fl", default=None, nargs="+",
-        help="If you want to include the fragmented library, please assign here.")
+        help="If you want to include the fragmented wig file, please also assign proper format here. The format is: "
+        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -)..")
     screen_parser.add_argument(
         "--present", "-p", default="expand",
         help="Which type you want to present in the screen shot. expand/collapse/squish. ")

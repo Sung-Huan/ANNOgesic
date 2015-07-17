@@ -225,7 +225,8 @@ class Controller(object):
                               self._args.processing_site_folder, self._args.sORF, 
                               self._args.fasta_folder, self._args.transcript_assembly_folder)
         srna.run_srna_detection(
-                self._args.Vienna_folder, self._args.blast_plus_folder,
+                self._args.Vienna_folder, self._args.Vienna_utils,
+                self._args.blast_plus_folder,
                 self._args.ps2pdf14_path, self._paths.srna_folder,
                 self._args.UTR_derived_sRNA, self._args.annotation_folder, 
                 self._args.TSS_folder, self._args.transcript_assembly_folder,
@@ -348,7 +349,7 @@ class Controller(object):
                 self._args.samtools_path, self._args.bcftools_path,
                 self._args.bam_type, 
                 self._args.program, self._args.fasta_path,
-                self._args.normal_bam_path, self._args.frag_bam_path,
+                self._args.tex_bam_path, self._args.frag_bam_path,
                 self._args.quality, self._args.read_depth,
                 self._paths.snp_output_folder, self._args.indel_fraction)
 
@@ -369,8 +370,7 @@ class Controller(object):
         sublocal.run_sub_local(
             self._args.Psortb_path, self._args.gff_path,
             self._args.fasta_path, self._args.bacteria_type,
-            self._args.difference_multi,
-            self._args.merge_to_gff, self._args.EMBOSS_transeq_path,
+            self._args.difference_multi, self._args.merge_to_gff,
             self._paths.sublocal_output_folder)
 
     def ribos(self):

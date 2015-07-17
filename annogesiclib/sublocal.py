@@ -26,8 +26,7 @@ class SubLocal(object):
         self.endfix_table = "table.csv"
         self.endfix_raw = "raw.txt"
 
-    def _get_protein_seq(self, fasta_path, gff, tmp_path,
-                         gff_path, emboss_path):
+    def _get_protein_seq(self, fasta_path, gff, tmp_path, gff_path):
         prefix = gff.replace(".gff", "")
         fasta = self.helper.get_correct_file(fasta_path, ".fa", prefix, None)
         dna_seq_file = os.path.join(tmp_path, "_".join([prefix, "dna.fa"]))
@@ -36,8 +35,6 @@ class SubLocal(object):
                                 fasta, dna_seq_file)
         print("transfer DNA seq to protein seq of {0}".format(prefix))
         self.helper.translation(dna_seq_file, "tmp")
-#        call([emboss_path, "-sequence", dna_seq_file,
-#              "-outseq", "tmp", "-trim"])
         prot_seq_file = os.path.join(tmp_path, "_".join([prefix, "protein.fa"]))
         self.fixer.fix_emboss("tmp", prot_seq_file)
         os.remove("tmp")
@@ -98,7 +95,7 @@ class SubLocal(object):
                               "_".join(["stat", prefix, "sublocal.csv"])))
 
     def run_sub_local(self, psortb_path, gffs, fastas, gram, fuzzy,
-                      merge, emboss_path, out_folder):
+                      merge, out_folder):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
@@ -108,7 +105,7 @@ class SubLocal(object):
         self.helper.check_make_folder(self.tmp_result)
         for gff in os.listdir(self.gff_path):
             prefix = self._get_protein_seq(self.fasta_path, gff, self.tmp_path,
-                                           self.gff_path, emboss_path)
+                                           self.gff_path)
             self._run_psortb(prefix, out_folder, gram,
                              psortb_path, self.tmp_path)
             self._extract_result(merge, self.tmp_result, prefix,

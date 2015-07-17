@@ -414,8 +414,8 @@ class TSSpredator(object):
                 self.helper.check_make_folder(
                      os.path.join(self.stat_outfolder, gff_folder))
                 datas.append(gff_folder)
-        if remove_low_expression:
-            self._low_expression(nt_length, cluster, manual, libs,
+        if remove_low_expression is not None:
+            self._low_expression(nt_length, cluster, remove_low_expression, libs,
                 self.gff_outfolder, program, wig_folder)
         if manual is not None:
             self.multiparser.combine_wig(gffs, self.wig_path, None)

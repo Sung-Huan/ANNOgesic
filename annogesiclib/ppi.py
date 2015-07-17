@@ -51,25 +51,20 @@ class PPINetwork(object):
             detect_id = True
         return detect_id
 
-    def _retrieve_id(self, strain_id, query_id, genes, files):
+    def _retrieve_id(self, strain_id, genes, files):
         detect_id = False
-        if strain_id["protein"] == "all":
-            for gene in genes:
-                detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
-                                          strain_id, files)
-        else:
-            for gene in genes:
-                detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
-                                          strain_id, files)
+        for gene in genes:
+            detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
+                                      strain_id, files)
             if not detect_id:
                 print("Error:there is no {0} in {1}".format(
-                       query_id, strain_id["file"]))
+                       gene, strain_id["file"]))
 
     def _get_prefer_name(self, row_a, strain_id, files, genes, querys):
         prefername = ""
         filename = row_a.split(".")
         if (filename[1] not in os.listdir(files["id_list"])) and (
-            (strain_id["protein"] != "all") or ("all" not in querys)):
+            "all" not in querys):
             self._wget_id(strain_id["ptt"], filename[1], strain_id, files)
         if filename[1] in os.listdir(files["id_list"]):
             id_h = open(os.path.join(files["id_list"], filename[1]), "r")
@@ -298,51 +293,49 @@ class PPINetwork(object):
     def _retrieve_actions(self, files, out_folder, strain_id, paths,
                           score, no_specific, genes, querys):
         for id_file in os.listdir(files["id_list"]):
-            if (strain_id["protein"] == id_file) or (
-                strain_id["protein"] == "all"):
-                if id_file != self.tmp_files["log"]:
-                    self._wget_actions(files, id_file, strain_id, out_folder)
-                    a_h = open(self.tmp_files["wget_action"], "r")
-                    pre_row = []
-                    first = True
-                    detect = False
-                    first_output = {"specific_all": True, "specific_best": True,
-                                    "nospecific_all": True,
-                                    "nospecific_best": True}
-                    print("Retrieving Pubmed for {0} of {1} -- {2}".format(
-                           id_file, strain_id["string"], strain_id["file"]))
-                    for row_a in csv.reader(a_h, delimiter="\t"):
-                        if row_a == []:
-                            print("No interaction can be detected...")
-                            break
-                        if row_a[0].startswith("item_id_a"):
-                            continue
+            if id_file != self.tmp_files["log"]:
+                self._wget_actions(files, id_file, strain_id, out_folder)
+                a_h = open(self.tmp_files["wget_action"], "r")
+                pre_row = []
+                first = True
+                detect = False
+                first_output = {"specific_all": True, "specific_best": True,
+                                "nospecific_all": True,
+                                "nospecific_best": True}
+                print("Retrieving Pubmed for {0} of {1} -- {2}".format(
+                       id_file, strain_id["string"], strain_id["file"]))
+                for row_a in csv.reader(a_h, delimiter="\t"):
+                    if row_a == []:
+                        print("No interaction can be detected...")
+                        break
+                    if row_a[0].startswith("item_id_a"):
+                        continue
+                    else:
+                        detect = True
+                        if first:
+                            first = False
+                            mode = row_a[2]
+                            actor = row_a[4]
                         else:
-                            detect = True
-                            if first:
-                                first = False
+                            if (row_a[0] != pre_row[0]) or (
+                                row_a[1] != pre_row[1]):
+                                self._get_pubmed(pre_row, out_folder,
+                                     strain_id, mode, actor, score, id_file,
+                                     first_output, no_specific,
+                                     strain_id["ptt"], genes, files, paths,
+                                     querys)
                                 mode = row_a[2]
                                 actor = row_a[4]
                             else:
-                                if (row_a[0] != pre_row[0]) or (
-                                    row_a[1] != pre_row[1]):
-                                    self._get_pubmed(pre_row, out_folder,
-                                         strain_id, mode, actor, score, id_file,
-                                         first_output, no_specific,
-                                         strain_id["ptt"], genes, files, paths,
-                                         querys)
-                                    mode = row_a[2]
-                                    actor = row_a[4]
-                                else:
-                                    mode = mode + ";" + row_a[2]
-                                    actor = actor + ";" + row_a[4]
-                            pre_row = row_a
-                    if detect:
-                        detect = False
-                        self._get_pubmed(row_a, out_folder, strain_id, mode,
-                                         actor, score, id_file, first_output,
-                                         no_specific, strain_id["ptt"], genes,
-                                         files, paths, querys)
+                                mode = mode + ";" + row_a[2]
+                                actor = actor + ";" + row_a[4]
+                        pre_row = row_a
+                if detect:
+                    detect = False
+                    self._get_pubmed(row_a, out_folder, strain_id, mode,
+                                     actor, score, id_file, first_output,
+                                     no_specific, strain_id["ptt"], genes,
+                                     files, paths, querys)
 
     def _plot(self, out_folder, score, size, no_specific):
         for folder in os.listdir(self.all_result): ## plot figure
@@ -367,9 +360,9 @@ class PPINetwork(object):
         files = {}
         for strain in strains: # import strain information
             datas = strain.split(":")
-            strain_ids.append({"protein": datas[0], "file": datas[1],
-                               "ptt":datas[2], "string": datas[3],
-                               "pie": datas[4]})
+            strain_ids.append({"file": datas[0],
+                               "ptt":datas[1], "string": datas[2],
+                               "pie": datas[3]})
         strain_ids.sort(key=lambda x: x["file"])
         pre_file = ""
         file_holders = {"all_nospecific": None, "best_nospecific": None,
@@ -390,7 +383,7 @@ class PPINetwork(object):
                     elif row[3] == strain_id["string"]:
                         strain_id["string"] = row[0]
                         break
-            self._retrieve_id(strain_id, strain_id["protein"], genes, files)
+            self._retrieve_id(strain_id, genes, files)
             self._retrieve_actions(files, out_folder, strain_id, paths,
                                    score, no_specific, genes, querys)
         self._plot(out_folder, score, size, no_specific)

@@ -276,7 +276,7 @@ class sRNADetection(object):
         tmp_sec_path = os.path.join(main_path, sec_path)
         tmp_dot_path = os.path.join(main_path, dot_path)
         os.system(" ".join(["cat", seq_file, "|",
-                  os.path.join(vienna_path, "Progs", "RNAfold"),
+                  os.path.join(vienna_path, "RNAfold"),
                   "-p", ">", sec_file]))
         extract_energy(os.path.join(main_path,
                        "_".join([self.prefixs["basic"], prefix])),
@@ -288,7 +288,7 @@ class sRNADetection(object):
         return {"sec": tmp_sec_path, "dot": tmp_dot_path, "main": main_path,
                 "tmp": os.path.join(main_path, tmp_path)}
 
-    def _replot_sec_to_pdf(self, vienna_path, tmp_paths, ps2pdf14_path, prefix):
+    def _replot_sec_to_pdf(self, vienna_util, tmp_paths, ps2pdf14_path, prefix):
         ### now we are in out_folder/tmp_srna
         for file_ in os.listdir(os.getcwd()):
             if file_.endswith("ss.ps"):
@@ -296,7 +296,7 @@ class sRNADetection(object):
                 rel_file = file_.replace("ss.ps", "rss.ps")
                 print("replot {0}".format(file_))
                 os.system(" ".join(["perl",
-                          os.path.join(vienna_path, "Utils", "relplot.pl"),
+                          os.path.join(vienna_util, "relplot.pl"),
                           os.path.join(tmp_paths["tmp"], file_),
                           os.path.join(tmp_paths["tmp"], dot_file),
                           ">", os.path.join(tmp_paths["tmp"], rel_file)]))
@@ -314,7 +314,7 @@ class sRNADetection(object):
                  os.path.join(tmp_paths["dot"], prefix), ["dp.pdf"])
 
     def _plot_mountain(self, mountain, moun_path,
-                       tmp_paths, prefix, vienna_path):
+                       tmp_paths, prefix, vienna_util):
         if mountain:
             tmp_moun_path = os.path.join(tmp_paths["main"], moun_path)
             os.mkdir(os.path.join(tmp_moun_path, prefix))
@@ -328,7 +328,7 @@ class sRNADetection(object):
                     moun_file = dot_file.replace("dp.ps", "mountain.pdf")
                     print("Generating {0}".format(moun_file))
                     call(["perl",
-                          os.path.join(vienna_path, "Utils", "mountain.pl"),
+                          os.path.join(vienna_util, "mountain.pl"),
                           os.path.join(tmp_paths["tmp"], dot_file)], stdout=out)
                     plot_mountain_plot(moun_txt, moun_file)
                     os.rename(moun_file,
@@ -336,8 +336,8 @@ class sRNADetection(object):
                     out.close()
                     os.remove(moun_txt)
 
-    def _compute_2d_and_energy(self, out_folder, prefixs, fasta_path,
-                               vienna_path, mountain, ps2pdf14_path):
+    def _compute_2d_and_energy(self, out_folder, prefixs, fasta_path, vienna_path,
+                               vienna_util, mountain, ps2pdf14_path):
         print("Running energy calculation....")
         moun_path = os.path.join(out_folder, "mountain_plot")
         sec_path = os.path.join(out_folder, "sec_structure", "sec_plot")
@@ -348,10 +348,10 @@ class sRNADetection(object):
         for prefix in prefixs:
             tmp_paths = self._get_seq_sec(fasta_path, out_folder, prefix,
                                           sec_path, dot_path, vienna_path)
-            self._replot_sec_to_pdf(vienna_path, tmp_paths,
+            self._replot_sec_to_pdf(vienna_util, tmp_paths,
                                     ps2pdf14_path, prefix)
             self._plot_mountain(mountain, moun_path, tmp_paths,
-                                prefix, vienna_path)
+                                prefix, vienna_util)
             self.helper.remove_all_content(os.getcwd(), ".ps", "file")
             os.chdir(tmp_paths["main"])
             os.rename("_".join([self.prefixs["energy"], prefix]),
@@ -452,12 +452,13 @@ class sRNADetection(object):
             self.helper.remove_tmp(sorf_file)
 
     def _filter_srna(self, import_info, out_folder, prefixs, fasta_path,
-                     vienna_path, mountain, ps2pdf14_path, nr_database,
-                     database_format, blast_path, srna_database,
+                     vienna_path, vienna_util, mountain, ps2pdf14_path,
+                     nr_database, database_format, blast_path, srna_database,
                      stat_path, sorf_path, e_nr, e_srna):
         if "2" in import_info:
             self._compute_2d_and_energy(out_folder, prefixs, fasta_path,
-                                        vienna_path, mountain, ps2pdf14_path)
+                                        vienna_path, vienna_util,
+                                        mountain, ps2pdf14_path)
         if "3" in import_info:
             self._blast(nr_database, database_format, "prot", out_folder,
                         blast_path, prefixs, fasta_path, "blastx", "nr", e_nr)
@@ -498,13 +499,13 @@ class sRNADetection(object):
             sys.exit()
         return replicates
 
-    def run_srna_detection(self, vienna_path, blast_path, ps2pdf14_path,
-            out_folder, utr_srna, gffs, tsss, trans, fuzzy_inter_tss,
-            fuzzy_5utr_tss, fuzzy_3utr_tss, fuzzy_intercds_tss, import_info,
-            tex_wigs, frag_wigs, pros, fastas, mountain, database_format,
-            srna_database, nr_database, energy, coverage, utr5_coverage,
-            utr3_coverage, intercds_coverage, max_len, min_len, tlibs, flibs,
-            replicates_tex, replicates_frag, tex_notex, e_nr, e_srna,
+    def run_srna_detection(self, vienna_path, vienna_util, blast_path,
+            ps2pdf14_path, out_folder, utr_srna, gffs, tsss, trans,
+            fuzzy_inter_tss, fuzzy_5utr_tss, fuzzy_3utr_tss, fuzzy_intercds_tss,
+            import_info, tex_wigs, frag_wigs, pros, fastas, mountain,
+            database_format, srna_database, nr_database, energy, coverage,
+            utr5_coverage, utr3_coverage, intercds_coverage, max_len, min_len,
+            tlibs, flibs, replicates_tex, replicates_frag, tex_notex, e_nr, e_srna,
             table_best, decrease_inter, decrease_utr, fuzzy_inter, fuzzy_utr,
             nr_hits_num, sorf_file, all_hit, best_sorf):
         replicates = self._get_replicates(replicates_tex, replicates_frag)
@@ -527,9 +528,9 @@ class sRNADetection(object):
                       fuzzy_utr, fuzzy_tsss, utr5_coverage, utr3_coverage,
                       intercds_coverage, out_folder, utr_srna, self.fasta_path)
         self._filter_srna(import_info, out_folder, prefixs, self.fasta_path,
-            vienna_path, mountain, ps2pdf14_path, nr_database, database_format,
-            blast_path, srna_database, self.stat_path, self.sorf_path, e_nr,
-            e_srna)
+            vienna_path, vienna_util, mountain, ps2pdf14_path, nr_database,
+            database_format, blast_path, srna_database, self.stat_path,
+            self.sorf_path, e_nr, e_srna)
         for prefix in prefixs:
             shutil.copyfile("_".join([self.prefixs["basic"], prefix]),
                             os.path.join(self.all_best["all_gff"],
