@@ -466,7 +466,7 @@ def main():
         help="The terminator of fragmented library should be detected more than this number of replicates.")
     Terminator_parser.add_argument(
         "-tb","--table_best", default=False, action="store_true",
-        help="Output sRNA table only most decreasing track")
+        help="Output sRNA table only most decreasing track.")
     Terminator_parser.set_defaults(func=run_Terminator)
 
     # Parameter of Transcript assembly
