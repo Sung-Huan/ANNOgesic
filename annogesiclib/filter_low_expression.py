@@ -35,14 +35,14 @@ def compare_wig(tars, wig_fs, wig_rs):
 def stat(tars, refs, cutoff, gene_length, cluster):
     stats = {"tp": 0, "fp": 0, "miss": 0, "fp_rate": 0,
              "tp_rate": 0, "miss_rate": 0}
-    nums = {"tar": 0, "ref": 0}
+    num_ref = 0
     for ref in refs:
-        nums["ref"] += 1
+        num_ref += 1
         detect = False
         for tar in tars:
             if (ref.seq_id == tar.seq_id) and (
                 ref.strand == tar.strand) and (
-                tar.attributes["coverage"] >= cutoff) and (
+                float(tar.attributes["coverage"]) >= cutoff) and (
                 tar.start <= int(gene_length)):
                 if math.fabs(ref.start - tar.start) <= cluster:
                     stats["tp"] += 1
@@ -52,13 +52,13 @@ def stat(tars, refs, cutoff, gene_length, cluster):
             stats["miss"] += 1
     for tar in tars:
         if (not tar.attributes["print"]) and (
-            tar.attributes["coverage"] >= cutoff) and (
+            float(tar.attributes["coverage"]) >= cutoff) and (
             tar.start <= int(gene_length)):
             stats["fp"] += 1
-    stats["fp_rate"] = float(stats["fp"]) / float(int(gene_length) - nums["ref"])
-    stats["tp_rate"] = float(stats["tp"]) / float(nums["ref"])
-    stats["miss_rate"] = float(stats["miss"]) / float(nums["ref"])
-    return stats, nums
+    stats["fp_rate"] = float(stats["fp"]) / float(int(gene_length) - num_ref)
+    stats["tp_rate"] = float(stats["tp"]) / float(num_ref)
+    stats["miss_rate"] = float(stats["miss"]) / float(num_ref)
+    return stats, num_ref
 
 def print_file(tars, cutoff, out_file):
     out = open(out_file, "w")
@@ -66,9 +66,45 @@ def print_file(tars, cutoff, out_file):
         if tar.attributes["coverage"] >= cutoff:
             out.write(tar.info + "\n")
 
+def change_best(num_ref, best, stat_value, change):
+    if num_ref > 100:
+        if best["tp_rate"] - stat_value["tp_rate"] >= 0.1:
+            change = False
+        else:
+            if (best["tp_rate"] <= stat_value["tp_rate"]) and (
+                best["fp_rate"] >= stat_value["fp_rate"]):
+                best = stat_value.copy()
+                change = True
+            elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and (
+                  stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
+                best = stat_value.copy()
+                change = True
+            elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and (
+                  best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
+                best = stat_value.copy()
+                change = True
+    else:
+        if best["tp"] - stat_value["tp"] >= 5:
+            change = False
+        else:
+            if (best["tp"] <= stat_value["tp"]) and (
+                best["fp"] >= stat_value["fp"]):
+                best = stat_value.copy()
+                change = True
+            tp_diff = float(best["tp"] - stat_value["tp"])
+            if tp_diff > 0:
+                if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
+                    best = stat_value.copy()
+                    change = True
+            elif tp_diff < 0:
+                tp_diff = tp_diff * -1
+                if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
+                    best = stat_value.copy()
+                    change = True
+    return best, change
+
 def filter_low_expression(gff_file, manual_file, wig_f_file, wig_r_file,
-                          input_lib, wig_folder, cluster, gene_length,
-                          out_file):
+            input_lib, wig_folder, cluster, gene_length, out_file):
     tars = read_gff(gff_file)
     refs = read_gff(manual_file)
     libs, texs = read_libs(input_lib, wig_folder)
@@ -79,46 +115,13 @@ def filter_low_expression(gff_file, manual_file, wig_f_file, wig_r_file,
     first = True
     while True:
         change = False
-        stat_value, nums = stat(tars, refs, cutoff, gene_length, cluster)
+        stat_value, num_ref = stat(tars, refs, cutoff, gene_length, cluster)
         if first:
             first = False
             best = stat_value.copy()
             continue
         else:
-            if nums["ref"] > 100:
-                if best["tp_rate"] - stat_value["tp_rate"] >= 0.1:
-                    break
-                else:
-                    if (best["tp_rate"] <= stat_value["tp_rate"]) and (
-                        best["fp_rate"] >= stat_value["fp_rate"]):
-                        best = stat_value.copy()
-                        change = True
-                    elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and (
-                          stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
-                        best = stat_value.copy()
-                        change = True
-                    elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and (
-                          best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
-                        best = stat_value.copy()
-                        change = True
-            else:
-                if best["tp"] - stat_value["tp"] >= 5:
-                    break
-                else:
-                    if (best["tp"] <= stat_value["tp"]) and (
-                        best["fp"] >= stat_value["fp"]):
-                        best = stat_value.copy()
-                        change = True
-                    tp_diff = float(best["tp"] - stat_value["tp"])
-                    if tp_diff > 0:
-                        if float(best["fp"] - stat_value["fp"]) >= 5 * tp_diff:
-                            best = stat_value.copy()
-                            change = True
-                    elif tp_diff < 0:
-                        tp_diff = tp_diff * -1
-                        if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
-                            best = stat_value.copy()
-                            change = True
+            best, change = change_best(num_ref, best, stat_value, change)
             if not change:
                 break
         cutoff = cutoff + 0.1
