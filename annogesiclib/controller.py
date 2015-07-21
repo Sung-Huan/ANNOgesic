@@ -165,7 +165,7 @@ class Controller(object):
         """color the screenshots"""
         color = ColorPNG()
         color.generate_color_png(
-                self._args.track_number, self._args.output_folder, 
+                self._args.track_number, self._args.screenshot_folder, 
                 self._args.ImageMagick_covert_path)
 
     def terminator(self):

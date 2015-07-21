@@ -358,6 +358,7 @@ def read_wig(filename, strand):
 
 def read_data(tss_file, fasta_file):
     seq = {}
+    tsss = []
     t_f = open(tss_file, "r")
     for entry in Gff3Parser().entries(t_f):
         tsss.append(entry)
@@ -410,7 +411,7 @@ def upstream(tss_file, fasta_file, gff_file, source, wig_folder,
              "inter": open("tmp/internal.fa", "w"),
              "anti": open("tmp/antisense.fa", "w"),
              "orph": open("tmp/orphan.fa", "w")}
-    tsss, seq = read_data(tsss, seq, tss_file, fasta_file)
+    tsss, seq = read_data(tss_file, fasta_file)
     num_tss = 0
     if not source:
         out = open(out_class, "w")

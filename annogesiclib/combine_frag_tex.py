@@ -69,12 +69,12 @@ def combine(frag_file, tex_file, tolerance, output_file):
         for norm in sort_norms:
             overlap = compare(frag, norm, overlap, tolerance)
         if overlap:
-            store(frag, "fragmented_and_normal", finals)
+            store(frag, "fragmented_and_tex", finals)
         else:
             store(frag, "fragmented", finals)
     for norm in sort_norms:
         if norm.attributes["print"] is False:
-            store(norm, "normal", finals)
+            store(norm, "tex", finals)
     sort_finals = sorted(finals, key=lambda k: (k.seq_id, k.start))
     num = 0
     for tar in sort_finals:

@@ -374,8 +374,8 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     color_parser.add_argument(
-        "--output_folder", "-f",
-        help="The folder which stores the screenshots. ")
+        "--screenshot_folder", "-f",
+        help="The folder which stores the folder of screenshots. ")
     color_parser.add_argument(
         "--track_number", "-t", type=int,
         help="How many number of tracks do you have. ")
@@ -977,7 +977,7 @@ def main():
         help="The ratio of (read support circ / all read) at starting point. The ratio of candidates should higher than this cutoff. Default is 0.25.")
     circrna_parser.add_argument(
         "--end_ratio", "-er", default=0.25, type=float, 
-        help="The ratio of (read support circ / all read) at end point. The ratio of candidates should higher than this cutoff. Default is 0.25")
+        help="The ratio of (read support circ / all read) at end point. The ratio of candidates should higher than this cutoff. Default is 0.25.")
     circrna_parser.set_defaults(func=run_circrna)
     # Parameters of Go term
     goterm_parser = subparsers.add_parser(
@@ -992,15 +992,15 @@ def main():
     goterm_parser.add_argument(
         "--UniProt_id", "-u", default="ANNOgesic/input/database/idmapping_selected.tab",
         help="The path of UniProt ID mapping database. "
-        "default is ANNOgesic/input/database/idmapping_selected.tab")
+        "default is ANNOgesic/input/database/idmapping_selected.tab.")
     goterm_parser.add_argument(
         "--go_obo", "-go", default="ANNOgesic/input/database/go.obo",
         help="The path of go.obo. "
-        "Default is ANNOgesic/input/database/go.obo")
+        "Default is ANNOgesic/input/database/go.obo.")
     goterm_parser.add_argument(
         "--goslim_obo", "-gs", default="ANNOgesic/input/database/goslim.obo",
         help="The path of goslim.obo. "
-        "Default is ANNOgesic/input/database/goslim.obo")
+        "Default is ANNOgesic/input/database/goslim.obo.")
     goterm_parser.set_defaults(func=run_goterm)
     # Parameters of sRNA target prediction
     starget_parser = subparsers.add_parser(
@@ -1079,7 +1079,7 @@ def main():
         "Default is 20. ")
     starget_parser.add_argument(
         "--top", "-t", default=20, type=int,
-        help="The output file only include top one(default is 20). ")
+        help="The output file only include top ones(default is 20). ")
     starget_parser.add_argument(
         "--process_rnaplex", "-pp", default=5, type=int,
         help="How many parallel processes for running RNAplex prediction. ")

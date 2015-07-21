@@ -83,7 +83,6 @@ def merge_srna(srnas, final_srnas, srna_type):
             srna.source = "UTR_derived"
             srna.feature = "sRNA"
         else:
-            srna.attributes["lib_type"] = srna.source.replace("_and_", "&")
             srna.source = "intergenic"
             if "with_TSS" in srna.attributes.keys():
                 if srna.attributes["with_TSS"] == "False":

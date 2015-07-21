@@ -190,7 +190,7 @@ def read_wig(filename, libs, strand):
     wigs = {}
     tracks = []
     wig_parser = WigParser()
-    wig_fh = open(fliename)
+    wig_fh = open(filename)
     for entry in wig_parser.parser(wig_fh, strand):
         if entry.track not in tracks:
             tracks.append(entry.track)
