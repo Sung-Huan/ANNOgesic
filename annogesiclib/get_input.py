@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import os
 import sys
 from annogesiclib.seq_editer import SeqEditer

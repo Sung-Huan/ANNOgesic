@@ -66,7 +66,8 @@ def print_file(tars, cutoff, out_file):
         if tar.attributes["coverage"] >= cutoff:
             out.write(tar.info + "\n")
 
-def change_best(num_ref, best, stat_value, change):
+def change_best(num_ref, best, stat_value):
+    change = False
     if num_ref > 100:
         if best["tp_rate"] - stat_value["tp_rate"] >= 0.1:
             change = False
@@ -114,14 +115,13 @@ def filter_low_expression(gff_file, manual_file, wig_f_file, wig_r_file,
     cutoff = 1
     first = True
     while True:
-        change = False
         stat_value, num_ref = stat(tars, refs, cutoff, gene_length, cluster)
         if first:
             first = False
             best = stat_value.copy()
             continue
         else:
-            best, change = change_best(num_ref, best, stat_value, change)
+            best, change = change_best(num_ref, best, stat_value)
             if not change:
                 break
         cutoff = cutoff + 0.1

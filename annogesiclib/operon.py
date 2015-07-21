@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper

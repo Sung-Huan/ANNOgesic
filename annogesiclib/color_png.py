@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import os
 from subprocess import call
 from annogesiclib.gen_svg import gen_svg

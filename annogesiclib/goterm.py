@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 import shutil
 from annogesiclib.helper import Helper

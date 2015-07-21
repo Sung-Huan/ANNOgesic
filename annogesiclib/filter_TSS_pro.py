@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 import math
 from annogesiclib.gff3 import Gff3Parser

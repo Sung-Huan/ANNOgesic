@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import os
 import shutil
 from annogesiclib.multiparser import Multiparser

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import csv
 
 class SpliceParser(object):

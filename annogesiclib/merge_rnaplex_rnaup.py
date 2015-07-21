@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from annogesiclib.gff3 import Gff3Parser
 
 def detect_energy(line, srna):
