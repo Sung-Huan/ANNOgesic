@@ -26,8 +26,8 @@ class RATT(object):
                           "ptt": os.path.join(gff_outfolder, "tmp.ptt"),
                           "rnt": os.path.join(gff_outfolder, "tmp.rnt")}
 
-    def _convert_to_pttrnt(self, gffs):
-        for gff in os.listdir(gffs):
+    def _convert_to_pttrnt(self, gffs, files):
+        for gff in files:
             if gff.endswith(".gff"):
                 gff = os.path.join(gffs, gff)
                 filename = gff.split("/")
@@ -55,7 +55,7 @@ class RATT(object):
         if out_gbk:
             shutil.rmtree(out_gbk)
 
-    def _convert_to_gff(self, ratt_result, output_path, gff_outfolder):
+    def _convert_to_gff(self, ratt_result, output_path, gff_outfolder, files):
         name = ratt_result.split(".")
         filename = ".".join(name[1:-2]) + ".gff"
         output_file = os.path.join(output_path, filename)
@@ -64,6 +64,7 @@ class RATT(object):
         self.format_fixer.fix_ratt(output_file, ".".join(name[1:-2]), "tmp_gff")
         os.rename("tmp_gff", output_file)
         shutil.copy(output_file, os.path.join(gff_outfolder, filename))
+        files.append(filename)
 
     def _parser_embl_gbk(self, files):
         self.helper.check_make_folder(self.gbk)
@@ -133,7 +134,7 @@ class RATT(object):
                     if os.path.isdir(filename):
                         shutil.rmtree(filename)
 
-    def annotation_transfer(self, ratt_path, pagit_folder, element, transfer_type,
+    def annotation_transfer(self, ratt_path, element, transfer_type,
                             ref_embls, tar_fastas, ref_fastas, output_path,
                             convert, gff_outfolder, pairs):
         self.multiparser.parser_fasta(tar_fastas)
@@ -141,33 +142,34 @@ class RATT(object):
         out_gbk = self._convert_embl(ref_embls)
         self._run_ratt(output_path, ratt_path, element, transfer_type, pairs)
         if convert:
+            files = []
             for data in os.listdir(output_path):
                 if "final.embl" in data:
-                    self._convert_to_gff(data, output_path, gff_outfolder)
-                    self._convert_to_pttrnt(gff_outfolder)
-        self.helper.check_make_folder(self.tmp_files["out_gff"])
-        for folder in os.listdir(tar_fastas):
-            files = []
-            if "_folder" in folder:
-                datas = folder.split("_folder")
-                prefix = datas[0][:-3]
-                for file_ in os.listdir(os.path.join(tar_fastas, folder)):
-                    files.append(file_[:-3])
-                for gff in os.listdir(gff_outfolder):
-                    for file_ in files:
-                        if (".gff" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(os.path.join(
-                                 gff_outfolder, gff), self.tmp_files["gff"])
-                        if (".ptt" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(os.path.join(
-                                 gff_outfolder, gff), self.tmp_files["ptt"])
-                        if (".rnt" in gff) and (file_ == gff[:-4]):
-                            self.helper.merge_file(os.path.join(
-                                 gff_outfolder, gff), self.tmp_files["rnt"])
-                os.rename(self.tmp_files["gff"], os.path.join(
-                          self.tmp_files["out_gff"], prefix + ".gff"))
-                os.rename(self.tmp_files["ptt"], os.path.join(
-                          self.tmp_files["out_gff"], prefix + ".ptt"))
-                os.rename(self.tmp_files["rnt"], os.path.join(
-                          self.tmp_files["out_gff"], prefix + ".rnt"))
+                    self._convert_to_gff(data, output_path, gff_outfolder, files)
+                    self._convert_to_pttrnt(gff_outfolder, files)
+            self.helper.check_make_folder(self.tmp_files["out_gff"])
+            for folder in os.listdir(tar_fastas):
+                files = []
+                if "_folder" in folder:
+                    datas = folder.split("_folder")
+                    prefix = datas[0][:-3]
+                    for file_ in os.listdir(os.path.join(tar_fastas, folder)):
+                        files.append(file_[:-3])
+                    for gff in os.listdir(gff_outfolder):
+                        for file_ in files:
+                            if (".gff" in gff) and (file_ == gff[:-4]):
+                                self.helper.merge_file(os.path.join(
+                                     gff_outfolder, gff), self.tmp_files["gff"])
+                            if (".ptt" in gff) and (file_ == gff[:-4]):
+                                self.helper.merge_file(os.path.join(
+                                     gff_outfolder, gff), self.tmp_files["ptt"])
+                            if (".rnt" in gff) and (file_ == gff[:-4]):
+                                self.helper.merge_file(os.path.join(
+                                     gff_outfolder, gff), self.tmp_files["rnt"])
+                    os.rename(self.tmp_files["gff"], os.path.join(
+                              self.tmp_files["out_gff"], prefix + ".gff"))
+                    os.rename(self.tmp_files["ptt"], os.path.join(
+                              self.tmp_files["out_gff"], prefix + ".ptt"))
+                    os.rename(self.tmp_files["rnt"], os.path.join(
+                              self.tmp_files["out_gff"], prefix + ".rnt"))
         self._remove_files(gff_outfolder, tar_fastas, out_gbk, ref_fastas)

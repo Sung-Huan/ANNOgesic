@@ -23,6 +23,7 @@ class TargetFasta(object):
                                    self.folders["tmp_tar"])
         print("transfer to target fasta...")
         if output is not None:
+            first = True
             for file_ in output:
                 datas = file_.split(":")
                 filename = datas[0]
@@ -30,12 +31,15 @@ class TargetFasta(object):
                 out = open(os.path.join(tar_folder, filename + ".fa"), "w")
                 for strain in strains:
                     if strain + ".fa" in os.listdir(self.folders["tmp_tar"]):
+                        if first:
+                            first = False
+                        else:
+                            out.write("\n")
                         with open(os.path.join(
                                   self.folders["tmp_tar"],
                                   strain + ".fa")) as f_h:
                             for line in f_h:
                                 out.write(line)
-                        out.write("\n")
                     else:
                         print("Error:no fasta information of {0}.fa".format(
                               strain))

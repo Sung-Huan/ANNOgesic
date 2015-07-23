@@ -45,24 +45,24 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("root"))
         project_creator.create_subfolders(self._paths.required_folders("get_target_fasta"))
         project_creator.create_version_file(self._paths.version_path, version)
-        sys.stdout.write("Created folder \"%s\" and required subfolders.\n" % (
-            self._args.project_path))
-        sys.stdout.write("Please copy tex and no tex wig files into \"%s\.\n" % (
-            self._paths.tex_folder))
-        sys.stdout.write("Please copy mutation table files into \"%s\.\n" % (
-            self._paths.mutation_table_folder))
-        sys.stdout.write("Please copy fragment wig files into \"%s\.\n" % (
-            self._paths.frag_folder))
-        sys.stdout.write("Please copy read files into \"%s\.\n" % (
-            self._paths.read_folder))
-        sys.stdout.write("Please copy BAM files which map to reference genome(if you start from them) into \"%s\.\n" % (
-            self._paths.bam_ref_folder))
-        sys.stdout.write("Please copy BAM files which map to target genome(if you already had them) into \"%s\.\n" % (
-            self._paths.bam_tar_folder))
-        sys.stdout.write("Please download sRNAdatabse files(i.e. BSRD) into \"%s\.\n" % (
-            self._paths.database_folder))
-        sys.stdout.write("Please extract the riboswitch information of Rfam into \"%s\.\n" % (
-            self._paths.database_folder))
+#        sys.stdout.write("Created folder \"%s\" and required subfolders.\n" % (
+#            self._args.project_path))
+#        sys.stdout.write("Please copy tex and no tex wig files into \"%s\.\n" % (
+#            self._paths.tex_folder))
+#        sys.stdout.write("Please copy mutation table files into \"%s\.\n" % (
+#            self._paths.mutation_table_folder))
+#        sys.stdout.write("Please copy fragment wig files into \"%s\.\n" % (
+#            self._paths.frag_folder))
+#        sys.stdout.write("Please copy read files into \"%s\.\n" % (
+#            self._paths.read_folder))
+#        sys.stdout.write("Please copy BAM files which map to reference genome(if you start from them) into \"%s\.\n" % (
+#            self._paths.bam_ref_folder))
+#        sys.stdout.write("Please copy BAM files which map to target genome(if you already had them) into \"%s\.\n" % (
+#            self._paths.bam_tar_folder))
+#        sys.stdout.write("Please download sRNAdatabse files(i.e. BSRD) into \"%s\.\n" % (
+#            self._paths.database_folder))
+#        sys.stdout.write("Please extract the riboswitch information of Rfam into \"%s\.\n" % (
+#            self._paths.database_folder))
     def get_input(self):
         """Download required files from website."""
         if self._args.ref_gff is True:
@@ -71,6 +71,10 @@ class Controller(object):
             get_file(self._args.FTP_path, self._paths.ref_fasta_folder, "fna")
         if self._args.ref_gbk is True:
             get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "gbk")
+        if self._args.ref_ptt is True:
+            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "ptt")
+        if self._args.ref_rnt is True:
+            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "rnt")
         if self._args.convert_embl is True:
             annotation_files = os.listdir(self._paths.ref_annotation_folder)
             if len(annotation_files) == 0:
@@ -90,7 +94,7 @@ class Controller(object):
         ratt = RATT(self._args.ref_gbk, self._paths.ratt_folder,
                     self._args.target_fasta, self._args.ref_fasta,
                     self._paths.tar_annotation_folder)
-        ratt.annotation_transfer(self._args.RATT_path, self._args.PAGIT_folder, 
+        ratt.annotation_transfer(self._args.RATT_path, 
                                  self._args.element, self._args.transfer_type, 
                                  self._args.ref_gbk, self._args.target_fasta, 
                                  self._args.ref_fasta, self._paths.ratt_folder, 

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import os
 import csv
 from annogesiclib.gff3 import Gff3Parser
@@ -76,7 +74,8 @@ def modify_overlap(pre_srna, srna):
             pre_srna.end = srna.end
     return pre_srna
 
-def merge_srna(srnas, final_srnas, srna_type):
+def merge_srna(srnas, srna_type):
+    final_srnas = []
     first = True
     for srna in srnas:
         if srna_type == "UTR":
@@ -102,6 +101,7 @@ def merge_srna(srnas, final_srnas, srna_type):
                 pre_srna = srna
     if not overlap:
         final_srnas.append(srna)
+    return final_srnas
 
 def read_gff(srna_file):
     datas = []
@@ -120,16 +120,15 @@ def read_table(table_file, file_type):
     return datas
 
 def merge_srna_gff(srna_utr, srna_inter, out_file):
-    srnas = []
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
     utrs = read_gff(srna_utr)
     inters = read_gff(srna_inter)
     num_srna = 0
     if len(utrs) != 0:
-        merge_srna(utrs, srnas, "UTR")
+        srnas = merge_srna(utrs, "UTR")
     if len(inters) != 0:
-        merge_srna(inters, srnas, "inter")
+        srnas = merge_srna(inters, "inter")
     sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start))
     for srna in sort_srnas:
         srna.attributes["ID"] = "srna" + str(num_srna)
@@ -145,6 +144,7 @@ def merge_srna_gff(srna_utr, srna_inter, out_file):
                         srna.end, srna.score, srna.strand, srna.phase]])
         out.write(srna.info_without_attributes + "\t" + attribute_string + "\n")
         num_srna += 1
+    out.close()
 
 def import_data(row, type_):
     if type_ == "inter":

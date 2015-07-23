@@ -39,6 +39,12 @@ def main():
         "--ref_gff", "-g", default=False, action="store_true",
         help="Download gff files of reference. Default is False")
     get_input_parser.add_argument(
+        "--ref_ptt", "-p", default=False, action="store_true",
+        help="Download ptt files of reference. Default is False")
+    get_input_parser.add_argument(
+        "--ref_rnt", "-r", default=False, action="store_true",
+        help="Download rnt files of reference. Default is False")
+    get_input_parser.add_argument(
         "--ref_gbk", "-k", default=False, action="store_true",
         help="Download genbank files of reference. Default is False")
     get_input_parser.add_argument(
@@ -76,7 +82,8 @@ def main():
         help="Path of the start.ratt.sh file of RATT folder. Default is start.ratt.sh.")
     RATT_parser.add_argument(
         "--compare_pair", "-p", nargs="+",
-        help="Please assign the name of pairs. ex. $REFERENCE.fa:$TARGET.fa. "
+        help="Please assign the name of fasta files of pairs. ex. NC_007795:NEW_NC_007795. "
+        "The reference fasta file is NC_007795.fa and the target fasta file is NEW_NC_007795.fa. "
         "ATTENTION:please make sure the ref name is the same as embl file. ")
     RATT_parser.add_argument(
         "--element", "-e",
