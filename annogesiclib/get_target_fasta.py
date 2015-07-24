@@ -23,8 +23,8 @@ class TargetFasta(object):
                                    self.folders["tmp_tar"])
         print("transfer to target fasta...")
         if output is not None:
-            first = True
             for file_ in output:
+                first = True
                 datas = file_.split(":")
                 filename = datas[0]
                 strains = datas[1].split(",")
