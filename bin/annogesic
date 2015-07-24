@@ -82,8 +82,9 @@ def main():
         help="Path of the start.ratt.sh file of RATT folder. Default is start.ratt.sh.")
     RATT_parser.add_argument(
         "--compare_pair", "-p", nargs="+",
-        help="Please assign the name of fasta files of pairs. ex. NC_007795:NEW_NC_007795. "
-        "The reference fasta file is NC_007795.fa and the target fasta file is NEW_NC_007795.fa. "
+        help="Please assign the name of strain of pairs. ex. NC_007795:NEW_NC_007795. "
+        "The original strain is NC_007795 and the target strain is NEW_NC_007795. "
+        "This is names of strain, not names of fasta files. "
         "ATTENTION:please make sure the ref name is the same as embl file. ")
     RATT_parser.add_argument(
         "--element", "-e",
@@ -325,7 +326,7 @@ def main():
         "This value must be smaller than the step factor threshold."
         "During optimization will never larger than this value.")
     op_TSSpredator_parser.add_argument(
-        "--max_base_height", "-bh", default=0.2, type=float,
+        "--max_base_height", "-bh", default=0.1, type=float,
         help="This is the minimal number of reads should be mapped on TSS. "
         "During optimization will never larger than this value.")
     op_TSSpredator_parser.add_argument(
