@@ -361,7 +361,7 @@ def main():
         "--core", "-c", type=int, default=4,
         help="How many paralle running do you want to use. Default is 4")
     op_TSSpredator_parser.add_argument(
-        "--program", "-r", default="TSS",
+        "--program", "-t", default="TSS",
         help="The type which you want to run TSSpredator (TSS or Processing_site). Default is TSS")
     op_TSSpredator_parser.add_argument(
         "--replicate_match", "-rm", default=1,
@@ -658,6 +658,10 @@ def main():
     sRNA_parser.add_argument(
         "--cutoff_intergenic_coverage", "-ci",default=5, type=float,
         help="The cutoff of minimal coverage of intergenic sRNA candidates. Default is 5")
+    sRNA_parser.add_argument(
+        "--intergenic_tolerance", "-it",default=5, type=float,
+        help="This number indicates how willing the algorithm is to ignore a temporary drop below this number. "
+        "The default is 5.")
     sRNA_parser.add_argument(
         "--cutoff_5utr_coverage", "-cu5",default="median",
         help="The cutoff of minimal coverage of 5'UTR derived sRNA candidates. "
@@ -1003,9 +1007,9 @@ def main():
         help="The path of go.obo. "
         "Default is ANNOgesic/input/database/go.obo.")
     goterm_parser.add_argument(
-        "--goslim_obo", "-gs", default="ANNOgesic/input/database/goslim.obo",
+        "--goslim_obo", "-gs", default="ANNOgesic/input/database/goslim_generic.obo",
         help="The path of goslim.obo. "
-        "Default is ANNOgesic/input/database/goslim.obo.")
+        "Default is ANNOgesic/input/database/goslim_generic.obo.")
     goterm_parser.set_defaults(func=run_goterm)
     # Parameters of sRNA target prediction
     starget_parser = subparsers.add_parser(
@@ -1161,7 +1165,11 @@ def main():
              "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"93061\":\"Staphylococcus aureus\". "
              "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus NCTC 8325\":\"Staphylococcus aureus\". "
              "(ptt_filename:strain_ptt:STRING_name:Pubmed_name). "
-             "First one is the ptt file name. Second one is the seq name in ptt files. "
+             "First one is the ptt file name. Second one is the header of gff annotation files. If first line of ptt file has a comma, "
+             "it will extract the string before comma as the header, ex: Staphylococcus_aureus_HG003 chromosome, complete genome - 1..2821337. "
+             "The header will be \"Staphylococcus_aureus_HG003 chromosome\". If there is no comma in first line, "
+             "the header will be the string before dash. ex: Staphylococcus_aureus_HG003 - 1..1667867. "
+             "The header will be \"Staphylococcus_aureus_HG003\". "
              "Third one is for STRING database, and the fourth one is for Pubmed. "
              "Of course, you can run the script for several strains at the same time. "
              "Before running it, please check the species file which located in ANNOgesic/input/database ."
@@ -1184,8 +1192,9 @@ def main():
         help="Please size of the nodes in figure, default is 4000.")
     ppi_parser.add_argument(
         "--query", "-q", default="all", nargs="+",
-        help="Please assign the query protein here. The format is $STRAIN:$START_POINT:$END_POINT:$STRAND."
-        "For example, NC_007795:345:456:+ NC_007795:2000:3211:-. If you want to compute all protein, just type all."
+        help="Please assign the query protein here. The format is $HEADEROFPTT:$START_POINT:$END_POINT:$STRAND."
+        "For example, Helicobacter pylori 26695 chromosome:345:456:+ Helicobacter pylori 26695 chromosome:2000:3211:-. "
+        "If you want to compute all protein, just type all."
         "The default is all.")
     ppi_parser.set_defaults(func=PPI)
     # Parameters of subcellular localization
@@ -1229,7 +1238,7 @@ def main():
         help="Please assign the folder of Infernal(where is cmscan and cmsearch located).")
     ribos_parser.add_argument(
         "--riboswitch_ID", "-i",
-        help="The path of the riboswitch ID of Rfam. ")
+        help="The path of the riboswitch ID of Rfam. The file is include the Accession, ID and Description of riboswitch in Rfam.")
     ribos_parser.add_argument(
         "--gff_path", "-g", default="ANNOgesic/output/target/annotation",
         help="The path of annotation gff folder. ")
