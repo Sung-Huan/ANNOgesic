@@ -25,7 +25,7 @@ def extract_info(out_file, type_):
         with open(out_file) as fh:
             for line in fh:
                 line = line.rstrip()
-                if len(line):
+                if (line != "##gff-version 3") and len(line):
                     attributes.append(line.split("\t")[-1].split(";"))
                     datas.append("\t".join(line.split("\t")[0:-1]))
     else:

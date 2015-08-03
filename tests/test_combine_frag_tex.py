@@ -97,10 +97,10 @@ class Example(object):
                        {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]
 
     out_tran = """##gff-version 3
-aaa	fragmented_and_normal	Transcript	3	40	.	+	.	Name=Tran_00000;ID=tran0
-aaa	fragmented_and_normal	Transcript	120	367	.	+	.	Name=Tran_00001;ID=tran1
+aaa	fragmented_and_tex	Transcript	3	40	.	+	.	Name=Tran_00000;ID=tran0
+aaa	fragmented_and_tex	Transcript	120	367	.	+	.	Name=Tran_00001;ID=tran1
 bbb	fragmented	Transcript	430	567	.	-	.	Name=Tran_00002;ID=tran2
-bbb	normal	Transcript	1430	1667	.	-	.	Name=Tran_00003;ID=tran3"""
+bbb	tex	Transcript	1430	1667	.	-	.	Name=Tran_00003;ID=tran3"""
 
 if __name__ == "__main__":
     unittest.main()
