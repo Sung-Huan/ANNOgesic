@@ -32,10 +32,49 @@ def get_differential_cover(fuzzy_end, num, checks, cover_sets,
             cover_sets["diff"] = cover["coverage"]
     return go_out
 
-def get_best(wigs, strain, strand, start, end, type_,
-             decrease, cutoff_coverage, fuzzy_end):
+def check_coverage_pos(start, end, cover, cutoff_coverage, tmps, cover_sets,
+                       checks, poss, strand, tolerance):
+    go_out = False
+    if (start <= cover["pos"]) and (
+        end >= cover["pos"]):
+        if cover["coverage"] > cutoff_coverage:
+            tmps["pos"] = cover["pos"]
+            tmps["toler"] = 0
+            cover_sets["total"] = cover_sets["total"] + \
+                                  cover["coverage"]
+            if tmps["total"] != 0:
+                 cover_sets["total"] = cover_sets["total"] + \
+                                       tmps["total"]
+            tmps["total"] = 0
+            checks["first"] = coverage_comparison(
+                              cover, cover_sets, poss,
+                              checks["first"], strand)
+        else:
+            if tmps["toler"] <= tolerance:
+                tmps["toler"] += 1
+                tmps["total"] = cover_sets["total"] + \
+                            cover["coverage"]
+                checks["first"] = coverage_comparison(
+                                  cover, cover_sets, poss,
+                                  checks["first"], strand)
+            else:
+                if tmps["pos"] != 0:
+                    poss["stop_point"] = tmps["pos"]
+                    go_out = True
+    else:
+        if (strand == "+") and (cover["pos"] > end):
+            poss["stop_point"] = cover["pos"]
+            go_out = True
+        elif (strand == "-") and (cover["pos"] < start):
+            poss["stop_point"] = cover["pos"]
+            go_out = True
+    return go_out
+
+def get_best(wigs, strain, strand, start, end, type_, decrease,
+             cutoff_coverage, fuzzy_end, tolerance):
     cover_sets = {"low": -1, "high": -1, "total": 0, "diff": 0}
     poss = {"high": 0, "low": 0, "stop_point": -1}
+    tmps = {"total": 0, "toler": 0, "pos": 0}
     srna_covers = {}
     for wig_strain, conds in wigs.items():
         if wig_strain == strain:
@@ -50,29 +89,26 @@ def get_best(wigs, strain, strand, start, end, type_,
                         covers = covers[start-2:end+1]
                     elif strand == "-":
                         covers = reversed(covers[start-2:end+1])
+                    go_out = False
                     for cover in covers:
                         if (cover["strand"] == strand):
-                            if (start <= cover["pos"]) and (
-                                end >= cover["pos"]):
-                                cover_sets["total"] = cover_sets["total"] + \
-                                                      cover["coverage"]
-                                checks["first"] = coverage_comparison(
-                                                  cover, cover_sets, poss,
-                                                  checks["first"], strand)
-                            else:
-                                if (strand == "+") and (cover["pos"] > end):
-                                    poss["stop_point"] = cover["pos"]
-                                    break
-                                elif (strand == "-") and (cover["pos"] < start):
-                                    poss["stop_point"] = cover["pos"]
-                                    break
+                            go_out = check_coverage_pos(start, end, cover,
+                                               cutoff_coverage, tmps,
+                                               cover_sets, checks, poss,
+                                               strand, tolerance)
+                            if go_out:
+                                break
                             if type_ == "differential":
                                 go_out = get_differential_cover(
                                              fuzzy_end, num, checks, cover_sets,
                                              poss, cover, decrease)
                                 if go_out:
                                     break
-                    avg = cover_sets["total"] / float(end - start + 1)
+                    if strand == "+":
+                        diff = poss["stop_point"] - start
+                    else:
+                        diff = end - poss["stop_point"]
+                    avg = cover_sets["total"] / float(diff + 1)
                     if avg > float(cutoff_coverage):
                         srna_covers[cond].append({"track": track,
                                                   "high": cover_sets["high"],
@@ -166,11 +202,11 @@ def print_file(string, nums, tss, output, out_table, srna_datas, table_best):
                                 srna_datas["high"], srna_datas["low"]))
         out_table.write("\n")
 
-def get_coverage(start, end, strain, wigs, strand, ta, nums, tss,
-                 output, template_texs, out_table, cutoff_coverage,
-                 tex_notex, replicates, decrease, fuzzy_end, table_best):
+def get_coverage(start, end, strain, wigs, strand, ta, nums, tss, output,
+                 template_texs, out_table, cutoff_coverage, tex_notex,
+                 replicates, decrease, fuzzy_end, table_best, tolerance):
     srna_covers = get_best(wigs, strain, strand, start, end, "total",
-                           decrease, cutoff_coverage, fuzzy_end)
+                           decrease, cutoff_coverage, fuzzy_end, tolerance)
     srna_datas = replicate_comparison(srna_covers, template_texs, strand,
                                      cutoff_coverage, tex_notex, replicates,
                                      "normal", None, None, None, False)
@@ -182,7 +218,7 @@ def get_coverage(start, end, strain, wigs, strand, ta, nums, tss,
 
 def check_pro(pros, ta, start, end, min_len, max_len, srna_datas, type_,
               cutoff_coverage, wigs, decrease, fuzzy_end, template_texs,
-              tex_notex, replicates):
+              tex_notex, replicates, tolerance):
     pro_pos = -1
     detect_pro = "NA"
     for pro in pros:
@@ -212,7 +248,7 @@ def check_pro(pros, ta, start, end, min_len, max_len, srna_datas, type_,
         if ((type_ == "within") and (srna_datas["pos"] < pro_pos)) or (
             (type_ == "longer") and (pro_pos != -1)):
             srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, pro_pos,
-                          "total", decrease, cutoff_coverage, fuzzy_end)
+                          "total", decrease, cutoff_coverage, fuzzy_end, tolerance)
             new_srna_datas = replicate_comparison(srna_covers, template_texs,
                             ta.strand, cutoff_coverage, tex_notex,
                             replicates, "normal", None, None, None, False)
@@ -222,7 +258,7 @@ def check_pro(pros, ta, start, end, min_len, max_len, srna_datas, type_,
         if ((type_ == "within") and (srna_datas["pos"] > pro_pos)) or (
             (type_ == "longer") and (pro_pos != -1)):
             srna_covers = get_best(wigs, ta.seq_id, ta.strand, pro_pos, end,
-                          "total", decrease, cutoff_coverage, fuzzy_end)
+                          "total", decrease, cutoff_coverage, fuzzy_end, tolerance)
             new_srna_datas = replicate_comparison(srna_covers, template_texs,
                             ta.strand, cutoff_coverage, tex_notex,
                             replicates, "normal", None, None, None, False)
@@ -232,47 +268,53 @@ def check_pro(pros, ta, start, end, min_len, max_len, srna_datas, type_,
 
 def exchange_to_pro(srna_datas, min_len, max_len, pros, ta, start, end, nums,
                     cutoff_coverage, output, out_table, table_best, wigs,
-                    decrease, fuzzy_end, template_texs, tex_notex, replicates):
+                    decrease, fuzzy_end, template_texs, tex_notex, replicates,
+                    tolerance):
     detect = False
-    if ((srna_datas["pos"] - start) >= min_len) and (
-        (srna_datas["pos"] - start) <= max_len):
-        pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
-                                  min_len, max_len, srna_datas, "within",
-                                  cutoff_coverage, wigs, decrease,
-                                  fuzzy_end, template_texs, tex_notex,
-                                  replicates)
-        if pro_datas is not None:
-            srna_datas = pro_datas
-            srna_datas["pos"] = pro_pos
-            detect = True
+    if srna_datas["high"] != 0:
+        if ((srna_datas["pos"] - start) >= min_len) and (
+            (srna_datas["pos"] - start) <= max_len):
+            pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
+                                      min_len, max_len, srna_datas, "within",
+                                      cutoff_coverage, wigs, decrease,
+                                      fuzzy_end, template_texs, tex_notex,
+                                      replicates, tolerance)
+            if pro_datas is not None:
+                srna_datas = pro_datas
+                srna_datas["pos"] = pro_pos
+                detect = True
+            else:
+                if srna_datas["best"] > cutoff_coverage:
+                    detect = True
         else:
-            if srna_datas["best"] > cutoff_coverage:
+            pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
+                                      min_len, max_len, srna_datas, "longer",
+                                      cutoff_coverage, wigs, decrease,
+                                      fuzzy_end, template_texs, tex_notex,
+                                      replicates, tolerance)
+            if pro_datas is not None:
+                srna_datas = pro_datas
+                srna_datas["pos"] = pro_pos
                 detect = True
     else:
-        pro_pos, pro_datas, pro = check_pro(pros, ta, start, end,
-                                  min_len, max_len, srna_datas, "longer",
-                                  cutoff_coverage, wigs, decrease,
-                                  fuzzy_end, template_texs, tex_notex,
-                                  replicates)
-        if pro_datas is not None:
-            srna_datas = pro_datas
-            srna_datas["pos"] = pro_pos
-            detect = True
+        pro = None
     return detect, srna_datas, pro
 
 def detect_wig_pos(wigs, ta, start, end, nums, output, tss, template_texs,
                    out_table, cutoff_coverage, min_len, max_len, decrease,
-                   fuzzy_end, table_best, tex_notex, replicates, pros):
+                   fuzzy_end, table_best, tex_notex, replicates, pros,
+                   tolerance):
     srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, end,
                            "differential", decrease, cutoff_coverage,
-                           fuzzy_end)
+                           fuzzy_end, tolerance)
     srna_datas = replicate_comparison(srna_covers, template_texs, ta.strand,
                                       cutoff_coverage, tex_notex, replicates,
                                       "normal", None, None, None, False)
     detect, srna_datas, pro = exchange_to_pro(srna_datas, min_len, max_len,
                               pros, ta, start, end, nums, cutoff_coverage,
                               output, out_table, table_best, wigs, decrease,
-                              fuzzy_end, template_texs, tex_notex, replicates)
+                              fuzzy_end, template_texs, tex_notex, replicates,
+                              tolerance)
     if ta.strand == "+":
         if detect:
             string = ("\t".join([str(field) for field in [
@@ -295,7 +337,7 @@ def detect_wig_pos(wigs, ta, start, end, nums, output, tss, template_texs,
 def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                   out_table, fuzzy, cutoff_coverage, tex_notex, replicates,
                   decrease, fuzzy_end, table_best, min_len, max_len,
-                  detects, pros):
+                  detects, pros, tolerance):
     if len(tsss) != 0:
         for tss in tsss:
             if (tss.strand == ta.strand) and (
@@ -305,7 +347,7 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                         max_len, wigs_f, nums, ta, tss, output, out_table,
                         template_texs, detects, (ta.end - tss.start),
                         cutoff_coverage, tex_notex, replicates, decrease,
-                        fuzzy_end, table_best)
+                        fuzzy_end, table_best, tolerance)
                     if (tss.start >= ta.start - fuzzy) and (
                         tss.start <= ta.end) and (
                        (ta.end - tss.start) > max_len):
@@ -315,13 +357,14 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                                                    "_", tss.strand]),
                                   template_texs, out_table, cutoff_coverage,
                                   min_len, max_len, decrease, fuzzy_end,
-                                  table_best, tex_notex, replicates, pros)
+                                  table_best, tex_notex, replicates, pros,
+                                  tolerance)
                 else:
                     compare_ta_tss(tss.end, ta.start, ta.end + fuzzy, min_len,
                         max_len, wigs_r, nums, ta, tss, output, out_table,
                         template_texs, detects, (tss.end - ta.start),
                         cutoff_coverage, tex_notex, replicates, decrease,
-                        fuzzy_end, table_best)
+                        fuzzy_end, table_best, tolerance)
                     if (tss.end >= ta.start) and (
                         tss.end <= ta.end + fuzzy) and (
                         tss.end - ta.start > max_len):
@@ -331,24 +374,25 @@ def detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, template_texs,
                                                    "_", tss.strand]),
                                   template_texs, out_table, cutoff_coverage,
                                   min_len, max_len, decrease, fuzzy_end,
-                                  table_best, tex_notex, replicates, pros)
+                                  table_best, tex_notex, replicates, pros,
+                                  tolerance)
     if len(tsss) == 0:
         if (len(wigs_f) != 0) and (len(wigs_r) != 0):
             if ta.strand == "+":
                 num_uni = detect_wig_pos(wigs_f, ta, ta.start, ta.end, nums,
-                          output, "NA", template_texs, out_table,
-                          cutoff_coverage, min_len, max_len, decrease,
-                          fuzzy_end, table_best, tex_notex, replicates, pros)
+                          output, "NA", template_texs, out_table, cutoff_coverage,
+                          min_len, max_len, decrease, fuzzy_end, table_best,
+                          tex_notex, replicates, pros, tolerance)
             else:
                 num_uni = detect_wig_pos(wigs_r, ta, ta.start, ta.end, nums,
-                          output, "NA", template_texs, out_table,
-                          cutoff_coverage, min_len, max_len, decrease,
-                          fuzzy_end, table_best, tex_notex, replicates, pros)
+                          output, "NA", template_texs, out_table, cutoff_coverage,
+                          min_len, max_len, decrease, fuzzy_end, table_best,
+                          tex_notex, replicates, pros, tolerance)
 
 def compare_ta_tss(tss_pos, ta_start, ta_end, min_len, max_len, wigs, nums,
                    ta, tss, output, out_table, template_texs, detects, diff,
                    cutoff_coverage, tex_notex, replicates, decrease,
-                   fuzzy_end, table_best):
+                   fuzzy_end, table_best, tolerance):
     if (tss_pos >= ta_start) and (tss_pos <= ta_end) and (
         diff >= min_len) and (diff <= max_len):
         if tss.strand == "+":
@@ -361,7 +405,8 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, min_len, max_len, wigs, nums,
             get_coverage(start, end, ta.seq_id, wigs, tss.strand, ta, nums,
                          "".join(["TSS:", str(tss.start), "_", tss.strand]),
                          output, template_texs, out_table, cutoff_coverage,
-                         tex_notex, replicates, decrease, fuzzy_end, table_best)
+                         tex_notex, replicates, decrease, fuzzy_end, table_best,
+                         tolerance)
         else:
             string = "\t".join([str(field) for field in [
                      ta.seq_id, ta.source, "sRNA", str(start),
@@ -375,7 +420,7 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, min_len, max_len, wigs, nums,
 def detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output, out_table,
                        template_texs, min_len, max_len, detects, fuzzy,
                        cutoff_coverage, tex_notex, replicates, decrease,
-                       fuzzy_end, table_best):
+                       fuzzy_end, table_best, tolerance):
     detects["uni_with_tss"] = False
     for tss in tsss:
         if (tss.strand == ta.strand) and (tss.seq_id == ta.seq_id):
@@ -385,7 +430,7 @@ def detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output, out_table,
                                out_table, template_texs, detects,
                                (ta.end - tss.start), cutoff_coverage,
                                tex_notex, replicates, decrease,
-                               fuzzy_end, table_best)
+                               fuzzy_end, table_best, tolerance)
                 if tss.start > ta.end:
                     break
             else:
@@ -394,7 +439,7 @@ def detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output, out_table,
                                out_table, template_texs, detects,
                                (tss.end - ta.start), cutoff_coverage,
                                tex_notex, replicates, decrease,
-                               fuzzy_end, table_best)
+                               fuzzy_end, table_best, tolerance)
                 if tss.end > ta.end + fuzzy:
                     break
     if not detects["uni_with_tss"]:
@@ -402,12 +447,12 @@ def detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output, out_table,
             get_coverage(ta.start, ta.end, ta.seq_id, wigs_f, "+", ta, nums,
                          "False", output, template_texs, out_table,
                          cutoff_coverage, tex_notex, replicates, decrease,
-                         fuzzy_end, table_best)
+                         fuzzy_end, table_best, tolerance)
         elif (ta.strand == "-") and (len(wigs_r) != 0):
             get_coverage(ta.start, ta.end, ta.seq_id, wigs_r, "-", ta, nums,
                          "False", output, template_texs, out_table,
                          cutoff_coverage, tex_notex, replicates, decrease,
-                         fuzzy_end, table_best)
+                         fuzzy_end, table_best, tolerance)
         elif (len(wigs_f) == 0) and (len(wigs_r) == 0):
             print_file(ta.info_without_attributes.replace("Transcript", "sRNA"),
                        nums, "False", output, out_table, None, table_best)
@@ -477,25 +522,25 @@ def compare_ta_cds(cdss, ta, detects):
 def check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
                          nums, output, out_table, texs, fuzzy, detects,
                          cutoff_coverage, tex_notex, replicates,
-                         decrease, fuzzy_end, table_best):
+                         decrease, fuzzy_end, table_best, tolerance):
     if ((ta.end - ta.start) >= min_len) and (
         (ta.end - ta.start) <= max_len):
         if len(tsss) != 0:
             detect_include_tss(nums, tsss, ta, wigs_f, wigs_r, output,
                                out_table, texs, min_len, max_len, detects,
-                               fuzzy, cutoff_coverage, tex_notex,
-                               replicates, decrease, fuzzy_end, table_best)
+                               fuzzy, cutoff_coverage, tex_notex, replicates,
+                               decrease, fuzzy_end, table_best, tolerance)
         else:
             if (ta.strand == "+") and (len(wigs_f) != 0):
                 get_coverage(ta.start, ta.end, ta.seq_id, wigs_f, "+",
                              ta, nums, "NA", output, texs, out_table,
                              cutoff_coverage, tex_notex, replicates,
-                             decrease, fuzzy_end, table_best)
+                             decrease, fuzzy_end, table_best, tolerance)
             elif (ta.strand == "-") and (len(wigs_r) != 0):
                 get_coverage(ta.start, ta.end, ta.seq_id, wigs_r, "-",
                              ta, nums, "NA", output, texs, out_table,
                              cutoff_coverage, tex_notex, replicates,
-                             decrease, fuzzy_end, table_best)
+                             decrease, fuzzy_end, table_best, tolerance)
             if (len(wigs_f) == 0) and (len(wigs_r) == 0):
                 print_file(ta.info_without_attributes.replace("Transcript", "sRNA"),
                            nums, "NA", output, out_table, None, table_best)
@@ -503,12 +548,12 @@ def check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
         detect_longer(tsss, ta, nums, output, wigs_f, wigs_r, texs,
                       out_table, fuzzy, cutoff_coverage, tex_notex,
                       replicates, decrease, fuzzy_end, table_best,
-                      min_len, max_len, detects, pros)
+                      min_len, max_len, detects, pros, tolerance)
 
 def intergenic_srna(gff_file, tran_file, tss_file, pro_file, fuzzy, max_len,
                     min_len, wig_f_file, wig_r_file, wig_folder, input_libs,
                     tex_notex, replicates, output_file, output_table,
-                    table_best, decrease, fuzzy_end, cutoff_coverage):
+                    table_best, decrease, fuzzy_end, cutoff_coverage, tolerance):
     libs, texs = read_libs(input_libs, wig_folder)
     wigs_f = read_wig(wig_f_file, "+", libs)
     wigs_r = read_wig(wig_r_file, "-", libs)
@@ -527,7 +572,7 @@ def intergenic_srna(gff_file, tran_file, tss_file, pro_file, fuzzy, max_len,
             check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
                                  nums, output, out_table, texs, fuzzy, detects,
                                  cutoff_coverage, tex_notex, replicates,
-                                 decrease, fuzzy_end, table_best)
+                                 decrease, fuzzy_end, table_best, tolerance)
     file_name = output_file.split(".")
     file_name = file_name[0] + ".stat"
     stat = open(file_name, "w")
