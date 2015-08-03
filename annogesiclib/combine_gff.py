@@ -66,6 +66,7 @@ def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file,
     utr5s = read_file(utr5_file)
     utr3s = read_file(utr3_file)
     out = open(out_file, "w")
+    out.write("##gff-version 3\n")
     if term_file is not None:
         terms = read_file(term_file)
     for tran in trans:
