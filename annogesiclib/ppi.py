@@ -6,6 +6,8 @@ from subprocess import call
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.plot_PPI import plot_ppi
+from annogesiclib.converter import Converter
+from annogesiclib.gff3 import Gff3Parser
 
 
 class PPINetwork(object):
@@ -13,6 +15,8 @@ class PPINetwork(object):
     def __init__(self, out_folder):
         self.multiparser = Multiparser()
         self.helper = Helper()
+        self.converter = Converter()
+        self.gffparser = Gff3Parser()
         self.tmp_id = os.path.join(out_folder, "tmp_id_list")
         self.all_result = os.path.join(out_folder, "all_results")
         self.best_result = os.path.join(out_folder, "best_results")
@@ -175,10 +179,11 @@ class PPINetwork(object):
 
     def _detect_protein(self, ptts, strain_id, querys):
         fh = open(os.path.join(ptts, strain_id["file"]), "r")
+        prefix = strain_id["file"][0:-4]
         genes = []
         for row in csv.reader(fh, delimiter="\t"):
             if (len(row) == 1) and ("-" in row[0]) and (".." in row[0]):
-                name = (row[0].split("-"))[0].strip()
+                name = (row[0].split("-"))[0].strip().split(",")[0].strip()
             if ("all" in querys):
                 if (len(row) > 1) and (row[0] != "Location"):
                     genes.append({"strain": name, "locus_tag": row[5]})
@@ -350,8 +355,8 @@ class PPINetwork(object):
                              os.path.join(self.fig, folder,
                              self.without_strain), size)
 
-    def retrieve_ppi_network(self, ptts, strains, no_specific, species,
-                             score, out_folder, size, querys):
+    def retrieve_ppi_network(self, ptts, strains, no_specific,
+                             species, score, out_folder, size, querys):
         strain_ids = []
         genes = []
         paths = {}
@@ -369,7 +374,8 @@ class PPINetwork(object):
                         "all": None, "best": None, "fig": None}
         for strain_id in strain_ids:
             genes = self._setup_folder_and_read_file(strain_id, pre_file,
-                         out_folder, ptts, no_specific, files, paths, querys)
+                         out_folder, ptts, no_specific, files, paths,
+                         querys)
             s_h = open(species, "r") ### get STRING id
             for row in csv.reader(s_h, delimiter="\t"):
                 if row[0] != "##":
