@@ -112,3 +112,4 @@ class SubLocal(object):
         self.helper.remove_tmp(fastas)
         self.helper.remove_tmp(gffs)
         self.helper.remove_all_content(out_folder, "tmp", "dir")
+        os.remove(os.path.join(out_folder, "tmp_log"))
