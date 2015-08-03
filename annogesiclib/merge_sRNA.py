@@ -128,7 +128,7 @@ def merge_srna_gff(srna_utr, srna_inter, out_file):
     if len(utrs) != 0:
         srnas = merge_srna(utrs, "UTR")
     if len(inters) != 0:
-        srnas = merge_srna(inters, "inter")
+        srnas = srnas + merge_srna(inters, "inter")
     sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start))
     for srna in sort_srnas:
         srna.attributes["ID"] = "srna" + str(num_srna)
