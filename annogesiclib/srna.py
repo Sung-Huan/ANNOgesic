@@ -13,6 +13,7 @@ from annogesiclib.sRNA_class import classify_srna
 from annogesiclib.gen_srna_output import gen_srna_table, gen_best_srna
 from annogesiclib.blast_class import blast_class
 from annogesiclib.compare_sRNA_sORF import srna_sorf_comparison
+from annogesiclib.change_db_format import change_format 
 
 
 class sRNADetection(object):
@@ -67,7 +68,7 @@ class sRNADetection(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
-    def _formatdb(self, database, type_, out_folder, blast_path):
+    def _formatdb(self, database, type_, out_folder, blast_path, database_type):
         err = open(os.path.join(out_folder, "log.txt"), "w")
         if (database.endswith(".fa")) or (
             database.endswith(".fna")) or (
@@ -83,6 +84,10 @@ class sRNADetection(object):
                     fasta.endswith(".fasta")):
                     if ".".join(fasta.split(".")[:-1]) == filename:
                         database = os.path.join(folder, fasta)
+        if database_type == "sRNA":
+            change_format(database, "tmp_srna_database")
+            os.remove(database)
+            os.rename("tmp_srna_database", database)
         db_file = ".".join(database.split(".")[:-1])
         call([os.path.join(blast_path, "makeblastdb"), "-in", database,
               "-dbtype", type_, "-out", db_file], stderr=err)
@@ -90,7 +95,7 @@ class sRNADetection(object):
     def _run_normal(self, import_info, tss_path, pro_path, prefix, gff_path,
                     gff, tran, fuzzy_tss, max_len, min_len, wig_path, coverage,
                     merge_wigs, libs, tex_notex, replicates, table_best,
-                    decrease_inter, fuzzy_inter, out_folder):
+                    decrease_inter, fuzzy_inter, out_folder, tolerance):
         if ("1" in import_info):
             tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
                                                prefix, None)
@@ -109,7 +114,8 @@ class sRNADetection(object):
                         merge_wigs, libs, tex_notex, replicates,
                         "_".join([self.prefixs["normal"], prefix]),
                         "_".join([self.prefixs["normal_table"], prefix]),
-                        table_best, decrease_inter, fuzzy_inter, coverage)
+                        table_best, decrease_inter, fuzzy_inter, coverage,
+                        tolerance)
 
     def _run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, merge_wigs, max_len,
                      min_len, wig_path, prefix, tss, pro, fasta_path, libs,
@@ -197,7 +203,7 @@ class sRNADetection(object):
                      tex_notex, replicates, table_best, decrease_inter,
                      decrease_utr, fuzzy_inter, fuzzy_utr, fuzzy_tsss,
                      utr5_coverage, utr3_coverage, intercds_coverage,
-                     out_folder, utr_srna, fasta_path):
+                     out_folder, utr_srna, fasta_path, tolerance):
         prefixs = []
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
@@ -216,7 +222,8 @@ class sRNADetection(object):
                                  gff_path, gff, tran, fuzzy_tsss["inter"],
                                  max_len, min_len, wig_path, coverage,
                                  merge_wigs, libs, tex_notex, replicates,
-                                 table_best, decrease_inter, fuzzy_inter, out_folder)
+                                 table_best, decrease_inter, fuzzy_inter,
+                                 out_folder, tolerance)
                 if utr_srna:
                     print("Running UTR derived sRNA detection of {0}...".format(
                           prefix))
@@ -360,7 +367,8 @@ class sRNADetection(object):
             print("Error: No database assigned!")
         else:
             if database_format:
-                self._formatdb(database, data_type, out_folder, blast_path)
+                self._formatdb(database, data_type, out_folder, blast_path,
+                               database_type)
             for prefix in prefixs:
                 blast_file = os.path.join(out_folder, "blast_result_and_misc",
                              "_".join([database_type, "blast",
@@ -500,10 +508,10 @@ class sRNADetection(object):
             fuzzy_inter_tss, fuzzy_5utr_tss, fuzzy_3utr_tss, fuzzy_intercds_tss,
             import_info, tex_wigs, frag_wigs, pros, fastas, mountain,
             database_format, srna_database, nr_database, energy, coverage,
-            utr5_coverage, utr3_coverage, intercds_coverage, max_len, min_len,
-            tlibs, flibs, replicates_tex, replicates_frag, tex_notex, e_nr, e_srna,
-            table_best, decrease_inter, decrease_utr, fuzzy_inter, fuzzy_utr,
-            nr_hits_num, sorf_file, all_hit, best_sorf):
+            tolerance, utr5_coverage, utr3_coverage, intercds_coverage,
+            max_len, min_len, tlibs, flibs, replicates_tex, replicates_frag,
+            tex_notex, e_nr, e_srna, table_best, decrease_inter, decrease_utr,
+            fuzzy_inter, fuzzy_utr, nr_hits_num, sorf_file, all_hit, best_sorf):
         replicates = self._get_replicates(replicates_tex, replicates_frag)
         fuzzy_tsss = {"5utr": fuzzy_5utr_tss, "3utr": fuzzy_3utr_tss,
                       "interCDS": fuzzy_intercds_tss, "inter": fuzzy_inter_tss}
@@ -522,7 +530,8 @@ class sRNADetection(object):
                       coverage, merge_wigs, libs, tex_notex, replicates,
                       table_best, decrease_inter, decrease_utr, fuzzy_inter,
                       fuzzy_utr, fuzzy_tsss, utr5_coverage, utr3_coverage,
-                      intercds_coverage, out_folder, utr_srna, self.fasta_path)
+                      intercds_coverage, out_folder, utr_srna, self.fasta_path,
+                      tolerance)
         self._filter_srna(import_info, out_folder, prefixs, self.fasta_path,
             vienna_path, vienna_util, mountain, ps2pdf14_path, nr_database,
             database_format, blast_path, srna_database, self.stat_path,
