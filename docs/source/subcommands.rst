@@ -155,23 +155,27 @@ Then, user can assign which kinds of files he/she wants to download.
 
 ::
 
-  usage: ANNOgesic.py get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
-                                    [--ref_gff] [--ref_gbk] [--convert_embl]
-                                    [project_path]
+    usage: annogesic get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
+                                     [--ref_gff] [--ref_ptt] [--ref_rnt]
+                                     [--ref_gbk] [--convert_embl]
+                                     [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --FTP_path FTP_PATH, -F FTP_PATH
+                            Path of website where can download the required files
+      --ref_fasta, -f       Download fasta files of reference. Default is False
+      --ref_gff, -g         Download gff files of reference. Default is False
+      --ref_ptt, -p         Download ptt files of reference. Default is False
+      --ref_rnt, -r         Download rnt files of reference. Default is False
+      --ref_gbk, -k         Download genbank files of reference. Default is False
+      --convert_embl, -e    Convert gbk to embl files of reference. Default is
+                            False
 
-  positional arguments:
-    project_path          Path of the project folder. If none is given the
-                        current directory is used.
-  
-  optional arguments:
-    -h, --help            show this help message and exit
-    --FTP_path FTP_PATH, -F FTP_PATH
-                          Path of website where can download the required files
-    --ref_fasta, -f       Download fasta files of reference. Default is False
-    --ref_gff, -g         Download gff files of reference. Default is False
-    --ref_gbk, -k         Download genbank files of reference. Default is False
-    --convert_embl, -e    Convert gbk to embl files of reference. Default is
-                          False
 - Output files
 
 The output files will store in ``$ANNOgesic_folder/input/reference``.
@@ -216,27 +220,26 @@ Mutation table which indicate the information of mutations between reference and
 
 ::
 
-   usage: ANNOgesic.py get_target_fasta [-h]
-                                        [--ref_fasta_folder REF_FASTA_FOLDER]
-                                        [--mutation_table MUTATION_TABLE]
-                                        [--output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...]]
-                                        [project_path]
-   
-   positional arguments:
-     project_path          Path of the project folder. If none is given the
-                           current directory is used.
-   
-   optional arguments:
-     -h, --help            show this help message and exit
-     --ref_fasta_folder REF_FASTA_FOLDER, -r REF_FASTA_FOLDER
-                           Folder of fasta files.
-     --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
-                           The path of mutation table.
-     --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
-                           Please assign the output filename and which strain
-                           should be included in it. For example:
-                           FILE1:strain1,strain2. FILE1 is a output fasta file
-                           which include the information of strain1 and strain2.
+    usage: annogesic get_target_fasta [-h] [--ref_fasta_folder REF_FASTA_FOLDER]
+                                  [--mutation_table MUTATION_TABLE]
+                                  [--output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...]]
+                                  [project_path]
+
+    positional arguments:
+      project_path          Path of the project folder. If none is given the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --ref_fasta_folder REF_FASTA_FOLDER, -r REF_FASTA_FOLDER
+                            Folder of fasta files.
+      --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
+                            The path of mutation table.
+      --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
+                            Please assign the output filename and which strain
+                            should be included in it. For example:
+                            FILE1:strain1,strain2. FILE1 is a output fasta file
+                            which include the information of strain1 and strain2.
 
 - Output files
 
@@ -266,49 +269,48 @@ The fasta file of target genome.
 
 ::
 
-   usage: ANNOgesic.py annotation_transfer [-h] [--PAGIT_folder PAGIT_FOLDER]
-                                           [--RATT_path RATT_PATH]
-                                           [--compare_pair COMPARE_PAIR [COMPARE_PAIR ...]]
-                                           [--element ELEMENT]
-                                           [--transfer_type TRANSFER_TYPE]
-                                           [--ref_gbk REF_GBK]
-                                           [--ref_fasta REF_FASTA]
-                                           [--target_fasta TARGET_FASTA]
-                                           [--convert_to_gff_rnt_ptt]
-                                           [project_path]
-   
-   positional arguments:
-     project_path          Path of the project folder. If none is given the
-                           current directory is used.
-   
-   optional arguments:
-     -h, --help            show this help message and exit
-     --PAGIT_folder PAGIT_FOLDER
-                           Path of the PAGIT folder. If your PAGIT folder is not
-                           located at /tools/PAGIT, please assign here.
-     --RATT_path RATT_PATH
-                           Path of the start.ratt.sh file of RATT folder. Default
-                           is start.ratt.sh.
-     --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
-                           Please assign the name of pairs. ex.
-                           $REFERENCE.fa:$TARGET.fa. ATTENTION:please make sure
-                           the ref name is the same as embl file.
-     --element ELEMENT, -e ELEMENT
-                           It will become the prefix of all output file.
-     --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
-                           The transfer type for running RATT.(details can refer
-                           to the manual of RATT.) default is Strain.
-     --ref_gbk REF_GBK, -re REF_GBK
-                           The folder which stores every reference embl
-                           folders.If you have no embl folder, you can assign the
-                           folder of genbank.
-     --ref_fasta REF_FASTA, -rf REF_FASTA
-                           The folder of reference fasta files.
-     --target_fasta TARGET_FASTA, -tf TARGET_FASTA
-                           The folder which stores target fasta files.
-     --convert_to_gff_rnt_ptt, -g
-                           Do you want to convert to gff, rnt and ptt? Default is
-                           False
+    usage: annogesic annotation_transfer [-h] [--RATT_path RATT_PATH]
+                                         [--compare_pair COMPARE_PAIR [COMPARE_PAIR ...]]
+                                         [--element ELEMENT]
+                                         [--transfer_type TRANSFER_TYPE]
+                                         [--ref_gbk REF_GBK]
+                                         [--ref_fasta REF_FASTA]
+                                         [--target_fasta TARGET_FASTA]
+                                         [--convert_to_gff_rnt_ptt]
+                                         [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --RATT_path RATT_PATH
+                            Path of the start.ratt.sh file of RATT folder. Default
+                            is start.ratt.sh.
+      --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
+                            Please assign the name of fasta files of pairs. ex.
+                            NC_007795:NEW_NC_007795. The reference fasta file is
+                            NC_007795.fa and the target fasta file is
+                            NEW_NC_007795.fa. ATTENTION:please make sure the ref
+                            name is the same as embl file.
+      --element ELEMENT, -e ELEMENT
+                            It will become the prefix of all output file.
+      --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
+                            The transfer type for running RATT.(details can refer
+                            to the manual of RATT.) default is Strain.
+      --ref_gbk REF_GBK, -re REF_GBK
+                            The folder which stores every reference embl
+                            folders.If you have no embl folder, you can assign the
+                            folder of genbank.
+      --ref_fasta REF_FASTA, -rf REF_FASTA
+                            The folder of reference fasta files.
+      --target_fasta TARGET_FASTA, -tf TARGET_FASTA
+                            The folder which stores target fasta files.
+      --convert_to_gff_rnt_ptt, -g
+                            Do you want to convert to gff, rnt and ptt? Default is
+                            False
+
 - Output files
 
 All the output files from `PAGIT and RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_
@@ -1158,7 +1160,13 @@ wiggle file: To detect the intergenic transcripts which have dramatic coverage
 decreasing, it could be find the sRNA which located in long transcripts,
 The libraries and wiggle files, Please refer to the ``The format of libraries for import to ANNOgesic``.
 
-sRNA database: It could be used to search the known sRNA.
+sRNA database: It could be used to search the known sRNA. The format of header should be ``$ID|$STRAIN|$sRNANAME|$OTHER_INFO|$OTHER_INFO``. 
+For example, ``>saci2813.1|Acinetobacter sp. ADP1|Aar|12240|2812430|forward``.
+The ID is saci403.1; the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar. 
+``srna`` only consider the first three columns. Therefore, the format of the first three columns should be 
+fit the rule. BE ATTENTION, after format the sRNA database, the information after the third columns will be removed.
+If the user doesn't follow the format, it will occur some error when the user run ``--sRNA_blast_stat, -sb``. 
+Of course, it also can run ``srna`` without ``--sRNA_blast_stat, -sb``.
 
 nr database: It could be used to search the known protein in order to exclude false positive.
 
@@ -2062,13 +2070,13 @@ Ptt file of genome
 
 ::
 
-    usage: ANNOgesic.py ppi_network [-h] [--ptt_path PTT_PATH]
-                                    [--proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...]]
-                                    [--without_strain_pubmed]
-                                    [--species_STRING SPECIES_STRING]
-                                    [--score SCORE] [--node_size NODE_SIZE]
-                                    [--query QUERY [QUERY ...]]
-                                    [project_path]
+    usage: annogesic ppi_network [-h] [--ptt_path PTT_PATH] [--gff_path GFF_PATH]
+                                 [--proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...]]
+                                 [--without_strain_pubmed]
+                                 [--species_STRING SPECIES_STRING] [--score SCORE]
+                                 [--node_size NODE_SIZE]
+                                 [--query QUERY [QUERY ...]]
+                                 [project_path]
     
     positional arguments:
       project_path          Path of the project folder. If none is given the
@@ -2078,6 +2086,8 @@ Ptt file of genome
       -h, --help            show this help message and exit
       --ptt_path PTT_PATH, -p PTT_PATH
                             The path of .ptt annotation folder.
+      --gff_path GFF_PATH, -g GFF_PATH
+                            The path of gff annotation folder.
       --proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
                             This is for assigning protein Id which you want to
                             predict. In order to retrieve the data from STRING and
@@ -2092,19 +2102,27 @@ Ptt file of genome
                             Staphylococcus_aureus_HG003:"Staphylococcus aureus
                             NCTC 8325":"Staphylococcus aureus".
                             (ptt_filename:strain_ptt:STRING_name:Pubmed_name).
-                            First one is the ptt file name. Second one is the seq
-                            name in ptt files. Third one is for STRING database,
-                            and the fourth one is for Pubmed. Of course, you can
-                            run the script for several strains at the same time.
-                            Before running it, please check the species file which
-                            located in ANNOgesic/input/database .If you didn't
-                            download the file, please download it. You can use
-                            taxon_id, STRING_name_compact or official_name_NCBI to
-                            represent STRING_name.BE CAREFUL, if the name which
-                            you assigned has spaces, please put "" at two ends.
-                            For the name of Pubmed, you can assign the name not so
-                            specific. If you assign a specific name, it may not be
-                            able to find the related literatures.
+                            First one is the ptt file name. Second one is the
+                            header of gff annotation files. If first line of ptt
+                            file has a comma, it will extract the string before
+                            comma as the header, ex: Helicobacter pylori 26695
+                            chromosome, complete genome - 1..1667867. The header
+                            will be "Helicobacter pylori 26695 chromosome". If
+                            there is no comma in first line, the header will be
+                            the string before dash. ex: Helicobacter pylori -
+                            1..1667867. The header will be "Helicobacter pylori".
+                            Third one is for STRING database, and the fourth one
+                            is for Pubmed. Of course, you can run the script for
+                            several strains at the same time. Before running it,
+                            please check the species file which located in
+                            ANNOgesic/input/database .If you didn't download the
+                            file, please download it. You can use taxon_id,
+                            STRING_name_compact or official_name_NCBI to represent
+                            STRING_name.BE CAREFUL, if the name which you assigned
+                            has spaces, please put "" at two ends. For the name of
+                            Pubmed, you can assign the name not so specific. If
+                            you assign a specific name, it may not be able to find
+                            the related literatures.
       --without_strain_pubmed, -n
                             If you want to retrieve pubmed without assign any
                             strains, please turn it on. Default is False.
@@ -2117,10 +2135,12 @@ Ptt file of genome
                             Please size of the nodes in figure, default is 4000.
       --query QUERY [QUERY ...], -q QUERY [QUERY ...]
                             Please assign the query protein here. The format is
-                            $STRAIN:$START_POINT:$END_POINT:$STRAND.For example,
-                            NC_007795:345:456:+ NC_007795:2000:3211:-. If you want
-                            to compute all protein, just type all.The default is
-                            all.
+                            $HEADEROFPTT:$START_POINT:$END_POINT:$STRAND.For
+                            example, Helicobacter pylori 26695
+                            chromosome:345:456:+ Helicobacter pylori 26695
+                            chromosome:2000:3211:-. If you want to compute all
+                            protein, just type all.The default is all.
+
 
 - Output files
 
@@ -2140,7 +2160,8 @@ They still stores in this folder.
 ``figures``: the thickness is represent how many literatures can be found for the interaction of two proteins. 
 The solid line means there is some literatures which strongly support the interaction. The dash-dot line 
 means the supported literatures are very weak. The dot line means there is no literatures support the 
-interaction. The color is the best score of the literatures of the interaction.
+interaction. The color is the best score of the literatures of the interaction. Basically, these figures are 
+generated from the ``best_results``
 
 subcellular_localization
 ------------------
@@ -2213,6 +2234,11 @@ riboswitch
 `Rfam <http://rfam.xfam.org/>`_
 
 Gff files and fasta files of genome
+
+File of ``riboswitch_ID``. The file should contain Accession of Rfam, ID and Description of riboswitch.
+The format is ``$ACCESSION{tab}$ID{tab}$DESCRIPTION``. You can download the file from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv). Ours is based on the 
+section of Rfam and literatures. You also can create your own one.
 
 - Arguments
 
