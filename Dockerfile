@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM debian
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 ENV DEBIAN_FRONTEND noninteractive
 
