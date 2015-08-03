@@ -72,13 +72,13 @@ class GoTermFinding(object):
                                     "_".join(["stat", folder + ".csv"])),
                        out_folder)
             self.helper.move_all_content(out_folder, fig_path,
-                                         "_three_roots.png")
+                                         ["_three_roots.png"])
             self.helper.move_all_content(out_folder, fig_path,
-                                         "_molecular_function.png")
+                                         ["_molecular_function.png"])
             self.helper.move_all_content(out_folder, fig_path,
-                                         "_cellular_component.png")
+                                         ["_cellular_component.png"])
             self.helper.move_all_content(out_folder, fig_path,
-                                         "_biological_process.png")
+                                         ["_biological_process.png"])
 
     def run_go_term(self, gffs, out_folder, uniprot, go, goslim):
         for gff in os.listdir(gffs):
