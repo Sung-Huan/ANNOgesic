@@ -291,7 +291,7 @@ class Terminator(object):
         self._move_file(term_outfolder, csv_outfolder)
         
     def _remove_tmp_file(self, gffs, fastas, sRNAs, tex_wigs, frag_wigs,
-                         term_outfolder, out_folder, merge_wigs):
+                         trans, term_outfolder, out_folder, merge_wigs):
         self.helper.remove_tmp(gffs)
         self.helper.remove_tmp(fastas)
         if sRNAs is not None:
@@ -299,6 +299,7 @@ class Terminator(object):
             shutil.rmtree(self.tmps["merge"])
         if (tex_wigs is not None) and (frag_wigs is not None):
             shutil.rmtree(merge_wigs)
+        self.helper.remove_tmp(trans)
         self.helper.remove_tmp(tex_wigs)
         self.helper.remove_tmp(frag_wigs)
         self.helper.remove_tmp(term_outfolder)
@@ -413,5 +414,5 @@ class Terminator(object):
             out_folder, fuzzy_up_ta, fuzzy_down_ta, fuzzy_up_cds, fuzzy_down_cds)
         self._compute_stat(self.outfolder["term"], self.outfolder["csv"],
                            stat, out_folder)
-        self._remove_tmp_file(gffs, fastas, sRNAs, tex_wigs, frag_wigs,
+        self._remove_tmp_file(gffs, fastas, sRNAs, tex_wigs, frag_wigs, trans,
                               self.outfolder["term"], out_folder, merge_wigs)
