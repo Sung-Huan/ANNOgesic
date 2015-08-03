@@ -9,6 +9,15 @@ def optimize_tss(tsspredator_path, fastas, gffs, wigs, manual, output_folder,
                  max_factor_reduction, max_base_height, max_enrichment,
                  max_processing, utr_length, libs, replicate_name, cluster,
                  length, core, program, replicate, steps):
+    if len(os.listdir(gffs)) == 0:
+        print("Error: there is no gff files!!!")
+        sys.exit()
+    if len(os.listdir(fastas)) == 0:
+        print("Error: there is no fasta files!!!")
+        sys.exit()
+    if len(os.listdir(wigs)) == 0:
+        print("Error: there is no wiggle files!!!")
+        sys.exit()
     Multiparser().parser_wig(wigs)
     Multiparser().parser_gff(gffs, None)
     Multiparser().parser_fasta(fastas)
