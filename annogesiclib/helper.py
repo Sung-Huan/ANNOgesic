@@ -193,9 +193,8 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Error: repeat ID {0} in gff file!!!".format(
+                            print("Warninng: repeat ID {0} in gff file!!!".format(
                                   gff.attributes["ID"]))
-                            sys.exit(1)
                         else:
                             self._add_element(ids, "ID", gff)
                     if "locus_tag" in gff.attributes.keys():
