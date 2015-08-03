@@ -82,8 +82,7 @@ def change(snp, seq):
                          snp["alt"].lower() + seq["seq"][end_point:]
             seq["num_mod"] = seq["num_mod"] - (len(snp["ref"]) - len(snp["alt"]))
 
-def import_data(max_quals, snps, snp_file, read_depth,
-                bam_number, indel_fraction):
+def import_data(snp_file, read_depth, bam_number, indel_fraction):
     snps = []
     max_quals = {}
     max_quals["All_strain"] = 0
@@ -145,7 +144,7 @@ def check_overlap(new_snps, overlaps, printeds, count_overlap):
                 break
             count = 0
 
-def overlap_position(qual_snps, conflicts, qual_nooverlap_snps, num_overlap):
+def overlap_position(qual_snps):
     first = True
     qual_nooverlap_snps = {}
     num_overlap = 1
