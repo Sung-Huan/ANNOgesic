@@ -88,7 +88,8 @@ class CircRNADetection(object):
 
     def _run_segemehl_align(self, segemehl_path, fasta_path,
                             index, fasta, read_folder, read,
-                            sam_file, log_file):
+                            sam_file, log_file, alignment_path,
+                            fasta_prefix):
         out = open(os.path.join(alignment_path,
                    fasta_prefix, sam_file), "w")
         log = open(os.path.join(alignment_path,
@@ -126,7 +127,8 @@ class CircRNADetection(object):
                     align_files.append("_".join([read_prefix, fasta_prefix]))
                     print("mapping {0}".format(sam_file))
                     p = self._run_segemehl_align(segemehl_path, fasta_path,
-                            index, fasta, read_folder, read, sam_file, log_file)
+                            index, fasta, read_folder, read, sam_file, log_file,
+                            alignment_path, fasta_prefix)
                     processes.append(p)
                     if num_process == cores:
                         self._wait_process(processes)
@@ -134,7 +136,7 @@ class CircRNADetection(object):
             self._wait_process(processes)
         return align_files, prefixs
 
-    def _run_samtools_convert_bam(self, samtools_path, out_bam, pre_sam):
+    def _run_samtools_convert_bam(self, samtools_path, pre_sam, out_bam):
         call([samtools_path, "view", "-bS", pre_sam, "-o", out_bam])
 
     def _convert_sam2bam(self, sub_alignment_path, samtools_path, align_files):
@@ -206,7 +208,7 @@ class CircRNADetection(object):
                                   self.bams["sort"] + ".sam"),
                             "-n"])
         os.system(command + " 2>" + err_log)
-        self.helper.move_all_content(os.getcwd(), sub_splice_path, ".bed")
+        self.helper.move_all_content(os.getcwd(), sub_splice_path, [".bed"])
         self.helper.remove_all_content(sub_alignment_path,
                                        self.bams["sort"], "file")
 
