@@ -53,9 +53,9 @@ class UTRDetection(object):
                             os.path.join(utr3_path, "gffs",
                             "_".join([prefix, "3UTR.gff"])))
                 self.helper.move_all_content(os.getcwd(),
-                     self.utr5_stat_path, "_5utr_length.png")
+                     self.utr5_stat_path, ["_5utr_length.png"])
                 self.helper.move_all_content(os.getcwd(),
-                     self.utr3_stat_path, "_3utr_length.png")
+                     self.utr3_stat_path, ["_3utr_length.png"])
 
     def run_utr_detection(self, tsss, gffs, trans, terms,
                           fuzzy, out_folder, source, base_5utr):
