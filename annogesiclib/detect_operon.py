@@ -11,8 +11,8 @@ def import_to_operon(start, end, strand):
 def get_gene_info(cds):
     if "locus_tag" in cds.attributes.keys():
         feature = cds.attributes["locus_tag"]
-    elif "protein_id" in cds.attributes.keys():
-        feature = cds.attributes["protein_id"]
+#    elif "protein_id" in cds.attributes.keys():
+#        feature = cds.attributes["protein_id"]
     else:
         strand = Helper().get_strand_name(cds.strand)
         feature = "".join([cds.feature, ":", str(cds.start),
@@ -200,7 +200,12 @@ def print_file(ta, operons, out, operon_id, whole_operon, tsss,
                 if (sub["strand"] == gene.strand) and (
                     sub["start"] <= gene.start) and (
                     sub["end"] >= gene.end):
-                    sub_gene.append(gene.attributes["locus_tag"])
+                    if "locus_tag" in gene.attributes.keys():
+                        sub_gene.append(gene.attributes["locus_tag"])
+                    else:
+                        sub_gene.append("".join([gene.feature, ":",
+                                        str(gene.start), "-", str(gene.end),
+                                        "_", gene.strand]))
                     num_sub_gene += 1
             if num_sub_gene == 0:
                 sub_gene.append("NA")
