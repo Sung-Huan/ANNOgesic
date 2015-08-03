@@ -241,6 +241,7 @@ class TranscriptAssembly(object):
         if compare_tss is not None:
             self.helper.remove_tmp(compare_tss)
         self.helper.remove_tmp(os.path.join(out_folder, "gffs"))
+        self.helper.remove_tmp(self.tran_path)
 
     def run_transcript_assembly(self, frag_wigs, tex_wigs, sort, tex, length,
             gffs, height, width, tolerance, low_cutoff, replicates_tex,
