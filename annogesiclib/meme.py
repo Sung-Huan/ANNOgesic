@@ -13,7 +13,10 @@ class MEME(object):
         self.multiparser = Multiparser()
         self.helper = Helper()
         self.tss_path = os.path.join(tsss, "tmp")
-        self.gff_path = os.path.join(gffs, "tmp")
+        if gffs is not None:
+            self.gff_path = os.path.join(gffs, "tmp")
+        else:
+            self.gff_path = None
         self.tmp_folder = os.path.join(os.getcwd(), "tmp")
         self.fastas = {"pri": os.path.join(self.tmp_folder, "primary.fa"),
                        "sec": os.path.join(self.tmp_folder, "secondary.fa"),
@@ -191,6 +194,10 @@ class MEME(object):
         self.helper.remove_tmp(tsss)
         self.helper.remove_tmp(gffs)
         self.helper.remove_tmp(wigs)
+        if "allfasta.fa" in os.listdir(fastas):
+            os.remove(self.all_fasta)
+        if "allfasta" in os.listdir(os.getcwd()):
+            shutil.rmtree("allfasta")
         shutil.rmtree("tmp")
 
     def run_meme(self, meme_path, input_folder, output_folder, input_libs,
@@ -204,7 +211,8 @@ class MEME(object):
         self.multiparser.parser_gff(tsss, "TSS")
         if "allfasta_TSS.gff" in os.listdir(self.tss_path):
             os.remove(self.all_tss)
-        self._check_gff(gffs)
+        if gffs is not None:
+            self._check_gff(gffs)
         self._check_gff(tsss)
         self.multiparser.combine_gff(fastas, self.tss_path, "fasta", "TSS")
         self.helper.remove_all_content(input_folder, None, "dir")
