@@ -46,7 +46,7 @@ class TargetFasta(object):
                 out.close()
         else:
             self.helper.move_all_content(self.folders["tmp_tar"],
-                                         ".fa ", tar_folder)
+                                         tar_folder, [".fa"])
         shutil.rmtree(self.folders["tmp_tar"])
         shutil.rmtree(self.folders["tmp_ref"])
         self.helper.remove_all_content(ref_folder, "_folder", "dir")
