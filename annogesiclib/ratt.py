@@ -107,7 +107,7 @@ class RATT(object):
             out_gbk = self._parser_embl_gbk(gbks)
             self.converter.convert_gbk2embl(out_gbk)
             self.helper.check_make_folder(self.embl)
-            self.helper.move_all_content(out_gbk, self.embl, ".embl")
+            self.helper.move_all_content(out_gbk, self.embl, [".embl"])
         return out_gbk
 
     def _run_ratt(self, output_path, ratt_path,
