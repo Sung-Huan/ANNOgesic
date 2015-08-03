@@ -870,7 +870,7 @@ def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
     if len(list_num) > 0:
         indexs["extend"] = True
     else:
-        print("Error: the stat.csv has something wrong, please check it!!!")
+        print("Error: the stat.csv has something wrong, please check it or remove it!!!")
         sys.exit()
     new_line = 0
     new_stat = open("tmp.csv", "w")
