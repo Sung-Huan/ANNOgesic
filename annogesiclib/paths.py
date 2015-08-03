@@ -46,6 +46,7 @@ class Paths(object):
         self.manual_pro_folder = "%s/manual_processing_site" % self.input_folder
         self.read_folder = "%s/reads" % self.input_folder
         self.bam_folder = "%s/BAMs" % self.input_folder
+        self.riborfam_folder = "%s/riboswitch_ID" % self.input_folder
 
     def _set_output_folder_names(self):
         self.target_folder = "%s/target" % self.output_folder
@@ -326,7 +327,7 @@ class Paths(object):
 		self.bam_folder,
 		self.promoter_input_folder, self.database_folder,
                 self.tsspredator_input_folder, self.manual_TSS_folder,
-                self.manual_pro_folder]
+                self.manual_pro_folder, self.riborfam_folder]
 
     def required_output_folders(self, folder_type):
         folder_dict = {"get_target_fasta": 
