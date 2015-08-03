@@ -6,9 +6,9 @@ Tools
 
 `Python <https://www.python.org/>`_ : version higher or equal than 3.4
 
-`BioPython <http://biopython.org/wiki/Main_Page>`_
+`BioPython <http://biopython.org/wiki/Main_Page>`_: version higher or equal than 1.65
 
-`BioPerl <http://www.bioperl.org/wiki/Main_Page>`_
+`BioPerl <http://www.bioperl.org/wiki/Main_Page>`_:  version higher or equal than 1.6.1
 
 `Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_ : version higher or equal than 2.2.28+ (for sRNA_detection)
 
@@ -41,6 +41,8 @@ modify the path for execute RATT.
 `ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal than 2.1.7 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection)
 
 `Ps2pdf14 <http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm>`_ (for sRNA detection)
+
+`IGV <https://www.broadinstitute.org/software/igv/home>`_ (for screenshot and color_png)
 
 Databases
 ---------
