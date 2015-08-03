@@ -8,8 +8,9 @@ Table of content
 
    index
    prerequired
-   subcommands
    docker
+   subcommands
+   test_case
    troubleshooting
 
 Introduction
