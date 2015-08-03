@@ -266,7 +266,8 @@ class Multiparser(object):
                                 pre_seq_id = row[0]
                                 out.write("\t".join(row) + "\n")
                                 out_t.write("\t".join(row) + "\n")
-        os.remove(os.path.join(gff_folder, "tmp.gff"))
+        if os.path.exists(os.path.join(gff_folder, "tmp.gff")):
+            os.remove(os.path.join(gff_folder, "tmp.gff"))
         f_h.close()
         out.close()
         out_t.close()
