@@ -31,24 +31,25 @@ def import_data(row, type_):
 def merge_info(blasts):
     first = True
     finals = []
-    for blast in blasts:
-        if first:
-            repeat = 0
-            first = False
-            pre_blast = deepcopy(blast)
-        else:
-            if (pre_blast["strain"] == blast["strain"]) and (
-                pre_blast["strand"] == blast["strand"]) and (
-                pre_blast["start"] == blast["start"]) and (
-                pre_blast["end"] == blast["end"]):
-                if (repeat < 2):
-                    pre_blast["hits"] = ";".join([pre_blast["hits"], blast["hits"]])
-                    repeat += 1
-            else:
+    if len(blasts) != 0:
+        for blast in blasts:
+            if first:
                 repeat = 0
-                finals.append(pre_blast)
-                pre_blast = blast.copy()
-    finals.append(pre_blast)
+                first = False
+                pre_blast = deepcopy(blast)
+            else:
+                if (pre_blast["strain"] == blast["strain"]) and (
+                    pre_blast["strand"] == blast["strand"]) and (
+                    pre_blast["start"] == blast["start"]) and (
+                    pre_blast["end"] == blast["end"]):
+                    if (repeat < 2):
+                        pre_blast["hits"] = ";".join([pre_blast["hits"], blast["hits"]])
+                        repeat += 1
+                else:
+                    repeat = 0
+                    finals.append(pre_blast)
+                    pre_blast = blast.copy()
+        finals.append(pre_blast)
     return finals
 
 def compare_srna_table(srna_tables, srna, final, min_len, max_len):
@@ -95,17 +96,20 @@ def compare_blast(blasts, srna, final, hit):
             final[hit] = blast["hits"]
     return final
 
+def check_keys(ref_key, final_key, srna, final):
+    if ref_key in srna.attributes.keys():
+        final[final_key] = srna.attributes[ref_key]
+    else:
+        final[final_key] = "NA"
+
 def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
     finals = []
     for srna in srnas:
         final = {}
-        final["energy"] = srna.attributes["2d_energy"]
-        final["nr_hit_num"] = srna.attributes["nr_hit"]
-        final["sRNA_hit_num"] = srna.attributes["sRNA_hit"]
-        if "sORF" in srna.attributes.keys():
-            final["sORF"] = srna.attributes["sORF"]
-        else:
-            final["sORF"] = "NA"
+        check_keys("2d_energy", "energy", srna, final)
+        check_keys("nr_hit", "nr_hit_num", srna, final)
+        check_keys("sRNA_hit", "sRNA_hit_num", srna, final)
+        check_keys("sORF", "sORF", srna, final)
         if srna.source == "intergenic":
             final["utr"] = "Intergenic"
         else:
@@ -125,6 +129,10 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
 
 def print_file(finals, out):
     for final in finals:
+        if "nr_hit" not in final.keys():
+            final["nr_hit"] = "NA"
+        if "sRNA_hit" not in final.keys():
+            final["sRNA_hit"] = "NA"
         out.write("\t".join([
                   final["strain"], final["name"], str(final["start"]),
                   str(final["end"]), final["strand"], final["tss_pro"],
@@ -142,14 +150,16 @@ def read_table(srna_table_file, nr_blast, srna_blast_file):
     for row in csv.reader(f_h, delimiter='\t'):
         srna_tables.append(import_data(row, "gff"))
     f_h.close()
-    f_h = open(nr_blast, "r")
-    for row in csv.reader(f_h, delimiter='\t'):
-        nr_blasts.append(import_data(row, "nr"))
-    f_h.close()
-    f_h = open(srna_blast_file, "r")
-    for row in csv.reader(f_h, delimiter='\t'):
-        srna_blasts.append(import_data(row, "sRNA"))
-    f_h.close()
+    if os.path.exists(nr_blast):
+        f_h = open(nr_blast, "r")
+        for row in csv.reader(f_h, delimiter='\t'):
+            nr_blasts.append(import_data(row, "nr"))
+        f_h.close()
+    if os.path.exists(nr_blast):
+        f_h = open(srna_blast_file, "r")
+        for row in csv.reader(f_h, delimiter='\t'):
+            srna_blasts.append(import_data(row, "sRNA"))
+        f_h.close()
     return srna_tables, nr_blasts, srna_blasts
 
 def read_gff(srna_gff):
