@@ -115,7 +115,8 @@ You just need to copy the data which you retrieved to ``ANNOgesic/output/target/
 
 If the retrieved data is only the closed strain of your target strain, you may need to run 
 subcommand ``get_target_fasta``. However, this command need the mutation table. please refer 
-to the user manual. Once you have the mutation table, you can improve the fasta files.
+to the `subcommand <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst>`_. 
+Once you have the mutation table, you can improve the fasta files.
 
 We use a simple example to modify our test case. The mutation table is 
 

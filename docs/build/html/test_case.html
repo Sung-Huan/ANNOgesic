@@ -147,7 +147,8 @@ cd ../../../../
 You just need to copy the data which you retrieved to <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>.</p>
 <p>If the retrieved data is only the closed strain of your target strain, you may need to run
 subcommand <code class="docutils literal"><span class="pre">get_target_fasta</span></code>. However, this command need the mutation table. please refer
-to the user manual. Once you have the mutation table, you can improve the fasta files.</p>
+to the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst">subcommand</a>.
+Once you have the mutation table, you can improve the fasta files.</p>
 <p>We use a simple example to modify our test case. The mutation table is</p>
 <div class="highlight-python"><div class="highlight"><pre>#target_id  reference_id    reference_nt    position        target_nt       impact of correction    locus tag       gene    Description
 NC_test.1   NC_000915.1     a       3       c               SAOUHSC_00002   dnaA    XXXXXX
@@ -786,7 +787,7 @@ NC_000915.1_NC_000915.1_1_101.fa  NC_000915.1_NC_000915.1_1_140.fa  NC_000915.1_
 ....
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id12"><span class="problematic" id="id13">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id13"><span class="problematic" id="id14">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores the results after filtering and the index of potential sequence.
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistics and visualization files.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_000915.1/
