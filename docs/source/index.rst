@@ -86,7 +86,9 @@ Download
 
 or
 
+
 ::
+
     pip3 install annogesic
 
 Source code
