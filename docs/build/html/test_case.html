@@ -66,7 +66,8 @@ For GFF3 file you can use a genome browser for example <cite>IGB &lt;http://biov
 <cite>IGV &lt;https://www.broadinstitute.org/igv/&gt;_</cite> or <cite>Jbrowse &lt;http://jbrowse.org/&gt;_</cite>.
 There are also several PNG and TXT files.</p>
 <p>Before we start, please refer to the section of <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">filename</span></code> and
-<code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
+<code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in <code class="docutils literal"><span class="pre">subcommand</span></code>. All the details
+are also in <code class="docutils literal"><span class="pre">subcommand</span></code>.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
 <p>First of all, we need to create a working folder, we use <code class="docutils literal"><span class="pre">create</span></code> subcommand.</p>
@@ -75,6 +76,8 @@ There are also several PNG and TXT files.</p>
 </div>
 <p>Then you will see</p>
 <div class="highlight-python"><div class="highlight"><pre>Created folder &quot;ANNOgesic&quot; and required subfolders.
+$ ls
+ANNOgesic
 </pre></div>
 </div>
 </div>
@@ -123,7 +126,7 @@ $ rm SRR1951997.sra
 $ rm SRR1951998.sra
 </pre></div>
 </div>
-<p>Now you get the reads. You can select part of them to reduce the running time.</p>
+<p>Now you get the reads. You can select a part of them to reduce the running time.</p>
 <p>Then we have to download the wiggle files.</p>
 <dl class="docutils">
 <dt>::</dt>
@@ -454,7 +457,7 @@ stat_NC_000915.csv
 </div>
 <div class="section" id="generating-utr">
 <h2>Generating UTR<a class="headerlink" href="#generating-utr" title="Permalink to this headline">¶</a></h2>
-<p>Now, we have the information of  TSS, transcripts and terminators. We can detect the 5&#8217;UTR and 3&#8217;UTR easily by using
+<p>Now, we have the information of TSS, transcripts and terminators. We can detect the 5&#8217;UTR and 3&#8217;UTR easily by using
 the subcommand <code class="docutils literal"><span class="pre">utr</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>python3 annogesic utr \
     -g ANNOgesic/output/target/annotation \
