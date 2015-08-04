@@ -1042,6 +1042,7 @@ Then you can put ``Rfam_riboswitch_ID.csv`` in ``ANNOgesic/input/riboswitch_ID``
 You also need to download Rfam.
 
 ::
+
     $ wget ANNOgesic/input/database ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
     $ cd ANNOgesic/input/database
     $ tar -zxvf Rfam.tar.gz
