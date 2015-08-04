@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ANNOgesic 1.0.0 documentation" href="index.html" />
-    <link rel="next" title="Dockfiles" href="docker.html" />
-    <link rel="prev" title="Pre-required tools or databases" href="prerequired.html" />
+    <link rel="next" title="Performing an test cast" href="test_case.html" />
+    <link rel="prev" title="Dockfiles" href="docker.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -39,10 +39,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="docker.html" title="Dockfiles"
+          <a href="test_case.html" title="Performing an test cast"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="prerequired.html" title="Pre-required tools or databases"
+          <a href="docker.html" title="Dockfiles"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 1.0.0 documentation</a> &raquo;</li> 
       </ul>
@@ -193,13 +193,14 @@ Then, user can assign which kinds of files he/she wants to download.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: ANNOgesic.py get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
-                                  [--ref_gff] [--ref_gbk] [--convert_embl]
-                                  [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
+                                 [--ref_gff] [--ref_ptt] [--ref_rnt]
+                                 [--ref_gbk] [--convert_embl]
+                                 [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given the
-                      current directory is used.
+                        current directory is used.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -207,6 +208,8 @@ optional arguments:
                         Path of website where can download the required files
   --ref_fasta, -f       Download fasta files of reference. Default is False
   --ref_gff, -g         Download gff files of reference. Default is False
+  --ref_ptt, -p         Download ptt files of reference. Default is False
+  --ref_rnt, -r         Download rnt files of reference. Default is False
   --ref_gbk, -k         Download genbank files of reference. Default is False
   --convert_embl, -e    Convert gbk to embl files of reference. Default is
                         False
@@ -296,11 +299,10 @@ it. Please refer to the description of SNP_calling.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: ANNOgesic.py get_target_fasta [-h]
-                                     [--ref_fasta_folder REF_FASTA_FOLDER]
-                                     [--mutation_table MUTATION_TABLE]
-                                     [--output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...]]
-                                     [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic get_target_fasta [-h] [--ref_fasta_folder REF_FASTA_FOLDER]
+                              [--mutation_table MUTATION_TABLE]
+                              [--output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...]]
+                              [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given the
@@ -342,16 +344,15 @@ run <code class="docutils literal"><span class="pre">source</span> <span class="
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: ANNOgesic.py annotation_transfer [-h] [--PAGIT_folder PAGIT_FOLDER]
-                                        [--RATT_path RATT_PATH]
-                                        [--compare_pair COMPARE_PAIR [COMPARE_PAIR ...]]
-                                        [--element ELEMENT]
-                                        [--transfer_type TRANSFER_TYPE]
-                                        [--ref_gbk REF_GBK]
-                                        [--ref_fasta REF_FASTA]
-                                        [--target_fasta TARGET_FASTA]
-                                        [--convert_to_gff_rnt_ptt]
-                                        [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic annotation_transfer [-h] [--RATT_path RATT_PATH]
+                                     [--compare_pair COMPARE_PAIR [COMPARE_PAIR ...]]
+                                     [--element ELEMENT]
+                                     [--transfer_type TRANSFER_TYPE]
+                                     [--ref_gbk REF_GBK]
+                                     [--ref_fasta REF_FASTA]
+                                     [--target_fasta TARGET_FASTA]
+                                     [--convert_to_gff_rnt_ptt]
+                                     [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given the
@@ -359,16 +360,15 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --PAGIT_folder PAGIT_FOLDER
-                        Path of the PAGIT folder. If your PAGIT folder is not
-                        located at /tools/PAGIT, please assign here.
   --RATT_path RATT_PATH
                         Path of the start.ratt.sh file of RATT folder. Default
                         is start.ratt.sh.
   --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
-                        Please assign the name of pairs. ex.
-                        $REFERENCE.fa:$TARGET.fa. ATTENTION:please make sure
-                        the ref name is the same as embl file.
+                        Please assign the name of fasta files of pairs. ex.
+                        NC_007795:NEW_NC_007795. The reference fasta file is
+                        NC_007795.fa and the target fasta file is
+                        NEW_NC_007795.fa. ATTENTION:please make sure the ref
+                        name is the same as embl file.
   --element ELEMENT, -e ELEMENT
                         It will become the prefix of all output file.
   --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
@@ -1151,7 +1151,13 @@ the information of TSS and processing site, we can also predict UTR derived sRNA
 <p>wiggle file: To detect the intergenic transcripts which have dramatic coverage
 decreasing, it could be find the sRNA which located in long transcripts,
 The libraries and wiggle files, Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
-<p>sRNA database: It could be used to search the known sRNA.</p>
+<p>sRNA database: It could be used to search the known sRNA. The format of header should be <code class="docutils literal"><span class="pre">$ID|$STRAIN|$sRNANAME|$OTHER_INFO|$OTHER_INFO</span></code>.
+For example, <code class="docutils literal"><span class="pre">&gt;saci2813.1|Acinetobacter</span> <span class="pre">sp.</span> <span class="pre">ADP1|Aar|12240|2812430|forward</span></code>.
+The ID is saci403.1; the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar.
+<code class="docutils literal"><span class="pre">srna</span></code> only consider the first three columns. Therefore, the format of the first three columns should be
+fit the rule. BE ATTENTION, after format the sRNA database, the information after the third columns will be removed.
+If the user doesn&#8217;t follow the format, it will occur some error when the user run <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.
+Of course, it also can run <code class="docutils literal"><span class="pre">srna</span></code> without <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.</p>
 <p>nr database: It could be used to search the known protein in order to exclude false positive.</p>
 <p>sORF: It could compare sORF and sRNA. User can refer these information to find the best sRNA candidates.</p>
 <p>If user want to detect the UTR derived sRNA, it will be necessary to import
@@ -1984,13 +1990,13 @@ User can refer to it and exclude false positive.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: ANNOgesic.py ppi_network [-h] [--ptt_path PTT_PATH]
-                                [--proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...]]
-                                [--without_strain_pubmed]
-                                [--species_STRING SPECIES_STRING]
-                                [--score SCORE] [--node_size NODE_SIZE]
-                                [--query QUERY [QUERY ...]]
-                                [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic ppi_network [-h] [--ptt_path PTT_PATH] [--gff_path GFF_PATH]
+                             [--proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...]]
+                             [--without_strain_pubmed]
+                             [--species_STRING SPECIES_STRING] [--score SCORE]
+                             [--node_size NODE_SIZE]
+                             [--query QUERY [QUERY ...]]
+                             [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given the
@@ -2000,6 +2006,8 @@ optional arguments:
   -h, --help            show this help message and exit
   --ptt_path PTT_PATH, -p PTT_PATH
                         The path of .ptt annotation folder.
+  --gff_path GFF_PATH, -g GFF_PATH
+                        The path of gff annotation folder.
   --proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
                         This is for assigning protein Id which you want to
                         predict. In order to retrieve the data from STRING and
@@ -2013,20 +2021,28 @@ optional arguments:
                         ylococcus aureus&quot;. or Staphylococcus_aureus_HG003.ptt:
                         Staphylococcus_aureus_HG003:&quot;Staphylococcus aureus
                         NCTC 8325&quot;:&quot;Staphylococcus aureus&quot;.
-                        (ptt_filename:strain_ptt:STRING_name:Pubmed_name).
-                        First one is the ptt file name. Second one is the seq
-                        name in ptt files. Third one is for STRING database,
-                        and the fourth one is for Pubmed. Of course, you can
-                        run the script for several strains at the same time.
-                        Before running it, please check the species file which
-                        located in ANNOgesic/input/database .If you didn&#39;t
-                        download the file, please download it. You can use
-                        taxon_id, STRING_name_compact or official_name_NCBI to
-                        represent STRING_name.BE CAREFUL, if the name which
-                        you assigned has spaces, please put &quot;&quot; at two ends.
-                        For the name of Pubmed, you can assign the name not so
-                        specific. If you assign a specific name, it may not be
-                        able to find the related literatures.
+                        (ptt_filename:header_ptt:STRING_name:Pubmed_name).
+                        First one is the ptt file name. Second one is the
+                        header of gff files. If first line of ptt
+                        file has a comma, it will extract the string before
+                        comma as the header, ex: Helicobacter pylori 26695
+                        chromosome, complete genome - 1..1667867. The header
+                        will be &quot;Helicobacter pylori 26695 chromosome&quot;. If
+                        there is no comma in first line, the header will be
+                        the string before dash. ex: Helicobacter pylori -
+                        1..1667867. The header will be &quot;Helicobacter pylori&quot;.
+                        Third one is for STRING database, and the fourth one
+                        is for Pubmed. Of course, you can run the script for
+                        several strains at the same time. Before running it,
+                        please check the species file which located in
+                        ANNOgesic/input/database .If you didn&#39;t download the
+                        file, please download it. You can use taxon_id,
+                        STRING_name_compact or official_name_NCBI to represent
+                        STRING_name.BE CAREFUL, if the name which you assigned
+                        has spaces, please put &quot;&quot; at two ends. For the name of
+                        Pubmed, you can assign the name not so specific. If
+                        you assign a specific name, it may not be able to find
+                        the related literatures.
   --without_strain_pubmed, -n
                         If you want to retrieve pubmed without assign any
                         strains, please turn it on. Default is False.
@@ -2039,10 +2055,11 @@ optional arguments:
                         Please size of the nodes in figure, default is 4000.
   --query QUERY [QUERY ...], -q QUERY [QUERY ...]
                         Please assign the query protein here. The format is
-                        $STRAIN:$START_POINT:$END_POINT:$STRAND.For example,
-                        NC_007795:345:456:+ NC_007795:2000:3211:-. If you want
-                        to compute all protein, just type all.The default is
-                        all.
+                        $HEADEROFPTT:$START_POINT:$END_POINT:$STRAND.For
+                        example, Helicobacter pylori 26695
+                        chromosome:345:456:+ Helicobacter pylori 26695
+                        chromosome:2000:3211:-. If you want to compute all
+                        protein, just type all.The default is all.
 </pre></div>
 </div>
 <ul class="simple">
@@ -2061,7 +2078,8 @@ They still stores in this folder.</p>
 <p><code class="docutils literal"><span class="pre">figures</span></code>: the thickness is represent how many literatures can be found for the interaction of two proteins.
 The solid line means there is some literatures which strongly support the interaction. The dash-dot line
 means the supported literatures are very weak. The dot line means there is no literatures support the
-interaction. The color is the best score of the literatures of the interaction.</p>
+interaction. The color is the best score of the literatures of the interaction. Basically, these figures are
+generated from the <code class="docutils literal"><span class="pre">best_results</span></code></p>
 </div>
 <div class="section" id="subcellular-localization">
 <h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
@@ -2127,6 +2145,10 @@ optional arguments:
 <p><a class="reference external" href="http://infernal.janelia.org/">Infernal</a></p>
 <p><a class="reference external" href="http://rfam.xfam.org/">Rfam</a></p>
 <p>Gff files and fasta files of genome</p>
+<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Accession of Rfam, ID and Description of riboswitch.
+The format is <code class="docutils literal"><span class="pre">$ACCESSION{tab}$ID{tab}$DESCRIPTION</span></code>. You can download the file from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv). Ours is based on the
+section of Rfam and literatures. You also can create your own one.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -2489,11 +2511,11 @@ optional arguments:
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="prerequired.html"
-                        title="previous chapter">Pre-required tools or databases</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="docker.html"
-                        title="next chapter">Dockfiles</a></p>
+                        title="previous chapter">Dockfiles</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_case.html"
+                        title="next chapter">Performing an test cast</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">

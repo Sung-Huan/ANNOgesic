@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Troubleshooting &mdash; ANNOgesic 1.0.0 documentation</title>
+    <title>Install &mdash; ANNOgesic 1.0.0 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,6 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ANNOgesic 1.0.0 documentation" href="index.html" />
-    <link rel="prev" title="Performing an test cast" href="test_case.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -37,9 +36,6 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="test_case.html" title="Performing an test cast"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 1.0.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,23 +45,30 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="troubleshooting">
-<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pickling-error">
-<h2>Pickling error<a class="headerlink" href="#pickling-error" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Problem</li>
-</ul>
-<div class="highlight-python"><div class="highlight"><pre>Traceback (most recent call last):
-  File &quot;ANNOgesic.py&quot;, line 6, in &lt;module&gt;
-    from annogesiclib.controller import Controller
-ImportError: No module named annogesiclib.controller
+  <div class="section" id="install">
+<h1>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h1>
+<p>There are three ways to install ANNOgesic. Please refer to the following
+sections. Only Dockerfiles can install the requirments automatically. If
+you install ANNOgesic through other ways, please install the pre-required
+tools by yourself.</p>
+<div class="section" id="github">
+<h2>Github<a class="headerlink" href="#github" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/Sung-Huan/ANNOgesic.git
 </pre></div>
 </div>
-<ul class="simple">
-<li>Solution</li>
-</ul>
-<p>Switch to Python 3.3 or higher. The newer versions can handle this.</p>
+</div>
+<div class="section" id="dockerfile">
+<h2>Dockerfile<a class="headerlink" href="#dockerfile" title="Permalink to this headline">¶</a></h2>
+<p>Please Download the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Dockerfile</a> of ANNOgesic first.
+Then switch to the folder which Dockerfile are located. For the following commands, please
+refer to <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/docker.rst">here</a>.</p>
+<p>If you want to check Other commands of Docker, please refer to  <a class="reference external" href="https://docs.docker.com/">here</a>.</p>
+</div>
+<div class="section" id="pip3">
+<h2>pip3<a class="headerlink" href="#pip3" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre>pip3 install ANNOgesic
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -77,19 +80,18 @@ ImportError: No module named annogesiclib.controller
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Troubleshooting</a><ul>
-<li><a class="reference internal" href="#pickling-error">Pickling error</a></li>
+<li><a class="reference internal" href="#">Install</a><ul>
+<li><a class="reference internal" href="#github">Github</a></li>
+<li><a class="reference internal" href="#dockerfile">Dockerfile</a></li>
+<li><a class="reference internal" href="#pip3">pip3</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="test_case.html"
-                        title="previous chapter">Performing an test cast</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/troubleshooting.txt"
+      <li><a href="_sources/install.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -118,7 +120,7 @@ ImportError: No module named annogesiclib.controller
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.4</a>
       
       |
-      <a href="_sources/troubleshooting.txt"
+      <a href="_sources/install.txt"
           rel="nofollow">Page source</a></li>
     </div>
 
