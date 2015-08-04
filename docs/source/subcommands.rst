@@ -1774,8 +1774,8 @@ transcript, 5'UTR, and 3'UTR. The order of rows in gff file is according to the 
 circrna
 --------------
 
-``circrna`` can detect the potential circular RNA. It uses `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_
- to detect circular RNA. Then check annotation file and quality of splicing site detection to 
+``circrna`` can detect the potential circular RNA. It uses `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
+to detect circular RNA. Then check annotation file and quality of splicing site detection to 
 exclude false positive. User can assign reads for mapping and detect circular RNA or assign alignment files to skip mapping.
 But BE CAREFUL, If user uses alignment files, they should be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
 and with ``-S``. Or ``circrna`` can't find the proper candidates.
