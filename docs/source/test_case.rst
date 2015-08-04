@@ -110,8 +110,8 @@ Then we have to download the wiggle files.
 Improving the reference genome
 ------------------
 
-If the input data which we retrieved is exactly what you want, you can skip this step. 
-You just need to copy the data which you retrieved to ``ANNOgesic/output/target/fasta``. 
+If the input data which we retrieved is exactly what you want, you can skip this step and just 
+copy the data which you retrieved to ``ANNOgesic/output/target/fasta``. 
 
 If the retrieved data is only the closed strain of your target strain, you may need to run 
 subcommand ``get_target_fasta``. However, this command need the mutation table. please refer 
@@ -182,7 +182,7 @@ Generating annotation files
 -------------------
 
 We have the fasta files now. We can use it to generate our annotation files. If the annotaion files which 
-you retrieved by ``get_input_files`` is exactly what you want, you can skip this step. You just need to 
+you retrieved by ``get_input_files`` is exactly what you want, you can skip this step and just need to 
 copy the annotation files to ``ANNOgesic/output/target/annotation``.
 
 Before you running it, you have to notice path. If you are using docker container, the path is alread setup.
