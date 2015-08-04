@@ -13,8 +13,9 @@ For GFF3 file you can use a genome browser for example `IGB <http://bioviz.org/i
 There are also several PNG and TXT files.
 
 Before we start, please refer to the section of ``The format of filename`` and 
-``The format of libraries for import to ANNOgesic`` in ``subcommand``. All the details 
-are also in ``subcommand``.
+``The format of libraries for import to ANNOgesic`` in 
+`subcommand <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst>`_. 
+All the details are also in `subcommand <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst>`_.
 
 Generating a project
 --------------------
