@@ -80,6 +80,15 @@ n) GO terms, o) subcellular localization, p) riboswitch, q) potential sORF.
 Download
 ========
 
+::
+
+    git clone git@github.com:Sung-Huan/ANNOgesic.git
+
+or
+
+::
+    pip3 install annogesic
+
 Source code
 ===========
 
