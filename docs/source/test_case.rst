@@ -127,9 +127,8 @@ We use a simple example to modify our test case. The mutation table is
     NC_test.1	NC_000915.1	t	6	-	deletion			YYYYYY
     test_case2	NC_000915.1	-	6	g	insertion	SAOUHSC_00132		
 
-You can see the new strain will be NC_test.1 and test_case2. Although there are four fasta files 
-in ``ANNOgesic/input/reference/fasta``, we just modify two of them. Therefore, there will be 
-only two fasta files in ``ANNOgesic/output/target/fasta``, too.
+You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
+two fasta files in ``ANNOgesic/output/target/fasta``.
 
 Now, let's try it
 

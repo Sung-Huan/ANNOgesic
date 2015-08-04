@@ -156,9 +156,8 @@ NC_test.1   NC_000915.1     t       6       -       deletion                    
 test_case2  NC_000915.1     -       6       g       insertion       SAOUHSC_00132
 </pre></div>
 </div>
-<p>You can see the new strain will be NC_test.1 and test_case2. Although there are four fasta files
-in <code class="docutils literal"><span class="pre">ANNOgesic/input/reference/fasta</span></code>, we just modify two of them. Therefore, there will be
-only two fasta files in <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>, too.</p>
+<p>You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be
+two fasta files in <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>.</p>
 <p>Now, let&#8217;s try it</p>
 <div class="highlight-python"><div class="highlight"><pre>$ annogesic get_target_fasta \
    -r ANNOgesic/input/reference/fasta \
