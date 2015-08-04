@@ -1,4 +1,4 @@
-Performing an test cast
+Performing a test cast
 ===================
 
 Here we will guide you through a small test case using ANNOgesic. 
