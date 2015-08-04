@@ -2101,9 +2101,9 @@ Ptt file of genome
                             ylococcus aureus". or Staphylococcus_aureus_HG003.ptt:
                             Staphylococcus_aureus_HG003:"Staphylococcus aureus
                             NCTC 8325":"Staphylococcus aureus".
-                            (ptt_filename:strain_ptt:STRING_name:Pubmed_name).
+                            (ptt_filename:header_ptt:STRING_name:Pubmed_name).
                             First one is the ptt file name. Second one is the
-                            header of gff annotation files. If first line of ptt
+                            header of gff files. If first line of ptt
                             file has a comma, it will extract the string before
                             comma as the header, ex: Helicobacter pylori 26695
                             chromosome, complete genome - 1..1667867. The header
