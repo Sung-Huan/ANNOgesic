@@ -86,6 +86,7 @@ use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
    $ rm sratoolkit.2.5.2-ubuntu64.tar.gz
    $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR1951997.sra
    $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR1951998.sra
+   $ mv *.fasta ANNOgesic/input/reads
    $ rm SRR1951997.sra
    $ rm SRR1951998.sra
 
