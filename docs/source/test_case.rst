@@ -182,12 +182,12 @@ Generating annotation files
 -------------------
 
 We have the fasta files now. We can use it to generate our annotation files. If the annotaion files which 
-you retrieved by ``get_input_files`` is exactly what you want, you can skip this step and just need to 
-copy the annotation files to ``ANNOgesic/output/target/annotation``.
+you retrieved by ``get_input_files`` is exactly what you want, you can skip this step and just copy the 
+annotation files to ``ANNOgesic/output/target/annotation``.
 
-Before you running it, you have to notice path. If you are using docker container, the path is alread setup.
-You don't need to worry about it. However, if you are build ANNOgesic by yourself, remember to assign the 
-path by running
+Before you running it, you have to notice the environment path. If you are using docker container, the 
+path is alread setup. You don't need to worry about it. However, if you are build ANNOgesic by 
+yourself, remember to assign the path by running
 
 ::
 
