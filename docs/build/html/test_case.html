@@ -58,12 +58,12 @@
 <p>Here we will guide you through a small test case using ANNOgesic.
 You will see most subcommands of ANNOgesic. The test case is a publicly
 available RNA-Seq from NCBI GEO that was part of a work by
-<cite>Bischler et al. &lt;http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564&gt;_</cite>.
+<a class="reference external" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564">Bischler et al.</a>.
 The differential RNA-seq data is of Helicobacter pylori 26695.
 There will be several output files which are generated in different formats.
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel).
-For GFF3 file you can use a genome browser for example <cite>IGB &lt;http://bioviz.org/igb/index.html&gt;_</cite>,
-<cite>IGV &lt;https://www.broadinstitute.org/igv/&gt;_</cite> or <cite>Jbrowse &lt;http://jbrowse.org/&gt;_</cite>.
+For GFF3 file you can use a genome browser for example <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
+<a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.
 There are also several PNG and TXT files.</p>
 <p>Before we start, please refer to the section of <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">filename</span></code> and
 <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in <code class="docutils literal"><span class="pre">subcommand</span></code>. All the details
@@ -83,7 +83,7 @@ ANNOgesic
 </div>
 <div class="section" id="retrieving-the-input-data">
 <h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
-<p>For our test case, we can download from <cite>NCBI &lt;ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/&gt;_</cite>.
+<p>For our test case, we can download from <a class="reference external" href="ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/">NCBI</a>.
 We can set the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
 <dl class="docutils">
 <dt>::</dt>
@@ -110,13 +110,13 @@ NC_000915.embl  NC_000915.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt</dd>
 <div class="section" id="putting-wig-bam-files-and-reads-to-proper-location">
 <h2>Putting wig, bam files and reads to proper location<a class="headerlink" href="#putting-wig-bam-files-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
 <p>For the test case, you can download files from
-<cite>here &lt;http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564&gt;_</cite>.</p>
+<a class="reference external" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564">here</a>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951997/SRR1951997.sra
 $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951998/SRR1951998.sra
 </pre></div>
 </div>
 <p>Then you need to convert the SRA files to Fasta or Fastq format for mapping. You can
-use <cite>SRA toolkit &lt;http://www.ncbi.nlm.nih.gov/books/NBK158900/&gt;_</cite> for that.</p>
+use <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK158900/">SRA toolkit</a> for that.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
 $ tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
 $ rm sratoolkit.2.5.2-ubuntu64.tar.gz
@@ -135,9 +135,9 @@ wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp:
 wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz</a>
 wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz</a>
 cd ANNOgesic/input/wigs/tex_notex
-gunzip <a href="#id7"><span class="problematic" id="id8">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_forward.wig.gz </p>
+gunzip <a href="#id11"><span class="problematic" id="id12">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_forward.wig.gz </p>
 <blockquote>
-<div><a href="#id9"><span class="problematic" id="id10">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_reverse.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz</div></blockquote>
+<div><a href="#id13"><span class="problematic" id="id14">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_reverse.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz</div></blockquote>
 <p class="last">cd ../../../../</p>
 </dd>
 </dl>
@@ -229,7 +229,7 @@ this command everytime. For changing the environment, you just need to copy all 
     ANNOgesic
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">-e</span></code> is the prefix of output embl files. <code class="docutils literal"><span class="pre">-t</span></code> is a program of <cite>RATT &lt;http://ratt.sourceforge.net/&gt;_</cite>.
+<p><code class="docutils literal"><span class="pre">-e</span></code> is the prefix of output embl files. <code class="docutils literal"><span class="pre">-t</span></code> is a program of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
 We use <code class="docutils literal"><span class="pre">Strain</span></code> because the similarity is higher than 90%. We assign the pairs of transfer at <code class="docutils literal"><span class="pre">-p</span></code>.
 The names are strains&#8217; name not filenames of fasta files. <code class="docutils literal"><span class="pre">-g</span></code> means we want to transfer the embl files
 to GFF3 files and store in <code class="docutils literal"><span class="pre">ANNOgesic/output/target/annotation</span></code>.</p>
@@ -241,8 +241,8 @@ chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff
 </pre></div>
 </div>
 <p>In <code class="docutils literal"><span class="pre">ANNOgesic/output/target/annotation</span></code>, you can see ptt, rnt and gff files. In <code class="docutils literal"><span class="pre">ANNOgesic/output/annotation_transfer</span></code>,
-you can see the results of <cite>RATT &lt;http://ratt.sourceforge.net/&gt;_</cite>. <code class="docutils literal"><span class="pre">chromosome.NC_test.1.final.embl</span></code> and
-<code class="docutils literal"><span class="pre">chromosome.test_case2.final.embl</span></code> are generated by <cite>RATT &lt;http://ratt.sourceforge.net/&gt;_</cite>. Gff files are
+you can see the results of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>. <code class="docutils literal"><span class="pre">chromosome.NC_test.1.final.embl</span></code> and
+<code class="docutils literal"><span class="pre">chromosome.test_case2.final.embl</span></code> are generated by <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>. Gff files are
 transferred from these embl files.</p>
 </div>
 <div class="section" id="gene-expression-analysis">
@@ -794,7 +794,7 @@ NC_000915.1_NC_000915.1_1_100.fa  NC_000915.1_NC_000915.1_1_13.fa   NC_000915.1_
 NC_000915.1_NC_000915.1_1_101.fa  NC_000915.1_NC_000915.1_1_140.fa  NC_000915.1_NC_000915.1_1_17.fa   NC_000915.1_NC_000915.1_1_218.fa  NC_000915.1_NC_000915.1_1_25.fa   NC_000915.1_NC_000915.1_1_64.fa
 ....</dd>
 </dl>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id11"><span class="problematic" id="id12">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id15"><span class="problematic" id="id16">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores the results after filtering and the index of potential sequence.
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistics and visualization files.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_000915.1/

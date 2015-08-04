@@ -1717,11 +1717,9 @@ transcript, 5&#8217;UTR, and 3&#8217;UTR. The order of rows in gff file is accor
 </div>
 <div class="section" id="circrna">
 <h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNA. It uses <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a></dt>
-<dd>to detect circular RNA. Then check annotation file and quality of splicing site detection to</dd>
-</dl>
-<p>exclude false positive. User can assign reads for mapping and detect circular RNA or assign alignment files to skip mapping.
+<p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNA. It uses <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>
+to detect circular RNA. Then check annotation file and quality of splicing site detection to
+exclude false positive. User can assign reads for mapping and detect circular RNA or assign alignment files to skip mapping.
 But BE CAREFUL, If user uses alignment files, they should be mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>
 and with <code class="docutils literal"><span class="pre">-S</span></code>. Or <code class="docutils literal"><span class="pre">circrna</span></code> can&#8217;t find the proper candidates.</p>
 <ul class="simple">
