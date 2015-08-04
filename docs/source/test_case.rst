@@ -40,6 +40,7 @@ For our test case, we can download from `NCBI <ftp://ftp.ncbi.nih.gov/genomes/Ba
 We can set the ``$FTP_SOURCE`` first
 
 ::
+
     FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787
 
 Then download fasta files(``-f``), gff files(``-g``), gbk files(``-k``), ptt files(``-p``), 
@@ -58,6 +59,7 @@ you can also write
 Then you will get the following results
 
 ::
+
     $ ls ANNOgesic/input/reference/fasta/
     NC_000915.fa
     $ ls ANNOgesic/input/reference/annotation/
@@ -91,6 +93,7 @@ Now you get the reads. You can select a part of them to reduce the running time.
 Then we have to download the wiggle files.
 
 ::
+
     wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Fforward%2Ewig%2Egz
     wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Freverse%2Ewig%2Egz
     wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz
@@ -141,6 +144,7 @@ second one test_case2. In test_case1 stores the fasta of NC_test.1 and test_case
 Now we can check the retuls.
 
 ::
+
     $ head ANNOgesic/input/reference/fasta/NC_016810.fa
     >NC_000915.1
     TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
@@ -184,6 +188,7 @@ You don't need to worry about it. However, if you are build ANNOgesic by yoursel
 path by running
 
 ::
+
     . $PAGIT_HOME/sourceme.pagit
 
 ``$PAGIT_HOME`` is the directory of PAGIT. The better way is change the environment. Or you have to run 
@@ -370,6 +375,7 @@ If you set the manual checked TSS ``-m``, the subcommand will merge the manual c
 If you didn't set it, the subcommand will only produce predicted TSS. You will get gff file, MasterTable and statistic file.
 
 ::
+
     $ ls ANNOgesic/output/TSS/gffs/
     NC_000915_TSS.gff
     $ ls ANNOgesic/output/TSS/MasterTables/MasterTable_NC_000915.1/
@@ -713,6 +719,7 @@ to ``-q``. However, it may take several days.
 ``merge`` is for the merged results of `RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
 
 ::
+
     $ ls ANNOgesic/output/sRNA_targets/merge/NC_000915.1/
     NC_000915.1_merge.csv  NC_000915.1_overlap.csv
 
@@ -789,6 +796,7 @@ alignment and ``segemehl_splice`` stores the results of splice detection.
 The gff files, tables and statistics files are stored in the other folders.
 
 ::
+
     $ ls ANNOgesic/output/circRNA/gffs/NC_000915/
     NC_000915_circRNA_all.gff  NC_000915_circRNA_best.gff
     $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915/
@@ -848,6 +856,7 @@ If you want to compute for comparison of "reference strain" and "target strain",
 Becaues we run ``validate_target``, you can see there are several folders under ``validate_target``.
 
 ::
+
     $ ls ANNOgesic/output/SNP_calling/validate_target/
     seqs/            SNP_raw_outputs/ SNP_table/       statistics/
 
@@ -861,6 +870,7 @@ All folders are divided by three parts - ``extend_BAQ``, ``extend_BAQ`` and ``ex
 In ``seqs``, there are the potential sequences.
 
 ::
+
     $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
     NC_000915.1_NC_000915.1_1_100.fa  NC_000915.1_NC_000915.1_1_13.fa   NC_000915.1_NC_000915.1_1_179.fa  NC_000915.1_NC_000915.1_1_217.fa  NC_000915.1_NC_000915.1_1_256.fa  NC_000915.1_NC_000915.1_1_63.fa
     NC_000915.1_NC_000915.1_1_101.fa  NC_000915.1_NC_000915.1_1_140.fa  NC_000915.1_NC_000915.1_1_17.fa   NC_000915.1_NC_000915.1_1_218.fa  NC_000915.1_NC_000915.1_1_25.fa   NC_000915.1_NC_000915.1_1_64.fa
