@@ -85,10 +85,9 @@ ANNOgesic
 <h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
 <p>For our test case, we can download from <a class="reference external" href="ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/">NCBI</a>.
 We can set the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787</dd>
-</dl>
+<div class="highlight-python"><div class="highlight"><pre>FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787
+</pre></div>
+</div>
 <p>Then download fasta files(<code class="docutils literal"><span class="pre">-f</span></code>), gff files(<code class="docutils literal"><span class="pre">-g</span></code>), gbk files(<code class="docutils literal"><span class="pre">-k</span></code>), ptt files(<code class="docutils literal"><span class="pre">-p</span></code>),
 rnt files(<code class="docutils literal"><span class="pre">-r</span></code>), and transfer to embl(<code class="docutils literal"><span class="pre">-e</span></code>).</p>
 <div class="highlight-python"><div class="highlight"><pre>$ annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r ANNOgesic
@@ -99,13 +98,12 @@ rnt files(<code class="docutils literal"><span class="pre">-r</span></code>), an
 </pre></div>
 </div>
 <p>Then you will get the following results</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/input/reference/fasta/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/input/reference/fasta/
 NC_000915.fa
 $ ls ANNOgesic/input/reference/annotation/
-NC_000915.embl  NC_000915.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt</dd>
-</dl>
+NC_000915.embl  NC_000915.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
+</pre></div>
+</div>
 </div>
 <div class="section" id="putting-wig-bam-files-and-reads-to-proper-location">
 <h2>Putting wig, bam files and reads to proper location<a class="headerlink" href="#putting-wig-bam-files-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
@@ -128,19 +126,18 @@ $ rm SRR1951998.sra
 </div>
 <p>Now you get the reads. You can select a part of them to reduce the running time.</p>
 <p>Then we have to download the wiggle files.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd><p class="first">wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Fforward%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Fforward%2Ewig%2Egz</a>
-wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Freverse%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Freverse%2Ewig%2Egz</a>
-wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz</a>
-wget -cP ANNOgesic/input/wigs/tex_notex <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz">ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz</a>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Fforward%2Ewig%2Egz
+wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Freverse%2Ewig%2Egz
+wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz
+wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz
 cd ANNOgesic/input/wigs/tex_notex
-gunzip <a href="#id11"><span class="problematic" id="id12">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_forward.wig.gz </p>
-<blockquote>
-<div><a href="#id13"><span class="problematic" id="id14">GSM1649587_Hp26695_ML_B1_HS1_</span></a>-TEX_reverse.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig.gz GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz</div></blockquote>
-<p class="last">cd ../../../../</p>
-</dd>
-</dl>
+gunzip GSM1649587_Hp26695_ML_B1_HS1_-TEX_forward.wig.gz \
+       GSM1649587_Hp26695_ML_B1_HS1_-TEX_reverse.wig.gz \
+       GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig.gz \
+       GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz
+cd ../../../../
+</pre></div>
+</div>
 </div>
 <div class="section" id="improving-the-reference-genome">
 <h2>Improving the reference genome<a class="headerlink" href="#improving-the-reference-genome" title="Permalink to this headline">¶</a></h2>
@@ -171,9 +168,7 @@ only two fasta files in <code class="docutils literal"><span class="pre">ANNOges
 which strains you want to put in it. In our case, we call the first fasta file test_case1 and the
 second one test_case2. In test_case1 stores the fasta of NC_test.1 and test_case2 stores test_case2.
 Now we can check the retuls.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ head ANNOgesic/input/reference/fasta/NC_016810.fa
+<div class="highlight-python"><div class="highlight"><pre>$ head ANNOgesic/input/reference/fasta/NC_016810.fa
 &gt;NC_000915.1
 TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
 TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
@@ -194,8 +189,9 @@ TTTTTGCTCAAAGAATCCAAGATAGCGTTTAAAAATTTAGGGGTGTTAGGCTCAGCGTAG
 AGTTTGCCAAGCTCTATGCATTCATTGATGATGATAGGGTTTTGCGTGGGCGTGAAGCCA
 ATTTCATACGCTCCTAAGCGTAAAATCGCCTTTTCCATGCTCCCTAATCGCTTGAAATCC
 CAGTCTTTTAAATGCGGCTCGATGAGGGCGTCAATTTCATTGATTTTTTCTAACACGCCA
-TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG</dd>
-</dl>
+TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG
+</pre></div>
+</div>
 <p>In new fasta file, the third nucleotide replace from A to c. Moreover, The sixth nucleotide is deleted.
 In test_case2, it also modify the fasta file based on the mutation table.</p>
 <p>when you have the correct fasta files, you can map your reads to the correct fasta file.</p>
@@ -210,10 +206,9 @@ copy the annotation files to <code class="docutils literal"><span class="pre">AN
 <p>Before you running it, you have to notice path. If you are using docker container, the path is alread setup.
 You don&#8217;t need to worry about it. However, if you are build ANNOgesic by yourself, remember to assign the
 path by running</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>. $PAGIT_HOME/sourceme.pagit</dd>
-</dl>
+<div class="highlight-python"><div class="highlight"><pre>. $PAGIT_HOME/sourceme.pagit
+</pre></div>
+</div>
 <p><code class="docutils literal"><span class="pre">$PAGIT_HOME</span></code> is the directory of PAGIT. The better way is change the environment. Or you have to run
 this command everytime. For changing the environment, you just need to copy all the information of
 <code class="docutils literal"><span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> to <code class="docutils literal"><span class="pre">.bashrc</span></code>.</p>
@@ -368,15 +363,14 @@ base_height is 0.0, enrichment_factor is 2.0, processing_factor is 1.5. Now we c
 </div>
 <p>If you set the manual checked TSS <code class="docutils literal"><span class="pre">-m</span></code>, the subcommand will merge the manual checked TSS with predicted TSS.
 If you didn&#8217;t set it, the subcommand will only produce predicted TSS. You will get gff file, MasterTable and statistic file.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/output/TSS/gffs/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/gffs/
 NC_000915_TSS.gff
 $ ls ANNOgesic/output/TSS/MasterTables/MasterTable_NC_000915.1/
 AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff  TSSstatistics.tsv
 $ ls ANNOgesic/output/TSS/statistics/NC_000915/
-stat_compare_TSSpredator_manual_NC_000915.csv  stat_gene_vali_NC_000915.csv  stat_TSS_class_NC_000915.csv  stat_TSS_libs_NC_000915.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png</dd>
-</dl>
+stat_compare_TSSpredator_manual_NC_000915.csv  stat_gene_vali_NC_000915.csv  stat_TSS_class_NC_000915.csv  stat_TSS_libs_NC_000915.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
+</pre></div>
+</div>
 <p>If you want to predict processing site, the procedures are the same. You just need to change the program from TSS to
 processing_site (<code class="docutils literal"><span class="pre">-t</span></code>).</p>
 </div>
@@ -662,11 +656,10 @@ NC_000915.1_RNAup.log  NC_000915.1_RNAup_rank.csv  NC_000915.1_RNAup.txt
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">merge</span></code> is for the merged results of <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/">RNAplex and RNAup</a>.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/output/sRNA_targets/merge/NC_000915.1/
-NC_000915.1_merge.csv  NC_000915.1_overlap.csv</dd>
-</dl>
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA_targets/merge/NC_000915.1/
+NC_000915.1_merge.csv  NC_000915.1_overlap.csv
+</pre></div>
+</div>
 </div>
 <div class="section" id="promoter-motif-detection">
 <h2>Promoter motif detection<a class="headerlink" href="#promoter-motif-detection" title="Permalink to this headline">¶</a></h2>
@@ -727,15 +720,14 @@ splicesites_all.bed  transrealigned_all.bed
 </pre></div>
 </div>
 <p>The gff files, tables and statistics files are stored in the other folders.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/output/circRNA/gffs/NC_000915/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/gffs/NC_000915/
 NC_000915_circRNA_all.gff  NC_000915_circRNA_best.gff
 $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915/
 circRNA_NC_000915.txt
 $ ls ANNOgesic/output/circRNA/statistics/
-stat_circRNA_NC_000915.csv</dd>
-</dl>
+stat_circRNA_NC_000915.csv
+</pre></div>
+</div>
 <p><code class="docutils literal"><span class="pre">NC_000915_circRNA_all.gff</span></code> is for all circular RNA candidates and <code class="docutils literal"><span class="pre">NC_000915_circRNA_best.gff</span></code> is the
 circular RNA after filering by mapping ratio and comparison of CDS.</p>
 </div>
@@ -776,25 +768,23 @@ compare_reference  validate_target
 </pre></div>
 </div>
 <p>Becaues we run <code class="docutils literal"><span class="pre">validate_target</span></code>, you can see there are several folders under <code class="docutils literal"><span class="pre">validate_target</span></code>.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/output/SNP_calling/validate_target/
-seqs/            SNP_raw_outputs/ SNP_table/       statistics/</dd>
-</dl>
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/
+seqs/            SNP_raw_outputs/ SNP_table/       statistics/
+</pre></div>
+</div>
 <p>All folders are divided by three parts - <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">extend_BAQ</span></code> and <code class="docutils literal"><span class="pre">extend_BAQ</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/seqs/
 extend_BAQ/  with_BAQ/    without_BAQ/
 </pre></div>
 </div>
 <p>In <code class="docutils literal"><span class="pre">seqs</span></code>, there are the potential sequences.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
 NC_000915.1_NC_000915.1_1_100.fa  NC_000915.1_NC_000915.1_1_13.fa   NC_000915.1_NC_000915.1_1_179.fa  NC_000915.1_NC_000915.1_1_217.fa  NC_000915.1_NC_000915.1_1_256.fa  NC_000915.1_NC_000915.1_1_63.fa
 NC_000915.1_NC_000915.1_1_101.fa  NC_000915.1_NC_000915.1_1_140.fa  NC_000915.1_NC_000915.1_1_17.fa   NC_000915.1_NC_000915.1_1_218.fa  NC_000915.1_NC_000915.1_1_25.fa   NC_000915.1_NC_000915.1_1_64.fa
-....</dd>
-</dl>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id15"><span class="problematic" id="id16">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+....
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id11"><span class="problematic" id="id12">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores the results after filtering and the index of potential sequence.
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistics and visualization files.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_000915.1/
