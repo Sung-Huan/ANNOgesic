@@ -46,3 +46,8 @@ The file in host is ``/home/silas/dockfiles/test2``. The mount file in container
     root@9a50d77ef14f:~# ls
     test
 
+If you want to copy the files from container to host, you can use ``cp``.
+
+::
+
+    docker cp <containerId>:/file/path/within/container /host/path/target
