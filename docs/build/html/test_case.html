@@ -221,7 +221,7 @@ this command everytime. For changing the environment, you just need to copy all 
     -tf ANNOgesic/output/target/fasta \
     -e chromosome \
     -t Strain \
-    -p NC_000915:NC_test.1 NC_000915:test_case2 \
+    -p NC_000915.1:NC_test.1 NC_000915.1:test_case2 \
     -g \
     ANNOgesic
 </pre></div>
@@ -334,7 +334,7 @@ Best:TP=665     TP_rate=0.38394919168591224     FP=23   FP_rate=1.38044036047499
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">optimize_TSSpredator</span></code> will compare gff files of manual checked TSS and predicted TSS to find the best parameters.
-You can check the results and parameters of each step in screen. Because we just test it, we set the steps only 20.
+You can check the results and parameters of each step in screen. we set the steps only 20 for testing.
 When the program finished, you can find several files.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/optimized_TSSpredator/
 best.csv  log.txt  stat.csv
@@ -544,7 +544,7 @@ sORF ans sRNA.</p>
 blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915  sRNA_seq_NC_000915  statistics  tables
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">blast_result_and_misc</span></code> will store the results of blast; <code class="docutils literal"><span class="pre">mountain_plos</span></code> will store the mountain plots;
+<p><code class="docutils literal"><span class="pre">blast_result_and_misc</span></code> will store the results of blast; <code class="docutils literal"><span class="pre">mountain_plot</span></code> will store the mountain plots;
 <code class="docutils literal"><span class="pre">sec_structure</span></code> will store the plots of secondary structure of sRNA; <code class="docutils literal"><span class="pre">statistics</span></code> will store statistics files.</p>
 <p><code class="docutils literal"><span class="pre">sRNA_2d_NC_000915</span></code> and <code class="docutils literal"><span class="pre">sRNA_seq_NC_000915</span></code> are text file of sequence of sRNA and secondary structure of sRNA.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA/blast_result_and_misc/
@@ -566,7 +566,7 @@ stat_sRNA_blast_class_NC_000915.csv  stat_sRNA_class_NC_000915.csv
 </pre></div>
 </div>
 <p>For <code class="docutils literal"><span class="pre">gffs</span></code> and <code class="docutils literal"><span class="pre">tables</span></code>, they are divided by three kinds of results. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates
-without filtering; <code class="docutils literal"><span class="pre">best</span></code> is for the best candidates of sRNA; <code class="docutils literal"><span class="pre">for_class</span></code> is for each class of sRNA which you
+without filtering; <code class="docutils literal"><span class="pre">best</span></code> is for the best candidates of sRNA after filtering; <code class="docutils literal"><span class="pre">for_class</span></code> is for each class of sRNA which you
 imported before. For our test case, we import TSS(class 1), folding energy(class 2), blast to nr(class 3),
 blast to sRNA database(class 4 for without homologs, class 5 for with homologs).</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA/gffs/
@@ -636,14 +636,15 @@ to get these information.</p>
     ANNOgesic
 </pre></div>
 </div>
-<p>For testing, we just did the prediction to one sRNA. If you want to compute all sRNA, you can assign <code class="docutils literal"><span class="pre">all</span></code>
-to <code class="docutils literal"><span class="pre">-q</span></code>. However, it may take several days.</p>
+<p>For testing, we just did the prediction to one sRNA. You can also assign several of sRNA like
+<code class="docutils literal"><span class="pre">NC_000915.1:+:13666:13701</span> <span class="pre">NC_000915.1:-:16651:16765</span></code>. If you want to compute all sRNA, you
+can assign <code class="docutils literal"><span class="pre">all</span></code> to <code class="docutils literal"><span class="pre">-q</span></code>. However, it may take several days.</p>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> will generate several folders.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA_targets/
 merge  RNAplex  RNAup  sRNA_seqs  target_seqs
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">sRNA_seqs</span></code> and <code class="docutils literal"><span class="pre">target_seqssRNA_seqs</span></code> are for the sequences of sRNA and potential targets.</p>
+<p><code class="docutils literal"><span class="pre">sRNA_seqs</span></code> and <code class="docutils literal"><span class="pre">target_seqs</span></code> are for the sequences of sRNA and potential targets.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA_targets/sRNA_seqs
 NC_000915.1_sRNA.fa
 $ ls ANNOgesic/output/sRNA_targets/target_seqs
@@ -665,7 +666,7 @@ NC_000915.1_merge.csv  NC_000915.1_overlap.csv
 </div>
 <div class="section" id="promoter-motif-detection">
 <h2>Promoter motif detection<a class="headerlink" href="#promoter-motif-detection" title="Permalink to this headline">¶</a></h2>
-<p>As long as you have TSS, you can use the subcommand <code class="docutils literal"><span class="pre">promoter</span></code> to get promoter. It will based on
+<p>As long as you have TSS, you can use the subcommand <code class="docutils literal"><span class="pre">promoter</span></code> to get promoter. It will be based on
 the class of TSS to generate the promoters. Therefore, if your TSS data is not computed by <code class="docutils literal"><span class="pre">ANNOgesic</span></code>,
 you need to assign <code class="docutils literal"><span class="pre">-s</span></code> and <code class="docutils literal"><span class="pre">-g</span></code> (for annotation files). Then <code class="docutils literal"><span class="pre">promoter</span></code> will help you
 to classify your TSS data.</p>
@@ -686,6 +687,10 @@ promoter_motifs_NC_000915_allstrain_all_types_50_nt    promoter_motifs_NC_000915
 promoter_motifs_NC_000915_allstrain_antisense_2-10_nt  promoter_motifs_NC_000915_allstrain_orphan_50_nt     promoter_motifs_NC_000915_allstrain_without_orphan_2-10_nt
 promoter_motifs_NC_000915_allstrain_antisense_50_nt    promoter_motifs_NC_000915_allstrain_primary_2-10_nt  promoter_motifs_NC_000915_allstrain_without_orphan_50_nt
 promoter_motifs_NC_000915_allstrain_internal_2-10_nt   promoter_motifs_NC_000915_allstrain_primary_50_nt
+$ ls ANNOgesic/output/promoter_analysis/NC_000915/promoter_motifs_NC_000915_allstrain_all_types_50_nt/
+logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps      logo_rc10.png  logo_rc2.eps  logo_rc3.png  logo_rc5.eps  logo_rc6.png  logo_rc8.eps  logo_rc9.png  meme.xml
+logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png      logo_rc1.eps   logo_rc2.png  logo_rc4.eps  logo_rc5.png  logo_rc7.eps  logo_rc8.png  meme.html
+logo1.eps   logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_rc10.eps  logo_rc1.png   logo_rc3.eps  logo_rc4.png  logo_rc6.eps  logo_rc7.png  logo_rc9.eps  meme.txt
 </pre></div>
 </div>
 </div>
@@ -694,8 +699,8 @@ promoter_motifs_NC_000915_allstrain_internal_2-10_nt   promoter_motifs_NC_000915
 <p>You may also be interested in circular RNA. The subcommand <code class="docutils literal"><span class="pre">circrna</span></code> can help you to get the information.
 it apply <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> to detect circular RNA. Because
 we didn&#8217;t map the reads of test case before, we can also do it by running <code class="docutils literal"><span class="pre">circrna</span></code>. However, if
-you already mapped the reads by other tools. Or you mapped read by
-<a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> without <code class="docutils literal"><span class="pre">-S</span></code>. You may need re-mapping again.
+you already mapped the reads by other tools. Or you mapped the reads by
+<a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> without <code class="docutils literal"><span class="pre">-S</span></code>. You need to re-mapping again.
 If your mapping is generated by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> with <code class="docutils literal"><span class="pre">-S</span></code>,
 then you can skip <code class="docutils literal"><span class="pre">-a</span></code> and assign the path of bam files to <code class="docutils literal"><span class="pre">-nb</span></code> or <code class="docutils literal"><span class="pre">-fb</span></code>. It can reduce the
 running time.</p>
@@ -721,7 +726,7 @@ $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915/
 splicesites_all.bed  transrealigned_all.bed
 </pre></div>
 </div>
-<p>The gff files, tables and statistics files are stored in the other folders.</p>
+<p>The gff files, tables and statistics files are stored in <code class="docutils literal"><span class="pre">gffs</span></code>, <code class="docutils literal"><span class="pre">circRNA_tables</span></code> and <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/gffs/NC_000915/
 NC_000915_circRNA_all.gff  NC_000915_circRNA_best.gff
 $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915/
@@ -735,14 +740,14 @@ circular RNA after filering by mapping ratio and comparison of CDS.</p>
 </div>
 <div class="section" id="snp-calling">
 <h2>SNP calling<a class="headerlink" href="#snp-calling" title="Permalink to this headline">¶</a></h2>
-<p>If you want to know the SNP or mutation of your sRNA-seq data, you can use <code class="docutils literal"><span class="pre">snp</span></code> to get it.
-<code class="docutils literal"><span class="pre">snp</span></code> is divided by two part. One part compares with the &#8220;reference strain&#8221; which is the
+<p>If you want to know the SNP or mutation of your RNA-seq data, you can use <code class="docutils literal"><span class="pre">snp</span></code> to get it.
+<code class="docutils literal"><span class="pre">snp</span></code> is divided by two part. One part is for comparing with the &#8220;reference strain&#8221; which is the
 closed strain of our strain(&#8220;target strain&#8221;). You can refer to the section of <code class="docutils literal"><span class="pre">Retrieving</span> <span class="pre">the</span> <span class="pre">input</span> <span class="pre">data</span></code>.
-Because you may not have time to check the mutation between &#8220;reference strain&#8221; and &#8220;target strain&#8221;,
-it is a good way to detect the mutations automatically. You just need to put your alignment files of
-mapping with &#8220;reference strain&#8221; into correct path. It will generate the potential sequence.
+Because you may not have time to check the mutations between &#8220;reference strain&#8221; and &#8220;target strain&#8221;,
+it is a good way to detect the mutations automatically. You just need to put your bam files of
+mapping with &#8220;reference strain&#8221; in correct path. It will generate the potential sequence.
 The other part is for detecting the mutations of the reads and &#8220;target strain&#8221;. In this part, you
-can know the real mutations in &#8220;target strain&#8221;. Therefore, you need to put the alignment files with
+can know the real mutations of &#8220;target strain&#8221;. Therefore, you need to put the bam files with
 &#8220;target strain&#8221; to the correct folder.</p>
 <p>Before running the subcommand, we must have the bam files. Because we already generated them through
 running <code class="docutils literal"><span class="pre">circrna</span></code>, we can just use them. However, please remember that the mapping function of
@@ -774,7 +779,7 @@ compare_reference  validate_target
 seqs/            SNP_raw_outputs/ SNP_table/       statistics/
 </pre></div>
 </div>
-<p>All folders are divided by three parts - <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">extend_BAQ</span></code> and <code class="docutils literal"><span class="pre">extend_BAQ</span></code>.</p>
+<p>All folders are divided by three parts - <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/seqs/
 extend_BAQ/  with_BAQ/    without_BAQ/
 </pre></div>
@@ -984,7 +989,7 @@ forward/     forward.txt  reverse/     reverse.txt
 </div>
 <p><code class="docutils literal"><span class="pre">forward.txt</span></code> and <code class="docutils literal"><span class="pre">reverse.txt</span></code> are batch files for <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>.
 <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code> are the folders for storing screenshots.</p>
-<p>Now, please open <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>. Please follow the command: Tools -&gt;
+<p>Now, please open <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>. Please follow the procedures: Tools -&gt;
 Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">forward.txt</span></code>. When it has done, please do it again for reverse strand: Tools -&gt;
 Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">reverse.txt</span></code>. If you just want to test it and don&#8217;t want to wait a long time for
 generating screenshots, you can delete some lines of gff files of TSS.</p>
@@ -1028,7 +1033,7 @@ NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:14
 ...
 </pre></div>
 </div>
-<p>Now you already finished your first wonderful trip of annotation. Hopefully, you enjoy it!!</p>
+<p>Now you already finished your first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!</p>
 </div>
 </div>
 

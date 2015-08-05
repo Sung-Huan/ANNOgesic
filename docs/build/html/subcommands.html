@@ -1171,47 +1171,46 @@ from processing site not TSS.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: ANNOgesic.py srna [-h] [--Vienna_folder VIENNA_FOLDER]
-                         [--Vienna_utils VIENNA_UTILS]
-                         [--blast_plus_folder BLAST_PLUS_FOLDER]
-                         [--ps2pdf14_path PS2PDF14_PATH] [--UTR_derived_sRNA]
-                         [--import_info IMPORT_INFO [IMPORT_INFO ...]]
-                         [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-                         [--annotation_folder ANNOTATION_FOLDER]
-                         [--TSS_folder TSS_FOLDER]
-                         [--processing_site_folder PROCESSING_SITE_FOLDER]
-                         [--TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
-                         [--TSS_5UTR_fuzzy TSS_5UTR_FUZZY]
-                         [--TSS_3UTR_fuzzy TSS_3UTR_FUZZY]
-                         [--TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY]
-                         [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-                         [--tex_wig_folder TEX_WIG_FOLDER]
-                         [--frag_wig_folder FRAG_WIG_FOLDER]
-                         [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
-                         [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
-                         [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-                         [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
-                         [--fasta_folder FASTA_FOLDER]
-                         [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
-                         [--database_format]
-                         [--sRNA_database_path SRNA_DATABASE_PATH]
-                         [--nr_database_path NR_DATABASE_PATH]
-                         [--sRNA_blast_stat]
-                         [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                         [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                         [--tex_notex TEX_NOTEX]
-                         [--replicates_tex REPLICATES_TEX]
-                         [--replicates_frag REPLICATES_FRAG] [--table_best]
-                         [--decrease_intergenic DECREASE_INTERGENIC]
-                         [--decrease_utr DECREASE_UTR]
-                         [--fuzzy_intergenic FUZZY_INTERGENIC]
-                         [--fuzzy_utr FUZZY_UTR]
-                         [--cutoff_nr_hit CUTOFF_NR_HIT]
-                         [--blast_e_nr BLAST_E_NR]
-                         [--blast_e_srna BLAST_E_SRNA] [--sORF SORF]
-                         [--best_with_all_sRNAhit]
-                         [--best_without_sORF_candidate]
-                         [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic srna [-h] [--Vienna_folder VIENNA_FOLDER]
+                      [--Vienna_utils VIENNA_UTILS]
+                      [--blast_plus_folder BLAST_PLUS_FOLDER]
+                      [--ps2pdf14_path PS2PDF14_PATH] [--UTR_derived_sRNA]
+                      [--import_info IMPORT_INFO [IMPORT_INFO ...]]
+                      [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
+                      [--annotation_folder ANNOTATION_FOLDER]
+                      [--TSS_folder TSS_FOLDER]
+                      [--processing_site_folder PROCESSING_SITE_FOLDER]
+                      [--TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
+                      [--TSS_5UTR_fuzzy TSS_5UTR_FUZZY]
+                      [--TSS_3UTR_fuzzy TSS_3UTR_FUZZY]
+                      [--TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY]
+                      [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
+                      [--tex_wig_folder TEX_WIG_FOLDER]
+                      [--frag_wig_folder FRAG_WIG_FOLDER]
+                      [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
+                      [--intergenic_tolerance INTERGENIC_TOLERANCE]
+                      [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
+                      [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
+                      [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
+                      [--fasta_folder FASTA_FOLDER]
+                      [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
+                      [--database_format]
+                      [--sRNA_database_path SRNA_DATABASE_PATH]
+                      [--nr_database_path NR_DATABASE_PATH]
+                      [--sRNA_blast_stat]
+                      [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                      [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                      [--tex_notex TEX_NOTEX]
+                      [--replicates_tex REPLICATES_TEX]
+                      [--replicates_frag REPLICATES_FRAG] [--table_best]
+                      [--decrease_intergenic DECREASE_INTERGENIC]
+                      [--decrease_utr DECREASE_UTR]
+                      [--fuzzy_intergenic FUZZY_INTERGENIC]
+                      [--fuzzy_utr FUZZY_UTR] [--cutoff_nr_hit CUTOFF_NR_HIT]
+                      [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
+                      [--sORF SORF] [--best_with_all_sRNAhit]
+                      [--best_without_sORF_candidate]
+                      [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given the
@@ -1292,6 +1291,10 @@ optional arguments:
   --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
                         The cutoff of minimal coverage of intergenic sRNA
                         candidates. Default is 5
+  --intergenic_tolerance INTERGENIC_TOLERANCE, -it INTERGENIC_TOLERANCE
+                        This number indicates how willing the algorithm is to
+                        ignore a temporary drop below this number. The default
+                        is 5.
   --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
                         The cutoff of minimal coverage of 5&#39;UTR derived sRNA
                         candidates. You can also assign median or mean.
@@ -1309,9 +1312,10 @@ optional arguments:
                         please assign the path of fasta folder.
   --cutoff_energy CUTOFF_ENERGY, -e CUTOFF_ENERGY
                         If you want to import secondary structure information,
-                        please assign the cutoff of folding energy. It will
-                        classify sRNA candidates based on the value. Default
-                        is 0.
+                        please assign the cutoff of folding energy change. It
+                        is the folding enery change divided by the length of
+                        sequence. It will classify sRNA candidates based on
+                        the value. Default is 0.
   --mountain_plot, -m   If you want to generate mountain plots of sRNA
                         candidates, please turn it on. Default is False.
   --database_format, -fd

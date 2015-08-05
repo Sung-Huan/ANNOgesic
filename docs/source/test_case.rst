@@ -207,7 +207,7 @@ Now, we can try it.
         -tf ANNOgesic/output/target/fasta \
         -e chromosome \
         -t Strain \
-        -p NC_000915:NC_test.1 NC_000915:test_case2 \
+        -p NC_000915.1:NC_test.1 NC_000915.1:test_case2 \
         -g \
         ANNOgesic
 
@@ -339,7 +339,7 @@ Now, we have a fake manual detected TSS file. we can try optimization of TSS rig
     ...
 
 ``optimize_TSSpredator`` will compare gff files of manual checked TSS and predicted TSS to find the best parameters. 
-You can check the results and parameters of each step in screen. Because we just test it, we set the steps only 20. 
+You can check the results and parameters of each step in screen. we set the steps only 20 for testing. 
 When the program finished, you can find several files.
 
 ::
@@ -587,7 +587,7 @@ The output of ``srna`` will be the following.
     $ ls ANNOgesic/output/sRNA/
     blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915  sRNA_seq_NC_000915  statistics  tables
 
-``blast_result_and_misc`` will store the results of blast; ``mountain_plos`` will store the mountain plots; 
+``blast_result_and_misc`` will store the results of blast; ``mountain_plot`` will store the mountain plots; 
 ``sec_structure`` will store the plots of secondary structure of sRNA; ``statistics`` will store statistics files.
 
 ``sRNA_2d_NC_000915`` and ``sRNA_seq_NC_000915`` are text file of sequence of sRNA and secondary structure of sRNA.
@@ -612,7 +612,7 @@ The output of ``srna`` will be the following.
     stat_sRNA_blast_class_NC_000915.csv  stat_sRNA_class_NC_000915.csv
 
 For ``gffs`` and ``tables``, they are divided by three kinds of results. ``all_candidates`` is for all candidates 
-without filtering; ``best`` is for the best candidates of sRNA; ``for_class`` is for each class of sRNA which you 
+without filtering; ``best`` is for the best candidates of sRNA after filtering; ``for_class`` is for each class of sRNA which you 
 imported before. For our test case, we import TSS(class 1), folding energy(class 2), blast to nr(class 3), 
 blast to sRNA database(class 4 for without homologs, class 5 for with homologs).
 
@@ -690,8 +690,9 @@ to get these information.
         -p both \
         ANNOgesic
 
-For testing, we just did the prediction to one sRNA. If you want to compute all sRNA, you can assign ``all`` 
-to ``-q``. However, it may take several days.
+For testing, we just did the prediction to one sRNA. You can also assign several of sRNA like 
+``NC_000915.1:+:13666:13701 NC_000915.1:-:16651:16765``. If you want to compute all sRNA, you 
+can assign ``all`` to ``-q``. However, it may take several days.
 
 ``srna_target`` will generate several folders.
 
@@ -700,7 +701,7 @@ to ``-q``. However, it may take several days.
     $ ls ANNOgesic/output/sRNA_targets/
     merge  RNAplex  RNAup  sRNA_seqs  target_seqs
 
-``sRNA_seqs`` and ``target_seqssRNA_seqs`` are for the sequences of sRNA and potential targets.
+``sRNA_seqs`` and ``target_seqs`` are for the sequences of sRNA and potential targets.
 
 ::
 
@@ -728,7 +729,7 @@ to ``-q``. However, it may take several days.
 Promoter motif detection
 ----------------
 
-As long as you have TSS, you can use the subcommand ``promoter`` to get promoter. It will based on 
+As long as you have TSS, you can use the subcommand ``promoter`` to get promoter. It will be based on 
 the class of TSS to generate the promoters. Therefore, if your TSS data is not computed by ``ANNOgesic``, 
 you need to assign ``-s`` and ``-g`` (for annotation files). Then ``promoter`` will help you 
 to classify your TSS data.
@@ -755,6 +756,10 @@ Based on the class of TSS, it will generate different output files.
     promoter_motifs_NC_000915_allstrain_antisense_2-10_nt  promoter_motifs_NC_000915_allstrain_orphan_50_nt     promoter_motifs_NC_000915_allstrain_without_orphan_2-10_nt
     promoter_motifs_NC_000915_allstrain_antisense_50_nt    promoter_motifs_NC_000915_allstrain_primary_2-10_nt  promoter_motifs_NC_000915_allstrain_without_orphan_50_nt
     promoter_motifs_NC_000915_allstrain_internal_2-10_nt   promoter_motifs_NC_000915_allstrain_primary_50_nt
+    $ ls ANNOgesic/output/promoter_analysis/NC_000915/promoter_motifs_NC_000915_allstrain_all_types_50_nt/
+    logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps      logo_rc10.png  logo_rc2.eps  logo_rc3.png  logo_rc5.eps  logo_rc6.png  logo_rc8.eps  logo_rc9.png  meme.xml
+    logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png      logo_rc1.eps   logo_rc2.png  logo_rc4.eps  logo_rc5.png  logo_rc7.eps  logo_rc8.png  meme.html
+    logo1.eps   logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_rc10.eps  logo_rc1.png   logo_rc3.eps  logo_rc4.png  logo_rc6.eps  logo_rc7.png  logo_rc9.eps  meme.txt
 
 Mapping and detecting of circular RNA
 -------------------
@@ -762,8 +767,8 @@ Mapping and detecting of circular RNA
 You may also be interested in circular RNA. The subcommand ``circrna`` can help you to get the information. 
 it apply `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ to detect circular RNA. Because 
 we didn't map the reads of test case before, we can also do it by running ``circrna``. However, if 
-you already mapped the reads by other tools. Or you mapped read by 
-`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``-S``. You may need re-mapping again.
+you already mapped the reads by other tools. Or you mapped the reads by 
+`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``-S``. You need to re-mapping again.
 If your mapping is generated by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``, 
 then you can skip ``-a`` and assign the path of bam files to ``-nb`` or ``-fb``. It can reduce the 
 running time.
@@ -795,7 +800,7 @@ alignment and ``segemehl_splice`` stores the results of splice detection.
     $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915/
     splicesites_all.bed  transrealigned_all.bed    
 
-The gff files, tables and statistics files are stored in the other folders.
+The gff files, tables and statistics files are stored in ``gffs``, ``circRNA_tables`` and ``statistics``.
 
 ::
 
@@ -812,14 +817,14 @@ circular RNA after filering by mapping ratio and comparison of CDS.
 SNP calling
 --------------
 
-If you want to know the SNP or mutation of your sRNA-seq data, you can use ``snp`` to get it.
-``snp`` is divided by two part. One part compares with the "reference strain" which is the
+If you want to know the SNP or mutation of your RNA-seq data, you can use ``snp`` to get it.
+``snp`` is divided by two part. One part is for comparing with the "reference strain" which is the
 closed strain of our strain("target strain"). You can refer to the section of ``Retrieving the input data``.
-Because you may not have time to check the mutation between "reference strain" and "target strain",
-it is a good way to detect the mutations automatically. You just need to put your alignment files of 
-mapping with "reference strain" into correct path. It will generate the potential sequence.
+Because you may not have time to check the mutations between "reference strain" and "target strain",
+it is a good way to detect the mutations automatically. You just need to put your bam files of 
+mapping with "reference strain" in correct path. It will generate the potential sequence.
 The other part is for detecting the mutations of the reads and "target strain". In this part, you 
-can know the real mutations in "target strain". Therefore, you need to put the alignment files with 
+can know the real mutations of "target strain". Therefore, you need to put the bam files with 
 "target strain" to the correct folder.
 
 Before running the subcommand, we must have the bam files. Because we already generated them through 
@@ -862,7 +867,7 @@ Becaues we run ``validate_target``, you can see there are several folders under 
     $ ls ANNOgesic/output/SNP_calling/validate_target/
     seqs/            SNP_raw_outputs/ SNP_table/       statistics/
 
-All folders are divided by three parts - ``extend_BAQ``, ``extend_BAQ`` and ``extend_BAQ``.
+All folders are divided by three parts - ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``.
 
 ::
 
@@ -1114,7 +1119,7 @@ For testing, we use TSS as main feature, sRNA and CDS information as side featur
 ``forward.txt`` and ``reverse.txt`` are batch files for `IGV <https://www.broadinstitute.org/software/igv/home>`_.
 ``forward`` and ``reverse`` are the folders for storing screenshots.
 
-Now, please open `IGV <https://www.broadinstitute.org/software/igv/home>`_. Please follow the command: Tools -> 
+Now, please open `IGV <https://www.broadinstitute.org/software/igv/home>`_. Please follow the procedures: Tools -> 
 Run Batch Script -> choose ``forward.txt``. When it has done, please do it again for reverse strand: Tools ->
 Run Batch Script -> choose ``reverse.txt``. If you just want to test it and don't want to wait a long time for 
 generating screenshots, you can delete some lines of gff files of TSS.
@@ -1167,4 +1172,4 @@ You will see the png files are not different as before. However, when you open t
     ...
 
 
-Now you already finished your first wonderful trip of annotation. Hopefully, you enjoy it!!
+Now you already finished your first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!
