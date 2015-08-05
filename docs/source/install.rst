@@ -14,6 +14,12 @@ Github
 
     git clone https://github.com/Sung-Huan/ANNOgesic.git
 
+or
+
+::
+
+    git clone git@github.com:Sung-Huan/ANNOgesic.git
+
 Dockerfile
 ----------
 
