@@ -679,8 +679,8 @@ def main():
         help="If you want to import secondary structure information, please assign the path of fasta folder. ")
     sRNA_parser.add_argument(
         "--cutoff_energy", "-e", default=0, type=float,
-        help="If you want to import secondary structure information, please assign the cutoff of folding energy. "
-        "It will classify sRNA candidates based on the value. Default is 0.")
+        help="If you want to import secondary structure information, please assign the cutoff of folding energy change. "
+        "It is the folding enery change divided by the length of sequence. It will classify sRNA candidates based on the value. Default is 0.")
     sRNA_parser.add_argument(
         "--mountain_plot", "-m", default=False, action="store_true",
         help="If you want to generate mountain plots of sRNA candidates, please turn it on. Default is False.")
