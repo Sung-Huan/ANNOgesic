@@ -278,13 +278,15 @@ know which CDS expresses in which library or discover housekeeping gene.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/target/annotation/for_libs/gffs
 NC_000915_CDS_1_texnotex.gff  NC_000915_CDS_all_libs.gff  NC_000915_CDS_at_least_one_lib.gff  NC_000915_CDS_no_express.gff
 $ ls ANNOgesic/output/target/annotation/for_libs/statistics
-NC_000915_CDS.csv
+CDS_high_express_analysis_0-500.png     CDS_high_express_analysis_500-1000.png NC_000915_CDS.csv
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">NC_000915_CDS_1_texnotex.gff</span></code> stores the CDS which express in the library of 1_texnotex. In our definition
 of library, it is <code class="docutils literal"><span class="pre">GSM1649587_Hp26695_ML_B1_HS1</span></code>. <code class="docutils literal"><span class="pre">NC_000915_CDS_all_lib.gff</span></code> is the CDS which express in all libraries.
 <code class="docutils literal"><span class="pre">NC_000915_CDS_at_least_one_lib.gff</span></code> stores the CDS which express at least one library. <code class="docutils literal"><span class="pre">NC_000915_CDS_no_express.gff</span></code>
-is the CDS which don&#8217;t express in any libraries.</p>
+is the CDS which don&#8217;t express in any libraries.
+<code class="docutils literal"><span class="pre">CDS_high_express_analysis_0-500.png</span></code> is the heatmap for first 500 CDS according to locus tag.
+<code class="docutils literal"><span class="pre">CDS_high_express_analysis_500-1000.png</span></code> is the heatmap from 500 to 1000 CDS according to locus tag.</p>
 </div>
 <div class="section" id="tss-and-processing-site-prediction-and-optimization">
 <h2>TSS and processing site prediction and optimization<a class="headerlink" href="#tss-and-processing-site-prediction-and-optimization" title="Permalink to this headline">¶</a></h2>
@@ -608,7 +610,9 @@ may be sORF not sRNA. Therefore, it is a good idea to have the information of sO
     ANNOgesic
 </pre></div>
 </div>
-<p>Then you can get the gff files, statistics files and tables. Based on the information of TSS and
+<p>For the generating best gff file, you can decide which information you want to use for filtering. The options
+are ribosomal binding site, starting from TSS and non-overlaping with sRNA.
+Then you can get the gff files, statistics files and tables. Based on the information of TSS and
 sRNA, the gff files and tables will be divided by <code class="docutils literal"><span class="pre">all_candidates</span></code> and <code class="docutils literal"><span class="pre">best</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sORF/gffs/all_candidates/
 NC_000915_sORF.gff
@@ -674,7 +678,6 @@ to classify your TSS data.</p>
     -t ANNOgesic/output/TSS/gffs \
     -f ANNOgesic/output/target/fasta \
     -w 50 2-10 \
-    -p 10 \
     ANNOgesic
 </pre></div>
 </div>

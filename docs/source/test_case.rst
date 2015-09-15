@@ -278,12 +278,14 @@ It will generate several gff files and statistics files.
     $ ls ANNOgesic/output/target/annotation/for_libs/gffs
     NC_000915_CDS_1_texnotex.gff  NC_000915_CDS_all_libs.gff  NC_000915_CDS_at_least_one_lib.gff  NC_000915_CDS_no_express.gff
     $ ls ANNOgesic/output/target/annotation/for_libs/statistics
-    NC_000915_CDS.csv
+    CDS_high_express_analysis_0-500.png     CDS_high_express_analysis_500-1000.png NC_000915_CDS.csv
 
 ``NC_000915_CDS_1_texnotex.gff`` stores the CDS which express in the library of 1_texnotex. In our definition 
 of library, it is ``GSM1649587_Hp26695_ML_B1_HS1``. ``NC_000915_CDS_all_lib.gff`` is the CDS which express in all libraries.
 ``NC_000915_CDS_at_least_one_lib.gff`` stores the CDS which express at least one library. ``NC_000915_CDS_no_express.gff`` 
 is the CDS which don't express in any libraries.
+``CDS_high_express_analysis_0-500.png`` is the heatmap for first 500 CDS according to locus tag.
+``CDS_high_express_analysis_500-1000.png`` is the heatmap from 500 to 1000 CDS according to locus tag.
 
 TSS and processing site prediction and optimization
 -----------------
@@ -658,6 +660,8 @@ may be sORF not sRNA. Therefore, it is a good idea to have the information of sO
         -te 2 -rt 1 -u \
         ANNOgesic
 
+For the generating best gff file, you can decide which information you want to use for filtering. The options 
+are ribosomal binding site, starting from TSS and non-overlaping with sRNA.
 Then you can get the gff files, statistics files and tables. Based on the information of TSS and 
 sRNA, the gff files and tables will be divided by ``all_candidates`` and ``best``.
 
@@ -740,7 +744,6 @@ to classify your TSS data.
         -t ANNOgesic/output/TSS/gffs \
         -f ANNOgesic/output/target/fasta \
         -w 50 2-10 \
-        -p 10 \
         ANNOgesic
 
 You can define the length of motif. In our test case, we use ``50`` and ``2-10``. ``2-10`` means the 
