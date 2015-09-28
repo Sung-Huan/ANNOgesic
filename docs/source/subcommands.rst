@@ -1464,7 +1464,9 @@ Second column presents the type of sRNA - ``intergenic`` or ``UTR_derived``
 
 ``with_TSS``: The sRNA is from which TSS. NA means the sRNA is not related with TSS.
 
-``with_cleavage``: The sRNA is ended at which processing site.
+``start_cleavage``: The sRNA may starts at which processing sites. This will only appear in 3'UTR or interCDS derived sRNA.
+
+``end_cleavage``: The sRNA may ends at which processing sites.
 
 ``sORF``: Which sORF overlap with this sRNA.
 
