@@ -76,7 +76,7 @@ class TestCombineFragTex(unittest.TestCase):
         trans = []
         outs, attributes_out = extract_info(output_file, "file")
         refs, attributes_ref = extract_info(self.example.out_tran, "string")
-        self.assertEqual(set(outs), set(refs))
+        self.assertEqual(set(outs), set(refs[1:]))
 
 class Example(object):
 

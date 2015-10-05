@@ -45,6 +45,10 @@ class TestPaths(unittest.TestCase):
             self.paths.sublocal_output_folder,
             self.paths.ribos_output_folder]
 
+    def tearDown(self):
+        if os.path.exists(self.test_folder):
+            shutil.rmtree(self.test_folder)
+
     def test_set_folder_names(self):
         self.paths._set_folder_names()
         for folder_name in self.folder_names:
@@ -53,25 +57,25 @@ class TestPaths(unittest.TestCase):
 
 
     def test_required_folders(self):
-        self.assertEqual(len(self.paths.required_folders("root")), 22)
-        self.assertEqual(len(self.paths.required_folders("get_target_fasta")), 25)
-        self.assertEqual(len(self.paths.required_folders("TSS")), 26)
-        self.assertEqual(len(self.paths.required_folders("transcript_assembly")), 25)
-        self.assertEqual(len(self.paths.required_folders("terminator")), 27)
-        self.assertEqual(len(self.paths.required_folders("annotation_transfer")), 25)
-        self.assertEqual(len(self.paths.required_folders("utr")), 29)
-        self.assertEqual(len(self.paths.required_folders("promoter")), 23)
-        self.assertEqual(len(self.paths.required_folders("operon")), 26)
-        self.assertEqual(len(self.paths.required_folders("srna")), 37)
-        self.assertEqual(len(self.paths.required_folders("sorf")), 30)
-        self.assertEqual(len(self.paths.required_folders("processing")), 26)
-        self.assertEqual(len(self.paths.required_folders("riboswitch")), 27)
-        self.assertEqual(len(self.paths.required_folders("go_term")), 25)
-        self.assertEqual(len(self.paths.required_folders("ppi_network")), 26)
-        self.assertEqual(len(self.paths.required_folders("circrna")), 28)
-        self.assertEqual(len(self.paths.required_folders("snp")), 39)
-        self.assertEqual(len(self.paths.required_folders("subcellular_localization")), 25)
-        self.assertEqual(len(self.paths.required_folders("srna_target")), 28)
+        self.assertEqual(len(self.paths.required_folders("root")), 23)
+        self.assertEqual(len(self.paths.required_folders("get_target_fasta")), 26)
+        self.assertEqual(len(self.paths.required_folders("TSS")), 27)
+        self.assertEqual(len(self.paths.required_folders("transcript_assembly")), 26)
+        self.assertEqual(len(self.paths.required_folders("terminator")), 28)
+        self.assertEqual(len(self.paths.required_folders("annotation_transfer")), 26)
+        self.assertEqual(len(self.paths.required_folders("utr")), 30)
+        self.assertEqual(len(self.paths.required_folders("promoter")), 24)
+        self.assertEqual(len(self.paths.required_folders("operon")), 27)
+        self.assertEqual(len(self.paths.required_folders("srna")), 38)
+        self.assertEqual(len(self.paths.required_folders("sorf")), 31)
+        self.assertEqual(len(self.paths.required_folders("processing")), 27)
+        self.assertEqual(len(self.paths.required_folders("riboswitch")), 28)
+        self.assertEqual(len(self.paths.required_folders("go_term")), 26)
+        self.assertEqual(len(self.paths.required_folders("ppi_network")), 27)
+        self.assertEqual(len(self.paths.required_folders("circrna")), 29)
+        self.assertEqual(len(self.paths.required_folders("snp")), 40)
+        self.assertEqual(len(self.paths.required_folders("subcellular_localization")), 26)
+        self.assertEqual(len(self.paths.required_folders("srna_target")), 29)
 
 if __name__ == "__main__":
     unittest.main()    

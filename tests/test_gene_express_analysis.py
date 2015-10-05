@@ -68,9 +68,11 @@ class TestGeneExpress(unittest.TestCase):
         attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         texs = {"tex1_tex2": 0}
+        plots = {"frag": {}}
         detects = {"cond": 0, "track": 0, "import": False, "express": 0}
         gea.detect_express(self.example.wig_frags["aaa"]["frag"]["track_1"], gff, 5,
-                           detects, "all", "all", texs, "frag", 2, "track_1")
+                           detects, "all", "all", texs, "frag", 2, "track_1",
+                           plots, "high", "frag")
         self.assertDictEqual({'track': 1, 'import': False, 'cond': 0, 'express': 2}, detects)
 
     def test_compare_wigs(self):
@@ -83,8 +85,9 @@ class TestGeneExpress(unittest.TestCase):
         stats = {"CDS": {"total": {"total": 0, "least_one": 0, "all": 0, "none": 0},
                          "aaa": {"total": 0, "least_one": 0, "all": 0, "none": 0}}}
         outs = {"CDS": {"least_one": [], "all": [], "none": []}}
+        plots = {}
         gea.compare_wigs(self.example.wig_texs, gff, 2, texs, replicates, stats["CDS"], outs["CDS"],
-                         5, "all", "all")
+                         plots, "high", 5, "all", "all")
         self.assertDictEqual(stats, {'CDS': {'total': {'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1},
                                      'aaa': {'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1}}})
 
@@ -105,7 +108,8 @@ class TestGeneExpress(unittest.TestCase):
         if not os.path.exists(out_gff_folder):
             os.mkdir(out_gff_folder)
         gea.gene_expression(None, gff_folder, "all", "all", "test_wig", "test_wig", ["CDS"],
-                           "test_wig_folder", 5, 2, replicates, stat_folder, out_gff_folder)
+                           "test_wig_folder", 5, 2, replicates, stat_folder, out_gff_folder,
+                           "high", 100, 0)
         datas = import_data(os.path.join(stat_folder, "aaa_CDS.csv"))
         dicts = {}
         for data in datas:

@@ -45,7 +45,7 @@ def main():
 #                    out.write("\t".join(covers))
 #                    out.write("\n")
     out.write("----------------------------------------------------\n")
-    out.write("Total = " + str(100 - (100*(float(miss) / float(sts)))))
+    out.write("Total = " + str(100 - (100*(float(miss) / float(sts)))) + "%")
     out.close()
 if __name__ == "__main__":
     main()

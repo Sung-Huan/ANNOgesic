@@ -48,7 +48,7 @@ class TestGensRNAOutput(unittest.TestCase):
         self.assertDictEqual(new_final, {'end': 367, 'start': 300, 'energy': -23, 'utr': '3UTR',
                                          'tss_pro': 'TSS:300_+', 'conds': 'tex_frag',
                                          'candidates': '300-367', 'strain': 'aaa', 'strand': '+',
-                                         'type': 'TEX+/-;Fragmented'})
+                                         'type': 'TEX+/-;Fragmented', "end_pro": "NA"})
 
     def test_compare(self):
         finals = gso.compare(self.example.srnas, self.example.srna_tables,
@@ -90,9 +90,9 @@ class Example(object):
     for index in range(0, 3):
         srnas.append(Create_generator(srna_dict[index], attributes_srna[index], "gff"))
 
-    srna_tables = [{"strain": "aaa", "strand": "+", "start": 300, "end": 367, "tss_pro": "TSS:300_+", "conds": "tex_frag"},
-                   {"strain": "aaa", "strand": "+", "start": 500, "end": 640, "tss_pro": "TSS:538_+;Cleavage:640_+", "conds": "tex"},
-                   {"strain": "bbb", "strand": "-", "start": 18, "end": 50, "tss_pro": "Cleavage:50_-;Cleavage:18_-", "conds": "frag"}]
+    srna_tables = [{"strain": "aaa", "strand": "+", "start": 300, "end": 367, "tss_pro": "TSS:300_+", "end_pro": "NA", "conds": "tex_frag"},
+                   {"strain": "aaa", "strand": "+", "start": 500, "end": 640, "tss_pro": "TSS:538_+;Cleavage:640_+", "end_pro": "Cleavage:1040_+", "conds": "tex"},
+                   {"strain": "bbb", "strand": "-", "start": 18, "end": 50, "tss_pro": "Cleavage:50_-;Cleavage:18_-", "end_pro": "NA", "conds": "frag"}]
     nr_blasts = [{"strain": "aaa", "strand": "+", "start": 300, "end": 367, "hits": "111;222"},
                  {"strain": "aaa", "strand": "+", "start": 500, "end": 640, "hits": "NA"},
                  {"strain": "bbb", "strand": "-", "start": 18, "end": 50, "hits": "333"}]
@@ -102,15 +102,15 @@ class Example(object):
     finals = [{'sORF': 'NA', 'nr_hit': '111;222', 'end': 367, 'conds': 'tex_frag', 'sRNA_hit': '444',
                'start': 300, 'utr': "5'UTR_derived", 'strand': '+', 'strain': 'aaa', 'sRNA_hit_num': '1',
                'type': 'TEX+/-;Fragmented', 'tss_pro': 'TSS:300_+', 'candidates': '300-367',
-               'nr_hit_num': '2', 'energy': '-34', 'sORF': 'NA'},
+               'nr_hit_num': '2', 'energy': '-34', 'sORF': 'NA', 'end_pro': 'NA'},
               {'sORF': 'NA', 'nr_hit': 'NA', 'end': 640, 'conds': 'tex', 'sRNA_hit': 'NA',
                'start': 500, 'utr': "3'UTR_derived", 'strand': '+', 'strain': 'aaa', 'sRNA_hit_num': 'NA',
                'type': 'TEX+/-', 'tss_pro': 'TSS:538_+;Cleavage:640_+', 'candidates': '500-640;538-640',
-               'nr_hit_num': 'NA', 'energy': '-23', 'sORF': 'sORF_1'},
+               'nr_hit_num': 'NA', 'energy': '-23', 'sORF': 'sORF_1', 'end_pro': 'Cleavage:1040_+'},
               {'sORF': 'NA', 'nr_hit': '333', 'end': 50, 'conds': 'frag', 'sRNA_hit': 'NA',
                'start': 18, 'utr': 'Intergenic', 'strand': '-', 'strain': 'bbb', 'sRNA_hit_num': 'NA',
                'type': 'Fragmented', 'tss_pro': 'Cleavage:50_-;Cleavage:18_-', 'candidates': '18-50',
-               'nr_hit_num': '1', 'energy': '-11', 'sORF': 'NA'}]
+               'nr_hit_num': '1', 'energy': '-11', 'sORF': 'NA', 'end_pro': 'NA'}]
 
 
 if __name__ == "__main__":

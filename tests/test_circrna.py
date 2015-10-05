@@ -14,8 +14,10 @@ class Mock_segemehl(object):
                          index, fasta):
         pass
 
-    def mock_align(self, segemehl_path, fasta_path, index,
-                   fasta, read_folder, read, sam_file, log_file):
+    def mock_align(self, segemehl_path, fasta_path,
+                   index, fasta, read_folder, read,
+                   sam_file, log_file, alignment_path,
+                   fasta_prefix):
         return "test"
 
     def mock_wait_processes(self, processes):

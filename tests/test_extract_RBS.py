@@ -31,7 +31,7 @@ class TestExtractRBS(unittest.TestCase):
         inters = [{"seq": "ATGGTGACCCAGGAGGTTGATCCCAGACGTAGGACCTGTTT"},
                   {"seq": "TTAGGACGTACTCCTCGAATGATCAACTGATACTTA"},
                   {"seq": "TTTTTTTTTAAAAAAAAAATATATATTTTTTTTTTT"}]
-        ribos = er.detect_site(inters)
+        ribos = er.detect_site(inters, ["ATG"], 5, 14, 2)
         self.assertListEqual(ribos, [{'seq': 'TTAGGACGTACTCCTCGAATGATCAACTGATACTTA'}])
 
     def test_extract_seq(self):

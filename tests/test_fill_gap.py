@@ -54,7 +54,7 @@ class TestFillGap(unittest.TestCase):
         fg.longer_ta(ta_file, 30, out_file)
         datas, attributes = extract_info(out_file, "file")
         refs, attributes_ref = extract_info(self.example.out_long, "string")
-        self.assertEqual(set(datas), set(refs))
+        self.assertEqual(set(datas), set(refs[1:]))
 
 class Example(object):
     ta_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 140,
