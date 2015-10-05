@@ -2,30 +2,32 @@ FROM debian
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update
 RUN apt-get upgrade --yes
+RUN apt-get update
 RUN apt-get install --yes \
+default-jre \
+default-jdk \
+python3 \
+python3-scipy \
+vim \
 make \
 gcc \
 g++ \
 gfortran \
 libx11-dev \
-default-jre \
-default-jdk \
 wget \
 zip unzip \
-python-biopython \
+python3-biopython \
 software-properties-common \
-python-software-properties \
+python3-software-properties \
 bioperl \
 ncbi-blast+ \
 pkg-config \
-python-dev \
+python3-dev \
 libfreetype6-dev \
 libpng-dev \
-python-pip \
-python-numpy \
-python-scipy \
+python3-pip \
+python3-numpy \
 imagemagick \
 infernal \
 git \
@@ -43,19 +45,24 @@ libapache-singleton-perl \
 libjson-rpc-perl \
 libncurses5-dev
 
-RUN pip install \
+RUN pip3 install \
 matplotlib \
-networkx            
+networkx \
+ANNOgesic
+
+RUN pip3 install --upgrade ANNOgesic
+            
 RUN mkdir tools
 WORKDIR tools
 
 # vienna package
-RUN apt-add-repository ppa:j-4/vienna-rna --yes
-RUN apt-get update --yes
-RUN apt-get install vienna-rna --yes
+# RUN apt-add-repository ppa:j-4/vienna-rna --yes
+# RUN apt-get update --yes
+# RUN apt-get install vienna-rna --yes
 RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.1.9.tar.gz && \
-tar -zxvf ViennaRNA-2.1.9.tar.gz && cp ViennaRNA-2.1.9/Utils/relplot.pl /usr/local/bin && \
-cp ViennaRNA-2.1.9/Utils/mountain.pl /usr/local/bin
+tar -zxvf ViennaRNA-2.1.9.tar.gz && cd ViennaRNA-2.1.9 && ./configure && make && make install && \
+cp Utils/relplot.pl /usr/local/bin && \
+cp Utils/mountain.pl /usr/local/bin
 
 # TSSpredator
 RUN wget http://it.informatik.uni-tuebingen.de/software/tsspredator/TSSpredator_v1-04.zip && \
@@ -92,14 +99,6 @@ ENV RATT_HOME /tools/PAGIT/RATT
 ENV RATT_CONFIG $RATT_HOME/RATT.config
 ENV PERL5LIB /usr/lib/perl5/:/tools/PAGIT/lib
 RUN cp PAGIT/RATT/start.ratt.sh /usr/local/bin
-
-# htslib, samtools, bcftools
-RUN git clone https://github.com/samtools/htslib.git
-RUN cd htslib && make && make install
-RUN git clone https://github.com/samtools/samtools.git
-RUN cd samtools && make && make install
-RUN git clone https://github.com/samtools/bcftools.git
-RUN cd bcftools && make && make install
 
 # segemehl
 RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_0_2_0.tar.gz && \
@@ -183,14 +182,28 @@ RUN /etc/init.d/apache2 restart
 EXPOSE 80
 CMD ["/opt/run.sh"]
 
+# copy psort to global execute
+RUN cp /usr/local/psortb/bin/psort /usr/local/bin
+
 WORKDIR /tools
+
+# htslib, samtools, bcftools
+RUN wget https://github.com/samtools/htslib/releases/download/1.2.1/htslib-1.2.1.tar.bz2
+RUN tar -jxvf htslib-1.2.1.tar.bz2 && cd htslib-1.2.1 && make all && make install && cd ..
+RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2
+RUN tar -jxvf samtools-1.2.tar.bz2 && cd samtools-1.2 && make all && make install && cd ..
+RUN wget https://github.com/samtools/bcftools/releases/download/1.2/bcftools-1.2.tar.bz2
+RUN tar -jxvf bcftools-1.2.tar.bz2 && cd bcftools-1.2 && make all && make install && cd ..
+
+# replace the old version of samtools in PAGIT
+RUN cp /tools/samtools-1.2/samtools /tools/PAGIT/bin/samtools
+
 RUN rm TSSpredator_v1-04.zip \
 meme_4.10.1_1.tar.gz \
 PAGIT.V1.64bit.tgz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
-ViennaRNA-2.1.9.tar.gz
-
-# ANNOgesic
-WORKDIR /root
-RUN git clone https://github.com/Sung-Huan/ANNOgesic.git
+ViennaRNA-2.1.9.tar.gz \
+htslib-1.2.1.tar.bz2 \
+samtools-1.2.tar.bz2 \
+bcftools-1.2.tar.bz2
