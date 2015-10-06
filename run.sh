@@ -351,7 +351,6 @@ promoter_detection(){
         -t $ANNOGESIC_FOLDER/output/TSS/gffs \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
 	-w 50 51 45 2-10 \
-	-p 10 \
 	-g $ANNOGESIC_FOLDER/output/TSS/gffs \
         $ANNOGESIC_FOLDER
 }

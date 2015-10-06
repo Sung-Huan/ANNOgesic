@@ -188,14 +188,14 @@ class TranscriptAssembly(object):
                                "_".join([strain, self.frag]))
                     final_gff = os.path.join(gff_outfolder,
                                 "_".join([strain, self.endfix_tran]))
-                    os.rename(frag_gff, final_gff)
+                    shutil.move(frag_gff, final_gff)
             elif tex_wigs is not None:
                 for strain in strains:
                     tex_gff = os.path.join(gff_outfolder,
                               "_".join([strain, self.tex]))
                     final_gff = os.path.join(gff_outfolder,
                                 "_".join([strain, self.endfix_tran]))
-                    os.rename(tex_gff, final_gff)
+                    shutil.move(tex_gff, final_gff)
 
     def _post_modify(self, tas, gffs, tran_path, length,
                      gff_outfolder, out_folder):
@@ -222,11 +222,11 @@ class TranscriptAssembly(object):
             os.remove(tmp_merge)
             final_out = os.path.join(gff_outfolder, "_".join(["final", ta]))
             longer_ta(tmp_out, length, final_out)
-            os.rename(final_out, os.path.join(self.tmps["tran"],
+            shutil.move(final_out, os.path.join(self.tmps["tran"],
                       "_".join([ta, self.endfix_tran])))
             os.remove(tmp_out)
         shutil.rmtree(gff_outfolder)
-        os.rename(self.tmps["tran"], gff_outfolder)
+        shutil.move(self.tmps["tran"], gff_outfolder)
 
     def _remove_file(self, frag_wigs, tex_wigs, gffs,
                      compare_cds, compare_tss, out_folder):
@@ -241,7 +241,7 @@ class TranscriptAssembly(object):
         if compare_tss is not None:
             self.helper.remove_tmp(compare_tss)
         self.helper.remove_tmp(os.path.join(out_folder, "gffs"))
-        self.helper.remove_tmp(self.tran_path)
+        self.helper.remove_tmp(self.gff_outfolder)
 
     def run_transcript_assembly(self, frag_wigs, tex_wigs, sort, tex, length,
             gffs, height, width, tolerance, low_cutoff, replicates_tex,
@@ -277,7 +277,7 @@ class TranscriptAssembly(object):
                 for gff in os.listdir(gffs):
                     if gff.endswith(".gff"):
                         self.helper.sort_gff(os.path.join(gffs, gff), self.tmps["gff"])
-                        os.rename(self.tmps["gff"], os.path.join(gffs, gff))
+                        shutil.move(self.tmps["gff"], os.path.join(gffs, gff))
             self.multiparser.parser_gff(gffs, None)
             self.multiparser.combine_gff(gffs, os.path.join(gffs, "tmp"), None, None)
             self.multiparser.parser_gff(self.gff_outfolder, "transcript")

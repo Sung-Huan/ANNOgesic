@@ -203,3 +203,4 @@ def extract_energy(srna_file, sec_file, out_file):
                     break
     s_f.close()
     d_f.close()
+    out.close()

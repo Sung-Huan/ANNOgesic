@@ -62,7 +62,7 @@ class Multiparser(object):
                                 change = True
                 if change:
                     change = False
-                    os.rename(os.path.join(tar_folder, self.tmp_fa),
+                    shutil.move(os.path.join(tar_folder, self.tmp_fa),
                               os.path.join(tar_merge, prefix + ".fa"))
         self.helper.remove_all_content(tar_folder, ".fa", "file")
         self.helper.move_all_content(tar_merge, tar_folder, None)
@@ -121,10 +121,10 @@ class Multiparser(object):
                 if change_f and change_r:
                     change_f = False
                     change_r = False
-                    os.rename(os.path.join(tar_folder, self.tmp_wig_forward),
-                              os.path.join(tar_merge, prefix + "_forward.wig"))
-                    os.rename(os.path.join(tar_folder, self.tmp_wig_reverse),
-                              os.path.join(tar_merge, prefix + "_reverse.wig"))
+                    shutil.move(os.path.join(tar_folder, self.tmp_wig_forward),
+                                os.path.join(tar_merge, prefix + "_forward.wig"))
+                    shutil.move(os.path.join(tar_folder, self.tmp_wig_reverse),
+                                os.path.join(tar_merge, prefix + "_reverse.wig"))
         self.helper.remove_all_content(tar_folder, ".wig", "file")
         self.helper.move_all_content(tar_merge, tar_folder, None)
         shutil.rmtree(tar_merge)
@@ -176,7 +176,7 @@ class Multiparser(object):
                             change = True
                 if change:
                     change = False
-                    os.rename(os.path.join(tar_folder, self.tmp_gff),
+                    shutil.move(os.path.join(tar_folder, self.tmp_gff),
                               os.path.join(tar_folder, "merge_tmp",
                               prefix + tar_feature + ".gff"))
         self.helper.remove_all_content(tar_folder, ".gff", "file")

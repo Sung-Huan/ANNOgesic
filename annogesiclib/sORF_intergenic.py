@@ -30,16 +30,20 @@ def get_type(inter, gffs):
 def read_gff(gff_file, tran_file):
     trans = []
     gffs = []
-    for entry in Gff3Parser().entries(open(gff_file)):
+    gh = open(gff_file)
+    for entry in Gff3Parser().entries(gh):
         if (entry.feature == "CDS") or \
            (entry.feature == "rRNA") or \
            (entry.feature == "tRNA") or \
            (entry.feature == "sRNA"):
             gffs.append(entry)
-    for entry in Gff3Parser().entries(open(tran_file)):
+    th = open(tran_file)
+    for entry in Gff3Parser().entries(th):
         trans.append(entry)
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     trans = sorted(trans, key=lambda k: (k.seq_id, k.start))
+    gh.close()
+    th.close()
     return gffs, trans
 
 def compare_tran_cds(trans, gffs):
@@ -99,3 +103,4 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect):
                         str(inter["end"]), ".", inter["strand"], ".",
                         attribute_string]]) + "\n")
         num += 1
+    out.close()

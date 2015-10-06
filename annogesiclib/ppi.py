@@ -40,16 +40,17 @@ class PPINetwork(object):
         os.mkdir(os.path.join(path, strain))
         os.mkdir(os.path.join(path, strain, ptt))
 
+    def _run_wget(self, source, folder, log):
+        call(["wget", source, "-O", folder], stderr=log)
+        time.sleep(3)
+
     def _wget_id(self, strain, locus, strain_id, files):
         if strain == strain_id["ptt"]:
             print("Retrieving STRING ID for {0} of {1} -- {2}".format(
                    locus, strain_id["string"], strain_id["file"]))
             id_source = "http://string-db.org/api/tsv/resolve?identifier={0}&species={1}".format(
                          locus, strain_id["string"])
-            call(["wget", id_source,
-                  "-O", os.path.join(files["id_list"], locus)],
-                  stderr=files["id_log"])
-            time.sleep(3)
+            self._run_wget(id_source, os.path.join(files["id_list"], locus), files["id_log"])
             detect_id = True
         return detect_id
 
@@ -62,7 +63,7 @@ class PPINetwork(object):
                 print("Error:there is no {0} in {1}".format(
                        gene, strain_id["file"]))
 
-    def _get_prefer_name(self, row_a, strain_id, files, genes, querys):
+    def _get_prefer_name(self, row_a, strain_id, files, querys):
         prefername = ""
         filename = row_a.split(".")
         if (filename[1] not in os.listdir(files["id_list"])) and (
@@ -87,27 +88,20 @@ class PPINetwork(object):
                    "STRING_action_score\tpubmed_id\tpubmed_score\n")
 
     def _get_pubmed(self, row, out_folder, strain_id, mode, actor, score,
-                    id_file, first_output, no_specific, ptt, genes, files,
-                    paths, querys):
-        prefer1 = self._get_prefer_name(row[0], strain_id, files, genes, querys)
-        prefer2 = self._get_prefer_name(row[1], strain_id, files, genes, querys)
+                    id_file, first_output, no_specific, ptt, files, paths, querys):
+        prefer1 = self._get_prefer_name(row[0], strain_id, files, querys)
+        prefer2 = self._get_prefer_name(row[1], strain_id, files, querys)
         if (len(prefer1) > 0) and (len(prefer2) > 0): ## retrieve from PIE
             if no_specific:
                 pubmed_source = \
                 "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}".format(
                  prefer1, prefer2)
-                call(["wget", pubmed_source,
-                      "-O", self.tmp_files["nospecific"]],
-                      stderr=files["pubmed_log"])
-                time.sleep(3)
+                self._run_wget(pubmed_source, self.tmp_files["nospecific"], files["pubmed_log"])
             strain_id["pie"] = "+".join(strain_id["pie"].split(" "))
             pubmed_source = \
             "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}+{2}".format(
              prefer1, prefer2, strain_id["pie"])
-            call(["wget", pubmed_source,
-                  "-O", self.tmp_files["specific"]],
-                  stderr=files["pubmed_log"])
-            time.sleep(3)
+            self._run_wget(pubmed_source, self.tmp_files["specific"], files["pubmed_log"])
             row[2] = mode ### merge information
             row[4] = actor
             row[0] = prefer1
@@ -286,15 +280,12 @@ class PPINetwork(object):
                 if row[1] == strain_id["string"]:
                     action_source = "http://string-db.org/api/tsv/actions?identifier={0}&species={1}".format(
                                     row[0], row[1])
-                    call(["wget", action_source,
-                          "-O", self.tmp_files["wget_action"]],
-                          stderr=files["action_log"])
-                    time.sleep(3)
+                    self._run_wget(action_source, self.tmp_files["wget_action"], files["action_log"])
                     break
         t_h.close()
 
     def _retrieve_actions(self, files, out_folder, strain_id, paths,
-                          score, no_specific, genes, querys):
+                          score, no_specific, querys):
         for id_file in os.listdir(files["id_list"]):
             if id_file != self.tmp_files["log"]:
                 self._wget_actions(files, id_file, strain_id, out_folder)
@@ -325,8 +316,7 @@ class PPINetwork(object):
                                 self._get_pubmed(pre_row, out_folder,
                                      strain_id, mode, actor, score, id_file,
                                      first_output, no_specific,
-                                     strain_id["ptt"], genes, files, paths,
-                                     querys)
+                                     strain_id["ptt"], files, paths, querys)
                                 mode = row_a[2]
                                 actor = row_a[4]
                             else:
@@ -337,8 +327,9 @@ class PPINetwork(object):
                     detect = False
                     self._get_pubmed(row_a, out_folder, strain_id, mode,
                                      actor, score, id_file, first_output,
-                                     no_specific, strain_id["ptt"], genes,
+                                     no_specific, strain_id["ptt"],
                                      files, paths, querys)
+        a_h.close()
 
     def _plot(self, out_folder, score, size, no_specific):
         for folder in os.listdir(self.all_result): ## plot figure
@@ -358,7 +349,6 @@ class PPINetwork(object):
     def retrieve_ppi_network(self, ptts, strains, no_specific,
                              species, score, out_folder, size, querys):
         strain_ids = []
-        genes = []
         paths = {}
         files = {}
         for strain in strains: # import strain information
@@ -389,7 +379,7 @@ class PPINetwork(object):
                         break
             self._retrieve_id(strain_id, genes, files)
             self._retrieve_actions(files, out_folder, strain_id, paths,
-                                   score, no_specific, genes, querys)
+                                   score, no_specific, querys)
         self._plot(out_folder, score, size, no_specific)
         self.helper.remove_all_content(os.path.join(out_folder), "tmp", "file")
         self.helper.remove_all_content(os.path.join(out_folder), "tmp", "dir")

@@ -74,3 +74,4 @@ def gen_svg(input_png, track_num, figure_height, figure_width):
      id="image3063" />\n""")
     print_track(track_num, svg_out, figure_width)
     svg_out.write("</svg>")
+    svg_out.close()

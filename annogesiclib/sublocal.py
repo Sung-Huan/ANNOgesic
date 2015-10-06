@@ -38,6 +38,11 @@ class SubLocal(object):
         os.remove("tmp")
         return prefix
 
+    def _psortb(self, psortb_path, strain_type, prot_seq_file,
+               out_raw, out_err):
+        call([psortb_path, strain_type, prot_seq_file],
+              stdout=out_raw, stderr=out_err)
+
     def _run_psortb(self, prefix, out_folder, gram, psortb_path, tmp_path):
         print("Running psortb of {0}".format(prefix))
         out_err = open(os.path.join(out_folder, "tmp_log"), "w")
@@ -45,14 +50,16 @@ class SubLocal(object):
                        "_".join([prefix, self.endfix_raw])), "w")
         prot_seq_file = os.path.join(tmp_path, "_".join([prefix, "protein.fa"]))
         if gram == "positive":
-            call([psortb_path, "-p", prot_seq_file],
-                  stdout=out_raw, stderr=out_err)
+            self._psortb(psortb_path, "-p", prot_seq_file,
+                        out_raw, out_err)
         elif gram == "negative":
-            call([psortb_path, "-n", prot_seq_file],
-                  stdout=out_raw, stderr=out_err)
+            self._psortb(psortb_path, "-n", prot_seq_file,
+                        out_raw, out_err)
         else:
             print("Error:It is not a proper bacteria type - {0}!!".format(gram))
             sys.exit()
+        out_err.close()
+        out_raw.close()
 
     def _extract_result(self, merge, tmp_psortb_path, prefix, gff_file, fuzzy):
         if merge:
@@ -62,7 +69,7 @@ class SubLocal(object):
                            os.path.join(tmp_psortb_path,
                            "_".join([prefix, self.endfix_table])),
                            gff_file, os.path.join(prefix + ".gff"), fuzzy)
-            os.rename(prefix + ".gff", gff_file)
+            shutil.move(prefix + ".gff", gff_file)
         else:
             extract_psortb(os.path.join(tmp_psortb_path,
                            "_".join([prefix, self.endfix_raw])),

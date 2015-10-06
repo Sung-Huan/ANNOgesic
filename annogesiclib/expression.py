@@ -37,9 +37,10 @@ class Expression(object):
             sys.exit()
         return replicates
 
-    def gene_expression(self, tex_libs, frag_libs, tex_notex, replicates_tex,
-                        replicates_frag, tex_wigs, frag_wigs, percent_tex,
-                        percent_frag, cutoff_coverage, gffs, features):
+    def expression(self, tex_libs, frag_libs, tex_notex, replicates_tex,
+                   replicates_frag, tex_wigs, frag_wigs, percent_tex,
+                   percent_frag, cutoff_coverage, gffs, features,
+                   cover_type, max_color, min_color):
         replicates = self._get_replicates(replicates_tex, replicates_frag)
         if (tex_libs is not None) and (frag_libs is not None):
             input_libs = tex_libs + frag_libs
@@ -79,6 +80,9 @@ class Expression(object):
         print("Computing expression analysis...")
         gene_expression(input_libs, gffs, percent_tex, percent_frag, wig_f_file,
                         wig_r_file, features, merge_wigs, cutoff_coverage,
-                        tex_notex, replicates, self.stat, self.gff_folder)
+                        tex_notex, replicates, self.stat, self.gff_folder,
+                        cover_type, max_color, min_color)
+        os.remove(wig_f_file)
+        os.remove(wig_r_file)
         if os.path.exists(self.merge_wigs):
             shutil.rmtree(self.merge_wigs)

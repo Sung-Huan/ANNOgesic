@@ -54,11 +54,15 @@ class Terminator(object):
         with open(combine_file, 'w') as result:
             for file_ in files:
                 check_start = False
-                for line in open( file_, 'r' ):
+                fh = open(file_, 'r')
+                for line in fh:
                     if check_start:
                         result.write(line)
                     if "Location" in line:
                         check_start = True
+                if "\n" not in line:
+                    result.write("\n")
+                fh.close()
 
     def _make_gff_folder(self):
         self.helper.check_make_folder(self.terms["all"])
@@ -68,8 +72,9 @@ class Terminator(object):
         self.helper.check_make_folder(self.terms["express"])
         self.helper.check_make_folder(self.csvs["express"])
 
-    def _convert_gff2rntptt(self, gff_path, prefixs,
-                            fasta_path, sRNAs, file_types):
+    def _convert_gff2rntptt(self, gff_path, fasta_path, sRNAs):
+        file_types = {}
+        prefixs = []
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
                 filename = gff.split("/")
@@ -100,6 +105,7 @@ class Terminator(object):
                     self.converter.convert_gff2rntptt(gff_file, fasta,
                          ptt_file, rnt_file, None, None)
                     file_types[prefix] = "normal"
+        return file_types, prefixs
 
     def _combine_ptt_rnt(self, gff_path, file_types, srna_path):
         self.helper.check_make_folder(self.combine_path)
@@ -116,6 +122,17 @@ class Terminator(object):
                                       "_".join([prefix, "sRNA.rnt"]))]
                 self._combine_annotation(combine_file, files)
 
+    def _TransTermHP(self, TransTermHP_path, expterm_path, fasta, combine_path,
+                     file_, out_path, prefix, out):
+        call([TransTermHP_path, "-p", expterm_path,
+              fasta, os.path.join(combine_path, file_), "--t2t-perf",
+              os.path.join(out_path,
+              "_".join([prefix,
+              "terminators_within_robust_tail-to-tail_regions.t2t"])),
+              "--bag-output", os.path.join(out_path,
+              "_".join([prefix, "best_terminator_after_gene.bag"]))],
+              stdout=out)
+
     def _run_TransTermHP(self, TransTermHP_path, combine_path,
                          fasta_path, hp_folder, expterm_path):
         self.helper.check_make_folder(self.tmps["transterm"])
@@ -131,14 +148,9 @@ class Terminator(object):
                 self.helper.check_make_folder(out_path)
                 out = open(os.path.join(out_path,
                            "_".join([prefix, "terminators.txt"])), "w")
-                call([TransTermHP_path, "-p", expterm_path,
-                      fasta, os.path.join(combine_path, file_), "--t2t-perf",
-                      os.path.join(out_path,
-                      "_".join([prefix,
-                      "terminators_within_robust_tail-to-tail_regions.t2t"])),
-                      "--bag-output", os.path.join(out_path,
-                      "_".join([prefix, "best_terminator_after_gene.bag"]))],
-                      stdout=out)
+                self._TransTermHP(TransTermHP_path, expterm_path, fasta,
+                                  combine_path, file_, out_path, prefix, out)
+                out.close()
         shutil.rmtree(combine_path)
 
     def _convert_to_gff(self, prefixs, hp_folder, gffs):
@@ -186,12 +198,11 @@ class Terminator(object):
         else:
             print("Error: no proper wig files!!!")
             sys.exit()
-        return (merge_wigs, libs)
+        return merge_wigs, libs
 
-    def _merge_sRNA(self, sRNAs, prefixs, gff_path, srna_path):
+    def _merge_sRNA(self, sRNAs, prefixs, gff_path):
         if sRNAs is not None:
             self.multiparser.parser_gff(sRNAs, "sRNA")
-            srna_path = os.path.join(sRNAs, "tmp")
             self.helper.check_make_folder(self.tmps["merge"])
             for prefix in prefixs:
                 tmp_gff = os.path.join(self.tmps["merge"], self.tmps["gff"])
@@ -199,7 +210,7 @@ class Terminator(object):
                     os.remove(tmp_gff)
                 self.helper.merge_file(os.path.join(gff_path, prefix + ".gff"),
                             tmp_gff)
-                self.helper.merge_file(os.path.join(srna_path,
+                self.helper.merge_file(os.path.join(self.srna_path,
                             "_".join([prefix, "sRNA.gff"])), tmp_gff)
                 self.helper.sort_gff(tmp_gff, os.path.join(self.tmps["merge"],
                             prefix + ".gff"))
@@ -214,7 +225,7 @@ class Terminator(object):
             if gff.endswith("_term.gff"):
                 self.helper.sort_gff(os.path.join(term_outfolder, gff),
                                      self.tmps["gff"])
-                os.rename(self.tmps["gff"], os.path.join(term_outfolder, gff))
+                shutil.move(self.tmps["gff"], os.path.join(term_outfolder, gff))
                 prefix = gff.replace("_term.gff", "")
                 new_gff = os.path.join(self.terms["all"],
                           "_".join([prefix, self.suffixs["allgff"]]))
@@ -235,7 +246,8 @@ class Terminator(object):
                 out_csv.write("\t".join(["strain", "name", "start", "end",
                               "strand", "detect", "coverage_detail"]) + "\n")
                 out_csv.close()
-                for entry in self.gff_parser.entries(open(new_gff)):
+                fh = open(new_gff)
+                for entry in self.gff_parser.entries(fh):
                     if entry.seq_id != pre_strain:
                         self.helper.merge_file(
                              os.path.join(self.tmps["term_table"],
@@ -243,6 +255,17 @@ class Terminator(object):
                              os.path.join(self.csvs["all"],
                              "_".join([prefix, self.suffixs["csv"]])))
                     pre_strain = entry.seq_id
+                fh.close()
+
+    def _run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix):
+        print("Computing secondray structure of {0}".format(prefix))
+        self.helper.check_make_folder(self.tmps["folder"])
+        pre_cwd = os.getcwd()
+        os.chdir(self.tmps["folder"])
+        os.system(" ".join([RNAfold_path, "<", os.path.join("..", tmp_seq),
+                  ">", os.path.join("..", tmp_sec)]))
+        os.chdir(pre_cwd)
+        shutil.rmtree(self.tmps["folder"])
 
     def _compute_intersection_forward_reverse(self, RNAfold_path, prefixs,
                 tran_path, merge_path, fasta_path, cutoff_coverage, fuzzy,
@@ -262,14 +285,7 @@ class Terminator(object):
             out_seq = open(tmp_seq, "w")
             intergenic_seq(os.path.join(fasta_path, prefix + ".fa"),
                            tran_file, gff_file, tmp_seq)
-            print("Computing secondray structure of {0}".format(prefix))
-            self.helper.check_make_folder(self.tmps["folder"])
-            pre_cwd = os.getcwd()
-            os.chdir(self.tmps["folder"])
-            os.system(" ".join([RNAfold_path, "<", os.path.join("..", tmp_seq),
-                                ">", os.path.join("..", tmp_sec)]))
-            os.chdir(pre_cwd)
-            shutil.rmtree(self.tmps["folder"])
+            self._run_rnafold(RNAfold_path, tmp_seq, tmp_sec, prefix)
             ### detect poly U/T tail of terminators and coverage decreasing.
             tmp_cand = os.path.join(out_folder,
                        "_".join(["term_candidates", prefix]))
@@ -287,6 +303,7 @@ class Terminator(object):
                 "_".join([prefix, self.suffixs["gff"]])),
                 os.path.join(self.tmps["term_table"],
                 "_".join([prefix, "term_raw.csv"])), table_best, decrease)
+            out_seq.close()
         self.multiparser.combine_gff(gffs, term_outfolder, None, "term")
         self._move_file(term_outfolder, csv_outfolder)
         
@@ -318,8 +335,8 @@ class Terminator(object):
                 new_prefix = gff.replace("_term_all.gff", "")
                 new_prefixs.append(gff.replace("_term_all.gff", ""))
                 num = 0
-                for entry in self.gff_parser.entries(
-                             open(os.path.join(self.terms["all"], gff))):
+                fh = open(os.path.join(self.terms["all"], gff))
+                for entry in self.gff_parser.entries(fh):
                     name = '%0*d' % (5, num)
                     entry.attributes["ID"] = "term" + str(num)
                     entry.attributes["Name"] = "_".join(["Terminator_" + name])
@@ -329,8 +346,9 @@ class Terminator(object):
                                   entry.attribute_string]) + "\n")
                     num += 1
                 out_tmp.close()
-                os.rename(self.tmps["gff"], os.path.join(self.terms["all"],
-                          "_".join([new_prefix, self.suffixs["gff"]])))
+                fh.close()
+                shutil.move(self.tmps["gff"], os.path.join(self.terms["all"],
+                            "_".join([new_prefix, self.suffixs["gff"]])))
         if stat:
             stat_path = os.path.join(out_folder, "statistics")
             for prefix in new_prefixs:
@@ -344,14 +362,14 @@ class Terminator(object):
                           "_".join([prefix, "term"])),
                           os.path.join(self.terms["express"],
                           "_".join([prefix, "term"])))
-                os.rename(os.path.join(self.terms["detect"],
-                          "_".join([prefix, self.suffixs["csv"]])),
-                          os.path.join(self.csvs["detect"],
-                          "_".join([prefix, self.suffixs["csv"]])))
-                os.rename(os.path.join(self.terms["express"],
-                          "_".join([prefix, self.suffixs["csv"]])),
-                          os.path.join(self.csvs["express"],
-                          "_".join([prefix, self.suffixs["csv"]])))
+                shutil.move(os.path.join(self.terms["detect"],
+                            "_".join([prefix, self.suffixs["csv"]])),
+                            os.path.join(self.csvs["detect"],
+                            "_".join([prefix, self.suffixs["csv"]])))
+                shutil.move(os.path.join(self.terms["express"],
+                            "_".join([prefix, self.suffixs["csv"]])),
+                            os.path.join(self.csvs["express"],
+                            "_".join([prefix, self.suffixs["csv"]])))
                 os.remove(os.path.join(self.terms["all"],
                           "_".join([prefix, self.suffixs["allgff"]])))
 
@@ -378,8 +396,6 @@ class Terminator(object):
             sys.exit()
         ### First, running TransTermHP. Before, running TransTermHP,
         ### we need to convert annotation files to .ptt and .rnt files.
-        file_types = {}
-        prefixs = []
         self._check_gff_file(gffs)
         self._check_gff_file(trans)
         self.multiparser.parser_gff(gffs, None)
@@ -387,15 +403,14 @@ class Terminator(object):
         if (not gffs) or (not fastas):
             print("Error: please assign gff annotation folder and fasta folder!!!")
             sys.exit()
-        self._convert_gff2rntptt(self.gff_path, prefixs,
-                                 self.fasta_path, sRNAs, file_types)
+        file_types, prefixs = self._convert_gff2rntptt(self.gff_path,
+                                                       self.fasta_path, sRNAs)
         self._combine_ptt_rnt(self.gff_path, file_types, self.srna_path)
         self._run_TransTermHP(TransTermHP_path, self.combine_path,
                               self.fasta_path, hp_folder, expterm_path)
         self._convert_to_gff(prefixs, hp_folder, gffs)
-        lib_datas = self._combine_libs_wigs(tlibs, flibs, tex_wigs, frag_wigs)
-        merge_wigs = lib_datas[0]
-        libs = lib_datas[1]
+        merge_wigs, libs = self._combine_libs_wigs(tlibs, flibs,
+                                                   tex_wigs, frag_wigs)
         self.multiparser.parser_gff(self.gff_path, None)
         wig_path = os.path.join(merge_wigs, "tmp")
         self.multiparser.parser_wig(merge_wigs)
@@ -404,8 +419,7 @@ class Terminator(object):
         self.multiparser.parser_gff(trans, "transcript")
         self.helper.check_make_folder(self.tmps["term_table"])
         self.multiparser.parser_gff(self.tmps["transterm"], self.tmps["hp"])
-        merge_path = self._merge_sRNA(sRNAs, prefixs, self.gff_path,
-                                      self.srna_path)
+        merge_path = self._merge_sRNA(sRNAs, prefixs, self.gff_path)
         ### Second, running the cross regions of forward and reverese strand.
         self._compute_intersection_forward_reverse(RNAfold_path, prefixs,
             self.tran_path, merge_path, self.fasta_path, cutoff_coverage, fuzzy,

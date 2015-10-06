@@ -17,13 +17,16 @@ def read_gff(gff_file, tss_file):
     tsss = []
     gffs = []
     gff_parser = Gff3Parser()
-    for gff in gff_parser.entries(open(gff_file)):
+    fh = open(gff_file)
+    for gff in gff_parser.entries(fh):
         gffs.append(gff)
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+    fh.close()
     tss_f = open(tss_file, "r")
-    for tss in gff_parser.entries(open(tss_file)):
+    for tss in gff_parser.entries(tss_f):
         tsss.append(tss)
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
+    tss_f.close()
     return gffs, tsss
 
 def compare_tss(tsss, gff, utr_length, num_all, num_strain):
@@ -91,6 +94,8 @@ def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
             print_stat("cds", num_strain[strain], out)
             print_stat("tRNA", num_strain[strain], out)
             print_stat("rRNA", num_strain[strain], out)
+    out_cds.close()
+    out.close()
 
 def validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length):
     num_all = {"all_cds": 0, "all_tRNA": 0, "all_rRNA": 0,

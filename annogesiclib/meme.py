@@ -30,18 +30,17 @@ class MEME(object):
         self.all_tss = os.path.join(self.tss_path, "allfasta_TSS.gff")
 
     def _run_normal_motif(self, meme_path, input_path, out_path,
-                          filename, width, parallel, num_motif, fasta):
+                          filename, width, num_motif, fasta):
         folder = "_".join(["promoter_motifs", filename, str(width), "nt"])
         if folder not in os.listdir(out_path):
             call([meme_path, "-maxsize", "1000000",
                   "-dna", "-nmotifs", str(num_motif),
                   "-w", str(width), "-maxiter", "100",
-                  "-p", str(parallel),
                   "-oc", os.path.join(out_path, folder),
                   os.path.join(input_path, fasta)])
 
     def _run_small_motif(self, meme_path, input_path, out_path,
-                         filename, width, parallel, num_motif, fasta):
+                         filename, width, num_motif, fasta):
         data = width.split("-")
         min_width = data[0]
         max_width = data[1]
@@ -52,7 +51,7 @@ class MEME(object):
                   "-dna", "-nmotifs", str(num_motif),
                   "-minsites", "0", "-maxsites", "2",
                   "-minw", str(min_width), "-maxw", str(max_width),
-                  "-maxiter", "100", "-p", str(parallel),
+                  "-maxiter", "100",
                   "-oc", os.path.join(out_path, folder),
                   os.path.join(input_path, fasta)])
 
@@ -92,19 +91,19 @@ class MEME(object):
         os.remove(self.fastas["tmp_fa"])
         os.remove(self.fastas["tmp_all"])
         out_prefix = os.path.join(input_path, prefix)
-        os.rename(self.fastas["pri"], "_".join([out_prefix,
+        shutil.move(self.fastas["pri"], "_".join([out_prefix,
                                       "allstrain_primary.fa"]))
-        os.rename(self.fastas["sec"], "_".join([out_prefix,
+        shutil.move(self.fastas["sec"], "_".join([out_prefix,
                                       "allstrain_secondary.fa"]))
-        os.rename(self.fastas["inter"], "_".join([out_prefix,
+        shutil.move(self.fastas["inter"], "_".join([out_prefix,
                                         "allstrain_internal.fa"]))
-        os.rename(self.fastas["anti"], "_".join([out_prefix,
+        shutil.move(self.fastas["anti"], "_".join([out_prefix,
                                        "allstrain_antisense.fa"]))
-        os.rename(self.fastas["orph"], "_".join([out_prefix,
+        shutil.move(self.fastas["orph"], "_".join([out_prefix,
                                        "allstrain_orphan.fa"]))
-        os.rename(all_type, "_".join([out_prefix,
+        shutil.move(all_type, "_".join([out_prefix,
                             "allstrain_all_types.fa"]))
-        os.rename(all_no_orph, "_".join([out_prefix,
+        shutil.move(all_no_orph, "_".join([out_prefix,
                                "allstrain_without_orphan.fa"]))
 
     def _split_fasta_by_strain(self, input_path):
@@ -140,7 +139,7 @@ class MEME(object):
         out.close()
 
     def _run_program(self, prefixs, input_folder, output_folder, widths,
-                     meme_path, parallel, num_motif):
+                     meme_path, num_motif):
         for prefix in prefixs: ### run MEME
             input_path = os.path.join(input_folder, prefix)
             out_path = os.path.join(output_folder, prefix)
@@ -151,10 +150,10 @@ class MEME(object):
                           fasta, width))
                     if "-" in width:
                         self._run_small_motif(meme_path, input_path, out_path,
-                                    filename, width, parallel, num_motif, fasta)
+                                    filename, width, num_motif, fasta)
                     else:
                         self._run_normal_motif(meme_path, input_path, out_path,
-                                    filename, width, parallel, num_motif, fasta)
+                                    filename, width, num_motif, fasta)
 
     def _combine_file(self, source, gffs, fastas, wigs, input_libs,
                       input_folder, output_folder, prefixs):
@@ -201,7 +200,7 @@ class MEME(object):
         shutil.rmtree("tmp")
 
     def run_meme(self, meme_path, input_folder, output_folder, input_libs,
-                 tsss, fastas, num_motif, widths, parallel, source, wigs,
+                 tsss, fastas, num_motif, widths, source, wigs,
                  gffs, combine):
         if "allfasta.fa" in os.listdir(fastas):
             os.remove(self.all_fasta)
@@ -252,5 +251,5 @@ class MEME(object):
             self._combine_file(source, gffs, fastas, wigs, input_libs,
                                input_folder, output_folder, prefixs)
         self._run_program(prefixs, input_folder, output_folder, widths,
-                          meme_path, parallel, num_motif)
+                          meme_path, num_motif)
         self._remove_files(fastas, tsss, gffs, wigs)

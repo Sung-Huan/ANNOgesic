@@ -21,6 +21,8 @@ def read_file(ribo_table, rfam_table):
     for row in csv.reader(r_h, delimiter="\t"):
         rfams.append({"ID": row[0].strip(), "class": row[1].strip()})
     ribos = sorted(ribos, key=lambda x: (x["strain"], x["start_seq"]))
+    f_h.close()
+    r_h.close()
     return ribos, rfams
 
 def get_overlap(pre_ribo, ribo, overlap, overlaps):
@@ -129,6 +131,7 @@ def print_stat(stats, out_stat, overlaps):
                 count += 1
                 for data in datas:
                     out.write("\t{0}\n".format(data))
+    out.close()
 
 def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
     stats = {}
@@ -176,3 +179,4 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
             pre_gff = ribo
     print_gff(num, pre_gff, out, stats, strain)
     print_stat(stats, out_stat, overlaps)
+    out.close()

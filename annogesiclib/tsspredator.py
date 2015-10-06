@@ -62,9 +62,12 @@ class TSSpredator(object):
         out.close()
         err.close()
 
-    def _import_lib(self, libs, wig_folder, project_strain_name, rep_set,
-                    lib_dict, out, gff, program, list_num_id, fasta):
+    def _import_lib(self, libs, wig_folder, project_strain_name,
+                    out, gff, program, fasta):
+        lib_dict = {"fp": [], "fm": [], "nm": [], "np": []}
         lib_num = 0
+        rep_set = set()
+        list_num_id = []
         print("Runniun {0} now...".format(program))
         for lib in libs:
             lib_datas = lib.split(":")
@@ -107,15 +110,13 @@ class TSSpredator(object):
             out.write("genome_{0} = {1}\n".format(num_id, fasta))
         for num_id in range(1, lib_num+1):
             list_num_id.append(str(num_id))
-        return (lib_num, num_id)
+        return lib_num, num_id, rep_set, lib_dict, list_num_id
 
     def _gen_config(self, project_strain_name, out_folder, libs, gff,
                     wig_folder, fasta, height, factor, height_reduction,
                     factor_reduction, enrichment_factor, processing_factor,
                     base_height, output_prefixs, config_file, program,
                     repmatch, cluster, utr_length):
-        lib_dict = {"fp": [], "fm": [], "nm": [], "np": []}
-        rep_set = set()
         master_folder = "MasterTable_" + project_strain_name
         out_path = os.path.join(self.master, master_folder)
         self.helper.check_make_folder(out_path)
@@ -123,11 +124,9 @@ class TSSpredator(object):
         out.write("TSSinClusterSelectionMethod = HIGHEST\n")
         out.write("allowedCompareShift = 1\n")
         out.write("allowedRepCompareShift = 1\n")
-        list_num_id = []
-        nums = self._import_lib(libs, wig_folder, project_strain_name,
-                     rep_set, lib_dict, out, gff, program, list_num_id, fasta)
-        lib_num = nums[0]
-        num_id = nums[1]
+        lib_num, num_id, rep_set, lib_dict, list_num_id = \
+            self._import_lib(libs, wig_folder, project_strain_name, out, gff,
+                             program, fasta)
         out.write("idList = ")
         out.write(",".join(list_num_id) + "\n")
         out.write("maxASutrLength = 100\n")
@@ -197,7 +196,7 @@ class TSSpredator(object):
                             os.path.join(self.tmps["tss"], filename),
                             os.path.join(gffs, gff), cluster, length, libs,
                             wig_path, feature)
-            os.rename(stat_file, os.path.join(out_folder,
+            shutil.move(stat_file, os.path.join(out_folder,
                                               "statistics", tss, stat_file))
         self.helper.move_all_content(self.tmps["tss"],
                                      self.gff_outfolder, [".gff"])
@@ -216,7 +215,7 @@ class TSSpredator(object):
                            "_".join([tss, "TSS.gff"]))
             validate_gff(compare_file, os.path.join(gffs, gff),
                          stat_file, out_cds_file, utr_length)
-            os.rename(out_cds_file, os.path.join(gffs, gff))
+            shutil.move(out_cds_file, os.path.join(gffs, gff))
 
     def _compare_ta(self, ta_files, gffs, tsss, fuzzy):
         detect = False
@@ -245,7 +244,7 @@ class TSSpredator(object):
                 os.remove(self.tmps["ta_tss"])
                 detect = False
 
-    def _stat_tss(self, tsss, manual, feature):
+    def _stat_tss(self, tsss, feature):
         print("Running statistaics.....")
         for tss in tsss:
             compare_file = os.path.join(self.gff_outfolder,
@@ -312,7 +311,7 @@ class TSSpredator(object):
                                    "_".join([prefix, program + ".gff"]))
             check_orphan(pre_tss, os.path.join(gffs, prefix + ".gff"),
                          "tmp/merge_forward.wig", "tmp/merge_reverse.wig", tmp_tss)
-            os.rename(tmp_tss, pre_tss)
+            shutil.move(tmp_tss, pre_tss)
         shutil.rmtree("tmp")
 
     def _remove_files(self, fastas, gffs, wig_folder, ta_files):
@@ -367,8 +366,9 @@ class TSSpredator(object):
                                     "tmp/without_low_expression.gff")
                 out.write("\t".join([prefix, str(cutoff)]) + "\n")
                 os.remove(os.path.join(gff_folder, gff))
-                os.rename("tmp/without_low_expression.gff", os.path.join(gff_folder, gff))
+                shutil.move("tmp/without_low_expression.gff", os.path.join(gff_folder, gff))
                 prefix = None
+        out.close()
 
     def run_tsspredator(self, tsspredator_path, program, input_folder, fastas,
             gffs, wig_folder, libs, output_prefixs, height, height_reduction,
@@ -376,8 +376,7 @@ class TSSpredator(object):
             processing_factor, repmatch, out_folder, stat, validate, manual,
             ta_files, fuzzy, utr_length, cluster, nt_length, check_orphan,
             overlap_feature, references, remove_low_expression):
-        ####  First of all, generate config file for running.
-        for gff in os.listdir(gffs):
+        for gff in os.listdir(gffs): ####  generate config file for running.
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
         self.helper.check_make_folder(self.gff_outfolder)
@@ -388,8 +387,7 @@ class TSSpredator(object):
                         height, factor, height_reduction, factor_reduction,
                         enrichment_factor, processing_factor, utr_length,
                         base_height, output_prefixs, repmatch, cluster)
-        #### After generating config file, we can start to run TSSpredator.
-        for prefix in prefixs:
+        for prefix in prefixs:   #### run TSSpredator.
             out_path = os.path.join(self.master,
                        "_".join(["MasterTable", prefix]))
             config_file = os.path.join(input_folder,
@@ -398,8 +396,7 @@ class TSSpredator(object):
         if program.lower() == "processing_site":
             program = "processing"
         self._convert_gff(prefixs, out_folder, program)
-        ### The information without locus_tag will check by this step ###
-        if check_orphan:
+        if check_orphan:   ### without locus_tag will check by this step
             print("checking the orphan TSS...")
             self._check_orphan(prefixs, os.path.join(wig_folder, "tmp"),
                                program, gffs)
@@ -422,7 +419,7 @@ class TSSpredator(object):
         self._deal_with_overlap(self.gff_outfolder, overlap_feature, references,
                                 program, cluster)
         if stat:
-            self._stat_tss(datas, manual, program)
+            self._stat_tss(datas, program)
         if validate:
             self._validate(datas, gffs, utr_length, out_folder)
         if ta_files is not None:

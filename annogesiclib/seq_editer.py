@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import csv
 from Bio import SeqIO
@@ -14,10 +15,12 @@ class SeqEditer(object):
                 "datas": [{"ref_nt": row[2],
                 "tar_nt": row[4], "position": row[3]}]})
 
-    def _import_data(self, mod_table_file, datas):
+    def _import_data(self, mod_table_file):
+        datas = []
         first = True
         num_index = 0
-        for row in csv.reader(open(mod_table_file), delimiter="\t"):
+        fh = open(mod_table_file)
+        for row in csv.reader(fh, delimiter="\t"):
             if row[0].startswith("#"):
                 continue
             else:
@@ -38,10 +41,11 @@ class SeqEditer(object):
                         num_index += 1
                         pre_ref_id = row[1].strip()
                         pre_tar_id = row[0].strip()
+        fh.close()
+        return datas
 
     def modify_seq(self, fasta_folder, mod_table_file, output_folder):
-        datas = []
-        self._import_data(mod_table_file, datas)
+        datas = self._import_data(mod_table_file)
         for data in datas:
             seq = ""
             if (data["ref_id"] + ".fa") in os.listdir(fasta_folder):
@@ -94,4 +98,4 @@ class SeqEditer(object):
                     line = new_header
                 output_fh.write(line + "\n")
         output_fh.close()
-        os.rename(tmp_file_path, input_file)
+        shutil.move(tmp_file_path, input_file)

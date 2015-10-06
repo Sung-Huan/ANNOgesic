@@ -43,7 +43,7 @@ class sORFDetection(object):
             sys.exit()
         if utr_detect:
             if (tsss is None):
-                print("Error: lack required files for UTR derived sRNA detection!!!!")
+                print("Error: lack required files for UTR derived sORF detection!!!!")
                 sys.exit()
         self._check_gff(gffs)
         self.multiparser.parser_gff(gffs, None)
@@ -90,54 +90,55 @@ class sORFDetection(object):
             libs = flibs
         return libs
 
-    def _start_stop_codon(self, prefixs, fasta_path, out_folder, utr_length,
-                          libs, tex_notex, replicate, cutoff_inter, cutoff_3utr,
+    def _start_stop_codon(self, prefixs, out_folder, utr_length, libs,
+                          tex_notex, replicate, cutoff_inter, cutoff_3utr,
                           cutoff_5utr, cutoff_intercds, wig_path, merge_wigs,
-                          start_codon, stop_codon, max_len, min_len, condition,
-                          gff_output, tss_path, srna_path, table_best,
-                          utr_detect, table_output, background):
+                          start_codon, stop_codon, max_len, min_len, table_best,
+                          utr_detect, background, start_rbs, end_rbs, fuzzy_rbs,
+                          print_all, no_srna, noafter_tss, no_tss):
         for prefix in prefixs:
-            if srna_path is not None:
-                srna_file = os.path.join(srna_path,
+            if self.srna_path is not None:
+                srna_file = os.path.join(self.srna_path,
                                          "_".join([prefix, "sRNA.gff"]))
             else:
                 srna_file = None
-            if tss_path is not None:
-                tss_file = os.path.join(tss_path, "_".join([prefix, "TSS.gff"]))
+            if self.tss_path is not None:
+                tss_file = os.path.join(self.tss_path,
+                                        "_".join([prefix, "TSS.gff"]))
             else:
                 tss_file = None
-            sorf_detection(os.path.join(fasta_path, prefix + ".fa"), srna_file,
-                           os.path.join(out_folder,
-                                        "_".join([prefix, "inter.gff"])),
+            sorf_detection(os.path.join(self.fasta_path, prefix + ".fa"),
+                           srna_file, os.path.join(out_folder,
+                                      "_".join([prefix, "inter.gff"])),
                            tss_file, utr_length, utr_detect, libs, tex_notex,
                            replicate, cutoff_inter, cutoff_3utr, cutoff_5utr,
-                           cutoff_intercds,
+                           cutoff_intercds, os.path.join(wig_path,
+                                            "_".join([prefix, "forward.wig"])),
                            os.path.join(wig_path,
-                                        "_".join([prefix, "forward.wig"])),
-                           os.path.join(wig_path,
-                                        "_".join([prefix, "reverse.wig"])),
-                           merge_wigs, start_codon, stop_codon, table_best,
-                           max_len, min_len, condition,
-                           os.path.join(gff_output, self.all_cand,
-                                        "_".join([prefix, "sORF"])), background)
+                           "_".join([prefix, "reverse.wig"])), merge_wigs,
+                           start_codon, stop_codon, table_best, max_len, min_len,
+                           os.path.join(self.gff_output, self.all_cand,
+                           "_".join([prefix, "sORF"])), background, start_rbs,
+                           end_rbs, fuzzy_rbs, print_all, no_srna, noafter_tss,
+                           no_tss)
             if "_".join([prefix, "sORF_all.gff"]) in os.listdir(
-                         os.path.join(gff_output, self.all_cand)):
-                os.rename(os.path.join(gff_output, self.all_cand,
-                          "_".join([prefix, "sORF_all.gff"])),
-                          os.path.join(gff_output, self.all_cand,
-                          "_".join([prefix, "sORF.gff"])))
-                os.rename(os.path.join(gff_output, self.all_cand,
-                          "_".join([prefix, "sORF_best.gff"])),
-                          os.path.join(gff_output, self.best,
-                          "_".join([prefix, "sORF.gff"])))
-                os.rename(os.path.join(gff_output, self.all_cand,
-                          "_".join([prefix, "sORF_all.csv"])),
-                          os.path.join(table_output, self.all_cand,
-                          "_".join([prefix, "sORF.csv"])))
-                os.rename(os.path.join(gff_output, self.all_cand,
-                          "_".join([prefix, "sORF_best.csv"])),
-                          os.path.join(table_output, self.best,
-                          "_".join([prefix, "sORF.csv"])))
+                         os.path.join(self.gff_output, self.all_cand)):
+                shutil.move(os.path.join(self.gff_output, self.all_cand,
+                            "_".join([prefix, "sORF_all.gff"])),
+                            os.path.join(self.gff_output, self.all_cand,
+                            "_".join([prefix, "sORF.gff"])))
+                shutil.move(os.path.join(self.gff_output, self.all_cand,
+                            "_".join([prefix, "sORF_best.gff"])),
+                            os.path.join(self.gff_output, self.best,
+                            "_".join([prefix, "sORF.gff"])))
+                shutil.move(os.path.join(self.gff_output, self.all_cand,
+                            "_".join([prefix, "sORF_all.csv"])),
+                            os.path.join(self.table_output, self.all_cand,
+                            "_".join([prefix, "sORF.csv"])))
+                shutil.move(os.path.join(self.gff_output, self.all_cand,
+                            "_".join([prefix, "sORF_best.csv"])),
+                            os.path.join(self.table_output, self.best,
+                            "_".join([prefix, "sORF.csv"])))
 
     def _remove_tmp(self, out_folder, fastas, gffs, tsss,
                     trans, srnas, tex_wigs, frag_wigs):
@@ -150,11 +151,30 @@ class sORFDetection(object):
         self.helper.remove_wigs(tex_wigs)
         self.helper.remove_wigs(frag_wigs)
 
+    def _compare_tran_cds(self, gffs, out_folder, utr_detect):
+        prefixs = []
+        for gff in os.listdir(gffs): ## compare transcript and CDS
+            if gff.endswith(".gff"):
+                prefix = gff.replace(".gff", "")
+                prefixs.append(prefix)
+                print("comparing transcript and CDS of {0}".format(prefix))
+                get_intergenic(os.path.join(gffs, gff),
+                               os.path.join(self.tran_path,
+                               "_".join([prefix, "transcript.gff"])),
+                               os.path.join(out_folder,
+                               "_".join([prefix, "inter.gff"])),
+                               utr_detect)
+        return prefixs
+
     def run_sorf_detection(self, out_folder, utr_detect, trans, gffs, tsss,
             utr_length, min_len, max_len, tex_wigs, frag_wigs, cutoff_inter,
             cutoff_5utr, cutoff_3utr, cutoff_intercds, fastas, tlibs, flibs,
             tex_notex, replicates_tex, replicates_frag, table_best, srnas,
-            start_codon, stop_codon, condition, background):
+            start_codon, stop_codon, background, start_rbs, end_rbs,
+            fuzzy_rbs, noafter_tss, print_all, no_srna, no_tss):
+        if fuzzy_rbs > 6:
+            print("Error: --fuzzy_rbs should be equal or less than 6!!")
+            sys.exit()
         if (replicates_tex is not None) and (
             replicates_frag is not None):
             replicates = {"tex": int(replicates_tex),
@@ -178,29 +198,17 @@ class sORFDetection(object):
         self.multiparser.parser_fasta(fastas)
         self.multiparser.combine_fasta(gffs, self.fasta_path, None)
         libs = self._combine_libs(tlibs, flibs)
-        prefixs = []
-        for gff in os.listdir(gffs): ## compare transcript and CDS
-            if gff.endswith(".gff"):
-                prefix = gff.replace(".gff", "")
-                prefixs.append(prefix)
-                print("comparing transcript and CDS of {0}".format(prefix))
-                get_intergenic(os.path.join(gffs, gff),
-                               os.path.join(self.tran_path,
-                               "_".join([prefix, "transcript.gff"])),
-                               os.path.join(out_folder,
-                               "_".join([prefix, "inter.gff"])),
-                               utr_detect)
-        self._start_stop_codon(prefixs, self.fasta_path, out_folder, utr_length,
-                               libs, tex_notex, replicates, cutoff_inter,
-                               cutoff_3utr, cutoff_5utr, cutoff_intercds,
-                               wig_path, merge_wigs, start_codon, stop_codon,
-                               max_len, min_len, condition, self.gff_output,
-                               self.tss_path, self.srna_path, table_best,
-                               utr_detect, self.table_output, background)
+        prefixs = self._compare_tran_cds(gffs, out_folder, utr_detect)
+        self._start_stop_codon(prefixs, out_folder, utr_length, libs,
+             tex_notex, replicates, cutoff_inter, cutoff_3utr, cutoff_5utr,
+             cutoff_intercds, wig_path, merge_wigs, start_codon, stop_codon,
+             max_len, min_len, table_best, utr_detect, background, start_rbs,
+             end_rbs, fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss)
         for sorf in os.listdir(os.path.join(self.gff_output, self.all_cand)):
             print("statistics of {0}".format(sorf))
             if sorf.endswith("_sORF.gff"):
                 stat(os.path.join(self.gff_output, self.all_cand, sorf),
+                     os.path.join(self.gff_output, self.best, sorf),
                      os.path.join(out_folder, "statistics",
                      "_".join(["stat", sorf.replace(".gff", ".csv")])),
                      utr_detect)

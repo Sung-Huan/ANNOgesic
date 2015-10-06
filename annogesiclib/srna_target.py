@@ -81,6 +81,7 @@ class sRNATargetPrediction(object):
         for srna in srnas:
             out.write(">" + srna["name"].split("|")[0] + "\n")
             out.write(srna["seq"] + "\n")
+        out.close()
 
     def _read_fasta(self, fasta_file):
         seq = ""
@@ -118,8 +119,9 @@ class sRNATargetPrediction(object):
                               entry.end, entry.strand, gene))
                     num += 1
             gff_f.close()
+            out.close()
 
-    def _gen_seq(self, prefixs, querys):
+    def _gen_seq(self, prefixs, querys, tar_start, tar_end):
         print("Generating sRNA fasta files...")
         for srna in os.listdir(self.srna_path): # extract sRNA seq
             if srna.endswith("_sRNA.gff"):
@@ -144,7 +146,8 @@ class sRNATargetPrediction(object):
                 prefix = gff.replace(".gff", "")
                 potential_target(os.path.join(self.gff_path, gff),
                                  os.path.join(self.fasta_path, prefix + ".fa"),
-                                 os.path.join(self.target_seq_path))
+                                 os.path.join(self.target_seq_path),
+                                 tar_start, tar_end)
                 file_num = 1
                 num = 0
                 sub_prefix = os.path.join(self.target_seq_path,
@@ -162,6 +165,33 @@ class sRNATargetPrediction(object):
                             sub_out = open("_".join([sub_prefix,
                                            str(file_num) + ".fa"]), "w")
                         sub_out.write(line + "\n")
+                sub_out.close()
+
+    def _run_rnaplex(self, target_seq_path, prefix, rnaplex_path,
+                     vienna_path, srna_seq_path, inter_length, energy,
+                     duplex_dist, rnaplfold_path, core_plex):
+        print("Running RNAplex of {0}".format(prefix))
+        num_process = 0
+        processes = []
+        for seq in os.listdir(target_seq_path): # Run RNAplex
+            if (prefix in seq) and ("_target_" in seq):
+                print("Running RNAplex with {0}".format(seq))
+                out_rnaplex = open(os.path.join(rnaplex_path, prefix,
+                              "_".join([prefix, "RNAplex",
+                                        str(num_process) + ".txt"])), "w")
+                num_process += 1
+                p = Popen([os.path.join(vienna_path, "RNAplex"),
+                           "-q", os.path.join(srna_seq_path,
+                           "_".join([self.tmps["tmp"], prefix, "sRNA.fa"])),
+                           "-t", os.path.join(target_seq_path, seq),
+                           "-l", str(inter_length),
+                           "-e", str(energy), "-z", str(duplex_dist),
+                           "-a", rnaplfold_path], stdout=out_rnaplex)
+                processes.append(p)
+                if num_process % core_plex == 0:
+                    self._wait_process(processes)
+        self._wait_process(processes)
+        return num_process
 
     def _rna_plex(self, prefixs, rnaplex_path, vienna_path, win_size_s, span_s,
                   unstr_region_rnaplex_s, srna_seq_path, win_size_t, span_t,
@@ -179,27 +209,10 @@ class sRNATargetPrediction(object):
             self._run_rnaplfold(vienna_path, "target", win_size_t, span_t,
                                 unstr_region_rnaplex_t, target_seq_path,
                                 prefix, rnaplfold_path)
-            print("Running RNAplex of {0}".format(prefix))
-            num_process = 0
-            processes = []
-            for seq in os.listdir(target_seq_path): # Run RNAplex
-                if (prefix in seq) and ("_target_" in seq):
-                    print("Running RNAplex with {0}".format(seq))
-                    out_rnaplex = open(os.path.join(rnaplex_path, prefix,
-                                  "_".join([prefix, "RNAplex",
-                                            str(num_process) + ".txt"])), "w")
-                    num_process += 1
-                    p = Popen([os.path.join(vienna_path, "RNAplex"),
-                               "-q", os.path.join(srna_seq_path,
-                               "_".join([self.tmps["tmp"], prefix, "sRNA.fa"])),
-                               "-t", os.path.join(target_seq_path, seq),
-                               "-l", str(inter_length),
-                               "-e", str(energy), "-z", str(duplex_dist),
-                               "-a", rnaplfold_path], stdout=out_rnaplex)
-                    processes.append(p)
-                    if num_process % core_plex == 0:
-                        self._wait_process(processes)
-            self._wait_process(processes)
+            num_process = self._run_rnaplex(target_seq_path, prefix,
+                               rnaplex_path, vienna_path, srna_seq_path,
+                               inter_length, energy, duplex_dist, rnaplfold_path,
+                               core_plex)
             rnaplex_file = os.path.join(rnaplex_path, prefix,
                            "_".join([prefix, "RNAplex.txt"]))
             if "_".join([prefix, "RNAplex.txt"]) in \
@@ -213,10 +226,10 @@ class sRNATargetPrediction(object):
             self.helper.remove_all_content(os.path.join(rnaplex_path, prefix),
                                            "_RNAplex_", "file")
             self.fixer.fix_rnaplex(rnaplex_file, self.tmps["tmp"])
-            os.rename(self.tmps["tmp"], rnaplex_file)
+            shutil.move(self.tmps["tmp"], rnaplex_file)
 
     def _run_rnaup(self, num_up, vienna_path, unstr_region_rnaup,
-                   processes, out_folder):
+                   processes, out_folder, out_rnaup, out_log):
         for index in range(1, num_up + 1):
             out_tmp_up = open(os.path.join(out_folder,
                               "".join([self.tmps["rnaup"],
@@ -231,6 +244,12 @@ class sRNATargetPrediction(object):
                        "-o", "--interaction_first"],
                        stdin=in_up, stdout=out_tmp_up, stderr=out_err)
             processes.append(p)
+        if len(processes) != 0:
+            time.sleep(5)
+            self._wait_process(processes)
+            os.system("rm " + os.path.join(out_folder, self.tmps["all_fa"]))
+            self._merge_txt(num_up, out_rnaup, out_log, out_folder)
+            os.system("rm " + os.path.join(out_folder, self.tmps["all_txt"]))
 
     def _merge_txt(self, num_up, out_rnaup, out_log, out_folder):
         for index in range(1, num_up + 1):
@@ -244,7 +263,7 @@ class sRNATargetPrediction(object):
         matchs ={}
         out = open("tmp.txt", "w")
         with open(out_rnaup) as f_h:
-            for line in out_rnaup:
+            for line in f_h:
                 line = line.strip()
                 if ">srna" in line:
                     srna = line[1:]
@@ -254,12 +273,12 @@ class sRNATargetPrediction(object):
                     matchs[srna].append(line)
         srnas = srnas[:-1]
         for srna in srnas:
-            out.write(srna + "\n")
-            for target in matchs.values():
+            out.write(">" + srna + "\n")
+            for target in matchs[srna]:
                 out.write(target + "\n")
         out.close()
         os.remove(out_rnaup)
-        os.rename("tmp.txt", out_rnaup)
+        shutil.move("tmp.txt", out_rnaup)
         return srnas
         
     def _rnaup(self, prefixs, rnaup_path, srna_seq_path, target_seq_path,
@@ -267,7 +286,9 @@ class sRNATargetPrediction(object):
         for prefix in prefixs:
             srnas = []
             print("Running RNAup of {0}".format(prefix))
-            self.helper.check_make_folder(os.path.join(rnaup_path, prefix))
+#            self.helper.check_make_folder(os.path.join(rnaup_path, prefix))
+            if not os.path.exists(os.path.join(rnaup_path, prefix)):
+                os.mkdir(os.path.join(rnaup_path, prefix))
             num_up = 0
             processes = []
             out_rnaup = os.path.join(rnaup_path, prefix,
@@ -287,7 +308,9 @@ class sRNATargetPrediction(object):
                     line = line.strip()
                     if line.startswith(">"):
                         if line[1:] in srnas:
+                            start = False
                             continue
+                        start = True
                         print("Running RNAup with {0}".format(line[1:]))
                         num_up += 1
                         out_up = open(os.path.join(out_folder,
@@ -295,29 +318,20 @@ class sRNATargetPrediction(object):
                                           str(num_up), ".fa"])), "w")
                         out_up.write(line + "\n")
                     else:
-                        out_up.write(line + "\n")
-                        out_up.close()
-                        self.helper.merge_file(os.path.join(target_seq_path,
-                            "_".join([prefix, "target.fa"])), os.path.join(out_folder,
-                            "".join([self.tmps["tmp"], str(num_up), ".fa"])))
-                        if num_up == core_up:
-                            self._run_rnaup(num_up, vienna_path,
-                                 unstr_region_rnaup, processes, out_folder)
-                            time.sleep(5)
-                            self._wait_process(processes)
-                            os.system("rm " + os.path.join(out_folder, self.tmps["all_fa"]))
-                            self._merge_txt(num_up, out_rnaup, out_log, out_folder)
-                            os.system("rm " + os.path.join(out_folder, self.tmps["all_txt"]))
-                            processes = []
-                            num_up = 0
+                        if start:
+                            out_up.write(line + "\n")
+                            out_up.close()
+                            self.helper.merge_file(os.path.join(target_seq_path,
+                                "_".join([prefix, "target.fa"])), os.path.join(out_folder,
+                                "".join([self.tmps["tmp"], str(num_up), ".fa"])))
+                            if num_up == core_up:
+                                self._run_rnaup(num_up, vienna_path,
+                                     unstr_region_rnaup, processes, out_folder,
+                                     out_rnaup, out_log)
+                                processes = []
+                                num_up = 0
             self._run_rnaup(num_up, vienna_path, unstr_region_rnaup,
-                            processes, out_folder)
-            if len(processes) != 0:
-                time.sleep(5)
-                self._wait_process(processes)
-                os.system("rm " + os.path.join(out_folder, self.tmps["all_fa"]))
-                self._merge_txt(num_up, out_rnaup, out_log, out_folder)
-                os.system("rm " + os.path.join(out_folder, self.tmps["all_txt"]))
+                            processes, out_folder, out_rnaup, out_log)
 
     def _merge_rnaplex_rnaup(self, prefixs, merge_path, program, rnaplex_path,
                              rnaup_path, srna_path, gff_path, top):
@@ -352,14 +366,14 @@ class sRNATargetPrediction(object):
                 query, program, inter_length, win_size_t, span_t, win_size_s,
                 span_s, unstr_region_rnaplex_t, unstr_region_rnaplex_s,
                 unstr_region_rnaup, energy, duplex_dist, top, out_folder,
-                core_plex, core_up, continue_rnaup):
+                core_plex, core_up, continue_rnaup, tar_start, tar_end):
         self._check_gff(gffs)
         self._check_gff(srnas)
         self.multiparser.parser_gff(gffs, None)
         self.multiparser.parser_fasta(fastas)
         self.multiparser.parser_gff(srnas, "sRNA")
         prefixs = []
-        self._gen_seq(prefixs, query)
+        self._gen_seq(prefixs, query, tar_start, tar_end)
         if (program == "both") or \
            (program == "RNAplex"):
             self._rna_plex(prefixs, self.rnaplex_path, vienna_path, win_size_s,

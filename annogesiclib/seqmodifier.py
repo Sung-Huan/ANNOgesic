@@ -41,5 +41,3 @@ class SeqModifier(object):
     def get_nucl(self, pos):
         return self._seq[self._org_pos_to_internal_pos[pos]]
 
-if __name__ == "__main__":
-    main()

@@ -3,16 +3,6 @@ import sys
 import itertools
 from annogesiclib.gff3 import Gff3Parser
 
-def get_gene_name(data):
-    if ("blast_hit" in data.attributes.keys()):
-        return "NA"
-    else:
-        name = []
-        for key, value in data.attributes.items():
-            if "blast_hit" in key:
-                if value.split(",")[2].split(":")[1] not in name:
-                    name.append(value.split(",")[2].split(":")[1])
-        return name
 
 def print_intersection(datas, keys, num_srna, gff_name, type_, out_stat):
     num = 0
@@ -39,8 +29,14 @@ def print_intersection(datas, keys, num_srna, gff_name, type_, out_stat):
         for data in datas_sort:
             if type_ == "total":
                 out.write(data["data"].info + "\n")
-    out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
-                   str(num), str(float(num)/float(num_srna))))
+        if num_srna == 0:
+            out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
+                           str(num), str(0)))
+        else:
+            out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
+                           str(num), str(float(num)/float(num_srna))))
+    if type_ == "total":
+        out.close()
 
 def initiate(key, key_list, class_name, class_num, index, out, content):
     if key in key_list:
@@ -71,7 +67,7 @@ def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                         datas_srna["class_" + str(index["with_TSS"])].append(data)
                     elif ((type_ == "UTR_derived") or (type_ == "total")) and (
                            data.source == "UTR_derived"):
-                        if (data.attributes["with_cleavage"] != "NA") and (
+                        if (data.attributes["start_cleavage"] != "NA") and (
                             ("3utr" in data.attributes["UTR_type"]) or (
                              "interCDS" in data.attributes["UTR_type"])):
                             datas_srna["class_" + str(index["with_TSS"])].append(data)
@@ -90,8 +86,9 @@ def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                         datas_srna["class_" + str(index["sRNA_no_hit"])].append(data)
     return num_srna
 
-def import_data(class_num, datas_srna, datas, index, num_srna,
+def import_data(class_num, datas, index, num_srna,
                 strain, utr, inter, energy, hit_nr_num):
+    datas_srna = {}
     if utr:
         datas_srna["5'UTR_derived"] = {}
         num_srna["5'UTR_derived"] = import_class(class_num,
@@ -118,6 +115,7 @@ def import_data(class_num, datas_srna, datas, index, num_srna,
         num_srna["total"] = import_class(class_num, datas_srna["total"], datas,
                             index, num_srna["total"], strain, "total", None,
                             energy, hit_nr_num)
+    return datas_srna
 
 def sort_keys(keys):
     nums = []
@@ -130,8 +128,9 @@ def sort_keys(keys):
     return final_keys
 
 def print_stat_title(checks, out_stat, strain, srna_datas,
-                     index, energy, hit_nr_num, num_strain):
+                     energy, hit_nr_num, num_strain):
     class_num = 0
+    index = {}
     if checks["first"]:
         checks["first"] = False
         class_num = initiate("2d_energy",
@@ -140,8 +139,7 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
                     " - free energy change of secondary structure below to " + \
                     str(energy))
         name = " ".join([" - sRNA candidates start with TSS",
-               "(3'UTR derived sRNA also includes the sRNA candidates which start with processing site.",
-               "interCDS includes start and end with processing site.)"])
+               "(3'UTR derived and interCDS sRNA also includes the sRNA candidates which start with processing site.)"])
         class_num = initiate("with_TSS",
                     srna_datas[strain][0].attributes.keys(), "with_TSS",
                     class_num, index, out_stat, name)
@@ -170,7 +168,7 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
             out_stat.write("All strains:\n")
         else:
             out_stat.write(strain + ":\n")
-    return class_num
+    return class_num, index
 
 def read_file(srna_file):
     strains = []
@@ -179,7 +177,8 @@ def read_file(srna_file):
     srna_datas["all"] = []
     strains.append("all")
     pre_seq_id = ""
-    for entry in Gff3Parser().entries(open(srna_file)):
+    fh = open(srna_file)
+    for entry in Gff3Parser().entries(fh):
         if entry.source == "UTR_derived":
             checks["utr"] = True
         elif entry.source == "intergenic":
@@ -193,6 +192,7 @@ def read_file(srna_file):
     for strain in srna_datas.keys():
         srna_datas[strain] = sorted(srna_datas[strain],
                              key=lambda k: (k.seq_id, k.start))
+    fh.close()
     return srna_datas, strains, checks
 
 def classify_srna(srna_file, out_folder, energy, hit_nr_num, out_stat_file):
@@ -207,20 +207,21 @@ def classify_srna(srna_file, out_folder, energy, hit_nr_num, out_stat_file):
                         "3'UTR_derived": 0, "interCDS": 0}
         else:
             num_srna = {"intergenic": 0}
-        index = {}
-        srna_class = {}
-        class_num = print_stat_title(checks, out_stat, strain, srna_datas,
-                                index, energy, hit_nr_num, len(strains))
-        import_data(class_num, srna_class, srna_datas, index, num_srna,
-                    strain, checks["utr"], checks["inter"], energy, hit_nr_num)
+        class_num, index = print_stat_title(checks, out_stat, strain, srna_datas,
+                                            energy, hit_nr_num, len(strains))
+        srna_class = import_data(class_num, srna_datas, index, num_srna, strain,
+                                 checks["utr"], checks["inter"], energy, hit_nr_num)
         for type_, srna in num_srna.items():
             out_stat.write("sRNA type - {0}:\n".format(type_))
             out_stat.write("\ttotal sRNA candidates = {0}\n".format(srna))
             for num in range(1, class_num + 1):
-                out_stat.write("\tclass {0} = {1}({2})\n".format(
-                         str(num),
-                         str(len(srna_class[type_]["class_" + str(num)])),
-                         str(float(len(srna_class[type_]["class_" + str(num)])) / float(srna))))
+                if srna != 0:
+                    out_stat.write("\tclass {0} = {1}({2})\n".format(
+                             num, len(srna_class[type_]["class_" + str(num)]),
+                             float(len(srna_class[type_]["class_" + str(num)])) / float(srna)))
+                elif srna == 0:
+                    out_stat.write("\tclass {0} = {1}({2})\n".format(
+                             num, len(srna_class[type_]["class_" + str(num)]), 0))
                 if type_ == "total":
                     out = open(os.path.join(out_folder,
                                "_".join(["class",
@@ -241,3 +242,4 @@ def classify_srna(srna_file, out_folder, energy, hit_nr_num, out_stat_file):
                                                 [strain]) + ".gff")
                             print_intersection(srna_class[type_], keys,
                                 srna, gff_name, type_, out_stat)
+    out_stat.close()

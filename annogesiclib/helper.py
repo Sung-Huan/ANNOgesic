@@ -43,7 +43,7 @@ class Helper(object):
                 tmp_out.write(line + "\n")
         tmp_out.close()
         os.remove(tar)
-        os.rename("tmp_file", tar)
+        shutil.move("tmp_file", tar)
 
     def merge_file(self, ref, tar):
         os.system(" ".join(["cat", ref, ">>", tar]))
@@ -84,8 +84,8 @@ class Helper(object):
             elif (features is None):
                 move = True
             if move:
-                os.rename(os.path.join(ref_folder, file_),
-                          os.path.join(tar_folder, file_))
+                shutil.move(os.path.join(ref_folder, file_),
+                            os.path.join(tar_folder, file_))
 
     def remove_tmp(self, folder):
         if folder:
@@ -177,7 +177,8 @@ class Helper(object):
     def check_uni_attributes(self, gff_file):
         print("Checking gff file of {0}".format(gff_file))
         gffs = []
-        for entry in self.gff3parser.entries(open(gff_file)):
+        fh = open(gff_file)
+        for entry in self.gff3parser.entries(fh):
             gffs.append(entry)
         gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
         first = True
@@ -204,6 +205,7 @@ class Helper(object):
                         else:
                             self._add_element(locus_tags, "locus_tag", gff)
             pre_gff = copy.copy(gff)
+        fh.close()
 
     def _read_fasta(self, fasta_file):
         seq = ""
@@ -237,7 +239,8 @@ class Helper(object):
         seq = self._read_fasta(fasta_file)
         out = open(out_file, "w")
         cdss = []
-        for entry in self.gff3parser.entries(open(gff_file)):
+        gh = open(gff_file)
+        for entry in self.gff3parser.entries(gh):
             if entry.feature == "CDS":
                 cdss.append(entry)
         cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
@@ -253,6 +256,7 @@ class Helper(object):
                       entry.strand, str(entry.start), str(entry.end)]) + "\n")
             out.write(cds + "\n")
         out.close()
+        gh.close()
 
     def translation(self, dna_file, protein_file):
         out = open(protein_file, "w")
@@ -264,3 +268,4 @@ class Helper(object):
                 else:
                     dna = Seq(seq, generic_dna)
                     out.write(str(dna.translate()) + "\n")
+        out.close()

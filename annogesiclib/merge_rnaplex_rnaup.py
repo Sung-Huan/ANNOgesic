@@ -119,6 +119,10 @@ def get_target_info(gffs, target):
             if gff.attributes["locus_tag"] == name[0]:
                 target_info = gff
                 return target_info
+        elif (gff.feature + ":" + str(gff.start) + "-" + \
+              str(gff.end) + "_" + gff.strand) == name[0]:
+            target_info = gff
+            return target_info
         elif "ID" in gff.attributes.keys():
             if gff.attributes["ID"] == name[0]:
                 target_info = gff

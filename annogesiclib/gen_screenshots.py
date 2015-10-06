@@ -97,7 +97,8 @@ def gen_screenshot(main_gff, forward_file, reverse_file, screenshot_folder,
                    fasta, side_gffs, presentation, strain):
     gffs_f = []
     gffs_r = []
-    for entry in Gff3Parser().entries(open(main_gff)):
+    fh = open(main_gff)
+    for entry in Gff3Parser().entries(fh):
         if entry.strand == "+":
             gffs_f.append(entry)
         else:
@@ -112,3 +113,6 @@ def gen_screenshot(main_gff, forward_file, reverse_file, screenshot_folder,
                 presentation, side_gffs, height, screenshot_folder, strain)
     gen_batch(lib_ft, lib_fn, lib_ff, "+", gffs_f, out_f)
     gen_batch(lib_rt, lib_rn, lib_rf, "-", gffs_r, out_r)
+    fh.close()
+    out_f.close()
+    out_r.close()

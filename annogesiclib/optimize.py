@@ -41,3 +41,6 @@ def optimize_tss(tsspredator_path, fastas, gffs, wigs, manual, output_folder,
                  utr_length, replicate)
     Helper().remove_all_content(os.path.join(output_folder, "optimized_TSSpredator"), "config", "file")
     Helper().remove_all_content(os.path.join(output_folder, "optimized_TSSpredator"), "Master", "dir")
+    Helper().remove_tmp(wigs)
+    Helper().remove_tmp(gffs)
+    Helper().remove_tmp(fastas)

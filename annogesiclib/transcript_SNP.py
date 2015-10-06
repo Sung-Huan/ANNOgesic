@@ -2,13 +2,14 @@ import os
 import sys
 import math
 import csv
+import copy
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
 
-def plot_bar(cutoffs, labels, strain, out_snp):
+def plot_bar(cutoffs, strain, out_snp):
     name = []
     for index in range(0, len(cutoffs) + 1):
         name.append(index * 10)
@@ -19,7 +20,7 @@ def plot_bar(cutoffs, labels, strain, out_snp):
     plt.ylabel('the number of SNPs', fontsize=20)
     plt.xlabel('QUAL of SNP in transcripts', fontsize=20)
     plt.xlim([0, len(cutoffs) + 1])
-    plt.xticks(ind+width, name, fontsize=18, rotation=40)
+    plt.xticks(ind+width-0.75, name, fontsize=18, rotation=40)
     pl.yticks(fontsize=18)
     plt.savefig(out_snp + "_" + strain + "_SNP_QUAL.png")
     plt.clf()
@@ -52,7 +53,7 @@ def row_in_list(row):
     else:
         return snps
 
-def gen_ref(snps, pos, refs, num, same):
+def gen_ref(snps, pos, refs, num):
     if num == 1:
         for snp in snps:
             refs.append(":".join([str(pos), snp["alt"]]))
@@ -61,7 +62,7 @@ def gen_ref(snps, pos, refs, num, same):
         for snp in snps:
             for ref in refs:
                 new_refs.append(ref + "_" + str(pos) + ":" + snp["alt"])
-        refs = list(new_refs)
+        refs = copy.deepcopy(new_refs)
     return refs
 
 def change(snp, seq):
@@ -113,12 +114,15 @@ def import_data(snp_file, read_depth, bam_number, indel_fraction):
                     else:
                         if (snp["frac"] >= indel_fraction):
                             snps.append(snp)
+    fh.close()
     return max_quals, snps
 
-def check_overlap(new_snps, overlaps, printeds, count_overlap):
+def check_overlap(new_snps, overlaps):
     count = 0
     element = 0
     first_overlap = True
+    printeds = []
+    count_overlap = len(overlaps)
     for key, value in new_snps.items():
         if first_overlap:
             for overlap in overlaps:
@@ -137,12 +141,13 @@ def check_overlap(new_snps, overlaps, printeds, count_overlap):
                     if printed not in value:
                         value.append(overlaps[element])
                         count += 1
-        if count == (len(new_snps.keys()) / count_overlap):
-            overlaps[element]["print"] = True
-            element += 1
-            if element >= len(overlaps):
-                break
-            count = 0
+        if count_overlap != 0:
+            if count == (len(new_snps.keys()) / count_overlap):
+                overlaps[element]["print"] = True
+                element += 1
+                if element >= len(overlaps):
+                    break
+                count = 0
 
 def overlap_position(qual_snps):
     first = True
@@ -165,7 +170,7 @@ def overlap_position(qual_snps):
                     qual_nooverlap_snps[num_overlap] = []
                     qual_nooverlap_snps[num_overlap].append(overlap)
                     num_overlap += 1
-                    coverlap["print"] = True
+                    overlap["print"] = True
                 num_overlap = 1
                 first = False
             else:
@@ -178,9 +183,7 @@ def overlap_position(qual_snps):
                 for times in range(1, len(overlaps) - repeat):
                     for key, value in qual_nooverlap_snps.items():
                         new_snps[key + index * times] = list(value)
-                count_overlap = len(overlaps)
-                printeds = []
-                check_overlap(new_snps, overlaps, printeds, count_overlap)
+                check_overlap(new_snps, overlaps)
                 qual_nooverlap_snps = new_snps.copy()
         else:
             if "print" not in snp1.keys():
@@ -227,6 +230,7 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
             out_fasta.write("{0}".format(nt))
             if num_nt % 60 == 0:
                 out_fasta.write("\n")
+        out_fasta.close()
     else:
         for seq in mod_seqs:
             num_nt = 0
@@ -239,6 +243,7 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
                 if num_nt % 60 == 0:
                     out_fasta.write("\n")
             num_seq += 1
+            out_fasta.close()
 
 def stat(max_quals, trans_snps, read_depth, bam_number,
          indel_fraction, quality, stat_file, out_snp):
@@ -247,7 +252,6 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
     for strain, max_qual in max_quals.items():
         max_qual = int(((max_qual / 10) + 1) * 10)
         cutoffs = []
-        labels = []
         if (strain == "All_strain") and (len(max_quals) > 2):
             printed = True
         elif (strain != "All_strain"):
@@ -255,7 +259,6 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
         if printed:
             for cutoff in range(0, max_qual, 10):
                 cutoffs.append(0)
-                labels.append(cutoff)
             for snp in trans_snps:
                 if (snp["strain"] == strain) or (strain == "All_strain"):
                     index = int(snp["qual"] / 10)
@@ -284,10 +287,12 @@ def stat(max_quals, trans_snps, read_depth, bam_number,
                 num_cutoff = num_cutoff + 10
             out_stat.write("the total numbers of QUAL which is higher than {0} = {1}\n".format(
                            quality, num_quality))
-            plot_bar(cutoffs, labels, strain, out_snp)
+            plot_bar(cutoffs, strain, out_snp)
             printed = False
+    out_stat.close()
 
-def read_fasta(fasta_file, seqs):
+def read_fasta(fasta_file):
+    seqs = []
     first = True
     num_index = 0
     seq_name = ""
@@ -306,7 +311,8 @@ def read_fasta(fasta_file, seqs):
                 seqs[num_index][seq_name] = seqs[num_index][seq_name] + line
     return seqs
 
-def gen_new_fasta(qual_nooverlap_snps, seqs, refs, out_ref, conflicts, out_seq):
+def gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq):
+    refs = {}
     for key, values in qual_nooverlap_snps.items():
         for seq in seqs:
             for name in seq.keys():
@@ -341,7 +347,7 @@ def gen_new_fasta(qual_nooverlap_snps, seqs, refs, out_ref, conflicts, out_seq):
                         pre_mut = ""
                         pre_pos = 0
                         refs[name] = gen_ref(tmp_snps, snp["pos"],
-                                             refs[name], num_var, False)
+                                             refs[name], num_var)
                         for mod_seq in mod_seqs:
                             change(tmp_snps[num_mod], mod_seq)
                             if num >= num_mod_seqs:
@@ -359,12 +365,13 @@ def gen_new_fasta(qual_nooverlap_snps, seqs, refs, out_ref, conflicts, out_seq):
 
 def snp_detect(fasta_file, snp_file, out_snp, quality, out_seq,
                read_depth, indel_fraction, bam_number, stat_file):
-    refs = {}
     max_quals, snps = import_data(snp_file, read_depth,
                                   bam_number, indel_fraction)
     out_table = open(out_snp + "_depth_only.vcf", "w")
     out_quality = open(out_snp + "_depth_quality.vcf", "w")
     out_ref = open(out_snp + "_seq_reference.csv", "w")
+    out_table.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tBAM\n")
+    out_quality.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tBAM\n")
     qual_snps = []
     trans_snps = []
     for snp in snps:
@@ -377,6 +384,8 @@ def snp_detect(fasta_file, snp_file, out_snp, quality, out_seq,
     printed = False
     stat(max_quals, trans_snps, read_depth, bam_number,
          indel_fraction, quality, stat_file, out_snp)
-    seqs = []
-    seqs = read_fasta(fasta_file, seqs)
-    gen_new_fasta(qual_nooverlap_snps, seqs, refs, out_ref, conflicts, out_seq)
+    seqs = read_fasta(fasta_file)
+    gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq)
+    out_table.close()
+    out_quality.close()
+    out_ref.close()

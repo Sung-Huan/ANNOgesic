@@ -7,69 +7,81 @@ def plus_num(nums, strain, feature):
     nums[strain][feature] += 1
     nums["total"][feature] += 1
 
+def print_percent(out, total, fract, name):
+    if total != 0:
+        out.write("\t\t(percentage of total {0}terminators = {1})\n".format(
+                  name, (fract / total)))
+    else:
+        out.write("\t\t(percentage of total {0}terminators = 0.0)\n".format(
+                  name))
+
+def print_express(out, total, fract, name):
+    if total != 0:
+        out.write("\t\t(percentage of total {0}terminators which have gene expression = {1})\n".format(
+                  name, (fract / total)))
+    else:
+        out.write("\t\t(percentage of total {0}terminators which have gene expression = 0.0)\n".format(
+                  name))
+
+def print_decrease(out, total, fract, name):
+    if total != 0:
+        out.write("\t\t(percentage of total {0}terminators which have dramatic coverage decreasing = {1})\n".format(
+                  name, (fract / total)))
+    else:
+        out.write("\t\t(percentage of total {0}terminators which have dramatic coverage decreasing = 0.0)\n".format(
+                  name))
+
 def print_method(nums, method_name, method, express, detect, only, out):
     out.write(method_name + "\n")
     out.write("\tTotal {0} terminators = {1}\n".format(
               method_name, nums[method] + nums["frhp"]))
-    out.write("\t\t(percentage of total terminator = {0})\n".format(
-              float(nums[method] + nums["frhp"]) / float(nums["total"])))
+    print_percent(out, float(nums["total"]),
+                  float(nums[method] + nums["frhp"]), "")
     out.write("\tTotal terminators which only can be detected in {0} = {1}\n".format(
               method_name, nums[method]))
-    out.write("\t\t(percentage of total terminators = {0})\n".format(
-              float(nums[method]) / float(nums["total"])))
-    out.write("\t\t(percentage of total {0} terminators = {1})\n".format(
-              method_name, float(nums[method]) / float(nums[method] + nums["frhp"])))
+    print_percent(out, float(nums["total"]), float(nums[method]), "")
+    print_percent(out, float(nums[method] + nums["frhp"]),
+                  float(nums[method]), method_name + " ")
     out.write("\tTotal {0} terminators which located in gene expression region = {1}\n".format(
               method_name, nums[express]))
-    out.write("\t\t(percentage of total terminators = {0})\n".format(
-              float(nums[express]) / float(nums["total"])))
-    out.write("\t\t(percentage of total {0} terminators = {1})\n".format(
-              method_name, float(nums[express]) / float(nums[method] + nums["frhp"])))
+    print_percent(out, float(nums["total"]), float(nums[express]), "")
+    print_percent(out, float(nums[method] + nums["frhp"]),
+                  float(nums[express]), method_name + " ")
     out.write("\tTotal {0} terminators which have dramatic coverage decreasing = {1}\n".format(
               method_name, nums[detect]))
-    out.write("\t\t(percentage of total terminators = {0})\n".format(
-              float(nums[detect]) / float(nums["total"])))
-    out.write("\t\t(percentage of total {0} terminators = {1})\n".format(
-              method_name, float(nums[detect]) / float(nums[method] + nums["frhp"])))
-    out.write("\t\t(percentage of terminators which have gene expression = {0})\n".format(
-              float(nums[detect]) / float(nums["total_ex"])))
-    out.write("\t\t(percentage of {0} terminators which have gene expression = {1})\n".format(
-              method_name, float(nums[detect]) / float(nums[express])))
+    print_percent(out, float(nums["total"]), float(nums[detect]), "")
+    print_percent(out, float(nums[method] + nums["frhp"]),
+                  float(nums[detect]), method_name + " ")
+    print_express(out, float(nums["total_ex"]), float(nums[detect]), "")
+    print_express(out, float(nums[express]), float(nums[detect]),
+                  method_name + " ")
     out.write("\tTotal terminators which have dramatic coverage decreasing(unique in {0}) = {1}\n".format(
               method_name, nums[only]))
-    out.write("\t\t(percentage of total terminator which have dramatic coverage decreasing = {0})\n".format(
-              float(nums[only]) / float(nums["total_de"])))
-    out.write("\t\t(percentage of total {0} terminator which have dramatic coverage decreasing = {1})\n\n".format(
-              method_name, float(nums[only]) / float(nums[detect])))
+    print_decrease(out, float(nums["total_de"]), float(nums[only]), "")
+    print_decrease(out, float(nums[detect]), float(nums[only]),
+                   method_name + " ")
+    out.write("\n")
 
 def print_intersection_number(out, nums, type_):
-    out.write("\t\t(percentage of total terminator = {0})\n".format(
-              float(nums[type_]) / float(nums["total"])))
-    out.write("\t\t(percentage of total method_1 terminator = {0})\n".format(
-              float(nums[type_]) / float(nums["fr"])))
-    out.write("\t\t(percentage of total method_2 terminator = {0})\n".format(
-              float(nums[type_]) / float(nums["hp"])))
+    print_percent(out, float(nums["total"]), float(nums[type_]), "")
+    print_percent(out, float(nums["fr"]), float(nums[type_]), "method_1 ")
+    print_percent(out, float(nums["hp"]), float(nums[type_]), "method_2 ")
 
 def print_intersection_express(out, nums, type_):
-    out.write("\t\t(percentage of total terminator which have gene expression = {0})\n".format(
-              float(nums[type_]) / float(nums["total_ex"])))
-    out.write("\t\t(percentage of total method_1 terminator which have gene expression = {0})\n".format(
-              float(nums[type_]) / float(nums["ex_fr"])))
-    out.write("\t\t(percentage of total method_2 terminator which have gene expression = {0})\n".format(
-              float(nums[type_]) / float(nums["ex_hp"])))
+    print_express(out, float(nums["total_ex"]), float(nums[type_]), "")
+    print_express(out, float(nums["ex_fr"]), float(nums[type_]), "method_1 ")
+    print_express(out, float(nums["ex_hp"]), float(nums[type_]), "method_2 ")
 
 def print_file(nums, out, strain):
     out.write(strain + ":\n")
     out.write("Combine two methods:\n")
     out.write("\tTotal terminators = {0}\n".format(nums["total"]))
     out.write("\tTotal terminators which located in gene expression region = {0}\n".format(nums["total_ex"]))
-    out.write("\t\t(percentage of total terminator = {0})\n".format(
-              float(nums["total_ex"]) / float(nums["total"])))
+    print_percent(out, float(nums["total"]), float(nums["total_ex"]), "")
     out.write("\tTotal terminators which have dramatic coverage decreasing = {0}\n".format(nums["total_de"]))
-    out.write("\t\t(percentage of total terminators = {0})\n".format(
-              float(nums["total_de"]) / float(nums["total"])))
-    out.write("\t\t(percentage of terminators which have gene expression = {0})\n\n".format(
-              float(nums["total_de"]) / float(nums["total_ex"])))
+    print_percent(out, float(nums["total"]), float(nums["total_de"]), "")
+    print_express(out, float(nums["total_ex"]), float(nums["total_de"]), "")
+    out.write("\n")
     print_method(nums, "method_1", "fr", "ex_fr", "de_fr", "only_de_fr", out)
     print_method(nums, "method_2", "hp", "ex_hp", "de_hp", "only_de_hp", out)
     out.write("intersection two methods:\n")
@@ -83,12 +95,9 @@ def print_file(nums, out, strain):
               nums["de_frhp"]))
     print_intersection_number(out, nums, "de_frhp")
     print_intersection_express(out, nums, "de_frhp")
-    out.write("\t\t(percentage of total terminator which have coverage dramatic decreasing = {0})\n".format(
-              float(nums["de_frhp"]) / float(nums["total_de"])))
-    out.write("\t\t(percentage of total method_1 terminator which have coverage dramatic decreasing = {0})\n".format(
-              float(nums["de_frhp"]) / float(nums["de_fr"])))
-    out.write("\t\t(percentage of total method_2 terminator which have coverage dramatic decreasing = {0})\n".format(
-              float(nums["de_frhp"]) / float(nums["de_hp"])))
+    print_express(out, float(nums["total_de"]), float(nums["de_frhp"]), "")
+    print_express(out, float(nums["de_fr"]), float(nums["de_frhp"]), "method_1 ")
+    print_express(out, float(nums["de_hp"]), float(nums["de_frhp"]), "method_2 ")
 
 def classify_terms(terms, nums, out_d, out_e, pre_strain):
     for term in terms:
@@ -160,7 +169,8 @@ def stat_term(term_gff, term_table, stat, output_decrease, output_expression):
             out_te.write("\t".join(row) + "\n")
         if (row[-1] == "No_coverage_decreasing"):
             out_te.write("\t".join(row) + "\n")
-    for entry in Gff3Parser().entries(open(term_gff)):
+    gh = open(term_gff)
+    for entry in Gff3Parser().entries(gh):
         terms.append(entry) 
     out = open(stat, "w")   
     out_e = open(output_expression + ".gff", "w")
@@ -176,4 +186,10 @@ def stat_term(term_gff, term_table, stat, output_decrease, output_expression):
         for strain, datas in nums.items():
             if strain != "total":
                 print_file(datas, out, strain)
-
+    out_te.close()
+    out_td.close()
+    out.close()
+    out_e.close()
+    out_d.close()
+    fh.close()
+    gh.close()

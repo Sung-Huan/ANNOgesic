@@ -19,22 +19,23 @@ def line(x, y, angle, plt):
     plt.gca().add_artist(line_)
     return plt
 
+def plot_text(plt, xy1, xy2, tss_type, size, color_text):
+    plt.text(xy1, xy2, tss_type, ha="center",
+             va="center", fontsize=15, fontweight='bold',
+             color=color_text)
+
 def text_total(xy, tss_type, num, plt):
-    plt.text(xy[0], xy[1], tss_type, ha="center",
-             va="center", fontsize=15, fontweight='bold')
+    plot_text(plt, xy[0], xy[1], tss_type, 15, "black")
     if tss_type != "Orphan":
-        plt.text(xy[0], xy[1] - 0.05, str(num), ha="center",
-                 va="center", fontsize=15, fontweight='bold')
+        plot_text(plt, xy[0], xy[1] - 0.05, str(num), 15, "black")
 
 def text(xy, tss_type, num, plt):
     if (tss_type == "Primary") or (
         tss_type == "Antisense") or (
         tss_type == "Antisense_Primary"):
-        plt.text(xy[0], xy[1], str(num), fontsize=16, ha="center",
-                 va="center", fontweight='bold', color="white")
+        plot_text(plt, xy[0], xy[1], str(num), 16, "white")
     else:
-        plt.text(xy[0], xy[1], str(num), fontsize=16, ha="center",
-                 va="center", fontweight='bold')
+        plot_text(plt, xy[0], xy[1], str(num), 16, "black")
 
 def check_tss_class(total_types, strain, tss, tss_type):
     if tss_type not in total_types[strain].keys():
@@ -73,7 +74,8 @@ def read_gff(tss_file):
     tss_num = {"all": 0}
     pre_strain = ""
     gff_parser = Gff3Parser()
-    for entry in gff_parser.entries(open(tss_file)):
+    f_h = open(tss_file)
+    for entry in gff_parser.entries(f_h):
         if pre_strain != entry.seq_id:
             tsss[entry.seq_id] = []
             tss_num[entry.seq_id] = 0
@@ -84,6 +86,7 @@ def read_gff(tss_file):
         tss_num["all"] += 1
     for strain in tsss.keys():
         tsss[strain] = sorted(tsss[strain], key=lambda k: (k.seq_id, k.start))
+    f_h.close()
     return tsss, tss_num
 
 def plot(types, file_type, feature_name, total_types, tss_num):
@@ -96,15 +99,11 @@ def plot(types, file_type, feature_name, total_types, tss_num):
                             "Internal": (0.575, 0.95), "Antisense": (0.7, 0.85),
                             "Orphan":(0.8, 0.3)}
         if feature_name == "processing site":
-            plt.text(0.05, 0.05, "Total processing sites", ha="center",
-                     va="center", fontsize=15, fontweight='bold')
-            plt.text(0.05, 0, str(tss_num[strain]), ha="center",
-                     va="center", fontsize=15, fontweight='bold')
+            plot_text(plt, 0.05, 0.05, "Total processing sites", 15, "black")
+            plot_text(plt, 0.05, 0, str(tss_num[strain]), 15, "black")
         elif feature_name == "TSS":
-            plt.text(0.025, 0.05, "Total TSSs", ha="center",
-                     va="center", fontsize=15, fontweight='bold')
-            plt.text(0.025, 0, str(tss_num[strain]), ha="center",
-                     va="center", fontsize=15, fontweight='bold')
+            plot_text(plt, 0.025, 0.05, "Total TSSs", 15, "black")
+            plot_text(plt, 0.025, 0, str(tss_num[strain]), 15, "black")
         for tss_type, num in total_types[strain].items():
             text_total(coordinate_total[tss_type], tss_type, num, plt)
         ellipse(0.5, 0.4, 70, "#E83241", 1.0, plt)

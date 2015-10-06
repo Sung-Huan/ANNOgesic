@@ -16,3 +16,4 @@ def change_format(input_file, output_file):
                 out.write("|".join(datas[:3]) + "\n")
             else:
                 out.write(line + "\n")
+    out.close()

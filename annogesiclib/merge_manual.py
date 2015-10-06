@@ -530,9 +530,11 @@ def print_file(final_tsss, program, out_gff):
         tss.attributes["ID"] = program.lower() + str(num_final)
         num_final += 1
         if program == "TSS":
+            strand = Helper().get_strand_name(tss.strand)
             tss.attributes["Name"] = "TSS:" + "_".join(
-                                              [str(tss.start), tss.strand])
+                                              [str(tss.start), strand])
         else:
+            strand = Helper().get_strand_name(tss.strand)
             tss.attributes["Name"] = "Processing:" + "_".join(
                                               [str(tss.start), tss.strand])
         tss.attribute_string = ";".join(

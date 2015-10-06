@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import csv
 
@@ -46,7 +47,6 @@ def modify_table(table, output_all):
                     out.write("\t".join([rbs1["info"], rbs1["rfam"], rbs1["e"],
                                          str(rbs1["start_align"]),
                                          str(rbs1["end_align"])]) + "\n")
-    os.remove(table)
-    os.rename("tmp.csv", table)
+        fh.close()
     out.close()
-
+    shutil.move("tmp.csv", table)

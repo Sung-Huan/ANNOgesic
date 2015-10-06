@@ -50,28 +50,31 @@ def detect_overlap(srna, pre_srna, srna_type, overlap):
             modify_attributes(pre_srna, srna, srna_type, "pre")
     return overlap
 
+def merge_tss_pro(pre_srna, srna, feature):
+    if (feature not in pre_srna.attributes.keys()) and (
+        feature in srna.attributes.keys()):
+        if srna.attributes[feature] != "NA":
+            pre_srna.attributes[feature] = srna.attributes[feature]
+    elif (feature in pre_srna.attributes.keys()) and (
+        feature in srna.attributes.keys()):
+        if (pre_srna.attributes[feature] == "NA") and (
+            srna.attributes[feature] != "NA"):
+            pre_srna.attributes[feature] = srna.attributes[feature]
+        elif (srna.attributes[feature] not in pre_srna.attributes[feature]) and (
+              srna.attributes[feature] != "NA"):
+            pre_srna.attributes[feature] = "&".join(
+                                              [pre_srna.attributes[feature],
+                                               srna.attributes[feature]])
+
 def modify_overlap(pre_srna, srna):
-    if (pre_srna.attributes["with_TSS"] == "NA") and (
-        srna.attributes["with_TSS"] != "NA"):
-        pre_srna.attributes["with_TSS"] = srna.attributes["with_TSS"]
-    elif (srna.attributes["with_TSS"] not in pre_srna.attributes["with_TSS"]) and (
-          srna.attributes["with_TSS"] != "NA"):
-        pre_srna.attributes["with_TSS"] = "&".join(
-                                          [pre_srna.attributes["with_TSS"],
-                                           srna.attributes["with_TSS"]])
+    merge_tss_pro(pre_srna, srna, "with_TSS")
+    merge_tss_pro(pre_srna, srna, "end_cleavage")
     if "UTR_type" in srna.attributes.keys():
-        if (pre_srna.attributes["with_cleavage"] == "NA") and (
-            srna.attributes["with_cleavage"] != "NA"):
-            pre_srna.attributes["with_cleavage"] = srna.attributes["with_cleavage"]
-        elif (srna.attributes["with_cleavage"] not in pre_srna.attributes["with_cleavage"]) and (
-              srna.attributes["with_cleavage"] != "NA"):
-            pre_srna.attributes["with_cleavage"] = \
-            "&".join([pre_srna.attributes["with_cleavage"],
-                      srna.attributes["with_cleavage"]])
+        merge_tss_pro(pre_srna, srna, "start_cleavage")
     if (srna.start < pre_srna.start):
-            pre_srna.start = srna.start
+        pre_srna.start = srna.start
     if (srna.end > pre_srna.end):
-            pre_srna.end = srna.end
+        pre_srna.end = srna.end
     return pre_srna
 
 def merge_srna(srnas, srna_type):
@@ -88,6 +91,11 @@ def merge_srna(srnas, srna_type):
                     srna.attributes["with_TSS"] = "NA"
             else:
                 srna.attributes["with_TSS"] = "NA"
+            if "end_cleavage" in srna.attributes.keys():
+                if srna.attributes["end_cleavage"] == "False":
+                    srna.attributes["end_cleavage"] = "NA"
+            else:
+                srna.attributes["end_cleavage"] = "NA"
         overlap = False
         if first:
             first = False
@@ -161,17 +169,17 @@ def import_data(row, type_):
 def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs, 
                   table_best, out, tex_notex, replicates):
     detect = False
-    tss_pro = get_tss_pro(type_, srna)
+    tss_pro, end_pro = get_tss_pro(type_, srna)
     for table in tables:
         if (srna.seq_id == table["strain"]) and (
             srna.strand == table["strand"]) and (
             srna.start == table["start"]) and (
             srna.end == table["end"]):
             detect = True
-            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\n".format(
+            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\n".format(
                       srna.seq_id, srna.attributes["Name"], srna.start,
                       srna.end, srna.strand, table["libs"], table["detect"],
-                      tss_pro, table["avg"], table["high"], table["low"],
+                      tss_pro, end_pro, table["avg"], table["high"], table["low"],
                       table["detail"]))
             break
     if not detect:
@@ -185,13 +193,12 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs,
                                   None, tex_notex, replicates, 
                                   "merge_sRNA", None, None, None, False)
         if srna_datas is not None:
-            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t".format(
+            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t".format(
                        srna.seq_id, srna.attributes["Name"], srna.start,
                        srna.end, srna.strand,
                        ";".join(srna_datas["conds"].keys()),
-                       ";".join(srna_datas["conds"].values()), tss_pro,
-                       srna_datas["best"], srna_datas["high"],
-                       srna_datas["low"]))
+                       ";".join(srna_datas["conds"].values()), tss_pro, end_pro,
+                       srna_datas["best"], srna_datas["high"], srna_datas["low"]))
             if not table_best:
                 first = True
                 for data in srna_datas["detail"]:
@@ -252,22 +259,41 @@ def get_coverage(wigs, strain, strand, start, end):
 def get_tss_pro(type_, srna):
     if type_ == "utr":
         if (srna.attributes["with_TSS"] != "NA") and (
-            srna.attributes["with_cleavage"] != "NA"):
+            srna.attributes["start_cleavage"] != "NA"):
             tss_pro = ";".join([srna.attributes["with_TSS"],
-                                srna.attributes["with_cleavage"]])
+                                srna.attributes["start_cleavage"]])
         elif (srna.attributes["with_TSS"] != "NA"):
             tss_pro = srna.attributes["with_TSS"]
-        elif srna.attributes["with_cleavage"] != "NA":
-            tss_pro = srna.attributes["with_cleavage"]
+        elif srna.attributes["start_cleavage"] != "NA":
+            tss_pro = srna.attributes["start_cleavage"]
         else:
             tss_pro = "None"
+        if (srna.attributes["end_cleavage"] != "NA"):
+            end_pro = srna.attributes["end_cleavage"]
+        else:
+            end_pro = "None"
         tss_pro = tss_pro.replace("&", ";")
+        end_pro = end_pro.replace("&", ";")
     elif type_ == "inter":
+        tss_pro = ""
+        end_pro = ""
         if (srna.attributes["with_TSS"] != "NA"):
+#            if "Cleavage" in srna.attributes["with_TSS"]:
+#                tsss = srna.attributes["with_TSS"].split(";")
+#                for tss in tsss:
+#                    if "TSS" in tss:
+#                        tss_pro = tss_pro + ";" + tss
+#                    else:
+#                        end_pro = end_pro + ";" + tss
+#            else:
             tss_pro = srna.attributes["with_TSS"].replace("&", ";")
         else:
             tss_pro = "None"
-    return tss_pro
+        if (srna.attributes["end_cleavage"] != "NA"):
+            end_pro = srna.attributes["end_cleavage"].replace("&", ";")
+        else:
+            end_pro = "None"
+    return tss_pro, end_pro
 
 def merge_srna_table(srna_file, inter_table, utr_table, wig_f_file, wig_r_file,
                      wig_folder, input_libs, tex_notex, replicates, table_best,

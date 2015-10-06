@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import random
 import csv
@@ -127,10 +128,13 @@ def comparison(manuals, predicts, nums, length, cluster):
                 elif (math.fabs(tss_p.start - tss_m.start) <= cluster):
                     overlap = True
                     pre_tss = tss_p
-        datas = check_overlap(overlap, pre_tss, nums, length,
-                              tss_m, tss_p, pre_pos)
-        overlap = datas[0]
-        pre_pos = datas[1]
+        try:
+            datas = check_overlap(overlap, pre_tss, nums, length,
+                                  tss_m, tss_p, pre_pos)
+            overlap = datas[0]
+            pre_pos = datas[1]
+        except UnboundLocalError:
+            nums = {"overlap": -1, "predict": -1, "manual": -1}
     for tss_p in predicts:
         if tss_p.attributes["print"] is False:
             if (tss_p.start <= int(length)):
@@ -145,6 +149,7 @@ def read_predict_manual_gff(gff_file, gene_length, cluster):
             num += 1
             entry.attributes["print"] = False
             gffs.append(entry)
+    f_h.close()
     return num, gffs
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path,
@@ -175,6 +180,8 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                   float(nums["predict"]) / float(int(gene_length) - num_manual),
                   nums["manual"],
                   float(nums["manual"]) / float(num_manual)))
+        if nums["overlap"] == -1:
+            out.write("No TSS is detected within the range...\n")
         stats.append({"tp": nums["overlap"],
                       "tp_rate": float(nums["overlap"]) / float(num_manual),
                       "fp": nums["predict"],
@@ -293,7 +300,7 @@ def import_lib(libs, wig_folder, project_strain_name, rep_set, lib_dict,
     return lib_num
 
 def gen_config(para_list, out_path, core, libs, wig, project_strain, utr,
-               fasta, output_prefix, gff, program, cluster, replicate_num,):
+               fasta, output_prefix, gff, program, cluster, replicate_num):
     files = os.listdir(out_path)
     if "MasterTable_" + str(core) not in files:
         os.mkdir(os.path.join(out_path, "MasterTable_" + str(core)))
@@ -563,37 +570,6 @@ def run_small_change_part(seeds, features, indexs, current_para,
                                      best_para)
     return current_para
 
-def check_fit(num_type, index_large, seed, number, number_par, compare):
-    if (((num_type == "height") and (index_large[seed] == "re_height")) or (
-        (num_type == "factor") and (index_large[seed] == "re_factor"))) and (
-        number <= number_par):
-        print("A")
-        return False
-    elif (((num_type == "re_factor") and (index_large[seed] == "factor")) or (
-          (num_type == "re_height") and (index_large[seed] == "height"))) and (
-          number >= number_par):
-        print("B")
-        return False
-    elif ((num_type == "factor") or (num_type == "height")) and (
-          number <= float(compare)):
-        print("C")
-        return False
-    elif ((num_type == "re_factor") or (num_type == "re_height")) and (
-          number >= float(compare)):
-        print("D")
-        return False
-    elif ((index_large[seed] == "factor") or (
-          index_large[seed] == "height")) and (
-          number_par <= float(compare)):
-        print("E")
-        return False
-    elif ((index_large[seed] == "re_factor") or (
-          index_large[seed] == "re_height")) and (
-          number_par >= float(compare)):
-        print("F")
-        return False
-    return True
-
 def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                      best_para, index_large, indexs):
     new_para = copy.deepcopy(best_para)
@@ -623,11 +599,6 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                                max_num[index_large[seed]]), 1)
             number_par = '%.1f' % number_par
             number_par = float(number_par)
-#        fit = check_fit(num_type, index_large, seed,
-#                        number, number_par, compare)
-#        if fit is False:
-#            continue
-#        else:
         new_para[num_type] = number
         new_para[index_large[seed]] = number_par
         if new_para in list_num:
@@ -855,6 +826,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
                 best["fn"] = float(row[11])
                 best["missing_ratio"] = float(row[13])
             indexs["step"] = int(row[0]) + 1
+    f_h.close()
     return (line_num, best, best_para)
 
 def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
@@ -882,7 +854,8 @@ def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
                 break
             else:
                 new_stat.write(line + "\n")
-    os.rename("tmp.csv", os.path.join(out_path, "stat.csv"))
+    shutil.move("tmp.csv", os.path.join(out_path, "stat.csv"))
+    new_stat.close()
     return (best_para, best)
 
 def get_gene_length(fasta, strain):
@@ -962,3 +935,4 @@ def optimization(tsspredator_path, height, reduction_height, factor,
                          best, libs, wig, project_strain, fasta, output_prefix,
                          gff, program, gene_length, manual, cluster, utr,
                          replicate_num, num_manual)
+    stat_out.close()

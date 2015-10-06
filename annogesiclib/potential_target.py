@@ -12,10 +12,14 @@ def print_fasta(entry, seq, out):
                       entry.attributes["Name"]]) + "\n")
             out.write(seq + "\n")
     except KeyError:
-        out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
-                  entry.feature, entry.start, entry.end, entry.strand, seq))
+        if "locus_tag" in entry.attributes.keys():
+            out.write(">{0}\n{1}\n".format(
+                      entry.attributes["locus_tag"], seq))
+        else:
+            out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
+                      entry.feature, entry.start, entry.end, entry.strand, seq))
 
-def read_file(seq_file, gff_file):
+def read_file(seq_file, gff_file, target_folder):
     fastas = []
     cdss_f = []
     cdss_r = []
@@ -28,31 +32,38 @@ def read_file(seq_file, gff_file):
                 line = line.strip()
                 fastas.append(line)
     fasta = "".join(fastas)
-    for entry in Gff3Parser().entries(open(gff_file)):
+    g_h = open(gff_file)
+    for entry in Gff3Parser().entries(g_h):
+        if os.path.exists(os.path.join(target_folder,
+                          "_".join([entry.seq_id, "target.fa"]))):
+            os.remove(os.path.join(target_folder,
+                      "_".join([entry.seq_id, "target.fa"])))
         if (entry.feature == "CDS") and (entry.strand == "+"):
             cdss_f.append(entry)
         elif (entry.feature == "CDS") and (entry.strand == "-"):
             cdss_r.append(entry)
         elif entry.feature == "gene":
             genes.append(entry)
+    g_h.close()
     return fasta, cdss_f, cdss_r, genes
 
-def deal_cds_forward(cdss_f, target_folder, fasta, genes):
+def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
     pre_id = ""
+    out = None
     for cds in cdss_f:
         if cds.seq_id != pre_id:
             out = open(os.path.join(target_folder,
                        "_".join([cds.seq_id, "target.fa"])), "w")
             pre_id = cds.seq_id
-        if (cds.start > 350):
-            start = cds.start - 350
+        if (cds.start > tar_start):
+            start = cds.start - tar_start
         else:
             start = 1
-        if ((cds.start + 300) < len(fasta)) and ((cds.end - cds.start) >= 300):
-            end = cds.start + 299
-        elif cds.start + 300 >= len(fasta):
+        if ((cds.start + tar_end) < len(fasta)) and ((cds.end - cds.start) >= tar_end):
+            end = cds.start + tar_end - 1
+        elif cds.start + tar_end >= len(fasta):
             end = len(fasta)
-        elif (cds.end - cds.start) < 300:
+        elif (cds.end - cds.start) < tar_end:
             end = cds.end
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
@@ -62,23 +73,26 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes):
                     target = gene
                     break
         print_fasta(target, seq, out)
+    if out is not None:
+        out.close()
 
-def deal_cds_reverse(cdss_r, target_folder, fasta, genes):
+def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
     pre_id = ""
+    out = None
     for cds in cdss_r:
         if cds.seq_id != pre_id:
             out = open(os.path.join(target_folder,
                        "_".join([cds.seq_id, "target.fa"])), "a")
             pre_id = cds.seq_id
-        if (len(fasta) - cds.end > 350):
-            end = cds.end + 350
+        if (len(fasta) - cds.end > tar_start):
+            end = cds.end + tar_start
         else:
             end = len(fasta)
-        if ((cds.end - 300) > 1) and ((cds.end - cds.start) >= 300):
-            start = cds.end - 299
-        elif cds.end - 300 < 1:
+        if ((cds.end - tar_end) > 1) and ((cds.end - cds.start) >= tar_end):
+            start = cds.end - tar_end - 1
+        elif cds.end - tar_end < 1:
             start = 1
-        elif (cds.end - cds.start) < 300:
+        elif (cds.end - cds.start) < tar_end:
             start = cds.start
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
@@ -88,11 +102,13 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes):
                     target = gene
                     break
         print_fasta(target, seq, out)
+    if out is not None:
+        out.close()
 
-def potential_target(gff_file, seq_file, target_folder):
-    fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file)
+def potential_target(gff_file, seq_file, target_folder, tar_start, tar_end):
+    fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file, target_folder)
     sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start))
-    deal_cds_forward(sort_cdss_f, target_folder, fasta, genes)
+    deal_cds_forward(sort_cdss_f, target_folder, fasta, genes, tar_start, tar_end)
     sort_cdss_r = sorted(cdss_r, reverse=True,
                          key=lambda k: (k.seq_id, k.start))
-    deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes)
+    deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes, tar_start, tar_end)

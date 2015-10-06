@@ -47,10 +47,11 @@ def print_file(ribos, out_t, out_s, seq_name, seqs):
             for seq in seqs:
                 if rbs["seq_name"] == seq["name"]:
                     tags = seq["name"].split("|")
-                    out_s.write(">" + "|".join(["|".join(tags[0:-2]),
-                                str(int(tags[-2]) + rbs["start"] - 1),
-                                str(int(tags[-2]) + rbs["end"] - 1)]) + "\n")
-                    out_s.write(seq["seq"][(rbs["start"] - 1): (rbs["end"])] + "\n")
+                    if (rbs["end"] > (rbs["start"] - 1)):
+                        out_s.write(">" + "|".join(["|".join(tags[0:-2]),
+                                    str(int(tags[-2]) + rbs["start"] - 1),
+                                    str(int(tags[-2]) + rbs["end"] - 1)]) + "\n")
+                        out_s.write(seq["seq"][(rbs["start"] - 1): (rbs["end"])] + "\n")
 
 def regenerate_seq(align_file, seq_file, out_table, out_seq):
     hit = False
@@ -76,6 +77,8 @@ def regenerate_seq(align_file, seq_file, out_table, out_seq):
                 if line.startswith("Hit alignments:"):
                     hit = False
                     print_file(ribos, out_t, out_s, seq_name, seqs)
+    out_t.close()
+    out_s.close()
 
 def compare_first_result(ribos, firsts, seq_name, out, extras):
     if len(ribos) != 0:
@@ -163,3 +166,5 @@ def reextract_rbs(align_file, first_file, output_file):
                       str(first["pre_start"]), str(first["pre_end"])]),
                       first["acc"], str(first["e"]), str(first["start"]),
                       str(first["end"])]) + "\n")
+    out.close()
+    f_h.close()

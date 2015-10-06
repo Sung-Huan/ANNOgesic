@@ -52,62 +52,63 @@ class SNPCalling(object):
                    read_depth, fraction, bam_number, stat_file)
         self.helper.move_all_content(table_path, stat_path, [".png"])
 
+    def _run_tools(self, samtools_path, bcftools_path, fasta_file, out_bcf,
+                   out_raw_prefix, type_):
+        if type_ == "with":
+            call([samtools_path, "mpileup",
+                  "-t", "DP", "-ugf", fasta_file, self.bams["sort"],
+                  "--ignore-RG"], stdout=out_bcf)
+        elif type_ == "without":
+            call([samtools_path, "mpileup",
+                  "-t", "DP", "-B", "-ugf", fasta_file,
+                  self.bams["sort"], "--ignore-RG"],
+                  stdout=out_bcf)
+        elif type_ == "extend":
+            call([samtools_path, "mpileup",
+                  "-t", "DP", "-E", "-ugf", fasta_file,
+                  self.bams["sort"], "--ignore-RG"], stdout=out_bcf)
+        out_vcf = "_".join([out_raw_prefix, self.baqs[type_] + ".vcf"])
+        call([bcftools_path, "call", self.outputs["tmp"],
+              "-vmO", "v", "-o", out_vcf])
+        return out_vcf
+
+    def _run_sub(self, samtools_path, fasta_file, type_, out_raw_prefix,
+                 bcftools_path, seq_path, prefix, out_table_prefix, quality,
+                 depth, stat_path, bam_number, fraction, table_path):
+        out_bcf = open(self.outputs["tmp"], "w")
+        out_vcf = self._run_tools(samtools_path, bcftools_path, fasta_file,
+                                  out_bcf, out_raw_prefix, type_)
+        self.helper.check_make_folder(
+             os.path.join(seq_path, self.baqs[type_], prefix))
+        self._transcript_snp(fasta_file, out_vcf,
+             "_".join([out_table_prefix, self.baqs[type_]]), quality,
+             os.path.join(seq_path, self.baqs[type_], prefix),
+             prefix, depth, stat_path, self.baqs[type_],
+             bam_number, fraction, table_path)
+        out_bcf.close()
+
     def _run_program(self, program, samtools_path, bcftools_path, fasta_file,
                      out_raw_prefix, out_table_prefix, quality, seq_path,
                      prefix, depth, stat_path, bam_number, fraction,
                      out_folder, table_path):
         if "1" in program:
             print("Running SNP calling with BAQ...")
-            out_bcf = open(self.outputs["tmp"], "w")
-            call([samtools_path, "mpileup",
-                  "-t", "DP", "-ugf", fasta_file, self.bams["sort"],
-                  "--ignore-RG"], stdout=out_bcf)
-            out_vcf = "_".join([out_raw_prefix, self.baqs["with"] + ".vcf"])
-            call([bcftools_path, "call", self.outputs["tmp"],
-                  "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(
-                 os.path.join(seq_path, self.baqs["with"], prefix))
-            self._transcript_snp(fasta_file, out_vcf,
-                 "_".join([out_table_prefix, self.baqs["with"]]), quality,
-                 os.path.join(seq_path, self.baqs["with"], prefix),
-                 prefix, depth, stat_path, self.baqs["with"],
-                 bam_number, fraction, table_path)
-            out_bcf.close()
+            self._run_sub(samtools_path, fasta_file, "with",
+                          out_raw_prefix, bcftools_path, seq_path,
+                          prefix, out_table_prefix, quality, depth,
+                          stat_path, bam_number, fraction, table_path)
         if "2" in program:
             print("Running SNP calling without BAQ...")
-            out_bcf = open(self.outputs["tmp"], "w")
-            call([samtools_path, "mpileup",
-                  "-t", "DP", "-B", "-ugf", fasta_file,
-                  self.bams["sort"], "--ignore-RG"],
-                  stdout=out_bcf)
-            out_vcf = "_".join([out_raw_prefix, self.baqs["without"] + ".vcf"])
-            call([bcftools_path, "call", self.outputs["tmp"],
-                  "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(
-                 os.path.join(seq_path, self.baqs["without"], prefix))
-            self._transcript_snp(fasta_file, out_vcf,
-                 "_".join([out_table_prefix, self.baqs["without"]]), quality,
-                 os.path.join(seq_path, self.baqs["without"], prefix),
-                 prefix, depth, stat_path, self.baqs["without"],
-                 bam_number, fraction, table_path)
-            out_bcf.close()
+            self._run_sub(samtools_path, fasta_file, "without",
+                          out_raw_prefix, bcftools_path, seq_path,
+                          prefix, out_table_prefix, quality, depth,
+                          stat_path, bam_number, fraction, table_path)
         if "3" in program:
             print("Running SNP calling extend BAQ...")
-            out_bcf = open(self.outputs["tmp"], "w")
-            call([samtools_path, "mpileup",
-                  "-t", "DP", "-E", "-ugf", fasta_file,
-                  self.bams["sort"], "--ignore-RG"], stdout=out_bcf)
-            out_vcf = "_".join([out_raw_prefix, self.baqs["extend"] + ".vcf"])
-            call([bcftools_path, "call", self.outputs["tmp"],
-                  "-vmO", "v", "-o", out_vcf])
-            self.helper.check_make_folder(
-                 os.path.join(seq_path, self.baqs["extend"], prefix))
-            self._transcript_snp(fasta_file, out_vcf,
-                 "_".join([out_table_prefix, self.baqs["extend"]]), quality,
-                 os.path.join(seq_path, self.baqs["extend"], prefix),
-                 prefix, depth, stat_path, self.baqs["extend"],
-                 bam_number, fraction, table_path)
-            out_bcf.close()
+            self._run_sub(samtools_path, fasta_file, "extend",
+                          out_raw_prefix, bcftools_path, seq_path,
+                          prefix, out_table_prefix, quality, depth,
+                          stat_path, bam_number, fraction, table_path)
 
     def _detect_fasta(self, fasta):
         detect = False
@@ -121,6 +122,11 @@ class SNPCalling(object):
             prefix = fasta[:-6]
             detect = True
         return (detect, prefix)
+
+    def _run_bam(self, samtools_path, sub_command, bam_file):
+        command = (" ".join([samtools_path, sub_command,
+                   self.bams["whole"], bam_file]))
+        os.system(command)
 
     def _merge_bams(self, normal_bams, frag_bams, samtools_path, out_folder):
         bams = []
@@ -138,18 +144,21 @@ class SNPCalling(object):
         if num_bam <= 1:
             shutil.copyfile(bams[0], self.bams["whole"])
             print("Sort BAM file now ...")
-            command = (" ".join([samtools_path, "sort",
-                       self.bams["whole"], self.bams["sort"].replace(".bam", "")]))
-            os.system(command)
+            self._run_bam(samtools_path, "sort", self.bams["sort"].replace(".bam", ""))
+#            command = (" ".join([samtools_path, "sort",
+#                       self.bams["whole"], self.bams["sort"].replace(".bam", "")]))
+#            os.system(command)
         else:
             print("Merge BAM files now ...")
-            command = (" ".join([samtools_path, "merge",
-                       self.bams["whole"], " ".join(bams)]))
-            os.system(command)
+            self._run_bam(samtools_path, "merge", " ".join(bams))
+#            command = (" ".join([samtools_path, "merge",
+#                       self.bams["whole"], " ".join(bams)]))
+#            os.system(command)
             print("Sort BAM file now ...")
-            command = (" ".join([samtools_path, "sort",
-                       self.bams["whole"], self.bams["sort"].replace(".bam", "")]))
-            os.system(command)
+            self._run_bam(samtools_path, "sort", self.bams["sort"].replace(".bam", ""))
+#            command = (" ".join([samtools_path, "sort",
+#                       self.bams["whole"], self.bams["sort"].replace(".bam", "")]))
+#            os.system(command)
         return num_bam
 
     def _modify_header(self, fastas):
@@ -159,14 +168,20 @@ class SNPCalling(object):
                fasta.endswith("fna"):
                 self.seq_editer.modify_header(os.path.join(fastas, fasta))
 
-    def _get_genome_name(self, samtools_path, out_folder):
+    def _get_header(self, samtools_path):
         command = " ".join([samtools_path, "view", "-H", self.bams["sort"]])
         os.system(">".join([command, self.header]))
+
+    def _get_genome_name(self, samtools_path):
+        self._get_header(samtools_path)
+#        command = " ".join([samtools_path, "view", "-H", self.bams["sort"]])
+#        os.system(">".join([command, self.header]))
         fh = open(self.header, "r");
         seq_names = []
         for row in csv.reader(fh, delimiter="\t"):
             if row[0] == "@SQ":
                 seq_names.append(row[1].split(":")[1])
+        fh.close()
         return seq_names
 
     def run_snp_calling(self, samtools_path, bcftools_path, types, program,
@@ -180,7 +195,7 @@ class SNPCalling(object):
         self._modify_header(fastas)
         bam_number = self._merge_bams(normal_bams, frag_bams,
                                       samtools_path, out_folder)
-        seq_names = self._get_genome_name(samtools_path, out_folder)
+        seq_names = self._get_genome_name(samtools_path)
         #### running SNP calling
         if ("1" not in program) and (
             "2" not in program) and (

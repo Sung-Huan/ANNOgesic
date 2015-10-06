@@ -56,7 +56,7 @@ class GoTermFinding(object):
         self.helper.remove_all_content(out_path, None, "file")
         for folder in folders:
             folder_prefix = folder.split("/")[-1]
-            os.rename(folder, os.path.join(out_path, folder_prefix))
+            shutil.move(folder, os.path.join(out_path, folder_prefix))
 
     def _stat(self, out_path, stat_path, go, goslim, out_folder):
         for folder in os.listdir(out_path):

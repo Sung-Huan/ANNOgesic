@@ -7,10 +7,18 @@ from annogesiclib.gff3 import Gff3Parser
 
 def import_data(row, type_):
     if type_ == "gff":
-        return {"strain": row[0], "name": row[1], "start": int(row[2]),
-                "end": int(row[3]), "strand": row[4], "conds": row[5],
-                "detect": row[6], "tss_pro": row[7], "avg": float(row[8]),
-                "high": float(row[9]), "low": float(row[10]), "track": row[11]}
+        if len(row) == 13:
+            return {"strain": row[0], "name": row[1], "start": int(row[2]),
+                    "end": int(row[3]), "strand": row[4], "conds": row[5],
+                    "detect": row[6], "tss_pro": row[7], "end_pro": row[8],
+                    "avg": float(row[9]), "high": float(row[10]),
+                    "low": float(row[11]), "track": row[12]}
+        else:
+            return {"strain": row[0], "name": row[1], "start": int(row[2]),
+                    "end": int(row[3]), "strand": row[4], "conds": row[5],
+                    "detect": row[6], "tss_pro": row[7], "end_pro": row[8],
+                    "avg": float(row[9]), "high": float(row[10]),
+                    "low": float(row[11])}
     elif type_ == "nr":
         if len(row) == 8:
             return {"strain": row[0], "name": row[1], "strand": row[2],
@@ -62,14 +70,19 @@ def compare_srna_table(srna_tables, srna, final, min_len, max_len):
             table["start"] == srna.start) and (
             table["end"] == srna.end):
             final = dict(final, **table)
-            datas = table["tss_pro"].split(";")
+            start_datas = table["tss_pro"].split(";")
+            end_datas = table["end_pro"].split(";")
             tsss.append(table["start"])
             pros.append(table["end"])
-            for data in datas:
+            for data in start_datas:
                 if "TSS" in data:
                     if table["start"] != int(data.split(":")[1][:-2]):
                         tsss.append(int(data.split(":")[1][:-2]))
                 elif "Cleavage" in data:
+                    if table["end"] != int(data.split(":")[1][:-2]):
+                        pros.append(int(data.split(":")[1][:-2]))
+            for data in end_datas:
+                if "Cleavage" in data:
                     if table["end"] != int(data.split(":")[1][:-2]):
                         pros.append(int(data.split(":")[1][:-2]))
             for tss in tsss:
@@ -110,6 +123,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
         check_keys("nr_hit", "nr_hit_num", srna, final)
         check_keys("sRNA_hit", "sRNA_hit_num", srna, final)
         check_keys("sORF", "sORF", srna, final)
+        check_keys("end_pro", "end_pro", srna, final)
         if srna.source == "intergenic":
             final["utr"] = "Intergenic"
         else:
@@ -136,9 +150,9 @@ def print_file(finals, out):
         out.write("\t".join([
                   final["strain"], final["name"], str(final["start"]),
                   str(final["end"]), final["strand"], final["tss_pro"],
-                  final["candidates"], final["type"], str(final["avg"]),
-                  str(final["high"]), str(final["low"]), final["track"],
-                  final["energy"], final["utr"], final["sORF"],
+                  final["end_pro"], final["candidates"], final["type"],
+                  str(final["avg"]), str(final["high"]), str(final["low"]),
+                  final["track"], final["energy"], final["utr"], final["sORF"],
                   final["nr_hit_num"], final["sRNA_hit_num"],
                   final["nr_hit"], final["sRNA_hit"]]) + "\n")
 
@@ -176,8 +190,8 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
                                           nr_blast, srna_blast_file)
     out = open(out_file, "w")
     out.write("\t".join(["strain", "name", "start", "end", "strand",
-                         "TSS/Cleavage_site", "candidates",
-                         "lib_type", "best_avg_coverage",
+                         "start_with_TSS/Cleavage_site", "end_with_cleavage",
+                         "candidates", "lib_type", "best_avg_coverage",
                          "best_highest_coverage", "best_lower_coverage",
                          "track/coverage", "secondary_energy_change",
                          "UTR_derived/Intergenic", "confliction of sORF",
@@ -217,7 +231,7 @@ def gen_best_srna(srna_file, all_srna_hit, energy, hit_nr_num,
             elif (srna.source == "UTR_derived"):
                 if (("3utr" in srna.attributes["UTR_type"]) or (
                      "interCDS" in srna.attributes["UTR_type"])) and (
-                     srna.attributes["with_cleavage"] != "NA"):
+                     srna.attributes["start_cleavage"] != "NA"):
                     detect["TSS"] = True
         else:
             detect["TSS"] = True

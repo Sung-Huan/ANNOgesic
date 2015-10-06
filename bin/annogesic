@@ -157,6 +157,16 @@ def main():
     expression_parser.add_argument(
         "--features", "-f", nargs="+",
         help="The features which you want to compute, ex: CDS tRNA")
+    expression_parser.add_argument(
+        "--coverage_type", "-ct", default="high",
+        help="For generating heatmap of coverage, you want to base on the highest coverage or average of coverage. "
+        "If you want to use highest, please type \"high\". If you want to use average, please type \"average\".")
+    expression_parser.add_argument(
+        "--max_colorbar", "-Mc", default=100, type=int,
+        help="The max number of colorbar of heatmap. Default is 100.")
+    expression_parser.add_argument(
+        "--min_colorbar", "-mc", default=0, type=int,
+        help="The min number of colorbar of heatmap. Default is 0.")
     expression_parser.set_defaults(func=run_expression)
     # Parameters of TSSpredator
     TSSpredator_parser = subparsers.add_parser(
@@ -166,8 +176,9 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     TSSpredator_parser.add_argument(
-        "--TSSpredator_path", default="TSSpredator.jar",
-        help="If you want to assign the path of TSSpredator, please assign here.")
+        "--TSSpredator_path", default="/usr/local/bin/TSSpredator.jar",
+        help="If you want to assign the path of TSSpredator, please assign here. "
+        "Default is /usr/local/bin/TSSpredator.jar")
     TSSpredator_parser.add_argument(
         "--fasta_folder", "-f", default="ANNOgesic/output/target/fasta",
         help="Path of the target fasta folder.")
@@ -282,8 +293,9 @@ def main():
         help="Path of the project folder. If none is given the current "
         "directory is used.")
     op_TSSpredator_parser.add_argument(
-        "--TSSpredator_path", default="TSSpredator.jar",
-        help="If you want to assign the path of TSSpredator, please assign here.")
+        "--TSSpredator_path", default="/usr/local/bin/TSSpredator.jar",
+        help="If you want to assign the path of TSSpredator, please assign here. "
+        "Default is /usr/local/bin/TSSpredator.jar")
     op_TSSpredator_parser.add_argument(
         "--fasta_file", "-fs",
         help="Path of one target fasta file which you want to opimize it.")
@@ -399,8 +411,8 @@ def main():
         "--TransTermHP_path", default="transterm",
         help="Please assign the path of transterm in TransTermHP.")
     Terminator_parser.add_argument(
-        "--expterm_path", default="expterm.dat",
-        help="Please assign the path of your expterm.dat.")
+        "--expterm_path", default="/usr/local/bin/expterm.dat",
+        help="Please assign the path of your expterm.dat. Default is /usr/local/bin/expterm.dat")
     Terminator_parser.add_argument(
         "--RNAfold_path", default="RNAfold",
         help="If you want to assign the path of RNAfold of Vienna package, please assign here.")
@@ -626,11 +638,11 @@ def main():
         help="If you want to import processing site information, please assign the path of gff folder of processing site."
         "If you want to detect UTR derived sRNA, you must assign the folder of processing site.")
     sRNA_parser.add_argument(
-        "--TSS_intergenic_fuzzy", "-ft", default=2, type=int,
+        "--TSS_intergenic_fuzzy", "-ft", default=3, type=int,
         help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for intergenic."
         "The default number is 2.")
     sRNA_parser.add_argument(
-        "--TSS_5UTR_fuzzy", "-f5", default=2, type=int,
+        "--TSS_5UTR_fuzzy", "-f5", default=3, type=int,
         help="If you want to import TSS information, you need to assign the fuzzy for comparing TSS and transcript assembly. It is for 5'UTR of UTR derived sRNA."
         "The default number is 2.")
     sRNA_parser.add_argument(
@@ -839,14 +851,33 @@ def main():
         "--sRNA_folder", "-s", default=None,
         help="If you want to compare sORF and sRNA, please assign the path of sORF gff folder.")
     sORF_parser.add_argument(
-        "--start_coden", "-ac", default=["ATG"], nargs="+", 
+        "--start_codon", "-ac", default=["ATG"], nargs="+", 
         help="What kinds of start coden ATG/GTG/TTG you want to use.")
     sORF_parser.add_argument(
-        "--stop_coden", "-oc", default=["TTA", "TAG", "TGA"], nargs="+", 
+        "--stop_codon", "-oc", default=["TTA", "TAG", "TGA"], nargs="+", 
         help="What kinds of stop coden TTA/TAG/TGA you want to use.")
     sORF_parser.add_argument(
-        "--condition_best", "-c", default="TSS",
-        help="For generating the result of best sORF, please assign which information you want to consider (TSS/sRNA/both). default is TSS.")
+        "--max_dist_rbs", "-Mr", default=14, type=int,
+        help="The maximum distance between ribosomal binding site and start codon. Default is 14.")
+    sORF_parser.add_argument(
+        "--min_dist_rbs", "-mr", default=5, type=int,
+        help="The minmum distance between ribosomal binding site and start codon. Default is 5.")
+    sORF_parser.add_argument(
+        "--rbs_not_after_TSS", "-at", default=False, action="store_true",
+        help="If you want to generate best gff file which include ribosomal binding site not after TSS. please turn it on. Default is False.")
+    sORF_parser.add_argument(
+        "--fuzzy_rbs", "-zr", default=2, type=int,
+        help="How many nucleotides of ribosomal binding site is different with AGGAGG? Default is 2.")
+    sORF_parser.add_argument(
+        "--print_all_combination", "-pa", default=False, action="store_true",
+        help="Every expressed transcript of sORF has many start codons and stop codons. "
+        "If you want to print all combinations of start codons and stop codons, please turn it on.")
+    sORF_parser.add_argument(
+        "--best_no_sRNA", "-bs", default=False, action="store_true",
+        help="If you want to generate best gff file without overlaping with sRNA, please turn it on.")
+    sORF_parser.add_argument(
+        "--best_no_TSS", "-bt", default=False, action="store_true",
+        help="If you want to generate best gff file which not refere to TSS, please turn it on.")
     sORF_parser.set_defaults(func=run_sORF_detection)
     # Parameters of promoter detection
     promoter_parser = subparsers.add_parser(
@@ -872,9 +903,6 @@ def main():
         help="Motif length - it will refer the value to find the motif. "
         "if you want to detect a range of width, you can insert \"-\" between two values. "
         "for example, 50 2-10. It means the range of width which you want to detect is 50 and within 2 to 10. ")
-    promoter_parser.add_argument(
-        "--parallel", "-p", default=4,
-        help="How many process you want to use to run paralle.")
     promoter_parser.add_argument(
         "--TSS_source", "-s", default=True, action="store_false",
         help="If you generate TSS from other method, please turn it on.")
@@ -1034,7 +1062,7 @@ def main():
         "--query_sRNA", "-q", nargs="+", default="all",
         help="Please assign the query sRNA. If you want to compute all sRNA in gff file, please keyin 'all'."
         "the input format should be like, $STRAIN:$STRAND:$START:$END."
-        "For example, NC_007795:+:200:534 NC_007795:-:6767:6900")
+        "For example, NC_007795.1:+:200:534 NC_007795.1:-:6767:6900")
     starget_parser.add_argument(
         "--program", "-p", default="both",
         help="Using RNAplex, RNAup or both. Default is both. ")
@@ -1099,6 +1127,12 @@ def main():
         "--continue_rnaup", "-cr", default=False, action="store_true",
         help="RNAup will take a long time for running if you want to compute a lot of sRNA. "
         "If the process crush, you can turn it on. This flag will continue running RNAup based on your previous running.")
+    starget_parser.add_argument(
+        "--potential_target_start", "-ps", default=200, type=int,
+        help="How many upstream nucleotides of the start point of CDS you want to extracts as potential target. Default is 200.")
+    starget_parser.add_argument(
+        "--potential_target_end", "-pe", default=150, type=int,
+        help="How many downstream nucleotides of the start point of CDS you want to extracts as potential target. Default is 150.")
     starget_parser.set_defaults(func=sRNA_target)
     # Parameters of SNP transcript
     snp_parser = subparsers.add_parser(
@@ -1262,6 +1296,18 @@ def main():
     ribos_parser.add_argument(
         "--fuzzy", "-z", default=10, type=int,
         help="It will extend some nts of 3' ans 5' end. Default is 10.")
+    ribos_parser.add_argument(
+        "--fuzzy_rbs", "-zr", default=2, type=int,
+        help="How many nucleotides of ribosomal binding site is different with AGGAGG? Default is 2.")
+    ribos_parser.add_argument(
+        "--start_codon", "-ac", default=["ATG"], nargs="+",
+        help="What kinds of start coden ATG/GTG/TTG you want to use.")
+    ribos_parser.add_argument(
+        "--max_dist_rbs", "-Mr", default=14, type=int,
+        help="The maximum distance between ribosomal binding site and start codon. Default is 14.")
+    ribos_parser.add_argument(
+        "--min_dist_rbs", "-mr", default=5, type=int,
+        help="The minmum distance between ribosomal binding site and start codon. Default is 5.")
     ribos_parser.set_defaults(func=Ribos)
     # Parameters of generate screenshots
     screen_parser = subparsers.add_parser(

@@ -79,6 +79,7 @@ def read_table(psortb_file):
                     unknown_nums["all_strain"] += 1
                 subs["all_strain"][row[5]] += 1
                 total_nums["all_strain"] += 1
+    f_h.close()
     return subs, total_nums, unknown_nums
 
 def print_file_and_plot(sub, total_nums, unknown_nums,

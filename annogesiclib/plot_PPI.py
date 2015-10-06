@@ -37,6 +37,13 @@ def get_largest_compare(tick, score):
             tick = score
     return (tick, same)
 
+def add_edge(G, ppi, style, weight, colorppi):
+    G.add_edge(ppi["item_a"], ppi["item_b"],
+               color=float(colorppi), style=style, weight=weight)
+    
+def add_node(G, nodes):
+    G.add_nodes_from(nodes)
+
 def best_assign_attributes(check_na, G, ppi, pre_ppi, first, style):
     check_na["best"] = True
     if ppi["score"] == 0:
@@ -49,8 +56,7 @@ def best_assign_attributes(check_na, G, ppi, pre_ppi, first, style):
             weight = 22
         else:
             weight = ppi["score"] + ppi["below"] + 2
-    G.add_edge(ppi["item_a"], ppi["item_b"],
-               color=float(ppi["best"]), style=style, weight=weight)
+    add_edge(G, ppi, style, weight, ppi["best"])
     if not first:
         if pre_ppi["best"] != ppi["best"]:
             check_na["same_best"] = True
@@ -66,8 +72,7 @@ def create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
            ((ppi["item_b"], ppi["item_a"]) not in edges):
             edges.append((ppi["item_a"], ppi["item_b"]))
             if ppi["best"] == "NA":
-                G.add_edge(ppi["item_a"], ppi["item_b"],
-                           color=-1, style='dotted', weight=2)
+                add_edge(G, ppi, 'dotted', 2, -1)
             elif float(ppi["best"]) <= cutoff_score:
                 best_assign_attributes(check_na, G, ppi,
                                        pre_ppi, first, "dashdot")
@@ -76,7 +81,7 @@ def create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
                                        pre_ppi, first, "solid")
             pre_ppi = ppi
             first = False
-    G.add_nodes_from(nodes)
+    add_node(G, nodes)
     return pre_ppi
 
 def modify_label(labels2, new_labels):
@@ -103,8 +108,25 @@ def plot_text(check_na, plt, ppis, ppi, color_edge):
         else:
             plt.colorbar(color_edge)
 
+def nx_node(G, pos, node_size, colors, color_list):
+    nx.draw_networkx_nodes(G, pos, node_size=node_size, node_shape='o',
+        nodelist=colors.keys(), node_color=color_list, linewidths=1)
+
+def nx_edge(G, pos, edges, colors, styles, weights):
+    color_edge = (nx.draw_networkx_edges(G, pos, edges=edges,
+                  edge_color=colors, style=styles, len=10, width=weights))
+    return color_edge
+
+def nx_label(G, pos, labels, size):
+    nx.draw_networkx_labels(G, pos, labels, font_size=size, font_weight='bold')
+
+def nx_color_style(G, edges):
+    colors = [G[u][v]['color'] for u, v in edges]
+    styles = [G[u][v]['style'] for u, v in edges]
+    return colors, styles
+
 def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
-    fig = plt.figure(figsize=(12, 12))
+    fig = plt.figure(figsize=(14, 14))
     G = nx.Graph()
     nodes = []
     edges = []
@@ -121,24 +143,23 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     pre_ppi = create_node(ppis, scores, nodes, center, colors,
                           labels1, labels2, edges,
                           G, cutoff_score, check_na, pre_ppi)
-    pos = nx.spring_layout(G)
+    pos = nx.spring_layout(G,k=0.9,iterations=15)
     color_list = []
     for color in colors.values():
         color_list.append(color)
-    nx.draw_networkx_nodes(G, pos, node_size=node_size, node_shape='o',
-        nodelist=colors.keys(), node_color=color_list, linewidths=1)
+    nx_node(G, pos, node_size, colors, color_list)
     connects = G.edges()
     for weight in G.edges(data=True):
-        weights.append(weight[2]["weight"])
-    colors = [G[u][v]['color'] for u, v in edges]
-    styles = [G[u][v]['style'] for u, v in edges]
-    color_edge = nx.draw_networkx_edges(G, pos, edges=connects,
-                 edge_color=colors, style=styles, len=10, width=weights)
-    nx.draw_networkx_labels(G, pos, labels1, font_size=12, font_weight='bold')
+        if weight[2]["weight"] <= 62:
+            weights.append(weight[2]["weight"])
+        else:
+            weights.append(62)
+    colors, styles = nx_color_style(G, connects)
+    color_edge = nx_edge(G, pos, connects, colors, styles, weights)
+    nx_label(G, pos, labels1, 12)
     new_labels = {}
     modify_label(labels2, new_labels)
-    nx.draw_networkx_labels(G, pos, new_labels,
-                            font_size=10, font_weight='bold')
+    nx_label(G, pos, new_labels, 10)
     plt.title("|".join([center["locus_tag"],
               " ".join([center["gene_name"],
               "(based on the score of best literature)"])]),
@@ -189,6 +210,7 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
     start = False
     fh = open(PPI_file, "r")
     print(PPI_file)
+    match = False
     for row in csv.reader(fh, delimiter="\t"):
         start = True
         if row[0].startswith("Interaction"):
@@ -196,8 +218,13 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
                 pass
             else:
                 assign_score_below(pre_ppi, scores, ppis)
-                plot(ppis, center, pre_ppi["strain"], cutoff_score,
-                     node_size, out_folder)
+                if match:
+                    plot(ppis, center, pre_ppi["strain"], cutoff_score,
+                         node_size, out_folder)
+                    match = False
+                else:
+                    print("No interacted partners with {0} | {1}".format(
+                          center["locus_tag"], center["gene_name"]))
                 scores = {"score": 0, "below": 0}
                 ppis = []
                 first = True
@@ -210,6 +237,11 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
         else:
             ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2],
                    "mode": row[3]}
+            if (ppi["item_a"] == center["locus_tag"]) or (
+                ppi["item_a"] == center["gene_name"]) or (
+                ppi["item_b"] == center["locus_tag"]) or (
+                ppi["item_b"] == center["gene_name"]):
+                match = True
             if first:
                 first = False
                 score_compare(row[8], scores, cutoff_score, ppi)
@@ -226,9 +258,13 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
                     score_compare(row[8], scores, cutoff_score, ppi)
                     ppi["best"] = row[8]
             pre_ppi = ppi
-    if start:
+    if start and match:
         assign_score_below(pre_ppi, scores, ppis)
         plot(ppis, center, pre_ppi["strain"],
              cutoff_score, node_size, out_folder)
-    else:
+    elif not start:
         print("No proper result can be retrieved...")
+    elif not match:
+        print("No interacted partners with {0} | {1}".format(
+               center["locus_tag"], center["gene_name"]))
+    fh.close()

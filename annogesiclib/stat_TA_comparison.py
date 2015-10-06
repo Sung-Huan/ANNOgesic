@@ -165,6 +165,9 @@ def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file, out_tss_file, fuzzy):
                     stats = detect_tas_region(tsss_uni[strain_tss],
                                               sort_tas, None, None, fuzzy)
                     print_tas_stat(stats, out_stat)
+    out_stat.close()
+    out_ta.close()
+    out_tss.close()
 
 def assign_parent(gff, tran):
     if "Parent_tran" not in gff.attributes.keys():
@@ -339,3 +342,6 @@ def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file):
                 out_stat.write(strain + ":\n")
                 out_stat.write("The transcriptome assembly information compares with annotation gff file:\n")
                 print_tag_stat(stats[strain], out_stat)
+    o_f.close()
+    og_f.close()
+    out_stat.close()

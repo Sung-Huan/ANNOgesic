@@ -149,7 +149,7 @@ class CircRNADetection(object):
                 bam_file = sam.replace(".sam", ".bam")
                 print("Convert {0} to {1}".format(sam, bam_file))
                 out_bam = os.path.join(sub_alignment_path, bam_file)
-                self._run_samtools_convert_bam(samtools_path, sam, out_bam)
+                self._run_samtools_convert_bam(samtools_path, pre_sam, out_bam)
                 bam_files.append(out_bam)
                 if align_files:
                     if bam_file.replace(".bam", "") not in align_files:
@@ -255,10 +255,10 @@ class CircRNADetection(object):
                             self.helper.merge_file(os.path.join(
                                     fasta_prefix, file_), out_trans)
                 else:
-                    os.rename(os.path.join(fasta_prefix,
+                    shutil.move(os.path.join(fasta_prefix,
                               "_".join([self.splices["splice"],
                               headers[0] + ".bed"])), out_splice)
-                    os.rename(os.path.join(fasta_prefix,
+                    shutil.move(os.path.join(fasta_prefix,
                               "_".join([self.trans["trans"],
                               headers[0] + ".bed"])), out_trans)
         self.helper.remove_all_content(splice_path, None, "dir")

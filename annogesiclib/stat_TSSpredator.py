@@ -104,7 +104,8 @@ def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
     out_stat = open(stat_file, "w")
     out_lib = open(lib_file, "w")
     gff_parser = Gff3Parser()
-    for entry in gff_parser.entries(open(tss_file)):
+    fh = open(tss_file)
+    for entry in gff_parser.entries(fh):
         if entry.seq_id != pre_seq_id:
             pre_seq_id = entry.seq_id
             tsss_strain[entry.seq_id] = []
@@ -115,3 +116,6 @@ def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
         stat(tsss, "All_strains", feature_name, out_stat, file_type, out_lib)
     for strain in tsss_strain.keys():
         stat(tsss_strain[strain], strain, feature_name, out_stat, file_type, out_lib)
+    out_stat.close()
+    out_lib.close()
+    fh.close()

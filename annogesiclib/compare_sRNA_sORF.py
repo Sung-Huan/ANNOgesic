@@ -41,8 +41,16 @@ def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
         for sorf in sorfs:
             if (srna.seq_id == sorf.seq_id) and \
                (srna.strand == sorf.strand):
-                if (srna.start <= sorf.start) and \
-                   (srna.end >= sorf.end):
+                if ((srna.start <= sorf.start) and (
+                     srna.end >= sorf.end)) or (
+                    (srna.start >= sorf.start) and (
+                     srna.end <= sorf.end)) or (
+                    (srna.start <= sorf.start) and (
+                     srna.end >= sorf.start) and (
+                     srna.end <= sorf.end)) or (
+                    (srna.start >= sorf.start) and (
+                     srna.start <= sorf.end) and (
+                     srna.end >= sorf.end)):
                     if "sORF" not in srna.attributes.keys():
                         srna.attributes["sORF"] = []
                         strand = Helper().get_strand_name(sorf.strand)

@@ -71,7 +71,7 @@ def elongation(covers, height, template_texs, libs, reps,
             detect_hight_toler(cover, height, tmp_covers, tracks)
         pre_wig = cover
         pre_pos = cover["pos"]
-    return (tmp_covers["best"], conds, tracks, texs, pre_pos)
+    return tmp_covers["best"], conds, tracks, texs, pre_pos
 
 def transfer_to_tran(wigs, height, libs, template_texs, strand,
                      reps, tex_notex):
@@ -82,13 +82,10 @@ def transfer_to_tran(wigs, height, libs, template_texs, strand,
             trans[strain] = []
             tolers[strain] = []
         sort_covers = sorted(covers, key=lambda k: (k["pos"], k["cond"]))
-        datas = elongation(sort_covers, height, template_texs, libs, reps,
-                           tex_notex, strand, trans, strain, tolers[strain])
-        best_cover = datas[0]
-        conds = datas[1]
-        tracks = datas[2]
-        texs = datas[3]
-        pos = datas[4]
+        best_cover, conds, tracks, texs, pos = elongation(sort_covers, height,
+                                               template_texs, libs, reps,
+                                               tex_notex, strand, trans,
+                                               strain, tolers[strain])
     for track in tracks:
         if len(texs) != 0:
             for key, num in texs.items():
@@ -106,6 +103,11 @@ def transfer_to_tran(wigs, height, libs, template_texs, strand,
                                 conds[index] = 1
                             else:
                                 conds[index] += 1
+                else:
+                    if index not in conds.keys():
+                        conds[index] = 1
+                    else:
+                        conds[index] += 1
     for cond, num in conds.items():
         if ((num >= reps["tex"]) and ("tex" in cond)) or (
             (num >= reps["frag"]) and ("frag" in cond)):
@@ -127,8 +129,7 @@ def print_transctipt(start, end, width, num, high_cover,
                   strain, "Transcript", "Transcript", str(start),
                   str(end), ".", strand, ".", attribute]]) + "\n")
 
-def fill_gap_and_print(trans, strand, tolerance, width, out,
-                       low_cutoff, num_track, tolers):
+def fill_gap_and_print(trans, strand, tolerance, width, out, low_cutoff, tolers):
     for strain, datas in tolers.items():
         num = 0
         for data in datas:
@@ -181,8 +182,9 @@ def fill_gap_and_print(trans, strand, tolerance, width, out,
                     high_cover = cover["coverage"]
                     low_cover = cover["coverage"]
             pre_cover = cover
-        print_transctipt(start, end, width, num, high_cover,
-                         low_cover, out, strain, strand)
+        if len(covers) != 0:
+            print_transctipt(start, end, width, num, high_cover,
+                             low_cover, out, strain, strand)
 
 def read_wig(filename, libs, strand):
     wigs = {}
@@ -207,7 +209,7 @@ def read_wig(filename, libs, strand):
                               "cond": cond})
                         break
     wig_fh.close()
-    return len(tracks), wigs
+    return wigs
 
 def assembly(wig_f_file, wig_r_file, height, width, tolerance, low_cutoff,
              wig_folder, tex_notex, input_lib, replicates, out_file):
@@ -245,13 +247,14 @@ def assembly(wig_f_file, wig_r_file, height, width, tolerance, low_cutoff,
         else:
             print("Error:not correct library type (fragmented or Tex treated??)")
             sys.exit()
-    num_track, wig_fs = read_wig(wig_f_file, libs, "+")
-    num_track, wig_rs = read_wig(wig_r_file, libs, "-")
+    wig_fs = read_wig(wig_f_file, libs, "+")
+    wig_rs = read_wig(wig_r_file, libs, "-")
     tolers_f, tran_fs = transfer_to_tran(wig_fs, height,
                         libs, texs, "+", replicates, tex_notex)
     tolers_r, tran_rs = transfer_to_tran(wig_rs, height,
                         libs, texs, "-", replicates, tex_notex)
     fill_gap_and_print(tran_fs, "+", tolerance, width, out,
-                       low_cutoff, num_track, tolers_f)
+                       low_cutoff, tolers_f)
     fill_gap_and_print(tran_rs, "-", tolerance, width, out,
-                       low_cutoff, num_track, tolers_r)
+                       low_cutoff, tolers_r)
+    out.close()

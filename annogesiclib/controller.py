@@ -103,13 +103,15 @@ class Controller(object):
 
     def expression(self):
         """Run gene expression analysis."""
-        expression = Expression(self._args.annotation_folder)
-        expression.gene_expression(self._args.tex_notex_libs, self._args.frag_libs,
-                                   self._args.tex_notex, self._args.replicates_tex,
-                                   self._args.replicates_frag, self._args.tex_wig_folder,
-                                   self._args.frag_wig_folder, self._args.cutoff_overlap_tex,
-                                   self._args.cutoff_overlap_frag, self._args.cutoff_coverage,
-                                   self._args.annotation_folder, self._args.features)
+        express = Expression(self._args.annotation_folder)
+        express.expression(self._args.tex_notex_libs, self._args.frag_libs,
+                           self._args.tex_notex, self._args.replicates_tex,
+                           self._args.replicates_frag, self._args.tex_wig_folder,
+                           self._args.frag_wig_folder, self._args.cutoff_overlap_tex,
+                           self._args.cutoff_overlap_frag, self._args.cutoff_coverage,
+                           self._args.annotation_folder, self._args.features,
+                           self._args.coverage_type, self._args.max_colorbar,
+                           self._args.min_colorbar)
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
         if self._args.compute_program.lower() == "tss":
@@ -274,8 +276,11 @@ class Controller(object):
                 self._args.frag_libs, self._args.tex_notex,
                 self._args.replicates_tex, self._args.replicates_frag,
                 self._args.table_best, self._args.sRNA_folder, 
-                self._args.start_coden, self._args.stop_coden, 
-                self._args.condition_best, self._args.cutoff_background)
+                self._args.start_codon, self._args.stop_codon, 
+                self._args.cutoff_background, self._args.min_dist_rbs,
+                self._args.max_dist_rbs, self._args.fuzzy_rbs,
+                self._args.rbs_not_after_TSS, self._args.print_all_combination,
+                self._args.best_no_sRNA, self._args.best_no_TSS)
 
     def meme(self):
         """promoter detectopn"""
@@ -287,7 +292,7 @@ class Controller(object):
                 self._paths.promoter_output_folder, self._args.tex_libs,
                 self._args.TSS_folder, self._args.fasta_folder, 
                 self._args.num_motif, self._args.motif_width, 
-                self._args.parallel, self._args.TSS_source, 
+                self._args.TSS_source, 
                 self._args.tex_wig_path, self._args.annotation_folder,
                 self._args.combine_all)
 
@@ -343,7 +348,8 @@ class Controller(object):
                 self._args.unstructured_region_RNAup, self._args.energy_threshold,
                 self._args.duplex_distance, self._args.top,
                 self._paths.starget_output_folder, self._args.process_rnaplex,
-                self._args.process_rnaup, self._args.continue_rnaup)
+                self._args.process_rnaup, self._args.continue_rnaup,
+                self._args.potential_target_start, self._args.potential_target_end)
     def snp(self):
         """SNP transcript detection"""
         project_creator.create_subfolders(self._paths.required_folders("snp"))
@@ -387,8 +393,10 @@ class Controller(object):
             self._args.gff_path, self._args.fasta_path,
             self._args.Rfam, self._paths.ribos_output_folder,
             self._args.re_scan, self._args.e_value,
-            self._args.output_all,
-            self._paths.database_folder, self._args.fuzzy)
+            self._args.output_all, self._paths.database_folder,
+            self._args.fuzzy, self._args.start_codon,
+            self._args.min_dist_rbs, self._args.max_dist_rbs,
+            self._args.fuzzy_rbs)
     def screen(self):
         """generate screenshot"""
         screen = Screen(self._args.output_folder, self._args.fasta)

@@ -141,7 +141,7 @@ def get_attribute_string(srna_datas, tss_pro, num, name):
     if len(pro) == 0:
         pro = "NA"
     with_tss = "=".join(["with_TSS", tss])
-    with_pro = "=".join(["with_cleavage", pro])
+    with_pro = "=".join(["end_cleavage", pro])
     if srna_datas is None:
         if (tss != "NA") and (pro != "NA"):
             attribute_string = ";".join([attribute_string, with_tss, with_pro])
@@ -171,17 +171,21 @@ def get_attribute_string(srna_datas, tss_pro, num, name):
 def print_file(string, nums, tss, output, out_table, srna_datas, table_best):
     name = '%0*d' % (5, nums["uni"])
     datas = string.split("\t")
-    out_table.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t".format(
-                    datas[0], name, datas[3], datas[4], datas[6],
-                    ";".join(srna_datas["conds"].keys()),
-                    ";".join(srna_datas["conds"].values()),
-                    srna_datas["best"], srna_datas["high"], srna_datas["low"]))
-    attribute_string = get_attribute_string(srna_datas, tss, nums["uni"], name)
-    output.write("\t".join([string, attribute_string]) + "\n")
-    nums["uni"] += 1
     if (srna_datas is None):
+        out_table.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t".format(
+                        datas[0], name, datas[3], datas[4], datas[6], "NA", "NA",
+                        "NA", "NA", "NA"))
+        attribute_string = get_attribute_string(srna_datas, tss, nums["uni"], name)
+        output.write("\t".join([string, attribute_string]) + "\n")
         out_table.write(tss + "\n")
     else:
+        out_table.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t".format(
+                        datas[0], name, datas[3], datas[4], datas[6],
+                        ";".join(srna_datas["conds"].keys()),
+                        ";".join(srna_datas["conds"].values()),
+                        srna_datas["best"], srna_datas["high"], srna_datas["low"]))
+        attribute_string = get_attribute_string(srna_datas, tss, nums["uni"], name)
+        output.write("\t".join([string, attribute_string]) + "\n")
         if srna_datas["detail"] is not None:
             out_table.write(tss + "\t")
             if not table_best:
@@ -201,6 +205,7 @@ def print_file(string, nums, tss, output, out_table, srna_datas, table_best):
                                 srna_datas["track"], srna_datas["best"],
                                 srna_datas["high"], srna_datas["low"]))
         out_table.write("\n")
+    nums["uni"] += 1
 
 def get_coverage(start, end, strain, wigs, strand, ta, nums, tss, output,
                  template_texs, out_table, cutoff_coverage, tex_notex,
@@ -487,13 +492,18 @@ def read_data(gff_file, tss_file, tran_file, pro_file):
             pros.append(entry)
             num_pro += 1
         pros = sorted(pros, key=lambda k: (k.seq_id, k.start))
-    for entry_ta in gff_parser.entries(open(tran_file)):
+    t_h = open(tran_file)
+    for entry_ta in gff_parser.entries(t_h):
         tas.append(entry_ta)
         num_ta += 1
     nums = {"cds": num_cds, "tss": num_tss, "ta": num_ta,
             "pro": num_pro, "uni": 0}
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
+    g_f.close()
+    tss_f.close()
+    pro_f.close()
+    t_h.close()
     return nums, cdss, tas, tsss, pros
 
 def compare_ta_cds(cdss, ta, detects):
@@ -579,3 +589,6 @@ def intergenic_srna(gff_file, tran_file, tss_file, pro_file, fuzzy, max_len,
     stat.write("number of cds = {0} \n".format(nums["cds"]))
     stat.write("number of transcript assembly = {0} \n".format(nums["ta"]))
     stat.write("total of sRNA candidates = {0} \n".format(nums["uni"]))
+    output.close()
+    out_table.close()
+    stat.close()

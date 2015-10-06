@@ -53,7 +53,7 @@ def print_stat(operons, total_num, class_operon, out):
         out.write("\tthe number of operons which {0} = {1} ({2})\n".format(
                   key, value, float(value) / float(total_num)))
     out.write("mono/polycistronic:\n")
-    out.write("\tno associated with CDS: {0} ({0})\n".format(
+    out.write("\tno associated with CDS: {0} ({1})\n".format(
               class_operon["na"],
               float(class_operon["na"]) / float(class_operon["total"])))
     out.write("\tmonocistronic: {0} ({1})\n".format(
@@ -101,3 +101,5 @@ def stat(input_file, out_file):
         out.write("\n" + strain + ":\n")
         print_stat(operons[strain], total_num[strain],
                    class_operon[strain], out)
+    out.close()
+    f_h.close()
