@@ -317,7 +317,7 @@ class Controller(object):
                                  self._args.fasta_path, self._args.align)
         circ.run_circrna(
                 self._args.align, self._args.process, self._args.fasta_path,
-                self._args.annotation_path, self._args.normal_bam_path,
+                self._args.annotation_path, self._args.tex_bam_path,
                 self._args.fragmented_bam_path,
                 self._paths.read_folder, self._paths.circrna_stat_folder, 
                 self._args.convert_to_gff, self._args.support_reads,

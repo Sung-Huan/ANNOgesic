@@ -2,7 +2,7 @@ main(){
     PATH_FILE=$(pwd)
     PYTHON_PATH=python3.4
     STRAINS=Staphylococcus_aureus_HG003
-    ANNOGESIC_PATH=/home/silas/ANNOgesic/ANNOgesic.py
+    ANNOGESIC_PATH=/home/silas/ANNOgesic/bin/annogesic
     ANNOGESIC_FOLDER=ANNOgesic
     FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795
     ID_MAPPING_SOURCE=ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
@@ -71,7 +71,7 @@ main(){
 #    get_target_fasta
 #    annotation_transfer
 #    expression_analysis
-#    SNP_calling_reference
+    SNP_calling_reference
 #    TSS_prediction
 #    Transcriptome_assembly
 #    Terminator_prediction
@@ -82,7 +82,7 @@ main(){
 #    promoter_detection
 #    CircRNA_detection
 #    Go_term
-    sRNA_target
+#    sRNA_target
 #    operon_detection
 #    SNP_calling_target
 #    PPI_network
@@ -144,7 +144,7 @@ annotation_transfer(){
 	-p NC_007795.1:Staphylococcus_aureus_HG003 \
 	-g \
 	--RATT_path /home/silas/ANNOgesic/tools/PAGIT/RATT/start.ratt.sh \
-        $ANNOGESIC_FOLDER
+	$ANNOGESIC_FOLDER
 }
 
 expression_analysis(){
@@ -152,12 +152,10 @@ expression_analysis(){
          expression_analysis \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -tl $tex_notex_libs \
-        -fl $frag_libs \
         -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
-        -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -f CDS tRNA rRNA \
         -rt 1 \
-        -rf 1 \
+	-ct high \
         $ANNOGESIC_FOLDER
 }
 
@@ -205,17 +203,15 @@ TSS_prediction(){
 	-rm 1 \
         -s \
         -m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
+        -ta $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         -v \
         $ANNOGESIC_FOLDER
 }
-#-ta $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
-#-m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
-#        -v \
 
 Transcriptome_assembly(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         transcript_assembly \
-        -nw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
 	-fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -tl $tex_notex_libs \
         -fl $frag_libs \
@@ -300,8 +296,8 @@ sRNA_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         srna \
         -d 1 2 3 4 5 \
-        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Progs \
-        --Vienna_utils /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Utils \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs \
+        --Vienna_utils /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Utils \
 	--blast_plus_folder /home/silas/ANNOgesic/tools \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs \
@@ -344,7 +340,7 @@ sORF_detection(){
         -u \
         $ANNOGESIC_FOLDER
 }
-#-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
+
 promoter_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         promoter \
@@ -352,6 +348,7 @@ promoter_detection(){
         -f $ANNOGESIC_FOLDER/output/target/fasta \
 	-w 50 51 45 2-10 \
 	-g $ANNOGESIC_FOLDER/output/TSS/gffs \
+	-c \
         $ANNOGESIC_FOLDER
 }
 
@@ -378,7 +375,7 @@ Go_term(){
 sRNA_target(){
     $PYTHON_PATH $ANNOGESIC_PATH \
          srna_target \
-        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.9/Progs \
+        --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
         -r $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
@@ -421,7 +418,7 @@ PPI_network(){
         -p $ANNOGESIC_FOLDER/output/target/annotation \
         -d $ANNOGESIC_FOLDER/input/database/species.v9.1.txt \
         -n \
-	-q Staphylococcus_aureus_HG003:1954999:1956240:- \
+	-q all \
         -ns 4000 \
         $ANNOGESIC_FOLDER
 }
