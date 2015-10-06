@@ -202,7 +202,7 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("transcript_assembly"))
         transcript = TranscriptAssembly(self._paths.transcript_assembly_output_folder)
         transcript.run_transcript_assembly(
-                self._args.frag_wig_path, self._args.normal_wig_path, 
+                self._args.frag_wig_path, self._args.tex_wig_path, 
                 self._args.sort_annotation, self._args.tex_notex,
                 self._args.length, self._args.annotation_folder, 
                 self._args.height, self._args.width, 
