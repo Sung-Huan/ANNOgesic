@@ -96,7 +96,7 @@ class Controller(object):
                     self._paths.tar_annotation_folder)
         ratt.annotation_transfer(self._args.RATT_path, 
                                  self._args.element, self._args.transfer_type, 
-                                 self._args.ref_gbk, self._args.target_fasta, 
+                                 self._args.ref_embl_gbk, self._args.target_fasta, 
                                  self._args.ref_fasta, self._paths.ratt_folder, 
                                  self._args.convert_to_gff_rnt_ptt,
                                  self._paths.tar_annotation_folder, self._args.compare_pair)
