@@ -67,7 +67,8 @@ Then you will get the following results
     NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
 
 If the fasta files and annotation files which are retrieved from NCBI is exactly the strain what you want,
-you can add ``-t`` to store the files to ``ANNOgesic/output/target``.
+you can add ``-t`` to store the files to ``ANNOgesic/output/target``. Then you can skip running ``get_target_fasta`` 
+and ``annotation_transfer``.
 
 Putting wig, bam files and reads to proper location
 ------------------
@@ -131,15 +132,7 @@ We use a simple example to modify our test case. The mutation table is
  test_case2  NC_000915.1   \-            600       g           insertion            SAOUHSC_00132
 ===========  ============  ============  ========  =========  ====================  =============  ====  ============
 
-==========  ============  ============  ========  =========  ====================  =============  =======  ===========
-#target_id  reference_id  reference_nt  position  target_nt  impact of correction  locus tag      gene     Description
-----------  ------------  ------------  --------  ---------  --------------------  -------------  -------  -----------
-NC_test.1   NC_000915.1   a             3         c          (blank)               SAOUHSC_00002  dnaA      XXXXXX
-NC_test.1   NC_000915.1   t             6         \-         deletion              (blank)        (blank)   YYYYYY
-test_case2  NC_000915.1   \-            6         g          insertion             SAOUHSC_00132  (blank)   (blank)
-==========  ===========   ============  ========  =========  ====================  =============  =======  ===========
-
-You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
+Every column is separated by tab. You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
 two fasta files in ``ANNOgesic/output/target/fasta``.
 
 Now, let's try it
@@ -153,7 +146,7 @@ Now, let's try it
         ANNOgesic
 
 ``-r`` is the folder of original fasta files. In ``-o`` you can assign the filename of output fasta and 
-which strains you want to put in it. In our case, we call the first fasta file test_case1 and the 
+the strains you want to put in it. In our case, we call the first fasta file test_case1 and the 
 second one test_case2. In test_case1 stores the fasta of NC_test.1 and test_case2 stores test_case2. 
 Now we can check the retuls.
 
@@ -182,13 +175,13 @@ Now we can check the retuls.
     CAGTCTTTTAAATGCGGCTCGATGAGGGCGTCAATTTCATTGATTTTTTCTAACACGCCA
     TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG
 
-In new fasta file, the third nucleotide replace from A to c. Moreover, The sixth nucleotide is deleted.
-In test_case2, it also modify the fasta file based on the mutation table.
+In ``test_case1.fa``, the third nucleotide replace from A to c. Moreover, The sixth nucleotide is deleted.
+In ``test_case2.fa``, it also modifies the fasta file based on the mutation table.
 
 when you have the correct fasta files, you can map your reads to the correct fasta file.
 
-If you have no mutation table, you can also use the subcommand ``snp`` to detect the mutation automatically. 
-For this subcommand, we will go through it later.
+If you have no mutation table, you can also use the subcommand ``snp`` to detect the mutation and apply to 
+reference genomoe automatically. For this subcommand, we will go through it later.
 
 Generating annotation files
 -------------------
@@ -205,7 +198,7 @@ yourself, remember to assign the path by running
 
     . $PAGIT_HOME/sourceme.pagit
 
-``$PAGIT_HOME`` is the directory of PAGIT. The better way is change the environment. Or you have to run 
+``$PAGIT_HOME`` is the directory of PAGIT. The better way is change the environment directly. Or you have to run 
 this command everytime. For changing the environment, you just need to copy all the information of 
 ``$PAGIT_HOME/sourceme.pagit`` to ``.bashrc``.
 
@@ -224,8 +217,9 @@ Now, we can try it.
         ANNOgesic
 
 ``-e`` is the prefix of output embl files. ``-t`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
-We use ``Strain`` because the similarity is higher than 90%. We assign the pairs of transfer at ``-p``. 
-The names are strains' name not filenames of fasta files. ``-g`` means we want to transfer the embl files 
+We use ``Strain`` because the similarity is higher than 90%. For other programs, you can refer to 
+`RATT <http://ratt.sourceforge.net/>`_. We assign the pairs of transfer at ``-p``. 
+The names for ``-p`` are the names of strain not filenames of fasta files. ``-g`` means we want to transfer the embl files 
 to GFF3 files and store in ``ANNOgesic/output/target/annotation``.
 
 When the computation is done, you can see
@@ -237,8 +231,8 @@ When the computation is done, you can see
     $ ls ANNOgesic/output/annotation_transfer/
     chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff  ratt_log.txt  test_case2.gff
 
-In ``ANNOgesic/output/target/annotation``, you can see ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
-you can see the results of `RATT <http://ratt.sourceforge.net/>`_. ``chromosome.NC_test.1.final.embl`` and 
+In ``ANNOgesic/output/target/annotation``, you can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
+you can find the results of `RATT <http://ratt.sourceforge.net/>`_. ``chromosome.NC_test.1.final.embl`` and 
 ``chromosome.test_case2.final.embl`` are generated by `RATT <http://ratt.sourceforge.net/>`_. Gff files are 
 transferred from these embl files.
 
@@ -246,9 +240,12 @@ Gene expression analysis
 -----------------
 
 Now we already saw how to generate the fasta and annotation files. In order to running
-the following subcommand, we have to re-run ``get_input_files`` again.
+the following subcommand, we have to remove the files that we generated before and 
+re-run ``get_input_files`` again.
 
 :: 
+    rm ANNOgesic/output/target/annotation/*
+    rm ANNOgesic/output/target/fasta/*
     python3 annogesic get_input_files \
         -F $FTP_SOURCE \
         -g \
@@ -260,9 +257,13 @@ the following subcommand, we have to re-run ``get_input_files`` again.
         -r \
         ANNOgesic
 
-We do this because the target genome we want to run is already in NCBI. Therefore, we can skip ``get_target_fasta`` 
-and ``annotation_transfer``. Adding ``-t`` will store all files which are downloaded to ``ANNOgesic/output/target``.
-Now, our fasta and annotation files are fit with wiggle files. We can run other subcommands now.
+We do this because the target genome of our test case is exactly what you retrieved from NCBI. 
+The previous files are only for testing ``get_target_fasta`` and ``annotation_transfer``. We 
+don't need them anymore. If they still in the folder, it will also cause some error.
+Therefore, we need to remove them and re-download the files again. Then, we can skip 
+``get_target_fasta`` and ``annotation_transfer``. Adding ``-t`` will 
+store all files which are downloaded to ``ANNOgesic/output/target``. Now, our fasta and annotation 
+files are fit with wiggle files. We can run other subcommands now.
 
 For analyzing gene expression, we can run ``expression analysis``. Based on this subcommand, you can 
 know which CDS expresses in which library or discover housekeeping gene.
