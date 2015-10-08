@@ -2,8 +2,8 @@ Performing a test cast
 ===================
 
 Here we will guide you through a small test case using ANNOgesic. 
-You will see most subcommands of ANNOgesic. The test case is a publicly 
-available RNA-Seq from NCBI GEO that was part of a work by
+You will see most of the subcommands of ANNOgesic. The test case is a public 
+RNA-Seq data from NCBI GEO that was part of a work by
 `Bischler et al. <http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564>`_.
 The differential RNA-seq data is of Helicobacter pylori 26695. 
 There will be several output files which are generated in different formats. 
@@ -64,7 +64,7 @@ Then you will get the following results
     $ ls ANNOgesic/input/reference/fasta/
     NC_000915.fa
     $ ls ANNOgesic/input/reference/annotation/
-    NC_000915.embl  NC_000915.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
+    NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
 
 Putting wig, bam files and reads to proper location
 ------------------

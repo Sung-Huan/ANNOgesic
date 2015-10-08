@@ -400,8 +400,18 @@ def get_attribute(num, name, start_tss, sorf, type_):
                              ["RBS", "&".join(sorf["rbs"])])])
     return attribute_string
 
+def check_start_point(sorf):
+    if sorf["start_TSS"] != "NA":
+        if (sorf["strand"] == "+") and (
+            sorf["start"] > int(sorf["start_TSS"])):
+            sorf["start"] = int(sorf["start_TSS"])
+        elif (sorf["strand"] == "-") and (
+            sorf["end"] < int(sorf["start_TSS"])):
+            sorf["end"] = int(sorf["start_TSS"])
+
 def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
     name = '%0*d' % (5, num)
+    check_start_point(sorf)
     if sorf["type"] == "intergenic":
         source = "intergenic"
         type_ = "Intergenic"

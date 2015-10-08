@@ -65,22 +65,28 @@ class Controller(object):
 #            self._paths.database_folder))
     def get_input(self):
         """Download required files from website."""
+        if self._args.for_target:
+            annotation_folder = self._paths.tar_annotation_folder
+            fasta_folder = self._paths.tar_fasta_folder
+        else:
+            annotation_folder = self._paths.ref_annotation_folder
+            fasta_folder = self._paths.ref_fasta_folder
         if self._args.ref_gff is True:
-            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "gff")
+            get_file(self._args.FTP_path, annotation_folder, "gff", self._args.for_target)
         if self._args.ref_fasta is True:
-            get_file(self._args.FTP_path, self._paths.ref_fasta_folder, "fna")
+            get_file(self._args.FTP_path, fasta_folder, "fna", self._args.for_target)
         if self._args.ref_gbk is True:
-            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "gbk")
+            get_file(self._args.FTP_path, annotation_folder, "gbk", self._args.for_target)
         if self._args.ref_ptt is True:
-            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "ptt")
+            get_file(self._args.FTP_path, annotation_folder, "ptt", self._args.for_target)
         if self._args.ref_rnt is True:
-            get_file(self._args.FTP_path, self._paths.ref_annotation_folder, "rnt")
+            get_file(self._args.FTP_path, annotation_folder, "rnt", self._args.for_target)
         if self._args.convert_embl is True:
-            annotation_files = os.listdir(self._paths.ref_annotation_folder)
+            annotation_files = os.listdir(annotation_folder)
             if len(annotation_files) == 0:
                 sys.stdout.write("No gbk files!!\n")
             else:
-                Converter().convert_gbk2embl(self._paths.ref_annotation_folder)
+                Converter().convert_gbk2embl(annotation_folder)
     def get_target_fasta(self):
         """Get target fasta"""
         project_creator.create_subfolders(self._paths.required_folders("get_target_fasta"))
@@ -91,7 +97,7 @@ class Controller(object):
     def ratt(self):
         """Run RATT to transfer annotation file from reference to target."""
         project_creator.create_subfolders(self._paths.required_folders("annotation_transfer"))
-        ratt = RATT(self._args.ref_gbk, self._paths.ratt_folder,
+        ratt = RATT(self._args.ref_embl_gbk, self._paths.ratt_folder,
                     self._args.target_fasta, self._args.ref_fasta,
                     self._paths.tar_annotation_folder)
         ratt.annotation_transfer(self._args.RATT_path, 
@@ -127,8 +133,7 @@ class Controller(object):
                                   self._args.annotation_folder, self._args.wig_folder,
                                   self._args.fasta_folder)
         tsspredator.run_tsspredator(
-                      self._args.TSSpredator_path, self._args.compute_program,
-                      self._paths.tsspredator_input_folder, 
+                      self._args.TSSpredator_path, self._args.compute_program, 
                       self._args.fasta_folder, self._args.annotation_folder,
                       self._args.wig_folder, self._args.lib, 
                       self._args.output_prefix,

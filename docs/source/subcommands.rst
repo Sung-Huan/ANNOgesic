@@ -130,8 +130,6 @@ riboswitch_ID: For storing the file which contains all the Rfam ID of riboswitch
 For the details of format, please refer to the section of 
 ``riboswicth``.
 
-TSSpredator: Please leave it blank. It is for config files of ``TSSpredator``.
-
 wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them to 
 ``fragment`` (fragmented libraries) or ``tex_notex`` (TEX +/- treated libraries).
 
@@ -779,6 +777,8 @@ of transcript. It will show the associated TSS in the transcript.
 
 The output file of processing site is similar. Just replace ``TSS`` to ``processing_site``
 like ``$ANNOgesic/output/processing_site``.
+
+``configs``: the configuration file for running TSSpredator.
 
 transcript_assembly
 -------------------
@@ -2553,8 +2553,9 @@ screenshot
 -----------
 
 ``screenshot`` will generate batch files based on input gff files for producing screenshot of `IGV <https://www.broadinstitute.org/igv>`_.
-When the batch file produced, user just need to open `IGV <https://www.broadinstitute.org/igv>`_, then press tools 
-and run batch script. The program will automatically produce screenshot. Then user can refer to them easily.
+When the batch file produced, user just need to open `IGV <https://www.broadinstitute.org/igv>`_, then press ``tools`` 
+on the top tags and choose ``run batch script``. The program will automatically produce screenshot. 
+Then user can refer to them easily.
 
 - Pre-required tools and files
 
@@ -2628,9 +2629,9 @@ The libraries and wiggle files. Please refer to the ``The format of libraries fo
 Based on the path of ``main_gff``, ``screenshot`` will generate a folder - ``screenshots`` under the 
 folder of ``main_gff``. All output files will be stored in this folder.
 
-``forward.txt`` is the batch file of forward strand.
+``forward.txt`` is the batch file of forward strand for running on IGV.
 
-``reverse.txt`` is the batch file of reverse strand.
+``reverse.txt`` is the batch file of reverse strand for running on IGV.
 
 ``forward`` is the folder for storing screenshots of forward strand.
 

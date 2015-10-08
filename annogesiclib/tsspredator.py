@@ -173,7 +173,7 @@ class TSSpredator(object):
             if "MasterTable.tsv" not in os.listdir(out_path):
                 print("Error:there is not MasterTable file in {0}".format(
                       out_path))
-                print("Please check config.ini")
+                print("Please check configuration file.")
             else:
                 self.converter.convert_mastertable2gff(
                                 os.path.join(out_path, "MasterTable.tsv"),
@@ -370,12 +370,13 @@ class TSSpredator(object):
                 prefix = None
         out.close()
 
-    def run_tsspredator(self, tsspredator_path, program, input_folder, fastas,
+    def run_tsspredator(self, tsspredator_path, program, fastas,
             gffs, wig_folder, libs, output_prefixs, height, height_reduction,
             factor, factor_reduction, base_height, enrichment_factor,
             processing_factor, repmatch, out_folder, stat, validate, manual,
             ta_files, fuzzy, utr_length, cluster, nt_length, check_orphan,
             overlap_feature, references, remove_low_expression):
+        input_folder = os.path.join(out_folder, "configs")
         for gff in os.listdir(gffs): ####  generate config file for running.
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))

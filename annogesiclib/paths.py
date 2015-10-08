@@ -41,7 +41,6 @@ class Paths(object):
         self.mutation_table_folder = "%s/mutation_table" % self.input_folder
         self.promoter_input_folder = "%s/promoter_analysis" % self.input_folder
         self.database_folder = "%s/database" % self.input_folder
-        self.tsspredator_input_folder = "%s/TSSpredator" % self.input_folder
         self.manual_TSS_folder = "%s/manual_TSS" % self.input_folder
         self.manual_pro_folder = "%s/manual_processing_site" % self.input_folder
         self.read_folder = "%s/reads" % self.input_folder
@@ -114,6 +113,8 @@ class Paths(object):
         self.tss_statistics_folder = "%s/statistics" % (
             self.tsspredator_base_folder)
         self.tss_Master_folder = "%s/MasterTables" % (
+            self.tsspredator_base_folder)
+        self.tss_config_folder = "%s/configs" % (
             self.tsspredator_base_folder)
 
     def _set_processing_folder_names(self):
@@ -324,9 +325,8 @@ class Paths(object):
     def required_input_folders(self):
         return [self.reference_input_folder, self.wig_folder, 
                 self.mutation_table_folder, self.read_folder,
-		self.bam_folder,
-		self.promoter_input_folder, self.database_folder,
-                self.tsspredator_input_folder, self.manual_TSS_folder,
+		self.bam_folder, self.promoter_input_folder,
+                self.database_folder, self.manual_TSS_folder,
                 self.manual_pro_folder, self.riborfam_folder]
 
     def required_output_folders(self, folder_type):
@@ -374,7 +374,7 @@ class Paths(object):
 
     def required_tsspredator_folders(self):
         return [self.tss_to_gff_folder, self.tss_statistics_folder,
-                self.tss_Master_folder]
+                self.tss_Master_folder, self.tss_config_folder]
     def required_transterm_folders(self):
         return [self.term_to_gff_folder, self.term_statistics_folder,
                 self.transtermhp_folder, self.term_to_table_folder]
