@@ -404,7 +404,7 @@ The command would be like the following.
 
     python3 annogesic transcript_assembly \
         -g ANNOgesic/output/target/annotation \
-        -nw ANNOgesic/input/wigs/tex_notex \
+        -tw ANNOgesic/input/wigs/tex_notex \
         -tl $tex_notex_libs \
         -rt 1 \
         -te 2 \
