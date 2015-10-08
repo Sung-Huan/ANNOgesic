@@ -66,6 +66,9 @@ Then you will get the following results
     $ ls ANNOgesic/input/reference/annotation/
     NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
 
+If the fasta files and annotation files which are retrieved from NCBI is exactly the strain what you want,
+you can add ``-t`` to store the files to ``ANNOgesic/output/target``.
+
 Putting wig, bam files and reads to proper location
 ------------------
 For the test case, you can download files from 
@@ -90,9 +93,7 @@ use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
    $ rm SRR1951997.sra
    $ rm SRR1951998.sra
 
-Now you get the reads. You can select a part of them to reduce the running time.
-
-Then we have to download the wiggle files.
+Now you get the reads. Then we have to download the wiggle files.
 
 ::
 
@@ -107,25 +108,28 @@ Then we have to download the wiggle files.
            GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz
     cd ../../../../
 
+Because it is a test case, we only download one replicate to reduce the running time.
+
 Improving the reference genome
 ------------------
 
-If the input data which we retrieved is exactly what you want, you can skip this step and just 
-copy the data which you retrieved to ``ANNOgesic/output/target/fasta``. 
+If the data which we retrieved from NCBI is exactly the strain what you want, you can skip this step. 
+Please remember to put or download the fasta file to ``ANNOgesic/output/target/fasta``.
 
-If the retrieved data is only the closed strain of your target strain, you may need to run 
+If the retrieved strain is only the closed strain of your target strain, you may need to run 
 subcommand ``get_target_fasta``. However, this command need the mutation table. please refer 
 to the `subcommand <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst>`_. 
 Once you have the mutation table, you can improve the fasta files.
 
 We use a simple example to modify our test case. The mutation table is 
 
-::
-
-    #target_id	reference_id	reference_nt	position	target_nt	impact of correction	locus tag	gene	Description
-    NC_test.1	NC_000915.1	a	3	c		SAOUHSC_00002	dnaA	XXXXXX
-    NC_test.1	NC_000915.1	t	6	-	deletion			YYYYYY
-    test_case2	NC_000915.1	-	6	g	insertion	SAOUHSC_00132		
+==========   ============    ============   ========    =========    ====================    =============    ====    ===========
+#target_id   reference_id    reference_nt   position    target_nt    impact of correction    locus tag        gene    Description
+----------   ------------    ------------   --------    ---------    --------------------    -------------    ----    -----------
+NC_test.1    NC_000915.1     a              3           c                                    SAOUHSC_00002    dnaA     XXXXXX
+NC_test.1    NC_000915.1     t              6           -            deletion                	                       YYYYYY
+test_case2   NC_000915.1     -              6           g            insertion               SAOUHSC_00132    	                 
+==========   ===========     ============   ========    =========    ====================    =============    ====     ==========	
 
 You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
 two fasta files in ``ANNOgesic/output/target/fasta``.
@@ -182,8 +186,8 @@ Generating annotation files
 -------------------
 
 We have the fasta files now. We can use it to generate our annotation files. If the annotaion files which 
-you retrieved by ``get_input_files`` is exactly what you want, you can skip this step and just copy the 
-annotation files to ``ANNOgesic/output/target/annotation``.
+you retrieved by ``get_input_files`` is exactly the strain what you want, you can skip this step. Please 
+remember to copy or download the annotation files to ``ANNOgesic/output/target/annotation``.
 
 Before you running it, you have to notice the environment path. If you are using docker container, the 
 path is alread setup. You don't need to worry about it. However, if you are build ANNOgesic by 
@@ -250,7 +254,7 @@ the following subcommand, we have to re-run ``get_input_files`` again.
 
 We do this because the target genome we want to run is already in NCBI. Therefore, we can skip ``get_target_fasta`` 
 and ``annotation_transfer``. Adding ``-t`` will store all files which are downloaded to ``ANNOgesic/output/target``.
-Now, our fasta and annotation files are fit with wiggle files. We can other subcommands now.
+Now, our fasta and annotation files are fit with wiggle files. We can run other subcommands now.
 
 For analyzing gene expression, we can run ``expression analysis``. Based on this subcommand, you can 
 know which CDS expresses in which library or discover housekeeping gene.
