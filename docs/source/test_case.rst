@@ -123,13 +123,21 @@ Once you have the mutation table, you can improve the fasta files.
 
 We use a simple example to modify our test case. The mutation table is 
 
-==========   ============    ============   ========    =========    ====================    =============    =======    ===========
-#target_id   reference_id    reference_nt   position    target_nt    impact of correction    locus tag        gene       Description
-----------   ------------    ------------   --------    ---------    --------------------    -------------    -------    -----------
-NC_test.1    NC_000915.1     a              3           c            (blank)                 SAOUHSC_00002    dnaA        XXXXXX
-NC_test.1    NC_000915.1     t              6           -            deletion                (blank)	      (blank)     YYYYYY
-test_case2   NC_000915.1     -              6           g            insertion               SAOUHSC_00132    (blank)     (blank)
-==========   ===========     ============   ========    =========    ====================    =============    =======     ==========	
+===========  ============  ============  ========  =========  ====================  =============  ====  ============
+ #target_id  reference_id  reference_nt  position  target_nt  impact of correction  locus tag      gene  Description
+-----------  ------------  ------------  --------  ---------  --------------------  -------------  ----  ------------
+ HG003       NC_007795.1   a             333       c                                SAOUHSC_00002  dnaA  XXXXXX
+ HG003       NC_007795.1   t             543       \-          deletion                                  YYYYYY
+ HG003       NC_007795.1   \-            600       g           insertion            SAOUHSC_00132
+===========  ============  ============  ========  =========  ====================  =============  ====  ============
+
+==========  ============  ============  ========  =========  ====================  =============  =======  ===========
+#target_id  reference_id  reference_nt  position  target_nt  impact of correction  locus tag      gene     Description
+----------  ------------  ------------  --------  ---------  --------------------  -------------  -------  -----------
+NC_test.1   NC_000915.1   a             3         c          (blank)               SAOUHSC_00002  dnaA      XXXXXX
+NC_test.1   NC_000915.1   t             6         \-         deletion              (blank)        (blank)   YYYYYY
+test_case2  NC_000915.1   \-            6         g          insertion             SAOUHSC_00132  (blank)   (blank)
+==========  ===========   ============  ========  =========  ====================  =============  =======  ===========
 
 You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
 two fasta files in ``ANNOgesic/output/target/fasta``.
