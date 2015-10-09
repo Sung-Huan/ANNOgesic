@@ -75,10 +75,10 @@ class TestRibos(unittest.TestCase):
 
     def test_merge_results(self):
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file) 
-        gen_file(os.path.join(self.out_folder, "tmp_table/test_RBS.csv"), self.example.table)
-        gen_file(os.path.join(self.out_folder, "tmp_scan/test_RBS.txt"), self.example.rescan_file)
+        gen_file(os.path.join(self.out_folder, "tmp_table/test_riboswitch.csv"), self.example.table)
+        gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch.txt"), self.example.rescan_file)
         gen_file(os.path.join(self.test_folder, "ids"), self.example.ids)
-        self.ribo._merge_results(self.gffs, self.scan, self.tables, self.out_folder,
+        self.ribo._merge_results(self.gffs, self.scan, self.tables,
                                  self.stat, os.path.join(self.test_folder, "ids"),
                                  3, self.out_folder, False)
 

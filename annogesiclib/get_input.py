@@ -6,7 +6,7 @@ from annogesiclib.seq_editer import SeqEditer
 def wget(input_folder, ftp, files_type):
     os.system(" ".join(["wget", "-cP", input_folder, ftp + "/*" + files_type]))
 
-def get_file(ftp, input_folder, files_type):
+def get_file(ftp, input_folder, files_type, target):
     """Download required files from FTP."""
     detect = False
     wget(input_folder, ftp, files_type)
@@ -31,16 +31,16 @@ def get_file(ftp, input_folder, files_type):
                         line = line.strip()
                         line = line.split("\t")
                         break
-            if line[0] != file_[:-4]:
-                name = line[0]
-                os.rename(input_file, os.path.join(input_folder, name + ".gff"))
+#            if (line[0] != file_[:-4]) and (not target):
+#                name = line[0]
+#                os.rename(input_file, os.path.join(input_folder, name + ".gff"))
         elif (file_[-3:] == "gbk"):
             with open("/".join([input_folder, file_]), "r") as g_f:
                 for line in g_f:
                     if line[0:7] == "VERSION":
                         data = line[12:].split(" ")
                         break
-            if data[0] != file_[:-4]:
+            if (data[0] != file_[:-4]) and (not target):
                 name = data[0]
                 os.rename(input_file, os.path.join(input_folder, name + ".gbk"))
         if detect:

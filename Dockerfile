@@ -25,6 +25,7 @@ ncbi-blast+ \
 pkg-config \
 python3-dev \
 libfreetype6-dev \
+libxft-dev \
 libpng-dev \
 python3-pip \
 python3-numpy \
@@ -44,6 +45,8 @@ apache2-dev \
 libapache-singleton-perl \
 libjson-rpc-perl \
 libncurses5-dev
+
+RUN apt-get update
 
 RUN pip3 install \
 matplotlib \

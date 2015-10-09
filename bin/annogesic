@@ -7,7 +7,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.1.0"
+__version__ = "0.1.3"
 
 def main():
     home_path = os.environ["HOME"]
@@ -49,6 +49,10 @@ def main():
     get_input_parser.add_argument(
         "--convert_embl", "-e", default=False, action="store_true",
         help="Convert gbk to embl files of reference. Default is False.")
+    get_input_parser.add_argument(
+        "--for_target", "-t", default=False, action="store_true",
+        help="If the genome which you download from NCBI is your query sequence(you won't modify the genome), "
+        "you can assign the download files to store in target folder in stead of reference folder.")
     get_input_parser.set_defaults(func=get_input)
     # get target fasta
     get_target_fasta_parser = subparsers.add_parser(
@@ -118,11 +122,11 @@ def main():
         "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     expression_parser.add_argument(
         "-fl","--frag_libs", default=None, nargs="+",
-        help="Library name of fragment library. The format is: "
+        help="Library name of fragmented library. The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     expression_parser.add_argument(
-        "-te","--tex_notex", default=2, type=int,
-        help="For tex +/- library, expressing CDS should be detected by both or just one.(1 or 2) Default is 2.")
+        "-te","--tex_notex", default=1, type=int,
+        help="For tex +/- library, expressing CDS should be detected by both or just one.(1 or 2) Default is 1.")
     expression_parser.add_argument(
         "-rt","--replicates_tex", default=None,
         help="The expressing CDS of tex +/- library should be detected more than this number of replicates.")
@@ -332,9 +336,9 @@ def main():
         "This value must be smaller than the step factor threshold. "
         "During optimization will never larger than this value. Default is 9.9.")
     op_TSSpredator_parser.add_argument(
-        "--max_base_height", "-bh", default=0.1, type=float,
+        "--max_base_height", "-bh", default=0.06, type=float,
         help="This is the minimal number of reads should be mapped on TSS. "
-        "During optimization will never larger than this value. Default is 0.1.")
+        "During optimization will never larger than this value. Default is 0.06.")
     op_TSSpredator_parser.add_argument(
         "--max_enrichment_factor", "-ef", default=6.0, type=float,
         help="This is the minimal enrichment factor. "
@@ -463,11 +467,11 @@ def main():
         "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Terminator_parser.add_argument(
         "-fl","--frag_libs", default=None, nargs="+", 
-        help="Library name of fragment library. The format is: "
+        help="Library name of fragmented library. The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Terminator_parser.add_argument(
-        "-te","--tex_notex", default=2, type=int,
-        help="For tex +/- library, terminators should be detected by both or just one.(1/2) Default is 2.")
+        "-te","--tex_notex", default=1, type=int,
+        help="For tex +/- library, terminators should be detected by both or just one.(1/2) Default is 1.")
     Terminator_parser.add_argument(
         "-rt","--replicates_tex", default=None,
         help="The terminator of tex +/- library should be detected more than this number of replicates.")
@@ -531,8 +535,8 @@ def main():
         "--replicates_frag", "-rf", default=None,
         help="The position is included in the transcript if there are more than the replicate which you assign here to supported it. (for fragmented library)")
     Transcript_parser.add_argument(
-        "--tex_notex", "-te", default=2, type=int,
-        help="If you use tex +/- libraries to run transcript assembly, the transcripts should be detected by both or just one. (1 or 2). Default is 2.")
+        "--tex_notex", "-te", default=1, type=int,
+        help="If you use tex +/- libraries to run transcript assembly, the transcripts should be detected by both or just one. (1 or 2). Default is 1.")
     Transcript_parser.add_argument(
         "--compare_TSS", "-ct", default=None,
         help="If you want to compare with TSS, please assign TSS folder.")
@@ -707,11 +711,11 @@ def main():
         "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sRNA_parser.add_argument(
         "--frag_libs", "-fl", default=None, nargs="+",
-        help="library name of fragment libraries. The format is: "
+        help="library name of fragmented libraries. The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sRNA_parser.add_argument(
-        "--tex_notex", "-te", default=2, type=int,
-        help="For tex +/- libraries, sRNA candidates should be detected by both or just one.(1/2) Default is 2.")
+        "--tex_notex", "-te", default=1, type=int,
+        help="For tex +/- libraries, sRNA candidates should be detected by both or just one.(1/2) Default is 1.")
     sRNA_parser.add_argument(
         "--replicates_tex", "-rt", default=None, 
         help="The sRNA of tex +/- libraries should be detected more than this number of replicates.")
@@ -822,11 +826,11 @@ def main():
         "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     sORF_parser.add_argument(
         "--frag_libs", "-fl", default=None, nargs="+", 
-        help="Library name of fragment library The format is: "
+        help="Library name of fragmented library The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -)..")
     sORF_parser.add_argument(
-        "--tex_notex", "-te", default=2, type=int,
-        help="For tex +/- library, sORF candidates should be detected by both or just one.(1/2) Default is 2.")
+        "--tex_notex", "-te", default=1, type=int,
+        help="For tex +/- library, sORF candidates should be detected by both or just one.(1/2) Default is 1.")
     sORF_parser.add_argument(
         "--replicates_tex", "-rt", default=None, 
         help="The sORF of tex +/- library should be detected more than this number of replicates.")
@@ -907,7 +911,7 @@ def main():
         help="The path of annotation gff folder. If your TSS is not from ANNOgesic, please assign the annotation gff path too.")
     promoter_parser.add_argument(
         "--combine_all", "-c", default=False, action="store_true",
-        help="If you want to combine all TSS in TSS output folder to generate a overall promoter motif, please turn it on. Default is False.")
+        help="If you want to combine all TSS in \"TSS_folder\" to generate promoter motifs, please turn it on. Default is False.")
     promoter_parser.set_defaults(func=run_MEME)
     # Parameters of operon detection
     operon_parser = subparsers.add_parser(
