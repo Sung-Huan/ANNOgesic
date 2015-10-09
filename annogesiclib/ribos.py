@@ -28,8 +28,8 @@ class Ribos(object):
         self.tmp_files = {"fasta": os.path.join(out_folder, "tmp_fasta"),
                           "scan": os.path.join(out_folder, "tmp_scan"),
                           "table": os.path.join(out_folder, "tmp_table")}
-        self.suffixs = {"csv": "RBS.csv", "txt": "RBS.txt",
-                        "re_txt": "RBS_rescan.txt", "re_csv": "RBS_rescan.csv"}
+        self.suffixs = {"csv": "riboswitch.csv", "txt": "riboswitch.txt",
+                        "re_txt": "riboswitch_rescan.txt", "re_csv": "riboswitch_rescan.csv"}
 
     def _run_infernal(self, infernal_path, e_value, seq, type_, prefix):
         scan_file = os.path.join(self.tmp_files["scan"],
@@ -75,7 +75,7 @@ class Ribos(object):
                     modify_table(first_table, output_all)
         return prefixs
 
-    def _merge_results(self, gffs, scan_folder, out_folder, table_folder,
+    def _merge_results(self, gffs, scan_folder, table_folder,
                        stat_folder, ribos_id, fuzzy, gff_outfolder, re_scan):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
@@ -112,7 +112,7 @@ class Ribos(object):
                 stat_and_covert2gff(os.path.join(
                      table_folder, "_".join([prefix, self.suffixs["csv"]])),
                      ribos_id,
-                     os.path.join(gff_outfolder, "_".join([prefix, "RBS.gff"])),
+                     os.path.join(gff_outfolder, "_".join([prefix, "riboswitch.gff"])),
                      fuzzy, out_stat)
                 fh.close()
 
