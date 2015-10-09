@@ -582,7 +582,7 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
         if num_type == index_large[seed]:
             continue
         if num_type == "base_height":
-            number = round(random.uniform(0.001, max_num[num_type]), 3)
+            number = round(random.uniform(0.000, max_num[num_type]), 3)
             number = '%.3f' % number
             number = float(number)
         else:
@@ -590,7 +590,7 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
             number = '%.1f' % number
             number = float(number)
         if index_large[seed] == "base_height":
-            number_par = round(random.uniform(0.001,
+            number_par = round(random.uniform(0.000,
                                max_num[index_large[seed]]), 3)
             number_par = '%.3f' % number_par
             number_par = float(number_par)
