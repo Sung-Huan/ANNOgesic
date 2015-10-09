@@ -127,6 +127,8 @@ class Paths(object):
             self.processing_base_folder)
         self.processing_Master_folder = "%s/MasterTables" % (
             self.processing_base_folder)
+        self.processing_config_folder = "%s/configs" % (
+            self.processing_base_folder)
 
     def _set_transterm_folder_names(self):
         self.transterm_base_folder = "%s/terminator" % self.output_folder
@@ -380,7 +382,7 @@ class Paths(object):
                 self.transtermhp_folder, self.term_to_table_folder]
     def required_processing_folders(self):
         return [self.processing_to_gff_folder, self.processing_statistics_folder,
-                self.processing_Master_folder]
+                self.processing_Master_folder, self.processing_config_folder]
     def required_transcript_assembly_folders(self):
         return [self.transcript_gff_folder, self.transcript_stat_folder]
 
