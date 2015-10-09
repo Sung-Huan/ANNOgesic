@@ -672,7 +672,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
         current_para["processing"] = round(random.uniform(
                                            0.1, max_num["processing"]), 1)
         current_para["base_height"] = round(random.uniform(
-                                            0.001, max_num["base_height"]), 3)
+                                            0.000, max_num["base_height"]), 3)
         if (current_para["height"] > current_para["re_height"]) and (
             current_para["factor"] > current_para["re_factor"]) and (
             current_para not in list_num):
@@ -687,7 +687,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
         steps, cores, out_path, tsspredator_path, stat_out, best, libs, wig,
         project_strain, fasta, output_prefix, gff, program, gene_length,
-        manual, cluster, utr, replicate_num, num_manual):
+        manual, cluster, utr, replicate_num, num_manual, new):
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed" : 0}
     tests = {"test1": [], "test2": ""}
@@ -698,10 +698,14 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
             features["feature"] = ""
         elif (indexs["switch"] % 3 == 0):
             features["feature"] = "r"
-            if features["feature"] != features["pre_feature"]:
-                seeds["pre_seed "] = []
-            current_para = run_random_part(current_para, list_num,
-                                           max_num, steps, indexs)
+            if new:
+                start_data(current_para, list_num)
+                new = False
+            else:
+                if features["feature"] != features["pre_feature"]:
+                    seeds["pre_seed "] = []
+                current_para = run_random_part(current_para, list_num,
+                                               max_num, steps, indexs)
             if current_para is None:
                 tmp_step += 1
         elif (indexs["switch"] % 3 == 1):
@@ -740,36 +744,16 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
         if indexs["step"] >= steps:
             break
 
-def start_data(out_path, current_para, best_para, indexs, max_num):
-    indexs["step"] = 0
-    list_num = []
-    while True:
-        current_para["height"] = round(random.uniform(
-                                       0.1, max_num["height"]), 1)
-        current_para["re_height"] = round(random.uniform(
-                                          0.1, max_num["re_height"]), 1)
-        current_para["factor"] = round(random.uniform(
-                                       0.1, max_num["factor"]), 1)
-        current_para["re_factor"] = round(random.uniform(
-                                          0.1, max_num["re_factor"]), 1)
-        current_para["enrichment"] = round(random.uniform(
-                                           0.1, max_num["enrichment"]), 1)
-        current_para["processing"] = round(random.uniform(
-                                           0.1, max_num["processing"]), 1)
-        current_para["base_height"] = round(random.uniform(
-                                            0.001, max_num["base_height"]), 3)
-        best_para = copy.deepcopy(current_para)
-        if (current_para["height"] > current_para["re_height"]) and \
-           (current_para["factor"] > current_para["re_factor"]):
-            break
-    list_num = [{"height": current_para["height"],
-                 "re_height": current_para["re_height"],
-                 "factor": current_para["factor"],
-                 "re_factor": current_para["re_factor"],
-                 "base_height": current_para["base_height"],
-                  "enrichment": current_para["enrichment"],
-                 "processing": current_para["processing"]}]
-    return list_num
+def start_data(current_para, list_num):
+    current_para["height"] = 0.3
+    current_para["re_height"] = 0.2
+    current_para["factor"] = 2.0
+    current_para["re_factor"] = 0.5
+    current_para["enrichment"] = 2.0
+    current_para["processing"] = 1.5
+    current_para["base_height"] = 0.000
+    list_num.append(copy.deepcopy(current_para))
+    return current_para
 
 def extend_data(out_path, best, best_para, step):
     print("extend step from {0}".format(step))
@@ -899,6 +883,7 @@ def optimization(tsspredator_path, height, reduction_height, factor,
                  gene_length, cluster, utr, replicate_num):
     pre_seed = []
     best = {}
+    new = True
     pre_feature = ""
     max_num, best_para, current_para, indexs = initiate(height,
                                                reduction_height, factor,
@@ -920,6 +905,7 @@ def optimization(tsspredator_path, height, reduction_height, factor,
     else:
         if ("stat.csv" in os.listdir(out_path)):
             list_num = []
+            new = False
             datas = reload_data(out_path, list_num, best, best_para, indexs,
                                 num_manual)
             best_para = datas[0]
@@ -934,5 +920,5 @@ def optimization(tsspredator_path, height, reduction_height, factor,
                          steps, cores, out_path, tsspredator_path, stat_out,
                          best, libs, wig, project_strain, fasta, output_prefix,
                          gff, program, gene_length, manual, cluster, utr,
-                         replicate_num, num_manual)
+                         replicate_num, num_manual, new)
     stat_out.close()
