@@ -217,7 +217,6 @@ Transcriptome_assembly(){
         -fl $frag_libs \
         -rt 1 \
 	-rf 1 \
-        -te 2 \
 	-ct $ANNOGESIC_FOLDER/output/TSS/gffs \
         -cg $ANNOGESIC_FOLDER/output/target/annotation \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
@@ -237,7 +236,6 @@ Terminator_prediction(){
         -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         -tl $tex_notex_libs \
         -fl $frag_libs \
-        -te 2 \
         -rt 1 \
 	-rf 1 \
         -tb \
@@ -314,7 +312,6 @@ sRNA_detection(){
         -nd $ANNOGESIC_FOLDER/input/database/nr \
         -tl $tex_notex_libs \
         -fl $frag_libs \
-        -te 2 \
         -rt 1 \
 	-rf 1 \
         -ba \
