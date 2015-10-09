@@ -288,7 +288,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         ot.optimization_process(indexs, current_para, list_num, self.example.max_nums, best_para,
                                 1, 1, self.test_folder, "test", stat_out,
                                 self.example.best, self.example.libs, wig_folder, "aaa", "aaa.fa", output_prefix,
-                                "aaa.gff", "TSS", 2000, os.path.join(self.test_folder, "manual.gff"), 3, 200, 1, 100)
+                                "aaa.gff", "TSS", 2000, os.path.join(self.test_folder, "manual.gff"), 3, 200, 1, 100, True)
         self.assertDictEqual(best_para, {'re_height': 0.2, 'factor': 0.7, 'processing': 3.3,
                                          'height': 0.6, 'base_height': 0.0, 're_factor': 0.3,
                                          'enrichment': 2.5})
