@@ -611,10 +611,10 @@ def main():
         "--UTR_derived_sRNA", "-u", default=False, action="store_true",
         help="If you want to detect UTR derived sRNA, please turn it on. Default is False.")
     sRNA_parser.add_argument(
-        "--import_info", "-d", nargs="+",
+        "--import_info", "-d", default=None, nargs="+",
         help="There are several types of information you can import to detect and filter sRNA: "
-        "TSS(1), energy of secondary structure(2), blast to nr(3), blast to sRNA(4), sORF(5), "
-        "without any information, only detect sRNA (without any information) by transcriptome assembly(6)."
+        "tss(the sRNA should start from a TSS), sec_str(energy of secondary structure), blast_nr(blast to nr), "
+        "blast_srna(blast to sRNA), sorf(compare with sORF). Default is None(detect sRNA without any filtering)."
         "Please assign the number of type you want to import, i.e. 1 2 4 - means it used TSS, energy and blast result to detect sRNA. "
         "Besides these information, it will also consider the sequence length of sRNA.")
     sRNA_parser.add_argument(
@@ -673,9 +673,9 @@ def main():
         help="The cutoff of minimal coverage of 5'UTR derived sRNA candidates. "
         "You can also assign median or mean. Default is median")
     sRNA_parser.add_argument(
-        "--cutoff_3utr_coverage", "-cu3",default="median",
+        "--cutoff_3utr_coverage", "-cu3",default="5",
         help="The cutoff of minimal coverage of 3'UTR derived sRNA candidates. "
-        "You can also assign median or mean. Default is median")
+        "You can also assign median or mean. Default is 5")
     sRNA_parser.add_argument(
         "--cutoff_interCDS_coverage", "-cuf",default="median",
         help="The cutoff of minimal coverage of inter CDS sRNA candidates. "
@@ -691,8 +691,11 @@ def main():
         "--mountain_plot", "-m", default=False, action="store_true",
         help="If you want to generate mountain plots of sRNA candidates, please turn it on. Default is False.")
     sRNA_parser.add_argument(
-        "--database_format", "-fd", default=False, action="store_true",
-        help="It is for formating database. If you already format your database, you don't need to turn it on. Default is False")
+        "--nr_format", "-nf", default=False, action="store_true",
+        help="It is for formating nr database. If you already format nr database, you don't need to turn it on. Default is False")
+    sRNA_parser.add_argument(
+        "--srna_format", "-sf", default=False, action="store_true",
+        help="It is for formating sRNA database. If you already format sRNA database, you don't need to turn it on. Default is False")
     sRNA_parser.add_argument(
         "--sRNA_database_path", "-sd", default=None,
         help="If you want to import blast results of sRNA, please assign the path of sRNA database.")
@@ -849,12 +852,6 @@ def main():
     sORF_parser.add_argument(
         "--stop_codon", "-oc", default=["TTA", "TAG", "TGA"], nargs="+", 
         help="What kinds of stop coden TTA/TAG/TGA you want to use. Default is TTA TAG TGA.")
-    sORF_parser.add_argument(
-        "--max_dist_rbs", "-Mr", default=14, type=int,
-        help="The maximum distance between ribosomal binding site and start codon. Default is 14.")
-    sORF_parser.add_argument(
-        "--min_dist_rbs", "-mr", default=5, type=int,
-        help="The minmum distance between ribosomal binding site and start codon. Default is 5.")
     sORF_parser.add_argument(
         "--rbs_not_after_TSS", "-at", default=False, action="store_true",
         help="If you want to generate best gff file which include ribosomal binding site not after TSS, please turn it on. Default is False.")
