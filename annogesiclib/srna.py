@@ -100,7 +100,7 @@ class sRNADetection(object):
                     gff, tran, fuzzy_tss, max_len, min_len, wig_path, coverage,
                     merge_wigs, libs, tex_notex, replicates, table_best,
                     decrease_inter, fuzzy_inter, out_folder, tolerance):
-        if ("1" in import_info):
+        if ("tss" in import_info):
             tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
                                                prefix, None)
         else:
@@ -166,8 +166,8 @@ class sRNADetection(object):
             self._check_gff(sorf_file)
             self.multiparser.parser_gff(sorf_file, "TSS")
             self.multiparser.combine_gff(gffs, self.sorf_path, None, "sORF")
-        if utr_srna or ("2" in import_info) or (
-           "3" in import_info) or ("4" in import_info):
+        if utr_srna or ("sec_str" in import_info) or (
+           "blast_nr" in import_info) or ("blast_srna" in import_info):
             if fastas is None:
                 print("Error: lack required fasta files for UTR derived sRNA detection!!!!")
                 sys.exit()
@@ -412,7 +412,7 @@ class sRNADetection(object):
 
     def _class_srna(self, import_info, prefixs, gff_output, table_output, stat_path,
                     energy, nr_hit_num, max_len, min_len):
-        if (len(import_info) != 1) or ('6' not in import_info):
+        if (len(import_info) != 1) or (len(import_info) != 0):
             for prefix in prefixs:
                 print("classifying sRNA of {0}".format(prefix))
                 class_gff = os.path.join(gff_output, "for_class")
@@ -478,17 +478,17 @@ class sRNADetection(object):
 
     def _filter_srna(self, import_info, out_folder, prefixs, fasta_path,
                      vienna_path, vienna_util, mountain, ps2pdf14_path,
-                     nr_database, database_format, blast_path, srna_database,
-                     stat_path, sorf_path, e_nr, e_srna):
-        if "2" in import_info:
+                     nr_database, srna_format, nr_format, blast_path,
+                     srna_database, stat_path, sorf_path, e_nr, e_srna):
+        if "sec_str" in import_info:
             self._compute_2d_and_energy(out_folder, prefixs, fasta_path,
                                         vienna_path, vienna_util,
                                         mountain, ps2pdf14_path)
-        if "3" in import_info:
-            self._blast(nr_database, database_format, "prot", out_folder,
+        if "blast_nr" in import_info:
+            self._blast(nr_database, nr_format, "prot", out_folder,
                         blast_path, prefixs, fasta_path, "blastx", "nr", e_nr)
-        if "4" in import_info:
-            self._blast(srna_database, database_format, "nucl", out_folder,
+        if "blast_srna" in import_info:
+            self._blast(srna_database, srna_format, "nucl", out_folder,
                         blast_path, prefixs, fasta_path,
                         "blastn", "sRNA", e_srna)
             for prefix in prefixs:
@@ -497,7 +497,7 @@ class sRNADetection(object):
                                  prefix + ".csv"]))
                 blast_class("_".join([self.tmps["srna"], prefix + ".csv"]),
                             out_srna_blast)
-        if "5" in import_info:
+        if "sorf" in import_info:
             if "_".join([prefix, "sORF.gff"]) in os.listdir(sorf_path):
                 tmp_srna = os.path.join(out_folder,
                            "".join(["tmp_srna_sorf", prefix]))
@@ -524,11 +524,18 @@ class sRNADetection(object):
             sys.exit()
         return replicates
 
+    def _import_info_format(self, import_info):
+        new_info = []
+        for info in import_info:
+            info = info.lower()
+            new_info.append(info)
+        return new_info
+
     def run_srna_detection(self, vienna_path, vienna_util, blast_path,
             ps2pdf14_path, out_folder, utr_srna, gffs, tsss, trans,
             fuzzy_inter_tss, fuzzy_5utr_tss, fuzzy_3utr_tss, fuzzy_intercds_tss,
             import_info, tex_wigs, frag_wigs, pros, fastas, mountain,
-            database_format, srna_database, nr_database, energy, coverage,
+            nr_format, srna_format, srna_database, nr_database, energy, coverage,
             tolerance, utr5_coverage, utr3_coverage, intercds_coverage,
             max_len, min_len, tlibs, flibs, replicates_tex, replicates_frag,
             tex_notex, e_nr, e_srna, table_best, decrease_inter, decrease_utr,
@@ -546,6 +553,7 @@ class sRNADetection(object):
         self.multiparser.parser_gff(trans, "transcript")
         self.multiparser.combine_gff(gffs, self.tran_path, None, "transcript")
         libs = self._merge_libs(tlibs, flibs)
+        import_info = self._import_info_format(import_info)
         prefixs = self._run_program(gffs, import_info, self.tran_path,
                       self.tss_path, self.pro_path, wig_path, max_len, min_len,
                       coverage, merge_wigs, libs, tex_notex, replicates,
@@ -555,7 +563,7 @@ class sRNADetection(object):
                       tolerance)
         self._filter_srna(import_info, out_folder, prefixs, self.fasta_path,
             vienna_path, vienna_util, mountain, ps2pdf14_path, nr_database,
-            database_format, blast_path, srna_database, self.stat_path,
+            srna_format, nr_format, blast_path, srna_database, self.stat_path,
             self.sorf_path, e_nr, e_srna)
         for prefix in prefixs:
             shutil.copyfile("_".join([self.prefixs["basic"], prefix]),

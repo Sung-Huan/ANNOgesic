@@ -7,7 +7,11 @@ def check_tex_conds(tracks, libs, texs, check_tex, conds, tex_notex):
     for track in tracks:
         for lib in libs:
             if lib["name"] == track:
-                index = "_".join([lib["cond"], lib["type"]])
+                if "tex" in lib["type"]:
+                    type_ = "tex"
+                else:
+                    type_ = "frag"
+                index = "_".join([lib["cond"], type_])
                 if len(texs) != 0:
                     for key, num in texs.items():
                         if track in key:

@@ -61,14 +61,13 @@ def import_sorf(inter, sorfs, start, end, fa_start, fa_end, type_, fasta, rbs):
                   "seq": fasta[fa_start:fa_end],
                   "type": type_,
                   "print": False,
-                  "rbs": [rbs]})
+                  "rbs": rbs})
 
-def detect_rbs_site(fasta, start, start_rbs, end_rbs, fuzzy_rbs, inter):
-    detect = "NA"
+def detect_rbs_site(fasta, start, fuzzy_rbs, inter):
+    detect = []
     for nts in range(0, start):
         num = 0
         miss = 0
-        detect = "NA"
         for nt in fasta[nts:nts + 6]:
             if miss == fuzzy_rbs:
                 break
@@ -87,19 +86,17 @@ def detect_rbs_site(fasta, start, start_rbs, end_rbs, fuzzy_rbs, inter):
                     miss += 1
                 num += 1
         if miss < fuzzy_rbs:
-            if (start - nts >= start_rbs) and (start - nts <= end_rbs):
-                if inter.strand == "+":
-                    detect = inter.start + nts + 1
-                    break
-                else:
-                    detect = inter.start + (len(fasta) - nts) - 1
-                    break
-        if detect != "NA":
-            break
+#            if (start - nts >= start_rbs) and (start - nts <= end_rbs):
+            if inter.strand == "+":
+                detect.append(inter.start + nts + 1)
+            else:
+                detect.append(inter.start + (len(fasta) - nts) - 1)
+    if len(detect) == 0:
+        detect = ["NA"]
     return detect
 
 def detect_start_stop(inters, seq, start_codon, stop_codon, max_len, min_len,
-                      start_rbs, end_rbs, fuzzy_rbs):
+                      fuzzy_rbs):
     sorfs = []
     for inter in inters:
         fasta = Helper().extract_gene(seq[inter.seq_id],
@@ -118,8 +115,7 @@ def detect_start_stop(inters, seq, start_codon, stop_codon, max_len, min_len,
                    (((stop - start) % 3) == 0) and \
                    ((stop - start) <= max_len) and \
                    ((stop - start) >= min_len):
-                    rbs = detect_rbs_site(fasta, start, start_rbs, end_rbs,
-                                          fuzzy_rbs, inter)
+                    rbs = detect_rbs_site(fasta, start, fuzzy_rbs, inter)
                     if inter.source == "intergenic":
                         if inter.strand == "+":
                             import_sorf(inter, sorfs, inter.start + start,
@@ -199,12 +195,18 @@ def check_tss(sorf, tss, utr_fuzzy, checks):
         sorf["with_TSS"].append("TSS_" + str(tss.start) + tss.strand)
         checks["start"] = True
         checks["import"] = True
-        if sorf["strand"] == "+":
-            if (sorf["rbs"][0] != "NA") and (sorf["rbs"][0] >= tss.start):
-                checks["rbs"] = True
-        else:
-            if (sorf["rbs"][0] != "NA") and (sorf["rbs"][0] <= tss.start):
-                checks["rbs"] = True
+        rbss = []
+        if (sorf["rbs"][0] != "NA"):
+            if sorf["strand"] == "+":
+                for rbs in sorf["rbs"]:
+                    if rbs >= tss.start:
+                        rbss.append(rbs)
+            else:
+                for rbs in sorf["rbs"]:
+                    if rbs <= tss.start:
+                        rbss.append(rbs)
+        if len(rbss) != 0:
+            checks["rbs"] = rbss
 
 def compare_sorf_tss(sorfs, tsss, tss_file, utr_fuzzy, noafter_tss, no_tss):
     sorfs_all = []
@@ -230,6 +232,7 @@ def compare_sorf_tss(sorfs, tsss, tss_file, utr_fuzzy, noafter_tss, no_tss):
             if len(sorf["with_TSS"]) == 0:
                 sorf["with_TSS"] = ["NA"]
             if (checks["rbs"] and (not noafter_tss) and (not no_tss)):
+                sorf["rbs"] = checks["rbs"]
                 sorfs_best.append(copy.deepcopy(sorf))
             elif ((sorf["rbs"][0] != "NA") and (noafter_tss) and \
                   (not no_tss) and (checks["start"])):
@@ -402,12 +405,16 @@ def get_attribute(num, name, start_tss, sorf, type_):
 
 def check_start_point(sorf):
     if sorf["start_TSS"] != "NA":
-        if (sorf["strand"] == "+") and (
-            sorf["start"] > int(sorf["start_TSS"])):
-            sorf["start"] = int(sorf["start_TSS"])
-        elif (sorf["strand"] == "-") and (
-            sorf["end"] < int(sorf["start_TSS"])):
-            sorf["end"] = int(sorf["start_TSS"])
+        if (sorf["strand"] == "+"):
+            start_TSS = sorf["start_TSS"].replace("TSS_", "")
+            start_TSS = start_TSS.replace("+", "")
+            if (sorf["start"] > int(start_TSS)):
+                sorf["start"] = int(start_TSS)
+        elif (sorf["strand"] == "-"):
+            start_TSS = sorf["start_TSS"].replace("TSS_", "")
+            start_TSS = start_TSS.replace("-", "")
+            if (sorf["end"] < int(start_TSS)):
+                sorf["end"] = int(start_TSS)
 
 def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
     name = '%0*d' % (5, num)
@@ -697,7 +704,7 @@ def sorf_detection(fasta, srna_gff, inter_gff, tss_file, utr_fuzzy, utr_detect,
                    input_libs, tex_notex, replicates, inter_coverage,
                    utr3_coverage, utr5_coverage, interCDS_coverage, wig_f_file,
                    wig_r_file, wig_folder, start_codon, stop_codon, table_best,
-                   max_len, min_len, out_prefix, background, start_rbs, end_rbs,
+                   max_len, min_len, out_prefix, background,
                    fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss):
     coverages = {"3utr": utr3_coverage, "5utr": utr5_coverage,
                  "inter": inter_coverage, "interCDS": interCDS_coverage}
@@ -720,8 +727,7 @@ def sorf_detection(fasta, srna_gff, inter_gff, tss_file, utr_fuzzy, utr_detect,
     out_bg = open("_".join([out_prefix, "best.gff"]), "w")
     out_bt = open("_".join([out_prefix, "best.csv"]), "w")
     sorfs = detect_start_stop(inters, seq, start_codon,
-                              stop_codon, max_len, min_len,
-                              start_rbs, end_rbs, fuzzy_rbs)
+                              stop_codon, max_len, min_len, fuzzy_rbs)
     sorfs_all, sorfs_best = compare_sorf_tss(sorfs, tsss, tss_file,
                                     utr_fuzzy, noafter_tss, no_tss)
     compare_sorf_srna(sorfs_all, srnas, srna_gff)

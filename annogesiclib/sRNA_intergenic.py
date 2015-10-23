@@ -562,8 +562,8 @@ def check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
 
 def intergenic_srna(gff_file, tran_file, tss_file, pro_file, fuzzy, max_len,
                     min_len, wig_f_file, wig_r_file, wig_folder, input_libs,
-                    tex_notex, replicates, output_file, output_table,
-                    table_best, decrease, fuzzy_end, cutoff_coverage, tolerance):
+                    tex_notex, replicates, output_file, output_table, table_best,
+                    decrease, fuzzy_end, cutoff_coverage, tolerance):
     libs, texs = read_libs(input_libs, wig_folder)
     wigs_f = read_wig(wig_f_file, "+", libs)
     wigs_r = read_wig(wig_r_file, "-", libs)

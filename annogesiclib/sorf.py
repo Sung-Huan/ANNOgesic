@@ -94,7 +94,7 @@ class sORFDetection(object):
                           tex_notex, replicate, cutoff_inter, cutoff_3utr,
                           cutoff_5utr, cutoff_intercds, wig_path, merge_wigs,
                           start_codon, stop_codon, max_len, min_len, table_best,
-                          utr_detect, background, start_rbs, end_rbs, fuzzy_rbs,
+                          utr_detect, background, fuzzy_rbs,
                           print_all, no_srna, noafter_tss, no_tss):
         for prefix in prefixs:
             if self.srna_path is not None:
@@ -118,9 +118,8 @@ class sORFDetection(object):
                            "_".join([prefix, "reverse.wig"])), merge_wigs,
                            start_codon, stop_codon, table_best, max_len, min_len,
                            os.path.join(self.gff_output, self.all_cand,
-                           "_".join([prefix, "sORF"])), background, start_rbs,
-                           end_rbs, fuzzy_rbs, print_all, no_srna, noafter_tss,
-                           no_tss)
+                           "_".join([prefix, "sORF"])), background,
+                           fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss)
             if "_".join([prefix, "sORF_all.gff"]) in os.listdir(
                          os.path.join(self.gff_output, self.all_cand)):
                 shutil.move(os.path.join(self.gff_output, self.all_cand,
@@ -170,8 +169,8 @@ class sORFDetection(object):
             utr_length, min_len, max_len, tex_wigs, frag_wigs, cutoff_inter,
             cutoff_5utr, cutoff_3utr, cutoff_intercds, fastas, tlibs, flibs,
             tex_notex, replicates_tex, replicates_frag, table_best, srnas,
-            start_codon, stop_codon, background, start_rbs, end_rbs,
-            fuzzy_rbs, noafter_tss, print_all, no_srna, no_tss):
+            start_codon, stop_codon, background, fuzzy_rbs, noafter_tss,
+            print_all, no_srna, no_tss):
         if fuzzy_rbs > 6:
             print("Error: --fuzzy_rbs should be equal or less than 6!!")
             sys.exit()
@@ -202,8 +201,8 @@ class sORFDetection(object):
         self._start_stop_codon(prefixs, out_folder, utr_length, libs,
              tex_notex, replicates, cutoff_inter, cutoff_3utr, cutoff_5utr,
              cutoff_intercds, wig_path, merge_wigs, start_codon, stop_codon,
-             max_len, min_len, table_best, utr_detect, background, start_rbs,
-             end_rbs, fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss)
+             max_len, min_len, table_best, utr_detect, background,
+             fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss)
         for sorf in os.listdir(os.path.join(self.gff_output, self.all_cand)):
             print("statistics of {0}".format(sorf))
             if sorf.endswith("_sORF.gff"):

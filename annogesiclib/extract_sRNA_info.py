@@ -22,7 +22,8 @@ def get_proteins(datas, checks, blast_f):
             name = data1[0].strip()
             tag = datas[nums["index"] - 1]
             if ("hypothetical" in name) or (
-                "unknown" in name):
+                "unknown" in name) or (
+                "predicted coding region" in name):
                 nums["hypo"] += 1
             if not checks["detect"]:
                 for line in blast_f:
@@ -60,7 +61,8 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
                     for protein in proteins:
                         name = protein["name"].replace("\n", "")
                         if ("hypothetical" not in name) and (
-                            "unknown" not in name):
+                            "unknown" not in name) and (
+                            "predicted coding region" not in name):
                             if (name not in protein_names.keys()):
                                 protein_names[name] = []
                             protein_names[name].append(protein["tag"])

@@ -246,7 +246,7 @@ class Controller(object):
                 self._args.import_info, self._args.tex_wig_folder, 
                 self._args.frag_wig_folder, self._args.processing_site_folder,
                 self._args.fasta_folder, self._args.mountain_plot,
-                self._args.database_format,
+                self._args.nr_format, self._args.srna_format,
                 self._args.sRNA_database_path, self._args.nr_database_path,
                 self._args.cutoff_energy, self._args.cutoff_intergenic_coverage,
                 self._args.intergenic_tolerance, self._args.cutoff_5utr_coverage,
@@ -271,8 +271,8 @@ class Controller(object):
         sorf.run_sorf_detection(
                 self._paths.sorf_folder, self._args.UTR_derived_sORF, 
                 self._args.transcript_assembly_folder,
-                self._args.annotation_folder, self._args.TSS_folder,
-                self._args.utr_length,
+                self._args.annotation_folder,
+                self._args.TSS_folder, self._args.utr_length,
                 self._args.min_length, self._args.max_length,
                 self._args.tex_wig_folder, self._args.frag_wig_folder,
                 self._args.cutoff_intergenic_coverage, self._args.cutoff_5utr_coverage, 
@@ -282,8 +282,7 @@ class Controller(object):
                 self._args.replicates_tex, self._args.replicates_frag,
                 self._args.table_best, self._args.sRNA_folder, 
                 self._args.start_codon, self._args.stop_codon, 
-                self._args.cutoff_background, self._args.min_dist_rbs,
-                self._args.max_dist_rbs, self._args.fuzzy_rbs,
+                self._args.cutoff_background, self._args.fuzzy_rbs,
                 self._args.rbs_not_after_TSS, self._args.print_all_combination,
                 self._args.best_no_sRNA, self._args.best_no_TSS)
 

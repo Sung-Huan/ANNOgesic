@@ -23,18 +23,19 @@ def print_intersection(datas, keys, num_srna, gff_name, type_, out_stat):
                 datas_merge.append({"data": data,
                             "wig": data.attributes["best_avg_coverage"]})
             num += 1
-    if len(keys) == 5:
-        datas_sort = sorted(datas_merge, key=lambda k: float(k['wig']),
-                            reverse=True)
-        for data in datas_sort:
-            if type_ == "total":
-                out.write(data["data"].info + "\n")
-        if num_srna == 0:
-            out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
-                           str(num), str(0)))
-        else:
-            out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
-                           str(num), str(float(num)/float(num_srna))))
+#    print(keys)
+#    if len(keys) == 5:
+    datas_sort = sorted(datas_merge, key=lambda k: float(k['wig']),
+                        reverse=True)
+    for data in datas_sort:
+        if type_ == "total":
+            out.write(data["data"].info + "\n")
+    if num_srna == 0:
+        out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
+                       str(num), str(0)))
+    else:
+        out_stat.write("\t{0} = {1}({2})\n".format(" and ".join(keys),
+                       str(num), str(float(num)/float(num_srna))))
     if type_ == "total":
         out.close()
 
