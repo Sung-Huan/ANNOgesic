@@ -261,6 +261,7 @@ class TestsTSSpredator(unittest.TestCase):
         os.mkdir(os.path.join(self.out, "statistics/test"))
         os.mkdir(os.path.join(self.out, "MasterTables"))
         os.mkdir(os.path.join(self.out, "MasterTables/MasterTable_test"))
+        os.mkdir(os.path.join(self.out, "configs"))
         ts.stat_tsspredator = self.mock.mock_stat_tsspredator
         ts.plot_venn = self.mock.mock_plot_venn
         ts.validate_gff = self.mock.mock_validate_gff
@@ -279,8 +280,8 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.fastas, "test.fa"), ">test\nAAATATATATATATAAATTTATATATATATA")
         libs = ["test1_forward.wig:notex:1:a:+", "test1_reverse.wig:notex:1:a:-",
                 "test1_TEX_forward.wig:tex:1:a:+", "test1_TEX_reverse.wig:tex:1:a:-"]
-        self.tss.run_tsspredator("tsspredator_path", "TSS", self.test_folder,
-            self.fastas, self.gffs, self.wigs, libs, "test", 0.3, 0.2,
+        self.tss.run_tsspredator("tsspredator_path", "TSS", self.fastas, 
+            self.gffs, self.wigs, libs, "test", 0.3, 0.2,
             2.0, 0.5, 0.00, 2.0, 1.5, 2, self.out, True, True, "manual",
             self.trans, 2, 300, 2, 100, True, "TSS", self.gffs, True)
         self.assertTrue(os.path.exists(os.path.join(self.out, "gffs/test_TSS.gff")))

@@ -308,11 +308,11 @@ class TestsRNADetection(unittest.TestCase):
         sr.srna_sorf_comparison = self.mock.mock_srna_sorf_comparison
         self.srna._filter_srna(["1", "2", "3", "4", "5"], self.out, ["test"],
                      self.fastas, "vienna_path", "vienna_util", True, "ps2pdf14_path",
-                     os.path.join(self.test_folder, "nr"), True, "blast_path",
+                     os.path.join(self.test_folder, "nr"), True, True, "blast_path",
                      os.path.join(self.test_folder, "srna"),
                      stat_out, self.sorf, 0, 0)
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
-        self.assertEqual("\n".join(datas), "test")
+        self.assertEqual("\n".join(datas), "test\tRefSeq\tsRNA\t1\t5\t.\t+\t.\tID=srna0;Name=sRNA_0")
 
     def test_get_replicates(self):
         reps = self.srna._get_replicates(5, 10)

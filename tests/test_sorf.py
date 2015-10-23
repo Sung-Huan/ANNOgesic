@@ -15,7 +15,7 @@ class Mock_func(object):
                             cutoff_inter, cutoff_3utr, cutoff_5utr,
                             cutoff_intercds, test3, test2, merge_wigs,
                             start_codon, stop_codon, table_best, max_len,
-                            min_len, test1, background, start_rbs, end_rbs,
+                            min_len, test1, background,
                             fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss):
         pass
 
@@ -115,7 +115,7 @@ class TestsORFDetection(unittest.TestCase):
                                     "tex_notex", "replicate", 10, 10,
                                     10, 10, "wig_path", "merge_wigs",
                                     ["ATG"], ["TTA"], 300, 30, True,
-                                    True, "background", 4, 14, 2,
+                                    True, "background", 2,
                                     False, True, True, True)
         self.assertTrue(os.path.exists(os.path.join(gff_path, "best/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(gff_path, "all_candidates/test_sORF.gff")))
@@ -147,7 +147,7 @@ class TestsORFDetection(unittest.TestCase):
                                      300, 30, 300, self.tex, self.frag, 10,
                                      10, 10, 10, self.fastas, "tlibs", "flibs",
                                      "tex_notex", 2, 3, True, self.srnas,
-                                     ["ATG"], ["TTA"], "background", 4, 14,
+                                     ["ATG"], ["TTA"], "background",
                                      2, True, False, True, True)
 
 
