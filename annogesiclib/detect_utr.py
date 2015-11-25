@@ -6,6 +6,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
+plt.style.use('ggplot')
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 

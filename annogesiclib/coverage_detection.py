@@ -29,19 +29,30 @@ def coverage_comparison(cover, cover_sets, poss, first, strand):
 
 def define_cutoff(coverages, median, utr_type):
     cutoffs = {}
-    if coverages[utr_type] == "median":
-        for track, values in median.items():
-            cutoffs[track] = values["median"]
-    elif coverages[utr_type] == "mean":
+    if coverages[utr_type] == "mean":
         for track, values in median.items():
             cutoffs[track] = values["mean"]
     else:
         for track, values in median.items():
-            cutoffs[track] = float(coverages[utr_type])
+            cutoffs[track] = values["median"]
     return cutoffs
 
+def check_notex(cover, texs, cutoff, notex):
+    if notex is not None:
+        for keys in texs.keys():
+            tracks = keys.split("@AND@")
+            if cover["track"] == tracks[0]:
+                if cover["avg"] > cutoff:
+                    return True
+            elif cover["track"] == tracks[1]:
+                if cover["avg"] > notex:
+                    return True
+    else:
+        if cover["avg"] > cutoff:
+            return True
+
 def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
-              type_, poss, median, coverages, utr_type):
+              texs, notex, type_, poss, median, coverages, utr_type):
     detect_num = 0
     check_texs = {}
     texs = template_texs.copy()
@@ -59,8 +70,10 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
         elif type_ == "sORF":
             if cover["avg"] > coverages[cover["track"]]:
                 run_check_tex = True
-        elif (type_ == "terminator") or (type_ == "merge_sRNA"):
+        elif (type_ == "terminator"):
             run_check_tex = True
+        elif (type_ == "normal"):
+            run_check_tex = check_notex(cover, texs, cutoff, notex)
         else:
             if cover["avg"] > cutoff:
                 run_check_tex = True
@@ -70,7 +83,7 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
                     if cover["track"] in key:
                         texs[key] += 1
                         check_texs[key].append(cover)
-                    if texs[key] == tex_notex:
+                    if texs[key] >= tex_notex:
                         if type_ == "sRNA_utr_derived":
                             if detect_num == 0:
                                 poss["start"] = cover["final_start"]
@@ -78,7 +91,8 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
                             else:
                                 exchange_start_end(poss, cover)
                         detect_num += 1
-                        target_datas.append(cover)
+                        if cover not in target_datas:
+                            target_datas.append(cover)
                         if tex_notex != 1:
                             target_datas.append(check_texs[key][0])
                             if type_ == "sRNA_utr_derived":
@@ -102,7 +116,7 @@ def exchange_start_end(poss, cover):
 
 def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
                          tex_notex, replicates, type_, median, coverages,
-                         utr_type, frag_detect):
+                         utr_type, texs, notex):
     srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
                   "end": -1, "track": "", "detail": [], "conds": {}}
     tmp_poss = {"start": -1, "end": -1, "pos": -1,
@@ -110,11 +124,8 @@ def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
     output = False
     for cond, covers in srna_covers.items():
         detect_num = check_tex(template_texs, covers, cutoff_coverage,
-                               srna_datas["detail"], tex_notex,
+                               srna_datas["detail"], tex_notex, texs, notex,
                                type_, tmp_poss, median, coverages, utr_type)
-        if (((detect_num >= replicates["frag"]) and \
-            ("frag" in cond)) or (not (frag_detect))):
-            output = True
         if ((detect_num >= replicates["tex"]) and \
            ("texnotex" in cond)) or \
            ((detect_num >= replicates["frag"]) and \
@@ -145,8 +156,4 @@ def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
         else:
             srna_datas["start"] = -1
             srna_datas["end"] = -1
-        if not output:
-            srna_datas = None
-            srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
-                          "end": -1, "track": "", "detail": [], "conds": {}}
     return srna_datas

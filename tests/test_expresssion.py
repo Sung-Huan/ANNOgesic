@@ -40,16 +40,16 @@ class TestExpression(unittest.TestCase):
 
     def test_expression(self):
         express_file.gene_expression = self.mock.mock_expression
-        tex_libs="tex_-TEX_forward.wig:notex:1:a:+ \
-                  tex_-TEX_reverse.wig:notex:1:a:- \
-                  tex_+TEX_forward.wig:tex:1:a:+ \
-                  tex_+TEX_reverse.wig:tex:1:a:-"
-        frag_libs="frag_forward.wig:frag:1:a:+ \
-                   frag_reverse.wig:frag:1:a:-"
-        gen_file(os.path.join(self.frag_path, "tex_-TEX_forward.wig"), "tex1")
-        gen_file(os.path.join(self.frag_path, "tex_-TEX_reverse.wig"), "tex2")
-        gen_file(os.path.join(self.frag_path, "tex_+TEX_forward.wig"), "tex3")
-        gen_file(os.path.join(self.frag_path, "tex_+TEX_reverse.wig"), "tex4")
+        tex_libs=["tex_-TEX_forward.wig:notex:1:a:+",
+                  "tex_-TEX_reverse.wig:notex:1:a:-",
+                  "tex_+TEX_forward.wig:tex:1:a:+",
+                  "tex_+TEX_reverse.wig:tex:1:a:-"]
+        frag_libs=["frag_forward.wig:frag:1:a:+",
+                   "frag_reverse.wig:frag:1:a:-"]
+        gen_file(os.path.join(self.tex_path, "tex_-TEX_forward.wig"), "tex1")
+        gen_file(os.path.join(self.tex_path, "tex_-TEX_reverse.wig"), "tex2")
+        gen_file(os.path.join(self.tex_path, "tex_+TEX_forward.wig"), "tex3")
+        gen_file(os.path.join(self.tex_path, "tex_+TEX_reverse.wig"), "tex4")
         gen_file(os.path.join(self.frag_path, "frag_forward.wig"), "frag1")
         gen_file(os.path.join(self.frag_path, "frag_reverse.wig"), "frag2")
         self.express.expression(tex_libs, frag_libs, 2, 2,

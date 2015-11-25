@@ -64,7 +64,7 @@ class TestLibReader(unittest.TestCase):
     def test_read_libs(self):
         libs, texs = self.lib_reader.read_libs(self.libs, self.test_folder)
         self.assertDictEqual(texs,
-        {'TSB_OD_0.2_TEX_reverse_TSB_OD_0.2_reverse': 0, 'TSB_OD_0.2_TEX_forward_TSB_OD_0.2_forward': 0})
+        {'TSB_OD_0.2_TEX_reverse@AND@TSB_OD_0.2_reverse': 0, 'TSB_OD_0.2_TEX_forward@AND@TSB_OD_0.2_forward': 0})
         for index in range(0, 6):
             self.assertDictEqual(libs[index], self.lib_dict[index])
 

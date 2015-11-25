@@ -150,7 +150,7 @@ class sORFDetection(object):
         self.helper.remove_wigs(tex_wigs)
         self.helper.remove_wigs(frag_wigs)
 
-    def _compare_tran_cds(self, gffs, out_folder, utr_detect):
+    def _compare_tran_cds(self, gffs, out_folder, utr_detect, hypo):
         prefixs = []
         for gff in os.listdir(gffs): ## compare transcript and CDS
             if gff.endswith(".gff"):
@@ -162,15 +162,27 @@ class sORFDetection(object):
                                "_".join([prefix, "transcript.gff"])),
                                os.path.join(out_folder,
                                "_".join([prefix, "inter.gff"])),
-                               utr_detect)
+                               utr_detect, hypo)
         return prefixs
+
+    def _merge_libs(self, flibs, tlibs):
+        if (flibs is not None) and (tlibs is not None):
+            input_libs = flibs + tlibs
+        elif (flibs is not None):
+            input_libs = flibs
+        elif (tlibs is not None):
+            input_libs = tlibs
+        else:
+            print("Error: No libs be assigned!!!")
+            sys.exit()
+        return input_libs
 
     def run_sorf_detection(self, out_folder, utr_detect, trans, gffs, tsss,
             utr_length, min_len, max_len, tex_wigs, frag_wigs, cutoff_inter,
             cutoff_5utr, cutoff_3utr, cutoff_intercds, fastas, tlibs, flibs,
             tex_notex, replicates_tex, replicates_frag, table_best, srnas,
             start_codon, stop_codon, background, fuzzy_rbs, noafter_tss,
-            print_all, no_srna, no_tss):
+            print_all, no_srna, no_tss, hypo):
         if fuzzy_rbs > 6:
             print("Error: --fuzzy_rbs should be equal or less than 6!!")
             sys.exit()
@@ -188,16 +200,17 @@ class sORFDetection(object):
         self._check_necessary_files(gffs, trans, tex_wigs,
                                     frag_wigs, utr_detect, tsss, srnas)
         merge_wigs = self._merge_wigs(tex_wigs, frag_wigs)
+        input_libs = self._merge_libs(flibs, tlibs)
         wig_path = os.path.join(merge_wigs, "tmp")
         self.multiparser.parser_wig(merge_wigs)
-        self.multiparser.combine_wig(gffs, wig_path, None)
+        self.multiparser.combine_wig(gffs, wig_path, None, input_libs)
         self.multiparser.parser_gff(trans, "transcript")
         self.multiparser.combine_gff(gffs, self.tran_path,
                                       None, "transcript")
         self.multiparser.parser_fasta(fastas)
         self.multiparser.combine_fasta(gffs, self.fasta_path, None)
         libs = self._combine_libs(tlibs, flibs)
-        prefixs = self._compare_tran_cds(gffs, out_folder, utr_detect)
+        prefixs = self._compare_tran_cds(gffs, out_folder, utr_detect, hypo)
         self._start_stop_codon(prefixs, out_folder, utr_length, libs,
              tex_notex, replicates, cutoff_inter, cutoff_3utr, cutoff_5utr,
              cutoff_intercds, wig_path, merge_wigs, start_codon, stop_codon,

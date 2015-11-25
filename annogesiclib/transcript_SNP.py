@@ -8,6 +8,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
+plt.style.use('ggplot')
 
 def plot_bar(cutoffs, strain, out_snp):
     name = []
@@ -21,7 +22,7 @@ def plot_bar(cutoffs, strain, out_snp):
     plt.xlabel('QUAL of SNP in transcripts', fontsize=20)
     plt.xlim([0, len(cutoffs) + 1])
     plt.xticks(ind+width-0.75, name, fontsize=18, rotation=40)
-    pl.yticks(fontsize=18)
+    plt.yticks(fontsize=18)
     plt.savefig(out_snp + "_" + strain + "_SNP_QUAL.png")
     plt.clf()
 

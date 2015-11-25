@@ -234,7 +234,8 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("srna"))
         srna = sRNADetection(self._paths.srna_folder, self._args.TSS_folder,
                               self._args.processing_site_folder, self._args.sORF, 
-                              self._args.fasta_folder, self._args.transcript_assembly_folder)
+                              self._args.fasta_folder, self._args.transcript_assembly_folder,
+                              self._args.terminator_folder)
         srna.run_srna_detection(
                 self._args.Vienna_folder, self._args.Vienna_utils,
                 self._args.blast_plus_folder,
@@ -248,19 +249,23 @@ class Controller(object):
                 self._args.fasta_folder, self._args.mountain_plot,
                 self._args.nr_format, self._args.srna_format,
                 self._args.sRNA_database_path, self._args.nr_database_path,
-                self._args.cutoff_energy, self._args.cutoff_intergenic_coverage,
-                self._args.intergenic_tolerance, self._args.cutoff_5utr_coverage,
-                self._args.cutoff_3utr_coverage, self._args.cutoff_interCDS_coverage,
+                self._args.cutoff_energy, self._args.run_intergenic_TEX_coverage,
+                self._args.run_intergenic_noTEX_coverage, self._args.run_intergenic_fragmented_coverage,
+                self._args.intergenic_tolerance, self._args.run_utr_TEX_coverage,
+                self._args.run_utr_noTEX_coverage, self._args.run_utr_fragmented_coverage,
                 self._args.max_length, self._args.min_length,
                 self._args.tex_notex_libs, self._args.frag_libs,
-                self._args.replicates_tex, self._args.replicates_tex, 
+                self._args.replicates_tex, self._args.replicates_frag, 
                 self._args.tex_notex, self._args.blast_e_nr,
-                self._args.blast_e_srna,
+                self._args.blast_e_srna, self._args.detect_sRNA_in_CDS,
                 self._args.table_best, self._args.decrease_intergenic,
                 self._args.decrease_utr, self._args.fuzzy_intergenic,
                 self._args.fuzzy_utr, self._args.cutoff_nr_hit,
                 self._args.sORF, self._args.best_with_all_sRNAhit,
-                self._args.best_without_sORF_candidate)
+                self._args.best_without_sORF_candidate, self._args.overlap_percent_CDS,
+                self._args.terminator_folder, self._args.terminator_fuzzy_in_CDS,
+                self._args.terminator_fuzzy_out_CDS, self._args.best_with_terminator,
+                self._args.ignore_hypothetical_protein, self._args.TSS_source)
 
     def sorf_detection(self):
         """sORF_detection."""
@@ -284,7 +289,8 @@ class Controller(object):
                 self._args.start_codon, self._args.stop_codon, 
                 self._args.cutoff_background, self._args.fuzzy_rbs,
                 self._args.rbs_not_after_TSS, self._args.print_all_combination,
-                self._args.best_no_sRNA, self._args.best_no_TSS)
+                self._args.best_no_sRNA, self._args.best_no_TSS,
+                self._args.ignore_hypothetical_protein)
 
     def meme(self):
         """promoter detectopn"""
@@ -326,15 +332,18 @@ class Controller(object):
                 self._paths.read_folder, self._paths.circrna_stat_folder, 
                 self._args.convert_to_gff, self._args.support_reads,
                 self._args.segemehl_folder, self._args.samtools_path,
-                self._args.start_ratio, self._args.end_ratio)
+                self._args.start_ratio, self._args.end_ratio,
+                self._args.ignore_hypothetical_protein)
     def goterm(self):
         """Go term discovery"""
         project_creator.create_subfolders(self._paths.required_folders("go_term"))
-        goterm = GoTermFinding(self._paths.goterm_output_folder, self._args.annotation_path)
+        goterm = GoTermFinding(self._paths.goterm_output_folder, self._args.annotation_path,
+                               self._args.transcript_path)
         goterm.run_go_term(
                 self._args.annotation_path,
                 self._paths.goterm_output_folder, self._args.UniProt_id,
-                self._args.go_obo, self._args.goslim_obo)
+                self._args.go_obo, self._args.goslim_obo,
+                self._args.transcript_path)
 
     def srna_target(self):
         """sRNA target prediction"""
@@ -380,12 +389,13 @@ class Controller(object):
     def sublocal(self):
         """Subcellular Localization prediction"""
         project_creator.create_subfolders(self._paths.required_folders("subcellular_localization"))
-        sublocal = SubLocal(self._args.gff_path, self._args.fasta_path, self._paths.sublocal_output_folder)
+        sublocal = SubLocal(self._args.gff_path, self._args.fasta_path,
+                            self._paths.sublocal_output_folder, self._args.transcript_path)
         sublocal.run_sub_local(
             self._args.Psortb_path, self._args.gff_path,
             self._args.fasta_path, self._args.bacteria_type,
             self._args.difference_multi, self._args.merge_to_gff,
-            self._paths.sublocal_output_folder)
+            self._paths.sublocal_output_folder, self._args.transcript_path)
 
     def ribos(self):
         """riboswitch prediction"""

@@ -81,9 +81,11 @@ class TestsTranscriptAssembly(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_combine_wigs(self):
-        gen_file(os.path.join(self.frag, "aaa_STRAIN_test.wig"), "test")
-        self.tran._combine_wigs(self.frag, self.test_folder, "bbb.wig", "aaa", "test")
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "bbb.wig")))
+        gen_file(os.path.join(self.frag, "aaa_forward.wig_STRAIN_test.wig"), "test")
+        gen_file(os.path.join(self.frag, "aaa_reverse.wig_STRAIN_test.wig"), "test")
+        libs = ["aaa_forward.wig_STRAIN_test.wig:frag:1:a:+", "aaa_reverse.wig_STRAIN_test.wig:frag:1:a:-"]
+        self.tran._combine_wigs(self.frag, self.test_folder, "bbb_forward.wig", libs, "test")
+        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "bbb_forward.wig")))
 
     def test_compute(self):
         tr.assembly = self.mock.mock_assembly

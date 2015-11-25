@@ -13,7 +13,7 @@ class Mock_read_file(object):
     def __init__(self):
         self.example = Example()
 
-    def read_file(self, gff_file, input_file):
+    def read_file(self, gff_file, input_file, hypo):
         self.circs = []
         self.gffs = []
         for index in range(0, 5):
@@ -87,7 +87,7 @@ class TestCircRNA(unittest.TestCase):
         stat_file = os.path.join(self.test_folder, "stat.csv")
         circ.read_file = Mock_read_file().read_file
         circ.detect_circrna("test.circ", "test.gff", out_file,
-                            0.5, 0.5, stat_file)
+                            0.5, 0.5, stat_file, True)
         circs = import_data(out_file)
         stats = import_data(stat_file)
         self.assertEqual(set(circs), set(self.example.out_file.split("\n")))
@@ -126,7 +126,7 @@ class Example(object):
                  {"seq_id": "bbb", "source": "Refseq", "feature": "circRNA", "start": 430,
                   "end": 5167, "phase": ".", "strand": "-", "score": "."}]
     attributes_gffs = [{"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
-                       {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
+                       {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002", "product": "hypothetical protein"},
                        {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]
     out_file = """ID	strain	strand	start	end	annotation_overlap	supported_reads	supported_reads/reads_at_start	supported_reads/reads_at_end
 circRNA_0	aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571
@@ -134,6 +134,7 @@ circRNA_1	aaa	+	1330	1564	NA	10	0.3333333333333333	0.25
 circRNA_2	bbb	-	30	167	NA	5	1.0	0.8333333333333334"""
 
     stat_file = """All strains:
+	Before filtering:
 	the number of all circular RNAs = 3
 	the number of potential circular RNAs, more than 0 supported it = 3
 	the number of potential circular RNAs, more than 5 supported it = 3
@@ -143,26 +144,28 @@ circRNA_2	bbb	-	30	167	NA	5	1.0	0.8333333333333334"""
 	the number of potential circular RNAs, more than 25 supported it = 1
 	the number of potential circular RNAs, more than 30 supported it = 1
 
-	the circular RNAs:
+	After filtering:
 		without conflict with annotation
-		support reat ratio of starting point is larger than 0.5
-		support reat ratio of end point is larger than 0.5
+		support read ratio of starting point is larger than 0.5
+		support read ratio of end point is larger than 0.5
 	the number of potential circular RNAs, more than 0 supported it = 1
 	the number of potential circular RNAs, more than 5 supported it = 1
 
 bbb:
+	Before filtering:
 	the number of all circular RNAs = 1
 	the number of potential circular RNAs, more than 0 supported it = 1
 	the number of potential circular RNAs, more than 5 supported it = 1
 
-	the circular RNAs:
+	After filtering:
 		without conflict with annotation
-		support reat ratio of starting point is larger than 0.5
-		support reat ratio of end point is larger than 0.5
+		support read ratio of starting point is larger than 0.5
+		support read ratio of end point is larger than 0.5
 	the number of potential circular RNAs, more than 0 supported it = 1
 	the number of potential circular RNAs, more than 5 supported it = 1
 
 aaa:
+	Before filtering:
 	the number of all circular RNAs = 2
 	the number of potential circular RNAs, more than 0 supported it = 2
 	the number of potential circular RNAs, more than 5 supported it = 2
@@ -172,10 +175,10 @@ aaa:
 	the number of potential circular RNAs, more than 25 supported it = 1
 	the number of potential circular RNAs, more than 30 supported it = 1
 
-	the circular RNAs:
+	After filtering:
 		without conflict with annotation
-		support reat ratio of starting point is larger than 0.5
-		support reat ratio of end point is larger than 0.5"""
+		support read ratio of starting point is larger than 0.5
+		support read ratio of end point is larger than 0.5"""
 
 if __name__ == "__main__":
     unittest.main()

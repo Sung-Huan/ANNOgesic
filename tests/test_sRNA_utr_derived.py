@@ -32,14 +32,14 @@ class Mock_func(object):
 
     def mock_replicate_comparison(self, srna_datas, template_texs, strand, test1,
                                   tex_notex, replicates, type_, median,
-                                  coverages, srna, frag_detect):
+                                  coverages, srna, texs, notex):
         datas = {"best": 500, "track": "frag", "high": 700, "low": 400,
                  "start": 100, "end": 202, "conds": {"frag_1": "track_1"}} 
         return datas
 
     def mock_get_coverage(self, wigs, inter, start, end, type_,
                           intercds_type, fuzzy_end, decrease,
-                          ori_start, ori_end):
+                          ori_start, ori_end, max_len, min_len):
         srna_covers = {'frag_1': [{'final_end': 20, 'final_start': 2,
                                    'track': 'track_1', 'high': 50, 'low': 10,
                                    'type': 'frag', 'avg': 41.36842105263158,
@@ -73,7 +73,7 @@ class TestsRNAUTR(unittest.TestCase):
         gen_file(gff_file, self.example.gff_file)
         gen_file(seq_file, self.example.seq_file)
         cdss, tas, tsss, pros, seq = sud.read_data(gff_file, gff_file,
-                                         gff_file, gff_file, seq_file)
+                                         gff_file, gff_file, seq_file, False)
         self.assertEqual(cdss[0].start, 4)
         self.assertEqual(tas[0].start, 4)
         self.assertEqual(tsss[0].start, 4)
@@ -84,16 +84,12 @@ class TestsRNAUTR(unittest.TestCase):
         inters = []
         seq = {"aaa": "ATATGACGATACGTAAACCGACCGAATATATCTTTTCACAACCAGATTACGATCGTCAT"}
         sud.get_terminal(self.example.gffs, inters, seq, "start")
-        self.assertListEqual(inters, [{'start': 1, 'strand': '+', 'start_tss': 'NA',
-                                       'end': 4, 'start_cleavage': 'NA', 'utr': '',
-                                       'datas': None, 'end_cleavage': 'NA', 'strain': 'aaa'}])
+        self.assertListEqual(inters, [{'end': 4, 'len_CDS': 0, 'strand': '+', 'strain': 'aaa', 'start': 1}])
 
     def test_get_inter(self):
         inters = []
         sud.get_inter(self.example.gffs, inters)
-        self.assertListEqual(inters, [{'datas': None, 'end': 20, 'end_cleavage': 'NA',
-                                       'start': 14, 'start_cleavage': 'NA', 'utr': '',
-                                       'strand': '+', 'start_tss': 'NA', 'strain': 'aaa'}])
+        self.assertListEqual(inters, [{'start': 14, 'strand': '+', 'end': 20, 'strain': 'aaa', 'len_CDS': 10}])
 
     def test_set_cover_and_point(self):
         covers = [2, 3, 4, 1, 6, 2, 8, 3, 5, 6, 7, 5, 2, 1]
@@ -104,7 +100,7 @@ class TestsRNAUTR(unittest.TestCase):
 
     def test_check_import_srna_covers(self):
         cover_tmp = {"total": 100, "ori_total": 200}
-        checks = {"detect_5utr": True}
+        checks = {"detect_decrease": True}
         cover_sets = {"high": 50, "low": 10}
         srna_covers = {"cond_1": []}
         utr_covers = {"cond_1": []}
@@ -112,18 +108,20 @@ class TestsRNAUTR(unittest.TestCase):
         final_poss = {"start": 3, "end": 23}
         sud.check_import_srna_covers(checks, final_poss, 20, 2, "5utr", cover_sets,
                                      cover_tmp, "TSS", self.example.inters[0],
-                                     srna_covers, "cond_1", "track", cover, 1, 25, utr_covers)
+                                     srna_covers, "cond_1", "track", cover, 1, 25,
+                                     utr_covers, 30, 500)
         self.assertDictEqual(final_poss, {'end': 20, 'start': 3})
         self.assertDictEqual(srna_covers, {'cond_1': [{'final_start': 3, 'high': 50, 'ori_avg': 8.0,
                                                        'final_end': 20, 'low': 10, 'type': '5utr',
                                                        'avg': 5.2631578947368425, 'track': 'track'}]})
         self.assertDictEqual(utr_covers, srna_covers)
-        checks = {"detect_5utr": False}
+        checks = {"detect_decrease": False}
         srna_covers = {"cond_1": []}
         utr_covers = {"cond_1": []}
         sud.check_import_srna_covers(checks, final_poss, 20, 2, "5utr", cover_sets,
                                      cover_tmp, "TSS", self.example.inters[0],
-                                     srna_covers, "cond_1", "track", cover, 1, 25, utr_covers)
+                                     srna_covers, "cond_1", "track", cover, 1, 25,
+                                     utr_covers, 30, 500)
         self.assertDictEqual(srna_covers, {'cond_1': []})
 
     def test_check_pos(self):
@@ -168,7 +166,7 @@ class TestsRNAUTR(unittest.TestCase):
         sud.detect_cover_utr_srna(covers, check_point, cover_sets, 2, 20,
                           "poss", self.example.inters[0], "5utr", "TSS", 0.5,
                           2, srna_covers, utr_covers, "frag_1",
-                          "track_1", 1, 23)
+                          "track_1", 1, 23, 30, 500)
         self.assertDictEqual(srna_covers, {'frag_1': [{'low': 20, 'high': 50, 'track': 'track_1',
                                            'final_start': 2, 'ori_avg': 0.8695652173913043,
                                            'type': 'frag', 'final_end': 20,
@@ -180,12 +178,18 @@ class TestsRNAUTR(unittest.TestCase):
         sud.coverage_comparison = self.mock.mock_coverage_comparison
         srna_covers, utr_covers = sud.get_coverage(self.example.wigs,
                                       self.example.inters[0], 2, 20, "3utr",
-                                      "TSS", 2, 0.5, 1, 25)
-        self.assertDictEqual(srna_covers, {'frag_1': [{'final_end': 20, 'final_start': 2,
-                                           'track': 'track_1', 'high': 50, 'low': 10,
-                                           'type': 'frag', 'avg': 41.36842105263158,
-                                           'ori_avg': 27.52}]})
+                                      "TSS", 2, 0.5, 1, 25, 30, 500)
+        self.assertDictEqual(srna_covers, {'frag_1': [{'track': 'track_1', 'high': 50,
+                                           'final_start': 2, 'type': 'frag',
+                                           'avg': 8.052631578947368, 'low': 10,
+                                           'final_end': 3, 'ori_avg': 2.12}]})
         self.assertDictEqual(utr_covers, srna_covers)
+
+    def test_get_utr_cutoff(self):
+        mediandict = {"aaa": {"5utr": {"bbb": {}}}}
+        avgs = [30, 60, 550, 302, 44]
+        sud.get_utr_cutoff("p_0.5", mediandict, avgs, "aaa", "5utr", "bbb")
+        self.assertDictEqual(mediandict, {'aaa': {'5utr': {'bbb': {'mean': 197.2, 'median': 60}}}})
 
     def test_detect_normal(self):
         sud.get_coverage = self.mock.mock_get_coverage
@@ -278,7 +282,7 @@ class TestsRNAUTR(unittest.TestCase):
     def test_run_utr_detection(self):
         utrs = []
         srnas = []
-        fuzzys = {"5utr": 3}
+        fuzzys = {"5utr": "n_3"}
         sud.get_coverage = self.mock.mock_get_coverage
         sud.run_utr_detection(self.example.wigs, self.example.inters[0],
                               2, 50, "5utr", utrs, self.example.tsss,
@@ -301,44 +305,55 @@ class TestsRNAUTR(unittest.TestCase):
     def test_class_utr(self):
         utrs = []
         srnas = []
-        fuzzys = {"3utr": 3}
+        fuzzys = {"3utr": "p_0.3"}
         sud.get_coverage = self.mock.mock_get_coverage
         sud.class_utr(self.example.inters[0], self.example.tas[0], utrs, srnas,
                       self.example.tsss, self.example.pros, self.example.wigs,
                       self.example.wigs, fuzzys, 30, 0.5, 1, 300)
         sud.get_coverage = get_coverage
-        self.assertListEqual(srnas, [{'strand': '+', 'utr': '3utr', 'end': 20,
-                                      'start': 18, 'start_tss': 'NA',
-                                      'datas': {'frag_1': [{'final_end': 20, 'track': 'track_1',
-                                      'final_start': 2, 'ori_avg': 27.52, 'avg': 41.36842105263158,
-                                      'type': 'frag', 'low': 10, 'high': 50}]}, 'end_cleavage': 'NA',
-                                      'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+'}])
-        self.assertListEqual(utrs, [{'strand': '+', 'utr': '3utr', 'end': 20, 'start': 18,
-                                     'start_tss': 'NA', 'datas': {'frag_1': [{'final_end': 20,
-                                     'track': 'track_1', 'final_start': 2, 'ori_avg': 27.52,
-                                     'avg': 41.36842105263158, 'type': 'frag', 'low': 10,
-                                     'high': 50}]}, 'end_cleavage': 'NA', 'strain': 'aaa',
-                                     'start_cleavage': 'NA'}])
+        self.assertListEqual(srnas, [{'end_cleavage': 'NA', 'start_tss': 'TSS:1_+',
+                                      'utr': '3utr', 'start_cleavage': 'NA', 'end': 20,
+                                      'start': 1, 'datas': {'frag_1': [{'ori_avg': 27.52,
+                                      'final_start': 2, 'avg': 41.36842105263158,
+                                      'track': 'track_1', 'type': 'frag', 'final_end': 20,
+                                      'low': 10, 'high': 50}]}, 'strain': 'aaa', 'strand': '+'},
+                                     {'end_cleavage': 'NA', 'start_tss': 'NA', 'utr': '3utr',
+                                      'start_cleavage': 'Cleavage:18_+', 'end': 20, 'start': 18,
+                                      'datas': {'frag_1': [{'ori_avg': 27.52, 'final_start': 2,
+                                      'avg': 41.36842105263158, 'track': 'track_1', 'type': 'frag',
+                                      'final_end': 20, 'low': 10, 'high': 50}]}, 'strain': 'aaa', 'strand': '+'}])
+        self.assertListEqual(utrs, [{'end_cleavage': 'NA', 'start_tss': 'NA', 'utr': '3utr',
+                                     'start_cleavage': 'NA', 'end': 20, 'start': 1,
+                                     'datas': {'frag_1': [{'ori_avg': 27.52, 'final_start': 2,
+                                     'avg': 41.36842105263158, 'track': 'track_1', 'type': 'frag',
+                                     'final_end': 20, 'low': 10, 'high': 50}]}, 'strain': 'aaa', 'strand': '+'},
+                                    {'end_cleavage': 'NA', 'start_tss': 'NA', 'utr': '3utr',
+                                     'start_cleavage': 'NA', 'end': 20, 'start': 18,
+                                     'datas': {'frag_1': [{'ori_avg': 27.52, 'final_start': 2,
+                                     'avg': 41.36842105263158, 'track': 'track_1', 'type': 'frag',
+                                     'final_end': 20, 'low': 10, 'high': 50}]}, 'strain': 'aaa', 'strand': '+'}])
 
     def test_get_utr_coverage(self):
         utrs = [{'strand': '+', 'utr': '3utr', 'end': 20, 'start': 18, 'start_tss': 'NA',
                  'datas': {'frag_1': [{'final_end': 20, 'track': 'track_1', 'final_start': 2,
                  'ori_avg': 27.52, 'avg': 41.36842105263158, 'type': 'frag', 'low': 10,
                  'high': 50}]}, 'end_cleavage': 'NA', 'strain': 'aaa', 'start_cleavage': 'NA'}]
-        covers = sud.get_utr_coverage(utrs, False)
-        self.assertDictEqual(covers, {'aaa': {'5utr': {}, 'inter': {}, 'total': {'track_1': [27.52]},
-                                      '3utr': {'track_1': [27.52]}, 'interCDS': {}}})
+        covers = sud.get_utr_coverage(utrs)
+        self.assertDictEqual(covers, {'aaa': {'interCDS': {}, '3utr': {'track_1': [27.52]}, '5utr': {}}})
 
-    def test_set_median(self):
+    def test_set_cutoff(self):
+        texs = {"track_4@AND@track_6": 0}
         covers = {'aaa': {'5utr': {'track_4': [52, 11, 23]}, 'inter': {'track_3': [111]},
                   'total': {'track_1': [27.52, 111]}, '3utr': {'track_1': [27.52, 111]},
                   'interCDS': {'track_2': [12, 0]}}}
-        mediandict = sud.set_median(covers)
-        self.assertDictEqual(mediandict, {'aaa': {'total': {'track_1': {'mean': 69.26, 'median': 69.26}},
-                                          '5utr': {'track_4': {'mean': 28.666666666666668, 'median': 23}},
-                                          '3utr': {'track_1': {'mean': 69.26, 'median': 69.26}},
-                                          'interCDS': {'track_2': {'mean': 6.0, 'median': 6.0}},
-                                          'inter': {'track_3': {'mean': 111.0, 'median': 111}}}})
+        coverages = {"5utr": "p_0.3", "3utr": "n_10", "interCDS": "p_0.5"}
+        mediandict = sud.set_cutoff(covers, coverages, coverages, texs)
+        self.assertDictEqual(mediandict, {'aaa': {'5utr': {'track_4': {'median': 11, 'mean': 28.666666666666668}},
+                                                  'interCDS': {'track_2': {}}, '3utr': {'track_1': {}}}})
+        mediandict = sud.set_cutoff(covers, coverages, None, texs)
+        self.assertDictEqual(mediandict, {'aaa': {'interCDS': {'track_2': {'median': 6.0, 'mean': 6.0}},
+                                                  '3utr': {'track_1': {'median': 10.0, 'mean': 69.26}},
+                                                  '5utr': {'track_4': {'median': 11, 'mean': 28.666666666666668}}}})
 
     def test_mean_score(self):
         lst = [1, 3, 5, 6, 7, 8]
@@ -347,7 +362,7 @@ class TestsRNAUTR(unittest.TestCase):
 
     def test_median_score(self):
         lst = [1, 3, 5, 6, 7, 8]
-        median = sud.median_score(lst)
+        median = sud.median_score(lst, 0.5)
         self.assertEqual(median, 5.5)
 
     def test_detect_srna(self):
@@ -362,7 +377,7 @@ class TestsRNAUTR(unittest.TestCase):
                   'type': 'frag', 'low': 10, 'high': 50, "conds": ["frag"]}]}, 'end_cleavage': 'NA',
                   'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+'}]
         sud.detect_srna(srnas, median, out, out_t, "template_texs", "covers",
-                        "tex_notex", "rep", True, 300, 1, False)
+                        "tex_notex", "rep", True, 300, 1)
         self.assertEqual(out.getvalue(), "aaa\t3utr\tUTR_sRNA\t18\t20\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;UTR_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
         self.assertEqual(out_t.getvalue(), "aaa\t00000\t18\t20\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=500;high=700;low=400)\n")
 
@@ -397,7 +412,7 @@ ATATGACGATACGTAAACCGACCGAATATATCTTTTCACAACCAGATTACGATCGTCAT"""
     for index in range(0, 2):
         gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
     inters = [{'strand': '+', 'start': 14, 'end': 20, 'cleavage': 'NA',
-               'strain': 'aaa', 'utr': '', 'datas': None, 'tss': 'NA'}]
+               'strain': 'aaa', 'utr': '', 'datas': None, 'tss': 'NA', "len_CDS": 1000}]
     wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
                                            {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
                                            {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},

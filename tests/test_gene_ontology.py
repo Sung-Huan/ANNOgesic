@@ -46,9 +46,18 @@ class TestGeneOntology(unittest.TestCase):
         gff_file = os.path.join(self.test_folder, "test.gff")
         gen_file(gff_file, "test")
         out_file = os.path.join(self.test_folder, "out.gff")
-        go.retrieve_uniprot(database_file, gff_file, out_file)
+        tran_file = os.path.join(self.test_folder, "test_transcript.gff")
+        gen_file(tran_file, "test")
+        go.retrieve_uniprot(database_file, gff_file, out_file, tran_file, "express")
         datas = import_data(out_file)
         self.assertEqual(set(datas), set(self.example.out_retrieve.split("\n")))
+
+    def test_compare_cds_tran(self):
+        gffs = self.example.gffs
+        trans = self.example.trans
+        news = go.compare_cds_tran(gffs, trans)
+        self.assertEqual(news[0].start, 150)
+        self.assertEqual(news[1].start, 100)
 
     def test_import_obo(self):
         obo_file = os.path.join(self.test_folder, "obo.txt")
@@ -101,9 +110,23 @@ Q197F8	002R_IIV3	4156251	YP_654574.1	106073503; 109287880; 123808694			UniRef100
                       {"ID": "cds1", "Name": "CDS_1", "locus_tag": "AAA_00002", "protein_id": "YP_031580.1"},
                       {"ID": "cds2", "Name": "YP_654574.1", "locus_tag": "BBB_00001"},
                       {"ID": "cds3", "Name": "YP_031579.1", "locus_tag": "BBB_00002"}]
+    tran_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 100,
+                  "end": 212, "phase": ".", "strand": "+", "score": "."},
+                 {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 530,
+                  "end": 540, "phase": ".", "strand": "+", "score": "."},
+                 {"seq_id": "bbb", "source": "Refseq", "feature": "transcript", "start": 700,
+                  "end": 867, "phase": ".", "strand": "-", "score": "."},
+                 {"seq_id": "bbb", "source": "Refseq", "feature": "transcript", "start": 80,
+                  "end": 130, "phase": ".", "strand": "-", "score": "."}]
+    attributes_tran = [{"ID": "tran0", "Name": "Tran0"},
+                       {"ID": "tran1", "Name": "Tran1"},
+                       {"ID": "tran2", "Name": "Tran2"},
+                       {"ID": "tran3", "Name": "Tran3"}]
     gffs = []
+    trans = []
     for index in range(0, 4):
         gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
+        trans.append(Create_generator(tran_dict[index], attributes_tran[index], "gff"))
     out_retrieve = """strain	strand	start	end	protein_id	Go_term
 aaa	+	150	200	YP_031579.1	GO:0006355; GO:0046782; GO:0006351
 aaa	+	1230	1240	YP_031580.1	GO:0033644; GO:0016021

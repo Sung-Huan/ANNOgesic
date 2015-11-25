@@ -15,6 +15,9 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
+    def mock_run_filter_frag(self, merge_table, merge_gff):
+        pass
+
     def mock_run_format(self, blast_path, database, type_, db_file, err):
         pass
 
@@ -31,28 +34,30 @@ class Mock_func(object):
     def mock_check_gff(self, gffs):
         pass
 
-    def mock_run_normal(self, import_info, tss_path, pro_path, prefix,
-                        gff_path, gff, tran, fuzzy_tsss,
-                        max_len, min_len, wig_path, coverage,
-                        merge_wigs, libs, tex_notex, replicates,
-                        table_best, decrease_inter, fuzzy_inter,
-                        out_folder, tolerance):
+    def mock_run_normal(self, import_info, tss_path, pro_path, prefix, gff_path,
+                    gff, tran, fuzzy_tss, max_len, min_len, tex_path, frag_path,
+                    coverage_tex, coverage_frag, tex_notex, replicates,
+                    table_best, decrease_inter, fuzzy_inter, out_folder,
+                    tolerance, in_cds, hypo, tex_wigs, frag_wigs,
+                    tlibs, flibs, tss_source, notex):
         pass
 
-    def mock_run_utrsrna(self, gff_path, gff, tran, fuzzy_tsss,
-                          merge_wigs, max_len, min_len, wig_path, prefix,
-                          tss, pro, fasta_path, libs, tex_notex,
-                          replicates, table_best, decrease_utr,
-                          fuzzy_utr, utr5_coverage, utr3_coverage,
-                          intercds_coverage, out_folder):
+    def mock_run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
+                     prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
+                     tex_notex, flibs, tlibs, replicates, table_best,
+                     decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
+                     out_folder, hypo, tex_path, frag_path, notex):
         pass
 
-    def mock_merge_srna_gff(self, utr_gff, normal_gff, merge_gff):
+    def mock_merge_srna_gff(self, utr_gff, normal_gff, merge_gff, in_cds, overlap, gff_file):
         shutil.copy("test_folder/test.gff", merge_gff)
 
     def mock_merge_srna_table(self, merge_gff, normal_table, utr_table,
-                              wig_f, wig_r, merge_wigs, libs, tex_notex,
-                              replicates, table_best, merge_table):
+                              forward, reverse, merge_wigs, libs,
+                              tex_notex, replicates,
+                              table_best, merge_table, in_cds, tss, coverage_tex,
+                              coverage_notex, coverage_frag, fuzzy_inter, out_folder,
+                              utr_tex_cover, utr_notex_cover, utr_frag_cover):
         pass
 
     def mock_get_seq(self, gff, fasta, seq_file):
@@ -73,13 +78,13 @@ class Mock_func(object):
     def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out):
         pass
 
-    def mock_run_blast(self, blast_path, program, database, e, seq_file, blast_file):
-        pass
+    def mock_run_blast(self, blast_path, program, database, e, seq_file, blast_file, strand):
+        gen_file('tmp_blast.txt', "test")
 
     def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file, database_type):
         pass
 
-    def mock_classify_srna(self, gff_file, class_gff, energy, nr_hit_num, out_stat):
+    def mock_classify_srna(self, gff_file, class_gff, energy, nr_hit_num, out_stat, in_cds):
         pass
 
     def mock_gen_srna_table(self, class_gff, merge, nr, srna, max_len, min_len, out_table):
@@ -120,6 +125,7 @@ class TestsRNADetection(unittest.TestCase):
         self.tex = "test_folder/tex"
         self.frag = "test_folder/frag"
         self.pros = "test_folder/pros"
+        self.terms = "test_folder/terms"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.tsss)
@@ -130,8 +136,9 @@ class TestsRNADetection(unittest.TestCase):
             os.mkdir(self.frag)
             os.mkdir(self.pros)
             os.mkdir(self.sorf)
+            os.mkdir(self.terms)
         self.srna = sRNADetection(self.out, self.tsss, self.pros,
-                                  self.sorf, self.fastas, self.trans)
+                                  self.sorf, self.fastas, self.trans, self.terms)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -139,10 +146,14 @@ class TestsRNADetection(unittest.TestCase):
         os.chdir(current_path)
         if os.path.exists("tmp"):
             shutil.rmtree("tmp")
+        if os.path.exists("tmp_srna.csv"):
+            os.remove("tmp_srna.csv")
+        if os.path.exists("tmp_srna.gff"):
+            os.remove("tmp_srna.gff")
 
     def test_check_folder_exist(self):
         path_ = self.srna._check_folder_exist(self.sorf)
-        self.assertEqual(path_, "test_folder/sORF")
+        self.assertEqual(path_, "test_folder/sORF/tmp")
 
     def test_formatdb(self):
         database = "test_folder/test.fa"
@@ -158,13 +169,18 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._check_necessary_file(self.test_folder, self.trans, self.tex,
                                         self.frag, True, self.tsss, self.pros,
                                         self.sorf, ["1", "2", "3", "4", "5"],
-                                        self.fastas)
+                                        self.fastas, self.terms)
 
     def test_merge_wig(self):
         gen_file(os.path.join(self.tex, "tex.wig"), "test")
         gen_file(os.path.join(self.frag, "frag.wig"), "test")
-        merge = self.srna._merge_wig(self.tex, self.frag, self.out)
+        frag_path = os.path.join(self.frag, "tmp")
+        tex_path = os.path.join(self.tex, "tmp")
+        os.mkdir(frag_path)
+        os.mkdir(tex_path)
+        merge, wig_path = self.srna._merge_wig(self.tex, self.frag, tex_path, frag_path, self.out)
         self.assertEqual(merge, "test_folder/output/merge_wigs")
+        self.assertEqual(wig_path, "test_folder/output/merge_wigs/tmp")
 
     def test_merge_libs(self):
         libs = self.srna._merge_libs("tlibs", "flibs")
@@ -175,6 +191,7 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._check_gff = self.mock.mock_check_gff
         self.srna._run_normal = self.mock.mock_run_normal
         self.srna._run_utrsrna = self.mock.mock_run_utrsrna
+        sr.filter_frag = self.mock.mock_run_filter_frag
         sr.merge_srna_gff = self.mock.mock_merge_srna_gff
         sr.merge_srna_table = self.mock.mock_merge_srna_table
         gen_file(os.path.join(self.test_folder, "test.gff"), self.example.sorf_file)
@@ -182,12 +199,13 @@ class TestsRNADetection(unittest.TestCase):
         gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.sorf_file)
         gen_file(os.path.join(self.tsss, "test_processing.gff"), self.example.sorf_file)
         fuzzy_tsss = {"inter": 3}
-        prefixs = self.srna._run_program(self.test_folder, ["1", "2", "3", "4", "5"],
+        prefixs = self.srna._run_program(self.test_folder, ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"],
                                          self.trans, self.tsss, self.pros,
-                                         "wig_path", 300, 30, "coverage", "merge_wigs",
+                                         300, 30, True, "coverage", "coverage", "coverage",
                                          "libs", "tex_notex", "replicates", True,
                                          50, 50, 5, 5, fuzzy_tsss, 30, 30, 30, self.out, True,
-                                         "fasta_path", 5)
+                                         "fasta_path", 5, True, 0.5, False, "tex_path", "frag_path",
+                                         "tex_wigs", "frag_wigs", "tlibs", "flibs", "merge", "wig_path")
         self.assertListEqual(prefixs, ['test'])
 
     def test_get_seq_sec(self):
@@ -266,7 +284,7 @@ class TestsRNADetection(unittest.TestCase):
         os.mkdir(os.path.join(table_out, "for_class"))
         os.mkdir(os.path.join(gff_out, "for_class"))
         self.srna._class_srna(["1", "2", "3", "4", "5"], ["test"], gff_out, table_out,
-                              stat_out, 0, 0, 300, 30)
+                              stat_out, 0, 0, 300, 30, True)
         self.assertTrue(os.path.exists(os.path.join(gff_out, "for_class/test")))
         self.assertTrue(os.path.exists(os.path.join(table_out, "for_class/test")))
 

@@ -32,7 +32,7 @@ class Mock_func(object):
 
     def mock_replicate_comparison(self, srna_covers, template_texs,
                                   strand, cutoff_coverage, tex_notex,
-                                  replicates, type_, test1, test2, test3, test4):
+                                  replicates, type_, test1, test2, test3, tex, notex):
         return {"best": 40, "high": 50, "low": 10, "pos": 5,
                 "conds": {"cond1": "test1"}, "detail": None}
 
@@ -53,19 +53,22 @@ class TestsRNAIntergenic(unittest.TestCase):
 
     def test_read_data(self):
         gff_file = os.path.join(self.test_folder, "anno.gff")
-        tss_file = os.path.join(self.test_folder, "tss.gff")
         tran_file = os.path.join(self.test_folder, "tran.gff")
         pro_file = os.path.join(self.test_folder, "pro.gff")
         gen_file(gff_file, self.example.gff_file)
-        gen_file(tss_file, self.example.gff_file)
         gen_file(tran_file, self.example.gff_file)
         gen_file(pro_file, self.example.gff_file)
-        nums, cdss, tas, tsss, pros = si.read_data(gff_file, tss_file, tran_file, pro_file)
-        self.assertDictEqual(nums, {'pro': 3, 'tss': 3, 'uni': 0, 'cds': 3, 'ta': 3})
+        nums, cdss, tas, pros, genes = si.read_data(gff_file, tran_file, pro_file, True)
+        self.assertDictEqual(nums, {'ta': 3, 'cds': 3, 'pro': 3, 'uni': 0} )
         self.assertEqual(cdss[0].start, 140)
         self.assertEqual(tas[0].start, 140)
-        self.assertEqual(tsss[0].start, 140)
         self.assertEqual(pros[0].start, 140)
+
+    def test_read_tss(self):
+        tss_file = os.path.join(self.test_folder, "tss.gff")
+        gen_file(tss_file, self.example.gff_file)
+        tsss, num_tss = si.read_tss(tss_file, "cutoff_coverage", True)
+        self.assertEqual(tsss[0].start, 140)
 
     def test_compare_ta_cds(self):
         detects = {"overlap": False}
@@ -81,8 +84,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         si.compare_ta_tss(10, 2, 15, 30, 300, "", nums,
                    self.example.tas[0], self.example.tsss[0], output, out_table, "texs", detects, 50,
                    "cutoff", "texnotex", "rep", "decrease",
-                   3, True, 5)
-        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS:170_+\n")
+                   3, True, 5, "texs", 20)
+        self.assertEqual(output.getvalue(), "aaa\tin_CDS\tsRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
         si.get_coverage = get_coverage
 
@@ -104,11 +107,12 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
         si.detect_include_tss(nums, self.example.tsss, self.example.tas[0],
                               "", "", output, out_table,
                               "template_texs", 30, 100, detects, 5,
-                              "cutoff", "tex_notex", "rep", "decrease",
-                              5, True, 5)
+                              coverage, "tex_notex", "rep", "decrease",
+                              5, True, 5, "texs", coverage)
         si.get_coverage = get_coverage
         self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t180\t230\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t180\t230\t+\tNA\tNA\tNA\tNA\tNA\tFalse\n")
@@ -138,7 +142,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         cover = {"coverage": 50, "pos": 80}
         detect = si.check_coverage_pos(30, 100, cover, 80, tmps, cover_sets,
                                        checks, poss, "+", 5)
-        self.assertFalse(detect)
+        self.assertEqual(detect, (False, {'total': 0, 'pos': 0, 'toler': 0}))
         self.assertDictEqual(poss, {'high': 20, 'stop_point': 70, 'low': 70})
         detect = si.check_coverage_pos(30, 50, cover, 80, tmps, cover_sets,
                                        checks, poss, "+", 5)
@@ -157,11 +161,12 @@ class TestsRNAIntergenic(unittest.TestCase):
     def test_check_pro(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
         srna_datas = {"pos": 50}
+        texs = {"track_1@AND@track_2"}
         pro_pos, new_srna_datas, detect_pro = si.check_pro(
                                               self.example.pros, self.example.tas[0],
                                               20, 70, 30, 300, srna_datas, "within",
                                               5, self.example.wigs, 50, 5, "template_texs",
-                                              "tex_notex", "replicates", 5)
+                                              "tex_notex", "replicates", 5, texs, 20)
         self.assertEqual(pro_pos, 190)
         self.assertDictEqual(new_srna_datas, {'best': 40, 'high': 50, 'low': 10, "pos": 5,
                                               "conds": {"cond1": "test1"}, "detail": None})
@@ -176,11 +181,16 @@ class TestsRNAIntergenic(unittest.TestCase):
         detect, srna_datas, pro = si.exchange_to_pro(srna_datas, 30, 300,
                                   self.example.pros, self.example.tas[0],
                                   20, 70, nums, 10, output, out_table, True, self.example.wigs,
-                                  50, 5, "template_texs", "tex_notex", "replicates", 5)
+                                  50, 5, "template_texs", "tex_notex", "replicates", 5, "texs", 20)
         self.assertTrue(detect)
         self.assertDictEqual(srna_datas, {'best': 40, 'high': 50, 'low': 10, 'pos': 190,
                                           "conds": {"cond1": "test1"}, "detail": None})
         self.assertEqual(pro, "Cleavage:190_+")
+
+    def test_get_tss_type(self):
+        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        cover = si.get_tss_type(self.example.tsss[0], coverage)
+        self.assertEqual(cover, 10)
 
     def test_detect_wig_pos(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
@@ -189,8 +199,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         output = StringIO()
         si.detect_wig_pos(self.example.wigs, self.example.tas[0], 20, 70, nums, output, "TSS_160+",
                           "template_texs", out_table, 10, 30, 300, 50,
-                          5, True, "tex_notex", "replicates", self.example.pros, 5)
-        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t20\t190\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
+                          5, True, "tex_notex", "replicates", self.example.pros, 5, "texs", 20)
+        self.assertEqual(output.getvalue(), "aaa\tin_CDS\tsRNA\t20\t190\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t20\t190\t+\tcond1\ttest1\t40\t50\t10\t\n")
 
     def test_detect_longer(self):
@@ -200,11 +210,19 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
         si.detect_longer(self.example.tsss, self.example.tas[0], nums, output, "", "",
-                         "template_texs", out_table, 20, 5, "tex_notex", "replicates",
-                         50, 5, True, 30, 100, detects, self.example.pros, 5)
-        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS:170_+\n")
+                         "template_texs", out_table, 20, coverage, "tex_notex", "replicates",
+                         50, 5, True, 30, 100, detects, self.example.pros, 5, "texs", coverage)
+        self.assertEqual(output.getvalue(), "aaa\tin_CDS\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
+
+    def test_get_proper_tss(self):
+        tss_file = os.path.join(self.test_folder, "tss.gff")
+        gen_file(tss_file, self.example.gff_file)
+        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        tsss, num_tss = si.get_proper_tss(tss_file, coverage)
+        self.assertEqual(tsss[0].start, 140)
 
     def test_check_srna_condition(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
@@ -213,19 +231,21 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
+        notex = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 30, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
         si.check_srna_condition(self.example.tas[0], 30, 300, self.example.tsss, self.example.pros,
                                 "", "", nums, output, out_table, "texs", 20, detects,
-                                5, "tex_notex", "replicates", 50, 5, True, 5)
+                                coverage, "tex_notex", "replicates", 50, 5, True, 5, notex)
         self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_candidates_00000;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_intergenic_srna(self):
         si.read_libs = self.mock.mock_read_libs
         si.read_wig = self.mock.mock_read_wig
-        gff_file = os.path.join(self.test_folder, "anno.gff")
-        tss_file = os.path.join(self.test_folder, "tss.gff")
-        tran_file = os.path.join(self.test_folder, "tran.gff")
-        pro_file = os.path.join(self.test_folder, "pro.gff")
+        gff_file = os.path.join(self.test_folder, "aaa.gff")
+        tss_file = os.path.join(self.test_folder, "aaa_TSS.gff")
+        tran_file = os.path.join(self.test_folder, "aaa_tran.gff")
+        pro_file = os.path.join(self.test_folder, "aaa_processing.gff")
         wig_f_file = os.path.join(self.wig_folder, "wig_f.wig")
         wig_r_file = os.path.join(self.wig_folder, "wig_r.wig")
         gen_file(gff_file, self.example.gff_file)
@@ -234,16 +254,16 @@ class TestsRNAIntergenic(unittest.TestCase):
         gen_file(pro_file, self.example.gff_file)
         output_file = os.path.join(self.test_folder, "output")
         output_table = os.path.join(self.test_folder, "table")
+        coverage = [0, 0, 0, 50, 10]
         si.replicate_comparison = self.mock.mock_replicate_comparison
         si.coverage_comparison = self.mock.mock_coverage_comparison
         si.intergenic_srna(gff_file, tran_file, tss_file, pro_file, 20, 300,
                            30, wig_f_file, wig_r_file, self.wig_folder, "input_libs",
                            "tex_notex", "replicates", output_file, output_table,
-                           True, 50, 5, 5, 5)
+                           True, 50, 5, coverage, 5, False, True, False, "aaa", self.test_folder,
+                           "frag", None)
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists(output_table))
-        datas = import_data("test_folder/output.stat")
-        self.assertEqual("\n".join(datas), "number of cds = 3\nnumber of transcript assembly = 3\ntotal of sRNA candidates = 0")
         
 
 
@@ -280,7 +300,7 @@ class Example(object):
     tas.append(Create_generator(ta_dict[0], attributes_tas[0], "gff"))
     tss_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "TSS", "start": 170,
                 "end": 170, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tsss = [{"ID": "tss0", "Name": "TSS_0"}]
+    attributes_tsss = [{"ID": "tss0", "Name": "TSS_0", "type": "Orphan"}]
     tsss = []
     tsss.append(Create_generator(tss_dict[0], attributes_tsss[0], "gff"))
     pro_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "TSS", "start": 190,
@@ -296,7 +316,7 @@ class Example(object):
                  "end": 9167, "phase": ".", "strand": "-", "score": "."}]
     attributes_gff = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
                       {"ID": "cds1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
-                      {"ID": "cds4", "Name": "CDS_4", "locus_tag": "BBB_00003"}]
+                      {"ID": "cds4", "Name": "CDS_4", "locus_tag": "BBB_00003", "product": "hypothetical protein"}]
     gffs = []
     for index in range(0, 3):
         gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))

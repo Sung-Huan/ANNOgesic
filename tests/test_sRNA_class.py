@@ -38,7 +38,7 @@ class TestsRNAClass(unittest.TestCase):
         checks = {"limit": False, "first": True, "utr": False, "inter": False}
         srna_datas = {"aaa": self.example.srnas, "all": self.example.srnas}
         class_num, index = sc.print_stat_title(checks, out_stat, strain, srna_datas, 0, 0, 1)
-        self.assertEqual(out_stat.getvalue(), """1 - free energy change of secondary structure below to 0
+        self.assertEqual(out_stat.getvalue(), """1 - the normalized(by length of sRNA) free energy change of secondary structure below to 0
 2 - sRNA candidates start with TSS (3'UTR derived and interCDS sRNA also includes the sRNA candidates which start with processing site.)
 3 - blast can not find the homology from nr database (the cutoff is 0).
 4 - blast can not find the homology from sRNA database.
@@ -66,11 +66,14 @@ All strains:
         index = {'sRNA_hit': 5, '2d_energy': 1, 'sRNA_no_hit': 4,
                  'nr_no_hit': 3, 'with_TSS': 2}
         num_srna = {"total": 0, "intergenic": 0, "5'UTR_derived": 0,
-                        "3'UTR_derived": 0, "interCDS": 0}
+                    "3'UTR_derived": 0, "interCDS": 0, "in_CDS": 0}
+        checks = {"limit": False, "first": True, "utr": True,
+                  "inter": True, "in_CDS": True}
         datas_rna = sc.import_data(5, datas, index, num_srna,
-                                   "aaa", "5utr", "inter", 0, 0)
+                                   "aaa", checks, 0, 0)
         self.assertEqual(datas_rna["5'UTR_derived"]["class_4"][0].start, 230)
         self.assertEqual(datas_rna["interCDS"]["class_1"][0].start, 140)
+        self.assertEqual(datas_rna["in_CDS"]["class_1"][0].start, 6166)
         self.assertEqual(datas_rna["intergenic"]["class_5"][0].start, 5166)
 
     def test_print_intersection(self):
@@ -83,7 +86,7 @@ All strains:
                  "class_3": self.example.srnas, "class_4": self.example.srnas,
                  "class_5": self.example.srnas}
         sc.print_intersection(datas, keys, 3, gff_name, "total", out_stat)
-        self.assertEqual(out_stat.getvalue(), "\tclass_1 and class_4 and class_2 and class_3 and class_5 = 3(1.0)\n")
+        self.assertEqual(out_stat.getvalue(), "\tclass_1 and class_4 and class_2 and class_3 and class_5 = 4(1.3333333333333333)\n")
         results, attributes = extract_info(os.path.join(self.test_folder, "test"), "file")
         self.assertEqual("\n".join(results), self.example.gff_info)
 
@@ -95,7 +98,7 @@ All strains:
         self.assertEqual(srna_datas["aaa"][1].start, 230)
         self.assertEqual(srna_datas["bbb"][0].start, 5166)
         self.assertListEqual(strains, ['all', 'aaa', 'bbb'])
-        self.assertDictEqual(checks, {'first': True, 'utr': True, 'limit': False, 'inter': True})
+        self.assertDictEqual(checks, {'first': True, 'utr': True, 'limit': False, 'inter': True, 'in_CDS': True})
 
     def test_sort_keys(self):
         keys = ["class_3", "class_1", "class_5"]
@@ -106,30 +109,36 @@ All strains:
         out_stat_file = os.path.join(self.test_folder, "stat")
         srna_file = os.path.join(self.test_folder, "srna.gff")
         gen_file(srna_file, self.example.gff_file)
-        sc.classify_srna(srna_file, self.test_folder, 0, 0, out_stat_file)
+        sc.classify_srna(srna_file, self.test_folder, 0, 0, out_stat_file, True)
 
 
 class Example(object):
     gff_file = """aaa	UTR_derived	sRNA	140	160	.	+	.	ID=srna0;Name=sRNA_0;UTR_type=interCDS
 aaa	UTR_derived	sRNA	230	280	.	+	.	ID=srna1;Name=sRNA_1;UTR_type=5utr
-bbb	intergenic	sRNA	5166	5266	.	-	.	ID=srna2;Name=sRNA_2;UTR_type=intergenic"""
+bbb	intergenic	sRNA	5166	5266	.	-	.	ID=srna2;Name=sRNA_2;UTR_type=intergenic
+bbb	in_CDS	sRNA	6166	6499	.	-	.	ID=srna3;Name=sRNA_3;UTR_type=in_CDS"""
     gff_info = """aaa	UTR_derived	sRNA	140	160	.	+	.
 aaa	UTR_derived	sRNA	230	280	.	+	.
-bbb	intergenic	sRNA	5166	5266	.	-	."""
+bbb	intergenic	sRNA	5166	5266	.	-	.
+bbb	in_CDS	sRNA	6166	6499	.	-	."""
     srna_dict = [{"seq_id": "aaa", "source": "UTR_derived", "feature": "sRNA", "start": 140,
                   "end": 160, "phase": ".", "strand": "+", "score": "."},
                  {"seq_id": "aaa", "source": "UTR_derived", "feature": "sRNA", "start": 230,
                   "end": 280, "phase": ".", "strand": "+", "score": "."},
                  {"seq_id": "bbb", "source": "intergenic", "feature": "sRNA", "start": 5166,
-                  "end": 5266, "phase": ".", "strand": "-", "score": "."}]
+                  "end": 5266, "phase": ".", "strand": "-", "score": "."},
+                 {"seq_id": "bbb", "source": "in_CDS", "feature": "sRNA", "start": 6166,
+                  "end": 6499, "phase": ".", "strand": "-", "score": "."}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_0", "with_TSS": "TSS:100_+", "with_cleavage": "Cleavage:145_+",
                         "UTR_type": "interCDS", "sRNA_hit": "ReaA", "2d_energy": "-0.45", "nr_hit": "NA"},
                        {"ID": "srna1", "Name": "sRNA_1", "with_TSS": "TSS:200_+", "with_cleavage": "NA",
                         "UTR_type": "5utr", "sRNA_hit": "NA", "2d_energy": "0", "nr_hit": "3"},
                        {"ID": "srna2", "Name": "sRNA_2", "with_TSS": "NA", "with_cleavage": "NA",
-                        "UTR_type": "intergenic", "sRNA_hit": "sRAE", "2d_energy": "-0.032", "nr_hit": "NA"}]
+                        "UTR_type": "intergenic", "sRNA_hit": "sRAE", "2d_energy": "-0.032", "nr_hit": "NA"},
+                       {"ID": "srna3", "Name": "sRNA_3", "with_TSS": "TSS:6499_-", "with_cleavage": "NA",
+                        "UTR_type": "in_CDS", "sRNA_hit": "NA", "2d_energy": "-0.042", "nr_hit": "NA"}]
     srnas = []
-    for index in range(0, 3):
+    for index in range(0, 4):
         srnas.append(Create_generator(srna_dict[index], attributes_srna[index], "gff"))
 
 

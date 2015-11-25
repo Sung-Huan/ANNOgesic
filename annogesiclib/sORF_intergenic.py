@@ -27,7 +27,7 @@ def get_type(inter, gffs):
     else:
         inter["source"] = "intergenic"
 
-def read_gff(gff_file, tran_file):
+def read_gff(gff_file, tran_file, hypo):
     trans = []
     gffs = []
     gh = open(gff_file)
@@ -36,7 +36,11 @@ def read_gff(gff_file, tran_file):
            (entry.feature == "rRNA") or \
            (entry.feature == "tRNA") or \
            (entry.feature == "sRNA"):
-            gffs.append(entry)
+            if ("product" in entry.attributes.keys()) and (hypo):
+                if "hypothetical protein" not in entry.attributes["product"]:
+                    gffs.append(entry)
+            else:
+                gffs.append(entry)
     th = open(tran_file)
     for entry in Gff3Parser().entries(th):
         trans.append(entry)
@@ -76,8 +80,8 @@ def compare_tran_cds(trans, gffs):
                                "start": pos["start"], "end": pos["end"]})
     return inters
 
-def get_intergenic(gff_file, tran_file, out_file, utr_detect):
-    gffs, trans = read_gff(gff_file, tran_file)
+def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
+    gffs, trans = read_gff(gff_file, tran_file, hypo)
     inters = compare_tran_cds(trans, gffs)
     num = 0
     out = open(out_file, "w")

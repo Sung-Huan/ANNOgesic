@@ -49,13 +49,15 @@ class TestSubLocal(unittest.TestCase):
         self.fastas = "test_folder/fastas"
         self.gffs = "test_folder/gffs"
         self.stat = "test_folder/stat"
+        self.trans = "test_folder/tran"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.out)
             os.mkdir(self.fastas)
             os.mkdir(self.gffs)
             os.mkdir(self.stat)
-        self.sub = SubLocal(self.gffs, self.fastas, self.out)
+            os.mkdir(self.trans)
+        self.sub = SubLocal(self.gffs, self.fastas, self.out, self.trans)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -65,14 +67,15 @@ class TestSubLocal(unittest.TestCase):
         gen_file(os.path.join(self.fastas, "aaa.fa"), self.example.fasta_file)
         gff = "aaa.gff"
         gen_file(os.path.join(self.gffs, gff), self.example.gff_file)
-        prefix = self.sub._get_protein_seq(self.fastas, gff, self.test_folder, self.gffs)
+        gen_file(os.path.join(self.trans, "aaa_transcript.gff"), self.example.tran_file)
+        prefix = self.sub._get_protein_seq(self.fastas, gff, self.test_folder, self.gffs, self.trans)
         self.assertEqual(prefix, "aaa")
 
     def test_run_psortb(self):
         self.sub._psortb = self.mock.mock_psortb
         tmp_result = os.path.join(self.out, "tmp_results")
         os.mkdir(tmp_result)
-        self.sub._run_psortb("aaa", self.out, "positive", "psortb_path", self.test_folder)
+        self.sub._run_psortb("aaa", self.out, "positive", "psortb_path", self.test_folder, tmp_result)
         self.assertTrue(os.path.exists(os.path.join(self.out, "tmp_log")))
         self.assertTrue(os.path.exists(os.path.join(tmp_result,
                        "_".join(["aaa", "raw.txt"]))))
@@ -82,18 +85,27 @@ class TestSubLocal(unittest.TestCase):
         os.mkdir(os.path.join(self.gffs, "aaa.gff_folder"))
         gen_file(os.path.join(self.gffs, "aaa.gff_folder/aaa.gff"), "test")
         os.mkdir(os.path.join(self.out, "psortb_results"))
-        gen_file(os.path.join(self.test_folder, "aaa_raw.txt"), "test")
-        gen_file(os.path.join(self.test_folder, "aaa_table.csv"), "test")
+        gen_file(os.path.join(self.out, "aaa_raw.txt"), "test")
+        gen_file(os.path.join(self.out, "aaa_table.csv"), "test")
         self.sub._merge_and_stat(self.gffs, self.out, self.test_folder, self.stat)
         self.assertTrue(os.path.exists(os.path.join(self.stat, "aaa")))
-        self.assertTrue(os.path.exists(os.path.join(self.out, "psortb_results/aaa")))
+        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "aaa")))
 
+    def test_compare_cds_tran(self):
+        gff_file = os.path.join(self.test_folder, "aaa.gff")
+        tran_file = os.path.join(self.test_folder, "aaa_transcript.gff")
+        gen_file(gff_file, self.example.gff_file)
+        gen_file(tran_file, self.example.tran_file)
+        self.sub._compare_cds_tran(gff_file, tran_file)
+        datas, string = extract_info("test_folder/output/all_CDS/tmp_cds.gff", "file")
+        self.assertEqual("\n".join(datas), 'aaa\tRefSeq\tCDS\t3\t17\t.\t+\t.')
 
 class Example(object):
 
     fasta_file = """aaa
 AATGTGTATACCCACAGTCTCAGCTACACATACAGTT"""
     gff_file = """aaa	RefSeq	CDS	3	17	.	+	.	ID=cds0;Name=CDS_0;locus_tag=AAA_00001"""
+    tran_file = """aaa	RefSeq	transcript	1	170	.	+	.	ID=tran0;Name=Tran_0"""
 
 if __name__ == "__main__":
     unittest.main()

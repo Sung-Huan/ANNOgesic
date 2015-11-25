@@ -19,7 +19,7 @@ class Mock_func(object):
                             fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss):
         pass
 
-    def mock_get_intergenic(self, gff, tran, inter, utr_detect):
+    def mock_get_intergenic(self, gff, tran, inter, utr_detect, hypo):
         pass
 
     def mock_check_gff(self, gffs):
@@ -39,7 +39,7 @@ class Mock_Multiparser(object):
     def parser_wig(self, merge_wigs):
         pass
 
-    def combine_wig(self, gffs, wig_path, test):
+    def combine_wig(self, gffs, wig_path, test, libs):
         pass
 
     def parser_gff(self, trans, type_):
@@ -125,7 +125,7 @@ class TestsORFDetection(unittest.TestCase):
     def test_compare_tran_cds(self):
         so.get_intergenic = self.mock.mock_get_intergenic
         gen_file(os.path.join(self.test_folder, "test.gff"), "test")
-        prefixs = self.sorf._compare_tran_cds(self.test_folder, self.out, True)
+        prefixs = self.sorf._compare_tran_cds(self.test_folder, self.out, True, False)
         self.assertListEqual(prefixs, ["test"])
 
     def test_run_sorf_detection(self):
@@ -148,7 +148,7 @@ class TestsORFDetection(unittest.TestCase):
                                      10, 10, 10, self.fastas, "tlibs", "flibs",
                                      "tex_notex", 2, 3, True, self.srnas,
                                      ["ATG"], ["TTA"], "background",
-                                     2, True, False, True, True)
+                                     2, True, False, True, True, False)
 
 
 if __name__ == "__main__":

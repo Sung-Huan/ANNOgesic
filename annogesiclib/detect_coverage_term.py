@@ -128,7 +128,7 @@ def compare_replicates(term_covers, template_texs, cond, tex_notex, replicates):
     diff = []
     detect = False
     detect_num = check_tex(template_texs, term_covers, 0, term_datas, tex_notex,
-                           "terminator", None, None, None, None)
+                           None, None, "terminator", None, None, None, None)
     if ((detect_num >= replicates["tex"]) and \
        ("texnotex" in cond)) or \
        ((detect_num >= replicates["frag"]) and \
@@ -486,6 +486,7 @@ def detect_coverage(term_table, gff_file, tran_file, seq_file,
     terms = compare_transtermhp(hps, fr_terms)
     compare_ta(terms, tas, fuzzy)
     libs, texs = read_libs(input_libs, wig_folder)
+    wigs = read_wig(wig_f_file, "+", libs)
     compute_wig(wig_f_file, libs, terms, "+", texs, fuzzy,
                 decrease, replicates, tex_notex)
     compute_wig(wig_r_file, libs, terms, "-", texs, fuzzy,

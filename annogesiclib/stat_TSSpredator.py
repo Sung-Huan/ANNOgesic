@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pylab as pl
 from annogesiclib.gff3 import Gff3Parser
+plt.style.use('ggplot')
+
 
 def plot(pri, sec, anti, inter, orph, total, total_more, name,
          feature_name, file_type):

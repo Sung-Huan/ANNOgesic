@@ -26,7 +26,7 @@ def detect_site(inters, start_codons, start_rbs, end_rbs, fuzzy_rbs):
             miss = 0
             detect = False
             for nt in inter["seq"][nts:nts + 6]:
-                if miss == fuzzy_rbs:
+                if miss > fuzzy_rbs:
                     break
                 else:
                     if (num == 0) and (nt != "A"):
@@ -42,7 +42,7 @@ def detect_site(inters, start_codons, start_rbs, end_rbs, fuzzy_rbs):
                     elif (num == 5) and (nt != "G"):
                         miss += 1
                     num += 1
-            if miss < fuzzy_rbs:
+            if miss <= fuzzy_rbs:
                 for start_codon in start_codons:
                     if (start_codon in inter["seq"][nts + (6 + start_rbs - 1):\
                                        nts + (6 + end_rbs)]):

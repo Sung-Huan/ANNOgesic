@@ -9,9 +9,8 @@ import annogesiclib.coverage_detection as cover_detect
 
 class Mock_func(object):
 
-    def mock_check_tex(self, template_texs, covers, cutoff,
-                       target_datas, tex_notex, type_,
-                       poss, median, coverages, utr_type):
+    def mock_check_tex(self, template_texs, covers, cutoff, target_datas, tex_notex,
+              texs, notex, type_, poss, median, coverages, utr_type):
         for srna in Example().cover_datas:
             target_datas.append(srna)
         poss["start"] = 100
@@ -75,8 +74,9 @@ class TestCoverageDetection(unittest.TestCase):
                   "track2_tex": {"median": 150, "mean": 200}, "track2_notex": {"median": 10, "mean": 20},
                   "frag": {"median": 80, "mean": 100}}
         target_datas = []
+        texs = {"track1_tex@AND@track1_notex": 0, "track2_tex@AND@track2_notex": 0}
         detect_num_lib = cover_detect.check_tex(template_texs, covers, 200, target_datas, 2,
-                                            None, poss, median, coverages, "3utr")
+                                            texs, 20, None, poss, median, coverages, "3utr")
         self.assertEqual(detect_num_lib, 2)
         num_frag = 0
         num_tex = 0
@@ -88,9 +88,9 @@ class TestCoverageDetection(unittest.TestCase):
         self.assertEqual(num_frag, 1)
         self.assertEqual(num_tex, 2)
         detect_num_lib = cover_detect.check_tex(template_texs, covers, 200, target_datas, 2,
-                                                "sRNA_utr_derived", poss, median, coverages, "5utr")
-        self.assertEqual(detect_num_lib, 0)
-        self.assertDictEqual(poss, {"high": 30, "low": 10})
+                                                texs, 20, "sRNA_utr_derived", poss, median, coverages, "5utr")
+        self.assertEqual(detect_num_lib, 2)
+        self.assertDictEqual(poss, {'start': 100, 'high': 30, 'end': 202, 'low': 10})
 
     def test_replicate_comparison(self):
         cover_detect.check_tex = Mock_func().mock_check_tex
@@ -100,9 +100,11 @@ class TestCoverageDetection(unittest.TestCase):
         median = {"track1_tex": {"median": 100, "mean": 200}, "track1_notex": {"median": 30, "mean": 80},
                   "track2_tex": {"median": 150, "mean": 200}, "track2_notex": {"median": 10, "mean": 20},
                   "frag": {"median": 80, "mean": 100}}
+        texs = {"track1_tex@AND@track1_notex": 0, "track2_tex@AND@track2_notex": 0}
         srna_datas = cover_detect.replicate_comparison(srna_covers, template_texs, "+",
                                                       200, 2, {"tex": 2, "frag": 1},
-                                                      "sRNA_utr_derived", median, coverages, "3utr", False)
+                                                      "sRNA_utr_derived", median, coverages, "3utr",
+                                                      texs, 100)
         self.assertEqual(srna_datas["best"], 500)
         self.assertEqual(srna_datas["track"], "frag")
         self.assertEqual(srna_datas["high"], 700)

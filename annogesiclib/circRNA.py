@@ -67,7 +67,7 @@ def print_file(nums, stat, strain):
         stat.write("more than {0} supported it = {1}\n".format(
                    key, nums[strain][key]))
 
-def read_file(input_file, gff_file):
+def read_file(input_file, gff_file, hypo):
     circs = []
     gffs = []
     ps = SpliceParser()
@@ -79,7 +79,11 @@ def read_file(input_file, gff_file):
         circs.append(entry)
     gff_parser = Gff3Parser()
     for entry in gff_parser.entries(open(gff_file)):
-        gffs.append(entry)
+        if ("product" in entry.attributes.keys()) and (hypo):
+            if "hypothetical protein" not in entry.attributes["product"]:
+                gffs.append(entry)
+        else:
+            gffs.append(entry)
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     circs = sorted(circs, key=lambda x: (x.strain, x.supported_reads),
                    reverse=True)
@@ -120,8 +124,8 @@ def get_circrna(circs, gffs, high, start_ratio, end_ratio, out):
             "conflict": num_conflict}
 
 def detect_circrna(input_file, gff_file, output_file,
-                   start_ratio, end_ratio, statistics):
-    circs, gffs, high = read_file(input_file, gff_file)
+                   start_ratio, end_ratio, statistics, hypo):
+    circs, gffs, high = read_file(input_file, gff_file, hypo)
     out = open(output_file, "w")
     out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
                "ID", "strain", "strand", "start", "end", "annotation_overlap",
@@ -130,28 +134,30 @@ def detect_circrna(input_file, gff_file, output_file,
     nums = get_circrna(circs, gffs, high, start_ratio, end_ratio, out)
     stat = open(statistics, "w")
     stat.write("All strains:\n")
+    stat.write("\tBefore filtering:\n")
     stat.write("\tthe number of all circular RNAs = {0}\n".format(
                nums["circular"]["all"]))
     print_file(nums["support"], stat, "all")
-    stat.write("\n\tthe circular RNAs:\n")
+    stat.write("\n\tAfter filtering:\n")
     stat.write("\t\twithout conflict with annotation\n")
-    stat.write("\t\tsupport reat ratio of starting point is larger than {0}\n".format(
+    stat.write("\t\tsupport read ratio of starting point is larger than {0}\n".format(
                start_ratio))
-    stat.write("\t\tsupport reat ratio of end point is larger than {0}\n".format(
+    stat.write("\t\tsupport read ratio of end point is larger than {0}\n".format(
                end_ratio))
     print_file(nums["conflict"], stat, "all")
     if len(nums["circular"]) > 2:
         for strain in nums["circular"].keys():
             if strain != "all":
                 stat.write("\n{0}:\n".format(strain))
+                stat.write("\tBefore filtering:\n")
                 stat.write("\tthe number of all circular RNAs = {0}\n".format(
                            nums["circular"][strain]))
                 print_file(nums["support"], stat, strain)
-                stat.write("\n\tthe circular RNAs:\n")
+                stat.write("\n\tAfter filtering:\n")
                 stat.write("\t\twithout conflict with annotation\n")
-                stat.write("\t\tsupport reat ratio of starting point is larger than {0}\n".format(
+                stat.write("\t\tsupport read ratio of starting point is larger than {0}\n".format(
                            start_ratio))
-                stat.write("\t\tsupport reat ratio of end point is larger than {0}\n".format(
+                stat.write("\t\tsupport read ratio of end point is larger than {0}\n".format(
                            end_ratio))
                 print_file(nums["conflict"], stat, strain)
     out.close()

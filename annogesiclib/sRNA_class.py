@@ -85,12 +85,18 @@ def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                         datas_srna["class_" + str(index["sRNA_hit"])].append(data)
                     else:
                         datas_srna["class_" + str(index["sRNA_no_hit"])].append(data)
+                if "with_term" in data.attributes.keys():
+                    if (data.attributes["with_term"] != "NA"):
+                        datas_srna["class_" + str(index["with_term"])].append(data)
+                    elif ("end_cleavage" in data.attributes.keys()):
+                        if data.attributes["end_cleavage"] != "NA":
+                            datas_srna["class_" + str(index["with_term"])].append(data)
     return num_srna
 
 def import_data(class_num, datas, index, num_srna,
-                strain, utr, inter, energy, hit_nr_num):
+                strain, checks, energy, hit_nr_num):
     datas_srna = {}
-    if utr:
+    if checks["utr"]:
         datas_srna["5'UTR_derived"] = {}
         num_srna["5'UTR_derived"] = import_class(class_num,
                                     datas_srna["5'UTR_derived"], datas, index,
@@ -105,13 +111,19 @@ def import_data(class_num, datas, index, num_srna,
         num_srna["interCDS"] = import_class(class_num, datas_srna["interCDS"],
                                datas, index, num_srna["interCDS"], strain,
                                "UTR_derived", "interCDS", energy, hit_nr_num)
-    if inter:
+    if checks["inter"]:
         datas_srna["intergenic"] = {}
         num_srna["intergenic"] = import_class(class_num,
                                  datas_srna["intergenic"],
                                  datas, index, num_srna["intergenic"], strain,
                                  "intergenic", None, energy, hit_nr_num)
-    if utr:
+    if checks["in_CDS"]:
+        datas_srna["in_CDS"] = {}
+        num_srna["in_CDS"] = import_class(class_num,
+                                 datas_srna["in_CDS"],
+                                 datas, index, num_srna["in_CDS"], strain,
+                                 "in_CDS", None, energy, hit_nr_num)
+    if (checks["utr"]) or (checks["in_CDS"]):
         datas_srna["total"] = {}
         num_srna["total"] = import_class(class_num, datas_srna["total"], datas,
                             index, num_srna["total"], strain, "total", None,
@@ -137,7 +149,7 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
         class_num = initiate("2d_energy",
                     srna_datas[strain][0].attributes.keys(),
                     "2d_energy", class_num, index, out_stat,
-                    " - free energy change of secondary structure below to " + \
+                    " - the normalized(by length of sRNA) free energy change of secondary structure below to " + \
                     str(energy))
         name = " ".join([" - sRNA candidates start with TSS",
                "(3'UTR derived and interCDS sRNA also includes the sRNA candidates which start with processing site.)"])
@@ -148,6 +160,9 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
                     "nr_no_hit", class_num, index, out_stat,
                     "".join([" - blast can not find the homology from nr database (the cutoff is ",
                              str(hit_nr_num), ")."]))
+        class_num = initiate("with_term", srna_datas[strain][0].attributes.keys(),
+                    "with_term", class_num, index, out_stat,
+                    " - sRNA candidates ends with terminator (including the candidates ends with processing site).")
         class_num = initiate("sORF", srna_datas[strain][0].attributes.keys(),
                     "sORF", class_num, index, out_stat,
                     " - have no confliction of sORF candidates.")
@@ -173,7 +188,8 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
 
 def read_file(srna_file):
     strains = []
-    checks = {"limit": False, "first": True, "utr": False, "inter": False}
+    checks = {"limit": False, "first": True, "utr": False,
+              "inter": False, "in_CDS": False}
     srna_datas = {}
     srna_datas["all"] = []
     strains.append("all")
@@ -184,6 +200,8 @@ def read_file(srna_file):
             checks["utr"] = True
         elif entry.source == "intergenic":
             checks["inter"] = True
+        elif entry.source == "in_CDS":
+            checks["in_CDS"] = True
         if entry.seq_id != pre_seq_id:
             srna_datas[entry.seq_id] = []
             strains.append(entry.seq_id)
@@ -196,7 +214,8 @@ def read_file(srna_file):
     fh.close()
     return srna_datas, strains, checks
 
-def classify_srna(srna_file, out_folder, energy, hit_nr_num, out_stat_file):
+def classify_srna(srna_file, out_folder, energy, hit_nr_num,
+                  out_stat_file, in_cds):
     srna_datas, strains, checks = read_file(srna_file)
     out_stat = open(out_stat_file, "w")
     for strain in strains:
@@ -208,10 +227,12 @@ def classify_srna(srna_file, out_folder, energy, hit_nr_num, out_stat_file):
                         "3'UTR_derived": 0, "interCDS": 0}
         else:
             num_srna = {"intergenic": 0}
+        if in_cds:
+            num_srna["in_CDS"] = 0
         class_num, index = print_stat_title(checks, out_stat, strain, srna_datas,
                                             energy, hit_nr_num, len(strains))
         srna_class = import_data(class_num, srna_datas, index, num_srna, strain,
-                                 checks["utr"], checks["inter"], energy, hit_nr_num)
+                                 checks, energy, hit_nr_num)
         for type_, srna in num_srna.items():
             out_stat.write("sRNA type - {0}:\n".format(type_))
             out_stat.write("\ttotal sRNA candidates = {0}\n".format(srna))

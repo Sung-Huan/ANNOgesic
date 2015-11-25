@@ -59,13 +59,13 @@ class TestGensRNAOutput(unittest.TestCase):
     def test_gen_best_srna(self):
         gso.read_gff = Mock_func().mock_read_gff
         out_file = os.path.join(self.test_folder, "test.out")
-        gso.gen_best_srna("test.srna", True, 0, 0, True, out_file)
+        gso.gen_best_srna("test.srna", True, 0, 0, True, out_file, True)
         with open(out_file) as fh:
             for line in fh:
                 if not (line.startswith("#")):
                     data = "\t".join(line.split("\t")[:-1])
         self.assertEqual(data, "aaa\tUTR_derived\tsRNA\t300\t367\t.\t+\t.")
-        gso.gen_best_srna("test.srna", False, 0, 0, True, out_file)
+        gso.gen_best_srna("test.srna", False, 0, 0, True, out_file, True)
         data = None
         with open(out_file) as fh:
             for line in fh:
@@ -81,11 +81,12 @@ class Example(object):
                  {"seq_id": "bbb", "source": "intergenic", "feature": "sRNA", "start": 18,
                   "end": 50, "phase": ".", "strand": "-", "score": "."}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_0", "2d_energy": "-34",
-                        "nr_hit": "2", "sRNA_hit": "1", "UTR_type": "5utr", "sORF": "NA"},
+                        "nr_hit": "2", "sRNA_hit": "1", "UTR_type": "5utr", "sORF": "NA", "with_term": "NA"},
                        {"ID": "srna1", "Name": "sRNA_1", "2d_energy": "-23",
-                        "nr_hit": "NA", "sRNA_hit": "NA", "UTR_type": "3utr", "sORF": "sORF_1"},
+                        "nr_hit": "NA", "sRNA_hit": "NA", "UTR_type": "3utr", "sORF": "sORF_1",
+                        "with_term": "terminator:366-378_+"},
                        {"ID": "srna2", "Name": "sRNA_2", "2d_energy": "-11",
-                        "nr_hit": "1", "sRNA_hit": "NA", "sORF": "NA"}]
+                        "nr_hit": "1", "sRNA_hit": "NA", "sORF": "NA", "with_term": "terminator:5-19_-"}]
     srnas = []
     for index in range(0, 3):
         srnas.append(Create_generator(srna_dict[index], attributes_srna[index], "gff"))

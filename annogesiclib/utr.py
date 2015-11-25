@@ -35,13 +35,13 @@ class UTRDetection(object):
             if gff.endswith(".gff"):
                 prefix = gff[:-4]
                 tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
-                                                   prefix, None)
+                                                   prefix, None, None)
                 tran = self.helper.get_correct_file(tran_path, "_transcript.gff",
-                                                    prefix, None)
+                                                    prefix, None, None)
                 if terms:
                     term = self.helper.get_correct_file(
                                 os.path.join(terms, "tmp"), "_term.gff",
-                                prefix, None)
+                                prefix, None, None)
                 else:
                     term = None
                 print("computing 5'UTR of {0} .....".format(prefix))

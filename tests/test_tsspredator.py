@@ -15,7 +15,7 @@ class Mock_func(object):
         self.example = Example()
 
     def mock_start_to_run(self, tsspredator_path, config_file, out_path, prefix):
-        pass
+        gen_file(os.path.join(out_path, "TSSstatistics.tsv"), "test")        
 
     def mock_check_orphan(sel, pre_tss, gff, wig_f, wig_r, tmp_tss):
         gen_file(tmp_tss, "test")
@@ -178,7 +178,11 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.wigs, "test1_reverse.wig"), "test_r")
         gen_file(os.path.join(self.wigs, "test1_TEX_forward.wig"), "test_f")
         gen_file(os.path.join(self.wigs, "test1_TEX_reverse.wig"), "test_r")
-        self.tss._merge_wigs(self.wigs, "test")
+        libs = ["test1_forward.wig:notex:1:a:+",
+                "test1_reverse.wig:notex:1:a:-",
+                "test1_TEX_forward.wig:tex:1:a:+",
+                "test1_TEX_reverse.wig:tex:1:a:-"]
+        self.tss._merge_wigs(self.wigs, "test", libs)
         datas = import_data(os.path.join("tmp", "merge_forward.wig"))
         self.assertEqual("\n".join(datas), "test_ftest_f")
         datas = import_data(os.path.join("tmp", "merge_reverse.wig"))
@@ -192,7 +196,9 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.wigs, "test1_TEX_forward.wig"), "test_f")
         gen_file(os.path.join(self.wigs, "test1_TEX_reverse.wig"), "test_r")
         ts.check_orphan = self.mock.mock_check_orphan
-        self.tss._check_orphan(["test"], self.wigs, "TSS", self.gffs)
+        libs = ["test1_TEX_forward.wig:tex:1:a:+", "test1_TEX_reverse.wig:tex:1:a:-",
+                "test1_forward.wig:notex:1:a:+", "test1_reverse.wig:notex:1:a:-"]
+        self.tss._check_orphan(["test"], self.wigs, "TSS", self.gffs, libs)
         self.assertTrue(os.path.exists(os.path.join(self.out, "gffs/test_TSS.gff")))
 
     def test_low_expression(self):
@@ -204,7 +210,9 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.gffs, "test_TSS.gff"), self.example.tss_file)
         os.mkdir(os.path.join(self.out, "statistics"))
         os.mkdir(os.path.join(self.out, "statistics/test"))
-        self.tss._low_expression(100, 3, "manual", "input_libs",
+        libs = ["test1_TEX_forward.wig:tex:1:a:+", "test1_TEX_reverse.wig:tex:1:a:-",
+                "test1_forward.wig:notex:1:a:+", "test1_reverse.wig:notex:1:a:-"]
+        self.tss._low_expression(100, 3, "manual", libs,
                                  self.gffs, "TSS", self.wigs)
         shutil.rmtree("tmp")
         datas = import_data(os.path.join(self.out, "statistics/test/stat_test_low_expression_cutoff.csv"))

@@ -40,14 +40,19 @@ class TranscriptAssembly(object):
         assembly(wig_f, wig_r, height, width, tolerance, low_cutoff,
                  wig_folder, tex, libs, replicates, out)
 
-    def _combine_wigs(self, wig_folder, merges, out_wig, direct, strain):
+    def _combine_wigs(self, wig_folder, merges, out_wig, libs, strain):
         for wig in os.listdir(wig_folder):
-            if (direct in wig):
-                filename = wig.split("_STRAIN_")
-                if filename[1][:-4] == strain:
-                    print("Merge {0} now....".format(wig))
-                    self.helper.merge_file(os.path.join(wig_folder, wig),
-                                           os.path.join(merges, out_wig))
+            for lib in libs:
+                info = lib.split(":")
+                if ((info[0][:-4] in wig) and (info[-1] == "+") and (
+                    "forward" in out_wig)) or (
+                    (info[0][:-4] in wig) and (info[-1] == "-") and (
+                    "reverse" in out_wig)):
+                    filename = wig.split("_STRAIN_")
+                    if filename[1][:-4] == strain:
+                        print("Merge {0} now....".format(wig))
+                        self.helper.merge_file(os.path.join(wig_folder, wig),
+                                               os.path.join(merges, out_wig))
 
     def _compute(self, merges, wig_folder, tex, height, width, tolerance,
                  replicates, out_folder, wig_type, libs, low_cutoff):
@@ -59,10 +64,10 @@ class TranscriptAssembly(object):
                 strains.append(filename[1][:-4])
         for strain in strains:
             self._combine_wigs(wigs, merges, "_".join([strain, "forward.wig"]),
-                               "forward", strain)
+                               libs, strain)
             print("Merge {0}_forward.wig complete...".format(strain))
             self._combine_wigs(wigs, merges, "_".join([strain, "reverse.wig"]),
-                               "reverse", strain)
+                               libs, strain)
             print("Merge {0}_reverse.wig complete...".format(strain))
         for strain in strains:
             f_file = os.path.join(merges, "_".join([strain, "forward.wig"]))

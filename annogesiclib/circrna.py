@@ -283,7 +283,7 @@ class CircRNADetection(object):
                                start_ratio, end_ratio,
                                os.path.join(stat_folder,
                                             "_".join(["stat_circRNA",
-                                                      prefix + ".csv"])))
+                                                      prefix + ".csv"])), hypo)
                 if convert:
                     self.converter.convert_circ2gff(
                          os.path.join(candidate_path, prefix,
@@ -318,7 +318,7 @@ class CircRNADetection(object):
 
     def run_circrna(self, align, cores, fastas, gffs, normal_bams, frag_bams,
                     read_folder, stat_folder, convert, support, segemehl_path,
-                    samtools_path, start_ratio, end_ratio):
+                    samtools_path, start_ratio, end_ratio, hypo):
         for gff in os.listdir(gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
@@ -362,7 +362,7 @@ class CircRNADetection(object):
         self.multiparser.combine_gff(fastas, self.gff_path, "fasta", None)
         self._stat_and_gen_gff(tmp_prefixs, self.gff_folder, self.splice_path,
                                self.candidate_path, self.gff_path,stat_folder,
-                               support, convert, start_ratio, end_ratio)
+                               support, convert, start_ratio, end_ratio, hypo)
         self.helper.remove_tmp(fastas)
         self.helper.remove_tmp(gffs)
         for tmp_prefix in tmp_prefixs:

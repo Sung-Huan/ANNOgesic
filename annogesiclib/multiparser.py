@@ -68,7 +68,7 @@ class Multiparser(object):
         self.helper.move_all_content(tar_merge, tar_folder, None)
         shutil.rmtree(tar_merge)
 
-    def combine_wig(self, ref_folder, tar_folder, ref_feature):
+    def combine_wig(self, ref_folder, tar_folder, ref_feature, libs):
         tar_merge = os.path.join(tar_folder, "merge_tmp")
         change_f = False
         change_r = False
@@ -108,15 +108,14 @@ class Multiparser(object):
                     for file_ in files:
                         if (tar.endswith(".wig")) and (
                             file_ == filename[-1][:-4]):
-                            if ("forward" in tar) and ("reverse" in tar):
-                                print("Error: Unclear wig file. It is reverse or forward!!!")
-                            elif ("forward" in tar):
-                                self.helper.merge_file(os.path.join(tar_folder, tar),
-                                     os.path.join(tar_folder, self.tmp_wig_forward))
-                                change_f = True
-                            elif ("reverse" in tar):
-                                self.helper.merge_file(os.path.join(tar_folder, tar),
-                                     os.path.join(tar_folder, self.tmp_wig_reverse))
+                            for lib in libs:
+                                if (filename[0] in lib) and (lib[-1] == "+"):
+                                    self.helper.merge_file(os.path.join(tar_folder, tar),
+                                         os.path.join(tar_folder, self.tmp_wig_forward))
+                                    change_f = True
+                                elif (filename[0] in lib) and (lib[-1] == "-"):
+                                    self.helper.merge_file(os.path.join(tar_folder, tar),
+                                         os.path.join(tar_folder, self.tmp_wig_reverse))
                                 change_r = True
                 if change_f and change_r:
                     change_f = False

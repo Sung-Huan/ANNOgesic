@@ -65,11 +65,12 @@ def import_sorf(inter, sorfs, start, end, fa_start, fa_end, type_, fasta, rbs):
 
 def detect_rbs_site(fasta, start, fuzzy_rbs, inter):
     detect = []
+    pre_miss = 5
     for nts in range(0, start):
         num = 0
         miss = 0
         for nt in fasta[nts:nts + 6]:
-            if miss == fuzzy_rbs:
+            if miss > fuzzy_rbs:
                 break
             else:
                 if (num == 0) and (nt != "A"):
@@ -85,12 +86,15 @@ def detect_rbs_site(fasta, start, fuzzy_rbs, inter):
                 elif (num == 5) and (nt != "G"):
                     miss += 1
                 num += 1
-        if miss < fuzzy_rbs:
-#            if (start - nts >= start_rbs) and (start - nts <= end_rbs):
-            if inter.strand == "+":
-                detect.append(inter.start + nts + 1)
-            else:
-                detect.append(inter.start + (len(fasta) - nts) - 1)
+        if miss <= fuzzy_rbs:
+            if (miss <= pre_miss):
+                if miss < pre_miss:
+                    detect = []
+                if inter.strand == "+":
+                    detect.append(inter.start + nts)
+                else:
+                    detect.append(inter.start + (len(fasta) - nts) - 1)
+                pre_miss = miss
     if len(detect) == 0:
         detect = ["NA"]
     return detect
@@ -403,22 +407,31 @@ def get_attribute(num, name, start_tss, sorf, type_):
                              ["RBS", "&".join(sorf["rbs"])])])
     return attribute_string
 
-def check_start_point(sorf):
-    if sorf["start_TSS"] != "NA":
-        if (sorf["strand"] == "+"):
-            start_TSS = sorf["start_TSS"].replace("TSS_", "")
-            start_TSS = start_TSS.replace("+", "")
-            if (sorf["start"] > int(start_TSS)):
-                sorf["start"] = int(start_TSS)
-        elif (sorf["strand"] == "-"):
-            start_TSS = sorf["start_TSS"].replace("TSS_", "")
-            start_TSS = start_TSS.replace("-", "")
-            if (sorf["end"] < int(start_TSS)):
-                sorf["end"] = int(start_TSS)
+def check_start_and_tss_point(sorf):
+#    if sorf["start_TSS"] != "NA":
+#        if (sorf["strand"] == "+"):
+#            start_TSS = sorf["start_TSS"].replace("TSS_", "")
+#            start_TSS = start_TSS.replace("+", "")
+#            if (sorf["start"] > int(start_TSS)):
+#                sorf["start"] = int(start_TSS)
+#        elif (sorf["strand"] == "-"):
+#            start_TSS = sorf["start_TSS"].replace("TSS_", "")
+#            start_TSS = start_TSS.replace("-", "")
+#            if (sorf["end"] < int(start_TSS)):
+#                sorf["end"] = int(start_TSS)
+    tsss = []
+    for tss in sorf["with_TSS"]:
+        if tss != "NA":
+            if (int(tss.replace("TSS_", "")[:-1]) >= int(sorf["start"])) and (
+                int(tss.replace("TSS_", "")[:-1]) <= int(sorf["end"])):
+                tsss.append(tss)
+        else:
+            tsss.append(tss)
+    sorf["with_TSS"] = copy.deepcopy(tsss)
 
 def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
     name = '%0*d' % (5, num)
-    check_start_point(sorf)
+#    check_start_and_tss_point(sorf)
     if sorf["type"] == "intergenic":
         source = "intergenic"
         type_ = "Intergenic"
@@ -427,11 +440,12 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
                 pass
             else:
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
-            if sorf["start_TSS"] != "NA":
-                start_tss = "TSS_" + sorf["start_TSS"]
-            else:
-                start_tss = sorf["start_TSS"]
-        attribute_string = get_attribute(num, name, start_tss, sorf, "intergenic")
+#            if sorf["start_TSS"] != "NA":
+#                start_tss = sorf["start_TSS"]
+#            else:
+#                start_tss = sorf["start_TSS"]
+#        attribute_string = get_attribute(num, name, start_tss, sorf, "intergenic")
+        attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "intergenic")
     else:
         source = "UTR_derived"
         if ("3utr" in sorf["type"]) and ("5utr" in sorf["type"]):
@@ -447,11 +461,12 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
                 pass
             else:
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
-            if sorf["start_TSS"] != "NA":
-                start_tss = "TSS_" + sorf["start_TSS"]
-            else:
-                start_tss = sorf["start_TSS"]
-        attribute_string = get_attribute(num, name, start_tss, sorf, "utr")
+#            if sorf["start_TSS"] != "NA":
+#                start_tss = sorf["start_TSS"]
+#            else:
+#                start_tss = sorf["start_TSS"]
+#        attribute_string = get_attribute(num, name, start_tss, sorf, "utr")
+        attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "utr")
     info = "\t".join([str(field) for field in [
                       sorf["strain"], source, "sORF", str(sorf["start"]),
                       str(sorf["end"]), ".", sorf["strand"],
@@ -657,7 +672,7 @@ def coverage_and_output(sorfs, mediandict, wigs_f, wigs_r, texs, out_g, out_t,
         if len(sorf_covers) != 0:
             sorf_info = replicate_comparison(sorf_covers, texs,
                                 sorf["strand"], None, tex_notex, replicates,
-                                "sORF", None, cutoffs, None, False)
+                                "sORF", None, cutoffs, None, texs, cutoffs)
             if len(sorf_info["conds"].keys()) != 0:
                 print_file(sorf, sorf_info, num, out_g,
                            out_t, table_best, print_all)

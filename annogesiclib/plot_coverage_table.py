@@ -6,6 +6,7 @@ from copy import deepcopy
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+plt.style.use('ggplot')
 
 def fig(rowlabels, collabels, cells, filename, max_color, min_color):
     row_num = len(rowlabels) / 100

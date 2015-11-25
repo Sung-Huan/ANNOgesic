@@ -33,15 +33,15 @@ class OperonDetection(object):
                         "_".join(["operon", prefix + ".csv"]))
             print("Detection operons of {0}".format(prefix))
             tss = self.helper.get_correct_file(self.tss_path, "_TSS.gff",
-                                               prefix, None)
+                                               prefix, None, None)
             tran = self.helper.get_correct_file(self.tran_path,
-                               "_transcript.gff", prefix, None)
-            gff = self.helper.get_correct_file(gffs, ".gff", prefix, None)
+                               "_transcript.gff", prefix, None, None)
+            gff = self.helper.get_correct_file(gffs, ".gff", prefix, None, None)
             if self.term_path is None:
                 term = False
             else:
                 term = self.helper.get_correct_file(self.term_path, "_term.gff",
-                                                    prefix, None)
+                                                    prefix, None, None)
             operon(tran, tss, gff, term, tss_fuzzy,
                    term_fuzzy, length, out_table)
 
@@ -80,19 +80,19 @@ class OperonDetection(object):
                                     "_".join([prefix, "all_features.gff"]))
             print("Combine all features of {0}".format(prefix))
             tss = self.helper.get_correct_file(self.tss_path, "_TSS.gff",
-                                               prefix, None)
+                                               prefix, None, None)
             tran = self.helper.get_correct_file(self.tran_path,
-                               "_transcript.gff", prefix, None)
-            gff = self.helper.get_correct_file(gffs, ".gff", prefix, None)
+                               "_transcript.gff", prefix, None, None)
+            gff = self.helper.get_correct_file(gffs, ".gff", prefix, None, None)
             utr5 = self.helper.get_correct_file(self.utr5_path,
-                                                "_5UTR.gff", prefix, None)
+                                                "_5UTR.gff", prefix, None, None)
             utr3 = self.helper.get_correct_file(self.utr3_path,
-                                                "_3UTR.gff", prefix, None)
+                                                "_3UTR.gff", prefix, None, None)
             if self.term_path is None:
                 term = None
             else:
                 term = self.helper.get_correct_file(self.term_path,
-                                                    "_term.gff", prefix, None)
+                                                "_term.gff", prefix, None, None)
             combine_gff(gff, tran, tss, utr5, utr3, term,
                         tss_fuzzy, term_fuzzy, out_file)
 

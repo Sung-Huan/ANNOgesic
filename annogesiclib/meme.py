@@ -218,6 +218,7 @@ class MEME(object):
         self.helper.check_make_folder(self.tmp_folder)
         prefixs = []
         for tss in os.listdir(self.tss_path):
+            print(tss)
             prefix = tss.replace("_TSS.gff", "")
             prefixs.append(prefix)
             self.helper.check_make_folder(os.path.join(output_folder, prefix))

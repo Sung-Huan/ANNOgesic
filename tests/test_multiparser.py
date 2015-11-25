@@ -69,7 +69,8 @@ class TestMultiparser(unittest.TestCase):
         for index in range(0, 4):
             with open(wig_files[index], "w") as fh:
                 fh.write(example_wigs[index])
-        self.multiparser.combine_wig(self.ref_folder, tmp_tar, "fasta")
+        libs = ["test_forward.wig_STRAIN_aaa.wig:frag:1:a:+", "test_reverse.wig_STRAIN_aaa.wig:frag:1:a:-"]
+        self.multiparser.combine_wig(self.ref_folder, tmp_tar, "fasta", libs)
         self.assertTrue(os.path.exists(os.path.join(tmp_tar, "test_forward.wig")))
         self.assertTrue(os.path.exists(os.path.join(tmp_tar, "test_reverse.wig")))
 

@@ -5,6 +5,7 @@ import csv
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
 
@@ -13,7 +14,27 @@ def import_uniprot_data(entry, name_list, feature):
     if ref_name not in name_list:
         name_list.add(ref_name)
 
-def retrieve_uniprot(database_file, gff_file, out_file):
+def compare_cds_tran(gffs, trans):
+    new_gffs = []
+    for gff in gffs:
+        for ta in trans:
+            if (gff.seq_id == ta.seq_id) and (
+                gff.strand == ta.strand):
+                if ((gff.end < ta.end) and (
+                     gff.end > ta.start) and (
+                     gff.start <= ta.start)) or (
+                    (gff.start > ta.start) and (
+                     gff.start < ta.end) and (
+                     gff.end >= ta.end)) or (
+                    (gff.end >= ta.end) and (
+                     gff.start <= ta.start)) or (
+                    (gff.end <= ta.end) and (
+                     gff.start >= ta.start)):
+                    new_gffs.append(gff)
+                    break
+    return new_gffs
+
+def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     name_list = set()
     gffs = []
     out = open(out_file, "w")
@@ -33,6 +54,12 @@ def retrieve_uniprot(database_file, gff_file, out_file):
             elif ("protein_id" in entry.attributes.keys()):
                 import_uniprot_data(entry, name_list, "protein_id")
             gffs.append(entry)
+    if (type_ == "express") and (tran_file is not None):
+        trans = []
+        for entry in Gff3Parser().entries(open(tran_file)):
+            trans.append(entry)
+        new_gffs = compare_cds_tran(gffs, trans)
+        gffs = new_gffs
     idmapping = open(database_file, "r")
     gos = []
     for uni_id in idmapping:

@@ -256,6 +256,9 @@ class TSSpredator(object):
                  "_".join(["stat", feature, "libs", tss]) + ".csv"))
             self.helper.move_all_content(os.getcwd(),
                  os.path.join(self.stat_outfolder, tss), ["_class", ".png"])
+            if os.path.exists(os.path.join(self.stat_outfolder, "TSSstatistics.tsv")):
+                shutil.move(os.path.join(self.stat_outfolder, "TSSstatistics.tsv"),
+                            os.path.join(self.stat_outfolder, tss, "TSSstatistics.tsv"))
             #### generate venn diagram
             plot_venn(compare_file, feature)
             self.helper.move_all_content(os.getcwd(),
@@ -289,22 +292,26 @@ class TSSpredator(object):
                               repmatch, cluster, utr_length)
         return prefixs
 
-    def _merge_wigs(self, wig_folder, prefix):
+    def _merge_wigs(self, wig_folder, prefix, libs):
         self.helper.check_make_folder(os.path.join(os.getcwd(),
                                       self.tmps["tmp"]))
         for wig_file in os.listdir(wig_folder):
-            if ("forward" in wig_file) and (prefix in wig_file) and (
-                os.path.isfile(os.path.join(wig_folder, wig_file))):
-                Helper().merge_file(os.path.join(wig_folder, wig_file),
-                                    os.path.join("tmp", "merge_forward.wig"))
-            if ("reverse" in wig_file) and (prefix in wig_file) and (
-                os.path.isfile(os.path.join(wig_folder, wig_file))):
-                Helper().merge_file(os.path.join(wig_folder, wig_file),
-                                    os.path.join("tmp", "merge_reverse.wig"))
+            for lib in libs:
+                info = lib.split(":")
+                if (info[0][:-4] in wig_file) and (info[-1] == "+") and (
+                    prefix in wig_file) and (
+                    os.path.isfile(os.path.join(wig_folder, wig_file))):
+                    Helper().merge_file(os.path.join(wig_folder, wig_file),
+                                        os.path.join("tmp", "merge_forward.wig"))
+                if (info[0][:-4] in wig_file) and (info[-1] == "-") and (
+                    prefix in wig_file) and (
+                    os.path.isfile(os.path.join(wig_folder, wig_file))):
+                    Helper().merge_file(os.path.join(wig_folder, wig_file),
+                                        os.path.join("tmp", "merge_reverse.wig"))
 
-    def _check_orphan(self, prefixs, wig_folder, program, gffs):
+    def _check_orphan(self, prefixs, wig_folder, program, gffs, libs):
         for prefix in prefixs:
-            self._merge_wigs(wig_folder, prefix)
+            self._merge_wigs(wig_folder, prefix, libs)
             tmp_tss = os.path.join(self.tmps["tmp"],
                                    "_".join([prefix, program + ".gff"]))
             pre_tss = os.path.join(self.gff_outfolder,
@@ -334,21 +341,21 @@ class TSSpredator(object):
                 for tss in os.listdir(out_folder):
                     if tss.endswith("_TSS.gff"):
                         ref = self.helper.get_correct_file(references, "_processing.gff",
-                                          tss.replace("_TSS.gff", ""), None)
+                                          tss.replace("_TSS.gff", ""), None, None)
                         filter_tss_pro(os.path.join(out_folder, tss), 
                                        ref, overlap, cluster)
             elif program.lower() == "processing_site":
                 for tss in os.listdir(out_folder):
                     if tss.endswith("_processing.gff"):
                         ref = self.helper.get_correct_file(references, "_TSS.gff",
-                                          tss.replace("_processing.gff", ""), None)
+                                          tss.replace("_processing.gff", ""), None, None)
                         filter_tss_pro(os.path.join(out_folder, tss),
                                        ref, overlap, cluster)
 
     def _low_expression(self, nt_length, cluster, manual, input_libs,
                         gff_folder, program, wig_folder):
         prefix = None
-        self._merge_wigs(wig_folder, "wig")
+        self._merge_wigs(wig_folder, "wig", input_libs)
         for gff in os.listdir(gff_folder):
             if (program.lower() == "tss") and (gff.endswith("_TSS.gff")):
                 prefix = gff.replace("_TSS.gff", "")
@@ -394,14 +401,16 @@ class TSSpredator(object):
             config_file = os.path.join(input_folder,
                           "_".join(["config", prefix]) + ".ini")
             self._start_to_run(tsspredator_path, config_file, out_path, prefix)
+            if os.path.exists(os.path.join(out_path, "TSSstatistics.tsv")):
+                shutil.move(os.path.join(out_path, "TSSstatistics.tsv"),
+                            os.path.join(self.stat_outfolder, "TSSstatistics.tsv"))
         if program.lower() == "processing_site":
             program = "processing"
         self._convert_gff(prefixs, out_folder, program)
         if check_orphan:   ### without locus_tag will check by this step
             print("checking the orphan TSS...")
             self._check_orphan(prefixs, os.path.join(wig_folder, "tmp"),
-                               program, gffs)
-        #### based on the original file to merge the information of strains.
+                               program, gffs, libs)
         self.multiparser.combine_gff(gffs, self.gff_outfolder, None, program)
         datas = []
         for gff in os.listdir(self.gff_outfolder):
@@ -414,7 +423,7 @@ class TSSpredator(object):
             self._low_expression(nt_length, cluster, remove_low_expression, libs,
                 self.gff_outfolder, program, wig_folder)
         if manual is not None:
-            self.multiparser.combine_wig(gffs, self.wig_path, None)
+            self.multiparser.combine_wig(gffs, self.wig_path, None, libs)
             self._merge_manual(datas, gffs, manual, wig_folder, out_folder,
                                cluster, program, nt_length, libs)
         self._deal_with_overlap(self.gff_outfolder, overlap_feature, references,

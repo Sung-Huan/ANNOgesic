@@ -84,14 +84,14 @@ class Terminator(object):
                 rnt_file = os.path.join(gff_path, gff.replace(".gff", ".rnt"))
                 ptt_file = os.path.join(gff_path, gff.replace(".gff", ".ptt"))
                 fasta = self.helper.get_correct_file(
-                             fasta_path, ".fa", prefix, None)
+                             fasta_path, ".fa", prefix, None, None)
                 if not fasta:
                     print("Error: no proper file - {0}.fa".format(prefix))
                     sys.exit()
                 if sRNAs:
                     self.multiparser.parser_gff(sRNAs, "sRNA")
                     srna = self.helper.get_correct_file(
-                                self.srna_path, "_sRNA.gff", prefix, None)
+                                self.srna_path, "_sRNA.gff", prefix, None, None)
                     if (srna) and (fasta):
                         self.converter.convert_gff2rntptt(gff_file, fasta,
                              ptt_file, rnt_file, srna,
@@ -140,7 +140,7 @@ class Terminator(object):
             if ".ptt" in file_:
                 prefix = file_.replace(".ptt", "")
                 fasta = self.helper.get_correct_file(
-                             fasta_path, ".fa", prefix, None)
+                             fasta_path, ".fa", prefix, None, None)
                 if not fasta:
                     print("Error: no proper file - {0}.fa".format(prefix))
                     sys.exit()
@@ -414,7 +414,7 @@ class Terminator(object):
         self.multiparser.parser_gff(self.gff_path, None)
         wig_path = os.path.join(merge_wigs, "tmp")
         self.multiparser.parser_wig(merge_wigs)
-        self.multiparser.combine_wig(self.gff_path, wig_path, None)
+        self.multiparser.combine_wig(self.gff_path, wig_path, None, libs)
         self.helper.remove_tmp(self.gff_path)
         self.multiparser.parser_gff(trans, "transcript")
         self.helper.check_make_folder(self.tmps["term_table"])

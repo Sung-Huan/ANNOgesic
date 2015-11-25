@@ -66,23 +66,23 @@ class TestsORFDetection(unittest.TestCase):
                                                   'high': 30, 'track': 'track_1', 'low': 2}]})
 
     def test_detect_rbs_site(self):
-        detect = sd.detect_rbs_site("AGGAGGCCGCTATGCCACACGT", 11, 5, self.example.tas[0])
-        self.assertListEqual(detect, [2, 3, 5, 6, 10])
+        detect = sd.detect_rbs_site("AGGAGGCCGCTATGCCACACGT", 11, 2, self.example.tas[0])
+        self.assertListEqual(detect, [1])
 
     def test_detect_start_stop(self):
         seq = {"aaa": "TAGGAGGCCGCTATGCCATTA"}
         sorf = sd.detect_start_stop(self.example.tas, seq, ["ATG"], ["TTA"],
                                     300, 3, 2)
-        self.assertListEqual(sorf, [{'end': 21, 'starts': ['13'], 'print': False, 'strain': 'aaa',
-                                     'type': 'intergenic', 'strand': '+', 'seq': 'ATGCCATTA',
-                                     'ends': ['21'], 'rbs': [3], 'start': 13}])
+        self.assertListEqual(sorf, [{'strand': '+', 'type': 'intergenic', 'starts': ['13'],
+                                     'print': False, 'seq': 'ATGCCATTA', 'ends': ['21'],
+                                     'end': 21, 'start': 13, 'rbs': [2], 'strain': 'aaa'}])
         seq = {"aaa": "TTAAAGGCATTATCCTCCTA"}
         self.example.tas[0].strand = "-"
         sorf = sd.detect_start_stop(self.example.tas, seq, ["ATG"], ["TTA"],
                                     300, 3, 2)
-        self.assertListEqual(sorf, [{'ends': ['10'], 'strand': '-', 'end': 10, 'starts': ['2'],
-                                     'seq': 'ATGCCTTTA', 'rbs': [19], 'start': 2, 'strain': 'aaa',
-                                     'print': False, 'type': 'intergenic'}])
+        self.assertListEqual(sorf, [{'strand': '-', 'type': 'intergenic', 'starts': ['2'],
+                                     'print': False, 'seq': 'ATGCCTTTA', 'ends': ['10'],
+                                     'end': 10, 'start': 2, 'rbs': [19], 'strain': 'aaa'}])
         self.example.tas[0].strand = "+"
 
     def test_read_data(self):
@@ -185,8 +185,8 @@ class TestsORFDetection(unittest.TestCase):
         sorf_datas = {"best": 20, "high": 50, "low": 10, "start": 1,
                       "end": 10, "track": "track_1", "detail": [], "conds": {"frag": "track_1"}}
         sd.print_file(sorf, sorf_datas, 1, out_g, out_t, True, True)
-        self.assertEqual(out_g.getvalue(), "aaa	UTR_derived\tsORF\t1\t6\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=TSS_1;with_TSS=NA;UTR_type=3utr;sRNA=NA;RBS=RBS_1\n")
-        self.assertEqual(out_t.getvalue(), "aaa\tsORF_00001\t1\t6\t+\t3'UTR_derived\tNA\tRBS_1\t2\t10\tNA\tFragmented\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
+        self.assertEqual(out_g.getvalue(), "aaa\tUTR_derived\tsORF\t2\t6\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;UTR_type=3utr;sRNA=NA;RBS=RBS_1\n")
+        self.assertEqual(out_t.getvalue(), "aaa\tsORF_00001\t2\t6\t+\t3'UTR_derived\tNA\tRBS_1\t2\t10\tNA\tFragmented\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
 
     def test_print_table(self):
         out_t = StringIO()
@@ -265,8 +265,8 @@ class TestsORFDetection(unittest.TestCase):
         sd.coverage_and_output(sorfs, "median", "wig_f", "wig_r", "test_tex",
                                out_g, out_t, "test", "rep", "cover", True, True)
         sd.get_coverage = copy.deepcopy(get_coverage)
-        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tUTR_derived\tsORF\t1\t6\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=TSS_1;with_TSS=TSS_3+;UTR_type=3utr;sRNA=sRNA:2-5_+;RBS=RBS_1\n")
-        self.assertEqual(out_t.getvalue().split("\n")[1], "aaa\tsORF_00000\t1\t6\t+\t3'UTR_derived\tTSS_3+\tRBS_1\t2\t10\tsRNA:2-5_+\tFragmented\t20\t50\t10\tsRNA:2-5_+\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\t2-6_TSS:3_RBS:1")
+        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tUTR_derived\tsORF\t2\t6\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=1;with_TSS=TSS_3+;UTR_type=3utr;sRNA=sRNA:2-5_+;RBS=RBS_1\n")
+        self.assertEqual(out_t.getvalue().split("\n")[1], "aaa\tsORF_00000\t2\t6\t+\t3'UTR_derived\tTSS_3+\tRBS_1\t2\t10\tsRNA:2-5_+\tFragmented\t20\t50\t10\tsRNA:2-5_+\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\t2-6_TSS:3_RBS:1")
 
     def test_detect_inter_type(self):
         inter_dict = [{"seq_id": "aaa", "source": "UTR_derived", "feature": "Transcript", "start": 1,

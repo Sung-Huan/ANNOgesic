@@ -228,10 +228,16 @@ class Paths(object):
 
     def _set_goterm_folder_names(self):
         self.goterm_base_folder = "%s/Go_term" % self.output_folder
-        self.goterm_result_folder = "%s/Go_term_results" % (
-             self.goterm_base_folder)
-        self.goterm_stat_folder = "%s/statistics" % (
-             self.goterm_base_folder)
+        self.goterm_all_folder = "%s/all_CDS" % self.goterm_base_folder
+        self.goterm_express_folder = "%s/expressed_CDS" % self.goterm_base_folder
+        self.goterm_express_result_folder = "%s/Go_term_results" % (
+             self.goterm_express_folder)
+        self.goterm_express_stat_folder = "%s/statistics" % (
+             self.goterm_express_folder)
+        self.goterm_all_result_folder = "%s/Go_term_results" % (
+             self.goterm_all_folder)
+        self.goterm_all_stat_folder = "%s/statistics" % (
+             self.goterm_all_folder)
 
     def _set_starget_folder_names(self):
         self.starget_base_folder = "%s/sRNA_targets" % self.output_folder
@@ -290,10 +296,16 @@ class Paths(object):
 
     def _set_sublocal_folder_names(self):
         self.sublocal_base_folder = "%s/subcellular_localization" % self.output_folder
-        self.sublocal_results_folder = "%s/psortb_results" % (
-             self.sublocal_base_folder)
-        self.sublocal_stat_folder = "%s/statistics" % (
-             self.sublocal_base_folder)
+        self.sublocal_all_folder = "%s/all_CDS" % self.output_folder
+        self.sublocal_express_folder = "%s/expressed_CDS" % self.output_folder
+        self.sublocal_all_results_folder = "%s/psortb_results" % (
+             self.sublocal_all_folder)
+        self.sublocal_all_stat_folder = "%s/statistics" % (
+             self.sublocal_all_folder)
+        self.sublocal_express_results_folder = "%s/psortb_results" % (
+             self.sublocal_express_folder)
+        self.sublocal_express_stat_folder = "%s/statistics" % (
+             self.sublocal_express_folder)
 
     def _set_ribos_folder_names(self):
         self.ribos_base_folder = "%s/riboswitch" % self.output_folder
@@ -411,7 +423,9 @@ class Paths(object):
                 self.circrna_circ_folder, self.circrna_stat_folder,
                 self.circrna_gff_folder]
     def required_goterm_folders(self):
-        return [self.goterm_result_folder, self.goterm_stat_folder]
+        return [self.goterm_all_folder, self.goterm_express_folder,
+                self.goterm_express_result_folder, self.goterm_express_stat_folder,
+                self.goterm_all_result_folder, self.goterm_all_stat_folder]
     def required_starget_folders(self):
         return [self.starget_RNAplex_folder, self.starget_RNAup_folder, 
                 self.starget_merge_folder, self.starget_srna_seq_folder,
@@ -429,7 +443,9 @@ class Paths(object):
         return [self.ppi_all_folder, self.ppi_best_folder,
                 self.ppi_fig_folder]
     def required_sublocal_folders(self):
-        return [self.sublocal_results_folder, self.sublocal_stat_folder]
+        return [self.sublocal_all_folder, self.sublocal_express_folder,
+                self.sublocal_all_results_folder, self.sublocal_all_stat_folder,
+                self.sublocal_express_results_folder, self.sublocal_express_stat_folder]
     def required_ribos_folders(self):
         return [self.ribos_gff_folder, self.ribos_table_folder,
                 self.ribos_stat_folder, self.ribos_rfam_folder]

@@ -5,6 +5,8 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
+plt.style.use('ggplot')
+
 
 def plot(subs, total, unknown, strain, prefix_name):
     nums = []

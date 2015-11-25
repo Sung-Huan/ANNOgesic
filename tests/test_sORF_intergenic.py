@@ -38,7 +38,7 @@ class TestsORFIntergenic(unittest.TestCase):
         tran_file = os.path.join(self.test_folder, "tran.gff")
         gen_file(gff_file, self.example.gff_file)
         gen_file(tran_file, self.example.tran_file)
-        si.get_intergenic(gff_file, tran_file, out_file, True)
+        si.get_intergenic(gff_file, tran_file, out_file, True, False)
         datas = import_data(out_file)
         self.assertEqual("\n".join(datas), self.example.out_file)
 

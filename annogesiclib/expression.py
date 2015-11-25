@@ -70,13 +70,11 @@ class Expression(object):
         wig_f_file = os.path.join(merge_wigs, "whole_forward.wig")
         wig_r_file = os.path.join(merge_wigs, "whole_reverse.wig")
         for wig in os.listdir(merge_wigs):
-            if (("forward" in wig) and ("reverse" in wig)) or (
-                ("forward" not in wig) and ("reverse" not in wig)):
-                print("Error: please define the proper forward or reverse strand!!")
-            elif ("forward" in wig):
-                self.helper.merge_file(os.path.join(merge_wigs, wig), wig_f_file)
-            elif ("reverse" in wig):
-                self.helper.merge_file(os.path.join(merge_wigs, wig), wig_r_file)
+            for lib in input_libs:
+                if (wig in lib) and (lib[-1] == "+"):
+                    self.helper.merge_file(os.path.join(merge_wigs, wig), wig_f_file)
+                elif (wig in lib) and (lib[-1] == "-"):
+                    self.helper.merge_file(os.path.join(merge_wigs, wig), wig_r_file)
         print("Computing expression analysis...")
         gene_expression(input_libs, gffs, percent_tex, percent_frag, wig_f_file,
                         wig_r_file, features, merge_wigs, cutoff_coverage,

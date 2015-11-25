@@ -9,6 +9,9 @@ from annogesiclib.parser_wig import WigParser
 
 def read_gff(gff_file, features):
     gffs = []
+    if not os.path.isfile(gff_file):
+        filename = gff_file.split(".")
+        gff_file = ".".join(filename[0:-2]) + ".gff"
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
         if entry.feature in features:

@@ -7,18 +7,20 @@ from annogesiclib.gff3 import Gff3Parser
 
 def import_data(row, type_):
     if type_ == "gff":
-        if len(row) == 13:
+        if len(row) == 15:
             return {"strain": row[0], "name": row[1], "start": int(row[2]),
                     "end": int(row[3]), "strand": row[4], "conds": row[5],
                     "detect": row[6], "tss_pro": row[7], "end_pro": row[8],
                     "avg": float(row[9]), "high": float(row[10]),
-                    "low": float(row[11]), "track": row[12]}
+                    "low": float(row[11]), "track": row[12],
+                    "overlap_CDS": row[13], "overlap_percent": row[14]}
         else:
             return {"strain": row[0], "name": row[1], "start": int(row[2]),
                     "end": int(row[3]), "strand": row[4], "conds": row[5],
                     "detect": row[6], "tss_pro": row[7], "end_pro": row[8],
                     "avg": float(row[9]), "high": float(row[10]),
-                    "low": float(row[11])}
+                    "low": float(row[11]), "overlap_CDS": row[13],
+                    "overlap_percent": row[14]}
     elif type_ == "nr":
         if len(row) == 8:
             return {"strain": row[0], "name": row[1], "strand": row[2],
@@ -113,7 +115,11 @@ def check_keys(ref_key, final_key, srna, final):
     if ref_key in srna.attributes.keys():
         final[final_key] = srna.attributes[ref_key]
     else:
-        final[final_key] = "NA"
+        if (final_key == "nr_hit_num") or (
+            final_key == "sRNA_hit_num"):
+            final[final_key] = "0"
+        else:
+            final[final_key] = "NA"
 
 def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
     finals = []
@@ -126,6 +132,8 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
         check_keys("end_pro", "end_pro", srna, final)
         if srna.source == "intergenic":
             final["utr"] = "Intergenic"
+        elif srna.source == "in_CDS":
+            final["utr"] = "in_CDS"
         else:
             if "&" in srna.attributes["UTR_type"]:
                 final["utr"] = "5'UTR_derived;3'UTR_derived"
@@ -142,19 +150,24 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
     return finals
 
 def print_file(finals, out):
+    rank = 1
     for final in finals:
         if "nr_hit" not in final.keys():
             final["nr_hit"] = "NA"
         if "sRNA_hit" not in final.keys():
             final["sRNA_hit"] = "NA"
-        out.write("\t".join([
+        if "with_term" not in final.keys():
+            final["with_term"] = "NA"
+        out.write("\t".join([str(rank),
                   final["strain"], final["name"], str(final["start"]),
                   str(final["end"]), final["strand"], final["tss_pro"],
                   final["end_pro"], final["candidates"], final["type"],
                   str(final["avg"]), str(final["high"]), str(final["low"]),
                   final["track"], final["energy"], final["utr"], final["sORF"],
                   final["nr_hit_num"], final["sRNA_hit_num"],
-                  final["nr_hit"], final["sRNA_hit"]]) + "\n")
+                  final["nr_hit"], final["sRNA_hit"], final["overlap_CDS"],
+                  str(final["overlap_percent"]), final["with_term"]]) + "\n")
+        rank += 1
 
 def read_table(srna_table_file, nr_blast, srna_blast_file):
     srna_tables = []
@@ -189,14 +202,15 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
     srna_tables, nr_blasts, srna_blasts = read_table(srna_table_file,
                                           nr_blast, srna_blast_file)
     out = open(out_file, "w")
-    out.write("\t".join(["strain", "name", "start", "end", "strand",
+    out.write("\t".join(["rank", "strain", "name", "start", "end", "strand",
                          "start_with_TSS/Cleavage_site", "end_with_cleavage",
                          "candidates", "lib_type", "best_avg_coverage",
                          "best_highest_coverage", "best_lower_coverage",
-                         "track/coverage", "secondary_energy_change",
-                         "UTR_derived/Intergenic", "confliction of sORF",
+                         "track/coverage", "normalized_secondary_energy_change(by_length)",
+                         "UTR_derived/Intergenic", "confliction_of_sORF",
                          "nr_hit_number", "sRNA_hit_number",
-                         "nr_hit_top3|ID|e-value", "sRNA_hit|e-value"]) + "\n")
+                         "nr_hit_top3|ID|e-value", "sRNA_hit|e-value",
+                         "overlap_CDS", "overlap_percent", "end_with_terminator"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
     finals = compare(srnas, srna_tables, nr_blasts,
@@ -213,13 +227,13 @@ def print_best(detect, out, srna):
         out.write(srna.info + "\n")
 
 def gen_best_srna(srna_file, all_srna_hit, energy, hit_nr_num,
-                  compare_sorf, out_file):
+                  compare_sorf, out_file, best_term):
     srnas = read_gff(srna_file)
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
     for srna in srnas:
         detect = {"energy": False, "TSS": False, "nr_hit": False,
-                  "sRNA_hit": False, "sORF": False}
+                  "sRNA_hit": False, "sORF": False, "term": False}
         if "2d_energy" in srna.attributes.keys():
             if float(srna.attributes["2d_energy"]) < energy:
                 detect["energy"] = True
@@ -260,5 +274,14 @@ def gen_best_srna(srna_file, all_srna_hit, energy, hit_nr_num,
                     detect["sRNA_hit"] = True
         else:
             detect["sRNA_hit"] = True
+        if best_term:
+            if ("with_term" in srna.attributes.keys()):
+                if srna.attributes["with_term"] != "NA":
+                    detect["term"] = True
+                elif ("end_cleavage" in srna.attributes.keys()):
+                    if srna.attributes["end_cleavage"] != "NA":
+                        detect["term"] = True
+        else:
+            detect["term"] = True
         print_best(detect, out, srna)
     out.close()

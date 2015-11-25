@@ -35,7 +35,7 @@ def read_libs(input_libs, wig_folder):
                    (lib1["type"] == "tex") and \
                    (lib2["type"] == "notex") and \
                    (lib1["strand"] == lib2["strand"]):
-                    texs[lib1["name"] + "_" + lib2["name"]] = 0
+                    texs[lib1["name"] + "@AND@" + lib2["name"]] = 0
             type_ = "tex"
         else:
             print("Error:library type (fragmented or Tex treated??)")
@@ -55,7 +55,8 @@ def read_wig(filename, strand, libs):
                     if lib["cond"] not in wigs[strain]:
                         wigs[strain][lib["cond"]] = {}
             for lib in libs:
-                if lib["name"] == entry.track:
+                if (lib["name"] == entry.track) and (
+                    lib["strand"] == entry.strand):
                     if entry.track not in wigs[strain][lib["cond"]].keys():
                         wigs[strain][lib["cond"]][entry.track] = []
                     wigs[strain][lib["cond"]][entry.track].append({

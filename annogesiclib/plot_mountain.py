@@ -3,6 +3,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot
 import pylab
+matplotlib.pyplot.style.use('ggplot')
 
 def plot_mountain_plot(input_file, output_name):
     poss = []

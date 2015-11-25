@@ -101,7 +101,7 @@ class Helper(object):
                 shutil.rmtree(os.path.join(folder, "merge_wigs"))
         self.remove_tmp(wigs)
 
-    def get_correct_file(self, datas, feature, prefix, for_wig_type):
+    def get_correct_file(self, datas, feature, prefix, for_wig_type, libs):
         detect = False
         for data in os.listdir(datas):
             if os.path.isfile(os.path.join(datas, data)):
@@ -116,9 +116,15 @@ class Helper(object):
                     if ("reverse" in data) and ("forward" in data):
                         print("Error: assign reverse or forward wigs!!!")
                         sys.exit()
-                    elif (prefix == filename[-1][:-1 * len(feature)]) and (
-                          for_wig_type in data):
-                        return os.path.join(datas, data)
+                    elif (prefix == filename[-1][:-1 * len(feature)]):
+                        if (for_wig_type == "forward"):
+                            for lib in libs:
+                                if (filename[0] in lib) and (lib[-1] == "+"):
+                                    return os.path.join(datas, data)
+                        if (for_wig_type == "reverse"):
+                            for lib in libs:
+                                if (filename[0] in lib) and (lib[-1] == "-"):
+                                    return os.path.join(datas, data)
         if detect:
             detect = False
         else:
@@ -179,6 +185,11 @@ class Helper(object):
         gffs = []
         fh = open(gff_file)
         for entry in self.gff3parser.entries(fh):
+            if (entry.feature == "source") or (
+                entry.feature == "region"):
+                length = entry.end
+            else:
+                length = None
             gffs.append(entry)
         gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
         first = True
@@ -186,6 +197,15 @@ class Helper(object):
         locus_tags = set()
         pre_gff = None
         for gff in gffs:
+            if (gff.feature != "source") and (
+                gff.feature != "region"):
+                if length is not None:
+                    if gff.end > length:
+                        name = "".join([gff.feature, ":", str(gff.start), "-",
+                                        str(gff.end), "_", gff.strand])
+                        print("Error: the end point of " + name + " is longer than the length of whole genome.")
+                        print("Please check the gff file.")
+                        sys.exit()
             if first:
                 first = False
                 self._add_element(ids, "ID", gff)

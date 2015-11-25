@@ -20,7 +20,10 @@ class TestGetPolyT(unittest.TestCase):
         if (not os.path.exists(self.go_folder)):
             os.mkdir(self.go_folder)
         self.all_strain = "all_strains_uniprot.csv"
-        self.go = GoTermFinding(self.test_folder, self.gffs)
+        self.trans = os.path.join(self.test_folder, "tran_folder")
+        if (not os.path.exists(self.trans)):
+            os.mkdir(self.trans)
+        self.go = GoTermFinding(self.test_folder, self.gffs, self.trans)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):

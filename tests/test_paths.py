@@ -69,11 +69,11 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(len(self.paths.required_folders("sorf")), 30)
         self.assertEqual(len(self.paths.required_folders("processing")), 27)
         self.assertEqual(len(self.paths.required_folders("riboswitch")), 27)
-        self.assertEqual(len(self.paths.required_folders("go_term")), 25)
+        self.assertEqual(len(self.paths.required_folders("go_term")), 29)
         self.assertEqual(len(self.paths.required_folders("ppi_network")), 26)
         self.assertEqual(len(self.paths.required_folders("circrna")), 28)
         self.assertEqual(len(self.paths.required_folders("snp")), 39)
-        self.assertEqual(len(self.paths.required_folders("subcellular_localization")), 25)
+        self.assertEqual(len(self.paths.required_folders("subcellular_localization")), 29)
         self.assertEqual(len(self.paths.required_folders("srna_target")), 28)
 
 if __name__ == "__main__":

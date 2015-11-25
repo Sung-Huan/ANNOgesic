@@ -35,7 +35,7 @@ class RATT(object):
                 rnt = gff[:-3] + "rnt"
                 ptt = gff[:-3] + "ptt"
                 fasta = self.helper.get_correct_file(self.tmp_files["tar"],
-                                                     ".fa", prefix, None)
+                                                     ".fa", prefix, None, None)
                 if fasta:
                     self.converter.convert_gff2rntptt(gff, fasta, ptt, rnt,
                                                       None, None)
