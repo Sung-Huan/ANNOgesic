@@ -102,7 +102,7 @@ def detect_rbs_site(fasta, start, fuzzy_rbs, inter, min_rbs, max_rbs):
 def check_terminal_seq(seq, start, end, start_codon, stop_codon, source,
                        inter, sorfs, rbs):
     detect = None
-    for i in [0, 1, -1]:
+    for i in [0, 1, -1, 2, -2]:
         fasta = Helper().extract_gene(seq, start + i, end + i, inter.strand)
         if (fasta[:3] in start_codon) and (fasta[-3:] in stop_codon):
             detect = i
