@@ -65,6 +65,7 @@ class Controller(object):
 #            self._paths.database_folder))
     def get_input(self):
         """Download required files from website."""
+        print("Running get input files...")
         if self._args.for_target:
             annotation_folder = self._paths.tar_annotation_folder
             fasta_folder = self._paths.tar_fasta_folder
@@ -89,6 +90,7 @@ class Controller(object):
                 Converter().convert_gbk2embl(annotation_folder)
     def get_target_fasta(self):
         """Get target fasta"""
+        print("Running get target fasta...")
         project_creator.create_subfolders(self._paths.required_folders("get_target_fasta"))
         target = TargetFasta(self._paths.tar_fasta_folder, self._args.ref_fasta_folder)
         target.get_target_fasta(self._args.mutation_table,
@@ -96,6 +98,7 @@ class Controller(object):
                 self._args.output_format)
     def ratt(self):
         """Run RATT to transfer annotation file from reference to target."""
+        print("Running annotation transfer...")
         project_creator.create_subfolders(self._paths.required_folders("annotation_transfer"))
         ratt = RATT(self._args.ref_embl_gbk, self._paths.ratt_folder,
                     self._args.target_fasta, self._args.ref_fasta,
@@ -109,6 +112,7 @@ class Controller(object):
 
     def expression(self):
         """Run gene expression analysis."""
+        print("Running gene expression analysis...")
         express = Expression(self._args.annotation_folder)
         express.expression(self._args.tex_notex_libs, self._args.frag_libs,
                            self._args.tex_notex, self._args.replicates_tex,
@@ -121,9 +125,11 @@ class Controller(object):
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
         if self._args.compute_program.lower() == "tss":
+            print("Running TSS prediction...")
             project_creator.create_subfolders(self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
         elif self._args.compute_program.lower() == "processing_site":
+            print("Running processing site prediction...")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(self._paths.required_folders("processing"))
         else:
@@ -151,9 +157,11 @@ class Controller(object):
     def optimize(self):
         """opimize TSSpredator"""
         if self._args.program.lower() == "tss":
+            print("Running optimization of TSS prediction...")
             project_creator.create_subfolders(self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
         elif self._args.program.lower() == "processing_site":
+            print("Running optimization of processing site prediction...")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(self._paths.required_folders("processing"))
         else:
@@ -174,6 +182,7 @@ class Controller(object):
 
     def color(self):
         """color the screenshots"""
+        print("Running png files coloring...")
         color = ColorPNG()
         color.generate_color_png(
                 self._args.track_number, self._args.screenshot_folder, 
@@ -181,6 +190,7 @@ class Controller(object):
 
     def terminator(self):
         """Run TransTermHP for detecting terminators."""
+        print("Running terminator prediction...")
         project_creator.create_subfolders(self._paths.required_folders("terminator"))
         terminator = Terminator(self._args.annotation_folder, self._args.fasta_folder,
                                 self._args.transcript_folder, self._paths.transterm_folder,
@@ -204,6 +214,7 @@ class Controller(object):
 
     def transcript(self):
         """Run Transcriptome assembly."""
+        print("Running transcript assembly...")
         project_creator.create_subfolders(self._paths.required_folders("transcript_assembly"))
         transcript = TranscriptAssembly(self._paths.transcript_assembly_output_folder)
         transcript.run_transcript_assembly(
@@ -219,6 +230,7 @@ class Controller(object):
                 self._args.fragmented_libs)
     def utr_detection(self):
         """Run UTR detection."""
+        print("Running UTR detection...")
         project_creator.create_subfolders(self._paths.required_folders("utr"))
         utr = UTRDetection(self._args.TSS_folder, self._args.transcript_assembly_folder,
                             self._paths.utr_folder)
@@ -231,6 +243,7 @@ class Controller(object):
 
     def srna_detection(self):
         """sRNA_detection."""
+        print("Running sRNA prediction...")
         project_creator.create_subfolders(self._paths.required_folders("srna"))
         srna = sRNADetection(self._paths.srna_folder, self._args.TSS_folder,
                               self._args.processing_site_folder, self._args.sORF, 
@@ -265,10 +278,12 @@ class Controller(object):
                 self._args.best_without_sORF_candidate, self._args.overlap_percent_CDS,
                 self._args.terminator_folder, self._args.terminator_fuzzy_in_CDS,
                 self._args.terminator_fuzzy_out_CDS, self._args.best_with_terminator,
-                self._args.ignore_hypothetical_protein, self._args.TSS_source)
+                self._args.ignore_hypothetical_protein, self._args.TSS_source,
+                self._args.min_utr_coverage)
 
     def sorf_detection(self):
         """sORF_detection."""
+        print("Running sORF prediction...")
         project_creator.create_subfolders(self._paths.required_folders("sorf"))
         sorf = sORFDetection(self._args.TSS_folder, self._args.sRNA_folder,
                               self._paths.sorf_folder, self._args.transcript_assembly_folder,
@@ -290,10 +305,12 @@ class Controller(object):
                 self._args.cutoff_background, self._args.fuzzy_rbs,
                 self._args.rbs_not_after_TSS, self._args.print_all_combination,
                 self._args.best_no_sRNA, self._args.best_no_TSS,
-                self._args.ignore_hypothetical_protein)
+                self._args.ignore_hypothetical_protein, self._args.min_rbs_distance,
+                self._args.max_rbs_distance)
 
     def meme(self):
         """promoter detectopn"""
+        print("Running promoter detection...")
         project_creator.create_subfolders(self._paths.required_folders("promoter"))
         meme = MEME(self._args.TSS_folder, self._args.annotation_folder,
                     self._args.fasta_folder)
@@ -308,6 +325,7 @@ class Controller(object):
 
     def operon(self):
         """operon detection"""
+        print("Running operon detection...")
         project_creator.create_subfolders(self._paths.required_folders("operon"))
         operon = OperonDetection(self._args.TSS_folder, self._args.transcript_folder,
                                   self._args.UTR5_folder, self._args.UTR3_folder,
@@ -322,6 +340,7 @@ class Controller(object):
                 self._paths.operon_statistics_folder)
     def circrna(self):
         """circRNA detection"""
+        print("Running circular RNA prediction...")
         project_creator.create_subfolders(self._paths.required_folders("circrna"))
         circ = CircRNADetection(self._paths.circrna_output_folder, self._args.annotation_path,
                                  self._args.fasta_path, self._args.align)
@@ -336,6 +355,7 @@ class Controller(object):
                 self._args.ignore_hypothetical_protein)
     def goterm(self):
         """Go term discovery"""
+        print("Running GO term mapping...")
         project_creator.create_subfolders(self._paths.required_folders("go_term"))
         goterm = GoTermFinding(self._paths.goterm_output_folder, self._args.annotation_path,
                                self._args.transcript_path)
@@ -347,6 +367,7 @@ class Controller(object):
 
     def srna_target(self):
         """sRNA target prediction"""
+        print("Running sRNA target prediction...")
         srnatarget = sRNATargetPrediction(self._paths.starget_output_folder, self._args.sRNA_path,
                                             self._args.fasta_path, self._args.annotation_path)
         project_creator.create_subfolders(self._paths.required_folders("srna_target"))
@@ -365,6 +386,7 @@ class Controller(object):
                 self._args.potential_target_start, self._args.potential_target_end)
     def snp(self):
         """SNP transcript detection"""
+        print("Running SNP/mutations calling...")
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         snp = SNPCalling(self._args.bam_type, self._paths.snp_output_folder,
                           self._args.fasta_path)
@@ -378,6 +400,7 @@ class Controller(object):
 
     def ppi(self):
         """PPI network retrieve"""
+        print("Running protein-protein interaction networks prediction...")
         project_creator.create_subfolders(self._paths.required_folders("ppi_network"))
         ppi = PPINetwork(self._paths.ppi_output_folder)
         ppi.retrieve_ppi_network(
@@ -388,6 +411,7 @@ class Controller(object):
 
     def sublocal(self):
         """Subcellular Localization prediction"""
+        print("Running subcellular localization prediction...")
         project_creator.create_subfolders(self._paths.required_folders("subcellular_localization"))
         sublocal = SubLocal(self._args.gff_path, self._args.fasta_path,
                             self._paths.sublocal_output_folder, self._args.transcript_path)
@@ -399,6 +423,7 @@ class Controller(object):
 
     def ribos(self):
         """riboswitch prediction"""
+        print("Running riboswitch prediction...")
         project_creator.create_subfolders(self._paths.required_folders("riboswitch"))
         ribos = Ribos(self._args.gff_path, self._args.fasta_path,
                       self._paths.ribos_output_folder, self._paths.database_folder)
@@ -413,6 +438,7 @@ class Controller(object):
             self._args.fuzzy_rbs)
     def screen(self):
         """generate screenshot"""
+        print("Running screenshot generating...")
         screen = Screen(self._args.output_folder, self._args.fasta)
         screen.screenshot(
             self._args.main_gff,

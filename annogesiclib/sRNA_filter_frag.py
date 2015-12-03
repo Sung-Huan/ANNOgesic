@@ -20,17 +20,19 @@ def filter_frag(srna_table, srna_gff):
         tables.append(row)
     new_gffs = []
     for gff in gffs:
-        if (gff.feature == "UTR_derived") and ((
-                gff.attributes["UTR_type"] == "5utr") or (
-                gff.attributes["UTR_type"] == "interCDS")):
-            for table in tables:
-                if (gff.seq_id == table[0]) and (
-                    gff.start == int(table[2])) and (
-                    gff.end == int(table[3])) and (
-                    gff.strand == table[4]):
-                    if "frag" in table[5]:
-                        new_gffs.append(gff)
-#                        out.write(gff.info + "\n")
+        if ("UTR_type" in gff.attributes.keys()):
+            if (gff.attributes["UTR_type"] == "5utr") or (
+                gff.attributes["UTR_type"] == "interCDS"):
+                for table in tables:
+                    if (gff.seq_id == table[0]) and (
+                        gff.start == int(table[2])) and (
+                        gff.end == int(table[3])) and (
+                        gff.strand == table[4]):
+                        if "frag" in table[5]:
+                            new_gffs.append(gff)
+#                            out.write(gff.info + "\n")
+            elif gff.attributes["UTR_type"] == "3utr":
+                new_gffs.append(gff)
         else:
             new_gffs.append(gff)
 #            out.write(gff.info + "\n")

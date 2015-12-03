@@ -90,13 +90,7 @@ def compare_wigs(wigs, gff, tex_notex, template_texs, replicates, stats, outs,
                     outs[cond] = []
                 detects["track"] = 0
                 for track, wigs in tracks.items():
-                    print(track)
                     name = track
-#                    name = track.replace("_reverse", "")
-#                    name = track.replace("_forward", "")
-#                    if name == track:
-#                        name = track.replace("reverse", "")
-#                        name = track.replace("forward", "")
                     plots[cond][name] = 0
                     detects["express"] = 0
                     detect_express(wigs, gff, cutoff_coverage, detects,

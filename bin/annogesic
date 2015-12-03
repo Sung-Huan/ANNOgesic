@@ -721,26 +721,30 @@ def main():
         help="This number indicates how willing the algorithm is to ignore a temporary drop below this number. "
         "Default is 5.")
     sRNA_parser.add_argument(
-        "--run_utr_TEX_coverage", "-ut",default=["p_0.8", "p_0.3", "p_0.6"], nargs="+",
+        "--run_utr_TEX_coverage", "-ut",default=["p_0.8", "p_0.6", "p_0.7"], nargs="+",
         help="The minimal average coverage of UTR derived sRNA candidates for TEX +. "
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
         "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.8 p_0.3 p_0.6.")
     sRNA_parser.add_argument(
-        "--run_utr_noTEX_coverage", "-un",default=["p_0.7", "p_0.2", "p_0.5"], nargs="+",
+        "--run_utr_noTEX_coverage", "-un",default=["p_0.7", "p_0.5", "p_0.6"], nargs="+",
         help="The minimal average coverage of UTR derived sRNA candidates for TEX -. "
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
         "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.7 p_0.2 p_0.5.")
     sRNA_parser.add_argument(
-        "--run_utr_fragmented_coverage", "-uf",default=["p_0.7", "p_0.2", "p_0.5"], nargs="+",
+        "--run_utr_fragmented_coverage", "-uf",default=["p_0.7", "p_0.5", "p_0.6"], nargs="+",
         help="The minimal average coverage of UTR derived sRNA candidates for fragmented library. "
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
         "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.7 p_0.25 p_0.5.")
+    sRNA_parser.add_argument(
+        "--min_utr_coverage", "-mu", default=50, type=float,
+        help="The minimum coverage of UTR-derived sRNA. The coverage should not only fit the --run_utr_TEX_coverage, --run_utr_noTEX_coverage and --run_utr_fragmented_coverage, "
+             "but also this value. Defaul is 50.")
     sRNA_parser.add_argument(
         "--fasta_folder", "-f", default=None,
         help="If you want to import secondary structure information, please assign the path of fasta folder. ")
@@ -884,19 +888,25 @@ def main():
         "--frag_wig_folder", "-fw", default=None,
         help="The path of fragment wig folder.")
     sORF_parser.add_argument(
-        "--cutoff_intergenic_coverage", "-ci",default=5, type=float,
+        "--cutoff_intergenic_coverage", "-ci",default=10, type=float,
         help="The cutoff of minimal coverage of intergenic sORF candidates.")
     sORF_parser.add_argument(
-        "--cutoff_5utr_coverage", "-cu5",default="median",
-        help="The cutoff of minimal coverage of 5'UTR derived sORF candidates. You can also assign median or mean. Default is median.")
+        "--cutoff_5utr_coverage", "-cu5",default="p_0.5",
+        help="The cutoff of minimal coverage of 5'UTR derived sORF candidates. "
+        "You can use percentage or the amount of reads. p_0.05 means the coverage of sORF candidates should higher than 5 percentile of all 5'UTR transcripts. "
+        "n_10 means the coverage of sORF candidates should be 10. Default is p_0.5.")
     sORF_parser.add_argument(
-        "--cutoff_3utr_coverage", "-cu3",default="median",
-        help="The cutoff of minimal coverage of 3'UTR derived sORF candidates. You can also assign median or mean. Default is median.")
+        "--cutoff_3utr_coverage", "-cu3",default="p_0.5",
+        help="The cutoff of minimal coverage of 3'UTR derived sORF candidates. "
+        "You can use percentage or the amount of reads. p_0.05 means the coverage of sORF candidates should higher than 5 percentile of all 3'UTR transcripts. "
+        "n_10 means the coverage of sORF candidates should be 10. Default is p_0.5.")
     sORF_parser.add_argument(
-        "--cutoff_interCDS_coverage", "-cuf",default="median",
-        help="The cutoff of minimal coverage of interCDS derived sORF candidates. You can also assign median or mean. Default is median.")
+        "--cutoff_interCDS_coverage", "-cuf",default="p_0.5",
+        help="The cutoff of minimal coverage of interCDS derived sORF candidates. "
+        "You can use percentage or the amount of reads. p_0.05 means the coverage of sORF candidates should higher than 5 percentile of all interCDS transcripts. "
+        "n_10 means the coverage of sORF candidates should be 10. Default is p_0.5.")
     sORF_parser.add_argument(
-        "--cutoff_background", "-cub",default=5, type=float,
+        "--cutoff_background", "-cub",default=10, type=float,
         help="The cutoff of minimal coverage of all sORF candidates. Default is 5.")
     sORF_parser.add_argument(
         "--fasta_folder", "-f", default="ANNOgesic/output/target/fasta",
@@ -930,6 +940,12 @@ def main():
     sORF_parser.add_argument(
         "--stop_codon", "-oc", default=["TTA", "TAG", "TGA"], nargs="+", 
         help="What kinds of stop coden TTA/TAG/TGA you want to use. Default is TTA TAG TGA.")
+    sORF_parser.add_argument(
+        "--min_rbs_distance", "-mr", default=3, type=int,
+        help="The minimum distance between the ribosomal binding site and start codon. Default is 5.")
+    sORF_parser.add_argument(
+        "--max_rbs_distance", "-Mr", default=15, type=int,
+        help="The maximum distance between the ribosomal binding site and start codon. Default is 20.")
     sORF_parser.add_argument(
         "--rbs_not_after_TSS", "-at", default=False, action="store_true",
         help="If you want to generate best gff file which include ribosomal binding site not after TSS, please turn it on. Default is False.")

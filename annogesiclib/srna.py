@@ -17,6 +17,7 @@ from annogesiclib.change_db_format import change_format
 from annogesiclib.compare_srna_term import compare_srna_term
 from annogesiclib.print_rank_all import print_rank_all
 from annogesiclib.sRNA_filter_frag import filter_frag
+from annogesiclib.sRNA_filter_min_utr import filter_utr
 
 
 class sRNADetection(object):
@@ -173,7 +174,7 @@ class sRNADetection(object):
 
     def _run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
                      prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
-                     tex_notex, flibs, tlibs, replicates, table_best,
+                     tex_notex, flibs, tlibs, replicates, table_best, min_utr,
                      decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
                      out_folder, hypo, tex_path, frag_path, utr_notex_cover):
         if "tmp_median" in os.listdir(out_folder):
@@ -212,6 +213,7 @@ class sRNADetection(object):
         merge_gff = "_".join([self.prefixs["utr"], prefix])
         self._merge_frag_tex_file(frag_wigs, tex_wigs, frag_gff, tex_gff,
                                   frag_csv, tex_csv, merge_table, merge_gff)
+        filter_utr(merge_gff, merge_table, min_utr)
 
     def _check_necessary_file(self, gffs, trans, tex_wigs, frag_wigs, utr_srna,
                               tsss, pros, sorf_file, import_info, fastas, terms):
@@ -297,7 +299,7 @@ class sRNADetection(object):
                      fuzzy_tsss, utr_tex_cover, utr_notex_cover, utr_frag_cover,
                      out_folder, utr_srna, fasta_path, tolerance, in_cds,
                      cutoff_overlap, hypo, tex_path, frag_path, tex_wigs, frag_wigs,
-                     tlibs, flibs, merge_wigs, wig_path):
+                     tlibs, flibs, merge_wigs, wig_path, min_utr):
         prefixs = []
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
@@ -334,9 +336,9 @@ class sRNADetection(object):
                         self._run_utrsrna(gff_path, gff, tran, fuzzy_tsss,
                                  max_len, min_len, prefix, tex_wigs, frag_wigs,
                                  tss, pro, fasta_path, tex_notex, flibs, tlibs,
-                                 replicates, table_best, decrease_utr, fuzzy_utr,
-                                 utr_tex_cover, utr_frag_cover, out_folder, hypo,
-                                 tex_path, frag_path, utr_notex_cover)
+                                 replicates, table_best, min_utr, decrease_utr,
+                                 fuzzy_utr, utr_tex_cover, utr_frag_cover,
+                                 out_folder, hypo, tex_path, frag_path, utr_notex_cover)
                 self._merge_srna(utr_gff, normal_gff, merge_gff, normal_table,
                                  utr_table, wig_path, prefix, merge_wigs, libs,
                                  tex_notex, replicates, table_best, merge_table,
@@ -726,17 +728,24 @@ class sRNADetection(object):
                                         tex_path, frag_path, out_folder)
         return tex_path, frag_path, merge_wigs, wig_path
 
+    def _filter_min_utr(self, prefixs, min_utr):
+        for prefix in prefixs:
+            filter_utr(os.path.join(self.all_best["all_gff"],
+                                    "_".join([prefix, "sRNA.gff"])),
+                       os.path.join(self.all_best["all_table"],
+                                    "_".join([prefix, "sRNA.csv"])), min_utr)
+
     def run_srna_detection(self, vienna_path, vienna_util, blast_path,
             ps2pdf14_path, out_folder, utr_srna, gffs, tsss, trans,
             fuzzy_inter_tss, fuzzy_5utr_tss, fuzzy_3utr_tss, fuzzy_intercds_tss,
             import_info, tex_wigs, frag_wigs, pros, fastas, mountain,
             nr_format, srna_format, srna_database, nr_database, energy, coverage_tex,
             coverage_notex, coverage_frag, tolerance, utr_tex_cover,
-            utr_notex_cover, utr_frag_cover, max_len,
-            min_len, tlibs, flibs, replicates_tex, replicates_frag, tex_notex,
-            e_nr, e_srna, in_cds, table_best, decrease_inter, decrease_utr,
-            fuzzy_inter, fuzzy_utr, nr_hits_num, sorf_file, all_hit, best_sorf,
-            cutoff_overlap, terms, fuzzy_b, fuzzy_a, best_term, hypo, tss_source):
+            utr_notex_cover, utr_frag_cover, max_len, min_len, tlibs, flibs,
+            replicates_tex, replicates_frag, tex_notex, e_nr, e_srna, in_cds,
+            table_best, decrease_inter, decrease_utr, fuzzy_inter, fuzzy_utr,
+            nr_hits_num, sorf_file, all_hit, best_sorf, cutoff_overlap, terms,
+            fuzzy_b, fuzzy_a, best_term, hypo, tss_source, min_utr):
         replicates = self._get_replicates(replicates_tex, replicates_frag)
         fuzzy_tsss = {"5utr": fuzzy_5utr_tss, "3utr": fuzzy_3utr_tss,
                       "interCDS": fuzzy_intercds_tss, "inter": fuzzy_inter_tss}
@@ -758,7 +767,7 @@ class sRNADetection(object):
                       utr_notex_cover, utr_frag_cover, out_folder, utr_srna,
                       self.fasta_path, tolerance, in_cds, cutoff_overlap, hypo,
                       tex_path, frag_path, tex_wigs, frag_wigs, tlibs, flibs,
-                      merge_wigs, wig_path)
+                      merge_wigs, wig_path, min_utr)
         self._filter_srna(import_info, out_folder, prefixs, self.fasta_path,
             vienna_path, vienna_util, mountain, ps2pdf14_path, nr_database,
             srna_format, nr_format, blast_path, srna_database, self.stat_path,

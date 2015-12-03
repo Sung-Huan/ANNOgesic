@@ -107,15 +107,67 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
     return {"data_list": datas, "num_feature": features["num"],
             "with_feature": features["detect"]}
 
-def check_gene(genes, pos, strand):
+def check_conflict(genes, pos, strand):
     conflict = False
     for gene in genes["data_list"]:
-        if (gene.strand == strand) and (
-            gene.start < pos) and (
-            gene.end >= pos):
-            conflict = True
-            break
+        if (gene.strand == strand):
+            if (gene.start < pos) and (
+                gene.end >= pos):
+                conflict = True
+                break
     return conflict
+
+def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
+               operons, operon_pos):
+    no_count_tsss = []
+    for tss in tsss:
+        if tss not in no_count_tsss:
+            end_points = [ta_pos]
+            for pos in tsss:
+                if (pos not in no_count_tsss) and (
+                    tss.start != pos.start):
+                    end_points.append(pos.start)
+            end_points.append(end)
+            if tss.strand == "+":
+                end_points.sort()
+            else:
+                end_points.sort(reverse=True)
+            for point in end_points:
+                detect_pos = False
+                if tss.strand == "+":
+                    for gene in genes["data_list"]:
+                        if (gene.seq_id == tss.seq_id) and (
+                            gene.strand == tss.strand):
+                            if (gene.start >= tss.start) and (
+                                gene.end <= point):
+                                detect_pos = True
+                                break
+                else:
+                    for gene in genes["data_list"]:
+                        if (gene.seq_id == tss.seq_id) and (
+                            gene.strand == tss.strand):
+                            if (gene.start >= point) and (
+                                gene.end <= tss.start):
+                                detect_pos = True
+                                break
+                if not detect_pos:
+                    no_count_tsss.append(tss)
+                else:
+                    operon_pos, first = compute_sub_operon(strand, point, ta_pos,
+                                        first, min_length, end, operons,
+                                        operon_pos)
+
+                    break
+
+def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
+                             end, operons, operon_pos):
+    new_tsss = []
+    for tss in tsss["data_list"]:
+        conflict = check_conflict(genes, tss.start, strand)
+        if not conflict:
+            new_tsss.append(tss)
+    check_gene(new_tsss, genes, strand, ta_pos, first,
+               min_length, end, operons, operon_pos)
 
 def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
     first = True
@@ -125,40 +177,34 @@ def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
         if tsss["num_feature"] == 1:
             pass
         else:
-            for tss in tsss["data_list"]:
-                conflict = check_gene(genes, tss.start, strand)
-                if not conflict:
-                    operon_pos, first = compute_sub_operon(strand, tss, ta_pos,
-                                        first, min_length, end, operons, operon_pos)
+            sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
+                                     end, operons, operon_pos)
     else:
-        for tss in tsss["data_list"]:
-            conflict = check_gene(genes, tss.start, strand)
-            if not conflict:
-                operon_pos, first = compute_sub_operon(strand, tss, ta_pos,
-                                    first, min_length, end, operons, operon_pos)
+        sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first,
+                                 min_length, end, operons, operon_pos)
     return operons
 
-def compute_sub_operon(strand, tss, ta_pos, first,
+def compute_sub_operon(strand, point, ta_pos, first,
                        min_length, end, operons, operon_pos):
     if first:
         operon_pos = ta_pos
         first = False
-    else:
-        if math.fabs(tss.start - operon_pos) > min_length:
-            if strand == "+":
-                operons.append(import_to_operon(operon_pos,
-                               tss.start - 1, strand))
-                operon_pos = tss.start
-            else:
-                operons.append(import_to_operon(tss.start + 1,
-                               operon_pos, strand))
-                operon_pos = tss.start
-    if (operon_pos != ta_pos) and \
-       (math.fabs(end - operon_pos) > min_length):
+#    else:
+    if math.fabs(point - operon_pos) > min_length:
         if strand == "+":
-            operons.append(import_to_operon(operon_pos, end, strand))
+            operons.append(import_to_operon(operon_pos,
+                           point - 1, strand))
+            operon_pos = point
         else:
-            operons.append(import_to_operon(end, operon_pos, strand))
+            operons.append(import_to_operon(point + 1,
+                           operon_pos, strand))
+            operon_pos = point
+#    if (operon_pos != ta_pos) and \
+#       (math.fabs(end - operon_pos) > min_length):
+#        if strand == "+":
+#            operons.append(import_to_operon(operon_pos, end, strand))
+#        else:
+#            operons.append(import_to_operon(end, operon_pos, strand))
     return operon_pos, first
 
 def read_gff(ta_file, gff_file, tss_file, terminator_file):
@@ -184,10 +230,10 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
 
 def print_file(ta, operons, out, operon_id, whole_operon, tsss,
                terms, genes, whole_gene):
-    if len(operons) == 0:
+    if len(operons) <= 1:
         out.write("\t".join([operon_id, ta.seq_id,
                   "-".join([str(whole_operon.start), str(whole_operon.end)]),
-                  whole_operon.strand, str(len(operons)), "NA",
+                  whole_operon.strand, "0", "NA",
                   str(tsss["with_feature"]), str(tsss["num_feature"]),
                   str(terms["with_feature"]), str(terms["num_feature"]), "NA",
                   str(genes["num_feature"]), "NA",

@@ -51,8 +51,6 @@ class OperonDetection(object):
         self._check_gff(trans, "tran")
         self._check_gff(utr5s, "utr")
         self._check_gff(utr3s, "utr")
-        if terms is not False:
-            self._check_gff(terms, "term")
         self.multiparser.parser_gff(gffs, None)
         self.multiparser.parser_gff(tsss, "TSS")
         self.multiparser.combine_gff(gffs, self.tss_path, None, "TSS")

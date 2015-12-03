@@ -497,10 +497,7 @@ def median_score(lst, per):
     lstLen = len(lst)
     index = int((lstLen - 1) * per)
     if lstLen != 0:
-        if (lstLen % 2):
-            return sortedLst[index]
-        else:
-            return (sortedLst[index] + sortedLst[index + 1])/2.0
+        return sortedLst[index]
     else:
         return 0
 

@@ -630,12 +630,14 @@ def check_srna_condition(ta, min_len, max_len, tsss, pros, wigs_f, wigs_r,
                 get_coverage(ta.start, ta.end, ta.seq_id, wigs_f, "+",
                              ta, nums, "NA", output, texs, out_table,
                              cutoff_coverage["no_tss"], tex_notex, replicates,
-                             decrease, fuzzy_end, table_best, tolerance, texs, notex)
+                             decrease, fuzzy_end, table_best, tolerance, texs,
+                             notex)
             elif (ta.strand == "-") and (len(wigs_r) != 0):
                 get_coverage(ta.start, ta.end, ta.seq_id, wigs_r, "-",
                              ta, nums, "NA", output, texs, out_table,
                              cutoff_coverage["no_tss"], tex_notex, replicates,
-                             decrease, fuzzy_end, table_best, tolerance, texs, notex)
+                             decrease, fuzzy_end, table_best, tolerance, texs,
+                             notex)
             if (len(wigs_f) == 0) and (len(wigs_r) == 0):
                 print_file(ta.info_without_attributes.replace("Transcript", "sRNA"),
                            nums, "NA", output, out_table, None, table_best)
@@ -663,10 +665,14 @@ def get_cutoff(cutoffs, out_folder, file_type):
         num_cutoff += 1
     low = None
     for cover in coverages.values():
-        if low is None:
-            low = cover
-        elif cover < float(low):
-            low = cover
+        if cover != 0:
+            if low is None:
+                low = cover
+            elif cover < float(low):
+                low = cover
+    if low is None:
+        print("Error:The cutoff of coverage can not be all 0...")
+        sys.exit()
     coverages["no_tss"] = float(low)
     for tss, cover in coverages.items():
         out.write("\t".join([file_type, tss, str(cover)]) + "\n")

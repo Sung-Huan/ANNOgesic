@@ -51,19 +51,19 @@ def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
                                                   "pos": sorf["start"]})
     return sorf_covers
 
-def import_sorf(inter, sorfs, start, end, fa_start, fa_end, type_, fasta, rbs):
+def import_sorf(inter, sorfs, start, end, type_, fasta, rbs):
     sorfs.append({"strain": inter.seq_id,
                   "strand": inter.strand,
                   "start": start,
                   "end": end,
                   "starts": [str(start)],
                   "ends": [str(end)],
-                  "seq": fasta[fa_start:fa_end],
+                  "seq": fasta[start-1:end],
                   "type": type_,
                   "print": False,
                   "rbs": rbs})
 
-def detect_rbs_site(fasta, start, fuzzy_rbs, inter):
+def detect_rbs_site(fasta, start, fuzzy_rbs, inter, min_rbs, max_rbs):
     detect = []
     pre_miss = 5
     for nts in range(0, start):
@@ -99,8 +99,21 @@ def detect_rbs_site(fasta, start, fuzzy_rbs, inter):
         detect = ["NA"]
     return detect
 
+def check_terminal_seq(seq, start, end, start_codon, stop_codon, source,
+                       inter, sorfs, rbs):
+    detect = None
+    for i in [0, 1, -1]:
+        fasta = Helper().extract_gene(seq, start + i, end + i, inter.strand)
+        if (fasta[:3] in start_codon) and (fasta[-3:] in stop_codon):
+            detect = i
+    if detect is not None:
+        start = start + detect
+        end = end + detect
+        import_sorf(inter, sorfs, start, end,
+                    source, seq, rbs)
+
 def detect_start_stop(inters, seq, start_codon, stop_codon, max_len, min_len,
-                      fuzzy_rbs):
+                      fuzzy_rbs, min_rbs, max_rbs):
     sorfs = []
     for inter in inters:
         fasta = Helper().extract_gene(seq[inter.seq_id],
@@ -119,31 +132,39 @@ def detect_start_stop(inters, seq, start_codon, stop_codon, max_len, min_len,
                    (((stop - start) % 3) == 0) and \
                    ((stop - start) <= max_len) and \
                    ((stop - start) >= min_len):
-                    rbs = detect_rbs_site(fasta, start, fuzzy_rbs, inter)
-                    if inter.source == "intergenic":
-                        if inter.strand == "+":
-                            import_sorf(inter, sorfs, inter.start + start,
-                                        inter.start + stop + 2, start, stop + 3,
-                                        inter.source, fasta, rbs)
-                        else:
-                            seq_start = inter.start + (len(fasta) - stop - 3)
-                            seq_end = inter.start + (len(fasta) - start - 1)
-                            import_sorf(inter, sorfs, seq_start,
-                                        seq_end, start, stop + 3, 
-                                        inter.source, fasta, rbs)
-                    elif inter.source == "UTR_derived":
-                        if inter.strand == "+":
-                            import_sorf(inter, sorfs, inter.start + start,
-                                        inter.start + stop + 2, start, stop + 3,
-                                        inter.attributes["UTR_type"],
-                                        fasta, rbs)
-                        else:
-                            seq_start = inter.start + (len(fasta) - stop - 3)
-                            seq_end = inter.start + (len(fasta) - start - 1)
-                            import_sorf(inter, sorfs, seq_start,
-                                        seq_end, start, stop + 3,
-                                        inter.attributes["UTR_type"],
-                                        fasta, rbs)
+                    rbs = detect_rbs_site(fasta, start, fuzzy_rbs, inter,
+                                          min_rbs, max_rbs)
+                    if (len(rbs) == 1) and (rbs[0] == "NA"):
+                        pass
+                    else:
+                        if inter.source == "intergenic":
+                            if inter.strand == "+":
+                                check_terminal_seq(seq[inter.seq_id],
+                                                 inter.start + start,
+                                                 inter.start + stop + 2,
+                                                 start_codon, stop_codon,
+                                                 inter.source, inter, sorfs, rbs)
+                            else:
+                                check_terminal_seq(seq[inter.seq_id],
+                                                 inter.start + (len(fasta) - stop - 3),
+                                                 inter.start + (len(fasta) - start - 1),
+                                                 start_codon, stop_codon,
+                                                 inter.source, inter, sorfs, rbs)
+                        elif inter.source == "UTR_derived":
+                            if inter.strand == "+":
+                                check_terminal_seq(seq[inter.seq_id],
+                                                 inter.start + start,
+                                                 inter.start + stop + 2,
+                                                 start_codon, stop_codon,
+                                                 inter.attributes["UTR_type"],
+                                                 inter, sorfs, rbs)
+                            else:
+                                check_terminal_seq(seq[inter.seq_id],
+                                                 inter.start + (len(fasta) - stop - 3),
+                                                 inter.start + (len(fasta) - start - 1),
+                                                 start_codon, stop_codon,
+                                                 inter.attributes["UTR_type"],
+                                                 inter, sorfs, rbs)
     return sorfs
 
 def read_data(inter_gff, tss_file, srna_gff, fasta, utr_detect):
@@ -328,7 +349,8 @@ def merge(sorfs, seq):
             for sorf2 in sorfs:
                 overlap = False
                 if (final["strain"] == sorf2["strain"]) and (
-                    final["strand"] == sorf2["strand"]):
+                    final["strand"] == sorf2["strand"]) and (
+                    final["rbs"] == sorf2["rbs"]):
                     if (final["start"] >= sorf2["start"]) and (
                         final["end"] <= sorf2["end"]):
                         overlap = True
@@ -395,7 +417,8 @@ def get_attribute(num, name, start_tss, sorf, type_):
                              ["start_TSS", start_tss],
                              ["with_TSS", "&".join(sorf["with_TSS"])],
                              ["sRNA", "&".join(sorf["srna"])],
-                             ["RBS", "&".join(sorf["rbs"])])])
+                             ["RBS", "&".join(sorf["rbs"])],
+                             ["frame_shift", str(sorf["shift"])])])
     else:
         attribute_string = ";".join(
             ["=".join(items) for items in (["ID", "sorf" + str(num)],
@@ -404,7 +427,8 @@ def get_attribute(num, name, start_tss, sorf, type_):
                              ["with_TSS", "&".join(sorf["with_TSS"])],
                              ["UTR_type", sorf["type"]],
                              ["sRNA", "&".join(sorf["srna"])],
-                             ["RBS", "&".join(sorf["rbs"])])])
+                             ["RBS", "&".join(sorf["rbs"])],
+                             ["frame_shift", str(sorf["shift"])])])
     return attribute_string
 
 def check_start_and_tss_point(sorf):
@@ -429,9 +453,174 @@ def check_start_and_tss_point(sorf):
             tsss.append(tss)
     sorf["with_TSS"] = copy.deepcopy(tsss)
 
-def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
+def compare_rbs_start(sorf, min_rbs, max_rbs):
+    detect = False
+    if (len(sorf["rbs"]) == 1) and (sorf["rbs"][0] == "NA"):
+        pass
+    else:
+        new_rbss = []
+        for rbs in sorf["rbs"]:
+            if rbs != "NA":
+                if sorf["strand"] == "+":
+                    for start in sorf["starts"]:
+                        if ((int(start) - int(rbs)) >= min_rbs + 6) and (
+                            (int(start) - int(rbs)) <= max_rbs + 6) and (
+                            rbs not in new_rbss):
+                            new_rbss.append(rbs)
+                            detect = True
+                else:
+                    for end in sorf["ends"]:
+                        if ((int(rbs) - int(end)) >= min_rbs + 6) and (
+                            (int(rbs) - int(end)) <= max_rbs + 6) and (
+                            rbs not in new_rbss):
+                            new_rbss.append(rbs)
+                            detect = True
+        if not detect:
+            sorf["rbs"] = ["NA"]
+        else:
+            sorf["rbs"] = new_rbss
+    return detect
+
+def gen_new_candidates(sorf, min_rbs, max_rbs):
+    new_candidates = []
+    for start in sorf["starts"]:
+        for end in sorf["ends"]:
+            if ((int(end) - int(start) + 1) % 3) == 0:
+                for rbs in sorf["rbs"]:
+                    if (sorf["strand"] == "+") and (
+                        (int(start) - rbs) >= (min_rbs + 6)) and (
+                        (int(start) - rbs) <= (max_rbs + 6)):
+                        for tss in sorf["with_TSS"]:
+                            if int(tss.split("_")[-1][:-1]) > int(start):
+                                break
+                            pre_tss = tss
+                        new_candidates.append("_".join(["-".join([
+                                  start, end]), pre_tss.replace("_", ":"),
+                                  "RBS:" + str(rbs)]))
+                    elif (sorf["strand"] == "-") and (
+                        (rbs - int(end)) >= (min_rbs + 6)) and (
+                        (rbs - int(end)) <= (max_rbs + 6)):
+                        for tss in sorf["with_TSS"]:
+                            if int(tss.split("_")[-1][:-1]) <= int(start):
+                                break
+                        new_candidates.append("_".join(["-".join([
+                                  start, end]), tss.replace("_", ":"),
+                                  "RBS:" + str(rbs)]))
+    return new_candidates
+
+def check_candidates_srnas(sorf, min_rbs, max_rbs):
+    new_candidates = []
+    for cand in sorf["candidate"]:
+        infos = cand.split("_")
+        start = infos[0].split("-")[0]
+        end = infos[0].split("-")[1]
+        rbs = int(infos[-1].split(":")[-1])
+        if (start in sorf["starts"]) and (
+            end in sorf["ends"]) and (
+            rbs in sorf["rbs"]):
+            new_candidates.append(cand)
+    if len(new_candidates) == 0:
+        new_candidates = gen_new_candidates(sorf, min_rbs, max_rbs)
+    new_srnas = []
+    if (len(sorf["srna"]) == 1) and (sorf["srna"][0] == "NA"):
+        pass
+    else:
+        for srna in sorf["srna"]:
+            srna_strand = srna.split("_")[-1]
+            if srna_strand == "r":
+                strand = "-"
+            else:
+                strand = "+"
+            srna_end = int(srna.split("_")[0].split("-")[-1])
+            srna_start = int(srna.split("_")[0].split("-")[0].split(":")[-1])
+            if (strand == sorf["strand"]):
+                if ((srna_start <= int(sorf["start"])) and (
+                     srna_end >= int(sorf["end"]))) or (
+                    (srna_start >= int(sorf["start"])) and (
+                     srna_end <= int(sorf["end"]))) or (
+                    (srna_start <= int(sorf["start"])) and (
+                     srna_end >= int(sorf["start"])) and (
+                     srna_end <= int(sorf["end"]))) or (
+                    (srna_start >= int(sorf["start"])) and (
+                     srna_start <= int(sorf["end"])) and (
+                     srna_end >= int(sorf["end"]))):
+                    new_srnas.append(srna)
+    sorf["candidate"] = new_candidates
+    if len(new_srnas) != 0:
+        sorf["srna"] = new_srnas
+    else:
+        sorf["srna"] = ["NA"]
+
+def check_start_end(sorf, min_rbs, max_rbs, min_len, max_len, fasta):
+    if (len(sorf["rbs"]) == 1) and (sorf["rbs"][0] == "NA"):
+        pass
+    else:
+        if sorf["strand"] == "+":
+            starts = []
+            for start in sorf["starts"]:
+                if int(start) < min(sorf["rbs"]):
+                    continue
+                else:
+                    for rbs in sorf["rbs"]:
+                        if ((int(start) - int(rbs)) >= min_rbs + 6) and (
+                            (int(start) - int(rbs)) <= max_rbs + 6) and (
+                            start not in starts):
+                            starts.append(start)
+            ends = []
+            for end in sorf["ends"]:
+                for start in starts:
+                    if ((int(end) - int(start) + 1) % 3 == 0) and (
+                        (int(end) - int(start) + 1) >= min_len) and (
+                        (int(end) - int(start) + 1) <= max_len) and (
+                        end not in ends):
+                        if end not in ends:
+                            ends.append(end)
+        else:
+            ends = []
+            for end in sorf["ends"]:
+                if int(end) > max(sorf["rbs"]):
+                    continue
+                else:
+                    for rbs in sorf["rbs"]:
+                        if ((int(rbs) - int(end)) >= min_rbs + 6) and (
+                            (int(rbs) - int(end)) <= max_rbs + 6) and (
+                            end not in ends):
+                            ends.append(end)
+            starts = []
+            for start in sorf["starts"]:
+                for end in ends:
+                    if ((int(end) - int(start) + 1) % 3 == 0) and (
+                        (int(end) - int(start) + 1) >= min_len) and (
+                        (int(end) - int(start) + 1) <= max_len) and (
+                        start not in starts):
+                        if start not in starts:
+                            starts.append(start)
+        sorf["starts"] = starts
+        sorf["ends"] = ends
+        sorf["start"] = min(map(int, starts))
+        sorf["end"] = max(map(int, ends))
+        sorf["seq"] = Helper().extract_gene(fasta[sorf["strain"]],
+                      sorf["start"], sorf["end"], sorf["strand"])
+        check_candidates_srnas(sorf, min_rbs, max_rbs)
+
+def detect_frame_shift(sorf):
+    stand = sorf["starts"][0]
+    shift = {"0": False, "1": False, "2": False}
+    sorf["shift"] = 0
+    for start in sorf["starts"]:
+        if ((int(start) - int(stand)) % 3) == 0:
+            shift["0"] = True
+        elif ((int(start) - int(stand)) % 3) == 1:
+            shift["1"] = True
+        elif ((int(start) - int(stand)) % 3) == 2:
+            shift["2"] = True
+    for key, value in shift.items():
+        if value:
+            sorf["shift"] += 1
+
+def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all,
+               min_rbs, max_rbs, file_type, min_len, max_len):
     name = '%0*d' % (5, num)
-#    check_start_and_tss_point(sorf)
     if sorf["type"] == "intergenic":
         source = "intergenic"
         type_ = "Intergenic"
@@ -440,11 +629,6 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
                 pass
             else:
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
-#            if sorf["start_TSS"] != "NA":
-#                start_tss = sorf["start_TSS"]
-#            else:
-#                start_tss = sorf["start_TSS"]
-#        attribute_string = get_attribute(num, name, start_tss, sorf, "intergenic")
         attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "intergenic")
     else:
         source = "UTR_derived"
@@ -461,11 +645,6 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all):
                 pass
             else:
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
-#            if sorf["start_TSS"] != "NA":
-#                start_tss = sorf["start_TSS"]
-#            else:
-#                start_tss = sorf["start_TSS"]
-#        attribute_string = get_attribute(num, name, start_tss, sorf, "utr")
         attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "utr")
     info = "\t".join([str(field) for field in [
                       sorf["strain"], source, "sORF", str(sorf["start"]),
@@ -490,7 +669,7 @@ def print_table(out_t, sorf, name, type_, lib_type,
                            str(sorf["end"]), sorf["strand"], type_,
                            ";".join(sorf["with_TSS"]), ";".join(sorf["rbs"]),
                            ";".join(sorf["starts"]), ";".join(sorf["ends"]),
-                           ";".join(sorf["srna"]),
+                           ";".join(sorf["srna"]), str(sorf["shift"]),
                            lib_type, str(sorf_datas["best"]),
                            str(sorf_datas["high"]), str(sorf_datas["low"]),
                            ";".join(sorf["srna"]), str(sorf_datas["best"]),
@@ -535,14 +714,18 @@ def detect_utr_type(inter, utr_type, med_inters, wigs, strand, background):
         inter_datas = get_coverage(inter_datas, wigs, strand, background, None, None)
         med_inters[inter.seq_id][utr_type].append(inter_datas)
 
-def median_score(lst):
-    sortedLst = sorted(lst)
-    lstLen = len(lst)
-    index = (lstLen - 1) // 2
-    if (lstLen % 2):
-        return sortedLst[index]
+def median_score(lst, cutoff):
+    if "p_" in cutoff:
+        per = float(cutoff.split("_")[-1])
+        sortedLst = sorted(lst)
+        lstLen = len(lst)
+        index = int((lstLen - 1) * per)
+        if lstLen != 0:
+            return sortedLst[index]
+        else:
+            return 0
     else:
-        return (sortedLst[index] + sortedLst[index + 1])/2.0
+        return cutoff
 
 def mean_score(lst):
     total = 0
@@ -646,37 +829,44 @@ def get_best(sorfs, utr_fuzzy, tss_file, srna_file, no_srna, no_tss):
     return final_sorfs
 
 def coverage_and_output(sorfs, mediandict, wigs_f, wigs_r, texs, out_g, out_t,
-                        tex_notex, replicates, coverages, table_best, print_all):
+                        tex_notex, replicates, coverages, table_best, print_all,
+                        min_rbs, max_rbs, file_type, min_len, max_len, fasta):
     out_g.write("##gff-version 3\n")
     if print_all:
         out_t.write("\t".join(["strain", "Name", "start", "end", "strand", "type",
-                    "TSS", "RBS", "start_codons", "stop_codons", "lib_type",
-                    "sRNA_confliction", "best_avg_coverage",
+                    "TSS", "RBS", "all_start_points", "all_stop_pointss",
+                    "sRNA_confliction", "frame_shift", "lib_type", "best_avg_coverage",
                     "best_highest_coverage", "best_lowest_coverage",
                     "track_detail", "seq", "combinations"]) + "\n")
     else:
         out_t.write("\t".join(["strain", "Name", "start", "end", "strand", "type",
-                    "TSS", "RBS", "start_codons", "stop_codons", "lib_type",
-                    "sRNA_confliction", "best_avg_coverage",
+                    "TSS", "RBS", "all_start_points", "all_stop_points",
+                    "sRNA_confliction", "frame_shift", "lib_type", "best_avg_coverage",
                     "best_highest_coverage", "best_lowest_coverage",
                     "track_detail", "seq"]) + "\n")
     num = 0
     for sorf in sorfs:
-        cutoffs = {}
-        if sorf["strand"] == "+":
-            sorf_covers = get_coverage(sorf, wigs_f, "+", coverages,
-                                       mediandict, cutoffs)
-        else:
-            sorf_covers = get_coverage(sorf, wigs_r, "-", coverages,
-                                       mediandict, cutoffs)
-        if len(sorf_covers) != 0:
-            sorf_info = replicate_comparison(sorf_covers, texs,
-                                sorf["strand"], None, tex_notex, replicates,
-                                "sORF", None, cutoffs, None, texs, cutoffs)
-            if len(sorf_info["conds"].keys()) != 0:
-                print_file(sorf, sorf_info, num, out_g,
-                           out_t, table_best, print_all)
-                num += 1
+        if (compare_rbs_start(sorf, min_rbs, max_rbs) and file_type == "best") or (
+            file_type == "all"):
+            if file_type == "best":
+                check_start_end(sorf, min_rbs, max_rbs, min_len, max_len, fasta)
+            detect_frame_shift(sorf)
+            cutoffs = {}
+            if sorf["strand"] == "+":
+                sorf_covers = get_coverage(sorf, wigs_f, "+", coverages,
+                                           mediandict, cutoffs)
+            else:
+                sorf_covers = get_coverage(sorf, wigs_r, "-", coverages,
+                                           mediandict, cutoffs)
+            if len(sorf_covers) != 0:
+                sorf_info = replicate_comparison(sorf_covers, texs,
+                                    sorf["strand"], None, tex_notex, replicates,
+                                    "sORF", None, cutoffs, None, texs, cutoffs)
+                if len(sorf_info["conds"].keys()) != 0:
+                    print_file(sorf, sorf_info, num, out_g, out_t, table_best,
+                               print_all, min_rbs, max_rbs, file_type,
+                               min_len, max_len)
+                    num += 1
 
 def detect_inter_type(inters, wigs_f, wigs_r, background):
     med_inters = {}
@@ -697,15 +887,19 @@ def detect_inter_type(inters, wigs_f, wigs_r, background):
                             wigs_r, "-", background)
     return med_inters
 
-def set_median(covers, mediandict):
+def set_median(covers, mediandict, coverages):
     for strain, utrs in covers.items():
         mediandict[strain] = {"3utr": {}, "5utr": {}, "interCDS": {}}
         for utr, tracks in utrs.items():
             for track, avgs in tracks.items():
                 if track not in mediandict[strain][utr].keys():
                     mediandict[strain][utr][track] = {}
-                mediandict[strain][utr][track] = {"median": median_score(avgs),
-                                                  "mean": mean_score(avgs)}
+                mediandict[strain][utr][track] = {"median": median_score(avgs,
+                                                            coverages[utr])}
+    for utr, value in coverages.items():
+        if type(value) is str:
+            if "p_" in value:
+                coverages[utr] = "median"
 
 def compute_candidate_best(sorfs_best):
     for sorf in sorfs_best:
@@ -715,14 +909,25 @@ def compute_candidate_best(sorfs_best):
                           "TSS:" + sorf["start_TSS"],
                           "RBS:" + str(sorf["rbs"][0])]))
 
+def set_coverage(utr3_coverage, utr5_coverage, inter_coverage, interCDS_coverage):
+    if "n_" in utr3_coverage:
+        utr3_coverage = float(utr3_coverage.split("_")[-1])
+    if "n_" in utr5_coverage:
+        utr5_coverage = float(utr5_coverage.split("_")[-1])
+    if "n_" in interCDS_coverage:
+        interCDS_coverage = float(interCDS_coverage.split("_")[-1])
+    coverages = {"3utr": utr3_coverage, "5utr": utr5_coverage,
+                 "inter": inter_coverage, "interCDS": interCDS_coverage}
+    return coverages
+
 def sorf_detection(fasta, srna_gff, inter_gff, tss_file, utr_fuzzy, utr_detect,
                    input_libs, tex_notex, replicates, inter_coverage,
                    utr3_coverage, utr5_coverage, interCDS_coverage, wig_f_file,
                    wig_r_file, wig_folder, start_codon, stop_codon, table_best,
-                   max_len, min_len, out_prefix, background,
-                   fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss):
-    coverages = {"3utr": utr3_coverage, "5utr": utr5_coverage,
-                 "inter": inter_coverage, "interCDS": interCDS_coverage}
+                   max_len, min_len, out_prefix, background, fuzzy_rbs, print_all,
+                   no_srna, noafter_tss, no_tss, min_rbs, max_rbs):
+    coverages = set_coverage(utr3_coverage, utr5_coverage,
+                             inter_coverage, interCDS_coverage)
     libs, texs = read_libs(input_libs, wig_folder)
     inters, tsss, srnas, seq = read_data(inter_gff, tss_file, srna_gff,
                                          fasta, utr_detect)
@@ -731,18 +936,17 @@ def sorf_detection(fasta, srna_gff, inter_gff, tss_file, utr_fuzzy, utr_detect,
     med_inters = detect_inter_type(inters, wigs_f, wigs_r, background)
     inter_covers = {}
     mediandict = {}
-    if utr_detect:
-        for strain, meds in med_inters.items():
-            inter_covers[strain] = {"5utr": {}, "3utr": {}, "interCDS": {}}
-            for type_, covers in meds.items():
-                get_inter_coverage(covers, inter_covers[strain][type_])
-        set_median(inter_covers, mediandict)
+    for strain, meds in med_inters.items():
+        inter_covers[strain] = {"5utr": {}, "3utr": {}, "interCDS": {}}
+        for type_, covers in meds.items():
+            get_inter_coverage(covers, inter_covers[strain][type_])
+    set_median(inter_covers, mediandict, coverages)
     out_ag = open("_".join([out_prefix, "all.gff"]), "w")
     out_at = open("_".join([out_prefix, "all.csv"]), "w")
     out_bg = open("_".join([out_prefix, "best.gff"]), "w")
     out_bt = open("_".join([out_prefix, "best.csv"]), "w")
-    sorfs = detect_start_stop(inters, seq, start_codon,
-                              stop_codon, max_len, min_len, fuzzy_rbs)
+    sorfs = detect_start_stop(inters, seq, start_codon, stop_codon, max_len,
+                              min_len, fuzzy_rbs, min_rbs, max_rbs)
     sorfs_all, sorfs_best = compare_sorf_tss(sorfs, tsss, tss_file,
                                     utr_fuzzy, noafter_tss, no_tss)
     compare_sorf_srna(sorfs_all, srnas, srna_gff)
@@ -754,10 +958,11 @@ def sorf_detection(fasta, srna_gff, inter_gff, tss_file, utr_fuzzy, utr_detect,
     final_best = get_best(sorfs_best, utr_fuzzy, tss_file,
                           srna_gff, no_srna, no_tss)
     coverage_and_output(sorfs_all, mediandict, wigs_f, wigs_r, texs, out_ag, out_at,
-                        tex_notex, replicates, coverages, table_best, print_all)
+                        tex_notex, replicates, coverages, table_best, print_all,
+                        min_rbs, max_rbs, "all", min_len, max_len, seq)
     coverage_and_output(final_best, mediandict, wigs_f, wigs_r, texs, out_bg,
                         out_bt, tex_notex, replicates, coverages, table_best,
-                        print_all)
+                        print_all, min_rbs, max_rbs, "best", min_len, max_len, seq)
     out_ag.close()
     out_at.close()
     out_bg.close()
