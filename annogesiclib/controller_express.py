@@ -114,6 +114,18 @@ class Controller(object):
                                  self._args.convert_to_gff_rnt_ptt,
                                  self._paths.tar_annotation_folder, self._args.compare_pair)
 
+#    def expression(self):
+#        """Run gene expression analysis."""
+#        print("Running gene expression analysis...")
+#        express = Expression(self._args.annotation_folder)
+#        express.expression(self._args.tex_notex_libs, self._args.frag_libs,
+#                           self._args.tex_notex, self._args.replicates_tex,
+#                           self._args.replicates_frag, self._args.tex_wig_folder,
+#                           self._args.frag_wig_folder, self._args.cutoff_overlap_tex,
+#                           self._args.cutoff_overlap_frag, self._args.cutoff_coverage,
+#                           self._args.annotation_folder, self._args.features,
+#                           self._args.coverage_type, self._args.max_colorbar,
+#                           self._args.min_colorbar)
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
         if self._args.compute_program.lower() == "tss":

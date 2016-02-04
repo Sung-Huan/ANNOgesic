@@ -11,18 +11,17 @@ __version__ = "0.1.3"
 
 def main():
     print("""
-         ___    _   ___   ______                  _     
-        /   |  / | / / | / / __ \____ ____  _____(_)____   \\
-  ____ / /| | /  |/ /  |/ / / / / __ `/ _ \/ ___/ / ___/ ___\\
- |    / ___ |/ /|  / /|  / /_/ / /_/ /  __(__  ) / /__      /
- |   /_/  |_/_/ |_/_/ |_/\____/\__, /\___/____/_/\___/     /
- |                            /____/ 
- |__________________________________________
- |_________________________________________________
- |________________________________________________________
- |__________________________________________________________
- |                                                          \\
- |__________________________________________________________/
+       ___    _   ___   ______                  _     
+      /   |  / | / / | / / __ \____ ____  _____(_)____ \\
+  __ / /| | /  |/ /  |/ / / / / __ `/ _ \/ ___/ / ___/__\\
+ |  / ___ |/ /|  / /|  / /_/ / /_/ /  __(__  ) / /__    /
+ | /_/  |_/_/ |_/_/ |_/\____/\__, /\___/____/_/\___/   /
+ |                          /____/ 
+ |__________________
+ |_____________________
+ |________________________________________________
+ |                                                \\
+ |________________________________________________/
 """)
     home_path = os.environ["HOME"]
     parser = argparse.ArgumentParser()
@@ -121,67 +120,7 @@ def main():
         "--convert_to_gff_rnt_ptt", "-g", default=False, action="store_true",
         help="Do you want to convert to gff, rnt and ptt? Default is False.")
     RATT_parser.set_defaults(func=run_RATT)
-    # gene expression analysis
-    expression_parser = subparsers.add_parser(
-        "expression_analysis", help="Run gene expression analysis to compare which CDS is expressing in which libraries.")
-    expression_parser.add_argument(
-        "project_path", default=".", nargs="?",
-        help="Path of the project folder. If none is given, the current directory is used.")
-    expression_parser.add_argument(
-        "-g","--annotation_folder", 
-        help="The folder of annotation file which you want to analyze.")
-    expression_parser.add_argument(
-        "-tl","--tex_notex_libs", default=None, nargs="+",
-        help="Library name of tex and notex library. The format is: "
-        "wig_file_name:tex_treat_or_not(tex or notex):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
-    expression_parser.add_argument(
-        "-fl","--frag_libs", default=None, nargs="+",
-        help="Library name of fragmented library. The format is: "
-        "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
-    expression_parser.add_argument(
-        "-te","--tex_notex", default=2, type=int,
-        help="For tex +/- library, expressing CDS should be detected by both or just one.(1 or 2) Default is 2.")
-    expression_parser.add_argument(
-        "-rt","--replicates_tex", default=None,
-        help="The expressing CDS of tex +/- library should be detected more than this number of replicates.")
-    expression_parser.add_argument(
-        "-rf","--replicates_frag", default=None,
-        help="The expressing CDS of fragmented library should be detected more than this number of replicates.")
-    expression_parser.add_argument(
-        "--tex_wig_folder", "-tw", default=None,
-        help="The folder of TEX+/- wigge files.")
-    expression_parser.add_argument(
-        "--frag_wig_folder", "-fw", default=None,
-        help="The folder of fragmented wigge files.")
-    expression_parser.add_argument(
-        "--cutoff_overlap_tex", "-ot", default="all",
-        help="This value is for decision of CDS which is expressing or not in TEX+/- library. If the expressing nucleotides more than this value, "
-        "it will consider the CDS is expressing one. You can assign by percentage(p) or nucleotide(n). ex: "
-        "p_0.5 means the percentage of expressing nts should higher 0.5. n_100 means there should be 100 nts which are expressing. "
-        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS which is expressing.")
-    expression_parser.add_argument(
-        "--cutoff_overlap_frag", "-of", default="all",
-        help="This value is for decision of CDS which is expressing or not in fragmented library. If the expressing nucleotides more than this value, "
-        "it will consider the CDS is expressing. You can assign by percentage(p) or nucleotide(n). ex: "
-        "p_0.5 means the percentage of expressing nts should higher 0.5. n_100 means there should be 100 nts which are expressing. "
-        "Default is \"all\" which means as long as there is a nt's coverage higher than cutoff_coverage, it would consider the CDS which is expressing.")
-    expression_parser.add_argument(
-        "--cutoff_coverage", "-c", default=5, type=float,
-        help="If the coverage is higher than this value, it will consider the nucleotide is expressing. Default is 5.")
-    expression_parser.add_argument(
-        "--features", "-f", nargs="+",
-        help="The features which you want to compute, ex: CDS tRNA.")
-    expression_parser.add_argument(
-        "--coverage_type", "-ct", default="high",
-        help="For generating heatmap of coverage, you want to base on the highest coverage or average of coverage. "
-        "If you want to use highest, please type \"high\". If you want to use average, please type \"average\". Default is high.")
-    expression_parser.add_argument(
-        "--max_colorbar", "-Mc", default=100, type=int,
-        help="The max number of colorbar of heatmap. Default is 100.")
-    expression_parser.add_argument(
-        "--min_colorbar", "-mc", default=0, type=int,
-        help="The min number of colorbar of heatmap. Default is 0.")
-    expression_parser.set_defaults(func=run_expression)
+
     # Parameters of TSSpredator
     TSSpredator_parser = subparsers.add_parser(
         "tsspredator", help="Run TSSpredator to predict TSSs or processing sites.")
@@ -484,8 +423,8 @@ def main():
         help="Library name of fragmented library. The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
     Terminator_parser.add_argument(
-        "-te","--tex_notex", default=2, type=int,
-        help="For tex +/- library, terminators should be detected by both or just one.(1/2) Default is 2.")
+        "-te","--tex_notex", default=1, type=int,
+        help="For tex +/- library, terminators should be detected by both or just one.(1/2) Default is 1.")
     Terminator_parser.add_argument(
         "-rt","--replicates_tex", default=None,
         help="The terminator of tex +/- library should be detected more than this number of replicates.")
@@ -555,8 +494,11 @@ def main():
         "--compare_TSS", "-ct", default=None,
         help="If you want to compare with TSS, please assign TSS folder.")
     Transcript_parser.add_argument(
-        "--compare_CDS", "-cg", default=None,
+        "--compare_genome_annotation", "-cg", default=None,
         help="If you want to compare with annotation file, please assign annotation folder.")
+    Transcript_parser.add_argument(
+        "--compare_feature_genome", "-cf", default="gene",
+        help="If you want to compare with annotation file, please assign the feature which you want to compare. Default is gene")
     Transcript_parser.add_argument(
         "--TSS_fuzzy", "-fu", default=5, type=int,
         help="The fuzzy for comparing TSS and transcript assembly. Default is 5.")
@@ -709,13 +651,13 @@ def main():
         "0 means you don't want to use it for prediction. If you don't use TSS information for prediction, it will choose the lowest one as a cutoff. "
         "Ex: if you assign 0 0 0 50 10 and you have no TSS information, it will use 10 as a general cutoff for prediction. Default is 0 0 0 30 10.")
     sRNA_parser.add_argument(
-        "--run_intergenic_fragmented_coverage", "-if",default=[400, 200, 0, 50, 30], nargs="+",
+        "--run_intergenic_fragmented_coverage", "-if",default=[400, 200, 0, 50, 20], nargs="+",
         help="The minimal average coverage of intergenic sRNA candidates for fragmented library. "
         "You can choose what kinds of TSS you want to use for sRNA prediction and assign the cutoff of coverage to TSS. "
         "The order of numbers is \"Primary Secondary Internal Antisense Orphan\". "
         "Ex: if you assign 0 0 0 50 10, it means you want to use Antisense(cutoff coverage is 50) and Orphan(cutoff coverage is 10) for sRNA prediction. "
         "0 means you don't want to use it for prediction. If you don't use TSS information for prediction, it will choose the lowest one as a cutoff. "
-        "Ex: if you assign 0 0 0 50 10 and you have no TSS information, it will use 10 as a general cutoff for prediction. Default is 400 200 0 50 30.")
+        "Ex: if you assign 0 0 0 50 10 and you have no TSS information, it will use 10 as a general cutoff for prediction. Default is 400 200 0 50 20.")
     sRNA_parser.add_argument(
         "--intergenic_tolerance", "-ti",default=5, type=float,
         help="This number indicates how willing the algorithm is to ignore a temporary drop below this number. "
@@ -726,21 +668,21 @@ def main():
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
-        "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.8 p_0.3 p_0.6.")
+        "Ex: if you assign \"n_30 n_10 n_20 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and 20 for interCDS. Default is p_0.8 p_0.3 p_0.6.")
     sRNA_parser.add_argument(
         "--run_utr_noTEX_coverage", "-un",default=["p_0.7", "p_0.5", "p_0.6"], nargs="+",
         help="The minimal average coverage of UTR derived sRNA candidates for TEX -. "
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
-        "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.7 p_0.2 p_0.5.")
+        "Ex: if you assign \"n_30 n_10 n_20 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and 20 for interCDS. Default is p_0.7 p_0.2 p_0.5.")
     sRNA_parser.add_argument(
         "--run_utr_fragmented_coverage", "-uf",default=["p_0.7", "p_0.5", "p_0.6"], nargs="+",
         help="The minimal average coverage of UTR derived sRNA candidates for fragmented library. "
         "You can assign the percentile or real number of coverage for 5'UTR, 3'UTR and interCDS. "
         "The order of numbers are \"5'UTR, 3'UTR and interCDS\". "
         "Ex: if you assign \"p_0.7 p_0.5 p_0.5\", it will use 70 percentile of coverage as cutoff for 5'UTR, median of coverage as cutoff for 3'UTR and interCDS. "
-        "Ex: if you assign \"n_30 n_10 n_10 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and interCDS. Default is p_0.7 p_0.25 p_0.5.")
+        "Ex: if you assign \"n_30 n_10 n_20 \" it will use 30 as cutoff for 5'UTR and 10 as cutoff for 3'UTR and 20 for interCDS. Default is p_0.7 p_0.25 p_0.5.")
     sRNA_parser.add_argument(
         "--min_utr_coverage", "-mu", default=50, type=float,
         help="The minimum coverage of UTR-derived sRNA. The coverage should not only fit the --run_utr_TEX_coverage, --run_utr_noTEX_coverage and --run_utr_fragmented_coverage, "
@@ -942,10 +884,10 @@ def main():
         help="What kinds of stop coden TTA/TAG/TGA you want to use. Default is TTA TAG TGA.")
     sORF_parser.add_argument(
         "--min_rbs_distance", "-mr", default=3, type=int,
-        help="The minimum distance between the ribosomal binding site and start codon. Default is 5.")
+        help="The minimum distance between the ribosomal binding site and start codon. Default is 3.")
     sORF_parser.add_argument(
         "--max_rbs_distance", "-Mr", default=15, type=int,
-        help="The maximum distance between the ribosomal binding site and start codon. Default is 20.")
+        help="The maximum distance between the ribosomal binding site and start codon. Default is 15.")
     sORF_parser.add_argument(
         "--rbs_not_after_TSS", "-at", default=False, action="store_true",
         help="If you want to generate best gff file which include ribosomal binding site not after TSS, please turn it on. Default is False.")
@@ -986,10 +928,14 @@ def main():
         "--num_motif", "-n", default=10,
         help="How many of motifs you want to produce? Default is 10.")
     promoter_parser.add_argument(
+        "--nt_before_TSS", "-b", default=50, type=int,
+        help="How many nucleotides which you want to extract before TSS for produce promoters? Default is 50.")
+    promoter_parser.add_argument(
         "--motif_width", "-w", nargs="+",
         help="Motif length - it will refer the value to find the motif. "
         "if you want to detect a range of width, you can insert \"-\" between two values. "
-        "for example, 50 2-10. It means the range of width which you want to detect is 50 and within 2 to 10. ")
+        "for example, 50 2-10. It means the range of width which you want to detect is 50 and within 2 to 10. "
+        "The number should be less or equal than --nt_before_TSS.")
     promoter_parser.add_argument(
         "--TSS_source", "-s", default=True, action="store_false",
         help="If you generate TSS from other method, please turn it on. Default is True(from ANNOgesic)")
@@ -1220,6 +1166,10 @@ def main():
     starget_parser.add_argument(
         "--potential_target_end", "-pe", default=150, type=int,
         help="How many downstream nucleotides of the start point of CDS you want to extracts as potential target. Default is 150.")
+    starget_parser.add_argument(
+        "--target_feature", "-tf", default=["CDS"], nargs="+",
+        help="What kinds of feature you want to extract as potential target. If you want to use multi-features, just use space to separate them. "
+        "For example, CDS gene. Default is CDS.")
     starget_parser.set_defaults(func=sRNA_target)
     # Parameters of SNP transcript
     snp_parser = subparsers.add_parser(
@@ -1272,8 +1222,9 @@ def main():
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given, the current directory is used.")
     ppi_parser.add_argument(
-        "--ptt_path", "-p", default="ANNOgesic/output/target/annotation",
-        help="The path of .ptt annotation folder.")
+        "--gff_path", "-g", default="ANNOgesic/output/target/annotation",
+        help="The path of .gff annotation folder. Please confirm your gff files have proper locus_tag item in attributes. "
+        "The locus_tag items can be real locus tag like locus_tag=SAOUHSC_00003, or they can be assigned by gene name, such as, locus_tag=dnaA. ")
     ppi_parser.add_argument(
         "--proteinID_strains", "-s", nargs="+",
         help="This is for assigning protein Id which you want to predict. "
@@ -1281,15 +1232,11 @@ def main():
              "For example, if you want to run all proteins in Staphylococcus aureus HG003, there is no Staphylococcus aureus HG003 in STRING database. "
              "However, there is Staphylococcus aureus 8325 which is highly similar with Staphylococcus aureus HG003. Therefore, we can use it as reference. "
              "you can assign the it like "
-             "Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus 8325\":\"Staphylococcus aureus\". "
-             "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"93061\":\"Staphylococcus aureus\". "
-             "or Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:\"Staphylococcus aureus NCTC 8325\":\"Staphylococcus aureus\". "
-             "(ptt_filename:header_ptt:STRING_name:Pubmed_name). "
-             "First one is the ptt file name. Second one is the header of ptt files. If first line of ptt file has a comma, "
-             "please use the string before comma, ex: Staphylococcus_aureus_HG003 chromosome, complete genome - 1..2821337. "
-             "The header will be \"Staphylococcus_aureus_HG003 chromosome\". If there is no comma in first line, "
-             "the header will be the string before dash. ex: Staphylococcus_aureus_HG003 - 1..1667867. "
-             "The header will be \"Staphylococcus_aureus_HG003\". "
+             "Staphylococcus_aureus_HG003.gff:Staphylococcus_aureus_HG003:\"Staphylococcus aureus 8325\":\"Staphylococcus aureus\". "
+             "or Staphylococcus_aureus_HG003.gff:Staphylococcus_aureus_HG003:\"93061\":\"Staphylococcus aureus\". "
+             "or Staphylococcus_aureus_HG003.gff:Staphylococcus_aureus_HG003:\"Staphylococcus aureus NCTC 8325\":\"Staphylococcus aureus\". "
+             "(gff_filename:gff_strain_name:STRING_name:Pubmed_name). "
+             "First one is the gff file name. Second one is the strain name of gff files. "
              "Third one is for STRING database, and the fourth one is for Pubmed. "
              "Of course, you can run the script for several strains at the same time. "
              "Before running it, please check the species file which located in ANNOgesic/input/database ."
@@ -1312,8 +1259,8 @@ def main():
         help="Please size of the nodes in figure, default is 4000.")
     ppi_parser.add_argument(
         "--query", "-q", default="all", nargs="+",
-        help="Please assign the query protein here. The format is $HEADEROFPTT:$START_POINT:$END_POINT:$STRAND."
-        "For example, Helicobacter pylori 26695 chromosome:345:456:+ Helicobacter pylori 26695 chromosome:2000:3211:-. "
+        help="Please assign the query protein here. The format is $STRAINOFGFF:$START_POINT:$END_POINT:$STRAND."
+        "For example, Staphylococcus_aureus_HG003:345:456:+ Staphylococcus_aureus_HG003:2000:3211:-. "
         "If you want to compute all protein, just type all. Default is all.")
     ppi_parser.set_defaults(func=PPI)
     # Parameters of subcellular localization
