@@ -864,6 +864,8 @@ optional arguments:
                         Input of fragmented library. The format is: wig_file_n
                         ame:fragmented(frag):condition_id(integer):replicate_i
                         d(alphabet):strand(+ or -).
+  --table_best, -tb     The table only includes the best library. Default is
+                        False.
 </pre></div>
 </div>
 <ul class="simple">
@@ -879,10 +881,13 @@ optional arguments:
 (If user has compared transcripts with TSSs.)</p>
 <p><code class="docutils literal"><span class="pre">associated_cds</span></code>: It shows the CDSs/tRNAs/rRNAs which are located in which transcripts.
 (If user has compared transcripts with genome annotations.)</p>
+<p><code class="docutils literal"><span class="pre">detect_lib</span></code>: It shows the transcript is detected by tex-treated libraries or fragmented libraries.</p>
+<p><code class="docutils literal"><span class="pre">best_avg_coverage</span></code>: It shows the the average coverage of highest expressed library.</p>
 <p>If user has compared transcripts with genome annotations. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
 in the gff files of genome annotations. It will show the CDSs/tRNAs/rRNAs are located in which transcripts.</p>
 <p>If user has compared transcripts with TSSs. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
 in the gff files of TSSs. It will show the TSSs is located in which transcripts.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: for more details of transcripts.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files.</p>
 </div>
 <div class="section" id="terminator">
@@ -1720,7 +1725,7 @@ optional arguments:
 <p><code class="docutils literal"><span class="pre">sORF_type</span></code>: the type of UTR if the sORF is 5&#8217;UTR, 3&#8217;UTR, interCDS, intergenic or in_CDS.</p>
 <p><code class="docutils literal"><span class="pre">sRNA</span></code>: which sRNAs overlap with the the region of sORFs.</p>
 <p><code class="docutils literal"><span class="pre">RBS</span></code>: the ribosomal binding sites of the region of sORFs.</p>
-<p><code class="docutils literal"><span class="pre">frame_shift</span></code>: how many frame shift in the regions of sORFs.</p>
+<p><code class="docutils literal"><span class="pre">frame_shift</span></code>: how many frame shifts in the regions of sORFs.</p>
 </div>
 <div class="section" id="promoter">
 <h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
