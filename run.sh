@@ -4,7 +4,8 @@ main(){
     STRAINS=Staphylococcus_aureus_HG003
     ANNOGESIC_PATH=/home/silas/ANNOgesic/bin/annogesic
     ANNOGESIC_FOLDER=ANNOgesic
-    FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795
+#    FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795
+    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1/
     ID_MAPPING_SOURCE=ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
     PAGIT_HOME=/home/silas/ANNOgesic/tools/PAGIT
     tex_notex_libs="TSB_OD_0.2_TEX_div_by_3598556.0_multi_by_3382258.0_reverse.wig:tex:1:a:- \
@@ -71,8 +72,8 @@ main(){
 #    get_target_fasta
 #    annotation_transfer
 #    expression_analysis
-    SNP_calling_reference
-#    TSS_prediction
+#    SNP_calling_reference
+    TSS_prediction
 #    Transcriptome_assembly
 #    Terminator_prediction
 #    processing_site_prediction
@@ -193,20 +194,30 @@ TSS_prediction(){
 	   pMEM_t0 \
 	   pMEM_t1 \
 	   pMEM_t2 \
-        -he 1.4 \
+	-he 1.4 \
         -rh 1.3 \
         -fa 5.1 \
         -rf 0.7 \
         -bh 0.055 \
-	-ef 0.4 \
-	-pf 1.6 \
+        -ef 0.4 \
+        -pf 1.6 \
+	-m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
 	-rm 1 \
         -s \
-        -m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
-        -ta $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         -v \
         $ANNOGESIC_FOLDER
 }
+
+#-he 1.4 \
+#        -rh 1.3 \
+#        -fa 5.1 \
+#        -rf 0.7 \
+#        -bh 0.055 \
+#        -ef 0.4 \
+#        -pf 1.6 \
+#-ta $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+#-m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff \
+#        -v \
 
 Transcriptome_assembly(){
     $PYTHON_PATH $ANNOGESIC_PATH \
@@ -226,7 +237,7 @@ Transcriptome_assembly(){
 Terminator_prediction(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         terminator \
-        --TransTermHP_folder /home/silas/ANNOgesic/tools/transterm_hp_v2.09/transterm \
+        --TransTermHP_path /home/silas/ANNOgesic/tools/transterm_hp_v2.09/transterm \
         --expterm_path /home/silas/ANNOgesic/tools/transterm_hp_v2.09/expterm.dat \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
@@ -265,20 +276,23 @@ processing_site_prediction()
            pMEM_t0 \
            pMEM_t1 \
            pMEM_t2 \
-        -he 0.5 \
+        -he 0.3 \
         -rh 0.2 \
-        -fa 2.1 \
-        -rf 1.4 \
+        -fa 2.0 \
+        -rf 0.5 \
 	-bh 0.0 \
-	-ef 4.7 \
-	-pf 2.5 \
+	-ef 2.0 \
+	-pf 1.5 \
 	-rm 1 \
 	-t processing_site \
 	-s \
-	-m $ANNOGESIC_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_105000.gff \
-        -le 105000 \
+        -le 200000 \
+        -m $ANNOGESIC_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_200000.gff \
         $ANNOGESIC_FOLDER
 }
+
+#-m $ANNOGESIC_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_105000.gff \
+#        -le 105000 \
 
 utr_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
@@ -293,7 +307,7 @@ utr_detection(){
 sRNA_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         srna \
-        -d 1 2 3 4 5 \
+        -d tss blast_srna blast_nr sec_str term sorf \
         --Vienna_folder /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs \
         --Vienna_utils /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Utils \
 	--blast_plus_folder /home/silas/ANNOgesic/tools \
@@ -304,10 +318,12 @@ sRNA_detection(){
         -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
-	-O $ANNOGESIC_FOLDER/output/sORF/gffs/best \
+	-O $ANNOGESIC_FOLDER/output/sORF/gffs/best/ \
+	-tf $ANNOGESIC_FOLDER/output/terminator/gffs/detect \
         -m \
         -u \
-	-fd \
+	-nf \
+        -sf \
         -sd $ANNOGESIC_FOLDER/input/database/sRNA_database \
         -nd $ANNOGESIC_FOLDER/input/database/nr \
         -tl $tex_notex_libs \
@@ -328,16 +344,14 @@ sORF_detection(){
         -fw $ANNOGESIC_FOLDER/input/wigs/fragment \
         -tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
-	-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
         -tl $tex_notex_libs \
         -fl $frag_libs \
-        -te 2 \
         -rt 1 \
 	-rf 1 \
         -u \
         $ANNOGESIC_FOLDER
 }
-
+#-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
 promoter_detection(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         promoter \
@@ -346,6 +360,9 @@ promoter_detection(){
 	-w 50 51 45 2-10 \
 	-g $ANNOGESIC_FOLDER/output/TSS/gffs \
 	-c \
+	-s \
+	-tl $tex_notex_libs \
+	-tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
         $ANNOGESIC_FOLDER
 }
 
@@ -366,6 +383,7 @@ Go_term(){
     $PYTHON_PATH $ANNOGESIC_PATH \
         go_term \
         -g $ANNOGESIC_FOLDER/output/target/annotation\
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         $ANNOGESIC_FOLDER
 }
 
@@ -411,8 +429,8 @@ SNP_calling_target(){
 PPI_network(){
     $PYTHON_PATH $ANNOGESIC_PATH \
          ppi_network \
-        -s Staphylococcus_aureus_HG003.ptt:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
-        -p $ANNOGESIC_FOLDER/output/target/annotation \
+        -s Staphylococcus_aureus_HG003.gff:Staphylococcus_aureus_HG003:'Staphylococcus aureus 8325':'Staphylococcus aureus' \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
         -d $ANNOGESIC_FOLDER/input/database/species.v9.1.txt \
         -n \
 	-q all \
@@ -424,6 +442,7 @@ Subcellular_localization(){
     $PYTHON_PATH $ANNOGESIC_PATH \
          subcellular_localization \
         -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
         -m \
         -b positive \
@@ -466,9 +485,11 @@ Optimize_TSSpredator(){
            pMEM_t0 \
            pMEM_t1 \
            pMEM_t2 \
-        -m $ANNOGESIC_FOLDER/input/manual_TSS/Staphylococcus_aureus_HG003_manual_TSS.gff  \
-        -c 4 \
+        -c 5 \
 	-rm 1 \
+        -le 200000 \
+	-m $ANNOGESIC_FOLDER/input/manual_processing_site/Staphylococcus_aureus_HG003_manual_processing_200000.gff \
+	-t Processing_site \
         $ANNOGESIC_FOLDER
 }
 
