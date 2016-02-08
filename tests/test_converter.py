@@ -209,7 +209,7 @@ class TestConverter(unittest.TestCase):
         with open(master_file, "w") as th:
             th.write(self.mastertable)
         out_gff = os.path.join(self.test_folder, "test.tsv_out")
-        self.converter.convert_mastertable2gff(master_file, "TSSpredator", "TSS",
+        self.converter.convert_mastertable2gff(master_file, "ANNOgesic", "TSS",
                                                "aaa", out_gff)
         datas = import_data(out_gff)
         self.assertEqual(set(datas), set(self.tss_file.split("\n")))
@@ -459,8 +459,8 @@ NC_007795.1	Refseq	gene	1491014	1491304	.	-	.	locus_tag=SAOUHSC_01545;db_xref=Ge
 2131	+	2	1	TSB_OD_0.5	0	1	31.77	5.45	0.48	2	2131	+	SAOUHSC_00003		DNA polymerase III subunit beta	NA	1134	0	0	1	0	1	0	0	0		ACAGCACCTACTACTATTACTAAGAACTTAAAACCTATATAATTATATATA"""
 
     tss_file = """##gff-version 3
-aaa	TSSpredator	TSS	313	313	.	+	.	Name=TSS:313_f;ID=tss0;type=Primary;UTR_length=Primary_204;associated_gene=SAOUHSC_00001;libs=TSB_OD_0.2&TSB_OD_0.5
-aaa	TSSpredator	TSS	2131	2131	.	+	.	Name=TSS:2131_f;ID=tss1;type=Primary&Internal;UTR_length=Primary_25&Internal_NA;associated_gene=SAOUHSC_00002&SAOUHSC_00003;libs=TSB_OD_0.2"""
+aaa	ANNOgesic	TSS	313	313	.	+	.	Name=TSS:313_f;ID=tss0;type=Primary;UTR_length=Primary_204;associated_gene=SAOUHSC_00001;libs=TSB_OD_0.2&TSB_OD_0.5;Method=TSSpredator
+aaa	ANNOgesic	TSS	2131	2131	.	+	.	Name=TSS:2131_f;ID=tss1;type=Primary&Internal;UTR_length=Primary_25&Internal_NA;associated_gene=SAOUHSC_00002&SAOUHSC_00003;libs=TSB_OD_0.2;Method=TSSpredator"""
 
     transterm = """        recF NONE
 SAOUHSC_00005 NONE
@@ -481,13 +481,13 @@ circRNA_3	Staphylococcus_aureus_HG003	+	23442	49504	NA	52	0.2106796116504854	0.8
 """
 
     circrna_all = """##gff-version 3
-Staphylococcus_aureus_HG003	segemehl	circRNA	492	4956	.	+	.	ID=circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;confliction=NA
-Staphylococcus_aureus_HG003	segemehl	circRNA	23442	49504	.	+	.	ID=circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;confliction=NA
-Staphylococcus_aureus_HG003	segemehl	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA
-Staphylococcus_aureus_HG003	segemehl	circRNA	497897	498038	.	+	.	ID=circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;confliction=SAOUHSC_R0007"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492	4956	.	+	.	ID=circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;confliction=NA;Method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	23442	49504	.	+	.	ID=circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;confliction=NA;Method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA;Method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	497897	498038	.	+	.	ID=circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;confliction=SAOUHSC_R0007;Method=segemehl"""
 
     circrna_best = """##gff-version 3
-Staphylococcus_aureus_HG003	segemehl	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA;Method=segemehl"""
 if __name__ == "__main__":
     unittest.main()
 

@@ -118,10 +118,10 @@ class TestStatsORF(unittest.TestCase):
 
 class Example(object):
 
-    sorf_best = """Staphylococcus_aureus_HG003	UTR_derived	sORF	399365	399439	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_TSS_399320+;with_TSS=TSS_399320+;UTR_type=5utr;sRNA=NA;RBS=RBS_399354"""
-    sorf_all = """Staphylococcus_aureus_HG003	UTR_derived	sORF	399365	399439	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_TSS_399320+;with_TSS=TSS_399320+;UTR_type=5utr;sRNA=NA;RBS=RBS_399354
-Staphylococcus_aureus_HG003	UTR_derived	sORF	330	497	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_313+;with_TSS=TSS_313+;UTR_type=5utr;sRNA=NA;RBS=NA
-Staphylococcus_aureus_HG003	intergenic	sORF	4090	4158	.	-	.	ID=sorf1;Name=sORF_00001;start_TSS=TSS_4368-;with_TSS=TSS_4159-&TSS_4368-;sRNA=NA;RBS=NA"""
+    sorf_best = """Staphylococcus_aureus_HG003	UTR_derived	sORF	399365	399439	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_TSS_399320+;with_TSS=TSS_399320+;sRNA=NA;RBS=RBS_399354;sORF_type=5utr"""
+    sorf_all = """Staphylococcus_aureus_HG003	UTR_derived	sORF	399365	399439	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_TSS_399320+;with_TSS=TSS_399320+;sRNA=NA;RBS=RBS_399354;sORF_type=5utr
+Staphylococcus_aureus_HG003	UTR_derived	sORF	330	497	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_313+;with_TSS=TSS_313+;sRNA=NA;RBS=NA;sORF_type=5utr
+Staphylococcus_aureus_HG003	intergenic	sORF	4090	4158	.	-	.	ID=sorf1;Name=sORF_00001;start_TSS=TSS_4368-;with_TSS=TSS_4159-&TSS_4368-;sRNA=NA;RBS=NA;sORF_type=intergenic"""
 
     nums = {'total': {'intergenic': {'TSS': 0,'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
             'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'RBS': 0},
@@ -144,7 +144,7 @@ Staphylococcus_aureus_HG003	intergenic	sORF	4090	4158	.	-	.	ID=sorf1;Name=sORF_0
             'TSS_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'sRNA': 1, 'RBS': 1}}}
     sorf_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 5,
                 "end": 8, "phase": ".", "strand": "+", "score": "."}]
-    attributes_sorf = [{"ID": "sorf0", "Name": "sORF_0", "UTR_type": "5utr",
+    attributes_sorf = [{"ID": "sorf0", "Name": "sORF_0", "sORF_type": "5utr",
                         "with_TSS": "NA", "RBS": "RBS:1-2_+", "sRNA": "NA"}]
     sorfs = []
     sorfs.append(Create_generator(sorf_dict[0], attributes_sorf[0], "gff"))

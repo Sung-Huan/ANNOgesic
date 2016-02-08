@@ -26,7 +26,7 @@ class TestPotentialTarget(unittest.TestCase):
         gff_file = os.path.join(self.test_folder, "gff")
         gen_file(seq_file, self.example.seq_file)
         gen_file(gff_file, self.example.gff_file)
-        fasta, cdss_f, cdss_r, genes = pt.read_file(seq_file, gff_file, "test")
+        fasta, cdss_f, cdss_r, genes = pt.read_file(seq_file, gff_file, "test", ["CDS"])
         self.assertEqual(fasta, "AGGATAGTCCGATACGTATACTGATAAAGACCGAAAATATTAGCGCGTAGC")
         self.assertEqual(cdss_f[0].start, 1)
         self.assertEqual(cdss_f[0].feature, "CDS")
@@ -53,7 +53,7 @@ class TestPotentialTarget(unittest.TestCase):
         gff_file = os.path.join(self.test_folder, "gff")
         gen_file(seq_file, self.example.seq_file)
         gen_file(gff_file, self.example.gff_file)
-        pt.potential_target(gff_file, seq_file, self.test_folder, 2, 10)
+        pt.potential_target(gff_file, seq_file, self.test_folder, 2, 10, ["CDS"])
         data = import_data(os.path.join(self.test_folder, "aaa_target.fa"))
         self.assertTrue("\n".join(data), self.example.all_result)
 

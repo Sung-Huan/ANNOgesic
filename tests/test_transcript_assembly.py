@@ -96,14 +96,15 @@ class TestTranscriptAssembly(unittest.TestCase):
         out = StringIO()
         tolers = {'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 20]}
         ta.fill_gap_and_print(trans, "+", 3, 1, out,
-                              5, tolers)
+                              5, tolers, "TEX")
         self.assertEqual(out.getvalue(), self.example.out_tran + "\n")
 
     def test_print_transctipt(self):
         out = StringIO()
-        ta.print_transctipt(100, 200, 20, 1, 40,
+        ta.print_transctipt(100, 200, 20, 1, 40, "TEX",
                             20, out, "aaa", "+")
-        self.assertEqual(out.getvalue(), "aaa\tTranscript\tTranscript\t100\t200\t.\t+\t.\tID=tran_1;Name=Transcript_00001;high_coverage=40;low_coverage=20\n")
+        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\tTranscript\t100\t200\t.\t+\t.\tID=tran_1;Name=Transcript_00001;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
+
 
     def test_assembly(self):
         wig_f_file = os.path.join(self.test_folder, "aaa_forward.wig")
@@ -121,7 +122,7 @@ class TestTranscriptAssembly(unittest.TestCase):
                      "aaa2_forward.wig:tex:1:a:+",
                      "aaa2_reverse.wig:tex:1:a:-"]
         ta.assembly(wig_f_file, wig_r_file, 10, 1, 3, 5,
-                    self.test_folder, 2, input_lib, reps, out_file)
+                    self.test_folder, 2, input_lib, reps, out_file, "TEX")
         datas = import_data(out_file)
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.out_tran)
 
@@ -172,8 +173,8 @@ variableStep chrom=aaa span=1
                       {'cond': '1', 'track': 'test1', 'pos': 6, 'strand': '+', 'coverage': 47.0},
                       {'cond': '1', 'track': 'test1', 'pos': 7, 'strand': '+', 'coverage': 7.0},
                       {'cond': '1', 'track': 'test1', 'pos': 8, 'strand': '+', 'coverage': 47.0}]}
-    out_tran = """aaa	Transcript	Transcript	3	4	.	+	.	ID=tran_0;Name=Transcript_00000;high_coverage=47.0;low_coverage=41.0
-aaa	Transcript	Transcript	6	8	.	+	.	ID=tran_1;Name=Transcript_00001;high_coverage=47.0;low_coverage=47.0"""
+    out_tran = """aaa	ANNOgesic	Transcript	3	4	.	+	.	ID=tran_0;Name=Transcript_00000;high_coverage=47.0;low_coverage=41.0;detect_lib=TEX
+aaa	ANNOgesic	Transcript	6	8	.	+	.	ID=tran_1;Name=Transcript_00001;high_coverage=47.0;low_coverage=47.0;detect_lib=TEX"""
 
 
 if __name__ == "__main__":

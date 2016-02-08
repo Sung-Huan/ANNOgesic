@@ -79,8 +79,8 @@ class TestDetectOperon(unittest.TestCase):
         for data in datas:
             features.append(data["num_feature"])
             detects.append(data["with_feature"])
-        self.assertEqual(set(features), set([2, 0, 0]))
-        self.assertEqual(set(detects), set([True, False, False]))
+        self.assertEqual(set(features), set([2, 1, 1]))
+        self.assertEqual(set(detects), set([True, True, True]))
 
     def test_sub_operon(self):
         tss_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 140,
@@ -92,7 +92,7 @@ class TestDetectOperon(unittest.TestCase):
         gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 540,
                      "end": 640, "phase": ".", "strand": "+", "score": "."},
                     {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 166,
-                     "end": 166, "phase": ".", "strand": "-", "score": "."}]
+                     "end": 198, "phase": ".", "strand": "+", "score": "."}]
         attributes_gff = [{"ID": "tss0", "Name": "TSS_0", "locus_tag": "AAA_00001"},
                           {"ID": "tss1", "Name": "TSS_1", "locus_tag": "BBB_00001"}] 
         tsss = {"with_feature": True, "num_feature": 2, "data_list": []}
@@ -100,9 +100,9 @@ class TestDetectOperon(unittest.TestCase):
         for index in range(0, 2):
             genes["data_list"].append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
             tsss["data_list"].append(Create_generator(tss_dict[index], attributes_tss[index], "gff"))
-        operons = op.sub_operon("+", tsss, 141, 300, genes, 30)
-        self.assertDictEqual(operons[0], {'end': 199, 'strand': '+', 'start': 141})
-        self.assertDictEqual(operons[1], {'end': 300, 'strand': '+', 'start': 200})
+        operons = op.sub_operon("+", tsss, 141, 800, genes, 30)
+        self.assertDictEqual(operons[0], {'end': 199, 'start': 141, 'strand': '+'})
+        self.assertDictEqual(operons[1], {'end': 799, 'start': 200, 'strand': '+'})
 
     def test_operon(self):
         op.read_gff = Mock_func().mock_read_gff
@@ -166,8 +166,8 @@ class Example(object):
                       {"ID": "cds2", "Name": "CDS_2", "locus_tag": "BBB_00002", "protein_id": "YP_000003"}]
     out_file = """Operon_ID	strain	Operon_position	strand	Number_of_suboperon	Position_of_suboperon	Start_with_TSS	Number_of_TSS	Terminated_with_terminator	Number_of_terminator	Number_of_gene_associated_suboperon	Number_of_gene_associated_operon	Associated_genes_with_suboperon	Associated_genes_with_whole_operon
 Operon1	aaa	140-367	+	0	NA	True	2	True	1	NA	2	NA	AAA_00001, AAA_00002
-Operon2	aaa	230-240	+	0	NA	True	1	False	0	NA	0	NA	NA
-Operon3	bbb	430-5167	-	0	NA	True	1	True	1	NA	0	NA	NA"""
+Operon2	aaa	230-240	+	0	NA	True	1	False	0	NA	2	NA	AAA_00001, AAA_00002
+Operon3	bbb	430-5167	-	0	NA	True	1	True	1	NA	1	NA	BBB_00001"""
 
     tas = []
     tsss = []

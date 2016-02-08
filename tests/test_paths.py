@@ -59,7 +59,7 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(len(self.paths.required_folders("root")), 22)
         self.assertEqual(len(self.paths.required_folders("get_target_fasta")), 25)
         self.assertEqual(len(self.paths.required_folders("TSS")), 27)
-        self.assertEqual(len(self.paths.required_folders("transcript_assembly")), 25)
+        self.assertEqual(len(self.paths.required_folders("transcript_assembly")), 26)
         self.assertEqual(len(self.paths.required_folders("terminator")), 27)
         self.assertEqual(len(self.paths.required_folders("annotation_transfer")), 25)
         self.assertEqual(len(self.paths.required_folders("utr")), 29)

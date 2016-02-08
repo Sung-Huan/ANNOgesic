@@ -45,37 +45,37 @@ class TestMergesRNA(unittest.TestCase):
     def test_modify_attributes(self):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                     "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr"}
+        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         tar1_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "3utr"}
+        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr"}
         tar2_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar2 = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr"}
+        attributes_tar2 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "pre")
-        self.assertEqual(pre.attributes["UTR_type"], "3utr&5utr")
+        self.assertEqual(pre.attributes["sRNA_type"], "3utr&5utr")
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar2 = Create_generator(tar2_dict, attributes_tar2, "gff")
         ms.modify_attributes(pre, tar2, "UTR", "pre")
-        self.assertEqual(pre.attributes["UTR_type"], "5utr")
+        self.assertEqual(pre.attributes["sRNA_type"], "5utr")
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "current")
-        self.assertEqual(pre.attributes["UTR_type"], "5utr")
-        self.assertEqual(tar1.attributes["UTR_type"], "3utr&5utr")
+        self.assertEqual(pre.attributes["sRNA_type"], "5utr")
+        self.assertEqual(tar1.attributes["sRNA_type"], "3utr&5utr")
 
     def test_detect_overlap(self):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                     "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr"}
+        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         tar1_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "3utr"}
+        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr"}
         tar2_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 53,
                      "end": 233, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar2 = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr"}
+        attributes_tar2 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         tar2 = Create_generator(tar2_dict, attributes_tar2, "gff")
@@ -89,11 +89,11 @@ class TestMergesRNA(unittest.TestCase):
     def test_modify_overlap(self):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                     "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr", "with_TSS": "NA",
+        attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr", "with_TSS": "NA",
                           "start_cleavage": "cleavage_1&cleavage_2", "end_cleavage": "NA"}
         tar_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 5,
                     "end": 30, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "3utr", "with_TSS": "TSS_1",
+        attributes_tar = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr", "with_TSS": "TSS_1",
                           "start_cleavage": "cleavage3", "end_cleavage": "cleavage10"}
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar = Create_generator(tar_dict, attributes_tar, "gff")
@@ -123,9 +123,15 @@ class TestMergesRNA(unittest.TestCase):
         ms.read_gff = Mock_func().mock_read_gff
         ms.merge_srna_gff("UTR", "inter", out_file, False, 0.5, os.path.join(self.test_folder, "aaa.gff"))
         datas, attributes = extract_info(out_file, "file")
-        self.assertListEqual(datas, ['aaa\tUTR_derived\tsRNA\t54\t254\t.\t+\t.',
-                                     'aaa\tintergenic\tsRNA\t54\t254\t.\t+\t.'])
-        
+        self.assertListEqual(datas, ['aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.',
+                                     'aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.'])
+        self.assertEqual(set(attributes[0]), set(['overlap_percent=NA', 'end_cleavage=cleavage_40',
+                                                  'start_cleavage=cleavage_4', 'Name=sRNA_00000',
+                                                  'with_TSS=TSS_3', 'ID=srna0', 'sRNA_type=interCDS',
+                                                  'overlap_cds=NA']))
+        self.assertEqual(set(attributes[1]), set(['overlap_percent=NA', 'end_cleavage=NA', 'Name=sRNA_00001',
+                                                  'with_TSS=NA', 'ID=srna1', 'sRNA_type=intergenic',
+                                                  'overlap_cds=NA']))
 
     def test_compare_table(self):
         ms.replicate_comparison = Mock_func().mock_replicate_comparison
@@ -143,7 +149,7 @@ class TestMergesRNA(unittest.TestCase):
                    "detail": "detail"}]
         srna_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 4, "phase": ".", "strand": "+", "score": "."}
-        attributes_srna = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "3utr", "with_TSS": "TSS_1",
+        attributes_srna = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr", "with_TSS": "TSS_1",
                            "start_cleavage": "cleavage3", "end_cleavage": "cleavage10",
                            "overlap_cds": "CDS1", "overlap_percent": "0.01415"}
         srna = Create_generator(srna_dict, attributes_srna, "gff")
@@ -174,7 +180,7 @@ class TestMergesRNA(unittest.TestCase):
     def test_get_tss_pro(self):
         srna_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 4, "phase": ".", "strand": "+", "score": "."}
-        attributes_srna = {"ID": "sRNA0", "Name": "srna_0", "UTR_type": "3utr", "with_TSS": "TSS_1",
+        attributes_srna = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr", "with_TSS": "TSS_1",
                            "start_cleavage": "cleavage3", "end_cleavage": "cleavage10"}
         srna = Create_generator(srna_dict, attributes_srna, "gff")
         tss_pro = ms.get_tss_pro("utr", srna)
@@ -189,17 +195,17 @@ class Example(object):
                   "end": 30, "phase": ".", "strand": "+", "score": "."},
                  {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 54,
                   "end": 254, "phase": ".", "strand": "+", "score": "."}]
-    attributes_utr = [{"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr",
+    attributes_utr = [{"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr",
                         "with_TSS": "NA", "start_cleavage": "cleavage_1&cleavage_2", "end_cleavage": "NA",},
-                       {"ID": "sRNA1", "Name": "srna_1", "UTR_type": "3utr",
+                       {"ID": "sRNA1", "Name": "srna_1", "sRNA_type": "3utr",
                         "with_TSS": "TSS_1", "start_cleavage": "cleavage_3", "end_cleavage": "cleavage_30",},
                        {"ID": "sRNA2", "Name": "srna_2", "with_TSS": "TSS_3", 
-                        "start_cleavage": "cleavage_4", "end_cleavage": "cleavage_40", "UTR_type": "interCDS"}]
-    attributes_int = [{"ID": "sRNA0", "Name": "srna_0", "UTR_type": "5utr",
+                        "start_cleavage": "cleavage_4", "end_cleavage": "cleavage_40", "sRNA_type": "interCDS"}]
+    attributes_int = [{"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr",
                         "with_TSS": "NA", "end_cleavage": "cleavage_10"},
-                       {"ID": "sRNA1", "Name": "srna_1", "UTR_type": "3utr",
+                       {"ID": "sRNA1", "Name": "srna_1", "sRNA_type": "3utr",
                         "with_TSS": "TSS_1", "end_cleavage": "NA"},
-                       {"ID": "sRNA2", "Name": "srna_2", "with_TSS": "NA", "end_cleavage": "NA"}]
+                       {"ID": "sRNA2", "Name": "srna_2", "with_TSS": "NA", "end_cleavage": "NA", "sRNA_type": "intergenic"}]
     gff_dict = [{"start": 6, "end": 15, "phase": ".",
                  "strand": "+", "seq_id": "aaa", "score": ".",
                  "source": "Refseq", "feature": "CDS"},

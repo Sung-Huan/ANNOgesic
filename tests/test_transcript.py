@@ -11,7 +11,7 @@ from annogesiclib.transcript import TranscriptAssembly
 class Mock_func(object):
 
     def mock_assembly(self, wig_f, wig_r, height, width, tolerance, low_cutoff,
-                      wig_folder, tex, libs, replicates, out):
+                      wig_folder, tex, libs, replicates, out, wig_type):
         pass
 
     def mock_combine(self, frag, tex, tolerance, out):
@@ -25,12 +25,15 @@ class Mock_func(object):
         pass
 
     def mock_stat_ta_gff(self, ta_file, cds_file, stat_gff_out,
-                         tmp_ta, tmp_gff):
+                         tmp_ta, tmp_gff, c_feature):
         pass
 
     def mock_stat_ta_tss(self, ta_file, tss_file, stat_tss_out, ta, tss, fuzzy):
         pass
 
+    def mock_gen_table_tran(self, gff_outfolder, frag_wigs, tex_wigs,
+                            tlibs, flibs, table_best, out_folder, gffs):
+        pass
 
 class Mock_Multiparser(object):
 
@@ -110,7 +113,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
     def test_for_two_wigs(self):
         tr.combine = self.mock.mock_combine
         gen_file(os.path.join(self.gffs, "test_transcript_assembly_fragment.gff"), "test")
-        gen_file(os.path.join(self.gffs, "test_transcript_assembly_tex.gff"), "test")
+        gen_file(os.path.join(self.gffs, "test_transcript_assembly_tex_notex.gff"), "test")
         
         self.tran._for_two_wigs(self.frag, self.tex, ["test"],
                                 self.gffs, 5)
@@ -141,7 +144,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         os.mkdir(gff_out)
         gen_file(os.path.join(gff_out, "tmp_ta_gff"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_gff_ta"), self.example.gff_file)
-        self.tran._compare_cds(["test"], self.out, self.gffs, self.trans)
+        self.tran._compare_cds(["test"], self.out, self.gffs, self.trans, "CDS")
         datas = import_data(os.path.join(self.gffs, "test.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
         datas = import_data(os.path.join(self.out, "test_transcript.gff"))
@@ -171,6 +174,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         tr.fill_gap = self.mock.mock_fill_gap
         tr.combine = self.mock.mock_combine
         tr.assembly = self.mock.mock_assembly
+        self.tran._gen_table = self.mock.mock_gen_table_tran
         gen_file(os.path.join(self.frag, "test1_forward.wig"), self.example.wig_f)
         gen_file(os.path.join(self.frag, "test1_reverse.wig"), self.example.wig_r)
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
@@ -184,7 +188,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         gen_file(os.path.join(gff_out, "final_test"), self.example.tran_file)
         self.tran.run_transcript_assembly(self.frag, None, True, "tex", 1,
                                           self.gffs, 5, 1, 5, 0, 1, 1, self.out,
-                                          None, None, 5, "tlibs", "flibs")
+                                          None, None, 5, "tlibs", "flibs", "CDS", False)
         self.assertTrue(os.path.exists(os.path.join(gff_out, "test_transcript.gff")))
 
 

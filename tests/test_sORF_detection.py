@@ -16,8 +16,9 @@ class Mock_func(object):
     def mock_get_coverage(self, inter_datas, wigs, strand, background, test1, test2):
         return "2"
 
-    def mock_replicate_comparison(self, sorf_covers, texs, strand, para_1, tex_notex,
-                                  replicates, sorf, para_2, cutoffs, para_3, para_4):
+    def mock_replicate_comparison(self, srna_covers, template_texs, strand, cutoff_coverage,
+                                  tex_notex, replicates, type_, median, coverages,
+                                  utr_type, texs, notex):
         return {"best": 20, "high": 50, "low": 10, "start": 1, "end": 10,
                 "track": "track_1", "detail": [], "conds": {"frag": "track_1"}}
 
@@ -66,23 +67,23 @@ class TestsORFDetection(unittest.TestCase):
                                                   'high': 30, 'track': 'track_1', 'low': 2}]})
 
     def test_detect_rbs_site(self):
-        detect = sd.detect_rbs_site("AGGAGGCCGCTATGCCACACGT", 11, 2, self.example.tas[0])
+        detect = sd.detect_rbs_site("AGGAGGCCGCTATGCCACACGT", 11, 2, self.example.tas[0], 3, 20)
         self.assertListEqual(detect, [1])
 
     def test_detect_start_stop(self):
         seq = {"aaa": "TAGGAGGCCGCTATGCCATTA"}
         sorf = sd.detect_start_stop(self.example.tas, seq, ["ATG"], ["TTA"],
-                                    300, 3, 2)
+                                    300, 3, 2, 3, 20)
         self.assertListEqual(sorf, [{'strand': '+', 'type': 'intergenic', 'starts': ['13'],
                                      'print': False, 'seq': 'ATGCCATTA', 'ends': ['21'],
                                      'end': 21, 'start': 13, 'rbs': [2], 'strain': 'aaa'}])
         seq = {"aaa": "TTAAAGGCATTATCCTCCTA"}
         self.example.tas[0].strand = "-"
         sorf = sd.detect_start_stop(self.example.tas, seq, ["ATG"], ["TTA"],
-                                    300, 3, 2)
-        self.assertListEqual(sorf, [{'strand': '-', 'type': 'intergenic', 'starts': ['2'],
-                                     'print': False, 'seq': 'ATGCCTTTA', 'ends': ['10'],
-                                     'end': 10, 'start': 2, 'rbs': [19], 'strain': 'aaa'}])
+                                    300, 3, 2, 3, 20)
+        self.assertListEqual(sorf, [{'end': 10, 'starts': ['2'], 'strain': 'aaa', 'ends': ['10'],
+                                     'type': 'intergenic', 'print': False, 'seq': 'TAAAGGCAT',
+                                     'rbs': [19], 'strand': '-', 'start': 2}])
         self.example.tas[0].strand = "+"
 
     def test_read_data(self):
@@ -146,11 +147,10 @@ class TestsORFDetection(unittest.TestCase):
                   "starts": [str(5)], "ends": [str(15)], "seq": "ATGTA",
                   "type": "3utr", "print": False, "rbs": [2], "start_TSS": "2"}]
         finals = sd.merge(sorfs, seq)
-        self.assertListEqual(finals, [{'start': 2, 'strand': '+', 'end': 15, 'type': '3utr',
-                                       'rbs': [1, 2], 'candidate': ['2-6_TSS:1_RBS:1',
-                                       '5-15_TSS:2_RBS:2'], 'seq': 'AGGAGGCCGCTATG',
-                                       'start_TSS': '1', 'starts': ['2', '5'],
-                                       'ends': ['10', '6', '15'], 'strain': 'aaa'}])
+        self.assertDictEqual(finals[0], {'rbs': [1], 'end': 6, 'starts': ['2'], 'strand': '+',
+                                         'start_TSS': '1', 'type': '3utr', 'start': 2, 'seq': 'AGGAG',
+                                         'candidate': ['2-6_TSS:1_RBS:1'], 'ends': ['10', '6'],
+                                         'strain': 'aaa'})
 
     def test_assign_utr_cutoff(self):
         coverages = {"3utr": "median", "5utr": 20, "interCDS": 11, "intergenic": 59}
@@ -171,34 +171,34 @@ class TestsORFDetection(unittest.TestCase):
         sorf = {"strain": "aaa", "strand": "+", "start": 2, "end": 6,
                 "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                 "type": "3utr", "print": False, "rbs": ["1"], "start_TSS": "1",
-                "with_TSS": "NA", "srna": "NA"}
+                "with_TSS": "NA", "srna": "NA", "shift": 1}
         string = sd.get_attribute(1, "sORF_1", "4", sorf, "utr")
-        self.assertEqual(string, "ID=sorf1;Name=sORF_sORF_1;start_TSS=4;with_TSS=N&A;UTR_type=3utr;sRNA=N&A;RBS=1")
+        self.assertEqual(string, "ID=sorf1;Name=sORF_sORF_1;start_TSS=4;with_TSS=N&A;sORF_type=3utr;sRNA=N&A;RBS=1;frame_shift=1")
 
     def test_print_file(self):
         out_g = StringIO()
         out_t = StringIO()
-        sorf = {"strain": "aaa", "strand": "+", "start": 2, "end": 6,
-                "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
-                "type": "3utr", "print": False, "rbs": ["1"], "start_TSS": "1",
-                "with_TSS": ["NA"], "srna": ["NA"], "candidate": ["AAA"]}
+        sorf = {"strain": "aaa", "strand": "+", "start": 10, "end": 15,
+                "starts": [str(10)], "ends": [str(15)], "seq": "ATGTA",
+                "type": "3utr", "print": False, "rbs": ["3"], "start_TSS": "1",
+                "with_TSS": ["NA"], "srna": ["NA"], "candidate": ["AAA"], "shift": 1}
         sorf_datas = {"best": 20, "high": 50, "low": 10, "start": 1,
                       "end": 10, "track": "track_1", "detail": [], "conds": {"frag": "track_1"}}
-        sd.print_file(sorf, sorf_datas, 1, out_g, out_t, True, True)
-        self.assertEqual(out_g.getvalue(), "aaa\tUTR_derived\tsORF\t2\t6\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;UTR_type=3utr;sRNA=NA;RBS=RBS_1\n")
-        self.assertEqual(out_t.getvalue(), "aaa\tsORF_00001\t2\t6\t+\t3'UTR_derived\tNA\tRBS_1\t2\t10\tNA\tFragmented\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
+        sd.print_file(sorf, sorf_datas, 1, out_g, out_t, True, True, 0, 20, "best", 10, 400)
+        self.assertEqual(out_g.getvalue(), "aaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;sORF_type=3utr;sRNA=NA;RBS=RBS_3;frame_shift=1\n")
+        self.assertEqual(out_t.getvalue(), "aaa\tsORF_00001\t10\t15\t+\t3'UTR_derived\tNA\tRBS_3\t10\t15\tNA\t1\tFragmented\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
 
     def test_print_table(self):
         out_t = StringIO()
         sorf = {"strain": "aaa", "strand": "+", "start": 2, "end": 6,
                 "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                 "type": "3utr", "print": False, "rbs": ["1"], "start_TSS": "1",
-                "with_TSS": ["NA"], "srna": ["NA"], "candidate": ["AAA"]}
+                "with_TSS": ["NA"], "srna": ["NA"], "candidate": ["AAA"], "shift": 1}
         sorf_datas = {"best": 20, "high": 50, "low": 10, "start": 1,
                       "end": 10, "track": "track_1", "detail": [], "conds": {"frag": "track_1"}}
         sd.print_table(out_t, sorf, "test", "3utr", "frag",
                        sorf_datas, True, True)
-        self.assertEqual(out_t.getvalue(), "aaa\tsORF_test\t2\t6\t+\t3utr\tNA\t1\t2\t10\tNA\tfrag\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
+        self.assertEqual(out_t.getvalue(), "aaa\tsORF_test\t2\t6\t+\t3utr\tNA\t1\t2\t10\tNA\t1\tfrag\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
 
     def test_get_inter_coverage(self):
         inter_covers = {}
@@ -219,7 +219,7 @@ class TestsORFDetection(unittest.TestCase):
         self.assertDictEqual(med_inters, {'aaa': {'intergenic': ["2"]}})
 
     def test_median_score(self):
-        num = sd.median_score([1, 3, 11, 42, 2, 32, 111])
+        num = sd.median_score([1, 3, 11, 42, 2, 32, 111], "p_0.5")
         self.assertEqual(num, 11)
 
     def test_mean_score(self):
@@ -258,15 +258,17 @@ class TestsORFDetection(unittest.TestCase):
         out_g = StringIO()
         sd.get_coverage = self.mock.mock_get_coverage
         sd.replicate_comparison = self.mock.mock_replicate_comparison
-        sorfs = [{"strain": "aaa", "strand": "+", "start": 2, "end": 6,
-                 "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
-                 "type": "3utr", "print": False, "rbs": ["1"], "start_TSS": "1",
+        sorfs = [{"strain": "aaa", "strand": "+", "start": 10, "end": 15,
+                 "starts": [str(10)], "ends": [str(15)], "seq": "ATGTA",
+                 "type": "3utr", "print": False, "rbs": [1], "start_TSS": "1",
                  "with_TSS": ["TSS_3+"], "srna": ["sRNA:2-5_+"], "candidate": ["2-6_TSS:3_RBS:1"]}]
+        seq = {"aaa": "TAGGAGGCCGCTATGCCATTA"}
         sd.coverage_and_output(sorfs, "median", "wig_f", "wig_r", "test_tex",
-                               out_g, out_t, "test", "rep", "cover", True, True)
+                               out_g, out_t, "test", "rep", "cover", True, True,
+                               0, 20, "best", 0, 300, seq)
         sd.get_coverage = copy.deepcopy(get_coverage)
-        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tUTR_derived\tsORF\t2\t6\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=1;with_TSS=TSS_3+;UTR_type=3utr;sRNA=sRNA:2-5_+;RBS=RBS_1\n")
-        self.assertEqual(out_t.getvalue().split("\n")[1], "aaa\tsORF_00000\t2\t6\t+\t3'UTR_derived\tTSS_3+\tRBS_1\t2\t10\tsRNA:2-5_+\tFragmented\t20\t50\t10\tsRNA:2-5_+\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\t2-6_TSS:3_RBS:1")
+        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=1;with_TSS=TSS_3+;sORF_type=3utr;sRNA=NA;RBS=RBS_1;frame_shift=1\n")
+        self.assertEqual(out_t.getvalue().split("\n")[1], "aaa\tsORF_00000\t10\t15\t+\t3'UTR_derived\tTSS_3+\tRBS_1\t10\t15\tNA\t1\tFragmented\t20\t50\t10\tNA\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tGCTATG\t10-15_TSS:3+_RBS:1")
 
     def test_detect_inter_type(self):
         inter_dict = [{"seq_id": "aaa", "source": "UTR_derived", "feature": "Transcript", "start": 1,
@@ -282,8 +284,9 @@ class TestsORFDetection(unittest.TestCase):
     def test_set_median(self):
         mediandict = {}
         covers = {"aaa": {"3utr": {"track_1": [1, 3, 4, 2, 55]}}}
-        sd.set_median(covers, mediandict)
-        self.assertDictEqual(mediandict, {'aaa': {'3utr': {'track_1': {'mean': 13.0, 'median': 3}}, '5utr': {}, 'interCDS': {}}})
+        coverages = {"3utr": "p_0.5", "5utr": "p_0.5", "interCDS": "n_100"}
+        sd.set_median(covers, mediandict, coverages)
+        self.assertDictEqual(mediandict, {'aaa': {'5utr': {}, 'interCDS': {}, '3utr': {'track_1': {'median': 3}}}})
 
     def test_compute_candidate_best(self):
         sorfs = [{"strain": "aaa", "strand": "+", "start": 2, "end": 6,
@@ -312,10 +315,10 @@ class TestsORFDetection(unittest.TestCase):
         gen_file(tss_file, self.example.tss)
         sd.sorf_detection(fasta, srna_gff, inter_gff, tss_file, 300, True,
                           ["frag:frag:1:a:+"], "tex", "rep", 50,
-                          "median", 20, 11, "wig_f_file",
+                          "p_0.5", "n_20", "n_11", "wig_f_file",
                           "wig_r_file", "wig_folder", ["ATG"], ["TTA"], True,
                           300, 30, "test_folder/test", None,
-                          2, True, True, True, True)
+                          2, True, True, True, True, 3, 20)
         sd.get_coverage = copy.deepcopy(get_coverage)
         sd.replicate_comparison = self.mock.mock_replicate_comparison
         self.assertTrue(os.path.exists("test_folder/test_all.csv"))

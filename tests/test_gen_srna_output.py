@@ -81,11 +81,11 @@ class Example(object):
                  {"seq_id": "bbb", "source": "intergenic", "feature": "sRNA", "start": 18,
                   "end": 50, "phase": ".", "strand": "-", "score": "."}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_0", "2d_energy": "-34",
-                        "nr_hit": "2", "sRNA_hit": "1", "UTR_type": "5utr", "sORF": "NA", "with_term": "NA"},
+                        "nr_hit": "2", "sRNA_hit": "1", "sRNA_type": "5utr", "sORF": "NA", "with_term": "NA"},
                        {"ID": "srna1", "Name": "sRNA_1", "2d_energy": "-23",
-                        "nr_hit": "NA", "sRNA_hit": "NA", "UTR_type": "3utr", "sORF": "sORF_1",
+                        "nr_hit": "NA", "sRNA_hit": "NA", "sRNA_type": "3utr", "sORF": "sORF_1",
                         "with_term": "terminator:366-378_+"},
-                       {"ID": "srna2", "Name": "sRNA_2", "2d_energy": "-11",
+                       {"ID": "srna2", "Name": "sRNA_2", "2d_energy": "-11", "sRNA_type": "intergenic",
                         "nr_hit": "1", "sRNA_hit": "NA", "sORF": "NA", "with_term": "terminator:5-19_-"}]
     srnas = []
     for index in range(0, 3):

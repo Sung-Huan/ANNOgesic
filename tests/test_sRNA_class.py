@@ -113,10 +113,10 @@ All strains:
 
 
 class Example(object):
-    gff_file = """aaa	UTR_derived	sRNA	140	160	.	+	.	ID=srna0;Name=sRNA_0;UTR_type=interCDS
-aaa	UTR_derived	sRNA	230	280	.	+	.	ID=srna1;Name=sRNA_1;UTR_type=5utr
-bbb	intergenic	sRNA	5166	5266	.	-	.	ID=srna2;Name=sRNA_2;UTR_type=intergenic
-bbb	in_CDS	sRNA	6166	6499	.	-	.	ID=srna3;Name=sRNA_3;UTR_type=in_CDS"""
+    gff_file = """aaa	UTR_derived	sRNA	140	160	.	+	.	ID=srna0;Name=sRNA_0;sRNA_type=interCDS
+aaa	UTR_derived	sRNA	230	280	.	+	.	ID=srna1;Name=sRNA_1;sRNA_type=5utr
+bbb	intergenic	sRNA	5166	5266	.	-	.	ID=srna2;Name=sRNA_2;sRNA_type=intergenic
+bbb	in_CDS	sRNA	6166	6499	.	-	.	ID=srna3;Name=sRNA_3;sRNA_type=in_CDS"""
     gff_info = """aaa	UTR_derived	sRNA	140	160	.	+	.
 aaa	UTR_derived	sRNA	230	280	.	+	.
 bbb	intergenic	sRNA	5166	5266	.	-	.
@@ -130,13 +130,13 @@ bbb	in_CDS	sRNA	6166	6499	.	-	."""
                  {"seq_id": "bbb", "source": "in_CDS", "feature": "sRNA", "start": 6166,
                   "end": 6499, "phase": ".", "strand": "-", "score": "."}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_0", "with_TSS": "TSS:100_+", "with_cleavage": "Cleavage:145_+",
-                        "UTR_type": "interCDS", "sRNA_hit": "ReaA", "2d_energy": "-0.45", "nr_hit": "NA"},
+                        "sRNA_type": "interCDS", "sRNA_hit": "ReaA", "2d_energy": "-0.45", "nr_hit": "NA"},
                        {"ID": "srna1", "Name": "sRNA_1", "with_TSS": "TSS:200_+", "with_cleavage": "NA",
-                        "UTR_type": "5utr", "sRNA_hit": "NA", "2d_energy": "0", "nr_hit": "3"},
+                        "sRNA_type": "5utr", "sRNA_hit": "NA", "2d_energy": "0", "nr_hit": "3"},
                        {"ID": "srna2", "Name": "sRNA_2", "with_TSS": "NA", "with_cleavage": "NA",
-                        "UTR_type": "intergenic", "sRNA_hit": "sRAE", "2d_energy": "-0.032", "nr_hit": "NA"},
+                        "sRNA_type": "intergenic", "sRNA_hit": "sRAE", "2d_energy": "-0.032", "nr_hit": "NA"},
                        {"ID": "srna3", "Name": "sRNA_3", "with_TSS": "TSS:6499_-", "with_cleavage": "NA",
-                        "UTR_type": "in_CDS", "sRNA_hit": "NA", "2d_energy": "-0.042", "nr_hit": "NA"}]
+                        "sRNA_type": "in_CDS", "sRNA_hit": "NA", "2d_energy": "-0.042", "nr_hit": "NA"}]
     srnas = []
     for index in range(0, 4):
         srnas.append(Create_generator(srna_dict[index], attributes_srna[index], "gff"))

@@ -80,27 +80,27 @@ class TestCombineFragTex(unittest.TestCase):
 
 class Example(object):
 
-    frag_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 140,
+    frag_dict = [{"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 140,
                   "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 30,
+                 {"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 30,
                   "end": 40, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "Transcript", "start": 430,
+                 {"seq_id": "bbb", "source": "ANNOgesic", "feature": "Transcript", "start": 430,
                   "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    tex_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 120,
+    tex_dict = [{"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 120,
                  "end": 367, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 3,
+                {"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 3,
                  "end": 38, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "bbb", "source": "Refseq", "feature": "Transcript", "start": 1430,
+                {"seq_id": "bbb", "source": "ANNOgesic", "feature": "Transcript", "start": 1430,
                  "end": 1667, "phase": ".", "strand": "-", "score": "."}]
     attributes_gffs = [{"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
                        {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
                        {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]
 
     out_tran = """##gff-version 3
-aaa	fragmented_and_tex	Transcript	3	40	.	+	.	Name=Tran_00000;ID=tran0
-aaa	fragmented_and_tex	Transcript	120	367	.	+	.	Name=Tran_00001;ID=tran1
-bbb	fragmented	Transcript	430	567	.	-	.	Name=Tran_00002;ID=tran2
-bbb	tex	Transcript	1430	1667	.	-	.	Name=Tran_00003;ID=tran3"""
+aaa	ANNOgesic	Transcript	3	40	.	+	.	Name=Tran_00000;ID=tran0
+aaa	ANNOgesic	Transcript	120	367	.	+	.	Name=Tran_00001;ID=tran1
+bbb	ANNOgesic	Transcript	430	567	.	-	.	Name=Tran_00002;ID=tran2
+bbb	ANNOgesic	Transcript	1430	1667	.	-	.	Name=Tran_00003;ID=tran3"""
 
 if __name__ == "__main__":
     unittest.main()

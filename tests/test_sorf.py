@@ -16,7 +16,8 @@ class Mock_func(object):
                             cutoff_intercds, test3, test2, merge_wigs,
                             start_codon, stop_codon, table_best, max_len,
                             min_len, test1, background,
-                            fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss):
+                            fuzzy_rbs, print_all, no_srna, noafter_tss, no_tss,
+                            min_rbs, max_rbs):
         pass
 
     def mock_get_intergenic(self, gff, tran, inter, utr_detect, hypo):
@@ -116,7 +117,7 @@ class TestsORFDetection(unittest.TestCase):
                                     10, 10, "wig_path", "merge_wigs",
                                     ["ATG"], ["TTA"], 300, 30, True,
                                     True, "background", 2,
-                                    False, True, True, True)
+                                    False, True, True, True, 0, 20)
         self.assertTrue(os.path.exists(os.path.join(gff_path, "best/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(gff_path, "all_candidates/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(table_path, "best/test_sORF.csv")))
@@ -148,7 +149,7 @@ class TestsORFDetection(unittest.TestCase):
                                      10, 10, 10, self.fastas, "tlibs", "flibs",
                                      "tex_notex", 2, 3, True, self.srnas,
                                      ["ATG"], ["TTA"], "background",
-                                     2, True, False, True, True, False)
+                                     2, True, False, True, True, False, 0, 20)
 
 
 if __name__ == "__main__":

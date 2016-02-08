@@ -89,7 +89,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         gen_file(os.path.join(self.srnas, "tmp", "aaa_sRNA.gff"), self.example.srna_file)
         gen_file(os.path.join(self.fastas, "tmp", "aaa.fa"), self.example.seq_file)
         gen_file(os.path.join(self.gffs, "tmp", "aaa.gff"), self.example.gff_file)
-        self.star._gen_seq(["aaa"], ["aaa:+:5:8"], 3, 5)
+        self.star._gen_seq(["aaa"], ["aaa:+:5:8"], 3, 5, ["CDS"])
         datas = import_data(os.path.join(srna_seq, "aaa_sRNA.fa"))
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
         datas = import_data(os.path.join(tar_seq, "aaa_target_1.fa"))

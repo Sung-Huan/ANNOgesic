@@ -99,48 +99,48 @@ class TestStatTaComparison(unittest.TestCase):
         ta_file = os.path.join(self.test_folder, "aaa_transcript.gff")
         gen_file(gff_file, self.example.gff)
         gen_file(ta_file, self.example.ta)
-        gffs, tas, stats = stc.read_tag_file(gff_file, ta_file)
+        gffs, tas, stats = stc.read_tag_file(gff_file, ta_file, "gene")
         self.assertEqual(gffs[0].start, 517)
         self.assertEqual(tas[0].start, 313)
-        self.assertEqual(stats, {'All': {'cds': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0},
-                                 'aaa': {'cds': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0}})
+        self.assertEqual(stats, {'All': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0},
+                                 'aaa': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0}})
 
     def test_detect_tag_region(self):
-        stats = {'All': {'cds': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0},
-                 'aaa': {'cds': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0}}
+        stats = {'All': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0},
+                 'aaa': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0}}
         out_t = StringIO()
         out_g = StringIO()
-        stc.detect_tag_region(self.example.gffs, self.example.tas, stats, out_t, out_g)
-        self.assertDictEqual(stats, {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'cds': 1, 'bsae': 0},
-                                     'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'cds': 1, 'bsae': 0}})
+        stc.detect_tag_region(self.example.gffs, self.example.tas, stats, out_t, out_g, "gene")
+        self.assertDictEqual(stats, {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0},
+                                     'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0}})
 
     def test_compare_ta_gff(self):
         tran_type = []
         check = [0, 0, 0, 0, 0]
-        stats = {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'cds': 1, 'bsae': 0},
-                 'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'cds': 1, 'bsae': 0}}
-        stc.compare_ta_gff(self.example.gffs, self.example.tas[0], check, tran_type, False, stats)
+        stats = {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0},
+                 'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0}}
+        stc.compare_ta_gff(self.example.gffs, self.example.tas[0], check, tran_type, False, stats, "gene")
         self.assertListEqual(check, [0, 0, 0, 1, 0])
-        self.assertDictEqual(stats, {'aaa': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'cds': 1},
-                                     'All': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'cds': 1}})
+        self.assertDictEqual(stats, {'aaa': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'gene': 1},
+                                     'All': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'gene': 1}})
 
     def test_assign_parent(self):
         gffs = copy.deepcopy(self.example.gffs)
         trans = copy.deepcopy(self.example.tas)
         stc.assign_parent(gffs[0], trans[0])
-        self.assertDictEqual(gffs[0].attributes, {'protein_id': 'YP_498609.1', 'Parent': 'gene0',
-                                                  'Name': 'YP_498609.1', 'Parent_tran': 'tran0',
-                                                  'locus_tag': 'SAOUHSC_00001', 'ID': 'cds0',
-                                                  'gene': 'dnaA'})
-        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS&cover_CDS',
+        self.assertDictEqual(gffs[0].attributes, {'Parent_tran': 'tran0',
+                                                  'locus_tag': 'SAOUHSC_00001', 'protein_id': 'YP_498609.1',
+                                                  'gene': 'dnaA', 'Name': 'YP_498609.1', 'ID': 'gene0'})
+        self.assertDictEqual(trans[0].attributes, {'associated_gene': 'SAOUHSC_00001',
                                                    'associated_tss': 'TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+',
-                                                   'associated_cds': 'YP_498609.1&YP_498610.1&YP_498609.1',
+                                                   'associated_cds': 'YP_498609.1&YP_498610.1', 'type': 'cover_CDS&cover_CDS',
                                                    'Name': 'Transcript_00000', 'ID': 'tran0'})
+
 
     def test_print_tag_stat(self):
         out = StringIO()
-        stats = {'asae': 0, 'bsbe': 0, 'asbe': 1, 'bsae': 0, 'other': 0, 'cds': 1}
-        stc.print_tag_stat(stats, out)
+        stats = {'asae': 0, 'bsbe': 0, 'asbe': 1, 'bsae': 0, 'other': 0, 'gene': 1}
+        stc.print_tag_stat(stats, out, 1, "gene")
         self.assertEqual(out.getvalue(), self.example.print_tag + "\n")
 
     def test_stat_ta_gff(self):
@@ -151,7 +151,7 @@ class TestStatTaComparison(unittest.TestCase):
         stat_file = os.path.join(self.test_folder, "stat")
         out_ta_file = os.path.join(self.test_folder, "out_ta.gff")
         out_gff_file = os.path.join(self.test_folder, "out.gff")
-        stc.stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file)
+        stc.stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file, "gene")
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas), "All strains:\nThe transcriptome assembly information compares with annotation gff file:\n" + \
                                             self.example.print_tag)
@@ -189,22 +189,22 @@ aaa	Refseq	CDS	517	1878	.	+	.	protein_id=YP_498609.1;gene=dnaA;ID=cds0;Parent=ge
                       "type": "cover_CDS&cover_CDS", "associated_cds": "YP_498609.1&YP_498610.1"}]
     tas = []
     tas.append(Create_generator(ta_dict[0], attributes_ta[0], "gff"))
-    gff_dict = [{"seq_id": "aaa", "source": "RefSeq", "feature": "CDS",
+    gff_dict = [{"seq_id": "aaa", "source": "RefSeq", "feature": "gene",
                 "start": 517, "end": 1878, "phase": ".", "strand": "+", "score": "."}]
-    attributes_gff = [{"ID": "cds0", "Name": "YP_498609.1", "locus_tag": "SAOUHSC_00001",
-                      "Parent": "gene0", "gene": "dnaA", "protein_id": "YP_498609.1"}]
+    attributes_gff = [{"ID": "gene0", "Name": "YP_498609.1", "locus_tag": "SAOUHSC_00001",
+                       "gene": "dnaA", "protein_id": "YP_498609.1"}]
     gffs = []
     gffs.append(Create_generator(gff_dict[0], attributes_gff[0], "gff"))
     print_tas = """	Transcript starts or overlap with TSS:1 (1.0)
 	Transcript has no relationship with TSS:0 (0.0)
 	TSS starts or overlap with transcript:1 (1.0)
 	TSS has no relationship with transcript:0 (0.0)"""
-    print_tag = """	Transcript starts before and ends after CDS/rRNA/tRNA:1 (1.0)
-	Transcript starts after and ends before CDS/rRNA/tRNA:0 (0.0)
-	Transcript starts before and ends before CDS/rRNA/tRNA:0 (0.0)
-	Transcript starts after and ends after CDS/rRNA/tRNA:0 (0.0)
-	Transcript has no overlap of CDS/rRNA/tRNA:0 (0.0)
-	Total CDSs which have gene expression:1 (1.0)"""
+    print_tag = """	Transcript starts before and ends after gene:1 (1.0)
+	Transcript starts after and ends before gene:0 (0.0)
+	Transcript starts before and ends before gene:0 (0.0)
+	Transcript starts after and ends after gene:0 (0.0)
+	Transcript has no overlap of gene:0 (0.0)
+	Total genes which have gene expression:1 (1.0)"""
 
 
 if __name__ == "__main__":

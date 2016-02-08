@@ -218,7 +218,7 @@ class TestCoverageTerminator(unittest.TestCase):
         out = StringIO()
         out_t = StringIO()
         term = {"strain": "aaa", "express": "True", "diff_cover": 70,
-                "strand": "+", "start": 2, "end": 4,
+                "strand": "+", "start": 2, "end": 4, "method": "TransTermHP",
                 "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
                                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
@@ -255,8 +255,8 @@ class Example(object):
     attributes_tran = [{"ID": "tran0", "Name": "Tran_0"},
                        {"ID": "tran1", "Name": "Tran_1"},
                        {"ID": "tran2", "Name": "Tran_2"}]
-    gff_file = """aaa	test_method	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associate=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True"""
-    table = """aaa	Term_00000	2	4	+	True	track_1(diff=70;high=100;low=30)"""
+    gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associate=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;Method=test_method"""
+    table = """aaa	Term_00000	2	4	+	TransTermHP	True	track_1(diff=70;high=100;low=30)"""
 
 if __name__ == "__main__":
     unittest.main()

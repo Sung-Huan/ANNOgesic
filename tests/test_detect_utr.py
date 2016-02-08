@@ -265,12 +265,12 @@ class Example(object):
     attributes_cds = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001", "protein_id": "YP_000001", "Parent": "gene0"},
                       {"ID": "rna0", "Name": "rRNA_0", "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
-    out_5utr = """aaa\tRefseq\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
-    out_5utr_tsspredator = """aaa\tRefseq\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;TSS_type=Primary;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
-    out_5utr_other = """aaa\tRefseq\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS:140_+"""
-    out_3utr = """aaa\tTranscript\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_tran0;ID=3utr0;length=40;associated_tran=tran0"""
+    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
+    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;TSS_type=Primary;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
+    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS:140_+"""
+    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_tran0;ID=3utr0;length=40;associated_tran=tran0"""
     out_3utr_gff = """##gff-version 3
-aaa	Transcript	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_tran0;associated_term=term0;length=7;associated_tran=tran0"""
+aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_tran0;associated_term=term0;length=7;associated_tran=tran0"""
     tas = []
     tsss = []
     terms = []

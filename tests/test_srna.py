@@ -46,7 +46,7 @@ class Mock_func(object):
                      prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
                      tex_notex, flibs, tlibs, replicates, table_best,
                      decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
-                     out_folder, hypo, tex_path, frag_path, notex):
+                     out_folder, hypo, tex_path, frag_path, notex, min_utr):
         pass
 
     def mock_merge_srna_gff(self, utr_gff, normal_gff, merge_gff, in_cds, overlap, gff_file):
@@ -205,7 +205,7 @@ class TestsRNADetection(unittest.TestCase):
                                          "libs", "tex_notex", "replicates", True,
                                          50, 50, 5, 5, fuzzy_tsss, 30, 30, 30, self.out, True,
                                          "fasta_path", 5, True, 0.5, False, "tex_path", "frag_path",
-                                         "tex_wigs", "frag_wigs", "tlibs", "flibs", "merge", "wig_path")
+                                         "tex_wigs", "frag_wigs", "tlibs", "flibs", "merge", "wig_path", 20)
         self.assertListEqual(prefixs, ['test'])
 
     def test_get_seq_sec(self):

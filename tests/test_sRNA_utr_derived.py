@@ -351,9 +351,9 @@ class TestsRNAUTR(unittest.TestCase):
         self.assertDictEqual(mediandict, {'aaa': {'5utr': {'track_4': {'median': 11, 'mean': 28.666666666666668}},
                                                   'interCDS': {'track_2': {}}, '3utr': {'track_1': {}}}})
         mediandict = sud.set_cutoff(covers, coverages, None, texs)
-        self.assertDictEqual(mediandict, {'aaa': {'interCDS': {'track_2': {'median': 6.0, 'mean': 6.0}},
-                                                  '3utr': {'track_1': {'median': 10.0, 'mean': 69.26}},
-                                                  '5utr': {'track_4': {'median': 11, 'mean': 28.666666666666668}}}})
+        self.assertDictEqual(mediandict, {'aaa': {'3utr': {'track_1': {'mean': 69.26, 'median': 10.0}},
+                                                  '5utr': {'track_4': {'mean': 28.666666666666668, 'median': 11}},
+                                                  'interCDS': {'track_2': {'mean': 6.0, 'median': 0}}}})
 
     def test_mean_score(self):
         lst = [1, 3, 5, 6, 7, 8]
@@ -363,7 +363,7 @@ class TestsRNAUTR(unittest.TestCase):
     def test_median_score(self):
         lst = [1, 3, 5, 6, 7, 8]
         median = sud.median_score(lst, 0.5)
-        self.assertEqual(median, 5.5)
+        self.assertEqual(median, 5)
 
     def test_detect_srna(self):
         sud.replicate_comparison = self.mock.mock_replicate_comparison
@@ -378,7 +378,7 @@ class TestsRNAUTR(unittest.TestCase):
                   'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+'}]
         sud.detect_srna(srnas, median, out, out_t, "template_texs", "covers",
                         "tex_notex", "rep", True, 300, 1)
-        self.assertEqual(out.getvalue(), "aaa\t3utr\tUTR_sRNA\t18\t20\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;UTR_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
+        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\tsRNA\t18\t20\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
         self.assertEqual(out_t.getvalue(), "aaa\t00000\t18\t20\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=500;high=700;low=400)\n")
 
     def test_print_file(self):
@@ -393,7 +393,7 @@ class TestsRNAUTR(unittest.TestCase):
         srna_datas = {"best": 500, "track": "frag", "high": 700, "low": 400,
                       "start": 100, "end": 202, "conds": {"frag_1": "track_1"}}
         sud.print_file(0, out_t, out, srna, 2, 50, srna_datas, True)
-        self.assertEqual(out.getvalue(), "aaa\t3utr\tUTR_sRNA\t2\t50\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;UTR_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
+        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\tsRNA\t2\t50\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
         self.assertEqual(out_t.getvalue(), "aaa\t00000\t2\t50\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=500;high=700;low=400)\n")
 
 
