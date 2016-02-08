@@ -6,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ANNOgesic’s subcommands &mdash; ANNOgesic 1.0.0 documentation</title>
+    <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.1.3 documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.0.0',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,30 +23,80 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ANNOgesic 1.0.0 documentation" href="index.html" />
+    <link rel="top" title="ANNOgesic 0.1.3 documentation" href="index.html" />
     <link rel="next" title="Performing a test cast" href="test_case.html" />
-    <link rel="prev" title="Dockfiles" href="docker.html" />
-   
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
-
+    <link rel="prev" title="Dockfiles" href="docker.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
           <a href="test_case.html" title="Performing a test cast"
-             accesskey="N">next</a> |</li>
+             accesskey="N">next</a></li>
         <li class="right" >
           <a href="docker.html" title="Dockfiles"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 1.0.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.1.3 documentation</a> &raquo;</li> 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo_annogesic.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ANNOgesic&#8217;s subcommands</a><ul>
+<li><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
+<li><a class="reference internal" href="#the-format-of-libraries-for-running-annogesic">The format of libraries for running ANNOgesic</a></li>
+<li><a class="reference internal" href="#create">create</a></li>
+<li><a class="reference internal" href="#get-input-files">get_input_files</a></li>
+<li><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
+<li><a class="reference internal" href="#annotation-transfer">annotation_transfer</a></li>
+<li><a class="reference internal" href="#snp">snp</a></li>
+<li><a class="reference internal" href="#tsspredator-tss-and-processing-site-prediction">tsspredator(TSS and processing site prediction)</a></li>
+<li><a class="reference internal" href="#transcript-assembly">transcript_assembly</a></li>
+<li><a class="reference internal" href="#terminator">terminator</a></li>
+<li><a class="reference internal" href="#utr">utr</a></li>
+<li><a class="reference internal" href="#srna">srna</a></li>
+<li><a class="reference internal" href="#sorf">sorf</a></li>
+<li><a class="reference internal" href="#promoter">promoter</a></li>
+<li><a class="reference internal" href="#operon">operon</a></li>
+<li><a class="reference internal" href="#circrna">circrna</a></li>
+<li><a class="reference internal" href="#go-term">go_term</a></li>
+<li><a class="reference internal" href="#srna-target">srna_target</a></li>
+<li><a class="reference internal" href="#ppi-network">ppi_network</a></li>
+<li><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
+<li><a class="reference internal" href="#riboswitch">riboswitch</a></li>
+<li><a class="reference internal" href="#optimize-tsspredator">optimize_tsspredator</a></li>
+<li><a class="reference internal" href="#screenshot">screenshot</a></li>
+<li><a class="reference internal" href="#color-png">color_png</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="docker.html"
+                        title="previous chapter">Dockfiles</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_case.html"
+                        title="next chapter">Performing a test cast</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -102,13 +152,12 @@ please follow the principle of the format of filename.</p>
 </tr>
 </tbody>
 </table>
-<p>For wiggle files, please use <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code> to represent strands.
-The format of wiggle file is <code class="docutils literal"><span class="pre">$LIBRARYNAME_$STRAND.wig</span></code>.
-For example, <code class="docutils literal"><span class="pre">TSB_OD_0.2_forward.wig</span></code>.</p>
-<p>Please also notice the name of strain or genome. It should be avoid to use <code class="docutils literal"><span class="pre">|</span></code> in the name. Because <code class="docutils literal"><span class="pre">|</span></code> is one character which already used in Unix system. However, if your fasta file or gff file are download from NCBI, ANNOgesic will automatically modify the name.</p>
+<p>Please also notice the name of strain or genome. It should be avoid to use <code class="docutils literal"><span class="pre">|</span></code> in the name.
+Because <code class="docutils literal"><span class="pre">|</span></code> is one character which already used in Unix system. However,
+if your fasta files or gff files are download from NCBI through ANNOgesic, ANNOgesic will automatically modify the names.</p>
 </div>
-<div class="section" id="the-format-of-libraries-for-import-to-annogesic">
-<h2>The format of libraries for import to ANNOgesic<a class="headerlink" href="#the-format-of-libraries-for-import-to-annogesic" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-format-of-libraries-for-running-annogesic">
+<h2>The format of libraries for running ANNOgesic<a class="headerlink" href="#the-format-of-libraries-for-running-annogesic" title="Permalink to this headline">¶</a></h2>
 <p>Some modules of <code class="docutils literal"><span class="pre">ANNOgesic</span></code> need to import the information of libraries.
 For import the information of libraries, please follow this format:</p>
 <p><code class="docutils literal"><span class="pre">$LIBRARY_FILENAME:$LIBRARY_TYPE:$CONDITION:$REPLICATE:$STRAND</span></code></p>
@@ -129,7 +178,8 @@ TSB_OD_0.2_forward.wig:notex:1:a:+
 TSB_OD_0.5_forward.wig:notex:2:a:+
 </pre></div>
 </div>
-<p>The above block is one file. Each line is combine with space.</p>
+<p>When you assign the libraries to ANNOgesic like the above block, these lines
+have to combine with space to be one line.</p>
 <p>for fragmented libraries:</p>
 <div class="highlight-python"><div class="highlight"><pre>fragmented_forward.wig:frag:1:a:+ fragmented_reverse.wig:frag:1:a:-
 </pre></div>
@@ -137,35 +187,38 @@ TSB_OD_0.5_forward.wig:notex:2:a:+
 </div>
 <div class="section" id="create">
 <h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">create</span></code> generates the required folder structure for input and
-output files. Once these folders are created the input files have to
-be placed into the correct locations. After creating the folders,
+<p><code class="docutils literal"><span class="pre">create</span></code> generates the required folders for input and
+output files. Once these folders are created, the input files have to
+be placed into the correct locations. Therefore, after creating the folders,
 please put the required files in the proper folders.</p>
 <p>BAMs: For <code class="docutils literal"><span class="pre">.bam</span></code> files</p>
-<p>database: For all databases. For example: BSRD, nr...</p>
-<p>manual_TSS: If you detected transcription starting sites(TSS) manually,
-you can put the results here. When you compute TSS, ANNOgesic
-will merge them  together. If you want to run <code class="docutils literal"><span class="pre">TSS_optimization</span></code>
-for TSS. It also required.</p>
+<p>database: For all databases. For example:</p>
+<p>sRNA database, nr database (for sRNA detection)</p>
+<p>go.obo, goslim_generic.obo, idmapping_selected.tab (for GO term detection)</p>
+<p>species.v9.1.txt (for protein-protein interaction)</p>
+<p>Rfam_riboswitch_ID.csv (for riboswitch detection)</p>
+<p>manual_TSS: If you detected transcription starting sites(TSSs) manually,
+you can put the results here. When you compute TSSs, ANNOgesic
+will merge them together. If you want to run <code class="docutils literal"><span class="pre">TSS_optimization</span></code>
+for TSSs, it is also necessary. Please use gff3 format.</p>
 <p>manual_processing_site: It is similar with <code class="docutils literal"><span class="pre">manual_TSS</span></code>, it is for
 processing sites.</p>
-<p>mutation_table: If you detect the mutation between reference genome and
+<p>mutation_table: If you detected the mutations between reference genome and
 target genome manually, please put the file here. When
 you run <code class="docutils literal"><span class="pre">get_target_fasta</span></code>. it is required. Please refer
 to the section of <code class="docutils literal"><span class="pre">get_target_fasta</span></code> for the format of
 mutation table.</p>
-<p>promoter_analysis: Please leave it blank. It is for store the fasta for
-<code class="docutils literal"><span class="pre">promoter_analysis</span></code>.</p>
-<p>reads: If you want to run <code class="docutils literal"><span class="pre">circrna</span></code> and you also want to realign read data,
+<p>promoter_analysis: Please leave it blank. It is for storing the fasta files of
+<code class="docutils literal"><span class="pre">promoter_analysis</span></code> which are generated by ANNOgesic.</p>
+<p>reads: If you want to run <code class="docutils literal"><span class="pre">circrna</span></code> and you also want to align read data by ANNOgesic,
 please put the read data here. It can also deal with <code class="docutils literal"><span class="pre">.bzip2</span></code> and <code class="docutils literal"><span class="pre">.gzip</span></code>.</p>
 <p>reference: For annotation files and fasta files. If the information of
 the reference strain can be download from NCBI, you can also get
 the files through running <code class="docutils literal"><span class="pre">get_input_files</span></code>.</p>
-<p>riboswitch_ID: For store the file which contains all the Rfam ID of riboswitch.
+<p>riboswitch_ID: For storing the file which contains all the Rfam ID of riboswitch.
 For the details of format, please refer to the section of
 <code class="docutils literal"><span class="pre">riboswicth</span></code>.</p>
-<p>TSSpredator: Please leave it blank. It is for config files of <code class="docutils literal"><span class="pre">TSSpredator</span></code>.</p>
-<p>wigs: For wiggle files. Based on the type of RNA-Seq, you can put them to
+<p>wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them to
 <code class="docutils literal"><span class="pre">fragment</span></code> (fragmented libraries) or <code class="docutils literal"><span class="pre">tex_notex</span></code> (TEX +/- treated libraries).</p>
 <ul class="simple">
 <li>Arguments</li>
@@ -182,10 +235,10 @@ optional arguments:
 </div>
 <div class="section" id="get-input-files">
 <h2>get_input_files<a class="headerlink" href="#get-input-files" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">get_input_files</span></code> is the subcommand for download required files (fasta, annotation files)from NCBI.
-Therefore, user need to assign the IP of the reference genome. For example,
+<p><code class="docutils literal"><span class="pre">get_input_files</span></code> is the subcommand for downloading required files (fasta, annotation files) from NCBI.
+Therefore, user need to assign the IP of the reference genome in NCBI. For example,
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795">ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Staphylococcus_aureus_NCTC_8325_uid57795</a>
-Then, user can assign which kinds of files he/she wants to download.</p>
+Then, user can choose which kinds of files he/she wants to download.</p>
 <ul class="simple">
 <li>Pre-reqired information</li>
 </ul>
@@ -195,7 +248,7 @@ Then, user can assign which kinds of files he/she wants to download.</p>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre>usage: annogesic get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
                                  [--ref_gff] [--ref_ptt] [--ref_rnt]
-                                 [--ref_gbk] [--convert_embl]
+                                 [--ref_gbk] [--convert_embl] [--for_target]
                                  [project_path]
 
 positional arguments:
@@ -213,20 +266,25 @@ optional arguments:
   --ref_gbk, -k         Download genbank files of reference. Default is False.
   --convert_embl, -e    Convert gbk to embl files of reference. Default is
                         False.
+  --for_target, -t      If the genome which you download from NCBI is your
+                        query sequence(you won&#39;t modify the genome), you can
+                        assign the download files to store in target folder in
+                        stead of reference folder.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>The output files will store in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/input/reference</span></code>.</p>
+<p>The output files will store in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/input/reference</span></code> if <code class="docutils literal"><span class="pre">--for_target</span></code> is False.
+The output files will store in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/target</span></code> if <code class="docutils literal"><span class="pre">--for_target</span></code> is True.</p>
 <p><code class="docutils literal"><span class="pre">fasta</span></code>: fasta files.</p>
 <p><code class="docutils literal"><span class="pre">annotation</span></code>: annotation files.</p>
 </div>
 <div class="section" id="get-target-fasta">
 <h2>get_target_fasta<a class="headerlink" href="#get-target-fasta" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">get_target_fasta</span></code> is the subcommand for generating target fasta file from
+<p><code class="docutils literal"><span class="pre">get_target_fasta</span></code> is the subcommand for generating target fasta files from
 reference genome files. It is based on the mutation table to modify the reference
-fasta to target fasta. Therefore, the similarity of reference genome and target genome
+fasta files to target fasta files. Therefore, the similarity of reference genome and target genome
 should be close. The example of format of mutation table is following:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -283,19 +341,19 @@ should be close. The example of format of mutation table is following:</p>
 </tr>
 </tbody>
 </table>
-<p>If user wants to put the name of column in the top, it needs to start from <code class="docutils literal"><span class="pre">#</span></code>.
+<p>If user wants to put the titles of columns in the top, it needs to start from <code class="docutils literal"><span class="pre">#</span></code>.
 Each column is separated by <code class="docutils literal"><span class="pre">tab</span></code>. If the mutation type if deletion or insertion,
-user can put - to represent them. The information of target_id, reference_id,
-reference_nt, position, target_nt is required. The others can leave them blank.
+user can put <code class="docutils literal"><span class="pre">-</span></code> to represent them. The information of <code class="docutils literal"><span class="pre">target_id</span></code>, <code class="docutils literal"><span class="pre">reference_id</span></code>,
+<code class="docutils literal"><span class="pre">reference_nt</span></code>, <code class="docutils literal"><span class="pre">position</span></code>, <code class="docutils literal"><span class="pre">target_nt</span></code> is required. The others can be blank.
 However, please still use tab to separate all blank columns.</p>
 <p>If user has no mutation information between the reference genome and target
 genome, user can also use <code class="docutils literal"><span class="pre">SNP_calling</span></code> (one module of <code class="docutils literal"><span class="pre">ANNOgesic</span></code>) to compute
-it. Please refer to the description of SNP_calling.</p>
+it. Please refer to the section of <code class="docutils literal"><span class="pre">SNP_calling</span></code>.</p>
 <ul class="simple">
 <li>Pre-required files</li>
 </ul>
-<p>Fasta file of reference genome.</p>
-<p>Mutation table which indicate the information of mutations between reference and target genome.</p>
+<p>Fasta files of reference genome.</p>
+<p>Mutation table which indicates the information of mutations between reference and target genome.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -328,19 +386,20 @@ optional arguments:
 </div>
 <div class="section" id="annotation-transfer">
 <h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transfer the annotation from reference genome
+<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transfering the annotation from reference genome
 to target genome. In this module, we use <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">PAGIT and RATT</a>
 to achieve it. The similarity of reference genome and target genome should be closed.
 Or it will influence the final results.
 Please be attation, before you start to run RATT(annotation transfer),
-run <code class="docutils literal"><span class="pre">source</span> <span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> first. it will modify the path for execute RATT.</p>
+run <code class="docutils literal"><span class="pre">source</span> <span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> first. it will modify the path for execute RATT.
+If you use Docker to execute ANNOgesic, you can skip the path modification.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">PAGIT and RATT</a></p>
-<p>The genbank file of reference genome.</p>
-<p>The fasta file of reference genome.</p>
-<p>The fasta file of target genome.</p>
+<p>The genbank files of reference genome.</p>
+<p>The fasta files of reference genome.</p>
+<p>The fasta files of target genome.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -397,12 +456,12 @@ will store in <code class="docutils literal"><span class="pre">$ANNOgesic_folder
 </div>
 <div class="section" id="snp">
 <h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">snp</span></code> can detect the potential mutation positions by comparing the results of alignment and fasta file.
+<p><code class="docutils literal"><span class="pre">snp</span></code> can detect the potential mutations by comparing the results of alignment and fasta files.
 <a class="reference external" href="https://github.com/samtools">Samtools</a>, <a class="reference external" href="https://github.com/samtools">Bcftools</a> are the main tools
 for detect mutations. User can choose programs (with BAQ, without BAQ and extend BAQ) to run <code class="docutils literal"><span class="pre">snp</span></code>.
 User can also set the quality, read depth and the fraction of maximum read depth which support for indel.
-User can use it for getting the target fasta file from the alignment results of reference genome.
-User can also use it for checking the alignment results of target genome.</p>
+If you have no target fasta files and want to generate it, <code class="docutils literal"><span class="pre">snp</span></code> can get the target fasta files from
+the alignment results of reference genome.</p>
 <ul class="simple">
 <li>Pre-required files and tools:</li>
 </ul>
@@ -470,26 +529,24 @@ optional arguments:
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>The results will store according to the type of Bam files. If the Bam files are from mapping
-with reference, the results will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_reference</span></code>.
-If the Bam files are from mapping with target genome, the results will store in
-<code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/validate_target</span></code>.</p>
+<p>The results will store according to the <code class="docutils literal"><span class="pre">bam_type</span></code>. If it is <code class="docutils literal"><span class="pre">reference</span></code>,
+the results will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_reference</span></code>.
+If it is <code class="docutils literal"><span class="pre">target</span></code>, the results will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/validate_target</span></code>.</p>
 <p>The raw data from <a class="reference external" href="https://github.com/samtools">Samtools</a> and <a class="reference external" href="https://github.com/samtools">Bcftools</a>
 will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_raw_outputs</span></code>.</p>
-<p>The results which fit the conditions which user set will store in
-<code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table</span></code>.</p>
+<p>The results will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table</span></code>.</p>
 <p>The meaning of file names are:</p>
 <p><code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_depth_only.vcf</span></code> means the results only match the condition of read depth.</p>
 <p><code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_depth_quality.vcf</span></code> means the results match the condition of read depth and quality.</p>
-<p><code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> is the index of fasta files which are generated based on the results of <code class="docutils literal"><span class="pre">snp</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> is the index of fasta files which generated by <code class="docutils literal"><span class="pre">snp</span></code>.</p>
 <p>For example,</p>
 <div class="highlight-python"><div class="highlight"><pre>Staphylococcus_aureus_HG003     1632629 .       AaA     AA      57      .
 Staphylococcus_aureus_HG003     1632630 .       aA      a       57      .
 Staphylococcus_aureus_HG003     1499572 .       T       TT,TTTTT        43.8525 .
 </pre></div>
 </div>
-<p>These first two mutation will cause conflicts. Then the conflicts will effect other mutations.
-Therefore, based on these information of mutations, it will generate four different fasta files.
+<p>These first two mutations will cause conflict. Then the conflict will effect the positions of other mutations.
+Therefore, it will generate four different fasta files.
 <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> is the index for these four fasta files.</p>
 <div class="highlight-python"><div class="highlight"><pre>1       1632629 1       1499572:TT      Staphylococcus_aureus_HG003
 1       1632629 2       1499572:TTTTT   Staphylococcus_aureus_HG003
@@ -497,9 +554,9 @@ Therefore, based on these information of mutations, it will generate four differ
 2       1632630 2       1499572:TTTTT   Staphylococcus_aureus_HG003
 </pre></div>
 </div>
-<p>The first column is the index of conflicts. The second column is the position which be selected.
+<p>The first column is the index of conflict. The second column is the positions which be selected.
 The third one is the index of two potential mutations in the same position. The fourth one is
-the position and nucleotides of mutation. The last column is the name of strain.
+the position and nucleotides of mutations. The last column is the name of strain.
 If you refer to <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/seqs</span></code>, the filename of fasta is like
 <code class="docutils literal"><span class="pre">$FILENAME_$STRIANNAME_$INDEXofCONFLICT_$INDEXofTWOMUTATION.fa</span></code>. Therefore, the first line of
 <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> will generate
@@ -508,137 +565,25 @@ If you refer to <code class="docutils literal"><span class="pre">$ANNOgesic/outp
 <code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_2.fa</span></code> and so forth.</p>
 <p>The statistics files will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/statistics</span></code>.</p>
 </div>
-<div class="section" id="expression-analysis">
-<h2>expression_analysis<a class="headerlink" href="#expression-analysis" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">expression_analysis</span></code> can analyze which CDSs or other features express in which libraries.
-It can be used to compare between different conditions. It is also a good way to detect housekeeping gene.</p>
-<ul class="simple">
-<li>Pre-required tools and files</li>
-</ul>
-<p>The gff file of annotation.</p>
-<p>The library and wiggle file. Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in
-order to assign correct format.</p>
-<ul class="simple">
-<li>Arguments</li>
-</ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: annogesic expression_analysis [-h] [-g ANNOTATION_FOLDER]
-                                     [-tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                                     [-fl FRAG_LIBS [FRAG_LIBS ...]]
-                                     [-te TEX_NOTEX] [-rt REPLICATES_TEX]
-                                     [-rf REPLICATES_FRAG]
-                                     [--tex_wig_folder TEX_WIG_FOLDER]
-                                     [--frag_wig_folder FRAG_WIG_FOLDER]
-                                     [--cutoff_overlap_tex CUTOFF_OVERLAP_TEX]
-                                     [--cutoff_overlap_frag CUTOFF_OVERLAP_FRAG]
-                                     [--cutoff_coverage CUTOFF_COVERAGE]
-                                     [--features FEATURES [FEATURES ...]]
-                                     [--coverage_type COVERAGE_TYPE]
-                                     [--max_colorbar MAX_COLORBAR]
-                                     [--min_colorbar MIN_COLORBAR]
-                                     [project_path]
-
-positional arguments:
-  project_path          Path of the project folder. If none is given, the
-                        current directory is used.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -g ANNOTATION_FOLDER, --annotation_folder ANNOTATION_FOLDER
-                        The folder of annotation file which you want to
-                        analyze.
-  -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                        Library name of tex and notex library. The format is:
-                        wig_file_name:tex_treat_or_not(tex or notex):condition
-                        _id(integer):replicate_id(alphabet):strand(+ or -).
-  -fl FRAG_LIBS [FRAG_LIBS ...], --frag_libs FRAG_LIBS [FRAG_LIBS ...]
-                        Library name of fragment library. The format is: wig_f
-                        ile_name:fragmented(frag):condition_id(integer):replic
-                        ate_id(alphabet):strand(+ or -).
-  -te TEX_NOTEX, --tex_notex TEX_NOTEX
-                        For tex +/- library, expressing CDS should be detected
-                        by both or just one.(1 or 2) Default is 2.
-  -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
-                        The expressing CDS of tex +/- library should be
-                        detected more than this number of replicates.
-  -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
-                        The expressing CDS of fragmented library should be
-                        detected more than this number of replicates.
-  --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                        The folder of TEX+/- wigge files.
-  --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                        The folder of fragmented wigge files.
-  --cutoff_overlap_tex CUTOFF_OVERLAP_TEX, -ot CUTOFF_OVERLAP_TEX
-                        This value is for decision of CDS which is expressing
-                        or not in TEX+/- library. If the expressing
-                        nucleotides more than this value, it will consider the
-                        CDS is expressing one. You can assign by percentage(p)
-                        or nucleotide(n). ex: p_0.5 means the percentage of
-                        expressing nts should higher 0.5. n_100 means there
-                        should be 100 nts which are expressing. Default is
-                        &quot;all&quot; which means as long as there is a nt&#39;s coverage
-                        higher than cutoff_coverage, it would consider the CDS
-                        which is expressing.
-  --cutoff_overlap_frag CUTOFF_OVERLAP_FRAG, -of CUTOFF_OVERLAP_FRAG
-                        This value is for decision of CDS which is expressing
-                        or not in fragmented library. If the expressing
-                        nucleotides more than this value, it will consider the
-                        CDS is expressing. You can assign by percentage(p) or
-                        nucleotide(n). ex: p_0.5 means the percentage of
-                        expressing nts should higher 0.5. n_100 means there
-                        should be 100 nts which are expressing. Default is
-                        &quot;all&quot; which means as long as there is a nt&#39;s coverage
-                        higher than cutoff_coverage, it would consider the CDS
-                        which is expressing.
-  --cutoff_coverage CUTOFF_COVERAGE, -c CUTOFF_COVERAGE
-                        If the coverage is higher than this value, it will
-                        consider the nucleotide is expressing. Default is 5.
-  --features FEATURES [FEATURES ...], -f FEATURES [FEATURES ...]
-                        The features which you want to compute, ex: CDS tRNA.
-  --coverage_type COVERAGE_TYPE, -ct COVERAGE_TYPE
-                        For generating heatmap of coverage, you want to base
-                        on the highest coverage or average of coverage. If you
-                        want to use highest, please type &quot;high&quot;. If you want
-                        to use average, please type &quot;average&quot;. Default is
-                        high.
-  --max_colorbar MAX_COLORBAR, -Mc MAX_COLORBAR
-                        The max number of colorbar of heatmap. Default is 100.
-  --min_colorbar MIN_COLORBAR, -mc MIN_COLORBAR
-                        The min number of colorbar of heatmap. Default is 0.
-</pre></div>
-</div>
-<ul class="simple">
-<li>Output files</li>
-</ul>
-<p>All output files will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/target/annotation/for_libs</span></code> of the input folder of annotation.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files. Based on the format of libraries, the name of output annotation file would be
-<code class="docutils literal"><span class="pre">STRAIN_FEATURE_LIBTYPE.gff</span></code>. For example, <code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_CDS_10_texnotex.gff</span></code>.
-It means the strain is Staphylococcus_aureus_HG003. The feature of this gff file is for analysis of CDS.
-About the <code class="docutils literal"><span class="pre">LIBTYPE</span></code>, <code class="docutils literal"><span class="pre">10_texnotex</span></code> is the number of condition of tex treated libraries.
-<code class="docutils literal"><span class="pre">all_libs</span></code> means the CDSs or other features express in all libraries. <code class="docutils literal"><span class="pre">at_least_one_lib</span></code>
-means the CDSs or other features express at least in one libraries. <code class="docutils literal"><span class="pre">no_express</span></code> means
-the CDSs or other features don&#8217;t express in any libraries.</p>
-<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files and some figures of analysis. The format of filename of figure is like <code class="docutils literal"><span class="pre">CDS_high_express_analysis_0-500.png</span></code>.
-<code class="docutils literal"><span class="pre">CDS</span></code> is the feature. It can also be tRNA or rRNA.... <code class="docutils literal"><span class="pre">0-500</span></code> means the figure cover first to 500th CDS according to locus tag.</p>
-</div>
 <div class="section" id="tsspredator-tss-and-processing-site-prediction">
 <h2>tsspredator(TSS and processing site prediction)<a class="headerlink" href="#tsspredator-tss-and-processing-site-prediction" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">tsspredator</span></code> can generate the candidates of TSS and processing sites. The main tool is
+<p><code class="docutils literal"><span class="pre">tsspredator</span></code> can generate the candidates of TSSs and processing sites. The main tool is
 <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>. We can easily switch the
-TEX + libraries and TEX - libraries to detect processing sites. User can assign the parameters
-for <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>. If User want to get the
+TEX+ libraries and TEX- libraries to detect processing sites. User can assign the parameters
+of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>. If User want to get the
 optimized parameters of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>,
-there is <code class="docutils literal"><span class="pre">optimize_tsspredator</span></code> for this purpose. Please refer to this section.</p>
-<p>For import the information of libraries, please refer to the section
+there is <code class="docutils literal"><span class="pre">optimize_tsspredator</span></code> for this purpose. Please refer to the section of <code class="docutils literal"><span class="pre">optimize_tsspredator</span></code>.</p>
+<p>For the information of libraries, please refer to the section
 <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a></p>
-<p>The libraries and wiggle files of TEX +/-. Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
-<p>The fasta and anntation file of genome.</p>
-<p>If User has gff file of TSS by manual detection, <code class="docutils literal"><span class="pre">tsspredator</span></code> can merge the manual one
+<p>The libraries and wiggle files of TEX +/-. Please refer to <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
+<p>The fasta and anntation files of genome.</p>
+<p>If user has gff file of manual detected TSSs, <code class="docutils literal"><span class="pre">tsspredator</span></code> can merge the manual one
 and predicted one.</p>
-<p>If User want to compare TSS with transcripts, it also need the gff file of transcripts.
+<p>If user want to compare TSSs with transcripts, it also need the gff files of transcripts.
 For the transcripts, please refer to the section of <code class="docutils literal"><span class="pre">transcript_assembly</span></code>.</p>
 <ul class="simple">
 <li>Arguments</li>
@@ -788,63 +733,58 @@ optional arguments:
 <li>Output files</li>
 </ul>
 <p>The output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/TSS</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">MasterTables</span></code>: The output files from <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff file of TSS.
-The second column of gff file shows the TSS is from manual detection or
-<a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.</p>
-<p>There are some useful tags of in the attributes of gff file:</p>
-<p><code class="docutils literal"><span class="pre">type</span></code>: It represents the type of TSS. It could be Primary, Secondary, Internal, Antisense or Orphan.</p>
+<p><code class="docutils literal"><span class="pre">MasterTables</span></code>: The MasterTable from <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff files of TSSs.</p>
+<p>There are some useful tags in the attributes of gff files:</p>
+<p><code class="docutils literal"><span class="pre">Method</span></code>: the TSSs are from manual detection or <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.</p>
+<p><code class="docutils literal"><span class="pre">type</span></code>: It represents the type of TSSs. It could be Primary, Secondary, Internal, Antisense or Orphan.</p>
 <p><code class="docutils literal"><span class="pre">UTR_length</span></code>: It represents the length of UTR.</p>
-<p><code class="docutils literal"><span class="pre">associated_gene</span></code>: It shows the TSS associates which gene.</p>
-<p><code class="docutils literal"><span class="pre">Parent_tran</span></code>: if user has compared with transcript, it will show that the TSS is located in which transcript.</p>
-<p>If user has compared with genome annotation file, the tag - <code class="docutils literal"><span class="pre">start_TSS</span></code> will appear in the gff file
-of genome annotation. It will show the TSS of CDS/rRNA/tRNA.</p>
-<p>If user has compared with transcript, the tag - <code class="docutils literal"><span class="pre">associated_tss</span></code> will appear in the gff file
-of transcript. It will show the associated TSS in the transcript.</p>
+<p><code class="docutils literal"><span class="pre">associated_gene</span></code>: It shows the TSSs associate with which genes.</p>
+<p><code class="docutils literal"><span class="pre">Parent_tran</span></code>: if user has compared with transcript, it will show that the TSSs are located in which transcripts.</p>
+<p>If user has compared with genome annotation files, the tag - <code class="docutils literal"><span class="pre">start_TSS</span></code> will appear in the gff files
+of genome annotation. It represents the TSSs which associates with the CDS/tRNA/rRNA.</p>
+<p>If user has compared with transcripts, the tag - <code class="docutils literal"><span class="pre">associated_tss</span></code> will appear in the gff files
+of transcript. It will show the associated TSSs which is in the transcript.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files.</p>
-<p>The output file of processing site is similar. Just replace <code class="docutils literal"><span class="pre">TSS</span></code> to <code class="docutils literal"><span class="pre">processing_site</span></code>
+<p>The output files of processing sites are similar. Just replace <code class="docutils literal"><span class="pre">TSS</span></code> to <code class="docutils literal"><span class="pre">processing_site</span></code>
 like <code class="docutils literal"><span class="pre">$ANNOgesic/output/processing_site</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">configs</span></code>: the configuration files for running TSSpredator.</p>
 </div>
 <div class="section" id="transcript-assembly">
 <h2>transcript_assembly<a class="headerlink" href="#transcript-assembly" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">transcript_assembly</span></code> will base on the coverage to generate transcripts. User can
+<p><code class="docutils literal"><span class="pre">transcript_assembly</span></code> will detect transcripts based on the coverage. User can
 assign the parameters of <code class="docutils literal"><span class="pre">transcript_assembly</span></code>.</p>
-<p>For importing the information of libraries, please refer to the section
+<p>For importing the information of libraries, please refer to the section of
 <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
-<p>Wiggle files of fragmented libraries or TEX +/- treated libraries. We don&#8217;t recommend only
-use wiggle files of TEX +/- treated libraries to generate transcripts. It will lose some reads
+<p>Wiggle files of fragmented libraries or TEX +/- treated libraries. We don&#8217;t recommend that only
+use TEX +/- treated libraries to generate transcripts. It will lose some information
 in 3&#8217;end.</p>
-<p>If user wants to compare transcript with TSS, it requires <code class="docutils literal"><span class="pre">.gff</span></code> file of TSS.
-If user wants to compare transcript with genome anntation, it requires <code class="docutils literal"><span class="pre">.gff</span></code> file of genome.</p>
+<p>If user wants to compare transcripts with TSSs, it requires <code class="docutils literal"><span class="pre">.gff</span></code> files of TSSs.
+If user wants to compare transcripts with genome anntation, it requires <code class="docutils literal"><span class="pre">.gff</span></code> files of genomes.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: annogesic tsspredator [-h] [--TSSpredator_path TSSPREDATOR_PATH]
-                             [--fasta_folder FASTA_FOLDER]
-                             [--annotation_folder ANNOTATION_FOLDER]
-                             [--wig_folder WIG_FOLDER] [--height HEIGHT]
-                             [--height_reduction HEIGHT_REDUCTION]
-                             [--factor FACTOR]
-                             [--factor_reduction FACTOR_REDUCTION]
-                             [--enrichment_factor ENRICHMENT_FACTOR]
-                             [--processing_factor PROCESSING_FACTOR]
-                             [--base_height BASE_HEIGHT]
-                             [--replicate_match REPLICATE_MATCH]
-                             [--utr_length UTR_LENGTH] [--lib LIB [LIB ...]]
-                             [--output_prefix OUTPUT_PREFIX [OUTPUT_PREFIX ...]]
-                             [--merge_manual MERGE_MANUAL] [--statistics]
-                             [--validate_gene]
-                             [--compute_program COMPUTE_PROGRAM]
-                             [--compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY]
-                             [--fuzzy FUZZY] [--cluster CLUSTER]
-                             [--length LENGTH] [--re_check_orphan]
-                             [--overlap_feature OVERLAP_FEATURE]
-                             [--reference_gff_folder REFERENCE_GFF_FOLDER]
-                             [--remove_low_expression REMOVE_LOW_EXPRESSION]
-                             [project_path]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic transcript_assembly [-h]
+                                     [--annotation_folder ANNOTATION_FOLDER]
+                                     [--sort_annotation] [--length LENGTH]
+                                     [--tex_wig_path TEX_WIG_PATH]
+                                     [--frag_wig_path FRAG_WIG_PATH]
+                                     [--height HEIGHT] [--width WIDTH]
+                                     [--tolerance TOLERANCE]
+                                     [--tolerance_coverage TOLERANCE_COVERAGE]
+                                     [--replicates_tex REPLICATES_TEX]
+                                     [--replicates_frag REPLICATES_FRAG]
+                                     [--tex_notex TEX_NOTEX]
+                                     [--compare_TSS COMPARE_TSS]
+                                     [--compare_genome_annotation COMPARE_GENOME_ANNOTATION]
+                                     [--compare_feature_genome COMPARE_FEATURE_GENOME]
+                                     [--TSS_fuzzy TSS_FUZZY]
+                                     [--Tex_treated_libs TEX_TREATED_LIBS [TEX_TREATED_LIBS ...]]
+                                     [--fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]]
+                                     [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given, the
@@ -852,153 +792,115 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --TSSpredator_path TSSPREDATOR_PATH
-                        If you want to assign the path of TSSpredator, please
-                        assign here. Default is /usr/local/bin/TSSpredator.jar
-  --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                        Path of the target fasta folder.
   --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                        Path of the target gff folder.
-  --wig_folder WIG_FOLDER, -w WIG_FOLDER
-                        The folder of the wig folder.
+                        It is for comparing transcript assembly and annotation
+                        gff file. It can use annotation gff file as reference
+                        and modify transcript assembly file. If you want to do
+                        it, please assign the annotation gff folder.
+                        Otherwise, don&#39;t turn it on.
+  --sort_annotation, -s
+                        The annotation gff files in annotation folder are
+                        sorted or not. If they didn&#39;t be sorted, please turn
+                        it on. Default is False.
+  --length LENGTH, -l LENGTH
+                        The minimum width of region to be a transcript. It is
+                        for refer to annotation file. If you want to compare
+                        with annotation files, it will be the final output. If
+                        you don&#39;t want to compare with annotation files,
+                        --width would be the length for the final output. The
+                        default is 20.
+  --tex_wig_path TEX_WIG_PATH, -tw TEX_WIG_PATH
+                        The path of TEX+/- wig folder.
+  --frag_wig_path FRAG_WIG_PATH, -fw FRAG_WIG_PATH
+                        The path of fragment wig folder.
   --height HEIGHT, -he HEIGHT
-                        This value relates to the minimal number of read
-                        starts at a certain genomic position to be considered
-                        as a TSS candidate. Default is 0.3.
-  --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
-                        When comparing different strains/conditions and the
-                        step height threshold is reached in at least one
-                        strain/condition, the threshold is reduced for the
-                        other strains/conditions by the value set here. This
-                        value must be smaller than the step height threshold.
-                        Default is 0.2.
-  --factor FACTOR, -fa FACTOR
-                        This is the minimal factor by which the TSS height has
-                        to exceed the local expression background. Default is
-                        2.0.
-  --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
-                        When comparing different strains/conditions and the
-                        step factor threshold is reached in at least one
-                        strain/condition, the threshold is reduced for the
-                        other strains/conditions by the value set here. This
-                        value must be smaller than the step factor threshold.
-                        Default is 0.5.
-  --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
-                        This is the minimal enrichment factor. During
-                        optimization will never larger than this value.
-                        Default is 2.0.
-  --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
-                        This is the minimal processing factor. If untreated
-                        library is higher than the treated library and above
-                        which the TSS candidate is considered as a processing
-                        site and not annotated as detected. During
-                        optimization will never larger than this value.
-                        Default is 1.5.
-  --base_height BASE_HEIGHT, -bh BASE_HEIGHT
-                        This is the minimal number of reads should be mapped
-                        on TSS. Default is 0.0.
-  --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
-                        The TSS candidates should match to how many number of
-                        the replicates. Default is 1.
-  --utr_length UTR_LENGTH, -u UTR_LENGTH
-                        The length of UTR. It is for Primary and Secondary
-                        definition. Default is 300.
-  --lib LIB [LIB ...], -l LIB [LIB ...]
-                        The libraries of wig files for TSSpredator. The format
-                        is: wig_file_name:tex_treat_or_not(tex or notex):condi
-                        tion_id(integer):replicate_id(alphabet):strand(+ or
-                        -).
-  --output_prefix OUTPUT_PREFIX [OUTPUT_PREFIX ...], -p OUTPUT_PREFIX [OUTPUT_PREFIX ...]
-                        The output prefix of all conditions.
-  --merge_manual MERGE_MANUAL, -m MERGE_MANUAL
-                        If you have gff file of manual checked TSS, you can
-                        use this function to merge manual checked ones and
-                        predicted ones.
-  --statistics, -s      Doing statistics for TSS candidates. it will store in
-                        statistics folder. Default is False.
-  --validate_gene, -v   Using TSS candidates to validate genes in annotation
-                        file. it will store in statistics folder. Default is
-                        False.
-  --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
-                        Which program do you want to predict. (TSS or
-                        processing_site) Default is TSS.
-  --compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY, -ta COMPARE_TRANSCRIPT_ASSEMBLY
-                        If you want to compare with transcriptome assembly,
-                        please assign the folder of gff file of transcript
-                        assembly.Default is False.
-  --fuzzy FUZZY, -fu FUZZY
+                        The minimum height of coverage to be a transcript. The
+                        default is 10.
+  --width WIDTH, -w WIDTH
+                        The minimum width of region to be a transcript. It is
+                        for without annotation to be reference. If you don&#39;t
+                        want to compare with annotation files (--length), it
+                        will be the final output. Otherwise, --length would be
+                        the length of transcript for the final output. The
+                        default is 20.
+  --tolerance TOLERANCE, -t TOLERANCE
+                        This number indicates how willing the algorithm is to
+                        ignore a temporary drop below this number. The default
+                        is 5.
+  --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
+                        If the coverage is lower than tolerance_coverage, even
+                        the range is within tolerance, it will terminate the
+                        current transcript. The default is 0.
+  --replicates_tex REPLICATES_TEX, -rt REPLICATES_TEX
+                        The position is included in the transcript if there
+                        are more than the replicate which you assign here to
+                        supported it. (for tex +/- library)
+  --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+                        The position is included in the transcript if there
+                        are more than the replicate which you assign here to
+                        supported it. (for fragmented library)
+  --tex_notex TEX_NOTEX, -te TEX_NOTEX
+                        If you use tex +/- libraries to run transcript
+                        assembly, the transcripts should be detected by both
+                        or just one. (1 or 2). Default is 1.
+  --compare_TSS COMPARE_TSS, -ct COMPARE_TSS
+                        If you want to compare with TSS, please assign TSS
+                        folder.
+  --compare_genome_annotation COMPARE_GENOME_ANNOTATION, -cg COMPARE_GENOME_ANNOTATION
+                        If you want to compare with annotation file, please
+                        assign annotation folder.
+  --compare_feature_genome COMPARE_FEATURE_GENOME, -cf COMPARE_FEATURE_GENOME
+                        If you want to compare with annotation file, please
+                        assign the feature which you want to compare. Default
+                        is gene
+  --TSS_fuzzy TSS_FUZZY, -fu TSS_FUZZY
                         The fuzzy for comparing TSS and transcript assembly.
                         Default is 5.
-  --cluster CLUSTER, -c CLUSTER
-                        This number is for compare manual detected TSS and
-                        prediced one. If the position between manual checked
-                        one and predicted one is smaller or equal than this
-                        value, It will only print one of them. Default is 2.
-  --length LENGTH, -le LENGTH
-                        The length of genome that you want to compare betweeb
-                        predicted one and manual checked one for statistics.
-                        If you want to compare whole genome, please don&#39;t turn
-                        it on. The default is comparing whole genome.
-  --re_check_orphan, -ro
-                        If your annotation file lack information of gene or
-                        locus_tag, you can turn it on. It will try to compare
-                        with CDS. Default is False.
-  --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
-                        If processing site and TSS are overlap, you can keep
-                        &quot;TSS&quot; or &quot;processing_site&quot; or &quot;both&quot;. Default is both.
-  --reference_gff_folder REFERENCE_GFF_FOLDER, -rg REFERENCE_GFF_FOLDER
-                        For overlap_feature, if you want to only keep &quot;TSS&quot; or
-                        &quot;processing_site&quot;, please assign the
-                        reference_gff_folder. If you are running TSS, please
-                        assign the folder of processing site. If you are
-                        running processing_site, please assign the folder of
-                        TSS. If you want to keep &quot;both&quot; at overlap position,
-                        please don&#39;t turn it on. Default is None(for keep
-                        both).
-  --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
-                        If you want to remove low expressed TSS/processing
-                        site, please assign the file of manual checked gff
-                        file here. Please Be ATTENTION: this parameter may
-                        remove some True positive, too. So, please make sure
-                        you want to do it.
+  --Tex_treated_libs TEX_TREATED_LIBS [TEX_TREATED_LIBS ...], -tl TEX_TREATED_LIBS [TEX_TREATED_LIBS ...]
+                        Input of tex +/- library. The format is:
+                        wig_file_name:tex_treat_or_not(tex or notex):condition
+                        _id(integer):replicate_id(alphabet):strand(+ or -).
+  --fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...], -fl FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]
+                        Input of fragmented library. The format is: wig_file_n
+                        ame:fragmented(frag):condition_id(integer):replicate_i
+                        d(alphabet):strand(+ or -).
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
 <p>The output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/transcriptome_assembly</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff files of transcript.
-In the second column of gff file shows the transcript is from which kinds of libraries.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff files of transcript.</p>
 <p>There are some useful tags in gff files.</p>
-<p><code class="docutils literal"><span class="pre">type</span></code>: It shows the situation of overlap between transcript and CDS/tRNA/rRNA
+<p><code class="docutils literal"><span class="pre">type</span></code>: It shows the situation of overlap between transcripts and CDSs/tRNAs/rRNAs
 (cover_CDS, within_CDS, not_related_CDS, left_shift_CDS or right_shift_CDS).
-(If user has compared transcript with genome annotation.)</p>
-<p><code class="docutils literal"><span class="pre">associated_tss</span></code>: It shows the TSS which are located in the transcript.
-(If user has compared transcript with TSS.)</p>
-<p><code class="docutils literal"><span class="pre">associated_cds</span></code>: It shows the CDS/tRNA/rRNA which are located in the transcript.
-(If user has compared transcript with genome annotation.)</p>
-<p>If user has compared transcript with genome annotation. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
-in the gff file of genome annotation. It will show the CDS/tRNA/rRNA is located in which transcript.</p>
-<p>If user has compared transcript with TSS. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
-in the gff file of TSS. It will show the TSS is located in which transcript.</p>
+(If user has compared transcripts with genome annotation.)</p>
+<p><code class="docutils literal"><span class="pre">associated_tss</span></code>: It shows the TSSs which are located in which transcripts.
+(If user has compared transcripts with TSSs.)</p>
+<p><code class="docutils literal"><span class="pre">associated_cds</span></code>: It shows the CDSs/tRNAs/rRNAs which are located in which transcripts.
+(If user has compared transcripts with genome annotations.)</p>
+<p>If user has compared transcripts with genome annotations. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
+in the gff files of genome annotations. It will show the CDSs/tRNAs/rRNAs are located in which transcripts.</p>
+<p>If user has compared transcripts with TSSs. The tag - <code class="docutils literal"><span class="pre">Parent_tran</span></code> will appear
+in the gff files of TSSs. It will show the TSSs is located in which transcripts.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files.</p>
 </div>
 <div class="section" id="terminator">
 <h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">terminator</span></code> will predict the rho-independent terminator. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> combine the results of
+<p><code class="docutils literal"><span class="pre">terminator</span></code> will predict the rho-independent terminators. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> combine the results of
 two methods in order to get more reliable candidates. First one is using <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.
-The other one is detect the specific secondary structure in intergenic region of forward and reverse strand.
-<code class="docutils literal"><span class="pre">ANNOgesic</span></code> can also compare with coverage in order to generate the terminators which has dramatic coverage
-decreasing.</p>
+The other one is detect the specific secondary structure in the intersection regions between forward and reverse strands
+of transcripts and CDSs. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> can also compare with coverages in order to generate the terminators
+which has dramatic coverage decreasing.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a></p>
 <p>RNAfold of <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/">ViennaRNA</a></p>
-<p>Annotation file and fasta file of target genome</p>
-<p>Wiggle file of TEX +/- treated libraries or fragmented libraries. we don&#8217;t
-recommand only use TEX +/- treated libraries. Because it will lose reads in 3&#8217;end.</p>
-<p>Gff file of transcript</p>
+<p>Annotation files and fasta files of target genome</p>
+<p>Wiggle files of TEX +/- treated libraries or fragmented libraries. we don&#8217;t
+recommand only use TEX +/- treated libraries. Because it will lose some information in 3&#8217;end.</p>
+<p>Gff files of transcript</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1094,7 +996,7 @@ optional arguments:
                         wig_file_name:tex_treat_or_not(tex or notex):condition
                         _id(integer):replicate_id(alphabet):strand(+ or -).
   -fl FRAG_LIBS [FRAG_LIBS ...], --frag_libs FRAG_LIBS [FRAG_LIBS ...]
-                        Library name of fragment library. The format is: wig_f
+                        Library name of fragmented library. The format is: wig_f
                         ile_name:fragmented(frag):condition_id(integer):replic
                         ate_id(alphabet):strand(+ or -).
   -te TEX_NOTEX, --tex_notex TEX_NOTEX
@@ -1121,26 +1023,26 @@ There are three different folders to store terminators.</p>
 <p><code class="docutils literal"><span class="pre">detect</span></code> will store the terminators which not only has gene expression but also
 the coverage has dramatic decreasing.</p>
 <p>The tags of gff files:</p>
-<p><code class="docutils literal"><span class="pre">coverage_decrease</span></code>: The coverage of the terminator has dramatic decreasing or not.</p>
-<p><code class="docutils literal"><span class="pre">express</span></code>: The terminator has gene expression or not.</p>
-<p><code class="docutils literal"><span class="pre">diff_coverage</span></code>: The best library which can detect the terminator. The numbers in parens
-are highest coverage and lowest coverage.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: the table of terminator which store more details.</p>
+<p><code class="docutils literal"><span class="pre">coverage_decrease</span></code>: The coverages of the terminators has dramatic decreasing or not.</p>
+<p><code class="docutils literal"><span class="pre">express</span></code>: The terminators has gene expression or not.</p>
+<p><code class="docutils literal"><span class="pre">diff_coverage</span></code>: The highest coverage and lowest coverages of the library which express highest.
+The numbers in parens are highest coverage and lowest coverage.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: the tables of terminators which store more details.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files.</p>
 <p><code class="docutils literal"><span class="pre">transtermhp</span></code>: all output of <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.</p>
 </div>
 <div class="section" id="utr">
 <h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">utr</span></code> can compare with the information of TSS, CDS/tRNA/sRNA, transcripts and terminators
-to generate proper UTRs. 5&#8217;UTR is based on detecting the intergenic region of  TSS (which
-are located in transcript) and CDS/tRNA/sRNA. 3&#8217;UTR is based on detecting the intergenic
-region of the terminal of transcript and CDS/tRNA/sRNA. If the gff file of TSS is not computed by
-ANNOgesic, please use &#8211;TSS_source. <code class="docutils literal"><span class="pre">utr</span></code> would compute the class of TSS for analysis.</p>
+<p><code class="docutils literal"><span class="pre">utr</span></code> can compare with the information of TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
+to generate proper UTRs. 5&#8217;UTRs are based on detecting the regions between TSSs (which
+are located in transcripts) and CDSs/tRNAs/sRNAs. 3&#8217;UTRs are based on detecting the
+regions between the terminal of transcripts and CDSs/tRNAs/sRNAs. If the gff files of TSSs are not computed by
+ANNOgesic, please use &#8211;TSS_source. <code class="docutils literal"><span class="pre">utr</span></code> would compute the classes of TSSs for analysis.</p>
 <ul class="simple">
 <li>Pre-required files</li>
 </ul>
-<p>Gff files of genome annotation, TSS and transcript.</p>
-<p>If user want to combine the information of terminator, it also need the gff file of terminator.</p>
+<p>Gff files of genome annotations, TSSs and transcripts.</p>
+<p>If user wants to combine the information of terminators, it also need the gff files of terminator.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1184,23 +1086,23 @@ optional arguments:
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>All output of 5&#8217;UTR will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/UTR/5UTR</span></code>.</p>
-<p>All output of 3&#8217;UTR will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/UTR/3UTR</span></code>.</p>
+<p>All output of 5&#8217;UTRs will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/UTR/5UTR</span></code>.</p>
+<p>All output of 3&#8217;UTRs will store in <code class="docutils literal"><span class="pre">$ANNOgesic/output/UTR/3UTR</span></code>.</p>
 <p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of 5&#8217;UTR/3&#8217;UTR</p>
-<p>The tags of gff file:</p>
+<p>The tags of gff files:</p>
 <p><code class="docutils literal"><span class="pre">length</span></code>: UTR length.</p>
-<p><code class="docutils literal"><span class="pre">associated_cds</span></code>: Which CDS/rRNA/tRNA are associated with this UTR.</p>
+<p><code class="docutils literal"><span class="pre">associated_cds</span></code>: Which CDSs/rRNAs/tRNAs are associated with this UTR.</p>
 <p><code class="docutils literal"><span class="pre">associated_gene</span></code>: Which genes are associated with this UTR.</p>
-<p><code class="docutils literal"><span class="pre">associated_tss</span></code>: Which TSS are associated with this 5&#8217;UTR.</p>
-<p><code class="docutils literal"><span class="pre">TSS_type</span></code>: What types of TSS are associated with this 5&#8217;UTR.</p>
-<p><code class="docutils literal"><span class="pre">associated_tran</span></code>: Which transcript is associated with this 3&#8217;UTR.</p>
+<p><code class="docutils literal"><span class="pre">associated_tss</span></code>: Which TSSs are associated with this 5&#8217;UTR.</p>
+<p><code class="docutils literal"><span class="pre">TSS_type</span></code>: What types of TSSs are associated with this 5&#8217;UTR.</p>
+<p><code class="docutils literal"><span class="pre">associated_tran</span></code>: Which transcripts is associated with this 3&#8217;UTR.</p>
 <p><code class="docutils literal"><span class="pre">associated_term</span></code>: Which terminators are associated with this 3&#8217;UTR.</p>
 </div>
 <div class="section" id="srna">
 <h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">srna</span></code> can predict sRNA candidates by comparing the transcripts and annotation profile.
+<p><code class="docutils literal"><span class="pre">srna</span></code> can predict sRNAs by comparing the transcripts and annotation profile.
 The transcripts in intergenic region might be sRNA candidates. Moreover, based on
-the information of TSS and processing site, we can also predict UTR derived sRNA candidates.</p>
+the information of TSSs and processing sites, we can also predict UTR-derived sRNA candidates.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
@@ -1210,29 +1112,34 @@ the information of TSS and processing site, we can also predict UTR derived sRNA
 <p><a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a></p>
 <p><a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a></p>
 <p>Gff files of genome annotation and Transcript assembly data.</p>
-<p>It also can import more information to improve the accuracy of prediction.</p>
-<p>TSS: To filter out the sRNA candidates which have no TSS related.</p>
-<p>Processing site: For checking the end point of sRNA candidates which are located in long transcripts.</p>
-<p>wiggle file: To detect the intergenic transcripts which have dramatic coverage
-decreasing, it could be find the sRNA which located in long transcripts,
+<p>It can also import more information to improve the accuracy of prediction.</p>
+<p>wiggle files: To detect the intergenic transcripts which have dramatic coverage
+decreasing, it could be find the sRNAs which located in long transcripts,
 The libraries and wiggle files, Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
-<p>sRNA database: It could be used to search the known sRNA. The format of header should be <code class="docutils literal"><span class="pre">$ID|$STRAIN|$sRNANAME|$OTHER_INFO|$OTHER_INFO</span></code>.
+<p>If user want to detect the UTR-derived sRNAs, it will be necessary to import
+more information.</p>
+<p>TSSs: UTR-derived sRNAs must to generated from TSSs. If you don&#8217;t want to detect UTR-derived sRNAs,
+you can also import this information. It will check the sRNA starts from TSSs or not.</p>
+<p>processing sites: Some 3&#8217;UTR-derived and interCDS-derived sRNA candidates start
+from processing sites not TSSs. If you don&#8217;t want to detect UTR-derived sRNAs,
+you can also import this information. It will check the sRNAs end with cleavage or not.</p>
+<p>wiggle files: The terminal of UTR-derived sRNAs should be processing sites or dramatic coverage decreasing points.
+The input format of libraries and wiggle files, Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.
+If you don&#8217;t want to detect UTR-derived sRNAs, you can also import this information. It will detect
+the intergenic transcripts which have dramatic coverage decreasing, it could be find
+the sRNA which located in long transcripts.</p>
+<p>Optional input file:</p>
+<p>sRNA database: It could be used to search the known sRNA. The format of header should be
+<code class="docutils literal"><span class="pre">$ID|$STRAIN|$sRNANAME|$OTHER_INFO|$OTHER_INFO</span></code>.
 For example, <code class="docutils literal"><span class="pre">&gt;saci2813.1|Acinetobacter</span> <span class="pre">sp.</span> <span class="pre">ADP1|Aar|12240|2812430|forward</span></code>.
 The ID is saci403.1; the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar.
 <code class="docutils literal"><span class="pre">srna</span></code> only consider the first three columns. Therefore, the format of the first three columns should be
-fit the rule. BE ATTENTION, after format the sRNA database, the information after the third columns will be removed.
+fit the rule. BE ATTENTION, after format the sRNA database, the information after the third column will be removed.
 If the user doesn&#8217;t follow the format, it will occur some error when the user run <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.
-Of course, it also can run <code class="docutils literal"><span class="pre">srna</span></code> without <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.</p>
-<p>nr database: It could be used to search the known protein in order to exclude false positive.</p>
-<p>sORF: It could compare sORF and sRNA. User can refer these information to find the best sRNA candidates.</p>
-<p>If user want to detect the UTR derived sRNA, it will be necessary to import
-more information.</p>
-<p>TSS: It becomes necessary information. Because UTR derived sRNAs must to from TSS.</p>
-<p>wiggle file: It becomes necessary information. Because the terminal of UTR derived
-sRNAs should be processing site or dramatic coverage decreasing point.
-The libraries and wiggle files, Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
-<p>processing site: Some 3&#8217;UTR derived and interCDS derived sRNA candidates start
-from processing site not TSS.</p>
+Or the results will be meaningless.
+Of course, it can run <code class="docutils literal"><span class="pre">srna</span></code> without <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.</p>
+<p>nr database: It could be used to search the known proteins in order to exclude false positive.</p>
+<p>sORFs: It could compare sORFs and sRNAs. User can refer these information to find the best sRNA candidates.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1245,21 +1152,28 @@ from processing site not TSS.</p>
                       [--annotation_folder ANNOTATION_FOLDER]
                       [--TSS_folder TSS_FOLDER]
                       [--processing_site_folder PROCESSING_SITE_FOLDER]
+                      [--TSS_source]
                       [--TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
                       [--TSS_5UTR_fuzzy TSS_5UTR_FUZZY]
                       [--TSS_3UTR_fuzzy TSS_3UTR_FUZZY]
                       [--TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY]
+                      [--terminator_folder TERMINATOR_FOLDER]
+                      [--terminator_fuzzy_in_CDS TERMINATOR_FUZZY_IN_CDS]
+                      [--terminator_fuzzy_out_CDS TERMINATOR_FUZZY_OUT_CDS]
                       [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
                       [--tex_wig_folder TEX_WIG_FOLDER]
                       [--frag_wig_folder FRAG_WIG_FOLDER]
-                      [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
+                      [--run_intergenic_TEX_coverage RUN_INTERGENIC_TEX_COVERAGE [RUN_INTERGENIC_TEX_COVERAGE ...]]
+                      [--run_intergenic_noTEX_coverage RUN_INTERGENIC_NOTEX_COVERAGE [RUN_INTERGENIC_NOTEX_COVERAGE ...]]
+                      [--run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE [RUN_INTERGENIC_FRAGMENTED_COVERAGE ...]]
                       [--intergenic_tolerance INTERGENIC_TOLERANCE]
-                      [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
-                      [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-                      [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
+                      [--run_utr_TEX_coverage RUN_UTR_TEX_COVERAGE [RUN_UTR_TEX_COVERAGE ...]]
+                      [--run_utr_noTEX_coverage RUN_UTR_NOTEX_COVERAGE [RUN_UTR_NOTEX_COVERAGE ...]]
+                      [--run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE [RUN_UTR_FRAGMENTED_COVERAGE ...]]
+                      [--min_utr_coverage MIN_UTR_COVERAGE]
                       [--fasta_folder FASTA_FOLDER]
                       [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
-                      [--database_format]
+                      [--nr_format] [--srna_format]
                       [--sRNA_database_path SRNA_DATABASE_PATH]
                       [--nr_database_path NR_DATABASE_PATH]
                       [--sRNA_blast_stat]
@@ -1274,7 +1188,10 @@ from processing site not TSS.</p>
                       [--fuzzy_utr FUZZY_UTR] [--cutoff_nr_hit CUTOFF_NR_HIT]
                       [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
                       [--sORF SORF] [--best_with_all_sRNAhit]
-                      [--best_without_sORF_candidate]
+                      [--best_without_sORF_candidate] [--best_with_terminator]
+                      [--detect_sRNA_in_CDS]
+                      [--overlap_percent_CDS OVERLAP_PERCENT_CDS]
+                      [--ignore_hypothetical_protein]
                       [project_path]
 
 positional arguments:
@@ -1299,13 +1216,14 @@ optional arguments:
                         on. Default is False.
   --import_info IMPORT_INFO [IMPORT_INFO ...], -d IMPORT_INFO [IMPORT_INFO ...]
                         There are several types of information you can import
-                        to detect and filter sRNA: TSS(1), energy of secondary
-                        structure(2), blast to nr(3), blast to sRNA(4),
-                        sORF(5), without any information, only detect sRNA
-                        (without any information) by transcriptome
-                        assembly(6).Please assign the number of type you want
-                        to import, i.e. 1 2 4 - means it used TSS, energy and
-                        blast result to detect sRNA. Besides these
+                        to detect and filter sRNA: tss(the sRNA should start
+                        from a TSS), sec_str(energy of secondary structure),
+                        blast_nr(blast to nr), blast_srna(blast to sRNA),
+                        sorf(compare with sORF), term(compare with
+                        terminator). Default is None(detect sRNA without any
+                        filtering).Please assign the information you want to
+                        import, i.e. tss sec_str blast_nr - means it used TSS,
+                        energy and blast result to detect sRNA. Besides these
                         information, it will also consider the sequence length
                         of sRNA.
   --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
@@ -1321,25 +1239,48 @@ optional arguments:
                         please assign the path of gff folder of processing
                         site.If you want to detect UTR derived sRNA, you MUST
                         assign the folder of processing site.
+  --TSS_source, -ts     If your gff file of TSS is not generated by ANNOgesic,
+                        please you turn it on. It will generate the type of
+                        TSS and the proper format for sRNA prediction. Default
+                        is True.
   --TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
                         If you want to import TSS information, you need to
                         assign the fuzzy for comparing TSS and transcript
-                        assembly. It is for intergenic.Default is 3.
+                        assembly/CDS. It is for intergenic.Default is 3.
   --TSS_5UTR_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
                         If you want to import TSS information, you need to
                         assign the fuzzy for comparing TSS and transcript
                         assembly. It is for 5&#39;UTR of UTR derived sRNA.Default
-                        is 3.
+                        is n_3.
   --TSS_3UTR_fuzzy TSS_3UTR_FUZZY, -f3 TSS_3UTR_FUZZY
                         If you want to import TSS information, you need to
                         assign the fuzzy for comparing TSS and transcript
-                        assembly. It is for 3&#39;UTR of UTR derived sRNA.Default
-                        is 10.
+                        assembly/CDS. It is for 3&#39;UTR of UTR derived sRNA.You
+                        can use percentage or the amount of reads. p_0.05
+                        means the fuzzy is 5 percent of the length of CDS
+                        which overlap with transcript. n_10 means the fuzzy is
+                        10 base pair. Default is p_0.04.
   --TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY, -fc TSS_INTERCDS_FUZZY
                         If you want to import TSS information, you need to
                         assign the fuzzy for comparing TSS and transcript
-                        assembly. It is for interCDS derived sRNA.Default is
-                        10.
+                        assembly. It is for interCDS derived sRNA.You can use
+                        percentage or the amount of reads. p_0.05 means the
+                        fuzzy is 5 percent of the length of CDS which overlap
+                        with transcript. n_10 means the fuzzy is 10 base pair.
+                        Default is p_0.04.
+  --terminator_folder TERMINATOR_FOLDER, -tf TERMINATOR_FOLDER
+                        If you want to import terminator information, please
+                        assign the path of gff folder of terminator.
+  --terminator_fuzzy_in_CDS TERMINATOR_FUZZY_IN_CDS, -tfi TERMINATOR_FUZZY_IN_CDS
+                        If you want to import terminator information, you need
+                        to assign the fuzzy for comparing terminator and
+                        transcript assembly. It is the fuzzy for the
+                        terminator which is within CDS. Default is 30.
+  --terminator_fuzzy_out_CDS TERMINATOR_FUZZY_OUT_CDS, -tfo TERMINATOR_FUZZY_OUT_CDS
+                        If you want to import terminator information, you need
+                        to assign the fuzzy for comparing terminator and
+                        transcript assembly. It is the fuzzy for the
+                        terminator with is out of CDS. Default is 30.
   --min_length MIN_LENGTH, -lm MIN_LENGTH
                         Please assign the minimum length of sRNA. It will
                         classify sRNA candidates based on the value. Default
@@ -1352,40 +1293,107 @@ optional arguments:
                         The path of tex+/- wig folder.
   --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
                         The path of fragment wig folder.
-  --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
-                        The cutoff of minimal coverage of intergenic sRNA
-                        candidates. Default is 5
-  --intergenic_tolerance INTERGENIC_TOLERANCE, -it INTERGENIC_TOLERANCE
+  --run_intergenic_TEX_coverage RUN_INTERGENIC_TEX_COVERAGE [RUN_INTERGENIC_TEX_COVERAGE ...], -it RUN_INTERGENIC_TEX_COVERAGE [RUN_INTERGENIC_TEX_COVERAGE ...]
+                        The minimal average coverage of intergenic sRNA
+                        candidates for TEX +. You can choose what kinds of TSS
+                        you want to use for sRNA prediction and assign the
+                        cutoff of coverage to TSS. The order of numbers is
+                        &quot;Primary Secondary Internal Antisense Orphan&quot;. Ex: if
+                        you assign 0 0 0 50 10, it means you want to use
+                        Antisense(cutoff coverage is 50) and Orphan(cutoff
+                        coverage is 10) for sRNA prediction. 0 means you don&#39;t
+                        want to use it for prediction. If you don&#39;t use TSS
+                        information for prediction, it will choose the lowest
+                        one as a cutoff. Ex: if you assign 0 0 0 50 10 and you
+                        have no TSS information, it will use 10 as a general
+                        cutoff for prediction. Default is 0 0 0 40 20.
+  --run_intergenic_noTEX_coverage RUN_INTERGENIC_NOTEX_COVERAGE [RUN_INTERGENIC_NOTEX_COVERAGE ...], -in RUN_INTERGENIC_NOTEX_COVERAGE [RUN_INTERGENIC_NOTEX_COVERAGE ...]
+                        The minimal average coverage of intergenic sRNA
+                        candidates for TEX -. You can choose what kinds of TSS
+                        you want to use for sRNA prediction and assign the
+                        cutoff of coverage to TSS. The order of numbers is
+                        &quot;Primary Secondary Internal Antisense Orphan&quot;. Ex: if
+                        you assign 0 0 0 50 10, it means you want to use
+                        Antisense(cutoff coverage is 50) and Orphan(cutoff
+                        coverage is 10) for sRNA prediction. 0 means you don&#39;t
+                        want to use it for prediction. If you don&#39;t use TSS
+                        information for prediction, it will choose the lowest
+                        one as a cutoff. Ex: if you assign 0 0 0 50 10 and you
+                        have no TSS information, it will use 10 as a general
+                        cutoff for prediction. Default is 0 0 0 30 10.
+  --run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE [RUN_INTERGENIC_FRAGMENTED_COVERAGE ...], -if RUN_INTERGENIC_FRAGMENTED_COVERAGE [RUN_INTERGENIC_FRAGMENTED_COVERAGE ...]
+                        The minimal average coverage of intergenic sRNA
+                        candidates for fragmented library. You can choose what
+                        kinds of TSS you want to use for sRNA prediction and
+                        assign the cutoff of coverage to TSS. The order of
+                        numbers is &quot;Primary Secondary Internal Antisense
+                        Orphan&quot;. Ex: if you assign 0 0 0 50 10, it means you
+                        want to use Antisense(cutoff coverage is 50) and
+                        Orphan(cutoff coverage is 10) for sRNA prediction. 0
+                        means you don&#39;t want to use it for prediction. If you
+                        don&#39;t use TSS information for prediction, it will
+                        choose the lowest one as a cutoff. Ex: if you assign 0
+                        0 0 50 10 and you have no TSS information, it will use
+                        10 as a general cutoff for prediction. Default is 400
+                        200 0 50 20.
+  --intergenic_tolerance INTERGENIC_TOLERANCE, -ti INTERGENIC_TOLERANCE
                         This number indicates how willing the algorithm is to
                         ignore a temporary drop below this number. Default is
                         5.
-  --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
-                        The cutoff of minimal coverage of 5&#39;UTR derived sRNA
-                        candidates. You can also assign median or mean.
-                        Default is median
-  --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
-                        The cutoff of minimal coverage of 3&#39;UTR derived sRNA
-                        candidates. You can also assign median or mean.
-                        Default is median
-  --cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
-                        The cutoff of minimal coverage of inter CDS sRNA
-                        candidates. You can also assign median or mean.
-                        Default is median
+  --run_utr_TEX_coverage RUN_UTR_TEX_COVERAGE [RUN_UTR_TEX_COVERAGE ...], -ut RUN_UTR_TEX_COVERAGE [RUN_UTR_TEX_COVERAGE ...]
+                        The minimal average coverage of UTR derived sRNA
+                        candidates for TEX +. You can assign the percentile or
+                        real number of coverage for 5&#39;UTR, 3&#39;UTR and interCDS.
+                        The order of numbers are &quot;5&#39;UTR, 3&#39;UTR and interCDS&quot;.
+                        Ex: if you assign &quot;p_0.7 p_0.5 p_0.5&quot;, it will use 70
+                        percentile of coverage as cutoff for 5&#39;UTR, median of
+                        coverage as cutoff for 3&#39;UTR and interCDS. Ex: if you
+                        assign &quot;n_30 n_10 n_20 &quot; it will use 30 as cutoff for
+                        5&#39;UTR and 10 as cutoff for 3&#39;UTR and 20 for interCDS.
+                        Default is p_0.8 p_0.3 p_0.6.
+  --run_utr_noTEX_coverage RUN_UTR_NOTEX_COVERAGE [RUN_UTR_NOTEX_COVERAGE ...], -un RUN_UTR_NOTEX_COVERAGE [RUN_UTR_NOTEX_COVERAGE ...]
+                        The minimal average coverage of UTR derived sRNA
+                        candidates for TEX -. You can assign the percentile or
+                        real number of coverage for 5&#39;UTR, 3&#39;UTR and interCDS.
+                        The order of numbers are &quot;5&#39;UTR, 3&#39;UTR and interCDS&quot;.
+                        Ex: if you assign &quot;p_0.7 p_0.5 p_0.5&quot;, it will use 70
+                        percentile of coverage as cutoff for 5&#39;UTR, median of
+                        coverage as cutoff for 3&#39;UTR and interCDS. Ex: if you
+                        assign &quot;n_30 n_10 n_20 &quot; it will use 30 as cutoff for
+                        5&#39;UTR and 10 as cutoff for 3&#39;UTR and 20 for interCDS.
+                        Default is p_0.7 p_0.2 p_0.5.
+  --run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE [RUN_UTR_FRAGMENTED_COVERAGE ...], -uf RUN_UTR_FRAGMENTED_COVERAGE [RUN_UTR_FRAGMENTED_COVERAGE ...]
+                        The minimal average coverage of UTR derived sRNA
+                        candidates for fragmented library. You can assign the
+                        percentile or real number of coverage for 5&#39;UTR, 3&#39;UTR
+                        and interCDS. The order of numbers are &quot;5&#39;UTR, 3&#39;UTR
+                        and interCDS&quot;. Ex: if you assign &quot;p_0.7 p_0.5 p_0.5&quot;,
+                        it will use 70 percentile of coverage as cutoff for
+                        5&#39;UTR, median of coverage as cutoff for 3&#39;UTR and
+                        interCDS. Ex: if you assign &quot;n_30 n_10 n_20 &quot; it will
+                        use 30 as cutoff for 5&#39;UTR and 10 as cutoff for 3&#39;UTR
+                        and 20 for interCDS. Default is p_0.7 p_0.25 p_0.5.
+  --min_utr_coverage MIN_UTR_COVERAGE, -mu MIN_UTR_COVERAGE
+                        The minimum coverage of UTR-derived sRNA. The coverage
+                        should not only fit the --run_utr_TEX_coverage,
+                        --run_utr_noTEX_coverage and
+                        --run_utr_fragmented_coverage, but also this value.
+                        Defaul is 50.
   --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
                         If you want to import secondary structure information,
                         please assign the path of fasta folder.
   --cutoff_energy CUTOFF_ENERGY, -e CUTOFF_ENERGY
                         If you want to import secondary structure information,
-                        please assign the cutoff of folding energy change. It
-                        is the folding enery change divided by the length of
-                        sequence. It will classify sRNA candidates based on
-                        the value. Default is 0.
+                        please assign the cutoff of folding energy change
+                        (normalized by length of gene). Default is -0.05.
   --mountain_plot, -m   If you want to generate mountain plots of sRNA
                         candidates, please turn it on. Default is False.
-  --database_format, -fd
-                        It is for formating database. If you already format
-                        your database, you don&#39;t need to turn it on. Default
-                        is False
+  --nr_format, -nf      It is for formating nr database. If you already format
+                        nr database, you don&#39;t need to turn it on. Default is
+                        False.
+  --srna_format, -sf    It is for formating sRNA database. If you already
+                        format sRNA database, you don&#39;t need to turn it on.
+                        Default is False.
   --sRNA_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
                         If you want to import blast results of sRNA, please
                         assign the path of sRNA database.
@@ -1406,9 +1414,9 @@ optional arguments:
                         tion_id(integer):replicate_id(alphabet):strand(+ or
                         -).
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                        library name of fragment libraries. The format is: wig
-                        _file_name:fragmented(frag):condition_id(integer):repl
-                        icate_id(alphabet):strand(+ or -).
+                        library name of fragmented libraries. The format is: w
+                        ig_file_name:fragmented(frag):condition_id(integer):re
+                        plicate_id(alphabet):strand(+ or -).
   --tex_notex TEX_NOTEX, -te TEX_NOTEX
                         For tex +/- libraries, sRNA candidates should be
                         detected by both or just one.(1/2) Default is 2.
@@ -1419,7 +1427,7 @@ optional arguments:
                         The sRNA of fragmented libraries should be detected
                         more than this number of replicates.
   --table_best, -tb     The output table of sRNA candidates only print the
-                        best track. Default is False
+                        best track. Default is False.
   --decrease_intergenic DECREASE_INTERGENIC, -di DECREASE_INTERGENIC
                         If the intergenic region is longer than the
                         max_length, it will based on coverage to check the
@@ -1429,7 +1437,7 @@ optional arguments:
                         consider the the point of lowest coverage to be end of
                         sRNA. If the length of sRNA candidate is properly, it
                         also assign the transcript to be one of sRNA
-                        candidates. Default is 0.5.
+                        candidates. Default is 0.1.
   --decrease_utr DECREASE_UTR, -du DECREASE_UTR
                         If the kind of utr derived is 5&#39;UTR, you have to
                         consider the end of it&#39;s end.If the ratio of lowest
@@ -1438,7 +1446,7 @@ optional arguments:
                         point of lowest coverage to be end of sRNA. If the
                         length of sRNA candidate is properly, it also assign
                         the transcript to be one of sRNA candidates. Default
-                        is 0.5.
+                        is 0.05.
   --fuzzy_intergenic FUZZY_INTERGENIC, -fi FUZZY_INTERGENIC
                         If the situation is like --decrease_intergenic
                         mentioned, the value would be fuzzy between the end of
@@ -1453,10 +1461,10 @@ optional arguments:
                         exclude it during classification. Default is 0.
   --blast_e_nr BLAST_E_NR, -en BLAST_E_NR
                         The cutoff of blast e value for nr alignment. Default
-                        is 0.0001
+                        is 0.0001.
   --blast_e_srna BLAST_E_SRNA, -es BLAST_E_SRNA
                         The cutoff of blast e value for sRNA alignment.
-                        Default is 0.0001
+                        Default is 0.0001.
   --sORF SORF, -O SORF  If you want to compare sORF and sRNA, please assign
                         the path of sORF gff folder.
   --best_with_all_sRNAhit, -ba
@@ -1473,6 +1481,28 @@ optional arguments:
                         also can be detected by sORF file.Please turn it on.
                         Or it will select the best candidates without
                         considering the overlap with sORF. Default is False.
+  --best_with_terminator, -bt
+                        If you want to generate the files which store the best
+                        sRNA candidates only include the sRNA candidates which
+                        have terminator. Please turn it on. Or it will select
+                        the best candidates without considering the
+                        terminator. If the sRNA candidate ends with processing
+                        site, it will include to best results, too. Default is
+                        False.
+  --detect_sRNA_in_CDS, -ds
+                        If you assume there some wrong annotation in your
+                        genome annotation file and you want to search the
+                        small transcript in CDS, you can turn it on. It may
+                        find more sRNA candidates which overlap with CDS.
+                        Default is False.
+  --overlap_percent_CDS OVERLAP_PERCENT_CDS, -oc OVERLAP_PERCENT_CDS
+                        If you want to execute --detect_sRNA_in_CDS, you can
+                        assign the cutoff. If the ratio of overlap between CDS
+                        and sRNA candidates is lower than the cutoff, It may
+                        be sRNA candidates. Default is 0.5
+  --ignore_hypothetical_protein, -ih
+                        If you want to ignore hypothetical protein in genome
+                        annotation file, you can turn it on. Default is False.
 </pre></div>
 </div>
 <ul class="simple">
@@ -1482,42 +1512,51 @@ optional arguments:
 <p><code class="docutils literal"><span class="pre">sRNA_2d_$STRAIN_NAME</span></code>: The secondary structure of all sRNA candidates.</p>
 <p><code class="docutils literal"><span class="pre">sRNA_seq_$STRAIN_NAME</span></code>: The sequence of all sRNA candidates.</p>
 <p><code class="docutils literal"><span class="pre">blast_result_and_misc</span></code>: the results of blast.</p>
-<p><code class="docutils literal"><span class="pre">mountain_plot</span></code>: the mountain plot of sRNA candidates.</p>
-<p><code class="docutils literal"><span class="pre">sec_structure</span></code>: the dot plot and secondary structure plot of sRNA candidates.</p>
-<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files. <code class="docutils literal"><span class="pre">stat_sRNA_blast_class_$STRAIN_NAME.csv</span></code> is the results of analysis of blast sRNA database.
+<p><code class="docutils literal"><span class="pre">mountain_plot</span></code>: the mountain plots of sRNA candidates.</p>
+<p><code class="docutils literal"><span class="pre">sec_structure</span></code>: the dot plots and secondary structure plots of sRNA candidates.</p>
+<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files. <code class="docutils literal"><span class="pre">stat_sRNA_blast_class_$STRAIN_NAME.csv</span></code> is the results of analysis of blast sRNA databases.
 <code class="docutils literal"><span class="pre">stat_sRNA_class_Staphylococcus_aureus_HG003.csv</span></code> is the results of classification of sRNA candidates.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: sRNA tables for more details. <code class="docutils literal"><span class="pre">for</span> <span class="pre">class</span></code> is for different classes of sRNAs.
-<code class="docutils literal"><span class="pre">best</span></code> is the best results of sRNA. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates without filtering.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of sRNA. The meaning of <code class="docutils literal"><span class="pre">for</span> <span class="pre">class</span></code>, <code class="docutils literal"><span class="pre">best</span></code>, <code class="docutils literal"><span class="pre">all_candidates</span></code> is the same as <code class="docutils literal"><span class="pre">tables</span></code>.</p>
-<p>The tags of gff file:</p>
-<p>Second column presents the type of sRNA - <code class="docutils literal"><span class="pre">intergenic</span></code> or <code class="docutils literal"><span class="pre">UTR_derived</span></code></p>
-<p><code class="docutils literal"><span class="pre">UTR_type</span></code>: The sRNA is from 5&#8217;UTR or 3&#8217;UTR or interCDS.</p>
-<p><code class="docutils literal"><span class="pre">with_TSS</span></code>: The sRNA is from which TSS. NA means the sRNA is not related with TSS.</p>
-<p><code class="docutils literal"><span class="pre">start_cleavage</span></code>: The sRNA may starts at which processing sites. This will only appear in 3&#8217;UTR or interCDS derived sRNA.</p>
-<p><code class="docutils literal"><span class="pre">end_cleavage</span></code>: The sRNA may ends at which processing sites.</p>
-<p><code class="docutils literal"><span class="pre">sORF</span></code>: Which sORF overlap with this sRNA.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: sRNA tables for more details. It also includes the ranking of sRNA candidates.
+<code class="docutils literal"><span class="pre">for</span> <span class="pre">class</span></code> is for different classes of sRNAs.
+<code class="docutils literal"><span class="pre">best</span></code> is the best results of sRNAs. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates without filtering.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of sRNAs. The meanings of <code class="docutils literal"><span class="pre">for</span> <span class="pre">class</span></code>, <code class="docutils literal"><span class="pre">best</span></code>, <code class="docutils literal"><span class="pre">all_candidates</span></code> are the same as <code class="docutils literal"><span class="pre">tables</span></code>.</p>
+<p>The tags of gff files:</p>
+<p><code class="docutils literal"><span class="pre">sRNA_type</span></code>: The sRNA is from 5&#8217;UTR or 3&#8217;UTR or interCDS or intergenic or in_CDS.</p>
+<p><code class="docutils literal"><span class="pre">with_TSS</span></code>: which TSSs are related to this sRNA. NA means the sRNA is not related to any TSSs.</p>
+<p><code class="docutils literal"><span class="pre">start_cleavage</span></code>: The sRNA may start at which processing sites. This will only appear in 3&#8217;UTR or interCDS-derived sRNAs.</p>
+<p><code class="docutils literal"><span class="pre">end_cleavage</span></code>: The sRNA may end at which processing sites.</p>
+<p><code class="docutils literal"><span class="pre">sORF</span></code>: Which sORFs overlap with this sRNA.</p>
 <p><code class="docutils literal"><span class="pre">sRNA_hit</span></code>: The blast hit of sRNA database.</p>
 <p><code class="docutils literal"><span class="pre">nr_hit</span></code>: The blast hit of nr database.</p>
-<p><code class="docutils literal"><span class="pre">2d_energy</span></code>: The folding energy of sRNA candidate.</p>
+<p><code class="docutils literal"><span class="pre">2d_energy</span></code>: The normalized(by the length of sRNA) free energy change of secondary structure of sRNA candidate.</p>
+<p><code class="docutils literal"><span class="pre">with_term</span></code>: The terminators which associated with the sRNA candidate.</p>
+<p>If you assigned <code class="docutils literal"><span class="pre">--TSS_source</span></code> for sRNA prediction, <code class="docutils literal"><span class="pre">TSS_class</span></code> will be generated and store the gff files of TSSs.</p>
 </div>
 <div class="section" id="sorf">
 <h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">sorf</span></code> can detect start codon and stop codon within the intergenic region.
+<p><code class="docutils literal"><span class="pre">sorf</span></code> can detect ribosomal binding sites, start codons and stop codons within the intergenic regions.
 User can also import some information to filter false positive. Because non-coding region
-may be sRNA or sORF, it also provide the function to compare sORF and sRNA. If start and stop
-codons are more than one in sORF region. <code class="docutils literal"><span class="pre">sorf</span></code> will provide the longest one and all the start
-and stop codons. User can refer to it. BE CAREFUL, The length between start codon and stop codon
-should be multiple of 3 or it will not be sORF. The position of start codon is the first nucleotide.
-The position of stop codon is the last nucleotide.</p>
+may be sRNAs or sORFs, it also provide the function to compare sORFs and sRNAs. If start and stop
+codons are more than one in sORFs region. <code class="docutils literal"><span class="pre">sorf</span></code> will provide the region which cover all possible sORF
+and all the start and stop codons based on ribosomal binding sites. User can refer to it.
+BE CAREFUL, The position of start codon is the first nucleotide. The position of stop codon is the last nucleotide.
+As we know that three nucleotides form one amino acid. Therefore, one small transcript may contain
+three open reading frame for one strand. Since <code class="docutils literal"><span class="pre">sorf</span></code> provide the region which cover all possible sORF,
+the start point and end point may not be the multiple of 3. The region may contain different frame shift.
+Ex: (200, 202, 203) are the positions of three start codons and (241, 243) are two stop codons in
+a small transcript. we can see that there are three possible ORF(200-241, 203-241 and 202-243).
+for 200-241 and 203-241, the frame has no shift, because the difference of positions for these two
+ORF is the multiple of 3. However, for 202-243, there is a frame shift. Please be aware this point for
+using the results.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
-<p>The gff files of CDS/tRNA/rRNA and transcripts.</p>
+<p>The gff files of CDSs/tRNAs/rRNAs and transcripts.</p>
 <p>The libraries and wiggle files, Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
-<p>The fasta for detect start codon and stop codon.</p>
+<p>The fasta files for detect ribosomal binding sites, start codons and stop codons.</p>
 <p>User can also import some useful information to improve the prediction:</p>
-<p>gff file of TSS for checking the sORF start from TSS or not.
-gff file of sRNA for checking the conflict of sRNA and sORF.</p>
+<p>gff files of TSSs for checking the sORFs start from TSS or not.</p>
+<p>gff files of sRNAs for checking the conflict of sRNAs and sORFs.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1542,10 +1581,12 @@ gff file of sRNA for checking the conflict of sRNA and sORF.</p>
                       [--sRNA_folder SRNA_FOLDER]
                       [--start_codon START_CODON [START_CODON ...]]
                       [--stop_codon STOP_CODON [STOP_CODON ...]]
-                      [--max_dist_rbs MAX_DIST_RBS]
-                      [--min_dist_rbs MIN_DIST_RBS] [--rbs_not_after_TSS]
-                      [--fuzzy_rbs FUZZY_RBS] [--print_all_combination]
-                      [--best_no_sRNA] [--best_no_TSS]
+                      [--min_rbs_distance MIN_RBS_DISTANCE]
+                      [--max_rbs_distance MAX_RBS_DISTANCE]
+                      [--rbs_not_after_TSS] [--fuzzy_rbs FUZZY_RBS]
+                      [--print_all_combination] [--best_no_sRNA]
+                      [--best_no_TSS]
+                      [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
                       [project_path]
 
 positional arguments:
@@ -1585,16 +1626,25 @@ optional arguments:
                         candidates.
   --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
                         The cutoff of minimal coverage of 5&#39;UTR derived sORF
-                        candidates. You can also assign median or mean.
-                        Default is median.
+                        candidates. You can use percentage or the amount of
+                        reads. p_0.05 means the coverage of sORF candidates
+                        should higher than 5 percentile of all 5&#39;UTR
+                        transcripts. n_10 means the coverage of sORF
+                        candidates should be 10. Default is p_0.5.
   --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
                         The cutoff of minimal coverage of 3&#39;UTR derived sORF
-                        candidates. You can also assign median or mean.
-                        Default is median.
+                        candidates. You can use percentage or the amount of
+                        reads. p_0.05 means the coverage of sORF candidates
+                        should higher than 5 percentile of all 3&#39;UTR
+                        transcripts. n_10 means the coverage of sORF
+                        candidates should be 10. Default is p_0.5.
   --cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
                         The cutoff of minimal coverage of interCDS derived
-                        sORF candidates. You can also assign median or mean.
-                        Default is median.
+                        sORF candidates. You can use percentage or the amount
+                        of reads. p_0.05 means the coverage of sORF candidates
+                        should higher than 5 percentile of all interCDS
+                        transcripts. n_10 means the coverage of sORF
+                        candidates should be 10. Default is p_0.5.
   --cutoff_background CUTOFF_BACKGROUND, -cub CUTOFF_BACKGROUND
                         The cutoff of minimal coverage of all sORF candidates.
                         Default is 5.
@@ -1605,9 +1655,9 @@ optional arguments:
                         wig_file_name:tex_treat_or_not(tex or notex):condition
                         _id(integer):replicate_id(alphabet):strand(+ or -).
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                        Library name of fragment library The format is: wig_fi
-                        le_name:fragmented(frag):condition_id(integer):replica
-                        te_id(alphabet):strand(+ or -)..
+                        Library name of fragmented library The format is: wig_
+                        file_name:fragmented(frag):condition_id(integer):repli
+                        cate_id(alphabet):strand(+ or -)..
   --tex_notex TEX_NOTEX, -te TEX_NOTEX
                         For tex +/- library, sORF candidates should be
                         detected by both or just one.(1/2) Default is 2.
@@ -1628,12 +1678,12 @@ optional arguments:
   --stop_codon STOP_CODON [STOP_CODON ...], -oc STOP_CODON [STOP_CODON ...]
                         What kinds of stop coden TTA/TAG/TGA you want to use.
                         Default is TTA TAG TGA.
-  --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
-                        The maximum distance between ribosomal binding site
-                        and start codon. Default is 14.
-  --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
-                        The minmum distance between ribosomal binding site and
-                        start codon. Default is 5.
+  --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
+                        The minimum distance between the ribosomal binding
+                        site and start codon. Default is 3.
+  --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
+                        The maximum distance between the ribosomal binding
+                        site and start codon. Default is 15.
   --rbs_not_after_TSS, -at
                         If you want to generate best gff file which include
                         ribosomal binding site not after TSS, please turn it
@@ -1651,6 +1701,9 @@ optional arguments:
                         False.
   --best_no_TSS, -bt    If you want to generate best gff file which not refere
                         to TSS, please turn it on. Default is False.
+  --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
+                        If you want to ignore hypothetical protein in genome
+                        annotation file, you can turn it on. Default is False.
 </pre></div>
 </div>
 <ul class="simple">
@@ -1658,31 +1711,32 @@ optional arguments:
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/sORF</span></code></p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: the tables of sORF for more details. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all sORF candidates without filtering.
-<code class="docutils literal"><span class="pre">best</span></code> is for the best sORF candidates with filtering. The table stores all the TSS, start codon and
-stop codon information.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of sORF. The meanings of <code class="docutils literal"><span class="pre">all_candidates</span></code> and <code class="docutils literal"><span class="pre">best</span></code> are the same as <code class="docutils literal"><span class="pre">tables</span></code>.</p>
-<p>The tags of gff file:</p>
-<p><code class="docutils literal"><span class="pre">start_TSS</span></code> is the sORF start from with TSS.</p>
-<p><code class="docutils literal"><span class="pre">with_TSS</span></code> means all TSSs which are located in the region of this sORF.</p>
-<p><code class="docutils literal"><span class="pre">UTR_type</span></code> is the type of UTR if the sORF is UTR derived one.</p>
-<p><code class="docutils literal"><span class="pre">sRNA</span></code> means which sRNA overlaps with this sORF.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: the tables of sORFs for more details. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all sORF candidates without filtering.
+<code class="docutils literal"><span class="pre">best</span></code> is for the best sORF candidates with filtering.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of sORFs. The meanings of <code class="docutils literal"><span class="pre">all_candidates</span></code> and <code class="docutils literal"><span class="pre">best</span></code> are the same as <code class="docutils literal"><span class="pre">tables</span></code>.</p>
+<p>The tags of gff files:</p>
+<p><code class="docutils literal"><span class="pre">start_TSS</span></code>: the region of sORFs starts from which TSS..</p>
+<p><code class="docutils literal"><span class="pre">with_TSS</span></code>: all TSSs which are located in the region of sORFs.</p>
+<p><code class="docutils literal"><span class="pre">sORF_type</span></code>: the type of UTR if the sORF is 5&#8217;UTR, 3&#8217;UTR, interCDS, intergenic or in_CDS.</p>
+<p><code class="docutils literal"><span class="pre">sRNA</span></code>: which sRNAs overlap with the the region of sORFs.</p>
+<p><code class="docutils literal"><span class="pre">RBS</span></code>: the ribosomal binding sites of the region of sORFs.</p>
+<p><code class="docutils literal"><span class="pre">frame_shift</span></code>: how many frame shift in the regions of sORFs.</p>
 </div>
 <div class="section" id="promoter">
 <h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSS to discover the promoter motif.
-User can assign the region of upstream TSS. We integrate MEME to compute the promoter.
-User can view the result very easily. If the gff file of TSS is not computed by
-ANNOgesic, please use &#8211;TSS_source. <code class="docutils literal"><span class="pre">promoter</span></code> will classify the TSS for computing
-promoter motif.</p>
+<p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSSs to discover the promoter motifs.
+User can assign the regions of upstream TSSs. We integrate MEME to compute the promoters.
+User can view the results very easily. If the gff files of TSSs is not computed by
+ANNOgesic, please use &#8211;TSS_source. <code class="docutils literal"><span class="pre">promoter</span></code> will classify the TSSs for computing
+promoter motifs.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a></p>
-<p>Fasta and gff file of genome.</p>
-<p>Gff file of TSS.</p>
-<p>If the gff file of TSS is not computed by ANNOgesic, the libraries and wiggle files are necessary.
-Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
+<p>Fasta and gff files of genome.</p>
+<p>Gff files of TSSs.</p>
+<p>If the gff files of TSSs is not computed by ANNOgesic, the libraries and wiggle files are necessary.
+Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in order to assign the correct format.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1731,29 +1785,30 @@ optional arguments:
                         The path of annotation gff folder. If your TSS is not
                         from ANNOgesic, please assign the annotation gff path
                         too.
-  --combine_all, -c     If you want to combine all TSS in TSS output folder to
-                        generate a overall promoter motif, please turn it on.
-                        Default is False.
+  --combine_all, -c     If you want to combine all TSS in &quot;TSS_folder&quot; to
+                        generate promoter motifs, please turn it on. Default
+                        is False.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>All output file will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/promoter_analysis</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">allfasta</span></code>: the promoter information of all TSS (including all strains in gff file)</p>
-<p>Every strain will generate one folder for storing the information of promoter motif.</p>
-<p>If the TSS is not computed by ANNOgesic, <code class="docutils literal"><span class="pre">TSS_class</span></code> will be generated. It will classify the
-TSS and store as gff file in it.</p>
+<p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/promoter_analysis</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">allfasta</span></code>: if you turn <code class="docutils literal"><span class="pre">--combine_all</span></code> on, it will combine all TSSs in <code class="docutils literal"><span class="pre">--TSS_folder</span></code>
+to generate promoter motifs. The results will store in this folder.</p>
+<p>Every strain will generate one folder for storing the information of promoter motifs.</p>
+<p>If the TSSs are not computed by ANNOgesic, <code class="docutils literal"><span class="pre">TSS_class</span></code> will be generated. It will classify the
+TSSs and store as gff files in it.</p>
 </div>
 <div class="section" id="operon">
 <h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">operon</span></code> will group TSS, gene/CDS/tRNA/rRNA, transcript, terminator and UTR to operon and
-suboperon.</p>
+<p><code class="docutils literal"><span class="pre">operon</span></code> will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and
+suboperons.</p>
 <ul class="simple">
 <li>Pre-required tools or files</li>
 </ul>
-<p>Gff files of TSS, annotation, transcript, 5&#8217;UTR, and 3&#8217;UTR.</p>
-<p>If user want to import the information of terminator, <code class="docutils literal"><span class="pre">operon</span></code> can integrate terminator, too.</p>
+<p>Gff files of TSSs, annotations, transcripts, 5&#8217;UTRs, and 3&#8217;UTRs.</p>
+<p>If user wants to import the information of terminators, <code class="docutils literal"><span class="pre">operon</span></code> can integrate terminators, too.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1805,16 +1860,16 @@ optional arguments:
 <li>Output files</li>
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/operon</span></code></p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: the gff files which integrate the information of TSS, annotation,
-transcript, 5&#8217;UTR, and 3&#8217;UTR. The order of rows in gff file is according to the operon.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: the table of operon which stores all information of operon and suboperon.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: the gff files which integrate the information of TSSs, annotations,
+transcripts, 5&#8217;UTRs, and 3&#8217;UTRs. The order of rows in gff file is according to the operons.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: the tables of operons which store all information of operons and suboperons.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: the statistics files.</p>
 </div>
 <div class="section" id="circrna">
 <h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNA. It uses <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>
-to detect circular RNA. Then check annotation file and quality of splicing site detection to
-exclude false positive. User can assign reads for mapping and detect circular RNA or assign alignment files to skip mapping.
+<p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNAs. It uses <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>
+to detect circular RNAs. Then check annotation files and quality of splicing site detection to
+exclude false positive. User can assign reads for mapping and detect circular RNAs or assign alignment files to skip mapping.
 But BE CAREFUL, If user uses alignment files, they should be mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>
 and with <code class="docutils literal"><span class="pre">-S</span></code>. Or <code class="docutils literal"><span class="pre">circrna</span></code> can&#8217;t find the proper candidates.</p>
 <ul class="simple">
@@ -1823,7 +1878,7 @@ and with <code class="docutils literal"><span class="pre">-S</span></code>. Or <
 <p><a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a></p>
 <p>Fasta files of reads or alignment files. If you want input alignment files directly, remember they should be
 mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> and with <code class="docutils literal"><span class="pre">-S</span></code>.</p>
-<p>Fasta file and gff file of genome</p>
+<p>Fasta files and gff files of genome</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1835,6 +1890,7 @@ mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/S
                          [--annotation_path ANNOTATION_PATH]
                          [--convert_to_gff] [--support_reads SUPPORT_READS]
                          [--start_ratio START_RATIO] [--end_ratio END_RATIO]
+                         [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
                          [project_path]
 
 positional arguments:
@@ -1884,35 +1940,40 @@ optional arguments:
                         The ratio of (read support circ / all read) at end
                         point. The ratio of candidates should higher than this
                         cutoff. Default is 0.25.
+  --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
+                        If you want to ignore hypothetical protein in genome
+                        annotation file, you can turn it on. Default is False.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
 <p>All the output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/circRNA</span></code></p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of circular RNA. <code class="docutils literal"><span class="pre">$STRAINNAME_best.gff</span></code> is the gff file for best result after comparing
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: gff files of circular RNAs. <code class="docutils literal"><span class="pre">$STRAINNAME_best.gff</span></code> is the gff files for best result after comparing
 with annotation and quality of splicing. <code class="docutils literal"><span class="pre">$STRAINNAME_all.gff</span></code> is for all candidates without filering.</p>
-<p><code class="docutils literal"><span class="pre">circRNA_tables</span></code>: the tables for circular RNA with more details.</p>
+<p><code class="docutils literal"><span class="pre">circRNA_tables</span></code>: the tables for circular RNAs with more details.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files</p>
 <p><code class="docutils literal"><span class="pre">segemehl_align</span></code>: if <code class="docutils literal"><span class="pre">circrna</span></code> starts from read mapping, the folder is for results of mapping.</p>
-<p><code class="docutils literal"><span class="pre">segemehl_splice</span></code>: the results of splicing detection. The information of the splicing table, please
+<p><code class="docutils literal"><span class="pre">segemehl_splice</span></code>: the results of splicing detection. The information of the splicing tables, please
 refer to <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.</p>
 </div>
 <div class="section" id="go-term">
 <h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">go_term</span></code> can compare the annotation file and the Uniprot to retreive the information of Gene Ontology.
-It also provide some analysis of the classes of Go term.</p>
+<p><code class="docutils literal"><span class="pre">go_term</span></code> can compare the annotation files and the Uniprot to retreive the information of Gene Ontology.
+It also provides some analysis of the classes of Go terms.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://www.uniprot.org/downloads">idmapping_selected.tab from Uniprot</a></p>
 <p><a class="reference external" href="http://geneontology.org/page/go-slim-and-subset-guide">goslim.obo</a></p>
 <p><a class="reference external" href="http://geneontology.org/page/download-ontology">go.obo</a></p>
-<p>Gff file of annotation of genome.</p>
+<p>Gff files of annotation of genome.</p>
+<p>If you want to compute the expressed CDSs only, you need to assign the transcript gff files to it.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre>usage: annogesic go_term [-h] [--annotation_path ANNOTATION_PATH]
+                         [--transcript_path TRANSCRIPT_PATH]
                          [--UniProt_id UNIPROT_ID] [--go_obo GO_OBO]
                          [--goslim_obo GOSLIM_OBO]
                          [project_path]
@@ -1925,6 +1986,9 @@ optional arguments:
   -h, --help            show this help message and exit
   --annotation_path ANNOTATION_PATH, -g ANNOTATION_PATH
                         The path of annotation gff folder.
+  --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
+                        If you assign the path of transcript gff folder, it
+                        can get the results which only include expressed CDS.
   --UniProt_id UNIPROT_ID, -u UNIPROT_ID
                         The path of UniProt ID mapping database. Default is
                         ANNOgesic/input/database/idmapping_selected.tab.
@@ -1940,20 +2004,20 @@ optional arguments:
 <li>Output files</li>
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/Go_term</span></code></p>
-<p><code class="docutils literal"><span class="pre">Go_term_results</span></code>: the table of Go term information.</p>
-<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files and visualization files.</p>
+<p><code class="docutils literal"><span class="pre">Go_term_results</span></code>: the tables of Go terms information.</p>
+<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files and figures.</p>
 </div>
 <div class="section" id="srna-target">
 <h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">srna_target</span></code> will search the possible target of sRNA. Users can assign which
-program they want to use (RNAup or RNAplex or both). We recommand use both of the
+<p><code class="docutils literal"><span class="pre">srna_target</span></code> will search the possible targets of sRNAs. User can assign the
+programs for running (RNAup or RNAplex or both). We recommand use both of the
 programs. <code class="docutils literal"><span class="pre">srna_target</span></code> can compare the both results and provide the best ones.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://www.tbi.univie.ac.at/RNA/">ViennaRNA</a></p>
 <p>Gff files of annotation of genome and sRNA</p>
-<p>Fasta file of genome</p>
+<p>Fasta files of genome</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -1977,6 +2041,7 @@ programs. <code class="docutils literal"><span class="pre">srna_target</span></c
                              [--continue_rnaup]
                              [--potential_target_start POTENTIAL_TARGET_START]
                              [--potential_target_end POTENTIAL_TARGET_END]
+                             [--target_feature TARGET_FEATURE [TARGET_FEATURE ...]]
                              [project_path]
 
 positional arguments:
@@ -2060,39 +2125,44 @@ optional arguments:
                         How many downstream nucleotides of the start point of
                         CDS you want to extracts as potential target. Default
                         is 150.
+  --target_feature TARGET_FEATURE [TARGET_FEATURE ...], -tf TARGET_FEATURE [TARGET_FEATURE ...]
+                        What kinds of feature you want to extract as potential
+                        target. If you want to use multi-features, just use
+                        space to separate them. For example, CDS gene. Default
+                        is CDS.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/sRNA_targets</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">RNAplex</span></code>: the results of RNAplex. <code class="docutils literal"><span class="pre">$STRAIN_RNAplex.txt</span></code> is raw results from RNAplex.
-It includes the information of binding situation. <code class="docutils literal"><span class="pre">$STRAIN_RNAplex_rank.csv</span></code> is the results
+<p><code class="docutils literal"><span class="pre">RNAplex</span></code>: It stores the all results of RNAplex. <code class="docutils literal"><span class="pre">$STRAIN_RNAplex.txt</span></code> is raw results of RNAplex.
+It includes the information of binding situations. <code class="docutils literal"><span class="pre">$STRAIN_RNAplex_rank.csv</span></code> is the results
 that sort by binding energy.</p>
-<p><code class="docutils literal"><span class="pre">RNAup</span></code>: the results of RNAup. <code class="docutils literal"><span class="pre">$STRAIN_RNAup.txt</span></code> is raw results from RNAup.
-It includes the information of binding situation. <code class="docutils literal"><span class="pre">$STRAIN_RNAup_rank.csv</span></code> is the results
+<p><code class="docutils literal"><span class="pre">RNAup</span></code>: It store all the results of RNAup. <code class="docutils literal"><span class="pre">$STRAIN_RNAup.txt</span></code> is raw results of RNAup.
+It includes the information of binding situations. <code class="docutils literal"><span class="pre">$STRAIN_RNAup_rank.csv</span></code> is the results
 that sort by binding energy.</p>
 <p><code class="docutils literal"><span class="pre">merge</span></code>: the results which merge <code class="docutils literal"><span class="pre">RNAplex</span></code> and <code class="docutils literal"><span class="pre">RNAup</span></code>. <code class="docutils literal"><span class="pre">$STRAIN_merge.csv</span></code> is just
-merge the results. <code class="docutils literal"><span class="pre">$STRAIN_overlap.csv</span></code> is list the results which be top 20(default) in both methods.</p>
-<p><code class="docutils literal"><span class="pre">sRNA_seqs</span></code>: the fasta sequence of sRNA.</p>
-<p><code class="docutils literal"><span class="pre">target_seqs</span></code>: the fasta sequence of potential target.</p>
+merge the results. <code class="docutils literal"><span class="pre">$STRAIN_overlap.csv</span></code> lists the results which be top 20(default) in both methods.</p>
+<p><code class="docutils literal"><span class="pre">sRNA_seqs</span></code>: the fasta sequences of sRNAs.</p>
+<p><code class="docutils literal"><span class="pre">target_seqs</span></code>: the fasta sequences of potential targets.</p>
 </div>
 <div class="section" id="ppi-network">
 <h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> will retrieve the data from <a class="reference external" href="http://string-db.org/">STRING</a>.
 Then use <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> to search
-the literatures to support the Protein-protein interaction network. Therefore,
-<code class="docutils literal"><span class="pre">ppi_network</span></code> can generate the Protein-protein interaction network with literatures.
+the literatures to support the Protein-protein interaction networks. Therefore,
+<code class="docutils literal"><span class="pre">ppi_network</span></code> can generate the Protein-protein interaction networks with literatures.
 User can refer to it and exclude false positive.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://string-db.org/newstring_cgi/show_download_page.pl?UserId=ReWbu8uLrfAN&amp;sessionId=_FAQBbatf7RX">species.vXXXX.txt from STRING</a></p>
-<p>Ptt file of genome</p>
+<p>Ptt files of genome</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>usage: annogesic ppi_network [-h] [--ptt_path PTT_PATH]
+<div class="highlight-python"><div class="highlight"><pre>usage: annogesic ppi_network [-h] [--gff_path GFF_PATH]
                              [--proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...]]
                              [--without_strain_pubmed]
                              [--species_STRING SPECIES_STRING] [--score SCORE]
@@ -2106,8 +2176,12 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --ptt_path PTT_PATH, -p PTT_PATH
-                        The path of .ptt annotation folder.
+  --gff_path GFF_PATH, -g GFF_PATH
+                        The path of .gff annotation folder. Please confirm
+                        your gff files have proper locus_tag item in
+                        attributes. The locus_tag items can be real locus tag
+                        like locus_tag=SAOUHSC_00003, or they can be assigned
+                        by gene name, such as, locus_tag=dnaA.
   --proteinID_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
                         This is for assigning protein Id which you want to
                         predict. In order to retrieve the data from STRING and
@@ -2118,36 +2192,27 @@ optional arguments:
                         However, there is Staphylococcus aureus 8325 which is
                         highly similar with Staphylococcus aureus HG003.
                         Therefore, we can use it as reference. you can assign
-                        the it like Staphylococcus_aureus_HG003.ptt:Staphyloco
+                        the it like Staphylococcus_aureus_HG003.gff:Staphyloco
                         ccus_aureus_HG003:&quot;Staphylococcus aureus
                         8325&quot;:&quot;Staphylococcus aureus&quot;. or Staphylococcus_aureu
-                        s_HG003.ptt:Staphylococcus_aureus_HG003:&quot;93061&quot;:&quot;Staph
-                        ylococcus aureus&quot;. or Staphylococcus_aureus_HG003.ptt:
+                        s_HG003.gff:Staphylococcus_aureus_HG003:&quot;93061&quot;:&quot;Staph
+                        ylococcus aureus&quot;. or Staphylococcus_aureus_HG003.gff:
                         Staphylococcus_aureus_HG003:&quot;Staphylococcus aureus
-                        NCTC 8325&quot;:&quot;Staphylococcus aureus&quot;.
-                        (ptt_filename:header_ptt:STRING_name:Pubmed_name).
-                        First one is the ptt file name. Second one is the
-                        header of ptt files. If first line of ptt file has a
-                        comma, please use the string before comma, ex:
-                        Staphylococcus_aureus_HG003 chromosome, complete
-                        genome - 1..2821337. The header will be
-                        &quot;Staphylococcus_aureus_HG003 chromosome&quot;. If there is
-                        no comma in first line, the header will be the string
-                        before dash. ex: Staphylococcus_aureus_HG003 -
-                        1..1667867. The header will be
-                        &quot;Staphylococcus_aureus_HG003&quot;. Third one is for STRING
-                        database, and the fourth one is for Pubmed. Of course,
-                        you can run the script for several strains at the same
-                        time. Before running it, please check the species file
-                        which located in ANNOgesic/input/database .If you
-                        didn&#39;t download the file, please download it. You can
-                        use taxon_id, STRING_name_compact or
-                        official_name_NCBI to represent STRING_name.BE
-                        CAREFUL, if the name which you assigned has spaces,
-                        please put &quot;&quot; at two ends. For the name of Pubmed, you
-                        can assign the name not so specific. If you assign a
-                        specific name, it may not be able to find the related
-                        literatures.
+                        NCTC 8325&quot;:&quot;Staphylococcus aureus&quot;. (gff_filename:gff_
+                        strain_name:STRING_name:Pubmed_name). First one is the
+                        gff file name. Second one is the strain name of gff
+                        files. Third one is for STRING database, and the
+                        fourth one is for Pubmed. Of course, you can run the
+                        script for several strains at the same time. Before
+                        running it, please check the species file which
+                        located in ANNOgesic/input/database .If you didn&#39;t
+                        download the file, please download it. You can use
+                        taxon_id, STRING_name_compact or official_name_NCBI to
+                        represent STRING_name.BE CAREFUL, if the name which
+                        you assigned has spaces, please put &quot;&quot; at two ends.
+                        For the name of Pubmed, you can assign the name not so
+                        specific. If you assign a specific name, it may not be
+                        able to find the related literatures.
   --without_strain_pubmed, -n
                         If you want to retrieve pubmed without assign any
                         strains, please turn it on. Default is False.
@@ -2160,47 +2225,49 @@ optional arguments:
                         Please size of the nodes in figure, default is 4000.
   --query QUERY [QUERY ...], -q QUERY [QUERY ...]
                         Please assign the query protein here. The format is
-                        $HEADEROFPTT:$START_POINT:$END_POINT:$STRAND.For
-                        example, Helicobacter pylori 26695
-                        chromosome:345:456:+ Helicobacter pylori 26695
-                        chromosome:2000:3211:-. If you want to compute all
-                        protein, just type all. Default is all.
+                        $STRAINOFGFF:$START_POINT:$END_POINT:$STRAND.For
+                        example, Staphylococcus_aureus_HG003:345:456:+
+                        Staphylococcus_aureus_HG003:2000:3211:-. If you want
+                        to compute all protein, just type all. Default is all.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
 <p>All the output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/PPI</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">best_results</span></code>: the results which have supported literatures. <code class="docutils literal"><span class="pre">$STRAIN_without_strain.csv</span></code> is
-the results of searching without specific strain. <code class="docutils literal"><span class="pre">$STRAIN_with_strain.csv</span></code> is the results of
-searching with specific strain. For example, Staphylococcus_aureus_8325_without_strain.csv is
-search with Staphylococcus aureus; Staphylococcus_aureus_8325_without_strain.csv is search with
-Staphylococcus aureus 8325. <code class="docutils literal"><span class="pre">without_strain</span></code> stores all interaction information which search without
-specific strain. <code class="docutils literal"><span class="pre">with_strain</span></code> stores all interaction information which search with specific strain.</p>
-<p><code class="docutils literal"><span class="pre">all_results</span></code>: the results of all protein-protein interaction.
-Even the text-mining(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>) score is too low,
+<p><code class="docutils literal"><span class="pre">best_results</span></code>: the results which have supported literatures(the text-mining
+(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>) score is high enough).
+<code class="docutils literal"><span class="pre">$STRAIN_without_strain.csv</span></code> is the results of searching literatures without specific strain.
+<code class="docutils literal"><span class="pre">$STRAIN_with_strain.csv</span></code> is the results of searching literatures with specific strain.
+For example, Staphylococcus_aureus_8325_without_strain.csv is search with Staphylococcus aureus;
+Staphylococcus_aureus_8325_without_strain.csv is search without Staphylococcus aureus.
+<code class="docutils literal"><span class="pre">without_strain</span></code> stores all interaction information which search without specific strain.
+<code class="docutils literal"><span class="pre">with_strain</span></code> stores all interaction information which search with specific strain.</p>
+<p><code class="docutils literal"><span class="pre">all_results</span></code>: the results of all protein-protein interactions.
+(Even the text-mining(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>) score is too low),
 They still stores in this folder.</p>
-<p><code class="docutils literal"><span class="pre">figures</span></code>: the thickness is represent how many literatures can be found for the interaction of two proteins.
-The solid line means there is some literatures which strongly support the interaction. The dash-dot line
-means the supported literatures are very weak. The dot line means there is no literatures support the
-interaction. The color is the best score of the literatures of the interaction. Basically, these figures are
-generated from the <code class="docutils literal"><span class="pre">best_results</span></code></p>
+<p><code class="docutils literal"><span class="pre">figures</span></code>: the thickness is represent how many literatures can be found for the interactions of these two proteins.
+The solid line means there is some literatures which strongly support the interactions. The dash-dot line
+means the supported literatures are very weak. The dot line means there is no literatures which can support the
+interactions. The color is the best score of the literatures of the interactions.</p>
 </div>
 <div class="section" id="subcellular-localization">
 <h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">subcellular</span> <span class="pre">localization</span></code> can predict where is the CDS located. It also provide some statistics and
+<p><code class="docutils literal"><span class="pre">subcellular</span> <span class="pre">localization</span></code> can predict where are CDSs located. It also provide some statistics and
 visualization files.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://www.psort.org/psortb/">Psortb</a></p>
-<p>Gff file and fasta file of genome</p>
+<p>Gff files and fasta files of genome</p>
+<p>If you want to compute the expressed CDSs only, you need to assign the transcript gff files to it.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
 <div class="highlight-python"><div class="highlight"><pre>usage: annogesic subcellular_localization [-h] [--Psortb_path PSORTB_PATH]
                                           [--gff_path GFF_PATH]
                                           [--fasta_path FASTA_PATH]
+                                          [--transcript_path TRANSCRIPT_PATH]
                                           [--bacteria_type BACTERIA_TYPE]
                                           [--difference_multi DIFFERENCE_MULTI]
                                           [--merge_to_gff]
@@ -2219,6 +2286,9 @@ optional arguments:
                         The path of annotation gff folder.
   --fasta_path FASTA_PATH, -f FASTA_PATH
                         The path of fasta folder.
+  --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
+                        If you assign the path of transcript gff folder, it
+                        can get the results which only include expressed CDS.
   --bacteria_type BACTERIA_TYPE, -b BACTERIA_TYPE
                         Is Gram-positive or Gram-negative. Please assign
                         &#39;positive&#39; or &#39;negative&#39;.
@@ -2237,12 +2307,12 @@ optional arguments:
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/subcellular_localization</span></code></p>
 <p><code class="docutils literal"><span class="pre">psortb_results</span></code>: the results of Psortb.</p>
-<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files and visualization files</p>
+<p><code class="docutils literal"><span class="pre">statistics</span></code>: statistics files and figures</p>
 </div>
 <div class="section" id="riboswitch">
 <h2>riboswitch<a class="headerlink" href="#riboswitch" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">riboswitch</span></code> will search the intergenic region which has ribosome binding site.
-<code class="docutils literal"><span class="pre">riboswitch</span></code> use <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
+<p><code class="docutils literal"><span class="pre">riboswitch</span></code> will search the intergenic regions which have ribosome binding sites.
+Basically, <code class="docutils literal"><span class="pre">riboswitch</span></code> use <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
 <a class="reference external" href="http://rfam.xfam.org/">Rfam</a> to find the homologs of known riboswitchs.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
@@ -2250,10 +2320,9 @@ optional arguments:
 <p><a class="reference external" href="http://infernal.janelia.org/">Infernal</a></p>
 <p><a class="reference external" href="http://rfam.xfam.org/">Rfam</a></p>
 <p>Gff files and fasta files of genome</p>
-<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Accession of Rfam, ID and Description of riboswitch.
+<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Accession of Rfams, IDs and Descriptions of riboswitchs.
 The format is <code class="docutils literal"><span class="pre">$ACCESSION{tab}$ID{tab}$DESCRIPTION</span></code>. You can download the file from our
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv). Ours is based on the
-section of Rfam and literatures. You also can create your own one.</p>
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv). You also can create your own one.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
@@ -2315,18 +2384,17 @@ optional arguments:
 <li>Output files</li>
 </ul>
 <p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/riboswitch</span></code></p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: the gff file of riboswitch.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: the table of riboswich with more detail information.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: the gff files of riboswitchs.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: the tables of riboswichs with more details.</p>
 <p><code class="docutils literal"><span class="pre">scan_Rfam</span></code>: the results of <code class="docutils literal"><span class="pre">cmscan</span></code> of <a class="reference external" href="http://infernal.janelia.org/">Infernal</a>.
 User can find the results of blast.</p>
-<p><code class="docutils literal"><span class="pre">statistics</span></code>: the statistics files and visualization files.</p>
+<p><code class="docutils literal"><span class="pre">statistics</span></code>: the statistics files and figures.</p>
 </div>
 <div class="section" id="optimize-tsspredator">
 <h2>optimize_tsspredator<a class="headerlink" href="#optimize-tsspredator" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">optimize_tsspredator</span></code> can adapt the parameter set for the input genome. User need to
-manual check more than 100kb of genome sequence and the detected TSS need to be more than 50.
-Then <code class="docutils literal"><span class="pre">optimize_tsspredator</span></code> can based on the principle of manual detection to scan whole genome
-in order to get the best results.</p>
+manual check around 50 true postive as a reference. Then <code class="docutils literal"><span class="pre">optimize_tsspredator</span></code> can
+scan whole genome based on the principle of manual detection to get the best results.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
@@ -2411,7 +2479,7 @@ optional arguments:
   --max_base_height MAX_BASE_HEIGHT, -bh MAX_BASE_HEIGHT
                         This is the minimal number of reads should be mapped
                         on TSS. During optimization will never larger than
-                        this value. Default is 0.1.
+                        this value. Default is 0.06.
   --max_enrichment_factor MAX_ENRICHMENT_FACTOR, -ef MAX_ENRICHMENT_FACTOR
                         This is the minimal enrichment factor. During
                         optimization will never larger than this value.
@@ -2458,9 +2526,9 @@ optional arguments:
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>Based on the program (TSS/processing site), the output files will be stored in
+<p>Based on the programs (TSS/processing site), the output files will be stored in
 <code class="docutils literal"><span class="pre">$ANNOgesic/output/TSS/optimized_TSSpredator</span></code> or <code class="docutils literal"><span class="pre">$ANNOgesic/output/processing_site/optimized_TSSpredator</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">stat.csv</span></code> stores the information of every run. The first column is the number of run.
+<p><code class="docutils literal"><span class="pre">stat.csv</span></code> stores the information of every step. The first column is the number of run.
 The second column is the parameter set. <code class="docutils literal"><span class="pre">he</span></code> represent height; <code class="docutils literal"><span class="pre">rh</span></code> represent
 height reduction; <code class="docutils literal"><span class="pre">fa</span></code> means factor; <code class="docutils literal"><span class="pre">rf</span></code> means factor reduction; <code class="docutils literal"><span class="pre">bh</span></code> is
 base height; <code class="docutils literal"><span class="pre">ef</span></code> is enrichment factor; <code class="docutils literal"><span class="pre">pf</span></code> is processing factor. About the details
@@ -2472,20 +2540,21 @@ the number of true positive. The fifth and sixth columns are true positive rate.
 and eighth columns are the number of false positive. The ninth and tenth false positive rate.
 The eleventh and twelfth columns are the number of false negative. The thirteenth and fourteenth
 columns are missing rate.</p>
-<p><code class="docutils literal"><span class="pre">best.csv</span></code> stores the best parameter set. The meaning of all columns are the same as <code class="docutils literal"><span class="pre">stat.csv</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">best.csv</span></code> stores the best parameter set. The meanings of all columns are the same as <code class="docutils literal"><span class="pre">stat.csv</span></code>.</p>
 </div>
 <div class="section" id="screenshot">
 <h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">screenshot</span></code> will generate batch files based on input gff files for producing screenshot of <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>.
-When the batch file produced, user just need to open <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>, then press tools
-and run batch script. The program will automatically produce screenshot. Then user can refer to them easily.</p>
+When the batch files produced, user just need to open <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>, then press <code class="docutils literal"><span class="pre">tools</span></code>
+on the top tags and choose <code class="docutils literal"><span class="pre">run</span> <span class="pre">batch</span> <span class="pre">script</span></code>. The program will automatically produce screenshots.
+Then user can refer to them easily.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a></p>
-<p>Gff files that user want to produce screenshots. All screenshots will be produced based on the position of <code class="docutils literal"><span class="pre">main_gff</span></code>.
+<p>Gff files that user want to produce screenshots. All screenshots will be produced based on the positions of <code class="docutils literal"><span class="pre">main_gff</span></code>.
 <code class="docutils literal"><span class="pre">side_gffs</span></code> are the gff files that user want to compare with <code class="docutils literal"><span class="pre">main_gff</span></code>. They will also show in the screenshots.</p>
-<p>Fasta file of genome.</p>
+<p>Fasta files of genome.</p>
 <p>The libraries and wiggle files. Please refer to the <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code>.</p>
 <ul class="simple">
 <li>Arguments</li>
@@ -2546,28 +2615,28 @@ optional arguments:
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>Based on the path of <code class="docutils literal"><span class="pre">main_gff</span></code>, <code class="docutils literal"><span class="pre">screenshot</span></code> will generate a folder - <code class="docutils literal"><span class="pre">screenshots</span></code> under the
+<p>Based on the paths of <code class="docutils literal"><span class="pre">main_gff</span></code>, <code class="docutils literal"><span class="pre">screenshot</span></code> will generate a folder - <code class="docutils literal"><span class="pre">screenshots</span></code> under the
 folder of <code class="docutils literal"><span class="pre">main_gff</span></code>. All output files will be stored in this folder.</p>
-<p><code class="docutils literal"><span class="pre">forward.txt</span></code> is the batch file of forward strand.</p>
-<p><code class="docutils literal"><span class="pre">reverse.txt</span></code> is the batch file of reverse strand.</p>
+<p><code class="docutils literal"><span class="pre">forward.txt</span></code> is the batch file of forward strand for running on IGV.</p>
+<p><code class="docutils literal"><span class="pre">reverse.txt</span></code> is the batch file of reverse strand for running on IGV.</p>
 <p><code class="docutils literal"><span class="pre">forward</span></code> is the folder for storing screenshots of forward strand.</p>
 <p><code class="docutils literal"><span class="pre">reverse</span></code> is the folder for storing screenshots of reverse strand.</p>
 <p>When user run batch files on IGV. The screenshots will automatically store in <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>.
-The filename will be <code class="docutils literal"><span class="pre">$STRAIN:$START-$END.png</span></code>. For example, <code class="docutils literal"><span class="pre">NC_007795:1051529-1051696.png</span></code>
-means the strain of the screenshot is NC_007795. The feature&#8217;s start point is 1051529 and the end point is
+The format of filenames will be <code class="docutils literal"><span class="pre">$STRAIN:$START-$END.png</span></code>. For example, <code class="docutils literal"><span class="pre">NC_007795:1051529-1051696.png</span></code>
+means the strain is NC_007795. The feature&#8217;s start point is 1051529 and the end point is
 1051696.</p>
 </div>
 <div class="section" id="color-png">
 <h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">color_png</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If there are many wiggle files, it will be difficult
-to distinguish the tracks. Especially, when user want to compare TEX +/- libraries to check TSS or processing sites,
+to distinguish the tracks. Especially, when user want to compare TEX +/- libraries to check TSSs or processing sites,
 it is not convenient. <code class="docutils literal"><span class="pre">color_png</span></code> can color the tracks based on TEX +/- libraries. Therefore, the user can
 refer to the screenshots much easier.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
 <p><a class="reference external" href="http://www.imagemagick.org/script/index.php">ImageMagick</a></p>
-<p>The screenshots which generated from <code class="docutils literal"><span class="pre">screenshot</span></code>. Please make sure the folder of <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>
+<p>The screenshots which generated from <code class="docutils literal"><span class="pre">screenshot</span></code>. Please make sure the folders of <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>
 exist in the folder of <code class="docutils literal"><span class="pre">screenshots</span></code>.</p>
 <ul class="simple">
 <li>Arguments</li>
@@ -2603,84 +2672,23 @@ optional arguments:
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">ANNOgesic&#8217;s subcommands</a><ul>
-<li><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
-<li><a class="reference internal" href="#the-format-of-libraries-for-import-to-annogesic">The format of libraries for import to ANNOgesic</a></li>
-<li><a class="reference internal" href="#create">create</a></li>
-<li><a class="reference internal" href="#get-input-files">get_input_files</a></li>
-<li><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
-<li><a class="reference internal" href="#annotation-transfer">annotation_transfer</a></li>
-<li><a class="reference internal" href="#snp">snp</a></li>
-<li><a class="reference internal" href="#expression-analysis">expression_analysis</a></li>
-<li><a class="reference internal" href="#tsspredator-tss-and-processing-site-prediction">tsspredator(TSS and processing site prediction)</a></li>
-<li><a class="reference internal" href="#transcript-assembly">transcript_assembly</a></li>
-<li><a class="reference internal" href="#terminator">terminator</a></li>
-<li><a class="reference internal" href="#utr">utr</a></li>
-<li><a class="reference internal" href="#srna">srna</a></li>
-<li><a class="reference internal" href="#sorf">sorf</a></li>
-<li><a class="reference internal" href="#promoter">promoter</a></li>
-<li><a class="reference internal" href="#operon">operon</a></li>
-<li><a class="reference internal" href="#circrna">circrna</a></li>
-<li><a class="reference internal" href="#go-term">go_term</a></li>
-<li><a class="reference internal" href="#srna-target">srna_target</a></li>
-<li><a class="reference internal" href="#ppi-network">ppi_network</a></li>
-<li><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
-<li><a class="reference internal" href="#riboswitch">riboswitch</a></li>
-<li><a class="reference internal" href="#optimize-tsspredator">optimize_tsspredator</a></li>
-<li><a class="reference internal" href="#screenshot">screenshot</a></li>
-<li><a class="reference internal" href="#color-png">color_png</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="docker.html"
-                        title="previous chapter">Dockfiles</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="test_case.html"
-                        title="next chapter">Performing a test cast</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/subcommands.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2015, Sung-Huan Yu.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.4</a>
-      
-      |
-      <a href="_sources/subcommands.txt"
-          rel="nofollow">Page source</a></li>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="test_case.html" title="Performing a test cast"
+             >next</a></li>
+        <li class="right" >
+          <a href="docker.html" title="Dockfiles"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.1.3 documentation</a> &raquo;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Sung-Huan Yu.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
   </body>
 </html>

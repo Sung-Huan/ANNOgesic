@@ -16,7 +16,7 @@ Tools
 
 `Infernal <http://infernal.janelia.org/>`_ : version higher or equal than 1.1.1 (for riboswitch detection)
 
-`Matplotlib <http://matplotlib.org/>`_ : version higher or equal than 1.4.3 (for generate all statistics figure)
+`Matplotlib <http://matplotlib.org/>`_ : version higher or equal than 1.5.0 (for generate all statistics figure)
 
 `Networkx <https://networkx.github.io/>`_ : version higher or equal than 1.10 (for generate PPI figure)
 
@@ -51,7 +51,7 @@ Databases
 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (for sRNA detection)
 
-`Rfam <http://rfam.xfam.org/>`_ (for sRNA riboswitch)
+`Rfam <http://rfam.xfam.org/>`_ (for riboswitch)
 
 `idmapping_selected.tab from Uniprot <http://www.uniprot.org/downloads>`_ (for Go term detection)
 

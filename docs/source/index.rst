@@ -8,10 +8,12 @@ Table of content
 
    index
    prerequired
+   installation
    docker
    subcommands
    test_case
    troubleshooting
+   license
 
 Introduction
 =========================
