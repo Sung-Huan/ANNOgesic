@@ -406,6 +406,7 @@ def read_gff(tss_predict_file, tss_manual_file, gff_file):
     for entry in gff_parser.entries(tssm_fh):
         entry.attributes["print"] = False
         entry.attributes["libs"] = "manual"
+        entry.attributes["Method"] = "manual"
         tsss["tsss_m"].append(entry)
     tssm_fh.close()
     tsss["tsss_m"] = sorted(tsss["tsss_m"], key=lambda k: (k.seq_id, k.start))
@@ -448,7 +449,7 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
         else:
             tss = tss_p
         tss.attribute_string = define_attributes(tss)
-        tss.source = "TSSpredator_manual"
+        tss.attributes["Method"] = "TSSpredator_manual"
         if (not length) or \
            (tss.start <= int(length)):
             num_strain[tss.seq_id]["overlap"] += 1
@@ -467,10 +468,10 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
         pre_pos = tss.start
     else:
         if tss_m.seq_id == tss_p.seq_id:
-            tss_m.source = "manual"
             tss_entry = compare_tss_gene(tss_m, genes)
             tss_m.attributes = tss_entry[1]
             tss_m.attribute_string = tss_entry[0]
+            tss_m.attributes["Method"] = "manual"
             tsss["merge"].append(tss_m)
             if (not length) or \
                (tss_m.start <= int(length)):
@@ -540,7 +541,7 @@ def print_file(final_tsss, program, out_gff):
         tss.attribute_string = ";".join(
             ["=".join(items) for items in tss.attributes.items()])
         out.write("\t".join([str(field) for field in [
-                             tss.seq_id, tss.source, tss.feature, tss.start,
+                             tss.seq_id, "ANNOgesic", tss.feature, tss.start,
                              tss.end, tss.score, tss.strand, tss.phase,
                              tss.attribute_string]]) + "\n")
 

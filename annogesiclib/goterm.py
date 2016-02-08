@@ -101,7 +101,8 @@ class GoTermFinding(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
         self.multiparser.parser_gff(gffs, None)
-        self.multiparser.parser_gff(trans, "transcript")
+        if trans is not None:
+            self.multiparser.parser_gff(trans, "transcript")
         print("Computing all CDS...")
         self._retrieve_go(self.gff_path, self.result_all_path,
                           self.tran_path, uniprot, "all")

@@ -47,14 +47,14 @@ def initiate(key, key_list, class_name, class_num, index, out, content):
     return class_num
 
 def import_class(class_num, datas_srna, datas, index, num_srna, strain,
-                 type_, utr, energy, hit_nr_num):
+                 type_, srna_type, energy, hit_nr_num):
     for num in range(1, class_num + 1):
         datas_srna["class_" + str(num)] = []
     for data in datas[strain]:
         detect = False
-        if (data.source == type_) or (type_ == "total"):
+        if (data.attributes["sRNA_type"] == srna_type) or (type_ == "total"):
             if type_ == "UTR_derived":
-                if utr in data.attributes["UTR_type"]:
+                if srna_type in data.attributes["sRNA_type"]:
                     detect = True
             else:
                 detect = True
@@ -67,10 +67,12 @@ def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                     if data.attributes["with_TSS"] != "NA":
                         datas_srna["class_" + str(index["with_TSS"])].append(data)
                     elif ((type_ == "UTR_derived") or (type_ == "total")) and (
-                           data.source == "UTR_derived"):
+                           (data.attributes["sRNA_type"] == "5utr") or (
+                            data.attributes["sRNA_type"] == "3utr") or (
+                            data.attributes["sRNA_type"] == "interCDS")):
                         if (data.attributes["start_cleavage"] != "NA") and (
-                            ("3utr" in data.attributes["UTR_type"]) or (
-                             "interCDS" in data.attributes["UTR_type"])):
+                            ("3utr" in data.attributes["sRNA_type"]) or (
+                             "interCDS" in data.attributes["sRNA_type"])):
                             datas_srna["class_" + str(index["with_TSS"])].append(data)
                 if "nr_hit" in data.attributes.keys():
                     if ((data.attributes["nr_hit"] != "NA") and (
@@ -116,18 +118,18 @@ def import_data(class_num, datas, index, num_srna,
         num_srna["intergenic"] = import_class(class_num,
                                  datas_srna["intergenic"],
                                  datas, index, num_srna["intergenic"], strain,
-                                 "intergenic", None, energy, hit_nr_num)
+                                 "intergenic", "intergenic", energy, hit_nr_num)
     if checks["in_CDS"]:
         datas_srna["in_CDS"] = {}
         num_srna["in_CDS"] = import_class(class_num,
                                  datas_srna["in_CDS"],
                                  datas, index, num_srna["in_CDS"], strain,
-                                 "in_CDS", None, energy, hit_nr_num)
-    if (checks["utr"]) or (checks["in_CDS"]):
-        datas_srna["total"] = {}
-        num_srna["total"] = import_class(class_num, datas_srna["total"], datas,
-                            index, num_srna["total"], strain, "total", None,
-                            energy, hit_nr_num)
+                                 "in_CDS", "in_CDS", energy, hit_nr_num)
+#    if (checks["utr"]) or (checks["in_CDS"]):
+    datas_srna["total"] = {}
+    num_srna["total"] = import_class(class_num, datas_srna["total"], datas,
+                        index, num_srna["total"], strain, "total", None,
+                        energy, hit_nr_num)
     return datas_srna
 
 def sort_keys(keys):
@@ -196,11 +198,13 @@ def read_file(srna_file):
     pre_seq_id = ""
     fh = open(srna_file)
     for entry in Gff3Parser().entries(fh):
-        if entry.source == "UTR_derived":
+        if (entry.attributes["sRNA_type"] == "5utr") or (
+            entry.attributes["sRNA_type"] == "3utr") or (
+            entry.attributes["sRNA_type"] == "interCDS"):
             checks["utr"] = True
-        elif entry.source == "intergenic":
+        elif entry.attributes["sRNA_type"] == "intergenic":
             checks["inter"] = True
-        elif entry.source == "in_CDS":
+        elif entry.attributes["sRNA_type"] == "in_CDS":
             checks["in_CDS"] = True
         if entry.seq_id != pre_seq_id:
             srna_datas[entry.seq_id] = []
@@ -226,7 +230,7 @@ def classify_srna(srna_file, out_folder, energy, hit_nr_num,
             num_srna = {"total": 0, "intergenic": 0, "5'UTR_derived": 0,
                         "3'UTR_derived": 0, "interCDS": 0}
         else:
-            num_srna = {"intergenic": 0}
+            num_srna = {"intergenic": 0, "total": 0}
         if in_cds:
             num_srna["in_CDS"] = 0
         class_num, index = print_stat_title(checks, out_stat, strain, srna_datas,

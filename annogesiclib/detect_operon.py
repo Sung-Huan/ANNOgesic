@@ -92,18 +92,20 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
             if feature == "gene":
                 if (ta.strand == data.strand) and (
                     ta.seq_id == data.seq_id) and (
-                    ta.start <= data.start) and (
-                    ta.end >= data.end) and (
-                    (data.feature == "CDS") or (
-                     data.feature == "tRNA") or (
-                     data.feature == "rRNA") or (
-                     data.feature == "sRNA")):
-                    features["num"] += 1
-                    features["detect"] = True
-                    datas.append(data)
-                elif (ta.seq_id == data.seq_id) and (
-                      data.start > ta.end):
-                    break
+                    data.feature == "gene"):
+                    if ((ta.start <= data.start) and (
+                         ta.end >= data.end)) or (
+                        (ta.start >= data.start) and (
+                         ta.end <= data.end)) or (
+                        (ta.start >= data.start) and (
+                         ta.start <= data.end) and (
+                         ta.end >= data.end)) or (
+                        (ta.start <= data.start) and (
+                         ta.end <= data.end) and (
+                         ta.end >= data.start)):
+                        features["num"] += 1
+                        features["detect"] = True
+                        datas.append(data)
     return {"data_list": datas, "num_feature": features["num"],
             "with_feature": features["detect"]}
 

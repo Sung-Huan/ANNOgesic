@@ -418,14 +418,15 @@ def get_attribute(num, name, start_tss, sorf, type_):
                              ["with_TSS", "&".join(sorf["with_TSS"])],
                              ["sRNA", "&".join(sorf["srna"])],
                              ["RBS", "&".join(sorf["rbs"])],
-                             ["frame_shift", str(sorf["shift"])])])
+                             ["frame_shift", str(sorf["shift"])],
+                             ["sORF_type", "intergenic"])])
     else:
         attribute_string = ";".join(
             ["=".join(items) for items in (["ID", "sorf" + str(num)],
                              ["Name", "sORF_" + name],
                              ["start_TSS", start_tss],
                              ["with_TSS", "&".join(sorf["with_TSS"])],
-                             ["UTR_type", sorf["type"]],
+                             ["sORF_type", sorf["type"]],
                              ["sRNA", "&".join(sorf["srna"])],
                              ["RBS", "&".join(sorf["rbs"])],
                              ["frame_shift", str(sorf["shift"])])])
@@ -622,7 +623,7 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all,
                min_rbs, max_rbs, file_type, min_len, max_len):
     name = '%0*d' % (5, num)
     if sorf["type"] == "intergenic":
-        source = "intergenic"
+#        source = "intergenic"
         type_ = "Intergenic"
         for index in range(len(sorf["rbs"])):
             if (sorf["rbs"][index] == "NA") and (len(sorf["rbs"]) == 1):
@@ -631,7 +632,7 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all,
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
         attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "intergenic")
     else:
-        source = "UTR_derived"
+#        source = "UTR_derived"
         if ("3utr" in sorf["type"]) and ("5utr" in sorf["type"]):
             type_ = "3'UTR_derived;5'UTR_derived"
         elif ("3utr" in sorf["type"]):
@@ -647,7 +648,7 @@ def print_file(sorf, sorf_datas, num, out_g, out_t, table_best, print_all,
                 sorf["rbs"][index] = "RBS_" + str(sorf["rbs"][index])
         attribute_string = get_attribute(num, name, sorf["start_TSS"], sorf, "utr")
     info = "\t".join([str(field) for field in [
-                      sorf["strain"], source, "sORF", str(sorf["start"]),
+                      sorf["strain"], "ANNOgesic", "sORF", str(sorf["start"]),
                       str(sorf["end"]), ".", sorf["strand"],
                       ".", attribute_string]])
     out_g.write(info + "\n")

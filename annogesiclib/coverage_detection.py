@@ -79,24 +79,25 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
                 run_check_tex = True
         if run_check_tex:
             if (cover["type"] == "tex") or (cover["type"] == "notex"):
-                for key, num in texs.items():
+                for key in texs.keys():
                     if cover["track"] in key:
                         texs[key] += 1
                         check_texs[key].append(cover)
-                    if texs[key] >= tex_notex:
-                        if type_ == "sRNA_utr_derived":
-                            if detect_num == 0:
-                                poss["start"] = cover["final_start"]
-                                poss["end"] = cover["final_end"]
-                            else:
-                                exchange_start_end(poss, cover)
-                        detect_num += 1
-                        if cover not in target_datas:
-                            target_datas.append(cover)
-                        if tex_notex != 1:
-                            target_datas.append(check_texs[key][0])
+                        if texs[key] >= tex_notex:
                             if type_ == "sRNA_utr_derived":
-                                exchange_start_end(poss, check_texs[key][0])
+                                if detect_num == 0:
+                                    poss["start"] = cover["final_start"]
+                                    poss["end"] = cover["final_end"]
+                                else:
+                                    exchange_start_end(poss, cover)
+                            detect_num += 1
+                            if cover not in target_datas:
+                                target_datas.append(cover)
+                            if tex_notex != 1:
+                                if check_texs[key][0] not in target_datas:
+                                    target_datas.append(check_texs[key][0])
+                                    if type_ == "sRNA_utr_derived":
+                                        exchange_start_end(poss, check_texs[key][0])
             elif cover["type"] == "frag":
                 if type_ == "sRNA_utr_derived":
                     if detect_num == 0:

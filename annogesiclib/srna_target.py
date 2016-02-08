@@ -121,7 +121,7 @@ class sRNATargetPrediction(object):
             gff_f.close()
             out.close()
 
-    def _gen_seq(self, prefixs, querys, tar_start, tar_end):
+    def _gen_seq(self, prefixs, querys, tar_start, tar_end, features):
         print("Generating sRNA fasta files...")
         for srna in os.listdir(self.srna_path): # extract sRNA seq
             if srna.endswith("_sRNA.gff"):
@@ -147,7 +147,7 @@ class sRNATargetPrediction(object):
                 potential_target(os.path.join(self.gff_path, gff),
                                  os.path.join(self.fasta_path, prefix + ".fa"),
                                  os.path.join(self.target_seq_path),
-                                 tar_start, tar_end)
+                                 tar_start, tar_end, features)
                 file_num = 1
                 num = 0
                 sub_prefix = os.path.join(self.target_seq_path,
@@ -366,14 +366,14 @@ class sRNATargetPrediction(object):
                 query, program, inter_length, win_size_t, span_t, win_size_s,
                 span_s, unstr_region_rnaplex_t, unstr_region_rnaplex_s,
                 unstr_region_rnaup, energy, duplex_dist, top, out_folder,
-                core_plex, core_up, continue_rnaup, tar_start, tar_end):
+                core_plex, core_up, continue_rnaup, tar_start, tar_end, features):
         self._check_gff(gffs)
         self._check_gff(srnas)
         self.multiparser.parser_gff(gffs, None)
         self.multiparser.parser_fasta(fastas)
         self.multiparser.parser_gff(srnas, "sRNA")
         prefixs = []
-        self._gen_seq(prefixs, query, tar_start, tar_end)
+        self._gen_seq(prefixs, query, tar_start, tar_end, features)
         if (program == "both") or \
            (program == "RNAplex"):
             self._rna_plex(prefixs, self.rnaplex_path, vienna_path, win_size_s,

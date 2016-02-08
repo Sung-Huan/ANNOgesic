@@ -93,14 +93,14 @@ def get_stat_num(sorfs_all, utr_detect):
         if strain != sorf.seq_id:
             create_dict(nums, sorf.seq_id, utr_detect)
             strain = sorf.seq_id
-        if sorf.source == "intergenic":
+        if sorf.attributes["sORF_type"] == "intergenic":
             sorf_type = "intergenic"
         else:
-            if "5utr" in sorf.attributes["UTR_type"]:
+            if "5utr" in sorf.attributes["sORF_type"]:
                 sorf_type = "5'UTR_derived"
-            elif "3utr" in sorf.attributes["UTR_type"]:
+            elif "3utr" in sorf.attributes["sORF_type"]:
                 sorf_type = "3'UTR_derived"
-            elif "interCDS" in sorf.attributes["UTR_type"]:
+            elif "interCDS" in sorf.attributes["sORF_type"]:
                 sorf_type = "interCDS"
         check_class(sorf, nums, sorf_type, utr_detect, strain)
     return nums

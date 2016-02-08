@@ -156,7 +156,7 @@ class MEME(object):
                                     filename, width, num_motif, fasta)
 
     def _combine_file(self, source, gffs, fastas, wigs, input_libs,
-                      input_folder, output_folder, prefixs):
+                      input_folder, output_folder, prefixs, nt_before):
         if source:
             for tss in os.listdir(self.tss_path):
                 if tss.endswith("_TSS.gff"):
@@ -185,7 +185,7 @@ class MEME(object):
         self.helper.check_make_folder(os.path.join(output_folder, "allfasta"))
         self.helper.check_make_folder(os.path.join(input_folder, "allfasta"))
         upstream(self.all_tss, self.all_fasta, gffs,
-                 True, wigs, input_libs, None)
+                 True, wigs, input_libs, None, nt_before)
         self._move_and_merge_fasta(input_path, "allfasta")
 
     def _remove_files(self, fastas, tsss, gffs, wigs):
@@ -200,7 +200,7 @@ class MEME(object):
         shutil.rmtree("tmp")
 
     def run_meme(self, meme_path, input_folder, output_folder, input_libs,
-                 tsss, fastas, num_motif, widths, source, wigs,
+                 tsss, fastas, num_motif, nt_before, widths, source, wigs,
                  gffs, combine):
         if "allfasta.fa" in os.listdir(fastas):
             os.remove(self.all_fasta)
@@ -228,8 +228,8 @@ class MEME(object):
             if source:
                 print("generating fasta file of {0}".format(prefix))
                 upstream(os.path.join(self.tss_path, tss),
-                         os.path.join(fastas, fasta),
-                         gffs, source, wigs, input_libs, None)
+                         os.path.join(fastas, fasta), gffs, source,
+                         wigs, input_libs, None, nt_before)
             else:
                 if (gffs is None) or (wigs is None) or (input_libs is None):
                     print("Error:please assign proper annotation, tex +/- wig folder and tex treated libs!!!")
@@ -245,12 +245,12 @@ class MEME(object):
                          os.path.join(self.gff_path, prefix + ".gff"),
                          source, wigs, input_libs,
                          os.path.join(output_folder, "TSS_class",
-                         "_".join([prefix, "TSS.gff"])))
+                         "_".join([prefix, "TSS.gff"])), nt_before)
             self._move_and_merge_fasta(input_path, prefix)
             self._split_fasta_by_strain(input_path)
         if combine:
             self._combine_file(source, gffs, fastas, wigs, input_libs,
-                               input_folder, output_folder, prefixs)
+                               input_folder, output_folder, prefixs, nt_before)
         self._run_program(prefixs, input_folder, output_folder, widths,
                           meme_path, num_motif)
         self._remove_files(fastas, tsss, gffs, wigs)

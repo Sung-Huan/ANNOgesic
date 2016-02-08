@@ -2,6 +2,7 @@ import os
 import sys
 import csv
 import time
+import shutil
 from subprocess import call
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
@@ -42,9 +43,10 @@ class PPINetwork(object):
 
     def _run_wget(self, source, folder, log):
         call(["wget", source, "-O", folder], stderr=log)
-        time.sleep(3)
+        time.sleep(1)
 
     def _wget_id(self, strain, locus, strain_id, files):
+        detect_id = False
         if strain == strain_id["ptt"]:
             print("Retrieving STRING ID for {0} of {1} -- {2}".format(
                    locus, strain_id["string"], strain_id["file"]))
@@ -55,7 +57,6 @@ class PPINetwork(object):
         return detect_id
 
     def _retrieve_id(self, strain_id, genes, files):
-        detect_id = False
         for gene in genes:
             detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
                                       strain_id, files)
@@ -270,6 +271,7 @@ class PPINetwork(object):
         return genes
 
     def _wget_actions(self, files, id_file, strain_id, out_folder):
+        detect = False
         t_h = open(os.path.join(files["id_list"], id_file), "r")
         print("Retrieving STRING actions for {0} of {1} -- {2}".format(
               id_file, strain_id["string"], strain_id["file"]))
@@ -277,61 +279,72 @@ class PPINetwork(object):
             if row[0].startswith("stringId"):
                 continue
             else:
+                detect = True
                 if row[1] == strain_id["string"]:
                     action_source = "http://string-db.org/api/tsv/actions?identifier={0}&species={1}".format(
                                     row[0], row[1])
                     self._run_wget(action_source, self.tmp_files["wget_action"], files["action_log"])
                     break
         t_h.close()
+        if not detect:
+            print("Warning: " + id_file + " can not be found in STRING...")
+        return detect
 
     def _retrieve_actions(self, files, out_folder, strain_id, paths,
                           score, no_specific, querys):
         for id_file in os.listdir(files["id_list"]):
             if id_file != self.tmp_files["log"]:
-                self._wget_actions(files, id_file, strain_id, out_folder)
-                a_h = open(self.tmp_files["wget_action"], "r")
-                pre_row = []
-                first = True
-                detect = False
-                first_output = {"specific_all": True, "specific_best": True,
-                                "nospecific_all": True,
-                                "nospecific_best": True}
-                print("Retrieving Pubmed for {0} of {1} -- {2}".format(
-                       id_file, strain_id["string"], strain_id["file"]))
-                for row_a in csv.reader(a_h, delimiter="\t"):
-                    if row_a == []:
-                        print("No interaction can be detected...")
-                        break
-                    if row_a[0].startswith("item_id_a"):
-                        continue
-                    else:
-                        detect = True
-                        if first:
-                            first = False
-                            mode = row_a[2]
-                            actor = row_a[4]
+                detect_id = self._wget_actions(files, id_file, strain_id, out_folder)
+                if detect_id:
+                    a_h = open(self.tmp_files["wget_action"], "r")
+                    pre_row = []
+                    first = True
+                    detect = False
+                    first_output = {"specific_all": True, "specific_best": True,
+                                    "nospecific_all": True,
+                                    "nospecific_best": True}
+                    print("Retrieving Pubmed for {0} of {1} -- {2}".format(
+                           id_file, strain_id["string"], strain_id["file"]))
+                    for row_a in csv.reader(a_h, delimiter="\t"):
+                        if row_a == []:
+                            print("No interaction can be detected...")
+                            break
+                        if row_a[0].startswith("item_id_a"):
+                            continue
                         else:
-                            if (row_a[0] != pre_row[0]) or (
-                                row_a[1] != pre_row[1]):
-                                self._get_pubmed(pre_row, out_folder,
-                                     strain_id, mode, actor, score, id_file,
-                                     first_output, no_specific,
-                                     strain_id["ptt"], files, paths, querys)
+                            detect = True
+                            if first:
+                                first = False
                                 mode = row_a[2]
                                 actor = row_a[4]
                             else:
-                                mode = mode + ";" + row_a[2]
-                                actor = actor + ";" + row_a[4]
-                        pre_row = row_a
-                if detect:
-                    detect = False
-                    self._get_pubmed(row_a, out_folder, strain_id, mode,
-                                     actor, score, id_file, first_output,
-                                     no_specific, strain_id["ptt"],
-                                     files, paths, querys)
-        a_h.close()
+                                if (row_a[0] != pre_row[0]) or (
+                                    row_a[1] != pre_row[1]):
+                                    self._get_pubmed(pre_row, out_folder,
+                                         strain_id, mode, actor, score, id_file,
+                                         first_output, no_specific,
+                                         strain_id["ptt"], files, paths, querys)
+                                    mode = row_a[2]
+                                    actor = row_a[4]
+                                else:
+                                    mode = mode + ";" + row_a[2]
+                                    actor = actor + ";" + row_a[4]
+                            pre_row = row_a
+                    if detect:
+                        detect = False
+                        self._get_pubmed(row_a, out_folder, strain_id, mode,
+                                         actor, score, id_file, first_output,
+                                         no_specific, strain_id["ptt"],
+                                         files, paths, querys)
+        if detect_id:
+            a_h.close()
 
-    def _plot(self, out_folder, score, size, no_specific):
+    def _plot(self, out_folder, score, size, no_specific, files):
+        if no_specific:
+            files["all_nospecific"].close()
+            files["best_nospecific"].close()
+        files["all_specific"].close()
+        files["best_specific"].close()
         for folder in os.listdir(self.all_result): ## plot figure
             if folder in os.listdir(self.fig):
                 print("plotting {0}".format(folder))
@@ -351,10 +364,30 @@ class PPINetwork(object):
         strain_ids = []
         paths = {}
         files = {}
+#        detect_ptt = False
         for strain in strains: # import strain information
             datas = strain.split(":")
-            strain_ids.append({"file": datas[0],
-                               "ptt":datas[1], "string": datas[2],
+            ptt_file = "PPI_" + datas[0].replace(".gff", ".ptt")
+            rnt_file = "PPI_" + datas[0].replace(".gff", ".rnt")
+#            if ptt_file in os.listdir(ptts):
+#                shutil.move(os.path.join(ptts, ptt_file),
+#                            os.path.join(ptts, "_".join(["bak", ptt_file])))
+#                shutil.move(os.path.join(ptts, rnt_file),
+#                            os.path.join(ptts, "_".join(["bak", rnt_file])))
+#                detect_ptt = True
+            self.converter.convert_gff2rntptt(os.path.join(ptts, datas[0]),
+                              "0", os.path.join(ptts, ptt_file),
+                              os.path.join(ptts, rnt_file), None, None)
+
+#            if ptt_file not in os.listdir(ptts):
+#                self.converter.convert_gff2rntptt(os.path.join(ptts, datas[0]),
+#                                  "0", os.path.join(ptts, ptt_file),
+#                                  os.path.join(ptts, rnt_file), None, None)
+#            else:
+#                detect_ptt = True
+            strain_ids.append({"file": ptt_file,
+                               "ptt": datas[1],
+                               "string": datas[2],
                                "pie": datas[3]})
         strain_ids.sort(key=lambda x: x["file"])
         pre_file = ""
@@ -380,6 +413,13 @@ class PPINetwork(object):
             self._retrieve_id(strain_id, genes, files)
             self._retrieve_actions(files, out_folder, strain_id, paths,
                                    score, no_specific, querys)
-        self._plot(out_folder, score, size, no_specific)
+        self._plot(out_folder, score, size, no_specific, files)
         self.helper.remove_all_content(os.path.join(out_folder), "tmp", "file")
         self.helper.remove_all_content(os.path.join(out_folder), "tmp", "dir")
+        for file_ in os.listdir(ptts):
+            if file_.startswith("PPI_"):
+                os.remove(os.path.join(ptts, file_))
+#                    shutil.move(os.path.join(ptts, file_),
+#                                os.path.join(ptts, file_[4:]))
+#            self.helper.remove_all_content(os.path.join(ptts), ".ptt", "file")
+#            self.helper.remove_all_content(os.path.join(ptts), ".rnt", "file")

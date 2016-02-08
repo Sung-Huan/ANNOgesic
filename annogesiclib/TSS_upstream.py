@@ -10,28 +10,28 @@ from annogesiclib.helper import Helper
 from annogesiclib.parser_wig import WigParser
 from annogesiclib.gen_TSS_type import compare_tss_cds, fix_primary_type
 
-def get_upstream(seq, tss, out, name):
+def get_upstream(seq, tss, out, name, nt_before):
     if tss.strand == "+":
-        fasta = Helper().extract_gene(seq, tss.start - 50,
+        fasta = Helper().extract_gene(seq, tss.start - nt_before + 1,
                                       tss.start, tss.strand)
     else:
         fasta = Helper().extract_gene(seq, tss.start,
-                                      tss.start + 50, tss.strand)
+                                      tss.start + nt_before - 1, tss.strand)
     out.write("{0}\n{1}\n".format(name, fasta))
 
-def print_fasta(seq, tss, files, name):
+def print_fasta(seq, tss, files, name, nt_before):
     for key in seq.keys():
         if tss.seq_id == key:
             if "Primary" in tss.attributes["type"]:
-                get_upstream(seq[key], tss, files["pri"], name)
+                get_upstream(seq[key], tss, files["pri"], name, nt_before)
             if "Secondary" in tss.attributes["type"]:
-                get_upstream(seq[key], tss, files["sec"], name)
+                get_upstream(seq[key], tss, files["sec"], name, nt_before)
             if "Internal" in tss.attributes["type"]:
-                get_upstream(seq[key], tss, files["inter"], name)
+                get_upstream(seq[key], tss, files["inter"], name, nt_before)
             if "Antisense" in tss.attributes["type"]:
-                get_upstream(seq[key], tss, files["anti"], name)
+                get_upstream(seq[key], tss, files["anti"], name, nt_before)
             if "Orphan" in tss.attributes["type"]:
-                get_upstream(seq[key], tss, files["orph"], name)
+                get_upstream(seq[key], tss, files["orph"], name, nt_before)
 
 def read_wig(filename, strand):
     wigs = {}
@@ -99,7 +99,7 @@ def read_libs(input_libs, wig_folder):
     return libs
 
 def upstream(tss_file, fasta_file, gff_file, source, wig_folder,
-             input_libs, out_class):
+             input_libs, out_class, nt_before):
     files = {"pri": open("tmp/primary.fa", "w"),
              "sec": open("tmp/secondary.fa", "w"),
              "inter": open("tmp/internal.fa", "w"),
@@ -114,7 +114,7 @@ def upstream(tss_file, fasta_file, gff_file, source, wig_folder,
     for tss in tsss:
         if source is True:
             name = ">" + "_".join([tss.seq_id, str(tss.start), tss.strand])
-            print_fasta(seq, tss, files, name)
+            print_fasta(seq, tss, files, name, nt_before)
         else:
             tss_type = compare_tss_cds(tss, cdss, genes)
             tss.attributes = tss_type[1]
@@ -135,7 +135,7 @@ def upstream(tss_file, fasta_file, gff_file, source, wig_folder,
                             tss.seq_id, tss.source, tss.feature, tss.start,
                             tss.end, tss.score, tss.strand, tss.phase,
                             tss.attribute_string]]) + "\n")
-            print_fasta(seq, tss, files, name)
+            print_fasta(seq, tss, files, name, nt_before)
 
 def del_repeat_fasta(input_file, out_file):
     data = {}

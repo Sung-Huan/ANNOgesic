@@ -510,7 +510,9 @@ def main():
         "--fragmented_libs", "-fl", nargs="+", default=None,
         help="Input of fragmented library. The format is: "
         "wig_file_name:fragmented(frag):condition_id(integer):replicate_id(alphabet):strand(+ or -).")
-    
+    Transcript_parser.add_argument(
+        "--table_best", "-tb", default=False, action="store_true",
+        help="The table only includes the best library. Default is False.")
     Transcript_parser.set_defaults(func=run_Transcript_Assembly)
 
     # Parameter of UTR detection

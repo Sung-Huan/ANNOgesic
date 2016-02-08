@@ -16,7 +16,7 @@ def assign_tss(tss, tran):
     else:
         tss.attributes["Parent_tran"] = \
             "&".join([tss.attributes["Parent_tran"], tran_id])
-    if "ID" in tss.attributes.keys():
+    if "Name" in tss.attributes.keys():
         tss_name = tss.attributes["Name"]
     else:
         strand = Helper().get_strand_name(tss.strand)
@@ -175,43 +175,41 @@ def assign_parent(gff, tran):
     else:
         gff.attributes["Parent_tran"] = \
             "&".join([gff.attributes["Parent_tran"], tran.attributes["ID"]])
-    if "associated_cds" not in tran.attributes.keys():
-        if "protein_id" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = gff.attributes["protein_id"]
-        elif "locus_tag" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = gff.attributes["locus_tag"]
+    if "associated_gene" not in tran.attributes.keys():
+        if "locus_tag" in gff.attributes.keys():
+            tran.attributes["associated_gene"] = gff.attributes["locus_tag"]
+        elif "protein_id" in gff.attributes.keys():
+            tran.attributes["associated_gene"] = gff.attributes["protein_id"]
         elif "Name" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = gff.attributes["Name"]
+            tran.attributes["associated_gene"] = gff.attributes["Name"]
         else:
             strand = Helper().get_strand_name(gff.strand)
-            tran.attributes["associated_cds"] = \
+            tran.attributes["associated_gene"] = \
                 "".join([gff.feature, ":", str(gff.start),
                          "-", str(gff.end), "_", strand])
     else:
-        if "protein_id" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = \
-                "&".join([tran.attributes["associated_cds"],
-                          gff.attributes["protein_id"]])
-        elif "locus_tag" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = \
-                "&".join([tran.attributes["associated_cds"],
+        if "locus_tag" in gff.attributes.keys():
+            tran.attributes["associated_gene"] = \
+                "&".join([tran.attributes["associated_gene"],
                           gff.attributes["locus_tag"]])
+        elif "protein_id" in gff.attributes.keys():
+            tran.attributes["associated_gene"] = \
+                "&".join([tran.attributes["associated_gene"],
+                          gff.attributes["protein_id"]])
         elif "Name" in gff.attributes.keys():
-            tran.attributes["associated_cds"] = \
-                "&".join([tran.attributes["associated_cds"],
+            tran.attributes["associated_gene"] = \
+                "&".join([tran.attributes["associated_gene"],
                 gff.attributes["Name"]])
         else:
             strand = Helper().get_strand_name(gff.strand)
-            tran.attributes["associated_cds"] = \
-                "&".join([tran.attributes["associated_cds"],
+            tran.attributes["associated_gene"] = \
+                "&".join([tran.attributes["associated_gene"],
                 "".join([gff.feature, ":", str(gff.start),
                 "-", str(gff.end), "_", strand])])
 
-def compare_ta_gff(gffs, tran, check, tran_type, detect, stats):
+def compare_ta_gff(gffs, tran, check, tran_type, detect, stats, c_feature):
     for gff in gffs:
-        if (gff.feature == "CDS") or (
-            gff.feature == "tRNA") or (
-            gff.feature == "rRNA"):
+        if (gff.feature == c_feature):
             if (gff.strand == tran.strand) and (
                 gff.seq_id == tran.seq_id):
                 if (gff.start < tran.start) and (
@@ -219,7 +217,7 @@ def compare_ta_gff(gffs, tran, check, tran_type, detect, stats):
                     if check[0] != 1:
                         stats[tran.seq_id]["bsae"] += 1
                         stats["All"]["bsae"] += 1
-                    tran_type.append("within_CDS")
+                    tran_type.append("within_gene")
                     assign_parent(gff, tran)
                     detect = True
                     check[0] = 1
@@ -229,7 +227,7 @@ def compare_ta_gff(gffs, tran, check, tran_type, detect, stats):
                     if check[1] != 1:
                         stats[tran.seq_id]["asae"] += 1
                         stats["All"]["asae"] += 1
-                    tran_type.append("left_shift_CDS")
+                    tran_type.append("left_shift_gene")
                     assign_parent(gff, tran)
                     check[1] = 1
                     detect = True
@@ -239,7 +237,7 @@ def compare_ta_gff(gffs, tran, check, tran_type, detect, stats):
                     if check[2] != 1:
                         stats[tran.seq_id]["bsbe"] += 1
                         stats["All"]["bsbe"] += 1
-                    tran_type.append("right_shift_CDS")
+                    tran_type.append("right_shift_gene")
                     assign_parent(gff, tran)
                     check[2] = 1
                     detect = True
@@ -248,24 +246,25 @@ def compare_ta_gff(gffs, tran, check, tran_type, detect, stats):
                     if check[3] != 1:
                         stats[tran.seq_id]["asbe"] += 1
                         stats["All"]["asbe"] += 1
-                    tran_type.append("cover_CDS")
+                    tran_type.append("cover_gene")
                     assign_parent(gff, tran)
                     check[3] = 1
                     detect = True
     return detect
 
-def detect_tag_region(gffs, trans, stats, out_t, out_g):
+def detect_tag_region(gffs, trans, stats, out_t, out_g, c_feature):
     detect = False
     for tran in trans:
         check = [0, 0, 0, 0, 0]
         tran_type = []
         tran_type_string = ""
-        detect = compare_ta_gff(gffs, tran, check, tran_type, detect, stats)
+        detect = compare_ta_gff(gffs, tran, check, tran_type,
+                                detect, stats, c_feature)
         if not detect:
             stats[tran.seq_id]["other"] += 1
             stats["All"]["other"] += 1
             check[4] = 1
-            tran_type.append("not_related_CDS")
+            tran_type.append("not_related_gene")
         else:
             detect = False
         tran_type_string = "&".join(tran_type)
@@ -274,74 +273,77 @@ def detect_tag_region(gffs, trans, stats, out_t, out_g):
         out_t.write("\t".join(
                     [tran.info_without_attributes, attribute_string]) + \
                      ";type=" + tran_type_string + "\n")
+    express_gene = 0
     for gff in gffs:
+        if "Parent_tran" in gff.attributes.keys():
+            express_gene += 1
         attribute_string = ";".join(
             ["=".join(items) for items in gff.attributes.items()])
         out_g.write(gff.info_without_attributes + "\t" + \
                     attribute_string + "\n")
+    return express_gene
 
-def print_tag_stat(stats, out):
+def print_tag_stat(stats, out, express_gene, c_feature):
     total = stats["bsae"] + stats["bsbe"] + stats["asae"] + \
             stats["asbe"] + stats["other"]
-    out.write("\tTranscript starts before and ends after CDS/rRNA/tRNA:%s (%s)\n" %
+    out.write("\tTranscript starts before and ends after " + c_feature + ":%s (%s)\n" %
               (str(stats["asbe"]), str(float(stats["asbe"]) / float(total))))
-    out.write("\tTranscript starts after and ends before CDS/rRNA/tRNA:%s (%s)\n" %
+    out.write("\tTranscript starts after and ends before " + c_feature + ":%s (%s)\n" %
               (str(stats["bsae"]), str(float(stats["bsae"]) / float(total))))
-    out.write("\tTranscript starts before and ends before CDS/rRNA/tRNA:%s (%s)\n" %
+    out.write("\tTranscript starts before and ends before " + c_feature + ":%s (%s)\n" %
               (str(stats["asae"]), str(float(stats["asae"]) / float(total))))
-    out.write("\tTranscript starts after and ends after CDS/rRNA/tRNA:%s (%s)\n" %
+    out.write("\tTranscript starts after and ends after " + c_feature + ":%s (%s)\n" %
               (str(stats["bsbe"]), str(float(stats["bsbe"]) / float(total))))
-    out.write("\tTranscript has no overlap of CDS/rRNA/tRNA:%s (%s)\n" %
+    out.write("\tTranscript has no overlap of " + c_feature + ":%s (%s)\n" %
               (str(stats["other"]), str(float(stats["other"]) / float(total))))
-    out.write("\tTotal CDSs which have gene expression:%s (%s)\n" %
-              (str(total), str(float(total) / float(stats["cds"]))))
-def read_tag_file(gff_file, ta_file):
+    out.write("\tTotal " + c_feature + "s which have gene expression:%s (%s)\n" %
+              (str(express_gene), str(float(express_gene) / float(stats["gene"]))))
+def read_tag_file(gff_file, ta_file, c_feature):
     gffs = []
     tas = []
     stats = {}
     stats["All"] = {"bsae": 0, "bsbe": 0, "asae": 0,
-                    "asbe": 0, "other": 0, "cds": 0}
+                    "asbe": 0, "other": 0, "gene": 0}
     pre_seq_id = ""
     ta_f = open(ta_file, "r")
     for entry in Gff3Parser().entries(ta_f):
         if entry.seq_id != pre_seq_id:
             pre_seq_id = entry.seq_id
             stats[entry.seq_id] = {"bsae": 0, "bsbe": 0, "asae": 0,
-                                   "asbe": 0, "other": 0, "cds": 0}
-        entry.attributes = del_attributes(entry, ["associated_cds", "type"])
+                                   "asbe": 0, "other": 0, "gene": 0}
+        entry.attributes = del_attributes(entry, ["associated_gene", "type"])
         tas.append(entry)
     ta_f.close()
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
-        if (entry.feature == "CDS") or \
-           (entry.feature == "rRNA") or \
-           (entry.feature == "tRNA"):
+        if (entry.feature == c_feature):
             entry.attributes = del_attributes(entry, ["Parent_tran"])
             if entry.seq_id in stats.keys():
-                stats[entry.seq_id]["cds"] += 1
-                stats["All"]["cds"] += 1
+                stats[entry.seq_id]["gene"] += 1
+                stats["All"]["gene"] += 1
         gffs.append(entry)
     g_f.close()
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
     return gffs, tas, stats
 
-def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file):
+def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
+                c_feature):
     o_f = open(out_ta_file, "w")
     og_f = open(out_gff_file, "w")
     o_f.write("##gff-version 3\n")
     og_f.write("##gff-version 3\n")
-    gffs, tas, stats = read_tag_file(gff_file, ta_file)
-    detect_tag_region(gffs, tas, stats, o_f, og_f)
+    gffs, tas, stats = read_tag_file(gff_file, ta_file, c_feature)
+    express_gene = detect_tag_region(gffs, tas, stats, o_f, og_f, c_feature)
     out_stat = open(stat_file, "w")
     out_stat.write("All strains:\n")
     out_stat.write("The transcriptome assembly information compares with annotation gff file:\n")
-    print_tag_stat(stats["All"], out_stat)
+    print_tag_stat(stats["All"], out_stat, express_gene, c_feature)
     if len(stats) > 2:
         for strain in stats.keys():
             if strain != "All":
                 out_stat.write(strain + ":\n")
                 out_stat.write("The transcriptome assembly information compares with annotation gff file:\n")
-                print_tag_stat(stats[strain], out_stat)
+                print_tag_stat(stats[strain], out_stat, c_feature)
     o_f.close()
     og_f.close()
     out_stat.close()

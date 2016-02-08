@@ -19,7 +19,7 @@ def print_fasta(entry, seq, out):
             out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
                       entry.feature, entry.start, entry.end, entry.strand, seq))
 
-def read_file(seq_file, gff_file, target_folder):
+def read_file(seq_file, gff_file, target_folder, features):
     fastas = []
     cdss_f = []
     cdss_r = []
@@ -38,11 +38,12 @@ def read_file(seq_file, gff_file, target_folder):
                           "_".join([entry.seq_id, "target.fa"]))):
             os.remove(os.path.join(target_folder,
                       "_".join([entry.seq_id, "target.fa"])))
-        if (entry.feature == "CDS") and (entry.strand == "+"):
-            cdss_f.append(entry)
-        elif (entry.feature == "CDS") and (entry.strand == "-"):
-            cdss_r.append(entry)
-        elif entry.feature == "gene":
+        for feature in features:
+            if (entry.feature == feature) and (entry.strand == "+"):
+                cdss_f.append(entry)
+            elif (entry.feature == feature) and (entry.strand == "-"):
+                cdss_r.append(entry)
+        if entry.feature == "gene":
             genes.append(entry)
     g_h.close()
     return fasta, cdss_f, cdss_r, genes
@@ -105,8 +106,10 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
     if out is not None:
         out.close()
 
-def potential_target(gff_file, seq_file, target_folder, tar_start, tar_end):
-    fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file, target_folder)
+def potential_target(gff_file, seq_file, target_folder, tar_start, tar_end,
+                     features):
+    fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file,
+                                             target_folder, features)
     sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start))
     deal_cds_forward(sort_cdss_f, target_folder, fasta, genes, tar_start, tar_end)
     sort_cdss_r = sorted(cdss_r, reverse=True,

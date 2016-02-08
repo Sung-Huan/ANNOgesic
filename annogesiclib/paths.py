@@ -71,6 +71,7 @@ class Paths(object):
         self.reference_base_folder = "%s/transcriptome_assembly" % self.output_folder
         self.transcript_gff_folder = "%s/gffs" % self.reference_base_folder
         self.transcript_stat_folder = "%s/statistics" % self.reference_base_folder
+        self.transcript_table_folder = "%s/tables" % self.reference_base_folder
 
     def _set_reference_input_folder_names(self):
         self.reference_base_folder = "%s/reference" % self.input_folder
@@ -296,8 +297,8 @@ class Paths(object):
 
     def _set_sublocal_folder_names(self):
         self.sublocal_base_folder = "%s/subcellular_localization" % self.output_folder
-        self.sublocal_all_folder = "%s/all_CDS" % self.output_folder
-        self.sublocal_express_folder = "%s/expressed_CDS" % self.output_folder
+        self.sublocal_all_folder = "%s/all_CDS" % self.sublocal_base_folder
+        self.sublocal_express_folder = "%s/expressed_CDS" % self.sublocal_base_folder
         self.sublocal_all_results_folder = "%s/psortb_results" % (
              self.sublocal_all_folder)
         self.sublocal_all_stat_folder = "%s/statistics" % (
@@ -396,7 +397,8 @@ class Paths(object):
         return [self.processing_to_gff_folder, self.processing_statistics_folder,
                 self.processing_Master_folder, self.processing_config_folder]
     def required_transcript_assembly_folders(self):
-        return [self.transcript_gff_folder, self.transcript_stat_folder]
+        return [self.transcript_gff_folder, self.transcript_stat_folder,
+                self.transcript_table_folder]
 
     def required_utr_folders(self):
         return [self.utr5_folder, self.utr3_folder,

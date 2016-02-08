@@ -7,7 +7,7 @@ from annogesiclib.lib_reader import read_libs, read_wig
 
 
 def import_data(row):
-    return{"method": "forward_reverse", "strain": row[0],
+    return{"method": "intersect_plus_minus", "strain": row[0],
            "start": int(row[1]), "end": int(row[2]), "name": row[3],
            "miss": int(row[4]), "loop": int(row[5]), "diff": [],
            "length": int(row[6]), "r_stem": int(row[7]), "strand": row[8],
@@ -241,13 +241,14 @@ def first_term(strand, term, detect_terms, detect):
             detect_terms["undetect"].append(term)
     return detect
 
-def get_attribute_string(num, name, parent, diff, term, coverage):
+def get_attribute_string(num, name, parent, diff, term, coverage, method):
     attribute_string = ";".join(
                  ["=".join(items) for items in [("ID", "term_" + str(num)),
                   ("Name", name), ("associate", parent),
                   ("coverage_decrease", coverage),
                   ("diff_coverage", diff),
-                  ("express", term["express"])]])
+                  ("express", term["express"]),
+                  ("Method", method)]])
     return attribute_string
 
 def print_table(term, cutoff_coverage, out_t, table_best):
@@ -289,28 +290,28 @@ def print2file(num, term, coverage, parent, out, out_t,
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
         out_t.write("\t".join([term["strain"], name, str(term["start"]),
-                              str(term["end"]), term["strand"]]))
+                              str(term["end"]), term["strand"], term["method"]]))
     else:
         out_t.write("\t".join([term["strain"], name, str(term["start"]),
-                              str(term["end"]), term["strand"]]))
+                              str(term["end"]), term["strand"], term["method"]]))
     if (term["express"] == "True") and (term["diff_cover"] != -1):
         if (term["diff"]["high"] >= cutoff_coverage):
             diff = ("{0}(high:{1},low:{2})".format(
                     term["diff"]["track"], term["diff"]["high"],
                     term["diff"]["low"]))
-            attribute_string = get_attribute_string(num, name, parent,
-                                                    diff, term, coverage)
+            attribute_string = get_attribute_string(num, name, parent, 
+                                                    diff, term, coverage, method)
         elif (term["diff"]["high"] < cutoff_coverage):
             attribute_string = get_attribute_string(num, name, parent, "NA",
-                                                term, "No_coverage_decreasing")
+                                                term, "No_coverage_decreasing", method)
     elif (term["express"] == "True") and (term["diff_cover"] == -1):
         attribute_string = get_attribute_string(num, name, parent, "NA",
-                                                term, "No_coverage_decreasing")
+                                                term, "No_coverage_decreasing", method)
     elif (term["express"] == "False"):
         attribute_string = get_attribute_string(num, name, parent, "NA",
-                                                term, "NA")
+                                                term, "NA", method)
     out.write("\t".join([str(field) for field in [
-              term["strain"], method, "terminator",
+              term["strain"], "ANNOgesic", "terminator",
               str(term["start"]), str(term["end"]), ".",
               term["strand"], ".", attribute_string]]) + "\n")
     print_table(term, cutoff_coverage, out_t, table_best)

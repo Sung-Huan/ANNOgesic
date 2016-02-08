@@ -119,21 +119,28 @@ def transfer_to_tran(wigs, height, libs, template_texs, strand,
                                   "coverage": best_cover, "cond": num})
     return tolers, trans
 
-def print_transctipt(start, end, width, num, high_cover,
+def print_transctipt(start, end, width, num, high_cover, wig_type,
                      low_cover, out, strain, strand):
     if (start != -1) and (end != -1) and (
         (end - start) >= width):
         name = '%0*d' % (5, num)
-        attribute = ";".join(
-                    ["=".join(items) for items in ([("ID", "tran_" + str(num)),
-                     ("Name", "Transcript_" + name),
-                     ("high_coverage", str(high_cover)),
-                     ("low_coverage", str(low_cover))])])
+        attribute = gen_attribute_string(num, name, high_cover,
+                                         low_cover, wig_type)
         out.write("\t".join([str(field) for field in [
-                  strain, "Transcript", "Transcript", str(start),
+                  strain, "ANNOgesic", "Transcript", str(start),
                   str(end), ".", strand, ".", attribute]]) + "\n")
 
-def fill_gap_and_print(trans, strand, tolerance, width, out, low_cutoff, tolers):
+def gen_attribute_string(num, name, high_cover, low_cover, wig_type):
+    attribute = ";".join(
+                ["=".join(items) for items in ([("ID", "tran_" + str(num)),
+                 ("Name", "Transcript_" + name),
+                 ("high_coverage", str(high_cover)),
+                 ("low_coverage", str(low_cover)),
+                 ("detect_lib", wig_type)])])
+    return attribute
+
+def fill_gap_and_print(trans, strand, tolerance, width, out, low_cutoff,
+                       tolers, wig_type):
     for strain, datas in tolers.items():
         num = 0
         for data in datas:
@@ -171,14 +178,10 @@ def fill_gap_and_print(trans, strand, tolerance, width, out, low_cutoff, tolers)
                     if (start != -1) and (end != -1) and (
                         (end - start) >= width):
                         name = '%0*d' % (5, num)
-                        attribute = ";".join(
-                                    ["=".join(items) for items in ([
-                                     ("ID", "tran_" + str(num)),
-                                     ("Name", "Transcript_" + name),
-                                     ("high_coverage", str(high_cover)),
-                                     ("low_coverage", str(low_cover))])])
+                        attribute = gen_attribute_string(num, name, high_cover,
+                                                         low_cover, wig_type)
                         out.write("\t".join([str(field) for field in [
-                                  strain, "Transcript", "Transcript", str(start),
+                                  strain, "ANNOgesic", "Transcript", str(start),
                                   str(end), ".", strand, ".", attribute]]) + "\n")
                         num += 1
                     start = cover["pos"]
@@ -187,7 +190,7 @@ def fill_gap_and_print(trans, strand, tolerance, width, out, low_cutoff, tolers)
                     low_cover = cover["coverage"]
             pre_cover = cover
         if len(covers) != 0:
-            print_transctipt(start, end, width, num, high_cover,
+            print_transctipt(start, end, width, num, high_cover, wig_type,
                              low_cover, out, strain, strand)
 
 def read_wig(filename, libs, strand):
@@ -216,7 +219,7 @@ def read_wig(filename, libs, strand):
     return wigs
 
 def assembly(wig_f_file, wig_r_file, height, width, tolerance, low_cutoff,
-             wig_folder, tex_notex, input_lib, replicates, out_file):
+             wig_folder, tex_notex, input_lib, replicates, out_file, wig_type):
     libs = []
     conds = []
     out = open(out_file, "w")
@@ -258,7 +261,7 @@ def assembly(wig_f_file, wig_r_file, height, width, tolerance, low_cutoff,
     tolers_r, tran_rs = transfer_to_tran(wig_rs, height,
                         libs, texs, "-", replicates, tex_notex)
     fill_gap_and_print(tran_fs, "+", tolerance, width, out,
-                       low_cutoff, tolers_f)
+                       low_cutoff, tolers_f, wig_type)
     fill_gap_and_print(tran_rs, "-", tolerance, width, out,
-                       low_cutoff, tolers_r)
+                       low_cutoff, tolers_r, wig_type)
     out.close()

@@ -89,9 +89,8 @@ class SeqEditer(object):
                     folder = "/".join(folder[:-1])
                     if (len(mod) == 5) and (line[0] == ">"):
                         new_header = ">%s" % (mod[3])
-                        print(os.path.join(folder, mod[3] + ".fa"))
                     elif (len(mod) != 5) and (line[0] == ">"):
-                        new_header = line
+                        new_header = line.split(" ")[0]
                     elif (line[0] != ">"):
                         print("Error: No proper header!!")
                         sys.exit()

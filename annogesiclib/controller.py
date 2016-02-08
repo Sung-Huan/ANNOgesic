@@ -219,7 +219,8 @@ class Controller(object):
                 self._paths.transcript_assembly_output_folder,
                 self._args.compare_TSS, self._args.compare_genome_annotation, 
                 self._args.TSS_fuzzy, self._args.Tex_treated_libs, 
-                self._args.fragmented_libs, self._args.compare_feature_genome)
+                self._args.fragmented_libs, self._args.compare_feature_genome,
+                self._args.table_best)
     def utr_detection(self):
         """Run UTR detection."""
         print("Running UTR detection...")

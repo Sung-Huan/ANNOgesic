@@ -177,7 +177,7 @@ class TSSpredator(object):
             else:
                 self.converter.convert_mastertable2gff(
                                 os.path.join(out_path, "MasterTable.tsv"),
-                                "TSSpredator", feature, prefix, out_file)
+                                "ANNOgesic", feature, prefix, out_file)
             gff_f.close()
 
     def _merge_manual(self, tsss, gffs, manual, wig_path,
@@ -324,7 +324,7 @@ class TSSpredator(object):
     def _remove_files(self, fastas, gffs, wig_folder, ta_files):
         print("Remove temperary files and folders...")
         self.helper.remove_tmp(fastas)
-#        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(gffs)
         self.helper.remove_tmp(wig_folder)
         self.helper.remove_tmp(ta_files)
         if "merge_forward.wig" in os.listdir(os.getcwd()):

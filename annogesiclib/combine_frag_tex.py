@@ -15,6 +15,7 @@ def print_file(data, out, name, num):
     attributes = {}
     attributes["ID"] = "tran" + str(num)
     attributes["Name"] = "Tran_" + name
+    attributes["detect_lib"] = data.attributes["detect_lib"]
     attribute_string = ";".join(["=".join(items) \
                        for items in attributes.items()])
     out.write("\t".join([str(field) for field in [
@@ -23,7 +24,7 @@ def print_file(data, out, name, num):
                         attribute_string]]) + "\n")
 
 def store(data, source, finals):
-    data.source = source
+    data.attributes["detect_lib"] = source
     data.attributes["print"] = False
     finals.append(data)
 
@@ -67,12 +68,12 @@ def combine(frag_file, tex_file, tolerance, output_file):
         for norm in sort_norms:
             overlap = compare(frag, norm, overlap, tolerance)
         if overlap:
-            store(frag, "fragmented_and_tex", finals)
+            store(frag, "fragmented&tex_notex", finals)
         else:
             store(frag, "fragmented", finals)
     for norm in sort_norms:
         if norm.attributes["print"] is False:
-            store(norm, "tex", finals)
+            store(norm, "tex_notex", finals)
     sort_finals = sorted(finals, key=lambda k: (k.seq_id, k.start))
     num = 0
     for tar in sort_finals:

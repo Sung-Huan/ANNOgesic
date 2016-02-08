@@ -266,7 +266,7 @@ class CircRNADetection(object):
 
     def _stat_and_gen_gff(self, tmp_prefixs, gff_folder, splice_path,
                           candidate_path, gff_path, stat_folder, support,
-                          convert, start_ratio, end_ratio):
+                          convert, start_ratio, end_ratio, hypo):
         for prefix in tmp_prefixs:
             self.helper.check_make_folder(os.path.join(gff_folder, prefix))
             shutil.copytree(prefix, os.path.join(splice_path, prefix))

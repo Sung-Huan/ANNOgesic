@@ -33,7 +33,7 @@ def import_data(row, type_):
         if len(row) == 7:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]),
-                    "hits": "|".join(row[5:6])}
+                    "hits": "|".join(row[5:])}
         elif len(row) == 6:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]), "hits": row[5]}
@@ -130,18 +130,18 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, min_len, max_len):
         check_keys("sRNA_hit", "sRNA_hit_num", srna, final)
         check_keys("sORF", "sORF", srna, final)
         check_keys("end_pro", "end_pro", srna, final)
-        if srna.source == "intergenic":
+        if srna.attributes["sRNA_type"] == "intergenic":
             final["utr"] = "Intergenic"
-        elif srna.source == "in_CDS":
+        elif srna.attributes["sRNA_type"] == "in_CDS":
             final["utr"] = "in_CDS"
         else:
-            if "&" in srna.attributes["UTR_type"]:
+            if "&" in srna.attributes["sRNA_type"]:
                 final["utr"] = "5'UTR_derived;3'UTR_derived"
-            elif srna.attributes["UTR_type"] == "5utr":
+            elif srna.attributes["sRNA_type"] == "5utr":
                 final["utr"] = "5'UTR_derived"
-            elif srna.attributes["UTR_type"] == "3utr":
+            elif srna.attributes["sRNA_type"] == "3utr":
                 final["utr"] = "3'UTR_derived"
-            elif srna.attributes["UTR_type"] == "interCDS":
+            elif srna.attributes["sRNA_type"] == "interCDS":
                 final["utr"] = "interCDS"
         final = compare_srna_table(srna_tables, srna, final, min_len, max_len)
         final = compare_blast(nr_blasts, srna, final, "nr_hit")
@@ -182,7 +182,7 @@ def read_table(srna_table_file, nr_blast, srna_blast_file):
         for row in csv.reader(f_h, delimiter='\t'):
             nr_blasts.append(import_data(row, "nr"))
         f_h.close()
-    if os.path.exists(nr_blast):
+    if os.path.exists(srna_blast_file):
         f_h = open(srna_blast_file, "r")
         for row in csv.reader(f_h, delimiter='\t'):
             srna_blasts.append(import_data(row, "sRNA"))
@@ -242,9 +242,10 @@ def gen_best_srna(srna_file, all_srna_hit, energy, hit_nr_num,
         if "with_TSS" in srna.attributes.keys():
             if srna.attributes["with_TSS"] != "NA":
                 detect["TSS"] = True
-            elif (srna.source == "UTR_derived"):
-                if (("3utr" in srna.attributes["UTR_type"]) or (
-                     "interCDS" in srna.attributes["UTR_type"])) and (
+            elif (srna.attributes["sRNA_type"] != "intergenic") and (
+                  srna.attributes["sRNA_type"] != "in_CDS"):
+                if (("3utr" in srna.attributes["sRNA_type"]) or (
+                     "interCDS" in srna.attributes["sRNA_type"])) and (
                      srna.attributes["start_cleavage"] != "NA"):
                     detect["TSS"] = True
         else:

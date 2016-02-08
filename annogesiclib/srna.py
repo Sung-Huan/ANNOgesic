@@ -170,6 +170,8 @@ class sRNADetection(object):
         merge_gff = "_".join([self.prefixs["normal"], prefix])
         self._merge_frag_tex_file(frag_wigs, tex_wigs, frag_gff, tex_gff,
                              frag_csv, tex_csv, merge_table, merge_gff)
+        if "TSS_class" in os.listdir(out_folder):
+            tss = os.path.join(out_folder, "TSS_class", prefix + "_TSS.gff")
         return tss
 
     def _run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
@@ -301,6 +303,7 @@ class sRNADetection(object):
                      cutoff_overlap, hypo, tex_path, frag_path, tex_wigs, frag_wigs,
                      tlibs, flibs, merge_wigs, wig_path, min_utr):
         prefixs = []
+        tss = None
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
@@ -325,8 +328,9 @@ class sRNADetection(object):
                 if utr_srna:
                     print("Running UTR derived sRNA detection of {0}...".format(
                           prefix))
-                    tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
-                                                       prefix, None, None)
+                    if tss is None:
+                        tss = self.helper.get_correct_file(tss_path, "_TSS.gff",
+                                                           prefix, None, None)
                     if pro_path is not None:
                         pro = self.helper.get_correct_file(pro_path,
                                           "_processing.gff", prefix, None, None)

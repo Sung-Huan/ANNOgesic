@@ -79,11 +79,14 @@ class Converter(object):
             elif entry.feature == "gene":
                 genes.append(entry)
         g_f.close()
-        with open(fasta_file, "r") as f_f:
-            for line in f_f:
-                line = line.strip()
-                if line[0] != ">":
-                    seq = seq + line
+        if fasta_file == "0":
+            seq = "-1"
+        else:
+            with open(fasta_file, "r") as f_f:
+                for line in f_f:
+                    line = line.strip()
+                    if line[0] != ">":
+                        seq = seq + line
         return (num_cds, num_rna, seq)
 
     def _srna2rntptt(self, srna_input_file, srna_output_file, srnas, length):
@@ -269,7 +272,7 @@ class Converter(object):
                               ["type", tss_merge_type],
                               ["UTR_length", str(utr_length)],
                               ["associated_gene", merge_locus_tag],
-                              ["libs", libs])])
+                              ["libs", libs], ["Method", "TSSpredator"])])
         out.write("\t".join([strain, method, tss_pro, str(tss.super_pos),
                              str(tss.super_pos), ".", tss.super_strand, ".",
                              attribute_string]) + "\n")
@@ -465,9 +468,10 @@ class Converter(object):
                                             str(circ["per_start"])),
                                            ("read_at_end",
                                             str(circ["per_end"])),
-                                           ("confliction", circ["conflict"])]])
+                                           ("confliction", circ["conflict"]),
+                                           ("Method", "segemehl")]])
             out_a.write("\t".join([str(field) for field in [
-                            circ["strain"], "segemehl", "circRNA",
+                            circ["strain"], "ANNOgesic", "circRNA",
                             str(circ["start"]), str(circ["end"]),
                             ".", circ["strand"], ".",
                             attribute_string]]) + "\n")
@@ -476,7 +480,7 @@ class Converter(object):
                 circ["per_start"] >= start_ratio) and (
                 circ["per_end"] >= end_ratio):
                 out_f.write("\t".join([str(field) for field in [
-                            circ["strain"], "segemehl", "circRNA",
+                            circ["strain"], "ANNOgesic", "circRNA",
                             str(circ["start"]), str(circ["end"]),
                             ".", circ["strand"], ".",
                             attribute_string]]) + "\n")

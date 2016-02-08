@@ -8,19 +8,19 @@ from annogesiclib.lib_reader import read_wig, read_libs
 
 def modify_attributes(pre_srna, srna, srna_type, input_type):
     if srna_type == "UTR":
-        if pre_srna.attributes["UTR_type"] != srna.attributes["UTR_type"]:
+        if pre_srna.attributes["sRNA_type"] != srna.attributes["sRNA_type"]:
             if input_type == "pre":
-                if "&" not in pre_srna.attributes["UTR_type"]:
-                    pre_srna.attributes["UTR_type"] = \
-                           "&".join([srna.attributes["UTR_type"],
-                                     pre_srna.attributes["UTR_type"]])
+                if "&" not in pre_srna.attributes["sRNA_type"]:
+                    pre_srna.attributes["sRNA_type"] = \
+                           "&".join([srna.attributes["sRNA_type"],
+                                     pre_srna.attributes["sRNA_type"]])
             else:
-                if "&" not in pre_srna.attributes["UTR_type"]:
-                    srna.attributes["UTR_type"] = \
-                           "&".join([srna.attributes["UTR_type"],
-                                     pre_srna.attributes["UTR_type"]])
+                if "&" not in pre_srna.attributes["sRNA_type"]:
+                    srna.attributes["sRNA_type"] = \
+                           "&".join([srna.attributes["sRNA_type"],
+                                     pre_srna.attributes["sRNA_type"]])
                 else:
-                    srna.attributes["UTR_type"] = pre_srna.attributes["UTR_type"]
+                    srna.attributes["sRNA_type"] = pre_srna.attributes["sRNA_type"]
 
 def del_attributes(feature, entry):
     attributes = {}
@@ -71,7 +71,9 @@ def merge_tss_pro(pre_srna, srna, feature):
 def modify_overlap(pre_srna, srna):
     merge_tss_pro(pre_srna, srna, "with_TSS")
     merge_tss_pro(pre_srna, srna, "end_cleavage")
-    if "UTR_type" in srna.attributes.keys():
+    if (srna.attributes["sRNA_type"] == "5utr") or (
+        srna.attributes["sRNA_type"] == "3utr") or (
+        srna.attributes["sRNA_type"] == "interCDS"):
         merge_tss_pro(pre_srna, srna, "start_cleavage")
     if (srna.start < pre_srna.start):
         pre_srna.start = srna.start
@@ -84,11 +86,12 @@ def merge_srna(srnas, srna_type):
     first = True
     for srna in srnas:
         if srna_type == "UTR":
-            srna.source = "UTR_derived"
             srna.feature = "sRNA"
         else:
-            if srna.source != "in_CDS":
-                srna.source = "intergenic"
+            if srna.attributes["sRNA_type"] != "in_CDS":
+                srna.attributes["sRNA_type"] = "intergenic"
+            else:
+                srna.attributes["sRNA_type"] = "in_CDS"
             if "with_TSS" in srna.attributes.keys():
                 if srna.attributes["with_TSS"] == "False":
                     srna.attributes["with_TSS"] = "NA"
@@ -110,6 +113,7 @@ def merge_srna(srnas, srna_type):
             if not overlap:
                 final_srnas.append(pre_srna)
                 pre_srna = srna
+        srna.source = "ANNOgesic"
     if not overlap:
         final_srnas.append(srna)
     return final_srnas
@@ -232,7 +236,7 @@ def merge_srna_gff(srna_utr, srna_inter, out_file, in_cds, cutoff_overlap,
         if new_srna:
             new_srna.attributes["ID"] = "srna" + str(num_srna)
             name = '%0*d' % (5, num_srna)
-            new_srna.attributes["Name"] = "sRNA_candidate_" + str(name)
+            new_srna.attributes["Name"] = "sRNA_" + str(name)
             new_srna.attributes = del_attributes("best_high_coverage", new_srna)
             new_srna.attributes = del_attributes("best_low_coverage", new_srna)
             new_srna.attributes = del_attributes("best_avg_coverage", new_srna)
@@ -313,7 +317,7 @@ def get_cutoff(srna, tsss, cutoff_tex, cutoff_frag, type_, fuzzy_tss,
         fh = open(os.path.join(out_folder, "tmp_median"), "r")
         for row in csv.reader(fh, delimiter='\t'):
             if (row[0] == srna.seq_id) and (
-                row[1] == srna.attributes["UTR_type"]):
+                row[1] == srna.attributes["sRNA_type"]):
                 if row[1] not in cut.keys():
                     cut[row[1]] = {}
                 cut[row[1]][row[2]] = {"median": float(row[3])}
@@ -387,8 +391,8 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs,
                              fuzzy_tss, tables, out_folder)
             srna_datas = replicate_comparison(covers, template_texs, srna.strand,
                                       cut, tex_notex, replicates,
-                                      "sRNA_utr_derived", cut[srna.attributes["UTR_type"]],
-                                      cut, srna.attributes["UTR_type"], template_texs, None)
+                                      "sRNA_utr_derived", cut[srna.attributes["sRNA_type"]],
+                                      cut, srna.attributes["sRNA_type"], template_texs, None)
         if len(srna_datas["conds"]) != 0:
             out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t".format(
                        srna.seq_id, srna.attributes["Name"], srna.start,
@@ -504,11 +508,14 @@ def merge_srna_table(srna_file, inter_table, utr_table, wig_f_file,
     utrs = read_table(utr_table, "utr")
     out = open(out_file, "w")
     for srna in srnas:
-        if srna.source == "UTR_derived":
+        if (srna.attributes["sRNA_type"] == "5utr") or (
+            srna.attributes["sRNA_type"] == "3utr") or (
+            srna.attributes["sRNA_type"] == "interCDS"):
             compare_table(srna, utrs, "utr", wigs_f, wigs_r, texs,
                           table_best, out, tex_notex, replicates, cutoff_tex,
                           cutoff_notex, cutoff_frag, tsss, fuzzy_tss, out_folder)
-        elif (srna.source == "intergenic") or (srna.source == "in_CDS"):
+        elif (srna.attributes["sRNA_type"] == "intergenic") or (
+              srna.attributes["sRNA_type"] == "in_CDS"):
             compare_table(srna, inters, "inter", wigs_f, wigs_r, texs,
                           table_best, out, tex_notex, replicates, utr_tex,
                           utr_notex, utr_frag, tsss, fuzzy_tss, out_folder)

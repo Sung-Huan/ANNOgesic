@@ -26,6 +26,7 @@ def plot(utr, utr_pri, utr_sec, filename, source, utr_type, base_5utr):
         n, bins, hist = plt.hist(utr, bin_num, color="#9999FF", label='3\'UTR')
         plt.legend([hist[0]], ["3'UTR"])
         plt.xlabel("3'UTR_length")
+    plt.ylabel("Amount")
     plt.savefig(filename)
     plt.clf()
 
@@ -106,8 +107,8 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
                   ("associated_cds", cds_name),
                   ("associated_gene", locus_tag),
                   ("associated_tss", tss.attributes["Name"])]])
-            out.write("{0}\t{1}\t5UTR\t{2}\t{3}\t.\t{4}\t.\t{5}\n".format(
-                  tss.seq_id, tss.source, start, end,
+            out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
+                  tss.seq_id, start, end,
                   tss.strand, attribute_string))
         else:
             attribute_string = ";".join(
@@ -119,8 +120,8 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
                   ("associated_gene", locus_tag),
                   ("associated_tss",
                   "".join(["TSS:", str(tss.start), "_", tss.strand]))]])
-            out.write("{0}\t{1}\t5UTR\t{2}\t{3}\t.\t{4}\t.\t{5}\n".format(
-                  tss.seq_id, tss.source, start, end,
+            out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
+                  tss.seq_id, start, end,
                   tss.strand, attribute_string))
         num_utr += 1
     return num_utr
@@ -426,8 +427,8 @@ def compare_ta(tas, tsss, genes, cdss, utr_strain, utr_all, out, source):
                   ("associated_cds", cds_name),
                   ("associated_gene", gene_name),
                   ("associated_tss", tss_name)]])
-            out.write("{0}\t{1}\t5UTR\t{2}\t{3}\t.\t{4}\t.\t{5}\n".format(
-                  ta.seq_id, ta.source, start, end,
+            out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
+                  ta.seq_id, start, end,
                   ta.strand, attribute_string))
             num_utr += 1
 
@@ -505,7 +506,7 @@ def get_3utr(ta, near_cds, utr_all, utr_strain, attributes, num_utr, out):
         id_ = "ID=utr3_" + str(num_utr)
         num_utr += 1
         attribute_string = ";".join([id_, name, attribute])
-        out.write("\t".join([ta.seq_id, "Transcript", "3UTR",
+        out.write("\t".join([ta.seq_id, "ANNOgesic", "3UTR",
                              str(start), str(end),
                              ta.score, ta.strand, ta.phase,
                              attribute_string]) + "\n")

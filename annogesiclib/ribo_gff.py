@@ -61,9 +61,10 @@ def print_gff(num, ribo, out, stats, strain):
                           ("Name", "Riboswitch_" + name),
                           ("Type", ribo["rfam_name"]),
                           ("Rfam_ID", ribo["rfam"]),
-                          ("E_value", ribo["e"])]])
+                          ("E_value", ribo["e"]),
+                          ("Method", "infernal_to_Rfam")]])
     out.write("\t".join([str(field) for field in [
-              ribo["strain"], "Rfam", "riboswitch", str(ribo["start_seq"]),
+              ribo["strain"], "ANNOgesic", "riboswitch", str(ribo["start_seq"]),
               str(ribo["end_seq"]), ".", ribo["strand"],
               ".", attribute]]) + "\n")
     stats["total"]["total"] += 1

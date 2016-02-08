@@ -1,12 +1,15 @@
 import os
 import sys
 import csv
+import math
 import matplotlib
+import numpy as np
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import networkx as nx
-
+import copy
+plt.rcParams['image.cmap'] = 'RdBu_r'
 
 def node(item, nodes, center, colors, labels1, labels2):
     if item not in nodes:
@@ -50,12 +53,12 @@ def best_assign_attributes(check_na, G, ppi, pre_ppi, first, style):
         if ppi["below"] >= 20:
             weight = 22
         else:
-            weight = ppi["below"] + 2
+            weight = ppi["below"] + 1
     else:
         if ppi["score"] >= 20:
             weight = 22
         else:
-            weight = ppi["score"] + ppi["below"] + 2
+            weight = ppi["score"] + ppi["below"] + 1
     add_edge(G, ppi, style, weight, ppi["best"])
     if not first:
         if pre_ppi["best"] != ppi["best"]:
@@ -106,7 +109,8 @@ def plot_text(check_na, plt, ppis, ppi, color_edge):
                      color='blue', verticalalignment='bottom',
                      horizontalalignment='center', fontsize=12)
         else:
-            plt.colorbar(color_edge)
+            cbar = plt.colorbar(color_edge)
+            cbar.ax.tick_params(labelsize=16)
 
 def nx_node(G, pos, node_size, colors, color_list):
     nx.draw_networkx_nodes(G, pos, node_size=node_size, node_shape='o',
@@ -114,7 +118,8 @@ def nx_node(G, pos, node_size, colors, color_list):
 
 def nx_edge(G, pos, edges, colors, styles, weights):
     color_edge = (nx.draw_networkx_edges(G, pos, edges=edges,
-                  edge_color=colors, style=styles, len=10, width=weights))
+                  edge_color=colors, style=styles, width=weights,
+                  edge_vmin=-1, edge_vmax=1, vmin=-1, vmax=1))
     return color_edge
 
 def nx_label(G, pos, labels, size):
@@ -126,8 +131,6 @@ def nx_color_style(G, edges):
     return colors, styles
 
 def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
-    fig = plt.figure(figsize=(14, 14))
-    G = nx.Graph()
     nodes = []
     edges = []
     labels1 = {}
@@ -140,20 +143,23 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     pre_ppi = ""
     scores = []
     weights = []
+    fig = plt.figure(figsize=(20, 20))
+    G = nx.Graph()
     pre_ppi = create_node(ppis, scores, nodes, center, colors,
-                          labels1, labels2, edges,
-                          G, cutoff_score, check_na, pre_ppi)
-    pos = nx.spring_layout(G,k=0.9,iterations=15)
+                          labels1, labels2, edges, G,
+                          cutoff_score, check_na, pre_ppi)
+#    pos = nx.spring_layout(G, k=3)
+    pos = nx.spring_layout(G, k=2, scale=3, iterations=20)
     color_list = []
     for color in colors.values():
         color_list.append(color)
     nx_node(G, pos, node_size, colors, color_list)
     connects = G.edges()
     for weight in G.edges(data=True):
-        if weight[2]["weight"] <= 62:
+        if weight[2]["weight"] <= 30:
             weights.append(weight[2]["weight"])
         else:
-            weights.append(62)
+            weights.append(30)
     colors, styles = nx_color_style(G, connects)
     color_edge = nx_edge(G, pos, connects, colors, styles, weights)
     nx_label(G, pos, labels1, 12)
@@ -208,63 +214,66 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
     scores = {"score": 0, "below": 0}
     center = {}
     start = False
-    fh = open(PPI_file, "r")
+#    fh = open(PPI_file, "r")
     print(PPI_file)
     match = False
-    for row in csv.reader(fh, delimiter="\t"):
-        start = True
-        if row[0].startswith("Interaction"):
-            if first:
-                pass
-            else:
-                assign_score_below(pre_ppi, scores, ppis)
-                if match:
-                    plot(ppis, center, pre_ppi["strain"], cutoff_score,
-                         node_size, out_folder)
-                    match = False
-                else:
-                    print("No interacted partners with {0} | {1}".format(
-                          center["locus_tag"], center["gene_name"]))
-                scores = {"score": 0, "below": 0}
-                ppis = []
-                first = True
-            datas = row[0].split(" | ")
-            center["locus_tag"] = datas[0].split(" ")[-1]
-            center["gene_name"] = datas[-1]
-            print("plotting {0}".format(center["gene_name"]))
-        elif row[0] == "strain":
-            pass
-        else:
-            ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2],
-                   "mode": row[3]}
-            if (ppi["item_a"] == center["locus_tag"]) or (
-                ppi["item_a"] == center["gene_name"]) or (
-                ppi["item_b"] == center["locus_tag"]) or (
-                ppi["item_b"] == center["gene_name"]):
-                match = True
-            if first:
-                first = False
-                score_compare(row[8], scores, cutoff_score, ppi)
-                ppi["best"] = row[8]
-            else:
-                if (ppi["strain"] == pre_ppi["strain"]) and (
-                    ppi["item_a"] == pre_ppi["item_a"]) and (
-                    ppi["item_b"] == pre_ppi["item_b"]):
-                    get_best(pre_ppi, ppi, row)
-                    score_compare(row[8], scores, cutoff_score, ppi)
+#    for row in csv.reader(fh, delimiter="\t"):
+    with open(PPI_file) as fh:
+        for line in fh:
+            line = line.strip()
+            row = line.split("\t")
+            start = True
+            if row[0].startswith("Interaction"):
+                if first:
+                    pass
                 else:
                     assign_score_below(pre_ppi, scores, ppis)
+                    if match:
+                        plot(ppis, center, pre_ppi["strain"], cutoff_score,
+                             node_size, out_folder)
+                        match = False
+                    else:
+                        print("No interacted partners with {0} | {1}".format(
+                              center["locus_tag"], center["gene_name"]))
                     scores = {"score": 0, "below": 0}
+                    ppis = []
+                    first = True
+                datas = row[0].split(" | ")
+                center["locus_tag"] = datas[0].split(" ")[-1]
+                center["gene_name"] = datas[-1]
+                print("plotting {0}".format(center["gene_name"]))
+            elif row[0] == "strain":
+                pass
+            else:
+                ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2],
+                       "mode": row[3]}
+                if (ppi["item_a"] == center["locus_tag"]) or (
+                    ppi["item_a"] == center["gene_name"]) or (
+                    ppi["item_b"] == center["locus_tag"]) or (
+                    ppi["item_b"] == center["gene_name"]):
+                    match = True
+                if first:
+                    first = False
                     score_compare(row[8], scores, cutoff_score, ppi)
                     ppi["best"] = row[8]
-            pre_ppi = ppi
+                else:
+                    if (ppi["strain"] == pre_ppi["strain"]) and (
+                        ppi["item_a"] == pre_ppi["item_a"]) and (
+                        ppi["item_b"] == pre_ppi["item_b"]):
+                        get_best(pre_ppi, ppi, row)
+                        score_compare(row[8], scores, cutoff_score, ppi)
+                    else:
+                        assign_score_below(pre_ppi, scores, ppis)
+                        scores = {"score": 0, "below": 0}
+                        score_compare(row[8], scores, cutoff_score, ppi)
+                        ppi["best"] = row[8]
+                pre_ppi = ppi
     if start and match:
         assign_score_below(pre_ppi, scores, ppis)
         plot(ppis, center, pre_ppi["strain"],
              cutoff_score, node_size, out_folder)
     elif not start:
-        print("No proper result can be retrieved...")
+        print("No proper result can be retrieved in " + PPI_file)
     elif not match:
         print("No interacted partners with {0} | {1}".format(
                center["locus_tag"], center["gene_name"]))
-    fh.close()

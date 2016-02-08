@@ -108,3 +108,10 @@ class OperonDetection(object):
         if combine:
             self._combine_gff(prefixs, output_folder,
                               gffs, tss_fuzzy, term_fuzzy)
+        self.helper.remove_tmp(gffs)
+        self.helper.remove_tmp(utr3s)
+        self.helper.remove_tmp(utr5s)
+        self.helper.remove_tmp(tsss)
+        self.helper.remove_tmp(trans)
+        if terms is not None:
+            self.helper.remove_tmp(terms)

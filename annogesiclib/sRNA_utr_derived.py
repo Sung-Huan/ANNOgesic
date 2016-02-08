@@ -510,7 +510,7 @@ def print_file(num, out_t, out, srna, start, end, srna_datas, table_best):
                 srna_datas["best"], srna_datas["high"], srna_datas["low"]))
     attribute_string = ";".join(
         ["=".join(items) for items in [["ID", "srna_utr" + str(num)],
-        ["Name", "UTR_sRNA_" + name], ["UTR_type", srna["utr"]],
+        ["Name", "UTR_sRNA_" + name], ["sRNA_type", srna["utr"]],
         ["best_avg_coverage", str(srna_datas["best"])],
         ["best_high_coverage", str(srna_datas["high"])],
         ["best_low_coverage", str(srna_datas["low"])],
@@ -518,7 +518,7 @@ def print_file(num, out_t, out, srna, start, end, srna_datas, table_best):
         ["start_cleavage", srna["start_cleavage"]],
         ["end_cleavage", srna["end_cleavage"]]]])
     out.write("\t".join([str(field) for field in [
-              srna["strain"], srna["utr"], "UTR_sRNA", str(start),
+              srna["strain"], "ANNOgesic", "sRNA", str(start),
               str(end), ".", srna["strand"], ".", attribute_string]]) + "\n")
     if not table_best:
         first = True
