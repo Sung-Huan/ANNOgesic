@@ -358,9 +358,7 @@ promoter_detection(){
         -t $ANNOGESIC_FOLDER/output/TSS/gffs \
         -f $ANNOGESIC_FOLDER/output/target/fasta \
 	-w 50 51 45 2-10 \
-	-g $ANNOGESIC_FOLDER/output/TSS/gffs \
 	-c \
-	-s \
 	-tl $tex_notex_libs \
 	-tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
         $ANNOGESIC_FOLDER
