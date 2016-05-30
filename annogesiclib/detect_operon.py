@@ -1,9 +1,7 @@
-import os
-import sys
 import math
-import csv
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
+
 
 def import_to_operon(start, end, strand):
     return {"start": start, "end": end, "strand": strand}
@@ -11,8 +9,6 @@ def import_to_operon(start, end, strand):
 def get_gene_info(cds):
     if "locus_tag" in cds.attributes.keys():
         feature = cds.attributes["locus_tag"]
-#    elif "protein_id" in cds.attributes.keys():
-#        feature = cds.attributes["protein_id"]
     else:
         strand = Helper().get_strand_name(cds.strand)
         feature = "".join([cds.feature, ":", str(cds.start),
@@ -23,24 +19,24 @@ def get_term_feature(ta, data, term_fuzzy, features, datas,
                      ta_check_point, data_check_start, data_check_end):
     jump = False
     if (ta.strand == data.strand) and (
-        ta.seq_id == data.seq_id) and (
-       (math.fabs(data.start - ta_check_point) <= term_fuzzy) or (
-        math.fabs(data.end - ta_check_point) <= term_fuzzy) or (
-       (ta_check_point >= data.start) and (
-        ta_check_point <= data.end))):
+            ta.seq_id == data.seq_id) and (
+            (math.fabs(data.start - ta_check_point) <= term_fuzzy) or (
+            math.fabs(data.end - ta_check_point) <= term_fuzzy) or (
+            (ta_check_point >= data.start) and (
+            ta_check_point <= data.end))):
         features["detect"] = True
     if (ta.strand == data.strand) and (
-        ta.seq_id == data.seq_id):
+            ta.seq_id == data.seq_id):
         if (ta.start <= data_check_start) and (
-            ta.end >= data_check_end):
+                ta.end >= data_check_end):
             features["num"] += 1
             datas.append(data)
         elif (ta_check_point >= data.start) and (
-              ta_check_point <= data.end):
+                ta_check_point <= data.end):
             features["num"] += 1
             datas.append(data)
     if (ta.seq_id == data.seq_id) and (
-        data.start - term_fuzzy > ta.end):
+            data.start - term_fuzzy > ta.end):
         jump = True
     return jump
 
@@ -48,17 +44,17 @@ def get_tss_feature(ta, data, features, tss_fuzzy, datas, ta_check_point,
                     data_check_start, data_check_end):
     jump = False
     if (ta.strand == data.strand) and (
-        ta.seq_id == data.seq_id) and (
-        math.fabs(ta_check_point - data.start) <= tss_fuzzy):
+            ta.seq_id == data.seq_id) and (
+            math.fabs(ta_check_point - data.start) <= tss_fuzzy):
         features["detect"] = True
     if (ta.strand == data.strand) and (
-        ta.seq_id == data.seq_id) and (
-        ta.start <= data_check_start) and (
-        ta.end >= data_check_end):
+            ta.seq_id == data.seq_id) and (
+            ta.start <= data_check_start) and (
+            ta.end >= data_check_end):
         features["num"] += 1
         datas.append(data)
     if (ta.seq_id == data.seq_id) and (
-        data_check_end > ta.end):
+            data_check_end > ta.end):
         jump = True
     return jump
 
@@ -69,40 +65,40 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
         if (feature == "term"):
             if ta.strand == "+":
                 jump_term = get_term_feature(ta, data, term_fuzzy, features,
-                                    datas, ta.end, data.start,
-                                    data.start - term_fuzzy)
+                                             datas, ta.end, data.start,
+                                             data.start - term_fuzzy)
             elif ta.strand == "-":
                 jump_term = get_term_feature(ta, data, term_fuzzy, features,
-                                    datas, ta.start, data.end + term_fuzzy,
-                                    data.end)
+                                             datas, ta.start,
+                                             data.end + term_fuzzy, data.end)
             if jump_term:
                 break
         elif (feature == "tss"):
             if ta.strand == "+":
                 jump_tss = get_tss_feature(ta, data, features, tss_fuzzy,
-                                   datas, ta.start, data.start + tss_fuzzy,
-                                   data.end)
+                                           datas, ta.start,
+                                           data.start + tss_fuzzy, data.end)
             elif ta.strand == "-":
                 jump_tss = get_tss_feature(ta, data, features, tss_fuzzy,
-                                   datas, ta.end, data.end,
-                                   data.start - tss_fuzzy)
+                                           datas, ta.end, data.end,
+                                           data.start - tss_fuzzy)
             if jump_tss:
                 break
         else:
             if feature == "gene":
                 if (ta.strand == data.strand) and (
-                    ta.seq_id == data.seq_id) and (
-                    data.feature == "gene"):
+                        ta.seq_id == data.seq_id) and (
+                        data.feature == "gene"):
                     if ((ta.start <= data.start) and (
-                         ta.end >= data.end)) or (
-                        (ta.start >= data.start) and (
-                         ta.end <= data.end)) or (
-                        (ta.start >= data.start) and (
-                         ta.start <= data.end) and (
-                         ta.end >= data.end)) or (
-                        (ta.start <= data.start) and (
-                         ta.end <= data.end) and (
-                         ta.end >= data.start)):
+                             ta.end >= data.end)) or (
+                            (ta.start >= data.start) and (
+                             ta.end <= data.end)) or (
+                            (ta.start >= data.start) and (
+                             ta.start < data.end) and (
+                             ta.end > data.end)) or (
+                            (ta.start < data.start) and (
+                             ta.end <= data.end) and (
+                             ta.end > data.start)):
                         features["num"] += 1
                         features["detect"] = True
                         datas.append(data)
@@ -114,7 +110,7 @@ def check_conflict(genes, pos, strand):
     for gene in genes["data_list"]:
         if (gene.strand == strand):
             if (gene.start < pos) and (
-                gene.end >= pos):
+                    gene.end >= pos):
                 conflict = True
                 break
     return conflict
@@ -127,7 +123,7 @@ def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
             end_points = [ta_pos]
             for pos in tsss:
                 if (pos not in no_count_tsss) and (
-                    tss.start != pos.start):
+                        tss.start != pos.start):
                     end_points.append(pos.start)
             end_points.append(end)
             if tss.strand == "+":
@@ -139,26 +135,25 @@ def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
                 if tss.strand == "+":
                     for gene in genes["data_list"]:
                         if (gene.seq_id == tss.seq_id) and (
-                            gene.strand == tss.strand):
+                                gene.strand == tss.strand):
                             if (gene.start >= tss.start) and (
-                                gene.end <= point):
+                                    gene.end <= point):
                                 detect_pos = True
                                 break
                 else:
                     for gene in genes["data_list"]:
                         if (gene.seq_id == tss.seq_id) and (
-                            gene.strand == tss.strand):
+                                gene.strand == tss.strand):
                             if (gene.start >= point) and (
-                                gene.end <= tss.start):
+                                    gene.end <= tss.start):
                                 detect_pos = True
                                 break
                 if not detect_pos:
                     no_count_tsss.append(tss)
                 else:
-                    operon_pos, first = compute_sub_operon(strand, point, ta_pos,
-                                        first, min_length, end, operons,
-                                        operon_pos)
-
+                    operon_pos, first = compute_sub_operon(
+                        strand, point, ta_pos, first, min_length,
+                        end, operons, operon_pos)
                     break
 
 def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
@@ -179,11 +174,13 @@ def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
         if tsss["num_feature"] == 1:
             pass
         else:
-            sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
-                                     end, operons, operon_pos)
+            sub_operon_gene_conflict(
+                tsss, strand, genes, ta_pos, first, min_length,
+                end, operons, operon_pos)
     else:
-        sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first,
-                                 min_length, end, operons, operon_pos)
+        sub_operon_gene_conflict(
+            tsss, strand, genes, ta_pos, first,
+            min_length, end, operons, operon_pos)
     return operons
 
 def compute_sub_operon(strand, point, ta_pos, first,
@@ -191,7 +188,6 @@ def compute_sub_operon(strand, point, ta_pos, first,
     if first:
         operon_pos = ta_pos
         first = False
-#    else:
     if math.fabs(point - operon_pos) > min_length:
         if strand == "+":
             operons.append(import_to_operon(operon_pos,
@@ -201,12 +197,6 @@ def compute_sub_operon(strand, point, ta_pos, first,
             operons.append(import_to_operon(point + 1,
                            operon_pos, strand))
             operon_pos = point
-#    if (operon_pos != ta_pos) and \
-#       (math.fabs(end - operon_pos) > min_length):
-#        if strand == "+":
-#            operons.append(import_to_operon(operon_pos, end, strand))
-#        else:
-#            operons.append(import_to_operon(end, operon_pos, strand))
     return operon_pos, first
 
 def read_gff(ta_file, gff_file, tss_file, terminator_file):
@@ -224,10 +214,12 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
     if terminator_file is not False:
         for entry in gff_parser.entries(open(terminator_file)):
             term_gffs.append(entry)
-        term_gffs = sorted(term_gffs, key=lambda k: (k.seq_id, k.start))
-    tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
-    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
-    tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start))
+        term_gffs = sorted(term_gffs, key=lambda k: (k.seq_id, k.start,
+                                                     k.end, k.strand))
+    tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+    tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start,
+                                               k.end, k.strand))
     return tas, gffs, tss_gffs, term_gffs
 
 def print_file(ta, operons, out, operon_id, whole_operon, tsss,
@@ -246,8 +238,8 @@ def print_file(ta, operons, out, operon_id, whole_operon, tsss,
             num_sub_gene = 0
             for gene in genes["data_list"]:
                 if (sub["strand"] == gene.strand) and (
-                    sub["start"] <= gene.start) and (
-                    sub["end"] >= gene.end):
+                        sub["start"] <= gene.start) and (
+                        sub["end"] >= gene.end):
                     if "locus_tag" in gene.attributes.keys():
                         sub_gene.append(gene.attributes["locus_tag"])
                     else:

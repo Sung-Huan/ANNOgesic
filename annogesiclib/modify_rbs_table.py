@@ -1,21 +1,20 @@
-import os
 import shutil
-import sys
 import csv
 
+
 def import_data(row):
-    datas = row[0].split("|")
-    return{"strain": datas[1], "strand": datas[2],
-           "associate": datas[3], "start_seq": int(datas[4]),
-           "end_seq": int(datas[5]), "rfam": row[1], "e": row[2],
-           "start_align": int(row[3]), "end_align": int(row[4]),
-           "info": row[0], "ID": datas[0]}
+    return{"strain": row[1], "strand": row[2],
+           "associate": row[3], "start_seq": int(row[4]),
+           "end_seq": int(row[5]), "rfam": row[6], "e": row[7],
+           "start_align": int(row[8]), "end_align": int(row[9]),
+           "info": row[0:6], "ID": row[0]}
 
 def modify_table(table, output_all):
     first = True
     rbss = []
     out = open("tmp.csv", "w")
-    out.write("#ID|strain|strand|associated_CDS|start|end\tRfam\te_value\tstart_align\tend_align\n")
+    out.write("#ID\tstrain\tstrand\tassociated_CDS\tstart_genome\t"
+              "end_genome\tRfam\te_value\tstart_align\tend_align\n")
     if output_all:
         with open(table) as fh:
             for line in fh:
@@ -44,9 +43,9 @@ def modify_table(table, output_all):
                             rbs2["print"] = True
                             repeat = True
                 if not repeat:
-                    out.write("\t".join([rbs1["info"], rbs1["rfam"], rbs1["e"],
-                                         str(rbs1["start_align"]),
-                                         str(rbs1["end_align"])]) + "\n")
+                    out.write("\t".join(rbs1["info"] + [rbs1["rfam"],
+                                        rbs1["e"], str(rbs1["start_align"]),
+                                        str(rbs1["end_align"])]) + "\n")
         fh.close()
     out.close()
     shutil.move("tmp.csv", table)

@@ -66,6 +66,7 @@ Gff3Entry({
         self.info_without_attributes = "\t".join([str(field) for field in [
                         self.seq_id, self.source, self.feature, self.start,
                         self.end, self.score, self.strand, self.phase]])
+
     def _attributes(self, attributes_string):
         """Translate the attribute string to dictionary"""
         attributes = {}

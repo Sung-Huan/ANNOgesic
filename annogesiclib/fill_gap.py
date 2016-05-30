@@ -1,7 +1,5 @@
-import os
-import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
+
 
 def uni(tas, genes, out):
     start_tmp = 0
@@ -10,15 +8,15 @@ def uni(tas, genes, out):
     for ta in tas:
         for gene in genes:
             if (ta.strand == gene.strand) and (
-                ta.seq_id == gene.seq_id):
+                    ta.seq_id == gene.seq_id):
                 if ((ta.start < gene.start) and (
-                     ta.end > gene.start) and (
-                     ta.end < gene.end)) or (
-                    (ta.start > gene.start) and (
-                     ta.end < gene.end)) or (
-                    (ta.start > gene.start) and (
-                     ta.start < gene.end) and (
-                     ta.end > gene.end)):
+                         ta.end > gene.start) and (
+                         ta.end < gene.end)) or (
+                        (ta.start > gene.start) and (
+                         ta.end < gene.end)) or (
+                        (ta.start > gene.start) and (
+                         ta.start < gene.end) and (
+                         ta.end > gene.end)):
                     detect = True
         if (not detect) and (start_tmp != ta.start) and (stop_tmp != ta.end):
             out.write(ta.info + "\n")
@@ -37,15 +35,15 @@ def overlap(tas, genes, print_list, out):
         stop_tmp = 0
         for ta in tas:
             if (ta.strand == gene.strand) and (
-                ta.seq_id == gene.seq_id):
+                    ta.seq_id == gene.seq_id):
                 if ((ta.start < gene.start) and (
-                     ta.end > gene.start) and (
-                     ta.end < gene.end)) or (
-                    (ta.start > gene.start) and (
-                     ta.end < gene.end)) or (
-                    (ta.start > gene.start) and (
-                     ta.start < gene.end) and (
-                     ta.end > gene.end)):
+                         ta.end > gene.start) and (
+                         ta.end < gene.end)) or (
+                        (ta.start > gene.start) and (
+                         ta.end < gene.end)) or (
+                        (ta.start > gene.start) and (
+                         ta.start < gene.end) and (
+                         ta.end > gene.end)):
                     check = True
                     if ta in print_list:
                         printed = True
@@ -64,8 +62,9 @@ def overlap(tas, genes, print_list, out):
                         tmp_ta = print_list[-1]
                         out.write("\t".join([str(field) for field in [
                                   tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
-                                  start_tmp, stop_tmp, tmp_ta.score, tmp_ta.strand,
-                                  tmp_ta.phase, tmp_ta.attribute_string]]) + "\n")
+                                  start_tmp, stop_tmp, tmp_ta.score,
+                                  tmp_ta.strand, tmp_ta.phase,
+                                  tmp_ta.attribute_string]]) + "\n")
                     combine = False
                     printed = False
                     break
@@ -76,6 +75,7 @@ def overlap(tas, genes, print_list, out):
                           tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
                           start_tmp, stop_tmp, tmp_ta.score, tmp_ta.strand,
                           tmp_ta.phase, tmp_ta.attribute_string]]) + "\n")
+
 def fill_gap(gff_file, ta_file, type_, output):
     tas = []
     genes = []
@@ -85,13 +85,15 @@ def fill_gap(gff_file, ta_file, type_, output):
     for entry in Gff3Parser().entries(ta_f):
         tas.append(entry)
     ta_f.close()
+    tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for entry in Gff3Parser().entries(gff_f):
         if (entry.feature == "gene") or (
-            entry.feature == "CDS") or (
-            entry.feature == "rRNA") or (
-            entry.feature == "tRNA"):
+                entry.feature == "CDS") or (
+                entry.feature == "rRNA") or (
+                entry.feature == "tRNA"):
             genes.append(entry)
     gff_f.close()
+    genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     out = open(output, "w")
     out.write("##gff-version 3\n")
     if type_ == "overlap":
@@ -113,24 +115,24 @@ def longer_ta(ta_file, length, out_file):
     tas = []
     for entry in Gff3Parser().entries(open(ta_file)):
         tas.append(entry)
-    tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
+    tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for ta_1 in tas:
         for ta_2 in tas:
             if (ta_1.seq_id == ta_2.seq_id) and (
-                ta_1.strand == ta_2.strand):
+                    ta_1.strand == ta_2.strand):
                 if (ta_1.start <= ta_2.start) and (
-                    ta_1.end >= ta_2.start) and (
-                    ta_1.end <= ta_2.end):
+                        ta_1.end >= ta_2.start) and (
+                        ta_1.end <= ta_2.end):
                     ta_1.end = ta_2.end
                 elif (ta_1.start >= ta_2.start) and (
-                      ta_1.start <= ta_2.end) and (
-                      ta_1.end >= ta_2.end):
+                        ta_1.start <= ta_2.end) and (
+                        ta_1.end >= ta_2.end):
                     ta_1.start = ta_2.start
                 elif (ta_1.start <= ta_2.start) and (
-                      ta_1.end >= ta_2.end):
+                        ta_1.end >= ta_2.end):
                     pass
                 elif (ta_1.start >= ta_2.start) and (
-                      ta_1.end <= ta_2.end):
+                        ta_1.end <= ta_2.end):
                     ta_1.start = ta_2.start
                     ta_1.end = ta_2.end
     first = True
@@ -138,7 +140,7 @@ def longer_ta(ta_file, length, out_file):
     out.write("##gff-version 3\n")
     num = 0
     pre_ta = None
-    tas = sorted(tas, key=lambda k: (k.seq_id, k.start))
+    tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for ta in tas:
         if (ta.end - ta.start) >= length:
             if first:
@@ -147,9 +149,9 @@ def longer_ta(ta_file, length, out_file):
                 num += 1
             else:
                 if (ta.seq_id == pre_ta.seq_id) and (
-                    ta.strand == pre_ta.strand) and (
-                    ta.start == pre_ta.start) and (
-                    ta.end == pre_ta.end):
+                        ta.strand == pre_ta.strand) and (
+                        ta.start == pre_ta.start) and (
+                        ta.end == pre_ta.end):
                     pass
                 else:
                     print_file(ta, num, out)

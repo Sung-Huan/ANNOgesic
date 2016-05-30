@@ -1,8 +1,6 @@
-import os
-import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
+
 
 def print_file(datas, out, feature):
     for data in datas:
@@ -32,41 +30,40 @@ def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
     for entry in Gff3Parser().entries(open(sRNA_file)):
         entry.attributes = del_attributes("sORF", entry)
         srnas.append(entry)
-    srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))
+    srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for entry in Gff3Parser().entries(open(sORF_file)):
         entry.attributes = del_attributes("sRNA", entry)
         sorfs.append(entry)
-    sorfs = sorted(sorfs, key=lambda k: (k.seq_id, k.start))
+    sorfs = sorted(sorfs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for srna in srnas:
         for sorf in sorfs:
-            if (srna.seq_id == sorf.seq_id) and \
-               (srna.strand == sorf.strand):
+            if (srna.seq_id == sorf.seq_id) and (srna.strand == sorf.strand):
                 if ((srna.start <= sorf.start) and (
-                     srna.end >= sorf.end)) or (
-                    (srna.start >= sorf.start) and (
-                     srna.end <= sorf.end)) or (
-                    (srna.start <= sorf.start) and (
-                     srna.end >= sorf.start) and (
-                     srna.end <= sorf.end)) or (
-                    (srna.start >= sorf.start) and (
-                     srna.start <= sorf.end) and (
-                     srna.end >= sorf.end)):
+                        srna.end >= sorf.end)) or (
+                        (srna.start >= sorf.start) and (
+                         srna.end <= sorf.end)) or (
+                        (srna.start <= sorf.start) and (
+                         srna.end >= sorf.start) and (
+                         srna.end <= sorf.end)) or (
+                        (srna.start >= sorf.start) and (
+                         srna.start <= sorf.end) and (
+                         srna.end >= sorf.end)):
                     if "sORF" not in srna.attributes.keys():
                         srna.attributes["sORF"] = []
                         strand = Helper().get_strand_name(sorf.strand)
                     srna.attributes["sORF"].append("".join(
                                               [sorf.attributes["ID"], ":",
-                                              str(sorf.start), "-",
-                                              str(sorf.end),
-                                              "_", strand]))
+                                               str(sorf.start), "-",
+                                               str(sorf.end),
+                                               "_", strand]))
                     if "sRNA" not in sorf.attributes.keys():
                         sorf.attributes["sRNA"] = []
                         strand = Helper().get_strand_name(srna.strand)
                     sorf.attributes["sRNA"].append("".join(
                                               [srna.attributes["ID"], ":",
-                                              str(srna.start), "-",
-                                              str(srna.end),
-                                              "_", strand]))
+                                               str(srna.start), "-",
+                                               str(srna.end),
+                                               "_", strand]))
     print_file(sorfs, out_o, "sRNA")
     print_file(srnas, out_r, "sORF")
     out_r.close()

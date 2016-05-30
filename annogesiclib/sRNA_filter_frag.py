@@ -1,9 +1,8 @@
 import os
-import sys
 import csv
-import math
 import shutil
 from annogesiclib.gff3 import Gff3Parser
+
 
 def filter_frag(srna_table, srna_gff):
     out = open("tmp_srna.gff", "w")
@@ -22,20 +21,18 @@ def filter_frag(srna_table, srna_gff):
     for gff in gffs:
         if ("UTR_type" in gff.attributes.keys()):
             if (gff.attributes["UTR_type"] == "5utr") or (
-                gff.attributes["UTR_type"] == "interCDS"):
+                    gff.attributes["UTR_type"] == "interCDS"):
                 for table in tables:
                     if (gff.seq_id == table[0]) and (
-                        gff.start == int(table[2])) and (
-                        gff.end == int(table[3])) and (
-                        gff.strand == table[4]):
+                            gff.start == int(table[2])) and (
+                            gff.end == int(table[3])) and (
+                            gff.strand == table[4]):
                         if "frag" in table[5]:
                             new_gffs.append(gff)
-#                            out.write(gff.info + "\n")
             elif gff.attributes["UTR_type"] == "3utr":
                 new_gffs.append(gff)
         else:
             new_gffs.append(gff)
-#            out.write(gff.info + "\n")
     new_tables = []
     for table in tables:
         for gff in new_gffs:
@@ -45,7 +42,6 @@ def filter_frag(srna_table, srna_gff):
                  gff.strand == table[4]):
                 new_tables.append(table)
                 out_ta.write("\t".join(table) + "\n")
-                
     for gff in new_gffs:
         for table in new_tables:
             if (gff.seq_id == table[0]) and (

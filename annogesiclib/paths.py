@@ -1,12 +1,8 @@
-import os
-import sys
-
 class Paths(object):
 
     def __init__(self, base_path="."):
         self.base_path = base_path
         self._set_folder_names()
-#        self._set_static_files()
 
     def _set_folder_names(self):
         """Set the name of folders used in a project."""
@@ -39,10 +35,10 @@ class Paths(object):
         self.reference_input_folder = "%s/reference" % self.input_folder
         self.wig_folder = "%s/wigs" % self.input_folder
         self.mutation_table_folder = "%s/mutation_table" % self.input_folder
-        self.promoter_input_folder = "%s/promoter_analysis" % self.input_folder
         self.database_folder = "%s/database" % self.input_folder
         self.manual_TSS_folder = "%s/manual_TSS" % self.input_folder
-        self.manual_pro_folder = "%s/manual_processing_site" % self.input_folder
+        self.manual_pro_folder = "%s/manual_processing_site" % (
+             self.input_folder)
         self.read_folder = "%s/reads" % self.input_folder
         self.bam_folder = "%s/BAMs" % self.input_folder
         self.riborfam_folder = "%s/riboswitch_ID" % self.input_folder
@@ -53,25 +49,31 @@ class Paths(object):
         self.tsspredator_folder = "%s/TSS" % self.output_folder
         self.utr_folder = "%s/UTR" % self.output_folder
         self.transterm_folder = "%s/terminator" % self.output_folder
-        self.transcript_assembly_output_folder = "%s/transcriptome_assembly" % self.output_folder
+        self.transcript_assembly_output_folder = (
+                "%s/transcriptome_assembly" % self.output_folder)
         self.processing_site_folder = "%s/processing_site" % self.output_folder
         self.srna_folder = "%s/sRNA" % self.output_folder
         self.sorf_folder = "%s/sORF" % self.output_folder
-        self.promoter_output_folder = "%s/promoter_analysis" % self.output_folder
+        self.promoter_output_folder = "%s/promoter_analysis" % (
+             self.output_folder)
         self.operon_output_folder = "%s/operons" % self.output_folder
         self.circrna_output_folder = "%s/circRNA" % self.output_folder
         self.goterm_output_folder = "%s/Go_term" % self.output_folder
         self.starget_output_folder = "%s/sRNA_targets" % self.output_folder
         self.snp_output_folder = "%s/SNP_calling" % self.output_folder
         self.ppi_output_folder = "%s/PPI" % self.output_folder
-        self.sublocal_output_folder = "%s/subcellular_localization" % self.output_folder
+        self.sublocal_output_folder = "%s/subcellular_localization" % (
+             self.output_folder)
         self.ribos_output_folder = "%s/riboswitch" % self.output_folder
 
     def _set_transcript_assembly_folder_names(self):
-        self.reference_base_folder = "%s/transcriptome_assembly" % self.output_folder
+        self.reference_base_folder = "%s/transcriptome_assembly" % (
+             self.output_folder)
         self.transcript_gff_folder = "%s/gffs" % self.reference_base_folder
-        self.transcript_stat_folder = "%s/statistics" % self.reference_base_folder
-        self.transcript_table_folder = "%s/tables" % self.reference_base_folder
+        self.transcript_stat_folder = "%s/statistics" % (
+             self.reference_base_folder)
+        self.transcript_table_folder = "%s/tables" % (
+             self.reference_base_folder)
 
     def _set_reference_input_folder_names(self):
         self.reference_base_folder = "%s/reference" % self.input_folder
@@ -156,7 +158,7 @@ class Paths(object):
              self.utr5_folder)
         self.utr5_gff_folder = "%s/gffs" % (
              self.utr5_folder)
-    
+
     def _set_srna_folder_names(self):
         self.srna_base_folder = "%s/sRNA" % self.output_folder
         self.srna_gff_folder = "%s/gffs" % (
@@ -204,7 +206,7 @@ class Paths(object):
             self.sorf_table_folder)
         self.sorf_table_all_folder = "%s/all_candidates" % (
             self.sorf_table_folder)
-        
+
     def _set_operon_folder_names(self):
         self.operon_base_folder = "%s/operons" % self.output_folder
         self.operon_gff_folder = "%s/gffs" % (
@@ -230,7 +232,8 @@ class Paths(object):
     def _set_goterm_folder_names(self):
         self.goterm_base_folder = "%s/Go_term" % self.output_folder
         self.goterm_all_folder = "%s/all_CDS" % self.goterm_base_folder
-        self.goterm_express_folder = "%s/expressed_CDS" % self.goterm_base_folder
+        self.goterm_express_folder = "%s/expressed_CDS" % (
+             self.goterm_base_folder)
         self.goterm_express_result_folder = "%s/Go_term_results" % (
              self.goterm_express_folder)
         self.goterm_express_stat_folder = "%s/statistics" % (
@@ -296,9 +299,11 @@ class Paths(object):
              self.ppi_base_folder)
 
     def _set_sublocal_folder_names(self):
-        self.sublocal_base_folder = "%s/subcellular_localization" % self.output_folder
+        self.sublocal_base_folder = "%s/subcellular_localization" % (
+             self.output_folder)
         self.sublocal_all_folder = "%s/all_CDS" % self.sublocal_base_folder
-        self.sublocal_express_folder = "%s/expressed_CDS" % self.sublocal_base_folder
+        self.sublocal_express_folder = "%s/expressed_CDS" % (
+             self.sublocal_base_folder)
         self.sublocal_all_results_folder = "%s/psortb_results" % (
              self.sublocal_all_folder)
         self.sublocal_all_stat_folder = "%s/statistics" % (
@@ -324,53 +329,75 @@ class Paths(object):
             return (self.required_base_folders() +
                     self.required_input_folders() +
                     self.required_reference_input_folders() +
-                    self.required_wig_folders() + 
+                    self.required_wig_folders() +
                     self.required_bam_folders())
         else:
             return (self.required_base_folders() +
                     self.required_input_folders() +
                     self.required_reference_input_folders() +
                     self.required_wig_folders() +
-                    self.required_bam_folders() + 
+                    self.required_bam_folders() +
                     self.required_output_folders(folder_type))
 
     def required_base_folders(self):
         return [self.input_folder, self.output_folder]
 
     def required_input_folders(self):
-        return [self.reference_input_folder, self.wig_folder, 
+        return [self.reference_input_folder, self.wig_folder,
                 self.mutation_table_folder, self.read_folder,
-		self.bam_folder, self.promoter_input_folder,
+                self.bam_folder,
                 self.database_folder, self.manual_TSS_folder,
                 self.manual_pro_folder, self.riborfam_folder]
 
     def required_output_folders(self, folder_type):
-        folder_dict = {"get_target_fasta": 
-                        [self.target_folder] + self.required_target_folders(),
-                       "annotation_transfer": 
-                        [self.ratt_folder] + self.required_target_folders(),
-                       "TSS": 
-                        [self.tsspredator_folder] + self.required_tsspredator_folders(),
-                       "processing":
-                        [self.processing_site_folder] + self.required_processing_folders(),
-                       "terminator":
-                        [self.transterm_folder] + self.required_transterm_folders(),
-                       "transcript_assembly":
-                        [self.transcript_assembly_output_folder] + self.required_transcript_assembly_folders(),
+        folder_dict = {"get_target_fasta": (
+                           [self.target_folder] +
+                           self.required_target_folders()),
+                       "annotation_transfer": (
+                           [self.ratt_folder] +
+                           self.required_target_folders()),
+                       "TSS": (
+                           [self.tsspredator_folder] +
+                           self.required_tsspredator_folders()),
+                       "processing": (
+                           [self.processing_site_folder] +
+                           self.required_processing_folders()),
+                       "terminator": (
+                           [self.transterm_folder] +
+                           self.required_transterm_folders()),
+                       "transcript_assembly": (
+                           [self.transcript_assembly_output_folder] +
+                           self.required_transcript_assembly_folders()),
                        "utr": [self.utr_folder] + self.required_utr_folders(),
-                       "srna": [self.srna_folder] + self.required_srna_folders(),
-                       "sorf": [self.sorf_folder] + self.required_sorf_folders(),
+                       "srna": (
+                           [self.srna_folder] + self.required_srna_folders()),
+                       "sorf": (
+                           [self.sorf_folder] + self.required_sorf_folders()),
                        "promoter": [self.promoter_output_folder],
-                       "circrna": [self.circrna_output_folder] + self.required_circrna_folders(),
-                       "go_term": [self.goterm_output_folder] + self.required_goterm_folders(),
-                       "srna_target":
-                        [self.starget_output_folder] + self.required_starget_folders(),
-                       "snp": [self.snp_output_folder] + self.required_snp_folders(),
-                       "ppi_network": [self.ppi_output_folder] + self.required_ppi_folders(),
-                       "subcellular_localization":
-                        [self.sublocal_output_folder] + self.required_sublocal_folders(),
-                       "riboswitch": [self.ribos_output_folder] + self.required_ribos_folders(),
-                       "operon": [self.operon_output_folder] + self.required_operon_folders(),}
+                       "circrna": (
+                           [self.circrna_output_folder] +
+                           self.required_circrna_folders()),
+                       "go_term": (
+                           [self.goterm_output_folder] +
+                           self.required_goterm_folders()),
+                       "srna_target": (
+                           [self.starget_output_folder] +
+                           self.required_starget_folders()),
+                       "snp": (
+                           [self.snp_output_folder] +
+                           self.required_snp_folders()),
+                       "ppi_network": (
+                           [self.ppi_output_folder] +
+                           self.required_ppi_folders()),
+                       "subcellular_localization": (
+                           [self.sublocal_output_folder] +
+                           self.required_sublocal_folders()),
+                       "riboswitch": (
+                           [self.ribos_output_folder] +
+                           self.required_ribos_folders()),
+                       "operon": (
+                           [self.operon_output_folder] +
+                           self.required_operon_folders())}
         return folder_dict[folder_type]
 
     def required_reference_input_folders(self):
@@ -390,12 +417,17 @@ class Paths(object):
     def required_tsspredator_folders(self):
         return [self.tss_to_gff_folder, self.tss_statistics_folder,
                 self.tss_Master_folder, self.tss_config_folder]
+
     def required_transterm_folders(self):
         return [self.term_to_gff_folder, self.term_statistics_folder,
                 self.transtermhp_folder, self.term_to_table_folder]
+
     def required_processing_folders(self):
-        return [self.processing_to_gff_folder, self.processing_statistics_folder,
-                self.processing_Master_folder, self.processing_config_folder]
+        return [self.processing_to_gff_folder,
+                self.processing_statistics_folder,
+                self.processing_Master_folder,
+                self.processing_config_folder]
+
     def required_transcript_assembly_folders(self):
         return [self.transcript_gff_folder, self.transcript_stat_folder,
                 self.transcript_table_folder]
@@ -404,6 +436,7 @@ class Paths(object):
         return [self.utr5_folder, self.utr3_folder,
                 self.utr5_stat_folder, self.utr5_gff_folder,
                 self.utr3_stat_folder, self.utr3_gff_folder]
+
     def required_srna_folders(self):
         return [self.srna_gff_folder, self.srna_sec_folder,
                 self.srna_sec_plot_folder, self.srna_dot_plot_folder,
@@ -412,42 +445,57 @@ class Paths(object):
                 self.srna_gff_class_folder, self.srna_gff_best_folder,
                 self.srna_gff_all_folder, self.srna_table_class_folder,
                 self.srna_table_best_folder, self.srna_table_all_folder]
+
     def required_sorf_folders(self):
         return [self.sorf_gff_folder, self.sorf_table_folder,
                 self.sorf_stat_folder, self.sorf_gff_best_folder,
-                self.sorf_gff_all_folder, self.sorf_table_best_folder, 
+                self.sorf_gff_all_folder, self.sorf_table_best_folder,
                 self.sorf_table_all_folder]
+
     def required_operon_folders(self):
         return [self.operon_gff_folder, self.operon_table_folder,
                 self.operon_statistics_folder]
+
     def required_circrna_folders(self):
-        return [self.circrna_align_folder, self.circrna_splice_folder, 
+        return [self.circrna_align_folder, self.circrna_splice_folder,
                 self.circrna_circ_folder, self.circrna_stat_folder,
                 self.circrna_gff_folder]
+
     def required_goterm_folders(self):
         return [self.goterm_all_folder, self.goterm_express_folder,
-                self.goterm_express_result_folder, self.goterm_express_stat_folder,
+                self.goterm_express_result_folder,
+                self.goterm_express_stat_folder,
                 self.goterm_all_result_folder, self.goterm_all_stat_folder]
+
     def required_starget_folders(self):
-        return [self.starget_RNAplex_folder, self.starget_RNAup_folder, 
+        return [self.starget_RNAplex_folder, self.starget_RNAup_folder,
                 self.starget_merge_folder, self.starget_srna_seq_folder,
                 self.starget_target_seq_folder]
+
     def required_snp_folders(self):
         return [self.ref_snp_folder, self.tar_snp_folder,
                 self.snp_ref_stat_folder, self.snp_tar_stat_folder,
                 self.snp_ref_table_folder, self.snp_tar_table_folder,
                 self.snp_ref_raw_folder, self.snp_tar_raw_folder,
                 self.snp_ref_seq_folder, self.snp_tar_seq_folder,
-                self.snp_ref_seq_extend_BAQ_folder, self.snp_tar_seq_extend_BAQ_folder,
-                self.snp_ref_seq_with_BAQ_folder, self.snp_tar_seq_with_BAQ_folder,
-                self.snp_ref_seq_without_BAQ_folder, self.snp_tar_seq_without_BAQ_folder]
+                self.snp_ref_seq_extend_BAQ_folder,
+                self.snp_tar_seq_extend_BAQ_folder,
+                self.snp_ref_seq_with_BAQ_folder,
+                self.snp_tar_seq_with_BAQ_folder,
+                self.snp_ref_seq_without_BAQ_folder,
+                self.snp_tar_seq_without_BAQ_folder]
+
     def required_ppi_folders(self):
         return [self.ppi_all_folder, self.ppi_best_folder,
                 self.ppi_fig_folder]
+
     def required_sublocal_folders(self):
         return [self.sublocal_all_folder, self.sublocal_express_folder,
-                self.sublocal_all_results_folder, self.sublocal_all_stat_folder,
-                self.sublocal_express_results_folder, self.sublocal_express_stat_folder]
+                self.sublocal_all_results_folder,
+                self.sublocal_all_stat_folder,
+                self.sublocal_express_results_folder,
+                self.sublocal_express_stat_folder]
+
     def required_ribos_folders(self):
         return [self.ribos_gff_folder, self.ribos_table_folder,
                 self.ribos_stat_folder, self.ribos_rfam_folder]

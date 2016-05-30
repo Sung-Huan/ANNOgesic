@@ -1,10 +1,8 @@
-import os
 import csv
 import matplotlib as mpl
-mpl.use('Agg')
 import matplotlib.pyplot as plt
-from annogesiclib.gff3 import Gff3Parser
 import numpy as np
+mpl.use('Agg')
 plt.style.use('ggplot')
 
 
@@ -15,33 +13,37 @@ def plot(subs, total, unknown, strain, prefix_name):
     classes_no_unknown = []
     width = 0.4
     tmp_unknown = ["Unknown", 0]
-    for local, num in subs.items():
-        if local == "Unknown":
-            tmp_unknown = [local, num]
+    sort_subs = sorted(subs.items(),
+                       key=lambda x: (x[1]), reverse=True)
+    for datas in sort_subs:
+        if datas[0] == "Unknown":
+            tmp_unknown = datas
         else:
-            nums.append(num)
-            nums_no_unknown.append(num)
-            classes.append(local)
-            classes_no_unknown.append(local)
+            nums.append(datas[1])
+            nums_no_unknown.append(datas[1])
+            classes.append(datas[0])
+            classes_no_unknown.append(datas[0])
     nums.append(tmp_unknown[1])
     classes.append(tmp_unknown[0])
-    fig = plt.figure(figsize=(12, 16))
+    plt.figure(figsize=(12, 16))
     plt.subplot(211)
     ind = np.arange(len(nums))
-    rects1 = plt.bar(ind, nums, width, color='#FF9999')
-    plt.title('Subcellular localization with Unknown\n', fontsize=16)
-    plt.ylabel('Amount', fontsize=16)
+    plt.bar(ind, nums, width, color='#FF9999')
+    plt.title('Subcellular localization with Unknown\n', fontsize=24)
+    plt.ylabel('Amount', fontsize=20)
+    plt.yticks(fontsize=16)
     plt.xlim([0, len(nums) + 1])
-    plt.xticks(ind+width, classes, rotation=40, fontsize=16, ha='right')
+    plt.xticks(ind+width, classes, rotation=40, fontsize=20, ha='right')
     plt.tight_layout(2, None, None, None)
     plt.subplot(212)
     ind = np.arange(len(nums_no_unknown))
-    rects1 = plt.bar(ind, nums_no_unknown, width, color='#FF9999')
-    plt.title('Subcellular localization without Unknown\n', fontsize=16)
-    plt.ylabel('Amount', fontsize=16)
+    plt.bar(ind, nums_no_unknown, width, color='#FF9999')
+    plt.title('Subcellular localization without Unknown\n', fontsize=24)
+    plt.ylabel('Amount', fontsize=20)
     plt.xlim([0, len(nums_no_unknown) + 1])
     plt.xticks(ind+width, classes_no_unknown, rotation=40,
-               fontsize=16, ha='right')
+               fontsize=20, ha='right')
+    plt.yticks(fontsize=16)
     plt.tight_layout(2, None, None, None)
     plt.savefig("_".join([prefix_name, strain + ".png"]))
 
@@ -88,17 +90,21 @@ def print_file_and_plot(sub, total_nums, unknown_nums,
                         strain, out_stat, prefix_name):
     plot(sub, total_nums[strain], unknown_nums[strain], strain, prefix_name)
     out_stat.write(strain + ":\n")
-    out_stat.write("Total with Unknown is {0}; Total_wihout_Unknown is {1}\n".format(
-                   total_nums[strain],
-                   total_nums[strain] - unknown_nums[strain]))
+    out_stat.write("Total with Unknown is {0}; "
+                   "Total_wihout_Unknown is {1}\n".format(
+                       total_nums[strain],
+                       total_nums[strain] - unknown_nums[strain]))
     for local, num in sub.items():
         if local != "Unknown":
-            out_stat.write("\t{0}\t{1}(include Unknown {2}; exclude Unknonwn {3})\n".format(
-            local, num, float(num) / float(total_nums[strain]),
-            float(num) / (float(total_nums[strain]) - float(unknown_nums[strain]))))
+            out_stat.write(
+                "\t{0}\t{1}(include Unknown {2}; "
+                "exclude Unknonwn {3})\n".format(
+                    local, num, float(num) / float(total_nums[strain]),
+                    float(num) / (float(total_nums[strain]) - float(
+                        unknown_nums[strain]))))
         else:
             out_stat.write("\t{0}\t{1}(include Unknown {2})\n".format(
-            local, num, float(num) / float(total_nums[strain])))
+                local, num, float(num) / float(total_nums[strain])))
 
 def stat_sublocal(psortb_file, prefix_name, stat_file):
     subs, total_nums, unknown_nums = read_table(psortb_file)

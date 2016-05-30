@@ -1,13 +1,12 @@
 import os
-import sys
-import random
 import csv
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-plt.style.use('ggplot')
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
+matplotlib.use('Agg')
+plt.style.use('ggplot')
+
 
 def import_uniprot_data(entry, name_list, feature):
     ref_name = entry.attributes[feature]
@@ -19,17 +18,17 @@ def compare_cds_tran(gffs, trans):
     for gff in gffs:
         for ta in trans:
             if (gff.seq_id == ta.seq_id) and (
-                gff.strand == ta.strand):
+                    gff.strand == ta.strand):
                 if ((gff.end < ta.end) and (
-                     gff.end > ta.start) and (
-                     gff.start <= ta.start)) or (
-                    (gff.start > ta.start) and (
-                     gff.start < ta.end) and (
-                     gff.end >= ta.end)) or (
-                    (gff.end >= ta.end) and (
-                     gff.start <= ta.start)) or (
-                    (gff.end <= ta.end) and (
-                     gff.start >= ta.start)):
+                         gff.end > ta.start) and (
+                         gff.start <= ta.start)) or (
+                        (gff.start > ta.start) and (
+                         gff.start < ta.end) and (
+                         gff.end >= ta.end)) or (
+                        (gff.end >= ta.end) and (
+                         gff.start <= ta.start)) or (
+                        (gff.end <= ta.end) and (
+                         gff.start >= ta.start)):
                     new_gffs.append(gff)
                     break
     return new_gffs
@@ -43,7 +42,7 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     for entry in Gff3Parser().entries(open(gff_file)):
         if entry.feature == "CDS":
             if ("Name" in entry.attributes.keys()) and (
-                "protein_id" in entry.attributes.keys()):
+                    "protein_id" in entry.attributes.keys()):
                 if entry.attributes["Name"] == entry.attributes["protein_id"]:
                     import_uniprot_data(entry, name_list, "Name")
                 else:
@@ -70,16 +69,18 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
             for gff in gffs:
                 if ("Name" in gff.attributes.keys()):
                     if (uni_lines[3] == gff.attributes["Name"]):
-                        detect = True 
+                        detect = True
                 if ("protein_id" in gff.attributes.keys()):
                     if (uni_lines[3] == gff.attributes["protein_id"]):
                         detect = True
                 if detect:
                     detect = False
                     gos.append({"strain": gff.seq_id, "strand": gff.strand,
-                                 "start": gff.start, "end": gff.end,
-                                 "protein_id": uni_lines[3], "go": uni_lines[6]})
-    gos = sorted(gos, key=lambda x: (x["strain"], x["start"]))
+                                "start": gff.start, "end": gff.end,
+                                "protein_id": uni_lines[3],
+                                "go": uni_lines[6]})
+    gos = sorted(gos, key=lambda x: (x["strain"], x["start"],
+                                     x["end"], x["strand"]))
     for go in gos:
         out.write("\t".join([go["strain"], go["strand"], str(go["start"]),
                   str(go["end"]), go["protein_id"], go["go"]]) + "\n")
@@ -92,7 +93,7 @@ def plot(total_nums, strain, filename, total, out_folder):
     classes = []
     nums = []
     width = 0.4
-    fig = plt.figure(figsize=(16, 12))
+    plt.figure(figsize=(16, 12))
     for total_num in sort_total_nums:
         class_ = total_num[0]
         num = total_num[1]
@@ -102,13 +103,15 @@ def plot(total_nums, strain, filename, total, out_folder):
                 classes.append(class_)
                 nums.append(num)
     ind = np.arange(len(nums))
-    rects1 = plt.bar(ind, nums, width, color='#FF9999')
-    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=20)
-    plt.ylabel('Amount', fontsize=16)
+    plt.bar(ind, nums, width, color='#FF9999')
+    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=24)
+    plt.ylabel('Amount', fontsize=20)
     plt.xlim([0, len(nums) + 1])
-    plt.xticks(ind+width, classes, rotation=45, fontsize=16, ha='right')
+    plt.yticks(fontsize=16)
+    plt.xticks(ind+width, classes, rotation=45, fontsize=20, ha='right')
     plt.tight_layout(3, None, None, None)
-    plt.savefig(os.path.join(out_folder, "_".join([strain, filename + ".png"])))
+    plt.savefig(os.path.join(out_folder,
+                             "_".join([strain, filename + ".png"])))
 
 def import_obo(filename):
     obos = []
@@ -150,19 +153,20 @@ def print_file(classes, total_nums, out_folder, stat):
             printed = False
         if printed:
             plot(total_nums[strain], strain, "three_roots",
-                  total_nums[strain]["total"], out_folder)
+                 total_nums[strain]["total"], out_folder)
             out_stat.write("{0}:\n".format(strain))
             for origin, types in datas.items():
                 plot(types, strain, origin,
                      total_nums[strain][origin], out_folder)
                 out_stat.write("\t{0}: {1}(percentage in total: {2})\n".format(
                                origin, total_nums[strain][origin],
-                               float(total_nums[strain][origin]) / \
+                               float(total_nums[strain][origin]) /
                                float(total_nums[strain]["total"])))
                 for type_, num in types.items():
-                    out_stat.write("\t\t{0}: {1}(percentage in {2}: {3})\n".format(
-                                   type_, num, origin, float(num) / \
-                                   float(total_nums[strain][origin])))
+                    out_stat.write("\t\t{0}: {1}(percentage "
+                                   "in {2}: {3})\n".format(
+                                       type_, num, origin, float(num) /
+                                       float(total_nums[strain][origin])))
         else:
             printed = True
     out_stat.close()
@@ -178,36 +182,41 @@ def initiate_dict(classes, total_nums, index):
 
 def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
     detect = False
-    for strain, go_ids in gos.items():
-        for go_id in go_ids:
-            target_terms = [go_id]
-            for target_term in target_terms:
-                for term_obo in term_obos:
-                    if target_term == term_obo["id"]:
-                        if "is_a" in term_obo.keys():
-                            for is_a in term_obo["is_a"]:
-                                go_a = is_a.split(" ! ")
-                                if (go_a[1] != "biological_process") and (
-                                    go_a[1] != "cellular_component") and (
-                                    go_a[1] != "molecular_function"):
-                                    target_terms.append(go_a[0])
-                        elif ("is_obsolete" in term_obo.keys()):
-                            if term_obo["is_obsolete"] == "true":
-                                break
-                        for slim_obo in slim_obos:
-                            for target_term in target_terms:
-                                if target_term == slim_obo["id"]:
-                                    detect = True
-                                    import_class(slim_obo, classes, strain)
-                                    import_class(slim_obo, classes,
-                                                 "All_strain")
-                                    import_total(slim_obo, total_nums, strain)
-                                    import_total(slim_obo, total_nums,
-                                                 "All_strain")
+    for strain, pros in gos.items():
+        for pro, go_ids in pros.items():
+            pro_list = []
+            for go_id in go_ids:
+                target_terms = [go_id]
+                for target_term in target_terms:
+                    for term_obo in term_obos:
+                        if target_term == term_obo["id"]:
+                            if "is_a" in term_obo.keys():
+                                for is_a in term_obo["is_a"]:
+                                    go_a = is_a.split(" ! ")
+                                    if (go_a[1] != "biological_process") and (
+                                        go_a[1] != "cellular_component") and (
+                                            go_a[1] != "molecular_function"):
+                                        target_terms.append(go_a[0])
+                            elif ("is_obsolete" in term_obo.keys()):
+                                if term_obo["is_obsolete"] == "true":
+                                    break
+                            for slim_obo in slim_obos:
+                                for target_term in target_terms:
+                                    if (target_term == slim_obo["id"]) and (
+                                            target_term not in pro_list):
+                                        detect = True
+                                        import_class(slim_obo, classes, strain)
+                                        import_class(slim_obo, classes,
+                                                     "All_strain")
+                                        import_total(slim_obo, total_nums,
+                                                     strain)
+                                        import_total(slim_obo, total_nums,
+                                                     "All_strain")
+                                        pro_list.append(target_term)
+                            break
+                    if detect:
+                        detect = False
                         break
-                if detect:
-                    detect = False
-                    break
 
 def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     gos = {}
@@ -220,10 +229,10 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     for row in csv.reader(g_h, delimiter="\t"):
         if row[0] != "strain":
             if row[0] != pre_strain:
-                gos[row[0]] = []
+                gos[row[0]] = {}
                 initiate_dict(classes, total_nums, row[0])
             go_terms = row[-1].split("; ")
-            gos[row[0]] = gos[row[0]] + go_terms
+            gos[row[0]]["\t".join(row[1:4])] = go_terms
             pre_strain = row[0]
     print("load obo file")
     term_obos = import_obo(term_file)

@@ -1,21 +1,19 @@
-import os
-import sys
 import matplotlib as mpl
-mpl.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 from annogesiclib.gff3 import Gff3Parser
+mpl.use('Agg')
+
 
 def ellipse(x, y, angle, face, al, plt):
     ellipse_ = mpl.patches.Ellipse(xy=(x, y), width=0.8, height=0.3,
-                                  angle=angle, facecolor=face, alpha=al)
+                                   angle=angle, facecolor=face, alpha=al)
     plt.gca().add_artist(ellipse_)
     return plt
 
 def line(x, y, angle, plt):
     line_ = mpl.patches.Ellipse(xy=(x, y), width=0.8, height=0.3,
-                               angle=angle, facecolor="none",
-                               edgecolor="#000000", linewidth=3)
+                                angle=angle, facecolor="none",
+                                edgecolor="#000000", linewidth=3)
     plt.gca().add_artist(line_)
     return plt
 
@@ -31,8 +29,8 @@ def text_total(xy, tss_type, num, plt):
 
 def text(xy, tss_type, num, plt):
     if (tss_type == "Primary") or (
-        tss_type == "Antisense") or (
-        tss_type == "Antisense_Primary"):
+            tss_type == "Antisense") or (
+            tss_type == "Antisense_Primary"):
         plot_text(plt, xy[0], xy[1], str(num), 16, "white")
     else:
         plot_text(plt, xy[0], xy[1], str(num), 16, "black")
@@ -96,8 +94,8 @@ def plot(types, file_type, feature_name, total_types, tss_num):
                 continue
         plt.figure(figsize=(12, 6))
         coordinate_total = {"Primary": (0.05, 0.85), "Secondary": (0.2, 0.95),
-                            "Internal": (0.575, 0.95), "Antisense": (0.7, 0.85),
-                            "Orphan":(0.8, 0.3)}
+                            "Internal": (0.575, 0.95),
+                            "Antisense": (0.7, 0.85), "Orphan": (0.8, 0.3)}
         if feature_name == "processing site":
             plot_text(plt, 0.05, 0.05, "Total processing sites", 15, "black")
             plot_text(plt, 0.05, 0, str(tss_num[strain]), 15, "black")

@@ -20,7 +20,7 @@ def read_data(gff, features):
             if entry.feature == feature:
                 gffs[feature].append(entry)
     for feature in gffs.keys():
-        gffs[feature] = sorted(gffs[feature], key=lambda k: (k.seq_id, k.start))
+        gffs[feature] = sorted(gffs[feature], key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return gffs, stats, outs
 
 def set_cutoff(cond, percent_tex, percent_frag, detects, gff):

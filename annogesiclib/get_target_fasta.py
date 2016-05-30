@@ -27,7 +27,7 @@ class TargetFasta(object):
                 first = True
                 datas = file_.split(":")
                 filename = datas[0]
-                strains = datas[1].split(",")
+                strains = datas[1].split("_and_")
                 out = open(os.path.join(tar_folder, filename + ".fa"), "w")
                 for strain in strains:
                     if strain + ".fa" in os.listdir(self.folders["tmp_tar"]):
@@ -51,4 +51,5 @@ class TargetFasta(object):
         shutil.rmtree(self.folders["tmp_ref"])
         self.helper.remove_all_content(ref_folder, "_folder", "dir")
         print("please use the new fasta file to remapping again.")
-        print("Then copy BAMs and wigs back to input/align_results/BAMs and input/align_results/wigs")
+        print("Then copy BAMs and wigs back to input/align_results/BAMs "
+              "and input/align_results/wigs")

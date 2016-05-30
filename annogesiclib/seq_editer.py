@@ -13,7 +13,7 @@ class SeqEditer(object):
     def _row_to_location(self, row):
         return({"target_id": row[0], "ref_id": row[1],
                 "datas": [{"ref_nt": row[2],
-                "tar_nt": row[4], "position": row[3]}]})
+                           "tar_nt": row[4], "position": row[3]}]})
 
     def _import_data(self, mod_table_file):
         datas = []
@@ -61,7 +61,8 @@ class SeqEditer(object):
                         seq_modifier.insert(
                                      int(change["position"]), change["tar_nt"])
                     elif change["tar_nt"] == "-":
-                        seq_modifier.remove(int(change["position"]))
+                        seq_modifier.remove(int(change["position"]),
+                                            len(change["ref_nt"]))
                     else:
                         seq_modifier.replace(
                                      int(change["position"]), change["tar_nt"])

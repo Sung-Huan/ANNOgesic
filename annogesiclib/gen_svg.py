@@ -1,6 +1,5 @@
 import os
-import sys
-import csv
+
 
 def print_track(track_num, svg_out, figure_width):
     id_num = 3067
@@ -18,8 +17,11 @@ def print_track(track_num, svg_out, figure_width):
                 y = y + 40
                 svg_out.write("     y=\"{0}\"\n".format(y))
             svg_out.write("     id=\"rect{0}\"\n".format(id_num))
-            svg_out.write("     style=\"opacity:0.25;fill:#37c84f;fill-opacity:0.25;fill-rule:evenodd;")
-            svg_out.write("stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.25\" />\n")
+            svg_out.write("     style=\"opacity:0.25;fill:#37c84f;"
+                          "fill-opacity:0.25;fill-rule:evenodd;")
+            svg_out.write("stroke:#000000;stroke-width:1px;"
+                          "stroke-linecap:butt;stroke-linejoin:miter;"
+                          "stroke-opacity:0.25\" />\n")
         if (track % 2) == 1:
             svg_out.write("  <rect\n")
             svg_out.write("     width=\"{0}\"\n".format(figure_width))
@@ -28,8 +30,11 @@ def print_track(track_num, svg_out, figure_width):
             y = y + 40
             svg_out.write("     y=\"{0}\"\n".format(y))
             svg_out.write("     id=\"rect{0}\"\n".format(id_num))
-            svg_out.write("     style=\"opacity:0.25;fill:#c8374f;fill-opacity:0.25;fill-rule:evenodd;")
-            svg_out.write("stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.25\" />\n")
+            svg_out.write("     style=\"opacity:0.25;fill:#c8374f;"
+                          "fill-opacity:0.25;fill-rule:evenodd;")
+            svg_out.write("stroke:#000000;stroke-width:1px;"
+                          "stroke-linecap:butt;stroke-linejoin:miter;"
+                          "stroke-opacity:0.25\" />\n")
         id_num += 1
 
 def gen_svg(input_png, track_num, figure_height, figure_width):

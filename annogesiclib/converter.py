@@ -1,13 +1,6 @@
-import sys
 import os
 import csv
-import re
-import itertools
-import math
-import shutil
-import copy
 from Bio import SeqIO
-from subprocess import call
 from collections import defaultdict
 from annogesiclib.gff3 import Gff3Parser, Gff3Entry
 from annogesiclib.TSSpredator import TSSPredatorReader
@@ -69,8 +62,7 @@ class Converter(object):
         seq = ""
         g_f = open(gff_file, "r")
         for entry in self.gff3parser.entries(g_f):
-            if (entry.feature == "rRNA") or (
-                entry.feature == "tRNA"):
+            if (entry.feature == "rRNA") or (entry.feature == "tRNA"):
                 num_rna += 1
                 rnas.append(entry)
             elif entry.feature == "CDS":
@@ -95,7 +87,8 @@ class Converter(object):
         for entry in Gff3Parser().entries(r_s):
             num_srna += 1
             srnas.append(entry)
-        srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))
+        srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start,
+                                             k.end, k.strand))
         r_s.close()
         out_s = open(srna_output_file, "w")
         self._print_rntptt_title(out_s, str(num_srna),
@@ -111,8 +104,8 @@ class Converter(object):
             location = "..".join([str(srna.start), str(srna.end)])
             length = str(srna.end - srna.start + 1)
             out_s.write("\t".join([location, srna.strand, length,
-                                 pid, gene_tag, locus_tag, "-", "-",
-                                 product]) + "\n")
+                                   pid, gene_tag, locus_tag, "-", "-",
+                                   product]) + "\n")
         out_s.close()
 
     def _deal_embl_join(self, info):
@@ -179,7 +172,8 @@ class Converter(object):
                         note_name = row[5:9]
                     if row[5:11] == "source":
                         info = self._multi_embl_pos(row)
-                    if (note_name != "misc")&(row[5] == " ")&(row[21] == "/"):
+                    if (note_name != "misc") and (row[5] == " ") and (
+                            row[21] == "/"):
                         if first:
                             first = False
                         else:
@@ -191,21 +185,21 @@ class Converter(object):
                             line = line + data[0] + "=" + note
                         except:
                             line = line + data[0] + "=" + "True"
-                    if (note_name != "misc") and (
-                        row[5] == " ") and (
-                        row[21] != "/"):
+                    if (note_name != "misc") and (row[5] == " ") and (
+                            row[21] != "/"):
                         note = row[21:].replace("\"", "")
                         note = note.replace(";", ",")
                         line = line + " " + note
-                    if (note_name != "misc") and (
-                        row[5] != " ") and (
-                        row[5:11] != "source"):
+                    if (note_name != "misc") and (row[5] != " ") and (
+                            row[5:11] != "source"):
                         first = True
                         if info != "Wrong":
                             for pos in info["pos"]:
-                                out.write(("{0}\tRefseq\t{1}\t{2}\t{3}\t.\t{4}\t.\t{5}\n").format(
-                                          id_name, info["source"], pos["start"],
-                                          pos["end"], info["strand"], line))
+                                out.write(("{0}\tRefseq\t{1}\t{2}\t{3}"
+                                           "\t.\t{4}\t.\t{5}\n").format(
+                                          id_name, info["source"],
+                                          pos["start"], pos["end"],
+                                          info["strand"], line))
                         if (row[5:8] != "CDS") and (row[5:9] != "misc"):
                             info = self._multi_embl_pos(row)
                         elif (row[5:8] == "CDS"):
@@ -230,8 +224,8 @@ class Converter(object):
 
     def _multi_tss_class(self, tss, tss_index, tss_features, nums, utrs):
         tss_type = self._assign_tss_type(tss, utrs["pri"], utrs["sec"])
-        if (tss_type not in tss_features["tss_types"]) or \
-           (tss.locus_tag not in tss_features["locus_tags"]):
+        if (tss_type not in tss_features["tss_types"]) or (
+                tss.locus_tag not in tss_features["locus_tags"]):
             if (tss_type not in tss_features["tss_types"]):
                 tss_index[tss_type] += 1
                 nums["tss"] += 1
@@ -284,9 +278,10 @@ class Converter(object):
         cdss = []
         srnas = []
         datas = self._read_file(gff_file, fasta_file, rnas, cdss, genes)
-        rnas = sorted(rnas, key=lambda k: (k.seq_id, k.start))
-        cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
-        genes = sorted(genes, key=lambda k: (k.seq_id, k.start))
+        rnas = sorted(rnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+        cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+        genes = sorted(genes, key=lambda k: (k.seq_id, k.start,
+                                             k.end, k.strand))
         num_cds = datas[0]
         num_rna = datas[1]
         seq = datas[2]
@@ -309,7 +304,8 @@ class Converter(object):
              (srna_output_file is None):
             pass
         else:
-            print("Error: lack sRNA input gff file or the name sRNA output rnt file\n")
+            print("Error: lack sRNA input gff file or "
+                  "the name sRNA output rnt file\n")
 
     def convert_embl2gff(self, embl_file, gff_file):
         info = "Wrong"
@@ -321,29 +317,21 @@ class Converter(object):
         line = datas[2]
         if info != "Wrong":
             for pos in info["pos"]:
-                out.write(("{0}\tRefseq\t{1}\t{2}\t{3}\t.\t{4}\t.\t{5}\n").format(
+                out.write(("{0}\tRefseq\t{1}\t{2}\t{3}"
+                           "\t.\t{4}\t.\t{5}\n").format(
                           id_name, info["source"], pos["start"],
                           pos["end"], info["strand"], line))
         out.close()
 
     def _get_libs(self, tss_file):
         tss_libs = {}
-        pre = {"pos": 0, "strand": "#"}
         tss_fh = open(tss_file, "r")
         for tss in self.tssparser.entries(tss_fh):
             key = "_".join([str(tss.super_pos), tss.super_strand])
             if key not in tss_libs.keys():
                 tss_libs[key] = []
-#            if (tss.super_pos == pre["pos"]) and \
-#               (tss.super_strand == pre["strand"]):
             if (tss.is_detected) and (tss.genome not in tss_libs[key]):
                 tss_libs[key].append(tss.genome)
-#            else:
-#                if (tss.is_detected):
-#                    tss_libs[key] = [tss.genome]
-#                else:
-#                    tss_libs[key] = []
-            pre = {"pos": tss.super_pos, "strand": tss.super_strand}
         tss_fh.close()
         return tss_libs
 
@@ -361,13 +349,13 @@ class Converter(object):
         tss_libs = self._get_libs(tss_file)
         for tss in self.tssparser.entries(tss_fh):
             key = "_".join([str(tss.super_pos), tss.super_strand])
-            if ((tss.super_pos == temps["tss"])) and \
-                (temps["strand"] == tss.super_strand) and \
-                (tss.class_count == 1):
+            if ((tss.super_pos == temps["tss"])) and (
+                    temps["strand"] == tss.super_strand) and (
+                        tss.class_count == 1):
                 pass
             else:
-                if ((tss.super_pos != temps["tss"])) or \
-                    (temps["strand"] != tss.super_strand):
+                if ((tss.super_pos != temps["tss"])) or (
+                        temps["strand"] != tss.super_strand):
                     check_print = False
                     nums["class"] = 1
                     if tss.utr_length != "NA":
@@ -375,11 +363,11 @@ class Converter(object):
                 temps["tss"] = tss.super_pos
                 temps["strand"] = tss.super_strand
                 if (tss.class_count != 1) and (
-                    nums["class"] <= tss.class_count):
+                        nums["class"] <= tss.class_count):
                     self._multi_tss_class(tss, tss_index, tss_features,
                                           nums, utrs)
-                if (tss.class_count == 1) or \
-                   (nums["class"] > tss.class_count):
+                if (tss.class_count == 1) or (
+                        nums["class"] > tss.class_count):
                     if (tss.class_count == 1):
                         self._uni_tss_class(tss, utrs, tss_index,
                                             tss_features, nums)
@@ -416,19 +404,20 @@ class Converter(object):
                     strand = row[3]
                     gene = "missing"
                 entry = Gff3Entry({
-                    "seq_id" : transterm_file.split("/")[-1][:-1 * len(
+                    "seq_id": transterm_file.split("/")[-1][:-1 * len(
                                "_best_terminator_after_gene.bag")],
-                    "source" : "TransTermHP",
-                    "feature" : "terminator",
-                    "start" : start,
-                    "end" : end,
-                    "score" : ".",
-                    "strand" : strand,
-                    "phase" : ".",
-                    "attributes" : "associated_gene=%s" % (gene)
+                    "source": "TransTermHP",
+                    "feature": "terminator",
+                    "start": start,
+                    "end": end,
+                    "score": ".",
+                    "strand": strand,
+                    "phase": ".",
+                    "attributes": "associated_gene=%s" % (gene)
                     })
                 terms.append(entry)
-        sort_terms = sorted(terms, key=lambda k: (k.seq_id, k.start))
+        sort_terms = sorted(terms, key=lambda k: (k.seq_id, k.start,
+                                                  k.end, k.strand))
         num = 0
         for term in sort_terms:
             out.write("\t".join([str(field) for field in [
@@ -441,8 +430,7 @@ class Converter(object):
             num += 1
         out.close()
 
-    def convert_circ2gff(self, circ_file, depth, start_ratio,
-                         end_ratio, out_all, out_filter):
+    def convert_circ2gff(self, circ_file, args_circ, out_all, out_filter):
         circs = []
         out_a = open(out_all, "w")
         out_f = open(out_filter, "w")
@@ -454,9 +442,10 @@ class Converter(object):
                 circs.append({"name": row[0], "strain": row[1],
                               "strand": row[2], "start": int(row[3]),
                               "end": int(row[4]), "conflict": row[5],
-                              "depth": int(row[6]), "per_start":float(row[7]),
-                              "per_end":float(row[8])})
-        circs = sorted(circs, key=lambda k: (k["strain"], k["start"]))
+                              "depth": int(row[6]), "per_start": float(row[7]),
+                              "per_end": float(row[8])})
+        circs = sorted(circs, key=lambda k: (k["strain"], k["start"],
+                                             k["end"], k["strand"]))
         for circ in circs:
             id_ = circ["name"].split("_")[1]
             attribute_string = ";".join(["=".join(items) for items in [
@@ -475,10 +464,10 @@ class Converter(object):
                             str(circ["start"]), str(circ["end"]),
                             ".", circ["strand"], ".",
                             attribute_string]]) + "\n")
-            if (circ["depth"] >= depth) and (
-                circ["conflict"] == "NA") and (
-                circ["per_start"] >= start_ratio) and (
-                circ["per_end"] >= end_ratio):
+            if (circ["depth"] >= args_circ.support) and (
+                    circ["conflict"] == "NA") and (
+                    circ["per_start"] >= args_circ.start_ratio) and (
+                    circ["per_end"] >= args_circ.end_ratio):
                 out_f.write("\t".join([str(field) for field in [
                             circ["strain"], "ANNOgesic", "circRNA",
                             str(circ["start"]), str(circ["end"]),

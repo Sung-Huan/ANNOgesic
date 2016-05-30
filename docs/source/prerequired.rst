@@ -59,4 +59,4 @@ Databases
 
 `go.obo <http://geneontology.org/page/download-ontology>`_ (for Go term detection)
 
-`species.vXXXX.txt from STRING <http://string-db.org/newstring_cgi/show_download_page.pl?UserId=ReWbu8uLrfAN&sessionId=_FAQBbatf7RX>`_ (for protein-protein interaction prediction)
+`species.vXXXX.txt from STRING <http://string-db.org/cgi/download.pl>`_ (for protein-protein interaction prediction)

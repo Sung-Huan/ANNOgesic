@@ -5,7 +5,9 @@ Dockfiles
 It is light and easy to manage. ``ANNOgesic`` includes a ``Dockfile`` which 
 is for build up a environment and install all required tools for running ``ANNOgesic``.
 
-Please go to the folder where ``Dockfile`` are located. Then type
+Please go to the folder where ``Dockfile`` and ``RATT`` folder(please download from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic>`_
+which is specific for Dockerfile, otherwise may cause some error.) are located. Then type
 
 ::
 

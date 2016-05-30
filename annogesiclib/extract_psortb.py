@@ -1,7 +1,6 @@
-import os
 import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
+
 
 def import_psortb(seq_name, psortbs, local_name, local_score, type_, results):
     seq_datas = seq_name.split("__")
@@ -66,8 +65,6 @@ def get_results(line, scores, psortbs, out_p, seq_name, fuzzy):
     return local_name, local_score
 
 def get_information(psortb_table, out_p, fuzzy):
-#    local_name = []
-#    local_score = []
     scores = []
     psortbs = []
     seq_name = None
@@ -84,15 +81,13 @@ def get_information(psortb_table, out_p, fuzzy):
                     scores.append({"local": datas[0],
                                    "score": float(datas[-1])})
             if detects["result"]:
-                local_name, local_score = get_results(line, scores,
-                                          psortbs, out_p, seq_name, fuzzy)
+                local_name, local_score = get_results(
+                    line, scores, psortbs, out_p, seq_name, fuzzy)
             if line.startswith("Final Prediction:"):
                 detects["score"] = False
                 detects["result"] = True
             if line.startswith("SeqID:"):
                 seq_name = line.replace("SeqID: ", "")
-#                local_name = []
-#                local_score = []
                 scores = []
             if line.startswith("Localization Scores:"):
                 detects["score"] = True
@@ -136,7 +131,7 @@ def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge, fuzzy):
         out_m = open(out_merge, "w")
         for entry in Gff3Parser().entries(open(merge_gff)):
             gffs.append(entry)
-        gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+        gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     else:
         out_m = None
     out_p = open(out_psortb, "w")

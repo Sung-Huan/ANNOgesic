@@ -1,5 +1,6 @@
 import csv
 
+
 class TSSPredatorReader(object):
 
     def entries(self, input_fh):
@@ -7,6 +8,7 @@ class TSSPredatorReader(object):
             if row[0].startswith("SuperPos"):
                 continue
             yield TSSPredatorEntry(row)
+
 
 class TSSPredatorEntry(object):
 
@@ -42,7 +44,7 @@ class TSSPredatorEntry(object):
         self.seq = row[27]
         self.is_orphan = False
         if (self.is_primary is False and self.is_secondary is False and
-            self.is_internal is False and self.is_antisense is False):
+                self.is_internal is False and self.is_antisense is False):
             self.is_orphan = True
 
     def __str__(self):

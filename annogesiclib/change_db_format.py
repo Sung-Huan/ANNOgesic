@@ -1,7 +1,3 @@
-import os
-import sys
-import csv
-
 def change_format(input_file, output_file):
     num = 1
     out = open(output_file, "w")

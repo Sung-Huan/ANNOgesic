@@ -1,11 +1,7 @@
-import os
-import sys
-import csv
 import math
 import copy
-import shutil
-from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
+
 
 def remove_primary(tss, tss_entry):
     final_types = []
@@ -85,14 +81,14 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
 
 def is_internal(cds_start, cds_end, tss_pos, strand):
     if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
-        (strand == "+") and (tss_pos == cds_end)) or (
-        (strand == "-") and (tss_pos == cds_start)):
+            (strand == "+") and (tss_pos == cds_end)) or (
+            (strand == "-") and (tss_pos == cds_start)):
         return True
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
     if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
-        (is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or (
-         is_internal(cds_start, cds_end, tss_pos, strand)):
+            (is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or (
+             is_internal(cds_start, cds_end, tss_pos, strand)):
         return True
 
 def is_utr(pos1, pos2, length):
@@ -101,6 +97,7 @@ def is_utr(pos1, pos2, length):
 
 def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
+        ori_entry = copy.deepcopy(tss_entry)
         if "locus_tag" in gene.attributes.keys():
             locus_tag = gene.attributes["locus_tag"]
         else:
@@ -108,35 +105,36 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
                                  str(gene.end), "_", gene.strand])
         if tss.strand == "+":
             if ((anti_ends["reverse"] != -1) and (
-                anti_ends["reverse"] - gene.start) > 0) or (
-                anti_ends["reverse"] == -1):
+                    anti_ends["reverse"] - gene.start) > 0) or (
+                    anti_ends["reverse"] == -1):
                 tss_entry = import_to_tss("Primary", gene.start, tss,
-                                          locus_tag, tss_entry)
+                                          locus_tag, ori_entry)
                 checks["orphan"] = False
                 gene_ends["forward"] = gene.start
             elif (anti_ends["reverse"] != -1) and (
-                  (anti_ends["reverse"] - gene.start) < 0):
+                    (anti_ends["reverse"] - gene.start) < 0):
                 if (checks["int_anti"]) or (
-                    tss.start - anti_ends["reverse"]) > 0:
+                        (tss.start - anti_ends["reverse"]) > 0):
                     tss_entry = import_to_tss("Primary", gene.start, tss,
-                                              locus_tag, tss_entry)
+                                              locus_tag, ori_entry)
                     checks["orphan"] = False
                     gene_ends["forward"] = gene.start
         else:
             if ((anti_ends["forward"] != -1) and (
-                gene.end - anti_ends["forward"]) > 0) or (
-                anti_ends["forward"] == -1):
+                    gene.end - anti_ends["forward"]) > 0) or (
+                    anti_ends["forward"] == -1):
                 tss_entry = import_to_tss("Primary", gene.end, tss,
-                                          locus_tag, tss_entry)
+                                          locus_tag, ori_entry)
                 checks["orphan"] = False
                 gene_ends["reverse"] = gene.end
     if is_internal(gene.start, gene.end, tss.start, tss.strand):
+        ori_entry = copy.deepcopy(tss_entry)
         if "locus_tag" in gene.attributes.keys():
             locus_tag = gene.attributes["locus_tag"]
         else:
             locus_tag = "".join([gene.feature, ":", str(gene.start), "-",
                                  str(gene.end), "_", gene.strand])
-        tss_entry = import_to_tss("Internal", "NA", tss, locus_tag, tss_entry)
+        tss_entry = import_to_tss("Internal", "NA", tss, locus_tag, ori_entry)
         checks["orphan"] = False
     return tss_entry
 
@@ -146,26 +144,20 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         if tss.strand == "-":
             anti_ends["forward"] = gene.start
             if (gene_ends["reverse"] != -1) and (
-                gene.start - gene_ends["reverse"]) > 0:
+                    gene.start - gene_ends["reverse"]) > 0:
                 if is_internal(gene.start, gene.end, tss.start, tss.strand):
                     pass
-                else:
-                    if (tss.start - gene.end) > 0:
-                        tss_entry = remove_primary(tss, tss_entry)
         else:
             anti_ends["reverse"] = gene.end
             if is_internal(gene.start, gene.end, tss.start, tss.strand):
                 checks["int_anti"] = True
-            if (gene_ends["forward"] != -1) and (
-                gene.start - gene_ends["forward"]) > 0:
-                if (gene.start - tss.start) > 0:
-                    tss_entry = remove_primary(tss, tss_entry)
         if "locus_tag" in gene.attributes.keys():
             locus_tag = gene.attributes["locus_tag"]
         else:
             locus_tag = "".join([gene.feature, ":", str(gene.start), "-",
                                  str(gene.end), "_", gene.strand])
-        tss_entry = import_to_tss("Antisense", "NA", tss, locus_tag, tss_entry)
+        ori_entry = copy.deepcopy(tss_entry)
+        tss_entry = import_to_tss("Antisense", "NA", tss, locus_tag, ori_entry)
         checks["orphan"] = False
     return tss_entry
 
@@ -179,14 +171,16 @@ def compare_tss_cds(tss, cdss, genes):
     else:
         datas = copy.deepcopy(genes)
     for data in datas:
+        ori_entry = copy.deepcopy(tss_entry)
         if data.strand == tss.strand:
             tss_entry = same_strand_tss_gene(data, tss, anti_ends,
-                                             gene_ends, checks, tss_entry)
+                                             gene_ends, checks, ori_entry)
         else:
             tss_entry = diff_strand_tss_gene(data, tss, anti_ends,
-                                             gene_ends, checks, tss_entry)
+                                             gene_ends, checks, ori_entry)
     if checks["orphan"]:
-        tss_entry = import_to_tss("Orphan", "NA", tss, "NA", tss_entry)
+        ori_entry = copy.deepcopy(tss_entry)
+        tss_entry = import_to_tss("Orphan", "NA", tss, "NA", ori_entry)
     return tss_entry
 
 def fix_attributes(tss, tss_entry):
@@ -211,17 +205,17 @@ def detect_coverage(wigs, tss, ref):
             ref_cover = 0
             for track, wig in tracks.items():
                 if ((tss.start + 1) <= len(wig)) and (
-                    (ref.start + 1) <= len(wig)):
+                        (ref.start + 1) <= len(wig)):
                     if tss.strand == "+":
-                        diff_t = (wig[tss.start - 1]["coverage"] - \
-                                wig[tss.start - 2]["coverage"])
-                        diff_r = (wig[ref.start - 1]["coverage"] - \
-                                wig[ref.start - 2]["coverage"])
+                        diff_t = (wig[tss.start - 1]["coverage"] -
+                                  wig[tss.start - 2]["coverage"])
+                        diff_r = (wig[ref.start - 1]["coverage"] -
+                                  wig[ref.start - 2]["coverage"])
                     else:
-                        diff_t = (wig[tss.start - 1]["coverage"] - \
-                                wig[tss.start]["coverage"])
-                        diff_r = (wig[ref.start - 1]["coverage"] - \
-                                wig[ref.start]["coverage"])
+                        diff_t = (wig[tss.start - 1]["coverage"] -
+                                  wig[tss.start]["coverage"])
+                        diff_r = (wig[ref.start - 1]["coverage"] -
+                                  wig[ref.start]["coverage"])
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
     return (tss_cover, ref_cover)
@@ -291,29 +285,30 @@ def get_primary_locus_tag(tss):
     return tsss
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
-    num_man = 0
     for tss in tsss:
-        num_auto = 0
         if ("Primary" in tss.attributes["type"]):
             tss_entrys = get_primary_locus_tag(tss)
             for ref in tsss:
                 if (ref.seq_id == tss.seq_id) and (
-                    ref.strand == tss.strand) and (
-                    ref.start == tss.start):
+                        ref.strand == tss.strand) and (
+                        ref.start == tss.start):
                     pass
                 else:
                     if ("Primary" in ref.attributes["type"]):
                         ref_entrys = get_primary_locus_tag(ref)
                         for tss_entry in tss_entrys:
                             for ref_entry in ref_entrys:
-                                if (tss_entry["locus"] == ref_entry["locus"]) and (
-                                    tss_entry["type"] == "Primary") and (
-                                    ref_entry["type"] == "Primary") and (
-                                    tss.seq_id == ref.seq_id):
+                                if (tss_entry["locus"] ==
+                                    ref_entry["locus"]) and (
+                                        tss_entry["type"] == "Primary") and (
+                                        ref_entry["type"] == "Primary") and (
+                                        tss.seq_id == ref.seq_id):
                                     if tss.strand == "+":
-                                        covers = detect_coverage(wigs_f, tss, ref)
+                                        covers = detect_coverage(
+                                            wigs_f, tss, ref)
                                     else:
-                                        covers = detect_coverage(wigs_r, tss, ref)
+                                        covers = detect_coverage(
+                                            wigs_r, tss, ref)
                                     tss_cover = covers[0]
                                     ref_cover = covers[1]
                                     if tss_cover < ref_cover:
@@ -321,10 +316,11 @@ def fix_primary_type(tsss, wigs_f, wigs_r):
                                     elif tss_cover > ref_cover:
                                         fix_attributes(ref, ref_entry)
                                     elif tss_cover == ref_cover:
-                                        if (tss_entry["utr"] < ref_entry["utr"]):
+                                        if (tss_entry["utr"] <
+                                                ref_entry["utr"]):
                                             fix_attributes(ref, ref_entry)
-                                        elif (tss_entry["utr"] > ref_entry["utr"]):
+                                        elif (tss_entry["utr"] >
+                                              ref_entry["utr"]):
                                             fix_attributes(tss, tss_entry)
     del_repeat(tsss)
     return tsss
-

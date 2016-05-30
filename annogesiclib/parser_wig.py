@@ -1,9 +1,5 @@
-import os
-import sys
-import csv
-
-
 class WigParser(object):
+
     def parser(self, wig_fh, strand):
         track = ""
         strain = ""
@@ -34,7 +30,9 @@ class WigParser(object):
                     yield assign_value(datas[0], datas[1],
                                        strand, strain, track)
 
+
 class assign_value(object):
+
     def __init__(self, pos, coverage, strand, strain, track):
         self.pos = int(pos)
         if strand == "+":
@@ -44,7 +42,7 @@ class assign_value(object):
         self.strand = strand
         self.strain = strain
         self.track = track
- 
+
     def __str__(self):
         return "{0} {1} {2} {3} {4}".format(
                 self.pos, self.coverage, self.strand, self.strain, self.track)

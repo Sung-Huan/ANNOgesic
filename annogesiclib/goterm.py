@@ -7,17 +7,17 @@ from annogesiclib.gene_ontology import retrieve_uniprot, map2goslim
 
 class GoTermFinding(object):
 
-    def __init__(self, out_folder, gffs, trans):
+    def __init__(self, args_go):
         self.multiparser = Multiparser()
         self.helper = Helper()
-        self.out_all = os.path.join(out_folder, "all_CDS")
-        self.out_express = os.path.join(out_folder, "expressed_CDS")
+        self.out_all = os.path.join(args_go.out_folder, "all_CDS")
+        self.out_express = os.path.join(args_go.out_folder, "expressed_CDS")
         self.result_all_path = os.path.join(self.out_all, "Go_term_results")
         self.result_express_path = os.path.join(self.out_express,
                                                 "Go_term_results")
-        self.gff_path = os.path.join(gffs, "tmp")
-        if trans is not None:
-            self.tran_path = os.path.join(trans, "tmp")
+        self.gff_path = os.path.join(args_go.gffs, "tmp")
+        if args_go.trans is not None:
+            self.tran_path = os.path.join(args_go.trans, "tmp")
         else:
             self.tran_path = None
         self.stat_all_path = os.path.join(self.out_all, "statistics")
@@ -25,22 +25,22 @@ class GoTermFinding(object):
                                               "statistics")
         self.all_strain = "all_strains_uniprot.csv"
 
-    def _retrieve_go(self, gff_path, out_path, tran_path, uniprot, type_):
+    def _retrieve_go(self, uniprot, out_path, type_):
         prefixs = []
-        for gff in os.listdir(gff_path):
+        for gff in os.listdir(self.gff_path):
             prefix = gff.replace(".gff", "")
             prefixs.append(prefix)
             self.helper.check_make_folder(os.path.join(out_path, prefix))
             out_file = os.path.join(out_path, prefix,
                                     "_".join([prefix, "uniprot.csv"]))
             print("extracting Go terms of {0} from UniProt...".format(prefix))
-            if tran_path is not None:
-                tran_file = os.path.join(tran_path,
-                            "_".join([prefix, "transcript.gff"]))
+            if self.tran_path is not None:
+                tran_file = os.path.join(self.tran_path,
+                                         "_".join([prefix, "transcript.gff"]))
             else:
                 tran_file = None
-            retrieve_uniprot(uniprot, os.path.join(gff_path, gff), out_file,
-                             tran_file, type_)
+            retrieve_uniprot(uniprot, os.path.join(self.gff_path, gff),
+                             out_file, tran_file, type_)
 
     def _merge_files(self, gffs, out_path, out_folder):
         folders = []
@@ -96,25 +96,27 @@ class GoTermFinding(object):
             self.helper.move_all_content(out_folder, fig_path,
                                          ["_biological_process.png"])
 
-    def run_go_term(self, gffs, out_folder, uniprot, go, goslim, trans):
-        for gff in os.listdir(gffs):
+    def run_go_term(self, args_go):
+        for gff in os.listdir(args_go.gffs):
             if gff.endswith(".gff"):
-                self.helper.check_uni_attributes(os.path.join(gffs, gff))
-        self.multiparser.parser_gff(gffs, None)
-        if trans is not None:
-            self.multiparser.parser_gff(trans, "transcript")
+                self.helper.check_uni_attributes(os.path.join(
+                                                 args_go.gffs, gff))
+        self.multiparser.parser_gff(args_go.gffs, None)
+        if args_go.trans is not None:
+            self.multiparser.parser_gff(args_go.trans, "transcript")
         print("Computing all CDS...")
-        self._retrieve_go(self.gff_path, self.result_all_path,
-                          self.tran_path, uniprot, "all")
-        self._merge_files(gffs, self.result_all_path, self.out_all)
-        self._stat(self.result_all_path, self.stat_all_path, go, goslim, self.out_all)
-        if trans is not None:
+        self._retrieve_go(args_go.uniprot, self.result_all_path, "all")
+        self._merge_files(args_go.gffs, self.result_all_path, self.out_all)
+        self._stat(self.result_all_path, self.stat_all_path, args_go.go,
+                   args_go.goslim, self.out_all)
+        if args_go.trans is not None:
             print("Computing express CDS...")
-            self._retrieve_go(self.gff_path, self.result_express_path,
-                              self.tran_path, uniprot, "express")
-            self._merge_files(gffs, self.result_express_path, self.out_express)
+            self._retrieve_go(args_go.uniprot, self.result_express_path,
+                              "express")
+            self._merge_files(args_go.gffs, self.result_express_path,
+                              self.out_express)
             self._stat(self.result_express_path, self.stat_express_path,
-                       go, goslim, self.out_express)
-        self.helper.remove_tmp(gffs)
-        if trans is not None:
-            self.helper.remove_tmp(trans)
+                       args_go.go, args_go.goslim, self.out_express)
+        self.helper.remove_tmp(args_go.gffs)
+        if args_go.trans is not None:
+            self.helper.remove_tmp(args_go.trans)

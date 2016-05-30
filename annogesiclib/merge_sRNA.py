@@ -3,24 +3,27 @@ import csv
 import math
 import copy
 from annogesiclib.gff3 import Gff3Parser
-from annogesiclib.coverage_detection import coverage_comparison, replicate_comparison
+from annogesiclib.coverage_detection import coverage_comparison
+from annogesiclib.coverage_detection import replicate_comparison
 from annogesiclib.lib_reader import read_wig, read_libs
+
 
 def modify_attributes(pre_srna, srna, srna_type, input_type):
     if srna_type == "UTR":
         if pre_srna.attributes["sRNA_type"] != srna.attributes["sRNA_type"]:
             if input_type == "pre":
                 if "&" not in pre_srna.attributes["sRNA_type"]:
-                    pre_srna.attributes["sRNA_type"] = \
-                           "&".join([srna.attributes["sRNA_type"],
-                                     pre_srna.attributes["sRNA_type"]])
+                    pre_srna.attributes["sRNA_type"] = (
+                        "&".join([srna.attributes["sRNA_type"],
+                                  pre_srna.attributes["sRNA_type"]]))
             else:
                 if "&" not in pre_srna.attributes["sRNA_type"]:
-                    srna.attributes["sRNA_type"] = \
-                           "&".join([srna.attributes["sRNA_type"],
-                                     pre_srna.attributes["sRNA_type"]])
+                    srna.attributes["sRNA_type"] = (
+                        "&".join([srna.attributes["sRNA_type"],
+                                  pre_srna.attributes["sRNA_type"]]))
                 else:
-                    srna.attributes["sRNA_type"] = pre_srna.attributes["sRNA_type"]
+                    srna.attributes["sRNA_type"] = (
+                        pre_srna.attributes["sRNA_type"])
 
 def del_attributes(feature, entry):
     attributes = {}
@@ -31,39 +34,40 @@ def del_attributes(feature, entry):
 
 def detect_overlap(srna, pre_srna, srna_type, overlap):
     if (srna.seq_id == pre_srna.seq_id) and (
-        srna.strand == pre_srna.strand):
+            srna.strand == pre_srna.strand):
         if (pre_srna.start >= srna.start) and (
-            pre_srna.end <= srna.end):
+                pre_srna.end <= srna.end):
             modify_attributes(pre_srna, srna, srna_type, None)
             overlap = True
         elif (pre_srna.start >= srna.start) and (
-              pre_srna.start <= srna.end) and (
-              pre_srna.end >= srna.end):
+                pre_srna.start <= srna.end) and (
+                pre_srna.end >= srna.end):
             modify_attributes(pre_srna, srna, srna_type, None)
             overlap = True
         elif (pre_srna.start <= srna.start) and (
-              pre_srna.end >= srna.start) and (
-              pre_srna.end <= srna.end):
+                pre_srna.end >= srna.start) and (
+                pre_srna.end <= srna.end):
             modify_attributes(pre_srna, srna, srna_type, None)
             overlap = True
-        elif (pre_srna.start <= srna.start) and \
-             (pre_srna.end >= srna.end):
+        elif (pre_srna.start <= srna.start) and (
+                pre_srna.end >= srna.end):
             overlap = True
             modify_attributes(pre_srna, srna, srna_type, "pre")
     return overlap
 
 def merge_tss_pro(pre_srna, srna, feature):
     if (feature not in pre_srna.attributes.keys()) and (
-        feature in srna.attributes.keys()):
+            feature in srna.attributes.keys()):
         if srna.attributes[feature] != "NA":
             pre_srna.attributes[feature] = srna.attributes[feature]
     elif (feature in pre_srna.attributes.keys()) and (
-        feature in srna.attributes.keys()):
+            feature in srna.attributes.keys()):
         if (pre_srna.attributes[feature] == "NA") and (
-            srna.attributes[feature] != "NA"):
+                srna.attributes[feature] != "NA"):
             pre_srna.attributes[feature] = srna.attributes[feature]
-        elif (srna.attributes[feature] not in pre_srna.attributes[feature]) and (
-              srna.attributes[feature] != "NA"):
+        elif (srna.attributes[feature] not in
+              pre_srna.attributes[feature]) and (
+                srna.attributes[feature] != "NA"):
             pre_srna.attributes[feature] = "&".join(
                                               [pre_srna.attributes[feature],
                                                srna.attributes[feature]])
@@ -72,8 +76,8 @@ def modify_overlap(pre_srna, srna):
     merge_tss_pro(pre_srna, srna, "with_TSS")
     merge_tss_pro(pre_srna, srna, "end_cleavage")
     if (srna.attributes["sRNA_type"] == "5utr") or (
-        srna.attributes["sRNA_type"] == "3utr") or (
-        srna.attributes["sRNA_type"] == "interCDS"):
+            srna.attributes["sRNA_type"] == "3utr") or (
+            srna.attributes["sRNA_type"] == "interCDS"):
         merge_tss_pro(pre_srna, srna, "start_cleavage")
     if (srna.start < pre_srna.start):
         pre_srna.start = srna.start
@@ -84,14 +88,11 @@ def modify_overlap(pre_srna, srna):
 def merge_srna(srnas, srna_type):
     final_srnas = []
     first = True
+    pre_srna = ""
     for srna in srnas:
         if srna_type == "UTR":
             srna.feature = "sRNA"
         else:
-            if srna.attributes["sRNA_type"] != "in_CDS":
-                srna.attributes["sRNA_type"] = "intergenic"
-            else:
-                srna.attributes["sRNA_type"] = "in_CDS"
             if "with_TSS" in srna.attributes.keys():
                 if srna.attributes["with_TSS"] == "False":
                     srna.attributes["with_TSS"] = "NA"
@@ -111,7 +112,8 @@ def merge_srna(srnas, srna_type):
             if overlap:
                 pre_srna = modify_overlap(pre_srna, srna)
             if not overlap:
-                final_srnas.append(pre_srna)
+                if pre_srna not in final_srnas:
+                    final_srnas.append(pre_srna)
                 pre_srna = srna
         srna.source = "ANNOgesic"
     if not overlap:
@@ -128,10 +130,11 @@ def read_gff(gff_file, type_):
                 datas.append(entry)
             else:
                 if (entry.feature == "CDS") or (
-                    entry.feature == "tRNA") or (
-                    entry.feature == "rRNA"):
+                        entry.feature == "tRNA") or (
+                        entry.feature == "rRNA"):
                     datas.append(entry)
-        datas = sorted(datas, key=lambda k: (k.seq_id, k.start))
+        datas = sorted(datas, key=lambda k: (k.seq_id, k.start,
+                                             k.end, k.strand))
     return datas
 
 def read_table(table_file, file_type):
@@ -149,17 +152,17 @@ def merge_incds_utr(utrs, inters):
         for utr in utrs:
             if inter.source == "in_CDS":
                 if (inter.seq_id == utr.seq_id) and (
-                    inter.strand == utr.strand):
+                        inter.strand == utr.strand):
                     if ((inter.end < utr.end) and (
-                         inter.end > utr.start) and (
-                         inter.start <= utr.start)) or (
-                        (inter.start > utr.start) and (
-                         inter.start < utr.end) and (
-                         inter.end >= utr.end)) or (
-                        (inter.end >= utr.end) and (
-                         inter.start <= utr.start)) or (
-                        (inter.end <= utr.end) and (
-                         inter.start >= utr.start)):
+                             inter.end > utr.start) and (
+                             inter.start <= utr.start)) or (
+                            (inter.start > utr.start) and (
+                             inter.start < utr.end) and (
+                             inter.end >= utr.end)) or (
+                            (inter.end >= utr.end) and (
+                             inter.start <= utr.start)) or (
+                            (inter.end <= utr.end) and (
+                             inter.start >= utr.start)):
                         utr.start = min(inter.start, utr.start)
                         utr.end = max(inter.end, utr.end)
                         remove = True
@@ -172,36 +175,40 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
     overlap = False
     for cds in cdss:
         if (srna.seq_id == cds.seq_id) and (
-            srna.strand == cds.strand):
+                srna.strand == cds.strand):
             if ((srna.end < cds.end) and (
-                 srna.end > cds.start) and (
-                 srna.start <= cds.start)) or (
-                (srna.start > cds.start) and (
-                 srna.start < cds.end) and (
-                 srna.end >= cds.end)) or (
-                (srna.end >= cds.end) and (
-                 srna.start <= cds.start)) or (
-                (srna.end <= cds.end) and (
-                 srna.start >= cds.start)):
+                     srna.end > cds.start) and (
+                     srna.start <= cds.start)) or (
+                    (srna.start > cds.start) and (
+                     srna.start < cds.end) and (
+                     srna.end >= cds.end)) or (
+                    (srna.end >= cds.end) and (
+                     srna.start <= cds.start)) or (
+                    (srna.end <= cds.end) and (
+                     srna.start >= cds.start)):
                 overlap = True
                 per_c = float(min(srna.end, cds.end) - max(
                         srna.start, cds.start)) / float(cds.end - cds.start)
                 if per_c <= cutoff_overlap:
                     if "product" in cds.attributes.keys():
-                        cds_name = "".join([cds.feature, ":", str(cds.start),
-                                            "-", str(cds.end), "_", cds.strand,
-                                            "(", cds.attributes["product"], ")"])
+                        cds_name = "".join([
+                            cds.feature, ":", str(cds.start),
+                            "-", str(cds.end), "_", cds.strand,
+                            "(", cds.attributes["product"], ")"])
                     else:
-                        cds_name = "".join([cds.feature, ":", str(cds.start),
-                                            "-", str(cds.end), "_", cds.strand])
+                        cds_name = "".join([
+                            cds.feature, ":", str(cds.start),
+                            "-", str(cds.end), "_", cds.strand])
                     if "overlap_cds" not in srna.attributes.keys():
                         srna.attributes["overlap_cds"] = cds_name
                         srna.attributes["overlap_percent"] = str(per_c)
                     else:
-                        srna.attributes["overlap_cds"] = \
-                            "&".join([srna.attributes["overlap_cds"], cds_name])
-                        srna.attributes["overlap_percent"] = \
-                            "&".join([srna.attributes["overlap_percent"], str(per_c)])
+                        srna.attributes["overlap_cds"] = (
+                            "&".join([srna.attributes["overlap_cds"],
+                                      cds_name]))
+                        srna.attributes["overlap_percent"] = (
+                            "&".join([srna.attributes["overlap_percent"],
+                                      str(per_c)]))
                     detect = True
     if not overlap:
         srna.attributes["overlap_cds"] = "NA"
@@ -211,13 +218,12 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
         return srna
     else:
         return None
-                        
-def merge_srna_gff(srna_utr, srna_inter, out_file, in_cds, cutoff_overlap,
-                   gff_file):
-    out = open(out_file, "w")
+
+def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
+    out = open(gffs["merge"], "w")
     out.write("##gff-version 3\n")
-    utrs = read_gff(srna_utr, "sRNA")
-    inters = read_gff(srna_inter, "sRNA")
+    utrs = read_gff(gffs["utr"], "sRNA")
+    inters = read_gff(gffs["normal"], "sRNA")
     cdss = read_gff(gff_file, "CDS")
     num_srna = 0
     srnas = None
@@ -230,23 +236,29 @@ def merge_srna_gff(srna_utr, srna_inter, out_file, in_cds, cutoff_overlap,
             srnas = srnas + merge_srna(inters, "inter")
         else:
             srnas = merge_srna(inters, "inter")
-    sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start))
+    sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start,
+                                              x.end, x.strand))
     for srna in sort_srnas:
         new_srna = compare_srna_cds(srna, cdss, cutoff_overlap)
         if new_srna:
             new_srna.attributes["ID"] = "srna" + str(num_srna)
             name = '%0*d' % (5, num_srna)
             new_srna.attributes["Name"] = "sRNA_" + str(name)
-            new_srna.attributes = del_attributes("best_high_coverage", new_srna)
-            new_srna.attributes = del_attributes("best_low_coverage", new_srna)
-            new_srna.attributes = del_attributes("best_avg_coverage", new_srna)
-            attribute_string = ";".join(
-                              ["=".join(items) for items in new_srna.attributes.items()])
-            new_srna.info_without_attributes = "\t".join([str(field) for field in [
-                            new_srna.seq_id, new_srna.source, new_srna.feature,
-                            new_srna.start, new_srna.end, new_srna.score,
-                            new_srna.strand, new_srna.phase]])
-            out.write(srna.info_without_attributes + "\t" + attribute_string + "\n")
+            new_srna.attributes = del_attributes("best_high_coverage",
+                                                 new_srna)
+            new_srna.attributes = del_attributes("best_low_coverage",
+                                                 new_srna)
+            new_srna.attributes = del_attributes("best_avg_coverage",
+                                                 new_srna)
+            attribute_string = ";".join([
+                "=".join(items) for items in new_srna.attributes.items()])
+            new_srna.info_without_attributes = (
+                "\t".join([str(field) for field in [
+                    new_srna.seq_id, new_srna.source, new_srna.feature,
+                    new_srna.start, new_srna.end, new_srna.score,
+                    new_srna.strand, new_srna.phase]]))
+            out.write(srna.info_without_attributes + "\t" +
+                      attribute_string + "\n")
             num_srna += 1
     out.close()
 
@@ -281,43 +293,40 @@ def check_real_cut(inter_cuts, tss_type, cut):
             cut = inter_cuts["no_tss"]
     return cut
 
-def get_cutoff(srna, tsss, cutoff_tex, cutoff_frag, type_, fuzzy_tss,
-               tables, out_folder):
+def get_cutoff(srna, tsss, type_, tables, args_srna):
     if type_ == "inter":
         tss_type = None
         inter_cuts = {"frag": {}, "tex": {}, "notex": {}}
-        fh = open(os.path.join(out_folder, "tmp_cutoff_inter"), "r")
+        fh = open(os.path.join(args_srna.out_folder, "tmp_cutoff_inter"), "r")
         for row in csv.reader(fh, delimiter='\t'):
             inter_cuts[row[0]][row[1]] = float(row[2])
         if tsss is not None:
             for tss in tsss:
                 if (srna.seq_id == tss.seq_id) and (
-                    srna.strand == tss.strand):
+                        srna.strand == tss.strand):
                     if srna.strand == "+":
-                        if math.fabs(srna.start - tss.start) <= fuzzy_tss:
+                        if math.fabs(srna.start -
+                           tss.start) <= args_srna.fuzzy_inter:
                             tss_type = tss.attributes["type"]
                             if srna.start == tss.start:
                                 break
                     else:
-                        if math.fabs(srna.end - tss.start) <= fuzzy_tss:
+                        if (math.fabs(srna.end - tss.start) <=
+                                args_srna.fuzzy_inter):
                             tss_type = tss.attributes["type"]
                             if srna.end == tss.start:
                                 break
-            cut = {"frag": None, "tex": None, "notex": None}
-            if tss_type is None:
-                tss_type = "no_tss"
-            for key, types in inter_cuts.items():
-                cut[key] = check_real_cut(types, tss_type, cut[key])
-        else:
-            cut = {}
-            for key, types in inter_cuts.items():
-                cut[key] = inter_cuts[key]["no_tss"]
+        cut = {"frag": None, "tex": None, "notex": None}
+        if tss_type is None:
+            tss_type = "no_tss"
+        for key, types in inter_cuts.items():
+            cut[key] = check_real_cut(types, tss_type, cut[key])
     elif type_ == "utr":
         cut = {}
-        fh = open(os.path.join(out_folder, "tmp_median"), "r")
+        fh = open(os.path.join(args_srna.out_folder, "tmp_median"), "r")
         for row in csv.reader(fh, delimiter='\t'):
             if (row[0] == srna.seq_id) and (
-                row[1] == srna.attributes["sRNA_type"]):
+                    row[1] == srna.attributes["sRNA_type"]):
                 if row[1] not in cut.keys():
                     cut[row[1]] = {}
                 cut[row[1]][row[2]] = {"median": float(row[3])}
@@ -336,7 +345,7 @@ def devide_covers(covers):
 
 def merge_srna_datas(srna_datas_tex, srna_datas_frag):
     if (len(srna_datas_tex["conds"]) != 0) and (
-        len(srna_datas_frag["conds"]) != 0):
+            len(srna_datas_frag["conds"]) != 0):
         srna_datas = copy.deepcopy(srna_datas_tex)
         for key, values in srna_datas_frag.items():
             if key == "conds":
@@ -357,50 +366,45 @@ def merge_srna_datas(srna_datas_tex, srna_datas_frag):
         srna_datas = copy.deepcopy(srna_datas_tex)
     return srna_datas
 
-def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs, 
-                  table_best, out, tex_notex, replicates, cutoff_tex,
-                  cutoff_notex, cutoff_frag, tsss, fuzzy_tss, out_folder):
+def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
+                  out, tsss, args_srna):
     detect = False
     tss_pro, end_pro = get_tss_pro(type_, srna)
     if not detect:
         if type_ == "inter":
             if srna.strand == "+":
-                covers = get_coverage(wigs_f, srna.seq_id, srna.strand,
-                                      srna.start, srna.end)
+                covers = get_coverage(wigs_f, srna)
             else:
-                covers = get_coverage(wigs_r, srna.seq_id, srna.strand,
-                                      srna.start, srna.end)
-            cut = get_cutoff(srna, tsss, cutoff_tex, cutoff_frag, type_,
-                             fuzzy_tss, tables, out_folder)
+                covers = get_coverage(wigs_r, srna)
+            cut = get_cutoff(srna, tsss, type_, tables, args_srna)
             frag_covers, tex_covers = devide_covers(covers)
-            srna_datas_tex = replicate_comparison(tex_covers, template_texs, srna.strand,
-                                  cut["tex"], tex_notex, replicates, "normal",
-                                  None, None, None, template_texs, cut["notex"])
-            srna_datas_frag = replicate_comparison(frag_covers, template_texs, srna.strand,
-                                  cut["frag"], tex_notex, replicates, "normal",
-                                  None, None, None, template_texs, None)
+            srna_datas_tex = replicate_comparison(
+                args_srna, tex_covers, srna.strand, "normal", None, None,
+                None, cut["notex"], cut["tex"], texs)
+            srna_datas_frag = replicate_comparison(
+                args_srna, frag_covers, srna.strand, "normal", None, None,
+                None, None, cut["frag"], texs)
             srna_datas = merge_srna_datas(srna_datas_tex, srna_datas_frag)
         elif type_ == "utr":
             if srna.strand == "+":
-                covers = get_coverage(wigs_f, srna.seq_id, srna.strand,
-                                      srna.start, srna.end)
+                covers = get_coverage(wigs_f, srna)
             else:
-                covers = get_coverage(wigs_r, srna.seq_id, srna.strand,
-                                      srna.start, srna.end)
-            cut = get_cutoff(srna, tsss, cutoff_tex, cutoff_frag, type_,
-                             fuzzy_tss, tables, out_folder)
-            srna_datas = replicate_comparison(covers, template_texs, srna.strand,
-                                      cut, tex_notex, replicates,
-                                      "sRNA_utr_derived", cut[srna.attributes["sRNA_type"]],
-                                      cut, srna.attributes["sRNA_type"], template_texs, None)
+                covers = get_coverage(wigs_r, srna)
+            cut = get_cutoff(srna, tsss, type_, tables, args_srna)
+            srna_datas = replicate_comparison(
+                args_srna, covers, srna.strand, "sRNA_utr_derived",
+                cut[srna.attributes["sRNA_type"]],
+                cut, srna.attributes["sRNA_type"], None, cut, texs)
         if len(srna_datas["conds"]) != 0:
-            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t".format(
-                       srna.seq_id, srna.attributes["Name"], srna.start,
-                       srna.end, srna.strand,
-                       ";".join(srna_datas["conds"].keys()),
-                       ";".join(srna_datas["conds"].values()), tss_pro, end_pro,
-                       srna_datas["best"], srna_datas["high"], srna_datas["low"]))
-            if not table_best:
+            out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}"
+                      "\t{8}\t{9}\t{10}\t{11}\t".format(
+                          srna.seq_id, srna.attributes["Name"], srna.start,
+                          srna.end, srna.strand,
+                          ";".join(srna_datas["conds"].keys()),
+                          ";".join(srna_datas["conds"].values()), tss_pro,
+                          end_pro, srna_datas["best"], srna_datas["high"],
+                          srna_datas["low"]))
+            if not args_srna.table_best:
                 first = True
                 for data in srna_datas["detail"]:
                     if first:
@@ -420,51 +424,56 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, template_texs,
                       srna.attributes["overlap_cds"].replace("&", ";"),
                       srna.attributes["overlap_percent"].replace("&", ";")))
 
-def get_coverage(wigs, strain, strand, start, end):
+def get_coverage(wigs, srna):
     cover_sets = {"high": -1, "low": -1, "total": 0, "diff": 0}
     poss = {"high": 0, "low": 0, "pos": 0}
     srna_covers = {}
     for wig_strain, conds in wigs.items():
-        if wig_strain == strain:
+        if wig_strain == srna.seq_id:
             for cond, tracks in conds.items():
                 srna_covers[cond] = []
                 for track, covers in tracks.items():
                     cover_sets["total"] = 0
                     cover_sets["diff"] = 0
                     first = True
-                    if strand == "+":
-                        covers = covers[start-2:end+1]
-                    elif strand == "-":
-                        covers = reversed(covers[start-2:end+1])
+                    if srna.strand == "+":
+                        covers = covers[srna.start-2:srna.end+1]
+                    elif srna.strand == "-":
+                        covers = reversed(covers[srna.start-2:srna.end+1])
                     for cover in covers:
-                        if (cover["strand"] == strand):
-                            if (start <= cover["pos"]) and (
-                                end >= cover["pos"]):
-                                cover_sets["total"] = cover_sets["total"] + cover["coverage"]
+                        if (cover["strand"] == srna.strand):
+                            if (srna.start <= cover["pos"]) and (
+                                    srna.end >= cover["pos"]):
+                                cover_sets["total"] = (cover_sets["total"] +
+                                                       cover["coverage"])
                                 first = coverage_comparison(
-                                        cover, cover_sets, poss, first, strand)
+                                        cover, cover_sets, poss,
+                                        first, srna.strand)
                             else:
-                                if (strand == "+") and (cover["pos"] > end):
+                                if (srna.strand == "+") and (
+                                        cover["pos"] > srna.end):
                                     cover_sets["pos"] = cover["pos"]
                                     break
-                                elif (strand == "-") and (cover["pos"] < start):
+                                elif (srna.strand == "-") and (
+                                        cover["pos"] < srna.start):
                                     cover_sets["pos"] = cover["pos"]
                                     break
-                    avg = cover_sets["total"] / float(end - start + 1)
+                    avg = cover_sets["total"] / float(
+                            srna.end - srna.start + 1)
                     srna_covers[cond].append({"track": track,
                                               "high": cover_sets["high"],
                                               "low": cover_sets["low"],
                                               "avg": avg,
                                               "pos": poss["pos"],
                                               "type": cover["type"],
-                                              "final_start": start,
-                                              "final_end": end})
+                                              "final_start": srna.start,
+                                              "final_end": srna.end})
     return srna_covers
 
 def get_tss_pro(type_, srna):
     if type_ == "utr":
         if (srna.attributes["with_TSS"] != "NA") and (
-            srna.attributes["start_cleavage"] != "NA"):
+                srna.attributes["start_cleavage"] != "NA"):
             tss_pro = ";".join([srna.attributes["with_TSS"],
                                 srna.attributes["start_cleavage"]])
         elif (srna.attributes["with_TSS"] != "NA"):
@@ -492,11 +501,13 @@ def get_tss_pro(type_, srna):
             end_pro = "NA"
     return tss_pro, end_pro
 
-def merge_srna_table(srna_file, inter_table, utr_table, wig_f_file,
-                     wig_r_file, wig_folder, input_libs, tex_notex, replicates,
-                     table_best, out_file, in_cds, tss_file, cutoff_tex, cutoff_notex,
-                     cutoff_frag, fuzzy_tss, out_folder, utr_tex, utr_notex, utr_frag):
-    libs, texs = read_libs(input_libs, wig_folder)
+def free_memory(paras):
+    for data in paras:
+        del(data)
+
+def merge_srna_table(srna_file, csvs, wig_f_file, wig_r_file,
+                     tss_file, args_srna):
+    libs, texs = read_libs(args_srna.libs, args_srna.merge_wigs)
     wigs_f = read_wig(wig_f_file, "+", libs)
     wigs_r = read_wig(wig_r_file, "-", libs)
     srnas = read_gff(srna_file, "sRNA")
@@ -504,18 +515,20 @@ def merge_srna_table(srna_file, inter_table, utr_table, wig_f_file,
         tsss = read_gff(tss_file, "tss")
     else:
         tsss = None
-    inters = read_table(inter_table, "inter")
-    utrs = read_table(utr_table, "utr")
-    out = open(out_file, "w")
+    inters = read_table(csvs["normal"], "inter")
+    utrs = read_table(csvs["utr"], "utr")
+    out = open(csvs["merge"], "w")
     for srna in srnas:
         if (srna.attributes["sRNA_type"] == "5utr") or (
-            srna.attributes["sRNA_type"] == "3utr") or (
-            srna.attributes["sRNA_type"] == "interCDS"):
-            compare_table(srna, utrs, "utr", wigs_f, wigs_r, texs,
-                          table_best, out, tex_notex, replicates, cutoff_tex,
-                          cutoff_notex, cutoff_frag, tsss, fuzzy_tss, out_folder)
+                srna.attributes["sRNA_type"] == "3utr") or (
+                srna.attributes["sRNA_type"] == "interCDS"):
+            compare_table(srna, utrs, "utr", wigs_f, wigs_r,
+                          texs, out, tsss, args_srna)
         elif (srna.attributes["sRNA_type"] == "intergenic") or (
-              srna.attributes["sRNA_type"] == "in_CDS"):
-            compare_table(srna, inters, "inter", wigs_f, wigs_r, texs,
-                          table_best, out, tex_notex, replicates, utr_tex,
-                          utr_notex, utr_frag, tsss, fuzzy_tss, out_folder)
+                srna.attributes["sRNA_type"] == "in_CDS") or (
+                srna.attributes["sRNA_type"] == "antisense"):
+            compare_table(srna, inters, "inter", wigs_f, wigs_r,
+                          texs, out, tsss, args_srna)
+    out.close()
+    paras = [wigs_r, wigs_f, srnas, tsss, inters, utrs]
+    free_memory(paras)

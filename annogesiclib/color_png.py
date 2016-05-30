@@ -23,15 +23,17 @@ class ColorPNG(object):
                 for strand in ["forward", "reverse"]:
                     print("Running for {0}_{1}".format(strain, strand))
                     out_path = os.path.join(out_folder, strain, strand)
-                    # convert original png file to svg file and give color on it.
+                    # convert original png to svg and give color on it.
                     for screenshot in os.listdir(out_path):
                         if screenshot.endswith(".png"):
-                            print("convert {0} to svg and painting tracks now...".format(
-                                  screenshot))
+                            print("convert {0} to svg and "
+                                  "painting tracks now...".format(
+                                      screenshot))
                             svg_file = screenshot.replace(".png", ".svg")
                             self._convert_svg(imagemagick_path, out_path,
-                                            screenshot, svg_file)
-                            with open(os.path.join(out_path, svg_file), "r") as f_h:
+                                              screenshot, svg_file)
+                            with open(os.path.join(
+                                      out_path, svg_file), "r") as f_h:
                                 for line in f_h:
                                     line = line.strip()
                                     if line.startswith("<svg"):

@@ -1,7 +1,7 @@
 import os
-import sys
 import csv
 import shutil
+
 
 def print_rank_all(all_table, best_table):
     out = open("tmp_rank_table", "w")
@@ -20,9 +20,9 @@ def print_rank_all(all_table, best_table):
         if row[0] != "rank":
             for best in bests:
                 if (row[1] == best[1]) and (
-                    row[3] == best[3]) and (
-                    row[4] == best[4]) and (
-                    row[5] == best[5]):
+                        row[3] == best[3]) and (
+                        row[4] == best[4]) and (
+                        row[5] == best[5]):
                     detect = True
                     break
             if not detect:

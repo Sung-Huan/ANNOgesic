@@ -1,6 +1,6 @@
-import os
 import csv
 import itertools
+
 
 def _boolean(data):
     if data == "False":
@@ -53,7 +53,7 @@ def print_stat(operons, total_num, class_operon, out):
         out.write("\tthe number of operons which {0} = {1} ({2})\n".format(
                   key, value, float(value) / float(total_num)))
     out.write("mono/polycistronic:\n")
-    out.write("\tno associated with CDS: {0} ({1})\n".format(
+    out.write("\tno associated with genes/CDSs: {0} ({1})\n".format(
               class_operon["na"],
               float(class_operon["na"]) / float(class_operon["total"])))
     out.write("\tmonocistronic: {0} ({1})\n".format(
@@ -73,7 +73,7 @@ def stat(input_file, out_file):
     total_num = {}
     total_num_all = 0
     class_operon = {}
-    class_operon["total"] = {"na": 0, "mono": 0, "poly":0, "total": 0}
+    class_operon["total"] = {"na": 0, "mono": 0, "poly": 0, "total": 0}
     for row in csv.reader(f_h, delimiter="\t"):
         if row[0] != "Operon_ID":
             if row[0] != tmp_id:
@@ -82,7 +82,7 @@ def stat(input_file, out_file):
                     operons[row[1]] = []
                     total_num[row[1]] = 0
                     class_operon[row[1]] = {"na": 0, "mono": 0,
-                                            "poly":0, "total": 0}
+                                            "poly": 0, "total": 0}
                 operons[row[1]].append(row_to_location(row))
                 operons_all.append(row_to_location(row))
                 total_num[row[1]] += 1

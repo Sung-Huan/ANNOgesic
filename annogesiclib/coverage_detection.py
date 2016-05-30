@@ -1,7 +1,5 @@
-import sys
-import math
-import csv
-import os
+import copy
+
 
 def coverage_comparison(cover, cover_sets, poss, first, strand):
     if first:
@@ -51,11 +49,44 @@ def check_notex(cover, texs, cutoff, notex):
         if cover["avg"] > cutoff:
             return True
 
-def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
-              texs, notex, type_, poss, median, coverages, utr_type):
+def run_tex(cover, texs, check_texs, tex_notex, type_,
+            detect_num, poss, target_datas):
+    if (cover["type"] == "tex") or (cover["type"] == "notex"):
+        for key in texs.keys():
+            if cover["track"] in key:
+                texs[key] += 1
+                check_texs[key].append(cover)
+                if texs[key] >= tex_notex:
+                    if type_ == "sRNA_utr_derived":
+                        if detect_num == 0:
+                            poss["start"] = cover["final_start"]
+                            poss["end"] = cover["final_end"]
+                        else:
+                            exchange_start_end(poss, cover)
+                    detect_num += 1
+                    if cover not in target_datas:
+                        target_datas.append(cover)
+                    if tex_notex != 1:
+                        if check_texs[key][0] not in target_datas:
+                            target_datas.append(check_texs[key][0])
+                            if type_ == "sRNA_utr_derived":
+                                exchange_start_end(poss, check_texs[key][0])
+    elif cover["type"] == "frag":
+        if type_ == "sRNA_utr_derived":
+            if detect_num == 0:
+                poss["start"] = cover["final_start"]
+                poss["end"] = cover["final_end"]
+            else:
+                exchange_start_end(poss, cover)
+        detect_num += 1
+        target_datas.append(cover)
+    return detect_num
+
+def check_tex(template_texs, covers, target_datas, notex, type_, poss, median,
+              coverages, utr_type, cutoff_coverage, tex_notex):
     detect_num = 0
     check_texs = {}
-    texs = template_texs.copy()
+    texs = copy.deepcopy(template_texs)
     for key, num in texs.items():
         check_texs[key] = []
     for cover in covers:
@@ -73,40 +104,14 @@ def check_tex(template_texs, covers, cutoff, target_datas, tex_notex,
         elif (type_ == "terminator"):
             run_check_tex = True
         elif (type_ == "normal"):
-            run_check_tex = check_notex(cover, texs, cutoff, notex)
+            run_check_tex = check_notex(cover, texs, cutoff_coverage,
+                                        notex)
         else:
-            if cover["avg"] > cutoff:
+            if cover["avg"] > cutoff_coverage:
                 run_check_tex = True
         if run_check_tex:
-            if (cover["type"] == "tex") or (cover["type"] == "notex"):
-                for key in texs.keys():
-                    if cover["track"] in key:
-                        texs[key] += 1
-                        check_texs[key].append(cover)
-                        if texs[key] >= tex_notex:
-                            if type_ == "sRNA_utr_derived":
-                                if detect_num == 0:
-                                    poss["start"] = cover["final_start"]
-                                    poss["end"] = cover["final_end"]
-                                else:
-                                    exchange_start_end(poss, cover)
-                            detect_num += 1
-                            if cover not in target_datas:
-                                target_datas.append(cover)
-                            if tex_notex != 1:
-                                if check_texs[key][0] not in target_datas:
-                                    target_datas.append(check_texs[key][0])
-                                    if type_ == "sRNA_utr_derived":
-                                        exchange_start_end(poss, check_texs[key][0])
-            elif cover["type"] == "frag":
-                if type_ == "sRNA_utr_derived":
-                    if detect_num == 0:
-                        poss["start"] = cover["final_start"]
-                        poss["end"] = cover["final_end"]
-                    else:
-                        exchange_start_end(poss, cover)
-                detect_num += 1
-                target_datas.append(cover)
+            detect_num = run_tex(cover, texs, check_texs, tex_notex,
+                                 type_, detect_num, poss, target_datas)
     return detect_num
 
 def exchange_start_end(poss, cover):
@@ -115,22 +120,20 @@ def exchange_start_end(poss, cover):
     if poss["end"] < cover["final_end"]:
         poss["end"] = cover["final_end"]
 
-def replicate_comparison(srna_covers, template_texs, strand, cutoff_coverage,
-                         tex_notex, replicates, type_, median, coverages,
-                         utr_type, texs, notex):
+def replicate_comparison(args_srna, srna_covers, strand, type_, median,
+                         coverages, utr_type, notex, cutoff_coverage, texs):
     srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
                   "end": -1, "track": "", "detail": [], "conds": {}}
     tmp_poss = {"start": -1, "end": -1, "pos": -1,
                 "all_start": [], "all_end": []}
-    output = False
     for cond, covers in srna_covers.items():
-        detect_num = check_tex(template_texs, covers, cutoff_coverage,
-                               srna_datas["detail"], tex_notex, texs, notex,
-                               type_, tmp_poss, median, coverages, utr_type)
-        if ((detect_num >= replicates["tex"]) and \
-           ("texnotex" in cond)) or \
-           ((detect_num >= replicates["frag"]) and \
-           ("frag" in cond)):
+        detect_num = check_tex(texs, covers, srna_datas["detail"], notex,
+                               type_, tmp_poss, median, coverages, utr_type,
+                               cutoff_coverage, args_srna.tex_notex)
+        if ((detect_num >= args_srna.replicates["tex"]) and (
+                "texnotex" in cond)) or (
+                (detect_num >= args_srna.replicates["frag"]) and (
+                "frag" in cond)):
             if type_ == "sRNA_utr_derived":
                 tmp_poss["all_start"].append(tmp_poss["start"])
                 tmp_poss["all_end"].append(tmp_poss["end"])

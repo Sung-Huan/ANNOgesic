@@ -7,24 +7,28 @@ from annogesiclib.converter import Converter
 from annogesiclib.format_fixer import FormatFixer
 from annogesiclib.helper import Helper
 
+
 class RATT(object):
 
-    def __init__(self, ref_embls, output_path, tar_fastas,
-                 ref_fastas, gff_outfolder):
+    def __init__(self, args_ratt):
         self.multiparser = Multiparser()
         self.converter = Converter()
         self.format_fixer = FormatFixer()
         self.helper = Helper()
-        self.gbk = os.path.join(ref_embls, "gbk_tmp")
+        self.gbk = os.path.join(args_ratt.ref_embls, "gbk_tmp")
         self.gbk_tmp = os.path.join(self.gbk, "tmp")
-        self.embl = os.path.join(ref_embls, "embls")
-        self.ratt_log = os.path.join(output_path, "ratt_log.txt")
-        self.tmp_files = {"tar": os.path.join(tar_fastas, "tmp"),
-                          "ref": os.path.join(ref_fastas, "tmp"),
-                          "out_gff": os.path.join(gff_outfolder, "tmp"),
-                          "gff": os.path.join(gff_outfolder, "tmp.gff"),
-                          "ptt": os.path.join(gff_outfolder, "tmp.ptt"),
-                          "rnt": os.path.join(gff_outfolder, "tmp.rnt")}
+        self.embl = os.path.join(args_ratt.ref_embls, "embls")
+        self.ratt_log = os.path.join(args_ratt.output_path, "ratt_log.txt")
+        self.tmp_files = {"tar": os.path.join(args_ratt.tar_fastas, "tmp"),
+                          "ref": os.path.join(args_ratt.ref_fastas, "tmp"),
+                          "out_gff": os.path.join(args_ratt.gff_outfolder,
+                                                  "tmp"),
+                          "gff": os.path.join(args_ratt.gff_outfolder,
+                                              "tmp.gff"),
+                          "ptt": os.path.join(args_ratt.gff_outfolder,
+                                              "tmp.ptt"),
+                          "rnt": os.path.join(args_ratt.gff_outfolder,
+                                              "tmp.rnt")}
 
     def _convert_to_pttrnt(self, gffs, files):
         for gff in files:
@@ -40,30 +44,32 @@ class RATT(object):
                     self.converter.convert_gff2rntptt(gff, fasta, ptt, rnt,
                                                       None, None)
 
-    def _remove_files(self, gff_outfolder, tar_fastas, out_gbk, ref_fastas):
-        self.helper.remove_all_content(gff_outfolder, ".gff", "file")
-        self.helper.remove_all_content(gff_outfolder, ".ptt", "file")
-        self.helper.remove_all_content(gff_outfolder, ".rnt", "file")
+    def _remove_files(self, args_ratt, out_gbk):
+        self.helper.remove_all_content(args_ratt.gff_outfolder, ".gff", "file")
+        self.helper.remove_all_content(args_ratt.gff_outfolder, ".ptt", "file")
+        self.helper.remove_all_content(args_ratt.gff_outfolder, ".rnt", "file")
         self.helper.move_all_content(self.tmp_files["out_gff"],
-                                     gff_outfolder, None)
+                                     args_ratt.gff_outfolder, None)
         shutil.rmtree(self.tmp_files["out_gff"])
         shutil.rmtree(self.tmp_files["tar"])
         shutil.rmtree(self.tmp_files["ref"])
         shutil.rmtree(self.embl)
-        self.helper.remove_all_content(tar_fastas, "_folder", "dir")
-        self.helper.remove_all_content(ref_fastas, "_folder", "dir")
+        self.helper.remove_all_content(args_ratt.tar_fastas, "_folder", "dir")
+        self.helper.remove_all_content(args_ratt.ref_fastas, "_folder", "dir")
         if out_gbk:
             shutil.rmtree(out_gbk)
 
-    def _convert_to_gff(self, ratt_result, output_path, gff_outfolder, files):
+    def _convert_to_gff(self, ratt_result, args_ratt, files):
         name = ratt_result.split(".")
         filename = ".".join(name[1:-2]) + ".gff"
-        output_file = os.path.join(output_path, filename)
+        output_file = os.path.join(args_ratt.output_path, filename)
         self.converter.convert_embl2gff(
-             os.path.join(output_path, ratt_result), output_file)
-        self.format_fixer.fix_ratt(output_file, ".".join(name[1:-2]), "tmp_gff")
+             os.path.join(args_ratt.output_path, ratt_result), output_file)
+        self.format_fixer.fix_ratt(output_file, ".".join(name[1:-2]),
+                                   "tmp_gff")
         shutil.move("tmp_gff", output_file)
-        shutil.copy(output_file, os.path.join(gff_outfolder, filename))
+        shutil.copy(output_file, os.path.join(args_ratt.gff_outfolder,
+                                              filename))
         files.append(filename)
 
     def _parser_embl_gbk(self, files):
@@ -116,27 +122,29 @@ class RATT(object):
             self.helper.move_all_content(out_gbk, self.embl, [".embl"])
         return out_gbk
 
-    def _run_ratt(self, ratt_path, tar, element, transfer_type, ref, out):
-        call([ratt_path, self.embl,
+    def _run_ratt(self, args_ratt, tar, ref, out):
+        call([args_ratt.ratt_path, self.embl,
               os.path.join(self.tmp_files["tar"], tar + ".fa"),
-              element, transfer_type,
+              args_ratt.element, args_ratt.transfer_type,
               os.path.join(self.tmp_files["ref"], ref + ".fa")],
-              stdout=out, stderr=DEVNULL)
+             stdout=out, stderr=DEVNULL)
 
-    def _format_and_run(self, output_path, ratt_path,
-                        element, transfer_type, pairs):
+    def _format_and_run(self, args_ratt):
         print("Running RATT...")
-        for pair in pairs:
+        for pair in args_ratt.pairs:
             ref = pair.split(":")[0]
             tar = pair.split(":")[1]
             out = open(self.ratt_log, "w+")
             print(tar)
-            self._run_ratt(ratt_path, tar, element, transfer_type, ref, out)
+            self._run_ratt(args_ratt, tar, ref, out)
             for filename in os.listdir():
                 if ("final" in filename):
-                    shutil.move(filename, os.path.join(output_path, filename))
-                elif (element in filename) or ("query" in filename) or (
-                      "Reference" in filename) or ("Query" in filename) or (
+                    shutil.move(filename, os.path.join(args_ratt.output_path,
+                                                       filename))
+                elif (args_ratt.element in filename) or (
+                      "query" in filename) or (
+                      "Reference" in filename) or (
+                      "Query" in filename) or (
                       "Sequences" in filename):
                     if os.path.isfile(filename):
                         os.remove(filename)
@@ -144,42 +152,44 @@ class RATT(object):
                         shutil.rmtree(filename)
         out.close()
 
-    def annotation_transfer(self, ratt_path, element, transfer_type,
-                            ref_embls, tar_fastas, ref_fastas, output_path,
-                            convert, gff_outfolder, pairs):
-        self.multiparser.parser_fasta(tar_fastas)
-        self.multiparser.parser_fasta(ref_fastas)
-        out_gbk = self._convert_embl(ref_embls)
-        self._format_and_run(output_path, ratt_path, element, transfer_type, pairs)
-        if convert:
+    def annotation_transfer(self, args_ratt):
+        self.multiparser.parser_fasta(args_ratt.tar_fastas)
+        self.multiparser.parser_fasta(args_ratt.ref_fastas)
+        out_gbk = self._convert_embl(args_ratt.ref_embls)
+        self._format_and_run(args_ratt)
+        if args_ratt.convert:
             files = []
-            for data in os.listdir(output_path):
+            for data in os.listdir(args_ratt.output_path):
                 if "final.embl" in data:
-                    self._convert_to_gff(data, output_path, gff_outfolder, files)
-                    self._convert_to_pttrnt(gff_outfolder, files)
+                    self._convert_to_gff(data, args_ratt, files)
+                    self._convert_to_pttrnt(args_ratt.gff_outfolder, files)
             self.helper.check_make_folder(self.tmp_files["out_gff"])
-            for folder in os.listdir(tar_fastas):
+            for folder in os.listdir(args_ratt.tar_fastas):
                 files = []
                 if "_folder" in folder:
                     datas = folder.split("_folder")
                     prefix = datas[0][:-3]
-                    for file_ in os.listdir(os.path.join(tar_fastas, folder)):
+                    for file_ in os.listdir(os.path.join(args_ratt.tar_fastas,
+                                                         folder)):
                         files.append(file_[:-3])
-                    for gff in os.listdir(gff_outfolder):
+                    for gff in os.listdir(args_ratt.gff_outfolder):
                         for file_ in files:
                             if (".gff" in gff) and (file_ == gff[:-4]):
                                 self.helper.merge_file(os.path.join(
-                                     gff_outfolder, gff), self.tmp_files["gff"])
+                                     args_ratt.gff_outfolder, gff),
+                                     self.tmp_files["gff"])
                             if (".ptt" in gff) and (file_ == gff[:-4]):
                                 self.helper.merge_file(os.path.join(
-                                     gff_outfolder, gff), self.tmp_files["ptt"])
+                                     args_ratt.gff_outfolder, gff),
+                                     self.tmp_files["ptt"])
                             if (".rnt" in gff) and (file_ == gff[:-4]):
                                 self.helper.merge_file(os.path.join(
-                                     gff_outfolder, gff), self.tmp_files["rnt"])
+                                     args_ratt.gff_outfolder, gff),
+                                     self.tmp_files["rnt"])
                     shutil.move(self.tmp_files["gff"], os.path.join(
                                 self.tmp_files["out_gff"], prefix + ".gff"))
                     shutil.move(self.tmp_files["ptt"], os.path.join(
                                 self.tmp_files["out_gff"], prefix + ".ptt"))
                     shutil.move(self.tmp_files["rnt"], os.path.join(
                                 self.tmp_files["out_gff"], prefix + ".rnt"))
-        self._remove_files(gff_outfolder, tar_fastas, out_gbk, ref_fastas)
+        self._remove_files(args_ratt, out_gbk)

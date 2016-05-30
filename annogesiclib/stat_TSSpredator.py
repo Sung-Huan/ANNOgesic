@@ -1,21 +1,17 @@
-import os
-import sys
-import csv
 import itertools
+import numpy as np
+from annogesiclib.gff3 import Gff3Parser
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
-import numpy as np
-import pylab as pl
-from annogesiclib.gff3 import Gff3Parser
 plt.style.use('ggplot')
 
 
 def plot(pri, sec, anti, inter, orph, total, total_more, name,
          feature_name, file_type):
     tsss = [pri, sec, anti, inter, orph]
-    ind = np.arange(5)  # the x locations for the groups
-    width = 0.5       # the width of the bars
+    ind = np.arange(5)
+    width = 0.5
     fig, ax = plt.subplots()
     if feature_name == "processing site":
         plt.text(0.85, 0.95, "Total processing sites", ha='center',
@@ -36,7 +32,7 @@ def plot(pri, sec, anti, inter, orph, total, total_more, name,
     for rect in rects:
         height = rect.get_height()
         plt.text(rect.get_x()+rect.get_width()/2., 1.05*height,
-                 '%d'%int(height), ha='center', va='bottom')
+                 '%d' % int(height), ha='center', va='bottom')
     plt.savefig(file_type + "_class_" + name + ".png")
 
 def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
@@ -76,10 +72,12 @@ def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
     for tss_lib, lib_num in tss_libs.items():
         out_lib.write(": ".join([tss_lib, str(lib_num)]))
         out_lib.write(" ({0})\n".format(lib_num / num_tss))
-    out_stat.write("total number of {0} (if one {1} belong to two class, it count two times) = {2}\n".format(
-                   feature_name, feature_name, num_tss_more))
-    out_stat.write("total number of unique {0} (if one {1} belong to two class, it count only one time) = {2}\n".format(
-                   feature_name, feature_name, num_tss))
+    out_stat.write("total number of {0} (if one {1} belong to two class, "
+                   "it count two times) = {2}\n".format(
+                       feature_name, feature_name, num_tss_more))
+    out_stat.write("total number of unique {0} (if one {1} belong to "
+                   "two class, it count only one time) = {2}\n".format(
+                       feature_name, feature_name, num_tss))
     for it in range(1, 5):
         for tss in itertools.combinations(tss_type.keys(), it):
             union = []
@@ -95,11 +93,6 @@ def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
         feature_name = "processing site"
     else:
         feature_name = "TSS"
-    num_tss = 0
-    num_tss_more = 0
-    union = []
-    tss_type = {"Primary": [], "Secondary": [], "Internal": [],
-                "Antisense": [], "Orphan": []}
     tsss = []
     tsss_strain = {}
     pre_seq_id = ""
@@ -113,11 +106,12 @@ def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
             tsss_strain[entry.seq_id] = []
         tsss_strain[entry.seq_id].append(entry)
         tsss.append(entry)
-    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
+    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     if len(tsss_strain) > 1:
         stat(tsss, "All_strains", feature_name, out_stat, file_type, out_lib)
     for strain in tsss_strain.keys():
-        stat(tsss_strain[strain], strain, feature_name, out_stat, file_type, out_lib)
+        stat(tsss_strain[strain], strain, feature_name,
+             out_stat, file_type, out_lib)
     out_stat.close()
     out_lib.close()
     fh.close()

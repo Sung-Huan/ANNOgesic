@@ -1,6 +1,3 @@
-import os
-import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
 
 
@@ -9,7 +6,7 @@ def line_to_dict(hit, strain, e_value):
 
 def get_proteins(datas, checks, blast_f):
     proteins = []
-    nums = {"index": 0, "hypo": 0}    
+    nums = {"index": 0, "hypo": 0}
     for data in datas:
         if (nums["index"] % 4 == 0) and (nums["index"] != 0):
             if "[" in data:
@@ -22,15 +19,13 @@ def get_proteins(datas, checks, blast_f):
             name = data1[0].strip()
             tag = datas[nums["index"] - 1]
             if ("hypothetical" in name) or (
-                "Hypothetical" in name) or (
-                "unknown" in name) or (
-                "Unknown" in name) or (
-                "predicted coding region" in name) or (
-                "Predicted coding region" in name) or (
-                "PREDICTED:" in name) or (
-                "putative" in name) or ("Putative" in name):
-#            if ("hypothetical" in name) or (
-#                "Hypothetical" in name):
+                    "Hypothetical" in name) or (
+                    "unknown" in name) or (
+                    "Unknown" in name) or (
+                    "predicted coding region" in name) or (
+                    "Predicted coding region" in name) or (
+                    "PREDICTED:" in name) or (
+                    "putative" in name) or ("Putative" in name):
                 nums["hypo"] += 1
             if not checks["detect"]:
                 for line in blast_f:
@@ -53,15 +48,13 @@ def detect_hypo(proteins, blasts, type_):
     for protein in proteins:
         name = protein["name"].replace("\n", "")
         if ("hypothetical" not in name) and (
-            "Hypothetical" not in name) and (
-            "Unknown" not in name) and (
-            "unknown" not in name) and (
-            "Predicted coding region" not in name) and (
-            "predicted coding region" not in name) and (
-            "PREDICTED:" not in name) and ("putative" not in name) and (
-            "Putative" not in name):
-#        if ("hypothetical" not in name) or (
-#            "Hypothetical" not in name):
+                "Hypothetical" not in name) and (
+                "Unknown" not in name) and (
+                "unknown" not in name) and (
+                "Predicted coding region" not in name) and (
+                "predicted coding region" not in name) and (
+                "PREDICTED:" not in name) and ("putative" not in name) and (
+                "Putative" not in name):
             if (name not in protein_names.keys()):
                 protein_names[name] = []
             protein_names[name].append(protein["tag"])
@@ -71,7 +64,6 @@ def detect_hypo(proteins, blasts, type_):
 
 def detect_nr(line, blast_f, out_t, blasts, prefix):
     checks = {"print": False, "detect": False}
-    equal = None
     if line.startswith(">"):
         info = line.replace(">", "")
         for line in blast_f:
@@ -83,8 +75,6 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
         datas = info.split("|")
         proteins, nums = get_proteins(datas, checks, blast_f)
         if checks["print"]:
-#            if float(nums["hypo"]) / float(len(proteins)) < 0.5:
-#            blasts["hit_num"] += 1
             if blasts["hit_num"] < 3:
                 protein_names, e = detect_hypo(proteins, blasts, "low")
                 if len(protein_names) != 0:
@@ -92,17 +82,6 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
                         out_t.write("{0}\t{1}\t{2}\t{3}\n".format(
                                     prefix, key, ",".join(value), e))
                     blasts["hit_num"] += 1
-#                else:
-#                    blasts["hit_num"] = blasts["hit_num"] - 1
-#            elif float(nums["hypo"]) / float(len(proteins)) == 0.5:
-#                equal = {"num": 0}
-#                equal["num"] += 1
-#                protein_names, e = detect_hypo(proteins, blasts, "equal")
-#                if (len(protein_names) != 0) and (equal is None):
-#                    for key, value in protein_names.items():
-#                        equal["name"] = ("{0}\t{1}\t{2}\t{3}\n".format(
-#                                         prefix, key, ",".join(value), e))
-#    return equal
 
 def detect_srna(line, blast_f, out_t, blasts, prefix):
     print_ = False
@@ -120,7 +99,6 @@ def detect_srna(line, blast_f, out_t, blasts, prefix):
         out_t.write("{0}\t{1}\t{2}\n".format(
                     prefix, blasts["name"], e_value))
         blasts["blast"] = True
-#    return blasts
 
 def read_gff(srna_file, data_type):
     srnas = []
@@ -140,7 +118,7 @@ def read_gff(srna_file, data_type):
         entry.info = "\t".join([entry.info_without_attributes,
                                 attribute_string])
         srnas.append(entry)
-    srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start))
+    srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return srnas
 
 def print_file(database, out_f, info, srna_hit, nr_hit):
@@ -150,12 +128,6 @@ def print_file(database, out_f, info, srna_hit, nr_hit):
         out_f.write("{0};nr_hit={1}\n".format(info, nr_hit))
 
 def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
-#    if (not blasts["blast"]) and (
-#        (float(num_compare["equal"]) / float(
-#         num_compare["protein"])) >= 0.75):
-#        blasts["hit_num"] = equal["num"]
-#        blasts["blast"] = True
-#        out_t.write(equal["name"])
     if not blasts["blast"]:
         out_t.write("{0}\tNA\n".format(prefix))
         print_file(database, out_f,
@@ -164,7 +136,8 @@ def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
         print_file(database, out_f, srna.info,
                    len(names), blasts["hit_num"])
 
-def extract_blast(blast_result, srna_file, output_file, output_table, database):
+def extract_blast(blast_result, srna_file, output_file,
+                  output_table, database):
     out_f = open(output_file, "w")
     out_t = open(output_table, "w")
     out_f.write("##gff-version 3\n")
@@ -179,39 +152,36 @@ def extract_blast(blast_result, srna_file, output_file, output_table, database):
                 line = line.strip()
                 if line.startswith("Query= "):
                     query = line.split("=")[1].strip()
-                    if (query == ("|".join([srna.attributes["ID"], srna.seq_id,
-                              str(srna.start), str(srna.end), srna.strand]))):
+                    if (query == ("|".join([
+                            srna.attributes["ID"], srna.seq_id,
+                            str(srna.start), str(srna.end), srna.strand]))):
                         for line in blast_f:
                             line = line.strip()
                             if line.find("No hits found") != -1:
-                                print_file(database, out_f, srna.info, "NA", "NA")
+                                print_file(database, out_f,
+                                           srna.info, "NA", "NA")
                                 out_t.write("{0}\tNA\n".format(prefix))
                                 break
-                            elif line.find("Sequences producing significant alignments:") != -1:
-#                                num_compare = {"protein": 0, "equal": 0}
-                                bak = None
-                                equal = None
+                            elif line.find("Sequences producing "
+                                           "significant alignments:") != -1:
                                 for line in blast_f:
                                     line = line.strip()
                                     if line:
-                                        if line.startswith("Effective search space"):
+                                        if line.startswith(
+                                                "Effective search space"):
                                             break
                                         if database == "sRNA":
                                             detect_srna(line, blast_f, out_t,
                                                         blasts, prefix)
                                             if (len(blasts["name"]) > 0):
                                                 if blasts["name"] not in names:
-                                                    names.append(blasts["name"])
+                                                    names.append(
+                                                        blasts["name"])
                                         elif database == "nr":
                                             detect_nr(line, blast_f, out_t,
                                                       blasts, prefix)
-#                                            num_compare["protein"] += 1
-#                                            if (equal is not None) and (bak is not None):
-#                                                bak = equal
-#                                            elif equal is not None:
-#                                                num_compare["equal"] += 1
-                                output_flie(blasts, out_t, prefix, out_f, database,
-                                            srna, names)
+                                output_flie(blasts, out_t, prefix, out_f,
+                                            database, srna, names)
                                 blasts["hit_num"] = 0
                                 break
     out_f.close()
@@ -233,8 +203,8 @@ def extract_energy(srna_file, sec_file, out_file):
                 if (structure.startswith(">")):
                     if (("|".join([srna.attributes["ID"], srna.seq_id,
                          str(srna.start),
-                         str(srna.end), srna.strand])) == structure[1:]) or \
-                       (("|".join([srna.feature, srna.seq_id, str(srna.start),
+                         str(srna.end), srna.strand])) == structure[1:]) or (
+                        ("|".join([srna.feature, srna.seq_id, str(srna.start),
                          str(srna.end), srna.strand])) == structure[1:]):
                         check = True
                         get_length = True

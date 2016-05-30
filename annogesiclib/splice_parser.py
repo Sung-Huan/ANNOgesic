@@ -1,11 +1,15 @@
 import csv
 
+
 class SpliceParser(object):
+
     def parser(self, splice_fh):
         for row in csv.reader(splice_fh, delimiter="\t"):
             yield assign_value(row)
 
+
 class assign_value(object):
+
     def __init__(self, row):
         self.strain = row[0]
         self.start = int(row[1])
@@ -19,6 +23,7 @@ class assign_value(object):
         self.situation = splice[5]
         self.strand = row[5]
         self.info = ("\t".join(row))
+
     def __str__(self):
         return "{0} {1} {2} {3} {4}".format(
                self.strain, self.start, self.end, self.splice, self.strand)

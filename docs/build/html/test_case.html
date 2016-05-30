@@ -58,9 +58,9 @@
 <li><a class="reference internal" href="#prediction-of-terminator">Prediction of terminator</a></li>
 <li><a class="reference internal" href="#generating-utr">Generating UTR</a></li>
 <li><a class="reference internal" href="#integrating-to-operon-and-suboperon">Integrating to operon and suboperon</a></li>
+<li><a class="reference internal" href="#promoter-motif-detection">Promoter motif detection</a></li>
 <li><a class="reference internal" href="#prediction-of-srna-and-sorf">Prediction of sRNA and sORF</a></li>
 <li><a class="reference internal" href="#performing-srna-target-prediction">Performing sRNA target prediction</a></li>
-<li><a class="reference internal" href="#promoter-motif-detection">Promoter motif detection</a></li>
 <li><a class="reference internal" href="#mapping-and-detecting-of-circular-rna">Mapping and detecting of circular RNA</a></li>
 <li><a class="reference internal" href="#snp-calling">SNP calling</a></li>
 <li><a class="reference internal" href="#mapping-gene-ontology">Mapping Gene ontology</a></li>
@@ -103,7 +103,7 @@
   <div class="section" id="performing-a-test-cast">
 <h1>Performing a test cast<a class="headerlink" href="#performing-a-test-cast" title="Permalink to this headline">¶</a></h1>
 <p>Here we will guide you through a small test case using ANNOgesic.
-You will see most of the subcommands of ANNOgesic. The test case is a public
+You will see who to run the subcommands of ANNOgesic. The test case is a public
 RNA-Seq data from NCBI GEO that was part of a work by
 <a class="reference external" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564">Bischler et al.</a>.
 The differential RNA-seq data is of Helicobacter pylori 26695.
@@ -113,9 +113,8 @@ For viewing GFF3 file, you can use a genome browser, for example <a class="refer
 <a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
 <p>Before we start, please refer to the section of <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">filename</span></code> and
 <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst">subcommand</a>.
-All the details are also in <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst">subcommand</a>.
-Moreover, all the requirements are listed in <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/prerequired.rst">prerequired</a>.</p>
+the section of <code class="docutils literal"><span class="pre">subcommands</span></code>. All the details are also in <code class="docutils literal"><span class="pre">subcommands</span></code>.
+Moreover, all the requirements are listed in the section of <code class="docutils literal"><span class="pre">prerequired</span></code>.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
 <p>First of all, we need to create a working folder, we use <code class="docutils literal"><span class="pre">create</span></code> subcommand.</p>
@@ -133,7 +132,7 @@ ANNOgesic
 <h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
 <p>For our test case, we can download from <a class="reference external" href="ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/">NCBI</a>.
 We can set the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
-<div class="highlight-python"><div class="highlight"><pre>FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787
+<div class="highlight-python"><div class="highlight"><pre>FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
 </pre></div>
 </div>
 <p>Then download fasta files(<code class="docutils literal"><span class="pre">-f</span></code>), gff files(<code class="docutils literal"><span class="pre">-g</span></code>), gbk files(<code class="docutils literal"><span class="pre">-k</span></code>), ptt files(<code class="docutils literal"><span class="pre">-p</span></code>),
@@ -145,12 +144,15 @@ rnt files(<code class="docutils literal"><span class="pre">-r</span></code>), an
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/input/reference/fasta/
 NC_000915.fa
 $ ls ANNOgesic/input/reference/annotation/
-NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff  NC_000915.ptt  NC_000915.rnt
+NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff
 </pre></div>
 </div>
 <p>If the fasta files and annotation files which are retrieved from NCBI is exactly the strain what you want,
-you can add <code class="docutils literal"><span class="pre">-t</span></code> to store the files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>. Then you can skip running <code class="docutils literal"><span class="pre">get_target_fasta</span></code>
+you can add <code class="docutils literal"><span class="pre">-t</span></code> for putting the files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>. Then you can skip running <code class="docutils literal"><span class="pre">get_target_fasta</span></code>
 and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>.</p>
+<p>In fact, these fasta and gff files are exactly what we want to use for the test case.
+But, in order to testing <code class="docutils literal"><span class="pre">get_target_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>, we used them as reference first.
+After that, we will reorganize the data again.</p>
 </div>
 <div class="section" id="putting-wig-bam-files-and-reads-to-proper-location">
 <h2>Putting wig, bam files and reads to proper location<a class="headerlink" href="#putting-wig-bam-files-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
@@ -193,7 +195,7 @@ cd ../../../../
 Please remember to put or download the fasta file to <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>.</p>
 <p>If the retrieved strain is only the closed strain of your target strain, you may need to run
 subcommand <code class="docutils literal"><span class="pre">get_target_fasta</span></code>. However, this command need the mutation table. please refer
-to the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst">subcommand</a>.
+to the section of <code class="docutils literal"><span class="pre">subcommands</span></code>.
 Once you have the mutation table, you can improve the fasta files.</p>
 <p>We use a simple example to modify our test case. The mutation table is</p>
 <table border="1" class="docutils">
@@ -256,16 +258,16 @@ two fasta files in <code class="docutils literal"><span class="pre">ANNOgesic/ou
 <p>Now, let&#8217;s try it</p>
 <div class="highlight-python"><div class="highlight"><pre>$ annogesic get_target_fasta \
    -r ANNOgesic/input/reference/fasta \
-   -o test_case1:NC_test.1 test_case2:test_case2 \
+   -o test_case1:NC_test.1,test_case2:test_case2 \
    -m ANNOgesic/input/mutation_table/mutation.csv \
    ANNOgesic
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">-r</span></code> is the folder of original fasta files. In <code class="docutils literal"><span class="pre">-o</span></code> you can assign the filenames of output fasta files and
-the strains you want to put in it. In our case, we call the first fasta file test_case1 and the
-second one test_case2. In test_case1 stores the fasta of NC_test.1 and test_case2 stores test_case2.
+the strains that you want to put in it. In our case, we call the first fasta file test_case1 and the
+second one test_case2. test_case1 stores the fasta of NC_test.1 and test_case2 stores test_case2.
 Now we can check the results.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ head ANNOgesic/input/reference/fasta/NC_016810.fa
+<div class="highlight-python"><div class="highlight"><pre>$ head ANNOgesic/input/reference/fasta/NC_000915.fa
 &gt;NC_000915.1
 TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
 TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
@@ -290,8 +292,7 @@ TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG
 </pre></div>
 </div>
 <p>In <code class="docutils literal"><span class="pre">test_case1.fa</span></code>, the third nucleotide replace from A to c. Moreover, The sixth nucleotide is deleted.
-In <code class="docutils literal"><span class="pre">test_case2.fa</span></code>, it also modifies the fasta file based on the mutation table.</p>
-<p>when you have the correct fasta files, you can map your reads to the correct fasta files.</p>
+In <code class="docutils literal"><span class="pre">test_case2.fa</span></code>, it is also modified by mutation table.</p>
 <p>If you have no mutation table, you can also use the subcommand <code class="docutils literal"><span class="pre">snp</span></code> to detect the mutations and apply to
 reference genomoes automatically. For this subcommand, we will go through it later.</p>
 </div>
@@ -310,13 +311,13 @@ yourself, remember to assign the paths by running</p>
 this command everytime. For changing the environment, you just need to copy all the information of
 <code class="docutils literal"><span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> to <code class="docutils literal"><span class="pre">.bashrc</span></code>.</p>
 <p>Now, we can try it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic annotation_transfer \
+<div class="highlight-python"><div class="highlight"><pre>anngesic annotation_transfer \
     -re ANNOgesic/input/reference/annotation \
     -rf ANNOgesic/input/reference/fasta \
     -tf ANNOgesic/output/target/fasta \
     -e chromosome \
     -t Strain \
-    -p NC_000915.1:NC_test.1 NC_000915.1:test_case2 \
+    -p NC_000915.1:NC_test.1,NC_000915.1:test_case2 \
     -g \
     ANNOgesic
 </pre></div>
@@ -340,50 +341,53 @@ transferred from these embl files.</p>
 </div>
 <div class="section" id="tss-and-processing-site-prediction-and-optimization">
 <h2>TSS and processing site prediction and optimization<a class="headerlink" href="#tss-and-processing-site-prediction-and-optimization" title="Permalink to this headline">¶</a></h2>
+<p>Now we already knew how to update the genome fasta and annotation files. In order to
+go through the following subcommands, we need to reorganize our data.
+First, we remove the fake files that we generated from previous subcommands.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>$ rm ANNOgesic/output/target/annotation/*</dt>
+<dd>rm ANNOgesic/output/target/fasta/*</dd>
+</dl>
+</dd>
+</dl>
+<p>Then put the correct files that we used as reference before into <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>$ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/</dt>
+<dd>mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/</dd>
+</dl>
+</dd>
+</dl>
+<p>Before running the subcommands, we need to setup our libraries as a correct format.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">tex_notex_libs</span><span class="o">=</span><span class="s">&quot;GSM1649587_Hp26695_ML_B1_HS1_-TEX_forward.wig:notex:1:a:+,</span><span class="se">\</span>
+<span class="s">GSM1649587_Hp26695_ML_B1_HS1_-TEX_reverse.wig:notex:1:a:-,</span><span class="se">\</span>
+<span class="s">GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig:tex:1:a:+,</span><span class="se">\</span>
+<span class="s">GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig:tex:1:a:-&quot;</span>
+</pre></div>
+</div>
 <p>Before running <code class="docutils literal"><span class="pre">tsspredator</span></code>, if you want to use the optimized parameters,
 you need to run <code class="docutils literal"><span class="pre">optimize_TSSpredator</span></code> first. It needs to manual check some TSSs.
 In our experience, we recommand you detect more than 50 TSSs and longer than 100kb of genome.</p>
-<p>For test case, we can just use the default parameter set as a manual detected ones. This is only for test.
-If you are running your own data and you have manual detected TSS, please use it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic tsspredator \
-    -w ANNOgesic/input/wigs/tex_notex \
-    -f ANNOgesic/output/target/fasta \
-    -g ANNOgesic/output/target/annotation \
-    -l $tex_notex_libs \
-    -p test \
-    ANNOgesic
-mv ANNOgesic/output/TSS/gffs/NC_000915_TSS.gff ANNOgesic/input/manual_TSS
+<p>For test case, we prepared the manual TSS file in our Github, you can download it.</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/NC_000915_manual_TSS.gff
 </pre></div>
 </div>
-<p>Now, we have a fake manual detected TSS files which store in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSS</span></code>.
-we can try optimization of TSSs right now.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic optimize_tsspredator \
+<p>Now, we have a manual TSS files which store in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSS</span></code>.
+we can try optimization of TSSs right now (because the manual TSS file only provide the first 200kb,
+we set the <code class="docutils literal"><span class="pre">--le</span></code> as 200000).</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic optimize_tsspredator \
     -w ANNOgesic/input/wigs/tex_notex \
     -fs ANNOgesic/output/target/fasta \
     -g ANNOgesic/output/target/annotation \
     -n NC_000915.1 \
     -l $tex_notex_libs \
     -p TSS -s 25 \
-    -m ANNOgesic/input/manual_TSS/NC_000915_TSS.gff  \
+    -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
+    -le 200000 \
     ANNOgesic
-...
-Current Parameter:step=16_height=0.5_reduction_height=0.1_factor=8.3_reduction_factor=2.4_base_height=0.068_enrichment_factor=3.0_processing_factor=2.4
-Current:TP=665  TP_rate=0.38394919168591224     FP=23   FP_rate=1.3804403604749916e-05  FN=1067 Missing_ratio=0.6160508083140878
-Best Parameter:height=0.5       reduction_height=0.1    factor=8.3      reduction_factor=2.4    base_height=0.068       enrichment_factor=3.0   processing_factor=2.4
-Best:TP=665     TP_rate=0.38394919168591224     FP=23   FP_rate=1.3804403604749916e-05  FN=1067 Missing_ratio=0.6160508083140878
-Current Parameter:step=17_height=0.5_reduction_height=0.1_factor=9.6_reduction_factor=6.4_base_height=0.1_enrichment_factor=3.0_processing_factor=1.0
-Current:TP=539  TP_rate=0.3112009237875289      FP=13   FP_rate=7.802488993989082e-06   FN=1193 Missing_ratio=0.6887990762124712
-Best Parameter:height=0.5       reduction_height=0.1    factor=8.3      reduction_factor=2.4    base_height=0.068       enrichment_factor=3.0   processing_factor=2.4
-Best:TP=665     TP_rate=0.38394919168591224     FP=23   FP_rate=1.3804403604749916e-05  FN=1067 Missing_ratio=0.6160508083140878
-Current Parameter:step=18_height=1.4_reduction_height=0.1_factor=8.3_reduction_factor=2.8_base_height=0.1_enrichment_factor=3.0_processing_factor=1.0
-Current:TP=433  TP_rate=0.25    FP=11   FP_rate=6.602106071836916e-06   FN=1299 Missing_ratio=0.75
-Best Parameter:height=0.5       reduction_height=0.1    factor=8.3      reduction_factor=2.4    base_height=0.068       enrichment_factor=3.0   processing_factor=2.4
-Best:TP=665     TP_rate=0.38394919168591224     FP=23   FP_rate=1.3804403604749916e-05  FN=1067 Missing_ratio=0.6160508083140878
-Current Parameter:step=19_height=0.5_reduction_height=0.1_factor=8.3_reduction_factor=4.9_base_height=0.1_enrichment_factor=3.0_processing_factor=5.6
-Current:TP=582  TP_rate=0.33602771362586603     FP=16   FP_rate=9.603063377217333e-06   FN=1150 Missing_ratio=0.663972286374134
-Best Parameter:height=0.5       reduction_height=0.1    factor=8.3      reduction_factor=2.4    base_height=0.068       enrichment_factor=3.0   processing_factor=2.4
-Best:TP=665     TP_rate=0.38394919168591224     FP=23   FP_rate=1.3804403604749916e-05  FN=1067 Missing_ratio=0.6160508083140878
-...
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">optimize_TSSpredator</span></code> will compare gff files of manual checked TSSs and predicted TSSs to find the best parameters.
@@ -394,54 +398,76 @@ best.csv  log.txt  stat.csv
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">best.csv</span></code> is for the best parameters; <code class="docutils literal"><span class="pre">stat.csv</span></code> is for the parameters of each step.</p>
-<p>Let&#8217;s assume the best parameters are that height is 0.4, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5,
-base_height is 0.0, enrichment_factor is 2.0, processing_factor is 1.5. Now we can set the parameter set for running
+<p>Let&#8217;s assume the best parameters are that height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5,
+base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. Now we can set the parameter set for running
 <code class="docutils literal"><span class="pre">tss</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic tsspredator \
+<div class="highlight-python"><div class="highlight"><pre>annogesic tsspredator \
     -w ANNOgesic/input/wigs/tex_notex \
     -f ANNOgesic/output/target/fasta \
     -g ANNOgesic/output/target/annotation \
     -l $tex_notex_libs \
     -p test \
-    -he 0.4 \
+    -he 0.3 \
     -rh 0.2 \
     -fa 2.0 \
     -rf 0.5 \
     -bh 0.0 \
-    -ef 2.0 \
+    -ef 1.7 \
     -pf 1.5 \
     -s \
     -v \
-    -m ANNOgesic/input/manual_TSS/NC_000915_TSS.gff \
+    -le 200000 \
+    -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
     ANNOgesic
 </pre></div>
 </div>
-<p>If you set the manual checked TSSs <code class="docutils literal"><span class="pre">-m</span></code>, the subcommand will merge the manual checked TSSs with predicted TSSs.
-If you didn&#8217;t set it, the subcommand will only produce predicted TSSs. You will get gff file, MasterTable and statistic file.</p>
+<p>If you import the manual checked TSSs to <code class="docutils literal"><span class="pre">-m</span></code>, the subcommand will merge the manual checked TSSs and predicted TSSs.
+If you didn&#8217;t import it, the subcommand will only produce predicted TSSs. You will get gff file, MasterTable and statistic file.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/
 configs  gffs  MasterTables  statistics
 $ ls ANNOgesic/output/TSS/configs/
 config_NC_000915.1.ini
 $ ls ANNOgesic/output/TSS/gffs/
-NC_000915_TSS.gff
+NC_000915.1_TSS.gff
 $ ls ANNOgesic/output/TSS/MasterTables/MasterTable_NC_000915.1/
 AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff  TSSstatistics.tsv
-$ ls ANNOgesic/output/TSS/statistics/NC_000915/
-stat_compare_TSSpredator_manual_NC_000915.csv  stat_gene_vali_NC_000915.csv  stat_TSS_class_NC_000915.csv  stat_TSS_libs_NC_000915.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
+$ ls ANNOgesic/output/TSS/statistics/NC_000915.1/
+stat_compare_TSSpredator_manual_NC_000915.1.csv  stat_gene_vali_NC_000915.1.csv  stat_TSS_class_NC_000915.1.csv  stat_TSS_libs_NC_000915.1.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
 </pre></div>
 </div>
 <p>If you want to predict processing sites, the procedures are the same. You just need to change the program from TSS to
-processing_site (<code class="docutils literal"><span class="pre">-t</span></code>).</p>
+processing_site (<code class="docutils literal"><span class="pre">-t</span></code>) and the parameter sets (we assume the best parameter sets are that
+height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5,
+base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7).</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic tsspredator \
+    -w ANNOgesic/input/wigs/tex_notex \
+    -f ANNOgesic/output/target/fasta \
+    -g ANNOgesic/output/target/annotation \
+    -l $tex_notex_libs \
+    -p test \
+    -he 0.3 \
+    -rh 0.2 \
+    -fa 2.0 \
+    -rf 0.5 \
+    -bh 0.0 \
+    -ef 1.9 \
+    -pf 5.7 \
+    -s \
+    -v \
+    -t processing_site \
+    ANNOgesic
+</pre></div>
+</div>
 </div>
 <div class="section" id="performing-transcript-assembly">
 <h2>Performing transcript assembly<a class="headerlink" href="#performing-transcript-assembly" title="Permalink to this headline">¶</a></h2>
 <p>For detecting transcript boundary, transcript assembly is the basic feature.
 we can use the subcommand <code class="docutils literal"><span class="pre">transcript_assembly</span></code> to do it. Normally, we strongly
-recommand using fragmentation RNA-Seq. Because RNA-Seq always lose some information
+recommand that user should provide fragmentation RNA-Seq. Because RNA-Seq always lose some information
 of 3&#8217;end. However, there is no fragmented libraries in the test case.
 Therefore, we only use TEX +/- to do it.</p>
 <p>The command would be like the following.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic transcript_assembly \
+<div class="highlight-python"><div class="highlight"><pre>annogesic transcript_assembly \
     -g ANNOgesic/output/target/annotation \
     -tw ANNOgesic/input/wigs/tex_notex \
     -tl $tex_notex_libs \
@@ -453,18 +479,18 @@ Therefore, we only use TEX +/- to do it.</p>
 </div>
 <p>It will generate gff files and tables. Because we also compared with TSSs and annotation files, it will generate statistics files.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/transcriptome_assembly/gffs
-NC_000915_transcript.gff
+NC_000915.1_transcript.gff
 $ ls ANNOgesic/output/transcriptome_assembly/tables
-NC_000915_transcript.csv
+NC_000915.1_transcript.csv
 $ ls ANNOgesic/output/transcriptome_assembly/statistics
-stat_compare_Transcriptome_assembly_CDS_NC_000915.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.csv
+stat_compare_Transcriptome_assembly_CDS_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
 </pre></div>
 </div>
 </div>
 <div class="section" id="prediction-of-terminator">
 <h2>Prediction of terminator<a class="headerlink" href="#prediction-of-terminator" title="Permalink to this headline">¶</a></h2>
-<p>For predicting terminators, we can use subcommand <code class="docutils literal"><span class="pre">terminator</span></code>. The command is like following.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic terminator \
+<p>For predicting terminators, we can use subcommand <code class="docutils literal"><span class="pre">terminator</span></code>. The command is like the following.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic terminator \
     -f ANNOgesic/output/target/fasta \
     -g ANNOgesic/output/target/annotation \
     -s \
@@ -475,28 +501,32 @@ stat_compare_Transcriptome_assembly_CDS_NC_000915.csv  stat_compare_Transcriptom
     ANNOgesic
 </pre></div>
 </div>
-<p>It will generate three different kinds of gff files and tables.</p>
+<p>It will generate four different kinds of gff files and tables.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/terminator/gffs/
-all_candidates  detect  express
+all_candidates  best  express non_express
 $ ls ANNOgesic/output/terminator/tables
-all_candidates  detect  express
+all_candidates  best  express non_express
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates; <code class="docutils literal"><span class="pre">express</span></code> is for the candidates which have expression;
-<code class="docutils literal"><span class="pre">detect</span></code> is for the candidates which have dramatic decreasing coverage. There is a gff file or table for
-each folder.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/terminator/gffs/detect
-NC_000915_term.gff
+<code class="docutils literal"><span class="pre">best</span></code> is for the candidates which coverage significant decreasing. <code class="docutils literal"><span class="pre">non_express</span></code> is for
+the candidates which have no expression. There are a gff file or table for each folder.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/terminator/gffs/best
+NC_000915.1_term.gff
 $ ls ANNOgesic/output/terminator/gffs/express
-NC_000915_term.gff
+NC_000915.1_term.gff
 $ ls ANNOgesic/output/terminator/gffs/all_candidates
-NC_000915_term.gff
-$ ls ANNOgesic/output/terminator/tables/detect
-NC_000915_term.csv
+NC_000915.1_term.gff
+$ ls ANNOgesic/output/terminator/gffs/non_express
+NC_000915.1_term.gff
+$ ls ANNOgesic/output/terminator/tables/best
+NC_000915.1_term.csv
 $ ls ANNOgesic/output/terminator/tables/express
-NC_000915_term.csv
+NC_000915.1_term.csv
 $ ls ANNOgesic/output/terminator/tables/all_candidates
-NC_000915_term.csv
+NC_000915.1_term.csv
+$ ls ANNOgesic/output/terminator/tables/non_express
+NC_000915.1_term.csv
 </pre></div>
 </div>
 <p>In transtermhp folder, there are the output files from <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.</p>
@@ -506,7 +536,10 @@ NC_000915.1_best_terminator_after_gene.bag  NC_000915.1_terminators.txt  NC_0009
 </div>
 <p>Moreover, the statistics files are stored in <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/terminator/statistics/
-stat_NC_000915.csv
+stat_NC_000915.1.csv
+stat_comparison_terminator_transcript_all_candidates.csv
+stat_comparison_terminator_transcript_best.csv
+stat_comparison_terminator_transcript_express.csv
 </pre></div>
 </div>
 </div>
@@ -514,43 +547,43 @@ stat_NC_000915.csv
 <h2>Generating UTR<a class="headerlink" href="#generating-utr" title="Permalink to this headline">¶</a></h2>
 <p>Now, we have the information of TSSs, transcripts and terminators. We can detect the 5&#8217;UTRs and 3&#8217;UTRs easily by using
 the subcommand <code class="docutils literal"><span class="pre">utr</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic utr \
+<div class="highlight-python"><div class="highlight"><pre>annogesic utr \
     -g ANNOgesic/output/target/annotation \
     -t ANNOgesic/output/TSS/gffs \
     -a ANNOgesic/output/transcriptome_assembly/gffs \
-    -e ANNOgesic/output/terminator/gffs/detect \
+    -e ANNOgesic/output/terminator/gffs/best \
     ANNOgesic
 </pre></div>
 </div>
-<p>If your TSSs is not generated by ANNOgesic, please assign <code class="docutils literal"><span class="pre">-s</span></code>, it will classify the TSSs to generate UTRs.
+<p>If your TSSs is not generated by ANNOgesic, please assign <code class="docutils literal"><span class="pre">-s</span></code>, it will classify the TSSs for generating UTRs.
 The gff files and statistics files will be stored in <code class="docutils literal"><span class="pre">5UTR</span></code> and <code class="docutils literal"><span class="pre">3UTR</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/UTR/3UTR
 gffs/       statistics/
 $ ls ANNOgesic/output/UTR/5UTR
 gffs/       statistics/
 $ ls ANNOgesic/output/UTR/3UTR/gffs
-NC_000915_3UTR.gff
+NC_000915.1_3UTR.gff
 $ ls ANNOgesic/output/UTR/5UTR/gffs
-NC_000915_5UTR.gff
+NC_000915.1_5UTR.gff
 $ ls ANNOgesic/output/UTR/5UTR/statistics
-NC_000915_all_5utr_length.png
+NC_000915.1_all_5utr_length.png
 $ ls ANNOgesic/output/UTR/3UTR/statistics
-NC_000915_all_3utr_length.png
+NC_000915.1_all_3utr_length.png
 </pre></div>
 </div>
-<p>Until now, you have all information for defining the transcript boundary.</p>
+<p>Now, you have all information for defining the transcript boundary.</p>
 </div>
 <div class="section" id="integrating-to-operon-and-suboperon">
 <h2>Integrating to operon and suboperon<a class="headerlink" href="#integrating-to-operon-and-suboperon" title="Permalink to this headline">¶</a></h2>
-<p>Now, we already had TSSs, transcripts, terminators, CDSs, UTRs. We can integrate all these information to
+<p>We already had TSSs, transcripts, terminators, CDSs, UTRs. We can integrate all these information to
 detect operons and suboperons. You can use the subcommand <code class="docutils literal"><span class="pre">operon</span></code> to get it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic operon \
+<div class="highlight-python"><div class="highlight"><pre>annogesic operon \
     -g ANNOgesic/output/target/annotation \
     -t ANNOgesic/output/TSS/gffs \
     -a ANNOgesic/output/transcriptome_assembly/gffs \
     -u5 ANNOgesic/output/UTR/5UTR/gffs \
     -u3 ANNOgesic/output/UTR/3UTR/gffs \
-    -e ANNOgesic/output/terminator/gffs/detect \
+    -e ANNOgesic/output/terminator/gffs/best \
     -s -c \
     ANNOgesic
 </pre></div>
@@ -559,57 +592,114 @@ detect operons and suboperons. You can use the subcommand <code class="docutils 
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/operons/
 gffs  statistics  tables
 $ ls ANNOgesic/output/operons/gffs/
-NC_000915_all_features.gff
+NC_000915.1_all_features.gff
 $ ls ANNOgesic/output/operons/tables/
-operon_NC_000915.csv
+operon_NC_000915.1.csv
 $ ls ANNOgesic/output/operons/statistics/
-stat_operon_NC_000915.csv
+stat_operon_NC_000915.1.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="promoter-motif-detection">
+<h2>Promoter motif detection<a class="headerlink" href="#promoter-motif-detection" title="Permalink to this headline">¶</a></h2>
+<p>As long as you have TSSs, you can use the subcommand <code class="docutils literal"><span class="pre">promoter</span></code> to get promoters. It will generate the promoters
+based on the classes of TSS. Therefore, if your TSSs are not computed by <code class="docutils literal"><span class="pre">ANNOgesic</span></code>,
+you need to add <code class="docutils literal"><span class="pre">-s</span></code> and <code class="docutils literal"><span class="pre">-g</span></code> (for annotation files). Then <code class="docutils literal"><span class="pre">promoter</span></code> will help you
+to classify your TSSs.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic promoter \
+    -t ANNOgesic/output/TSS/gffs \
+    -f ANNOgesic/output/target/fasta \
+    -w 45,2-10 \
+    ANNOgesic
+</pre></div>
+</div>
+<p>You can define the length of motifs. In our test case, we use <code class="docutils literal"><span class="pre">50</span></code> and <code class="docutils literal"><span class="pre">2-10</span></code>. <code class="docutils literal"><span class="pre">2-10</span></code> means the
+width is from 2 to 10.</p>
+<p>Based on the classes of TSSs, it will generate different output files.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/promoter_analysis/NC_000915.1
+promoter_motifs_NC_000915.1_allstrain_all_types_2-10_nt  promoter_motifs_NC_000915.1_allstrain_internal_45_nt   promoter_motifs_NC_000915.1_allstrain_secondary_2-10_nt
+promoter_motifs_NC_000915.1_allstrain_all_types_45_nt    promoter_motifs_NC_000915.1_allstrain_orphan_2-10_nt   promoter_motifs_NC_000915.1_allstrain_secondary_45_nt
+promoter_motifs_NC_000915.1_allstrain_antisense_2-10_nt  promoter_motifs_NC_000915.1_allstrain_orphan_45_nt     promoter_motifs_NC_000915.1_allstrain_without_orphan_2-10_nt
+promoter_motifs_NC_000915.1_allstrain_antisense_45_nt    promoter_motifs_NC_000915.1_allstrain_primary_2-10_nt  promoter_motifs_NC_000915.1_allstrain_without_orphan_45_nt
+promoter_motifs_NC_000915.1_allstrain_internal_2-10_nt   promoter_motifs_NC_000915.1_allstrain_primary_45_nt
+$ ls ANNOgesic/output/promoter_analysis/NC_000915.1/promoter_motifs_NC_000915.1_allstrain_all_types_45_nt/
+logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps      logo_rc10.png  logo_rc2.eps  logo_rc3.png  logo_rc5.eps  logo_rc6.png  logo_rc8.eps  logo_rc9.png  meme.xml
+logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png      logo_rc1.eps   logo_rc2.png  logo_rc4.eps  logo_rc5.png  logo_rc7.eps  logo_rc8.png  meme.html     meme.csv
+logo1.eps   logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_rc10.eps  logo_rc1.png   logo_rc3.eps  logo_rc4.png  logo_rc6.eps  logo_rc7.png  logo_rc9.eps  meme.txt
 </pre></div>
 </div>
 </div>
 <div class="section" id="prediction-of-srna-and-sorf">
 <h2>Prediction of sRNA and sORF<a class="headerlink" href="#prediction-of-srna-and-sorf" title="Permalink to this headline">¶</a></h2>
 <p>Based on comparison of trascripts and CDSs information, we can detect intergenic sRNAs. Moreover, we
-have the information of TSSs and processing sites. We can detect UTR-derived sRNAs, too. You can
+have the information of TSSs and processing sites. We can detect UTR-derived sRNAs as well. You can
 get sRNAs by running subcommand <code class="docutils literal"><span class="pre">srna</span></code>. Normally, we would recommand that you also have fragmented libraries to
-compute <code class="docutils literal"><span class="pre">srna</span></code>. However, we can&#8217;t get it in our test case right now. Therefore, we use TEX +/- for this test case.</p>
-<p>Before ŕunning <code class="docutils literal"><span class="pre">srna</span></code>, we have to get <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> and
-<a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a>. Please download them and store in <code class="docutils literal"><span class="pre">ANNOgesic/input/database</span></code>.
-If you put these databases to other folders, please change <code class="docutils literal"><span class="pre">-sd</span></code> and <code class="docutils literal"><span class="pre">-od</span></code>. If your databses are formated before,
-you can remove <code class="docutils literal"><span class="pre">-sf</span></code> and <code class="docutils literal"><span class="pre">-nf</span></code>. Then running the following
-command.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic srna \
-    -d tss sec_str blast_nr blast_srna \
+compute <code class="docutils literal"><span class="pre">srna</span></code>. However, we can&#8217;t get it in our test case right now. Therefore, we only use TEX +/- for this test case.</p>
+<p>For running <code class="docutils literal"><span class="pre">srna</span></code>, you can import some information to detect sRNA. There are <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
+<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>, <code class="docutils literal"><span class="pre">sorf</span></code>. Moreover, You can also assign that the best
+candidates should contain which information. In this test case, we can try to use <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
+<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>. If you don&#8217;t want to import <code class="docutils literal"><span class="pre">blast_nr</span></code> which take much time
+for running, you can also remove it.</p>
+<p>Before running <code class="docutils literal"><span class="pre">srna</span></code>, we have to get sRNA database(we use <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>) and
+<a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (if you have not downloaded before).
+You can download the fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/sRNA_database_BSRD.fa
+</pre></div>
+</div>
+<p>Then we need to download <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a>. If you already had it,
+you can skip this step.</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
+gunzip ANNOgesic/input/database/nr.gz
+</pre></div>
+</div>
+<p>Because the <code class="docutils literal"><span class="pre">ANNOgesic</span></code> will give the name of nr database - nr, we suggest the rename the nr to nr.fa.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa</dd>
+</dl>
+<p>If you already had these databases in other folders, please change <code class="docutils literal"><span class="pre">-sd</span></code> and <code class="docutils literal"><span class="pre">-od</span></code>.
+If your databses are formated before, you can remove <code class="docutils literal"><span class="pre">-sf</span></code> and <code class="docutils literal"><span class="pre">-nf</span></code>.
+Furthermore, you can assign the best candidates should include which information. You can assign
+<code class="docutils literal"><span class="pre">--best_with_terminator</span></code>, <code class="docutils literal"><span class="pre">--best_with_promoter</span></code>, <code class="docutils literal"><span class="pre">--best_with_all_sRNAhit</span></code>, <code class="docutils literal"><span class="pre">--best_without_sORF_candidate</span></code>.
+Please check the details in the section of <code class="docutils literal"><span class="pre">subcommands</span></code>.
+Now we can run <code class="docutils literal"><span class="pre">srna</span></code> with default parameters.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic srna \
+    -d tss,blast_srna,promoter,term,blast_nr,sec_str \
     -g ANNOgesic/output/target/annotation \
     -t ANNOgesic/output/TSS/gffs \
     -p ANNOgesic/output/processing_site/gffs \
     -a ANNOgesic/output/transcriptome_assembly/gffs \
     -tw ANNOgesic/input/wigs/tex_notex \
     -f ANNOgesic/output/target/fasta \
-    -m -u -nf -sf \
-    -sd ANNOgesic/input/database/sRNA_database \
+    -tf ANNOgesic/output/terminator/gffs/best \
+    -pt ANNOgesic/output/promoter_analysis/NC_000915.1/promoter_motifs_NC_000915.1_allstrain_all_types_45_nt/meme.csv \
+    -pn MOTIF_1 \
+    -m \
+    -u \
+    -nf \
+    -sf \
+    -sd ANNOgesic/input/database/sRNA_database_BSRD \
     -nd ANNOgesic/input/database/nr \
     -tl $tex_notex_libs \
     -rt 1 \
-    -ba -sb \
+    -ba \
     ANNOgesic
 </pre></div>
 </div>
 <p>For getting the best candidates of sRNAs, we can assign some information for filtering.
-If you already have the information of sORFs and terminators and want to import them, you can also assign
-<code class="docutils literal"><span class="pre">-d</span> <span class="pre">tss</span> <span class="pre">sec_str</span> <span class="pre">blast_nr</span> <span class="pre">blast_srna</span> <span class="pre">sorf</span> <span class="pre">term</span></code> and <code class="docutils literal"><span class="pre">-O</span></code> for the path of sORF; <code class="docutils literal"><span class="pre">-tf</span></code> for terminators. It will compare sORFs,
-termiators and sRNAs. If you want to know the details of <code class="docutils literal"><span class="pre">-d</span></code>, please refer to
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/subcommands.rst">subcommand</a>.</p>
+If you already have the information of sORFs and want to import them, you can also assign
+<code class="docutils literal"><span class="pre">-d</span> <span class="pre">tss,blast_srna,promoter,term,blast_nr,sec_str,sorf</span></code> and <code class="docutils literal"><span class="pre">-O</span></code> for the path of sORF.
+It will compare sORFs and sRNAs.</p>
 <p>The output of <code class="docutils literal"><span class="pre">srna</span></code> will be like the following.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA/
-blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915  sRNA_seq_NC_000915  statistics  tables
+blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915.1  sRNA_seq_NC_000915.1  statistics  tables
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">blast_result_and_misc</span></code> will store the results of blast; <code class="docutils literal"><span class="pre">mountain_plot</span></code> will store the mountain plots;
 <code class="docutils literal"><span class="pre">sec_structure</span></code> will store the plots of secondary structure of sRNA; <code class="docutils literal"><span class="pre">statistics</span></code> will store statistics files.</p>
-<p><code class="docutils literal"><span class="pre">sRNA_2d_NC_000915</span></code> and <code class="docutils literal"><span class="pre">sRNA_seq_NC_000915</span></code> are text files of sequence of sRNAs and secondary structure of sRNAs.</p>
+<p><code class="docutils literal"><span class="pre">sRNA_2d_NC_000915.1</span></code> and <code class="docutils literal"><span class="pre">sRNA_seq_NC_000915.1</span></code> are text files of sequence of sRNAs and secondary structure of sRNAs.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA/blast_result_and_misc/
-nr_blast_NC_000915.txt  sRNA_blast_NC_000915.txt
+nr_blast_NC_000915.1.txt  sRNA_blast_NC_000915.1.txt
 $ ls ANNOgesic/output/sRNA/mountain_plot/NC_000915/
 srna0_NC_000915.1_16651_16765_-_mountain.pdf        srna138_NC_000915.1_1496938_1497216_-_mountain.pdf  srna25_NC_000915.1_444979_445114_+_mountain.pdf  srna63_NC_000915.1_761094_761174_+_mountain.pdf
 srna100_NC_000915.1_1164252_1164295_-_mountain.pdf  srna139_NC_000915.1_1502542_1502637_+_mountain.pdf  srna26_NC_000915.1_445012_445139_-_mountain.pdf  srna64_NC_000915.1_773130_773564_+_mountain.pdf
@@ -623,41 +713,40 @@ srna0_NC_000915.1_16651_16765_-_rss.pdf        srna138_NC_000915.1_1496938_14972
 srna100_NC_000915.1_1164252_1164295_-_rss.pdf  srna139_NC_000915.1_1502542_1502637_+_rss.pdf  srna26_NC_000915.1_445012_445139_-_rss.pdf  srna64_NC_000915.1_773130_773564_+_rss.pdf
 ...
 $ ls ANNOgesic/output/sRNA/statistics/
-stat_sRNA_blast_class_NC_000915.csv  stat_sRNA_class_NC_000915.csv
+stat_sRNA_blast_class_NC_000915.1.csv  stat_sRNA_class_NC_000915.1.csv
 </pre></div>
 </div>
 <p>For <code class="docutils literal"><span class="pre">gffs</span></code> and <code class="docutils literal"><span class="pre">tables</span></code>, they are divided by three kinds of results. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates
-without filtering; <code class="docutils literal"><span class="pre">best</span></code> is for the best candidates of sRNAs after filtering; <code class="docutils literal"><span class="pre">for_class</span></code> is for each class of sRNAs which you
-imported before. For our test case, we import TSSs(class 1), folding energy(class 2), blast to nr(class 3),
-blast to sRNA database(class 4 for without homologs, class 5 for with homologs).</p>
+without filtering; <code class="docutils literal"><span class="pre">best</span></code> is for the best candidates of sRNAs after filtering; <code class="docutils literal"><span class="pre">for_class</span></code> is for classes which classified
+by the information that you assigned. For our test case, folding energy &lt; -0.05(class 1), associated with TSSs(class 2),
+blast to nr without homologs(class 3), associated with terminators(class 4),
+blast to sRNA database(class 5 for without homologs, class 6 for with homologs), associated with promoters(class 7).</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA/gffs/
 all_candidates  best  for_class
 $ ls ANNOgesic/output/sRNA/tables/
 all_candidates  best  for_class
 $ ls ANNOgesic/output/sRNA/gffs/all_candidates/
-NC_000915_sRNA.gff
+NC_000915.1_sRNA.gff
 $ ls ANNOgesic/output/sRNA/tables/all_candidates/
-NC_000915_sRNA.csv
+NC_000915.1_sRNA.csv
 $ ls ANNOgesic/output/sRNA/gffs/best/
-NC_000915_sRNA.gff
+NC_000915.1_sRNA.gff
 $ ls ANNOgesic/output/sRNA/tables/best/
-NC_000915_sRNA.csv
-$ ls ANNOgesic/output/sRNA/gffs/for_class/NC_000915/
-class_1_all.gff                          class_1_class_2_class_3_class_5_all.gff  class_1_class_3_class_4_all.gff  class_2_all.gff                  class_2_class_4_all.gff  class_3_class_5_all.gff
-class_1_class_2_all.gff                  class_1_class_2_class_4_all.gff          class_1_class_3_class_5_all.gff  class_2_class_3_all.gff          class_2_class_5_all.gff  class_4_all.gff
-class_1_class_2_class_3_all.gff          class_1_class_2_class_5_all.gff          class_1_class_4_all.gff          class_2_class_3_class_4_all.gff  class_3_all.gff          class_5_all.gff
-class_1_class_2_class_3_class_4_all.gff  class_1_class_3_all.gff                  class_1_class_5_all.gff          class_2_class_3_class_5_all.gff  class_3_class_4_all.gff
-$ ls ANNOgesic/output/sRNA/tables/for_class/NC_000915/
-class_1_all.csv                          class_1_class_2_class_3_class_5_all.csv  class_1_class_3_class_4_all.csv  class_2_all.csv                  class_2_class_4_all.csv  class_3_class_5_all.csv
-class_1_class_2_all.csv                  class_1_class_2_class_4_all.csv          class_1_class_3_class_5_all.csv  class_2_class_3_all.csv          class_2_class_5_all.csv  class_4_all.csv
-class_1_class_2_class_3_all.csv          class_1_class_2_class_5_all.csv          class_1_class_4_all.csv          class_2_class_3_class_4_all.csv  class_3_all.csv          class_5_all.csv
-class_1_class_2_class_3_class_4_all.csv  class_1_class_3_all.csv                  class_1_class_5_all.csv          class_2_class_3_class_5_all.csv  class_3_class_4_all.csv
+NC_000915.1_sRNA.csv
+$ ls ANNOgesic/output/sRNA/gffs/for_class/NC_000915.1/
+class_1_all.gff                                          class_1_class_2_class_7_all.gff                  class_2_all.gff                                  class_3_all.gff
+class_1_class_2_all.gff                                  class_1_class_3_all.gff                          class_2_class_3_all.gff                          class_3_class_4_all.gff
+...
+
+$ ls ANNOgesic/output/sRNA/tables/for_class/NC_000915.1/
+class_1_all.csv                                          class_1_class_2_class_7_all.csv                  class_2_all.csv                                  class_3_all.csv
+class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
+...
 </pre></div>
 </div>
-<p>As we know, the sORFs is also the region which has no annotation but has coverage. Therefore, the potential sRNAs
-may be sORFs not sRNAs. Therefore, it is a good idea to have the information of sORFs. You can use subcommand
-<code class="docutils literal"><span class="pre">sorf</span></code> to get it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic sorf \
+<p>As we know, the sORFs is also the region which has no annotation but has expression. Therefore, the potential sRNAs
+may be sORFs not sRNAs. In order to get information of sORFs, you can use subcommand <code class="docutils literal"><span class="pre">sorf</span></code> to get it.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic sorf \
     -g ANNOgesic/output/target/annotation \
     -t ANNOgesic/output/TSS/gffs \
     -a ANNOgesic/output/transcriptome_assembly/gffs \
@@ -669,20 +758,20 @@ may be sORFs not sRNAs. Therefore, it is a good idea to have the information of 
     ANNOgesic
 </pre></div>
 </div>
-<p>For the generating best gff files, you can decide which information you want to use for filtering. The options
+<p>For generating best gff files, you can decide which information you want to use for filtering. The options
 are ribosomal binding sites, starting from TSSs and non-overlaping with sRNAs.
 Then you can get the gff files, statistics files and tables. <code class="docutils literal"><span class="pre">all_candidates</span></code>
 is the gff files and tables without filtering; <code class="docutils literal"><span class="pre">best</span></code> is the gff_files and tables with filtering.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sORF/gffs/all_candidates/
-NC_000915_sORF.gff
+NC_000915.1_sORF.gff
 $ ls ANNOgesic/output/sORF/gffs/best/
-NC_000915_sORF.gff
+NC_000915.1_sORF.gff
 $ ls ANNOgesic/output/sORF/tables/all_candidates/
-NC_000915_sORF.csv
+NC_000915.1_sORF.csv
 $ ls ANNOgesic/output/sORF/tables/best/
-NC_000915_sORF.csv
+NC_000915.1_sORF.csv
 $ ls ANNOgesic/output/sORF/statistics/
-stat_NC_000915_sORF.csv
+stat_NC_000915.1_sORF.csv
 </pre></div>
 </div>
 </div>
@@ -690,17 +779,17 @@ stat_NC_000915_sORF.csv
 <h2>Performing sRNA target prediction<a class="headerlink" href="#performing-srna-target-prediction" title="Permalink to this headline">¶</a></h2>
 <p>Now we have the sRNA candidates. If you want to know the targets of these sRNAs, you can use <code class="docutils literal"><span class="pre">srna_target</span></code>
 to get these information.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic srna_target \
+<div class="highlight-python"><div class="highlight"><pre>annogesic srna_target \
     -g ANNOgesic/output/target/annotation \
     -f ANNOgesic/output/target/fasta \
     -r ANNOgesic/output/sRNA/gffs/best \
-    -q NC_000915.1:+:13666:13701 \
+    -q NC_000915.1:-:7249:7321 \
     -p both \
     ANNOgesic
 </pre></div>
 </div>
 <p>For testing, we just do the prediction for one sRNA. You can also assign several of sRNAs like
-<code class="docutils literal"><span class="pre">NC_000915.1:+:13666:13701</span> <span class="pre">NC_000915.1:-:16651:16765</span></code>. If you want to compute all sRNAs, you
+<code class="docutils literal"><span class="pre">NC_000915.1:-:7249:7321,NC_000915.1:-:16651:16765</span></code>. If you want to compute all sRNAs, you
 can assign <code class="docutils literal"><span class="pre">all</span></code> to <code class="docutils literal"><span class="pre">-q</span></code>. However, it may take several days.</p>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> will generate several folders.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA_targets/
@@ -723,38 +812,9 @@ NC_000915.1_RNAup.log  NC_000915.1_RNAup_rank.csv  NC_000915.1_RNAup.txt
 </div>
 <p><code class="docutils literal"><span class="pre">merge</span></code> is for the merged results of <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/RNAplex.1.html">RNAplex</a> and
 <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/RNAup.1.html">RNAup</a>. <code class="docutils literal"><span class="pre">NC_000915.1_merge.csv</span></code>  merge all the results of
-both methods. <code class="docutils literal"><span class="pre">NC_000915.1_overlap.csv</span></code> only get the candidates which are top 20(default) in both methods.</p>
+both methods. <code class="docutils literal"><span class="pre">NC_000915.1_overlap.csv</span></code> only stores the candidates which are top 20(default) in both methods.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/sRNA_targets/merge/NC_000915.1/
 NC_000915.1_merge.csv  NC_000915.1_overlap.csv
-</pre></div>
-</div>
-</div>
-<div class="section" id="promoter-motif-detection">
-<h2>Promoter motif detection<a class="headerlink" href="#promoter-motif-detection" title="Permalink to this headline">¶</a></h2>
-<p>As long as you have TSSs, you can use the subcommand <code class="docutils literal"><span class="pre">promoter</span></code> to get promoters. It will generate the promoters
-based on the classes of TSS. Therefore, if your TSSs are not computed by <code class="docutils literal"><span class="pre">ANNOgesic</span></code>,
-you need to add <code class="docutils literal"><span class="pre">-s</span></code> and <code class="docutils literal"><span class="pre">-g</span></code> (for annotation files). Then <code class="docutils literal"><span class="pre">promoter</span></code> will help you
-to classify your TSSs.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic promoter \
-    -t ANNOgesic/output/TSS/gffs \
-    -f ANNOgesic/output/target/fasta \
-    -w 50 2-10 \
-    ANNOgesic
-</pre></div>
-</div>
-<p>You can define the length of motifs. In our test case, we use <code class="docutils literal"><span class="pre">50</span></code> and <code class="docutils literal"><span class="pre">2-10</span></code>. <code class="docutils literal"><span class="pre">2-10</span></code> means the
-width is from 2 to 10.</p>
-<p>Based on the classes of TSSs, it will generate different output files.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/promoter_analysis/NC_000915
-promoter_motifs_NC_000915_allstrain_all_types_2-10_nt  promoter_motifs_NC_000915_allstrain_internal_50_nt   promoter_motifs_NC_000915_allstrain_secondary_2-10_nt
-promoter_motifs_NC_000915_allstrain_all_types_50_nt    promoter_motifs_NC_000915_allstrain_orphan_2-10_nt   promoter_motifs_NC_000915_allstrain_secondary_50_nt
-promoter_motifs_NC_000915_allstrain_antisense_2-10_nt  promoter_motifs_NC_000915_allstrain_orphan_50_nt     promoter_motifs_NC_000915_allstrain_without_orphan_2-10_nt
-promoter_motifs_NC_000915_allstrain_antisense_50_nt    promoter_motifs_NC_000915_allstrain_primary_2-10_nt  promoter_motifs_NC_000915_allstrain_without_orphan_50_nt
-promoter_motifs_NC_000915_allstrain_internal_2-10_nt   promoter_motifs_NC_000915_allstrain_primary_50_nt
-$ ls ANNOgesic/output/promoter_analysis/NC_000915/promoter_motifs_NC_000915_allstrain_all_types_50_nt/
-logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps      logo_rc10.png  logo_rc2.eps  logo_rc3.png  logo_rc5.eps  logo_rc6.png  logo_rc8.eps  logo_rc9.png  meme.xml
-logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png      logo_rc1.eps   logo_rc2.png  logo_rc4.eps  logo_rc5.png  logo_rc7.eps  logo_rc8.png  meme.html
-logo1.eps   logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_rc10.eps  logo_rc1.png   logo_rc3.eps  logo_rc4.png  logo_rc6.eps  logo_rc7.png  logo_rc9.eps  meme.txt
 </pre></div>
 </div>
 </div>
@@ -767,52 +827,61 @@ generated by <a class="reference external" href="http://www.bioinf.uni-leipzig.d
 skip <code class="docutils literal"><span class="pre">-a</span></code> and assign the path of bam files to <code class="docutils literal"><span class="pre">-nb</span></code> or <code class="docutils literal"><span class="pre">-fb</span></code>. It can reduce the running time. However,
 if you mapped the reads by other tools or you mapped the reads by
 <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> without <code class="docutils literal"><span class="pre">-S</span></code>, Unfortunately,
-you have to re-mapping again.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic circrna \
-   -f ANNOgesic/output/target/fasta \
-   -p 10 \
-   -g ANNOgesic/output/target/annotation \
-   -cg -a \
-   ANNOgesic
+you have to re-mapping again. You can assign parallel (<code class="docutils literal"><span class="pre">-p</span></code>) to run it as well.</p>
+<p>Since it is only a test case, we can reduce the running time by selecting the subset of reads(first 50000).</p>
+<div class="highlight-python"><div class="highlight"><pre>head -n 50000 ANNOgesic/input/reads/SRR1951998.fasta &gt; ANNOgesic/input/reads/SRR1951998_50000.fasta
+head -n 50000 ANNOgesic/input/reads/SRR1951997.fasta &gt; ANNOgesic/input/reads/SRR1951997_50000.fasta
+rm ANNOgesic/input/reads/SRR1951997.fasta
+rm ANNOgesic/input/reads/SRR1951998.fasta
+</pre></div>
+</div>
+<p>Now, we can try <code class="docutils literal"><span class="pre">circrna</span></code></p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic circrna \
+    -f ANNOgesic/output/target/fasta \
+    -p 10 \
+    -g ANNOgesic/output/target/annotation \
+    -a \
+    ANNOgesic
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">circrna</span></code> will generate several folders.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/
-circRNA_tables  gffs  segemehl_align  segemehl_splice  statistics
+circRNA_tables  gffs  segemehl_align  segemehl_splice statistics
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">segemehl_align</span></code> and <code class="docutils literal"><span class="pre">segemehl_splice</span></code> are for the results of
 <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>. <code class="docutils literal"><span class="pre">segemehl_align</span></code> stores the bam files of
 alignment and <code class="docutils literal"><span class="pre">segemehl_splice</span></code> stores the results of splice detection.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/segemehl_align/NC_000915.1/
-SRR1951997_NC_000915.1.bam  SRR1951998_NC_000915.1.bam
-$ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915/
+SRR1951997_50000_NC_000915.1.bam  SRR1951998_50000_NC_000915.1.bam
+$ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915.1/
 splicesites_all.bed  transrealigned_all.bed
 </pre></div>
 </div>
 <p>The gff files, tables and statistics files are stored in <code class="docutils literal"><span class="pre">gffs</span></code>, <code class="docutils literal"><span class="pre">circRNA_tables</span></code> and <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/gffs/NC_000915/
-NC_000915_circRNA_all.gff  NC_000915_circRNA_best.gff
-$ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915/
-circRNA_NC_000915.txt
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/circRNA/gffs/NC_000915.1/
+NC_000915.1_circRNA_all.gff  NC_000915.1_circRNA_best.gff
+$ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915.1/
+circRNA_NC_000915.1_all.csv  circRNA_NC_000915.1_best.csv
 $ ls ANNOgesic/output/circRNA/statistics/
-stat_circRNA_NC_000915.csv
+stat_circRNA_NC_000915.1.csv
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">NC_000915_circRNA_all.gff</span></code> is for all circular RNAs without filtering and <code class="docutils literal"><span class="pre">NC_000915_circRNA_best.gff</span></code>
-is the circular RNAs after filering by mapping ratio and comparison of CDSs/tRNAs/rRNAs.</p>
+<p><code class="docutils literal"><span class="pre">NC_000915.1_circRNA_all.gff</span></code> and <code class="docutils literal"><span class="pre">circRNA_NC_000915.1_all.csv</span></code> are for all circular RNAs without filtering.
+<code class="docutils literal"><span class="pre">NC_000915.1_circRNA_best.gff</span></code> and <code class="docutils literal"><span class="pre">circRNA_NC_000915.1_best.csv</span></code>
+are the circular RNAs after filering by mapping ratio and comparison of genome annotation.</p>
 </div>
 <div class="section" id="snp-calling">
 <h2>SNP calling<a class="headerlink" href="#snp-calling" title="Permalink to this headline">¶</a></h2>
 <p>If you want to know the SNPs or mutations of your RNA-seq data, you can use <code class="docutils literal"><span class="pre">snp</span></code> to get it.
 <code class="docutils literal"><span class="pre">snp</span></code> is divided by two parts. One part is for comparing with the &#8220;reference strain&#8221; which is the
-closed strain of our strain(&#8220;target strain&#8221;). It is useful for users who have no fasta files of their
+closed strain of your strain(&#8220;target strain&#8221;). It is useful for users who have no fasta files of their
 strain. You can refer to the section of <code class="docutils literal"><span class="pre">Retrieving</span> <span class="pre">the</span> <span class="pre">input</span> <span class="pre">data</span></code>.
 Because you may not have time to check the mutations between &#8220;reference strain&#8221; and &#8220;target strain&#8221;,
 it is a good way to detect the mutations automatically. You just need to put your bam files of
-mapping with &#8220;reference strain&#8221; in correct path. It will generate the potential sequences.
+&#8220;reference strain&#8221; in correct path. It will generate the potential sequences.
 The other part is for detecting the mutations of the alignment files and &#8220;target strain&#8221;. In this part,
-you can know the real mutations of &#8220;target strain&#8221;. Therefore, you need to put the bam files with
+you can know the real mutations of &#8220;target strain&#8221;. Therefore, you need to put the bam files of
 &#8220;target strain&#8221; to the correct folder.</p>
 <p>Before running the subcommand, we must have the bam files. Because we already generated them through
 running <code class="docutils literal"><span class="pre">circrna</span></code>, we can just use them. However, please remember that the mapping function of
@@ -823,9 +892,9 @@ fasta of &#8220;target strain&#8221; - NC_000915. Therefore, we copy the bam fil
 </pre></div>
 </div>
 <p>Then we can run the subcommand.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic snp \
+<div class="highlight-python"><div class="highlight"><pre>annogesic snp \
     -t target \
-    -p 1 2 3 \
+    -p 1,2,3 \
     -tw ANNOgesic/input/BAMs/BAMs_map_target/tex_notex \
     -f ANNOgesic/output/target/fasta \
     ANNOgesic
@@ -841,7 +910,7 @@ compare_reference  validate_target
 </div>
 <p>Becaues we run <code class="docutils literal"><span class="pre">validate_target</span></code>, you can see there are several folders under <code class="docutils literal"><span class="pre">validate_target</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/
-seqs/            SNP_raw_outputs/ SNP_table/       statistics/
+SNP_raw_outputs  SNP_table  seqs  statistics
 </pre></div>
 </div>
 <p>All folders are divided by three parts - <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code>.</p>
@@ -851,9 +920,7 @@ extend_BAQ/  with_BAQ/    without_BAQ/
 </div>
 <p>In <code class="docutils literal"><span class="pre">seqs</span></code>, there are the potential sequences.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
-NC_000915.1_NC_000915.1_1_100.fa  NC_000915.1_NC_000915.1_1_13.fa   NC_000915.1_NC_000915.1_1_179.fa  NC_000915.1_NC_000915.1_1_217.fa  NC_000915.1_NC_000915.1_1_256.fa  NC_000915.1_NC_000915.1_1_63.fa
-NC_000915.1_NC_000915.1_1_101.fa  NC_000915.1_NC_000915.1_1_140.fa  NC_000915.1_NC_000915.1_1_17.fa   NC_000915.1_NC_000915.1_1_218.fa  NC_000915.1_NC_000915.1_1_25.fa   NC_000915.1_NC_000915.1_1_64.fa
-....
+  NC_000915.1_NC_000915.1_1_1.fa
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id14"><span class="problematic" id="id15">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
@@ -886,32 +953,42 @@ $ wget -cP ANNOgesic/input/database ftp://ftp.uniprot.org/pub/databases/uniprot/
 $ gunzip ANNOgesic/input/database/idmapping_selected.tab.gz
 </pre></div>
 </div>
-<p>Now, we have all required databases. Let&#8217;s try it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic go_term \
-    -g ANNOgesic/output/target/annotation\
+<p>Now, we have all required databases. You can also import the information of transcript to
+generate the results which only included the expressed CDS.</p>
+<p>Let&#8217;s try it.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic go_term \
+    -g ANNOgesic/output/target/annotation \
+    -a ANNOgesic/output/transcriptome_assembly/gffs \
     ANNOgesic
 </pre></div>
 </div>
 <p>The output of <code class="docutils literal"><span class="pre">go_term</span></code> will store in <code class="docutils literal"><span class="pre">Go_term_results</span></code>. The statistics files and
 figures will store in <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/Go_term/Go_term_results/NC_000915/
+<dl class="docutils">
+<dt>::</dt>
+<dd>$ ls ANNOgesic/output/Go_term/
+all_CDS  expressed_CDS
+$ ls ANNOgesic/output/Go_term/all_CDS/
+Go_term_results  statistics
+$ ls ANNOgesic/output/Go_term/all_CDS/Go_term_results/NC_000915.1/
 all_strains_uniprot.csv
-$ ls ANNOgesic/output/Go_term/statistics/NC_000915/
-figs  stat_NC_000915.csv
-$ ls ANNOgesic/output/Go_term/statistics/NC_000915/figs/
-NC_000915.1_biological_process.png  NC_000915.1_cellular_component.png  NC_000915.1_molecular_function.png  NC_000915.1_three_roots.png
-</pre></div>
-</div>
+$ ls ANNOgesic/output/Go_term/all_CDS/statistics/NC_000915.1/
+figs  stat_NC_000915.1.csv
+$ ls ANNOgesic/output/Go_term/all_CDS/statistics/NC_000915.1/figs/
+NC_000915.1_biological_process.png  NC_000915.1_cellular_component.png  NC_000915.1_molecular_function.png  NC_000915.1_three_roots.png</dd>
+</dl>
 </div>
 <div class="section" id="prediction-of-subcellular-localization">
 <h2>Prediction of Subcellular localization<a class="headerlink" href="#prediction-of-subcellular-localization" title="Permalink to this headline">¶</a></h2>
 <p>Subcellular localization may be a useful information for analysis of protein function. For
 generating the information of subcellular localization, you can use the subcommand
-<code class="docutils literal"><span class="pre">subcellular_localization</span></code> to get it.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic subcellular_localization \
+<code class="docutils literal"><span class="pre">subcellular_localization</span></code> to get it. Like <code class="docutils literal"><span class="pre">go_term</span></code>, you can also import the
+information of transcript to generate the results which only included the expressed CDS.</p>
+<div class="highlight-python"><div class="highlight"><pre>annogesic subcellular_localization \
     -g ANNOgesic/output/target/annotation \
     -f ANNOgesic/output/target/fasta \
-    -m -b positive \
+    -a ANNOgesic/output/transcriptome_assembly/gffs \
+    -m -b negative \
     ANNOgesic
 </pre></div>
 </div>
@@ -919,37 +996,41 @@ generating the information of subcellular localization, you can use the subcomma
 store the output of <a class="reference external" href="http://www.psort.org/psortb/">Psortb</a>. <code class="docutils literal"><span class="pre">statistics</span></code> will store
 the statistics files and figures.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/subcellular_localization/
+all_CDS  expressed_CDS
+$ ls ANNOgesic/output/subcellular_localization/all_CDS/
 psortb_results  statistics
-$ ls ANNOgesic/output/subcellular_localization/psortb_results/NC_000915/
-NC_000915.1_raw.txt  NC_000915_table.csv
-$ ls ANNOgesic/output/subcellular_localization/statistics/NC_000915/
-NC_000915_NC_000915.1.png  stat_NC_000915_sublocal.csv
+$ ls ANNOgesic/output/subcellular_localization/all_CDS/psortb_results/NC_000915.1/
+NC_000915.1_raw.txt  NC_000915.1_table.csv
+$ ls ANNOgesic/output/subcellular_localization/all_CDS/statistics/NC_000915.1/
+NC_000915.1_NC_000915.1.png  stat_NC_000915.1_sublocal.csv
 </pre></div>
 </div>
 </div>
 <div class="section" id="generating-protein-protein-interaction-network">
 <h2>Generating protein-protein interaction network<a class="headerlink" href="#generating-protein-protein-interaction-network" title="Permalink to this headline">¶</a></h2>
 <p>Protein-protein interaction network is an important feature for analysis of regulation.
-The subcommand <code class="docutils literal"><span class="pre">ppi_network</span></code> combines STRING(database of protein-protein interaction)
-and PIE(text-mining for protein-protein interaction). It can generate the protein-protein
+The subcommand <code class="docutils literal"><span class="pre">ppi_network</span></code> combines <a class="reference external" href="http://string-db.org/">STRING</a>
+(database of protein-protein interaction)
+and <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>
+(text-mining for protein-protein interaction). It can generate the protein-protein
 interaction networks with supported literatures. You can refer to relevance of literatures
 and networks to find your interesting candidates.</p>
 <p>Before running the subcommand, you need to download the
-<a class="reference external" href="http://string-db.org/newstring_cgi/show_download_page.pl?UserId=ReWbu8uLrfAN&amp;sessionId=_FAQBbatf7RX">species.vXXXX.txt from STRING</a></p>
+<a class="reference external" href="http://string-db.org/cgi/download.pl">species.vXXXX.txt from STRING</a></p>
 <div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/database http://string-db.org/newstring_download/species.v10.txt
 </pre></div>
 </div>
 <p>Now, we can try the subcommand.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic ppi_network \
-    -s NC_000915.gff:NC_000915.1:&#39;Helicobacter pylori 26695&#39;:&#39;Helicobacter pylori&#39; \
-    -p ANNOgesic/output/target/annotation \
+<div class="highlight-python"><div class="highlight"><pre>annogesic ppi_network \
+    -s NC_000915.1.gff:NC_000915.1:&#39;Helicobacter pylori 26695&#39;:&#39;Helicobacter pylori&#39; \
+    -g ANNOgesic/output/target/annotation \
     -d ANNOgesic/input/database/species.v10.txt \
-    -q NC_000915.1:217:633:- NC_000915.1:2719:3402:+ \
+    -q NC_000915.1:217:633:-,NC_000915.1:2719:3402:+ \
     -n \
     ANNOgesic
 </pre></div>
 </div>
-<p>We just try to compute two proteins. If you want to get all proteins in ptt files,
+<p>We just tried to compute two proteins. If you want to get all proteins in ptt files,
 you just need to assign <code class="docutils literal"><span class="pre">all</span></code> in <code class="docutils literal"><span class="pre">-q</span></code>.</p>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> will generate three folders.</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/PPI/
@@ -962,28 +1043,31 @@ the figures of protein-protein interaction networks. There are two subfolders - 
 in these folders. These two folders store all information of interactions and literature scores.
 <code class="docutils literal"><span class="pre">with_strain</span></code> is for the information with giving specific strain name for searching literatures.
 <code class="docutils literal"><span class="pre">without_strain</span></code> is for the information without giving specific strain name for searching literatures.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/PPI/all_results/NC_000915/
-NC_000915_without_strain.csv  NC_000915_with_strain.csv     without_strain/               with_strain/
-$ ls ANNOgesic/output/PPI/best_results/NC_000915/
-NC_000915_without_strain.csv  NC_000915_with_strain.csv  without_strain  with_strain
-$ ls ANNOgesic/output/PPI/figures/NC_000915/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/
+NC_000915.1_without_strain.csv  NC_000915.1_with_strain.csv     without_strain/               with_strain/
+$ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/
+NC_000915.1_without_strain.csv  NC_000915.1_with_strain.csv  without_strain  with_strain
+$ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/
 without_strain  with_strain
-$ ls ANNOgesic/output/PPI/all_results/NC_000915/with_strain/Helicobacter\ pylori\ 26695\ chromosome/
-carA_C694_01345.csv  carA_guaB.csv  carB_C694_01345.csv  guaB_C694_01345.csv  pyrB_carB.csv  pyrD_C694_01345.csv  ribD_ribH.csv
-carA_carB.csv        carA_pyrB.csv  carB_guaB.csv        nusG_rpoB.csv        pyrB_guaB.csv  pyrE_pyrF.csv        rpsJ_nusB.csv
-$ ls ANNOgesic/output/PPI/all_results/NC_000915/without_strain/Helicobacter\ pylori\ 26695\ chromosome/
-carA_C694_01345.csv  carA_guaB.csv  carB_C694_01345.csv  guaB_C694_01345.csv  pyrB_carB.csv  pyrD_C694_01345.csv  ribD_ribH.csv
-carA_carB.csv        carA_pyrB.csv  carB_guaB.csv        nusG_rpoB.csv        pyrB_guaB.csv  pyrE_pyrF.csv        rpsJ_nusB.csv
-$ ls ANNOgesic/output/PPI/best_results/NC_000915/without_strain/Helicobacter\ pylori\ 26695\ chromosome/
-carA_C694_01345.csv  carA_carB.csv  carA_pyrB.csv  carB_C694_01345.csv  guaB_C694_01345.csv  pyrD_C694_01345.csv
-$ ls ANNOgesic/output/PPI/best_results/NC_000915/with_strain/Helicobacter\ pylori\ 26695\ chromosome/
+$ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/with_strain/NC_000915.1/
+carA_C694_01345.csv  carB_C694_01345.csv  pyrB_carB.csv        ribD_ribH.csv
+carA_carB.csv        carB_guaB.csv        pyrB_guaB.csv        rpsJ_nusB.csv
+carA_guaB.csv        guaB_C694_01345.csv  pyrD_C694_01345.csv
+carA_pyrB.csv        nusG_rpoB.csv        pyrE_pyrF.csv
+$ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/without_strain/NC_000915.1/
+carA_C694_01345.csv  carB_C694_01345.csv  pyrB_carB.csv        ribD_ribH.csv
+carA_carB.csv        carB_guaB.csv        pyrB_guaB.csv        rpsJ_nusB.csv
+carA_guaB.csv        guaB_C694_01345.csv  pyrD_C694_01345.csv
+carA_pyrB.csv        nusG_rpoB.csv        pyrE_pyrF.csv
+$ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/without_strain/NC_000915.1/
+carA_C694_01345.csv  carB_C694_01345.csv  pyrD_C694_01345.csv
+carA_carB.csv        guaB_C694_01345.csv
+$ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/with_strain/NC_000915.1/
   (It can&#39;t find any interactions)
-$ ls ANNOgesic/output/PPI/figures/NC_000915/with_strain/
-Helicobacter pylori 26695 chromosome
-$ ls ANNOgesic/output/PPI/figures/NC_000915/with_strain/Helicobacter\ pylori\ 26695\ chromosome/
-  (It can&#39;t find any interactions. Therefore, it has no figures)
-$ ls ANNOgesic/output/PPI/figures/NC_000915/without_strain/Helicobacter\ pylori\ 26695\ chromosome/
+$ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/with_strain/NC_000915.1/
 HP0001_nusB.png  HP0005_pyrF.png
+$ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/without_strain/NC_000915.1/
+P0001_nusB.png  HP0005_pyrF.png
 </pre></div>
 </div>
 </div>
@@ -991,14 +1075,12 @@ HP0001_nusB.png  HP0005_pyrF.png
 <h2>Generating riboswitch<a class="headerlink" href="#generating-riboswitch" title="Permalink to this headline">¶</a></h2>
 <p>If you want to know the riboswitchs, you can use the subcommand <code class="docutils literal"><span class="pre">riboswitch</span></code>.
 Before running <code class="docutils literal"><span class="pre">riboswitch</span></code>, you need to get the information of known riboswitches in Rfam.
-You can use ours or create your own one. For testing, you can just go
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">here</a> and download or copy <code class="docutils literal"><span class="pre">Rfam_riboswitch_ID.csv</span></code>.
-Then you can put <code class="docutils literal"><span class="pre">Rfam_riboswitch_ID.csv</span></code> in <code class="docutils literal"><span class="pre">ANNOgesic/input/riboswitch_ID</span></code></p>
-<div class="highlight-python"><div class="highlight"><pre>$ cp /path/of/Rfam_riboswitch_ID.csv ANNOgesic/input/riboswitch_ID
+You can download it from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/Rfam_riboswitch_ID.csv
 </pre></div>
 </div>
 <p>You also need to download Rfam.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ wget ANNOgesic/input/database ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
+<div class="highlight-python"><div class="highlight"><pre>$ wget -cP ANNOgesic/input/database ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
 $ cd ANNOgesic/input/database
 $ tar -zxvf Rfam.tar.gz
 $ rm Rfam.tar.gz
@@ -1006,10 +1088,9 @@ $ cd ../../../
 </pre></div>
 </div>
 <p>Now we can try the subcommand.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic riboswitch \
+<div class="highlight-python"><div class="highlight"><pre>annogesic riboswitch \
     -g ANNOgesic/output/target/annotation \
     -f ANNOgesic/output/target/fasta \
-    -r \
     -i ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
     -R ANNOgesic/input/database/CMs/Rfam.cm \
     ANNOgesic
@@ -1020,13 +1101,13 @@ $ cd ../../../
 <div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/riboswitch/
 gffs  scan_Rfam  statistics  tables
 $ ls ANNOgesic/output/riboswitch/gffs/
-NC_000915_riboswitch.gff
-$ ls ANNOgesic/output/riboswitch/scan_Rfam/NC_000915/
-NC_000915.1_riboswitch_rescan.txt  NC_000915.1_riboswitch.txt
+NC_000915.1_riboswitch.gff
+$ ls ANNOgesic/output/riboswitch/scan_Rfam/NC_000915.1/
+NC_000915.1_riboswitch_prescan.txt  NC_000915.1_riboswitch_scan.txt
 $ ls ANNOgesic/output/riboswitch/tables/
-NC_000915_riboswitch.csv
+NC_000915.1_riboswitch.csv
 $ ls ANNOgesic/output/riboswitch/statistics/
-stat_NC_000915_riboswitch.txt
+stat_NC_000915.1_riboswitch.txt
 </pre></div>
 </div>
 </div>
@@ -1038,19 +1119,18 @@ generating screenshots.</p>
 <p>Before you running it, you have to install <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>
 for generating screenshot.</p>
 <p>For testing, we use TSSs as main feature, sRNAs and CDSs information as side features.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic screenshot \
-    -mg ANNOgesic/output/TSS/gffs/NC_000915_TSS.gff \
-    -sg ANNOgesic/output/target/annotation/NC_000915.gff \
-        ANNOgesic/output/sRNA/gffs/best/NC_000915_sRNA.gff \
-    -f ANNOgesic/output/target/fasta/NC_000915.fa \
-    -o ANNOgesic/output/TSS/screenshots \
+<div class="highlight-python"><div class="highlight"><pre>annogesic screenshot \
+    -mg ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff \
+    -sg ANNOgesic/output/target/annotation/NC_000915.1.gff,ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff \
+    -f ANNOgesic/output/target/fasta/NC_000915.1.fa \
+    -o ANNOgesic/output/TSS \
     -tl $tex_notex_libs \
     -tw ANNOgesic/input/wigs/tex_notex \
 ANNOgesic
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">screenshot</span></code> will generate two txt files and two folders.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915/
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/
 forward/     forward.txt  reverse/     reverse.txt
 </pre></div>
 </div>
@@ -1061,13 +1141,15 @@ Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">f
 Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">reverse.txt</span></code>. If you just want to test it and don&#8217;t want to wait a long time for
 generating screenshots, you can delete some lines of gff files of TSSs.</p>
 <p>After that, you can see that there are several screenshots in <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915/forward
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/forward
+...
 NC_000915.1:1002230-1002230.png  NC_000915.1:1245705-1245705.png  NC_000915.1:1516949-1516949.png  NC_000915.1:246369-246369.png  NC_000915.1:463673-463673.png  NC_000915.1:741002-741002.png
 NC_000915.1:1002524-1002524.png  NC_000915.1:124623-124623.png    NC_000915.1:151822-151822.png    NC_000915.1:251753-251753.png  NC_000915.1:463731-463731.png  NC_000915.1:744418-744418.png
 NC_000915.1:1002728-1002728.png  NC_000915.1:1249488-1249488.png  NC_000915.1:1520156-1520156.png  NC_000915.1:255496-255496.png  NC_000915.1:464179-464179.png  NC_000915.1:744551-744551.png
 ...
 
-$ ls ANNOgesic/output/TSS/screenshots/NC_000915/reverse
+$ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/reverse
+...
 NC_000915.1:1002215-1002215.png  NC_000915.1:1235881-1235881.png  NC_000915.1:1481470-1481470.png  NC_000915.1:179609-179609.png  NC_000915.1:467716-467716.png  NC_000915.1:767765-767765.png
 NC_000915.1:1002707-1002707.png  NC_000915.1:1238472-1238472.png  NC_000915.1:1482537-1482537.png  NC_000915.1:181416-181416.png  NC_000915.1:46780-46780.png    NC_000915.1:769891-769891.png
 NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:1482926-1482926.png  NC_000915.1:181781-181781.png  NC_000915.1:468289-468289.png  NC_000915.1:770316-770316.png
@@ -1077,23 +1159,25 @@ NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:14
 </div>
 <div class="section" id="coloring-the-screenshots">
 <h2>Coloring the screenshots<a class="headerlink" href="#coloring-the-screenshots" title="Permalink to this headline">¶</a></h2>
-<p>If your RNA-seq data has a lot of tracks and you want to check TSS, it will be painful for distinguish the
+<p>If your RNA-seq data has a lot of tracks and you want to check TSSs, it will be painful for distinguish the
 tracks of TEX+ and TEX-. Therefore, we provide a subcommand <code class="docutils literal"><span class="pre">color_png</span></code> for coloring
 your screenshots.</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 annogesic color_png \
+<div class="highlight-python"><div class="highlight"><pre>annogesic color_png \
     -t 2 \
     -f ANNOgesic/output/TSS \
     ANNOgesic
 </pre></div>
 </div>
-<p>You will see the filenames of png files are not different as before. However, when you open them, the tracks are colored.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915/forward
+<p>You will see the filenames of png files are the same as before. However, when you open them, the tracks are colored.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/forward
+...
 NC_000915.1:1002230-1002230.png  NC_000915.1:1245705-1245705.png  NC_000915.1:1516949-1516949.png  NC_000915.1:246369-246369.png  NC_000915.1:463673-463673.png  NC_000915.1:741002-741002.png
 NC_000915.1:1002524-1002524.png  NC_000915.1:124623-124623.png    NC_000915.1:151822-151822.png    NC_000915.1:251753-251753.png  NC_000915.1:463731-463731.png  NC_000915.1:744418-744418.png
 NC_000915.1:1002728-1002728.png  NC_000915.1:1249488-1249488.png  NC_000915.1:1520156-1520156.png  NC_000915.1:255496-255496.png  NC_000915.1:464179-464179.png  NC_000915.1:744551-744551.png
 ...
 
-$ ls ANNOgesic/output/TSS/screenshots/NC_000915/reverse
+$ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/reverse
+...
 NC_000915.1:1002215-1002215.png  NC_000915.1:1235881-1235881.png  NC_000915.1:1481470-1481470.png  NC_000915.1:179609-179609.png  NC_000915.1:467716-467716.png  NC_000915.1:767765-767765.png
 NC_000915.1:1002707-1002707.png  NC_000915.1:1238472-1238472.png  NC_000915.1:1482537-1482537.png  NC_000915.1:181416-181416.png  NC_000915.1:46780-46780.png    NC_000915.1:769891-769891.png
 NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:1482926-1482926.png  NC_000915.1:181781-181781.png  NC_000915.1:468289-468289.png  NC_000915.1:770316-770316.png

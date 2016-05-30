@@ -144,7 +144,8 @@ class Helper(object):
         for entry in self.gff3parser.entries(g_f):
             gffs.append(entry)
         g_f.close()
-        sort_gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
+        sort_gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start,
+                                                x.end, x.strand))
         out = open(out_file, "w")
         out.write("##gff-version 3\n")
         for gff in sort_gffs:
@@ -186,24 +187,25 @@ class Helper(object):
         fh = open(gff_file)
         for entry in self.gff3parser.entries(fh):
             if (entry.feature == "source") or (
-                entry.feature == "region"):
+                    entry.feature == "region"):
                 length = entry.end
             else:
                 length = None
             gffs.append(entry)
-        gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start))
+        gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
         first = True
         ids = set()
         locus_tags = set()
         pre_gff = None
         for gff in gffs:
             if (gff.feature != "source") and (
-                gff.feature != "region"):
+                    gff.feature != "region"):
                 if length is not None:
                     if gff.end > length:
                         name = "".join([gff.feature, ":", str(gff.start), "-",
                                         str(gff.end), "_", gff.strand])
-                        print("Error: the end point of " + name + " is longer than the length of whole genome.")
+                        print("Error: the end point of " + name +
+                              " is longer than the length of whole genome.")
                         print("Please check the gff file.")
                         sys.exit()
             if first:
@@ -214,14 +216,16 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Warninng: repeat ID {0} in gff file!!!".format(
-                                  gff.attributes["ID"]))
+                            print("Warninng: repeat ID {0} "
+                                  "in gff file!!!".format(
+                                      gff.attributes["ID"]))
                         else:
                             self._add_element(ids, "ID", gff)
                     if "locus_tag" in gff.attributes.keys():
                         if gff.attributes["locus_tag"] in ids:
-                            print("Warning:repeat locus_tag {0} in gff file!!!".format(
-                                  gff.attributes["locus_tag"]))
+                            print("Warning:repeat locus_tag {0} "
+                                  "in gff file!!!".format(
+                                      gff.attributes["locus_tag"]))
                         else:
                             self._add_element(locus_tags, "locus_tag", gff)
             pre_gff = copy.copy(gff)
@@ -255,6 +259,7 @@ class Helper(object):
             num += 1
         gff_f.close()
         out.close()
+
     def get_cds_seq(self, gff_file, fasta_file, out_file):
         seq = self._read_fasta(fasta_file)
         out = open(out_file, "w")
@@ -263,7 +268,7 @@ class Helper(object):
         for entry in self.gff3parser.entries(gh):
             if entry.feature == "CDS":
                 cdss.append(entry)
-        cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start))
+        cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
         for entry in cdss:
             cds = self.extract_gene(seq, entry.start, entry.end, entry.strand)
             if "protein_id" in entry.attributes.keys():

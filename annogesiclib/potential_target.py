@@ -2,6 +2,7 @@ import os
 from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
 
+
 def print_fasta(entry, seq, out):
     try:
         if entry.attributes["locus_tag"] == entry.attributes["Name"]:
@@ -17,7 +18,8 @@ def print_fasta(entry, seq, out):
                       entry.attributes["locus_tag"], seq))
         else:
             out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
-                      entry.feature, entry.start, entry.end, entry.strand, seq))
+                      entry.feature, entry.start, entry.end,
+                      entry.strand, seq))
 
 def read_file(seq_file, gff_file, target_folder, features):
     fastas = []
@@ -60,7 +62,8 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
             start = cds.start - tar_start
         else:
             start = 1
-        if ((cds.start + tar_end) < len(fasta)) and ((cds.end - cds.start) >= tar_end):
+        if ((cds.start + tar_end) < len(fasta)) and (
+                (cds.end - cds.start) >= tar_end):
             end = cds.start + tar_end - 1
         elif cds.start + tar_end >= len(fasta):
             end = len(fasta)
@@ -106,12 +109,14 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
     if out is not None:
         out.close()
 
-def potential_target(gff_file, seq_file, target_folder, tar_start, tar_end,
-                     features):
+def potential_target(gff_file, seq_file, target_folder, args_tar):
     fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file,
-                                             target_folder, features)
-    sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start))
-    deal_cds_forward(sort_cdss_f, target_folder, fasta, genes, tar_start, tar_end)
+                                             target_folder, args_tar.features)
+    sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start,
+                                                k.end, k.strand))
+    deal_cds_forward(sort_cdss_f, target_folder, fasta, genes,
+                     args_tar.tar_start, args_tar.tar_end)
     sort_cdss_r = sorted(cdss_r, reverse=True,
-                         key=lambda k: (k.seq_id, k.start))
-    deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes, tar_start, tar_end)
+                         key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+    deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes,
+                     args_tar.tar_start, args_tar.tar_end)

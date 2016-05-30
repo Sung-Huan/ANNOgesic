@@ -18,13 +18,14 @@ class SeqModifier(object):
         seq_as_list[self._org_pos_to_internal_pos[pos]] = nucleotide
         self._seq = "".join(seq_as_list)
 
-    def remove(self, pos):
+    def remove(self, pos, num):
         int_pos = self._org_pos_to_internal_pos[pos]
         self._seq = self._seq[:int_pos] + self._seq[int_pos+1:]
         del(self._org_pos_to_internal_pos[pos])
         for pos in range(pos, len(self._seq) + 2):
             try:
-                self._org_pos_to_internal_pos[pos] -= 1
+                self._org_pos_to_internal_pos[pos] = (
+                    self._org_pos_to_internal_pos[pos] - num)
             except KeyError:
                 pass
 
@@ -34,10 +35,10 @@ class SeqModifier(object):
         self._seq = self._seq[:int_pos] + nucleotide + self._seq[int_pos:]
         for pos in range(pos + 1, len(self._seq) + 1):
             try:
-                self._org_pos_to_internal_pos[pos] += 1
+                self._org_pos_to_internal_pos[pos] = (
+                    self._org_pos_to_internal_pos[pos] + len(nucleotide))
             except KeyError:
                 pass
 
     def get_nucl(self, pos):
         return self._seq[self._org_pos_to_internal_pos[pos]]
-

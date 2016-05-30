@@ -1,5 +1,6 @@
 from annogesiclib.gff3 import Gff3Parser
 
+
 def detect_energy(line, srna):
     duplex = line.split(" ")[0]
     if ("(" in duplex) or (")" in duplex):
@@ -26,16 +27,18 @@ def print_rank_one(srnas, out, feature, gffs, srna_gffs, top):
                             srna_infos = get_srna_name(srna_gffs, srna_name)
                             name = srna_infos[0]
                             srna_info = srna_infos[1]
-                            target_info = get_target_info(gffs, target["target"])
+                            target_info = get_target_info(
+                                gffs, target["target"])
                             if srna_info is not None:
-                                out.write("\t".join([name, str(srna_info.seq_id),
-                                          str(srna_info.start), str(srna_info.end),
-                                          srna_info.strand, target["target"],
-                                          str(target_info.start),
-                                          str(target_info.end),
-                                          target_info.strand, method,
-                                          str(target["energy"]),
-                                          str(target["rank"])]) + "\n")
+                                out.write("\t".join([
+                                    name, str(srna_info.seq_id),
+                                    str(srna_info.start), str(srna_info.end),
+                                    srna_info.strand, target["target"],
+                                    str(target_info.start),
+                                    str(target_info.end),
+                                    target_info.strand, method,
+                                    str(target["energy"]),
+                                    str(target["rank"])]) + "\n")
 
 def read_table(gffs, rnaplex, rnaup):
     srnas = {"RNAup": {}, "RNAplex": {}}
@@ -74,11 +77,11 @@ def read_table(gffs, rnaplex, rnaup):
                     else:
                         if srna in srnas["RNAup"].keys():
                             srnas["RNAup"][srna].append({"target": line[1:],
-                                                         "energy" : 0})
+                                                         "energy": 0})
                         else:
                             srnas["RNAup"][srna] = []
                             srnas["RNAup"][srna].append({"target": line[1:],
-                                                         "energy" : 0})
+                                                         "energy": 0})
                 else:
                     detect_energy(line, srnas["RNAup"][srna][-1])
     return srnas
@@ -119,7 +122,7 @@ def get_target_info(gffs, target):
             if gff.attributes["locus_tag"] == name[0]:
                 target_info = gff
                 return target_info
-        elif (gff.feature + ":" + str(gff.start) + "-" + \
+        elif (gff.feature + ":" + str(gff.start) + "-" +
               str(gff.end) + "_" + gff.strand) == name[0]:
             target_info = gff
             return target_info
@@ -137,14 +140,14 @@ def read_gff(filename):
     gffs = []
     for entry in Gff3Parser().entries(open(filename)):
         gffs.append(entry)
-    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return gffs
 
 def print_title(out):
     out.write("\t".join(["sRNA", "strain", "srna_start", "srna_end",
                          "srna_strand", "target", "target_start",
                          "target_end", "target_strand", "method",
-                         "energy", "rank", "methon", "energy", "rank"]) + "\n")
+                         "energy", "rank", "method", "energy", "rank"]) + "\n")
 
 def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
     overlaps = []
@@ -155,14 +158,15 @@ def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
         for srna_plex in srna_plexs:
             if "rank" in srna_plex.keys():
                 if ("print" not in srna_plex.keys()) and (
-                    srna_plex["rank"] <= top):
+                        srna_plex["rank"] <= top):
                     for srna_up in srnas["RNAup"][srna]:
                         if "rank" in srna_up.keys():
                             if (srna_plex["target"] == srna_up["target"]) and (
                                 (srna_plex["rank"] <= top) and (
                                  srna_up["rank"] <= top)) and (
                                  "print" not in srna_up.keys()):
-                                target_info = get_target_info(gffs, srna_plex["target"])
+                                target_info = get_target_info(
+                                    gffs, srna_plex["target"])
                                 import_merge(overlaps, name, srna_info,
                                              srna_plex,
                                              srna_up, target_info)
@@ -171,9 +175,11 @@ def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
                                 import_merge(merges, name, srna_info,
                                              srna_plex,
                                              srna_up, target_info)
-                            elif (srna_plex["target"] == srna_up["target"]) and (
-                                  "print" not in srna_up.keys()):
-                                target_info = get_target_info(gffs, srna_plex["target"])
+                            elif (srna_plex["target"] ==
+                                  srna_up["target"]) and (
+                                      "print" not in srna_up.keys()):
+                                target_info = get_target_info(
+                                    gffs, srna_plex["target"])
                                 import_merge(merges, name, srna_info,
                                              srna_plex,
                                              srna_up, target_info)
@@ -188,13 +194,14 @@ def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
         for srna_up in srna_ups:
             if "rank" in srna_up.keys():
                 if ("print" not in srna_up.keys()) and (
-                    srna_up["rank"] <= top) and (
-                    srna in srnas["RNAplex"].keys()):
+                        srna_up["rank"] <= top) and (
+                        srna in srnas["RNAplex"].keys()):
                     for srna_plex in srnas["RNAplex"][srna]:
                         if "rank" in srna_plex.keys():
                             if (srna_plex["target"] == srna_up["target"]) and (
-                                "print" not in srna_plex.keys()):
-                                target_info = get_target_info(gffs, srna_up["target"])
+                                    "print" not in srna_plex.keys()):
+                                target_info = get_target_info(
+                                    gffs, srna_up["target"])
                                 import_merge(merges, name, srna_info,
                                              srna_plex, srna_up, target_info)
                                 srna_up["print"] = True

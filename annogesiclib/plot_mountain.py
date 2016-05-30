@@ -1,9 +1,8 @@
-import numpy
 import matplotlib as mpl
-mpl.use('Agg')
 import matplotlib.pyplot
-import pylab
+mpl.use('Agg')
 matplotlib.pyplot.style.use('ggplot')
+
 
 def plot_mountain_plot(input_file, output_name):
     poss = []
@@ -34,15 +33,17 @@ def plot_mountain_plot(input_file, output_name):
             if check == 1:
                 matplotlib.pyplot.figure(1)
                 matplotlib.pyplot.subplot(211)
+                ylabel = ("Number of enclosing nucleotides\nor\n"
+                          "Min free energy structure")
                 matplotlib.pyplot.ylabel(
-                    'Number of enclosing nucleotides\nor\nMin free energy structure',
-                    fontsize=10, multialignment='left')
+                    ylabel, fontsize=10, multialignment='left')
                 matplotlib.pyplot.plot(values, label='pair probabilities')
                 values = []
                 poss = []
             elif check == 2:
                 matplotlib.pyplot.plot(values, label='mfe structure')
-                matplotlib.pyplot.legend(bbox_to_anchor=(0., 1.02, 1., .102),
+                matplotlib.pyplot.legend(
+                    bbox_to_anchor=(0., 1.02, 1., .102),
                     loc=3, ncol=2, mode="expand", borderaxespad=0.)
                 values = []
                 poss = []

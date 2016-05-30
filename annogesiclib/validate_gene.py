@@ -1,17 +1,17 @@
-import os
-import sys
-import math
-import csv
 from annogesiclib.gff3 import Gff3Parser
+
 
 def print_stat(feature, num, out):
     if num["_".join(["all", feature])] != 0:
-        out.write("The number of {0} which is start from TSS: {1} ({2})\n".format(
-                  feature, num[feature],
-                  float(num[feature]) / float(num["_".join(["all", feature])])))
+        out.write("The number of {0} which is start "
+                  "from TSS: {1} ({2})\n".format(
+                      feature, num[feature],
+                      float(num[feature]) / float(
+                          num["_".join(["all", feature])])))
     else:
-        out.write("The number of {0} which is start from TSS: {1} ({2})\n".format(
-                  feature, num[feature], "NA"))
+        out.write("The number of {0} which is start "
+                  "from TSS: {1} ({2})\n".format(
+                      feature, num[feature], "NA"))
 
 def read_gff(gff_file, tss_file):
     tsss = []
@@ -20,49 +20,54 @@ def read_gff(gff_file, tss_file):
     fh = open(gff_file)
     for gff in gff_parser.entries(fh):
         gffs.append(gff)
-    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
+    gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     fh.close()
     tss_f = open(tss_file, "r")
     for tss in gff_parser.entries(tss_f):
         tsss.append(tss)
-    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start))
+    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     tss_f.close()
     return gffs, tsss
 
-def compare_tss(tsss, gff, utr_length, num_all, num_strain):
+def compare_tss(tsss, gff, utr_length, num_all, num_strain, program):
     detect = False
     for tss in tsss:
         length = utr_length
         if (gff.feature == "CDS") or (
-            gff.feature == "rRNA") or (
-            gff.feature == "tRNA"):
+                gff.feature == "rRNA") or (
+                gff.feature == "tRNA"):
             if (gff.seq_id == tss.seq_id) and (
-                gff.start < tss.start) and (
-                gff.strand == "+") and (tss.strand == "+"):
+                    gff.start < tss.start) and (
+                    gff.strand == "+") and (tss.strand == "+"):
                 break
             elif (gff.seq_id == tss.seq_id) and (
-                  gff.end < tss.start - utr_length) and (
-                  gff.strand == "-") and (tss.strand == "-"):
+                    gff.end < tss.start - utr_length) and (
+                    gff.strand == "-") and (tss.strand == "-"):
                 break
             if (gff.seq_id == tss.seq_id) and (
-                gff.strand == "+") and (tss.strand == "+") and (
-                gff.start - tss.start <= utr_length) and (
-                gff.start - tss.start >= 0):
+                    gff.strand == "+") and (tss.strand == "+") and (
+                    gff.start - tss.start <= utr_length) and (
+                    gff.start - tss.start >= 0):
                 detect = True
                 if (gff.start - tss.start) <= length:
                     start = tss
                     length = (gff.start - tss.start)
             elif (gff.seq_id == tss.seq_id) and (
-                  gff.strand == "-") and (tss.strand == "-") and (
-                  tss.start - gff.end <= utr_length) and (
-                  tss.start - gff.end >= 0):
+                    gff.strand == "-") and (tss.strand == "-") and (
+                    tss.start - gff.end <= utr_length) and (
+                    tss.start - gff.end >= 0):
                 detect = True
                 if (tss.start - gff.end) <= length:
                     start = tss
                     length = (tss.start - gff.end)
+    if program == "tss":
+        type_ = "TSS"
+    elif program == "processing":
+        type_ = "Cleavage"
     if detect:
         detect = False
-        gff.attributes["start_TSS"] = "TSS_" + str(start.start) + start.strand
+        gff.attributes["start_" + type_] = (
+                type_ + "_" + str(start.start) + start.strand)
         if gff.feature == "CDS":
             num_all["cds"] += 1
             num_strain[gff.seq_id]["cds"] += 1
@@ -97,7 +102,8 @@ def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
     out_cds.close()
     out.close()
 
-def validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length):
+def validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length,
+                 program):
     num_all = {"all_cds": 0, "all_tRNA": 0, "all_rRNA": 0,
                "cds": 0, "tRNA": 0, "rRNA": 0}
     num_strain = {}
@@ -118,5 +124,5 @@ def validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length):
         elif gff.feature == "rRNA":
             num_all["all_rRNA"] += 1
             num_strain[gff.seq_id]["all_rRNA"] += 1
-        compare_tss(tsss, gff, utr_length, num_all, num_strain)
+        compare_tss(tsss, gff, utr_length, num_all, num_strain, program)
     print_file(gffs, out_cds_file, stat_file, num_all, num_strain)

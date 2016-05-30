@@ -1,9 +1,7 @@
-import os
-import sys
 import math
 from annogesiclib.gff3 import Gff3Parser
-from annogesiclib.helper import Helper
 from annogesiclib.lib_reader import read_libs, read_wig
+
 
 def read_gff(input_file):
     datas = []
@@ -12,7 +10,7 @@ def read_gff(input_file):
     for entry in gff_parser.entries(f_h):
         entry.attributes["print"] = False
         datas.append(entry)
-    datas = sorted(datas, key=lambda k: (k.seq_id, k.start))
+    datas = sorted(datas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return datas
 
 def get_coverage(tar, wigs):
@@ -41,9 +39,9 @@ def stat(tars, refs, cutoff, gene_length, cluster):
         detect = False
         for tar in tars:
             if (ref.seq_id == tar.seq_id) and (
-                ref.strand == tar.strand) and (
-                float(tar.attributes["coverage"]) >= cutoff) and (
-                tar.start <= int(gene_length)):
+                    ref.strand == tar.strand) and (
+                    float(tar.attributes["coverage"]) >= cutoff) and (
+                    tar.start <= int(gene_length)):
                 if math.fabs(ref.start - tar.start) <= cluster:
                     stats["tp"] += 1
                     tar.attributes["print"] = True
@@ -52,8 +50,8 @@ def stat(tars, refs, cutoff, gene_length, cluster):
             stats["miss"] += 1
     for tar in tars:
         if (not tar.attributes["print"]) and (
-            float(tar.attributes["coverage"]) >= cutoff) and (
-            tar.start <= int(gene_length)):
+                float(tar.attributes["coverage"]) >= cutoff) and (
+                tar.start <= int(gene_length)):
             stats["fp"] += 1
     stats["fp_rate"] = float(stats["fp"]) / float(int(gene_length) - num_ref)
     stats["tp_rate"] = float(stats["tp"]) / float(num_ref)
@@ -73,15 +71,15 @@ def change_best(num_ref, best, stat_value):
             change = False
         else:
             if (best["tp_rate"] <= stat_value["tp_rate"]) and (
-                best["fp_rate"] >= stat_value["fp_rate"]):
+                    best["fp_rate"] >= stat_value["fp_rate"]):
                 best = stat_value.copy()
                 change = True
             elif (stat_value["tp_rate"] - best["tp_rate"] >= 0.01) and (
-                  stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
+                    stat_value["fp_rate"] - best["fp_rate"] <= 0.00005):
                 best = stat_value.copy()
                 change = True
             elif (best["tp_rate"] - stat_value["tp_rate"] <= 0.01) and (
-                  best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
+                    best["fp_rate"] - stat_value["fp_rate"] >= 0.00005):
                 best = stat_value.copy()
                 change = True
     else:
@@ -89,7 +87,7 @@ def change_best(num_ref, best, stat_value):
             change = False
         else:
             if (best["tp"] <= stat_value["tp"]) and (
-                best["fp"] >= stat_value["fp"]):
+                    best["fp"] >= stat_value["fp"]):
                 best = stat_value.copy()
                 change = True
             tp_diff = float(best["tp"] - stat_value["tp"])
@@ -104,18 +102,19 @@ def change_best(num_ref, best, stat_value):
                     change = True
     return best, change
 
-def filter_low_expression(gff_file, manual_file, wig_f_file, wig_r_file,
-            input_lib, wig_folder, cluster, gene_length, out_file):
+def filter_low_expression(gff_file, args_tss, wig_f_file,
+                          wig_r_file, out_file):
     tars = read_gff(gff_file)
-    refs = read_gff(manual_file)
-    libs, texs = read_libs(input_lib, wig_folder)
-    wig_fs = read_wig(wig_f_file, "+", libs)
-    wig_rs = read_wig(wig_r_file, "-", libs)
+    refs = read_gff(args_tss.manual_file)
+    libs, texs = read_libs(args_tss.input_lib, args_tss.wig_folder)
+    wig_fs = read_wig(wig_f_file, "+", args_tss.libs)
+    wig_rs = read_wig(wig_r_file, "-", args_tss.libs)
     compare_wig(tars, wig_fs, wig_rs)
     cutoff = 1
     first = True
     while True:
-        stat_value, num_ref = stat(tars, refs, cutoff, gene_length, cluster)
+        stat_value, num_ref = stat(tars, refs, cutoff,
+                                   args_tss.gene_length, args_tss.cluster)
         if first:
             first = False
             best = stat_value.copy()

@@ -1,6 +1,3 @@
-import os
-import sys
-import csv
 import argparse
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"

@@ -1,9 +1,8 @@
 import os
-import sys
 import csv
-import math
 import shutil
 from annogesiclib.gff3 import Gff3Parser
+
 
 def filter_utr(srna_gff, srna_table, min_utr):
     out = open("tmp_utr_srna.gff", "w")
@@ -24,9 +23,9 @@ def filter_utr(srna_gff, srna_table, min_utr):
     for gff in gffs:
         for table in tables:
             if (table[0] == gff.seq_id) and (
-                int(table[2]) == gff.start) and (
-                int(table[3]) == gff.end) and (
-                table[4] == gff.strand):
+                    int(table[2]) == gff.start) and (
+                    int(table[3]) == gff.end) and (
+                    table[4] == gff.strand):
                 out.write(gff.info + "\n")
     g_f.close()
     fh.close()

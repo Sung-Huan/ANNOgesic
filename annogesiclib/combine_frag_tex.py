@@ -1,7 +1,5 @@
-import os
-import sys
-import csv
 from annogesiclib.gff3 import Gff3Parser
+
 
 def modify_position(frag, norm):
     if frag.end < norm.end:
@@ -16,8 +14,8 @@ def print_file(data, out, name, num):
     attributes["ID"] = "tran" + str(num)
     attributes["Name"] = "Tran_" + name
     attributes["detect_lib"] = data.attributes["detect_lib"]
-    attribute_string = ";".join(["=".join(items) \
-                       for items in attributes.items()])
+    attribute_string = ";".join(["=".join(items)
+                                 for items in attributes.items()])
     out.write("\t".join([str(field) for field in [
                         data.seq_id, data.source, data.feature, data.start,
                         data.end, data.score, data.strand, data.phase,
@@ -29,18 +27,17 @@ def store(data, source, finals):
     finals.append(data)
 
 def compare(data1, data2, overlap, tolerance):
-    if (data1.seq_id == data2.seq_id) and \
-       (data1.strand == data2.strand):
-        if (data1.start <= (data2.end + tolerance)) and \
-           (data1.start >= data2.start):
+    if (data1.seq_id == data2.seq_id) and (data1.strand == data2.strand):
+        if (data1.start <= (data2.end + tolerance)) and (
+                data1.start >= data2.start):
             modify_position(data1, data2)
             overlap = True
-        elif (data1.end >= (data2.start - tolerance)) and \
-             (data1.end <= data2.end):
+        elif (data1.end >= (data2.start - tolerance)) and (
+                data1.end <= data2.end):
             modify_position(data1, data2)
             overlap = True
-        elif (data1.start <= data2.start) and \
-             (data1.end >= data2.end):
+        elif (data1.start <= data2.start) and (
+                data1.end >= data2.end):
             modify_position(data1, data2)
             overlap = True
     return overlap
@@ -61,8 +58,10 @@ def combine(frag_file, tex_file, tolerance, output_file):
         entry.attributes["print"] = False
         norms.append(entry)
     n_h.close()
-    sort_frags = sorted(frags, key=lambda k: (k.seq_id, k.start))
-    sort_norms = sorted(norms, key=lambda k: (k.seq_id, k.start))
+    sort_frags = sorted(frags, key=lambda k: (k.seq_id, k.start,
+                                              k.end, k.strand))
+    sort_norms = sorted(norms, key=lambda k: (k.seq_id, k.start,
+                                              k.end, k.strand))
     for frag in sort_frags:
         overlap = False
         for norm in sort_norms:
@@ -74,7 +73,8 @@ def combine(frag_file, tex_file, tolerance, output_file):
     for norm in sort_norms:
         if norm.attributes["print"] is False:
             store(norm, "tex_notex", finals)
-    sort_finals = sorted(finals, key=lambda k: (k.seq_id, k.start))
+    sort_finals = sorted(finals, key=lambda k: (k.seq_id, k.start,
+                                                k.end, k.strand))
     num = 0
     for tar in sort_finals:
         if tar.attributes["print"] is True:

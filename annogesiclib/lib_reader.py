@@ -1,7 +1,7 @@
 import sys
 import os
-from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.parser_wig import WigParser
+
 
 def read_libs(input_libs, wig_folder):
     libs = []
@@ -25,7 +25,7 @@ def read_libs(input_libs, wig_folder):
                      "rep": datas[3], "strand": datas[4]})
     for lib1 in libs:
         if lib1["type"] == "frag":
-            type_ = "frag"
+            pass
         elif (lib1["type"] == "tex") or (lib1["type"] == "notex"):
             prefix1 = lib1["cond"].split("_")[0]
             for lib2 in libs:
@@ -36,7 +36,6 @@ def read_libs(input_libs, wig_folder):
                    (lib2["type"] == "notex") and \
                    (lib1["strand"] == lib2["strand"]):
                     texs[lib1["name"] + "@AND@" + lib2["name"]] = 0
-            type_ = "tex"
         else:
             print("Error:library type (fragmented or Tex treated??)")
             sys.exit()
@@ -56,7 +55,7 @@ def read_wig(filename, strand, libs):
                         wigs[strain][lib["cond"]] = {}
             for lib in libs:
                 if (lib["name"] == entry.track) and (
-                    lib["strand"] == entry.strand):
+                        lib["strand"] == entry.strand):
                     if entry.track not in wigs[strain][lib["cond"]].keys():
                         wigs[strain][lib["cond"]][entry.track] = []
                     wigs[strain][lib["cond"]][entry.track].append({
