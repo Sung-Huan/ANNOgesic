@@ -23,6 +23,7 @@ or
 Then create a soft link of ``annogesiclib`` in ``bin``.
 
 ::
+
     cd ANNOgesic/bin
     ln -s ../annogesiclib .
 
