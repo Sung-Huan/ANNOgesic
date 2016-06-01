@@ -19,6 +19,7 @@ def read_file(srna_file, nums):
                 nums["total"][row[2]] += 1
     srna_f.close()
 
+
 def blast_class(srna_file, out_file):
     nums = {}
     nums["total"] = {}

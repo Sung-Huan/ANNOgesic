@@ -1,9 +1,11 @@
-ANNOgesic is a transcriptome annotation pipeline for RNA-seq.
+# ANNOgesic - a transcriptome annotation pipeline for RNA-seq data
 
 1. It include many useful modules.
 2. It is easy to run these modules seperately, in order to reach your specific goal.
 3. It also can be used to run whole modules from RNA-seq data to any annotation information.
 
+
+```
 usage: annogesic [-h] [--version]
                  {create,get_input_files,get_target_fasta,annotation_transfer,expression_analysis,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
                  ...
@@ -50,3 +52,4 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --version, -v         show version
+```
