@@ -1,6 +1,5 @@
 import os
 import sys
-import csv
 import shutil
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
@@ -95,14 +94,15 @@ class ArgsContainer(object):
             self.merge_wigs = self.tex_wigs
         elif (self.frag_wigs is not None):
             self.merge_wigs = self.frag_wigs
-        return self    
+        return self
 
     def _deal_multi_inputs(self, inputs, file_type, num, command):
         if inputs is not None:
             datas = inputs.split(",")
             if num is not None:
                 if (len(datas) != num):
-                    print("Error: the amount of {0} is not correct!!".format(command))
+                    print("Error: the amount of {0} is not correct!!".format(
+                        command))
             new_inputs = []
             for data in datas:
                 if file_type == "float":
@@ -138,8 +138,9 @@ class ArgsContainer(object):
                               processing_factor, replicate_match, out_folder,
                               statistics, validate_gene, merge_manual,
                               compare_transcript_assembly, fuzzy, utr_length,
-                              cluster, length, re_check_orphan, overlap_feature,
-                              reference_gff_folder, remove_low_expression):
+                              cluster, length, re_check_orphan,
+                              overlap_feature, reference_gff_folder,
+                              remove_low_expression):
         self.tsspredator_path = TSSpredator_path
         self.program = compute_program
         self.fastas = fasta_folder
