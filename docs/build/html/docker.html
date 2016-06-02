@@ -77,9 +77,7 @@
 <p><a class="reference external" href="https://www.docker.com">Docker</a> is a platform for distributing package.
 It is light and easy to manage. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> includes a <code class="docutils literal"><span class="pre">Dockfile</span></code> which
 is for build up a environment and install all required tools for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>.</p>
-<p>Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> and <code class="docutils literal"><span class="pre">RATT</span></code> folder(please download from our
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a>
-which is specific for Dockerfile, otherwise may cause some error.) are located. Then type</p>
+<p>Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
 <div class="highlight-python"><div class="highlight"><pre>sudo docker build -t=&quot;annogesic&quot; .
 </pre></div>
 </div>
@@ -99,15 +97,10 @@ ANNOgesic
 </pre></div>
 </div>
 <p>If you want to mount the files from your host to the container, just add <code class="docutils literal"><span class="pre">-v</span></code> to the command.</p>
-<div class="highlight-python"><div class="highlight"><pre>docker run -t -i -v &#39;/home/silas/dockfiles/test2:/root/test&#39; ubuntu:14.04 bash
+<div class="highlight-python"><div class="highlight"><pre>docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
 </pre></div>
 </div>
-<p>The file in host is <code class="docutils literal"><span class="pre">/home/silas/dockfiles/test2</span></code>. The mount file in container is
-<code class="docutils literal"><span class="pre">/root/test</span></code>. If we go to <code class="docutils literal"><span class="pre">root</span></code> in container. We can see the file.</p>
-<div class="highlight-python"><div class="highlight"><pre>root@9a50d77ef14f:~# ls
-test
-</pre></div>
-</div>
+<p>The paths should be absolute path. If we go to <code class="docutils literal"><span class="pre">root</span></code> in container. We can see the file.</p>
 <p>If you want to copy the files from container to host, you can use <code class="docutils literal"><span class="pre">cp</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre>docker cp &lt;containerId&gt;:/file/path/within/container /host/path/target
 </pre></div>

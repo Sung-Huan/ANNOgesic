@@ -52,6 +52,7 @@
 <li><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
 <li><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
 <li><a class="reference internal" href="#definition-of-reference-strain-and-target-strain">Definition of reference strain and target strain</a></li>
+<li><a class="reference internal" href="#riboswitch-dataset-of-rfam">Riboswitch dataset of Rfam</a></li>
 <li><a class="reference internal" href="#create">create</a></li>
 <li><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
@@ -206,6 +207,8 @@ nonsense. The format is</p>
 <dt>::</dt>
 <dd>srn_4840|S._aureus_NCTC8325|RsaOV</dd>
 </dl>
+<p>You can download sRNA database <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a> easily.</p>
 </div>
 <div class="section" id="definition-of-reference-strain-and-target-strain">
 <h2>Definition of reference strain and target strain<a class="headerlink" href="#definition-of-reference-strain-and-target-strain" title="Permalink to this headline">¶</a></h2>
@@ -213,6 +216,12 @@ nonsense. The format is</p>
 If user have no fasta file or genome annotation files of &#8220;target strain&#8221;,
 ANNOgesic can generate them. It requires a strain which is close to &#8220;target strain&#8221;.
 We call this required strain - &#8220;reference strain&#8221;.</p>
+</div>
+<div class="section" id="riboswitch-dataset-of-rfam">
+<h2>Riboswitch dataset of Rfam<a class="headerlink" href="#riboswitch-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
+<p>For riboswitch detection, it need the information of riboswitch of Rfam. The input format is like the following.</p>
+<p>All columns are splited by <code class="docutils literal"><span class="pre">tab</span></code>. You can also download the data from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
 </div>
 <div class="section" id="create">
 <h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
@@ -1202,7 +1211,7 @@ the information of TSSs and processing sites, we can also predict UTR-derived sR
 <p><a class="reference external" href="http://www.tbi.univie.ac.at/RNA/">ViennaRNA</a>.</p>
 <p><a class="reference external" href="http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm">Ps2pdf14</a>.</p>
 <p><a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/">Blast+</a>.</p>
-<p><a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>.</p>
+<p>sRNA database, such as <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>.</p>
 <p><a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a>.</p>
 <p>Gff files of genome annotation and Transcript data.</p>
 <p>It can also import more information to improve the accuracy of prediction.</p>
@@ -2502,8 +2511,8 @@ Basically, <code class="docutils literal"><span class="pre">riboswitch</span></c
 <p><a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
 <p>Gff files of genome annotation.</p>
 <p>Fasta files of genome sequence.</p>
-<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Accession of Rfams, IDs and Descriptions of riboswitchs.
-The format is <code class="docutils literal"><span class="pre">$ACCESSION{tab}$ID{tab}$DESCRIPTION</span></code>. You can download the file from our
+<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Rfam ID, Name and Description of riboswitchs.
+You can refer to the section of <code class="docutils literal"><span class="pre">Riboswitch</span> <span class="pre">dataset</span> <span class="pre">of</span> <span class="pre">Rfam</span></code>. You can download the file from our
 <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv). You also can create your own one.</p>
 <ul class="simple">
 <li>Arguments</li>

@@ -5,9 +5,7 @@ Dockfiles
 It is light and easy to manage. ``ANNOgesic`` includes a ``Dockfile`` which 
 is for build up a environment and install all required tools for running ``ANNOgesic``.
 
-Please go to the folder where ``Dockfile`` and ``RATT`` folder(please download from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic>`_
-which is specific for Dockerfile, otherwise may cause some error.) are located. Then type
+Please go to the folder where ``Dockfile`` are located. Then type
 
 ::
 
@@ -38,15 +36,10 @@ If you want to mount the files from your host to the container, just add ``-v`` 
 
 ::
 
-    docker run -t -i -v '/home/silas/dockfiles/test2:/root/test' ubuntu:14.04 bash
+    docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
 
-The file in host is ``/home/silas/dockfiles/test2``. The mount file in container is 
-``/root/test``. If we go to ``root`` in container. We can see the file.
+The paths should be absolute path. If we go to ``root`` in container. We can see the file.
 
-::
-
-    root@9a50d77ef14f:~# ls
-    test
 
 If you want to copy the files from container to host, you can use ``cp``.
 

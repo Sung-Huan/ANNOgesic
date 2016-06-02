@@ -30,12 +30,11 @@ Then create a soft link of ``annogesiclib`` in ``bin``.
 Dockerfile
 ----------
 
-Please Download the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`_ and 
-`RATT  <https://github.com/Sung-Huan/ANNOgesic>_` in our Github first.
-Then switch to the folder which Dockerfile and RATT folder are located. For the following commands, please 
+Please Download the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`_ in our Github.
+Then switch to the folder which Dockerfile are located. For the following commands, please 
 refer to `here <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/docker.rst>`_.
 
-If you want to check Other commands of Docker, please refer to  `here <https://docs.docker.com/>`_.
+If you want to check other commands of Docker, please refer to  `here <https://docs.docker.com/>`_.
 
 pip3
 ----------
@@ -43,3 +42,4 @@ pip3
 ::
 
     pip3 install ANNOgesic
+    pip3 install ANNOgesic --upgrade

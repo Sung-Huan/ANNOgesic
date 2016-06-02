@@ -93,6 +93,9 @@ for example
 ::
   srn_4840|S._aureus_NCTC8325|RsaOV
 
+You can download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
+`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
+
 Definition of reference strain and target strain
 ------------------------------
 We call the strain that user want to compute - "target strain".
@@ -100,6 +103,19 @@ If user have no fasta file or genome annotation files of "target strain",
 ANNOgesic can generate them. It requires a strain which is close to "target strain".
 We call this required strain - "reference strain".
 
+Riboswitch dataset of Rfam
+----------------------------
+For riboswitch detection, it need the information of riboswitch of Rfam. The input format is like the following.
+
+======== ==== ==========================
+#Rfam_ID Name Description
+-------- ---- --------------------------
+RF00162  SAM  SAM riboswitch box leader
+RF00059  TPP  TPP riboswitch THI element
+======== ===  ==========================
+
+All columns are splited by ``tab``. You can also download the data from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 create
 -----
@@ -1152,7 +1168,7 @@ the information of TSSs and processing sites, we can also predict UTR-derived sR
 
 `Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_.
 
-`BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_.
+sRNA database, such as `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_.
 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_.
 
@@ -2540,8 +2556,8 @@ Gff files of genome annotation.
 
 Fasta files of genome sequence.
 
-File of ``riboswitch_ID``. The file should contain Accession of Rfams, IDs and Descriptions of riboswitchs.
-The format is ``$ACCESSION{tab}$ID{tab}$DESCRIPTION``. You can download the file from our 
+File of ``riboswitch_ID``. The file should contain Rfam ID, Name and Description of riboswitchs.
+You can refer to the section of ``Riboswitch dataset of Rfam``. You can download the file from our 
 `Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv). You also can create your own one.
 
 - Arguments

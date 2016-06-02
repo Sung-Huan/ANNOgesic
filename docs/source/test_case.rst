@@ -15,6 +15,8 @@ Before we start, please refer to the section of ``The format of filename`` and
 ``The format of libraries for import to ANNOgesic`` in 
 the section of ``subcommands``. All the details are also in ``subcommands``. 
 Moreover, all the requirements are listed in the section of ``prerequired``.
+For the command lines which we will present in the following, please refer to the ``run.sh``
+in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
 
 Generating a project
 --------------------
@@ -36,7 +38,7 @@ Then you will see
 Retrieving the input data
 -------------------
 
-For our test case, we can download from `NCBI <ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/>`_.
+For our test case, we can download from `NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1>`_.
 We can set the ``$FTP_SOURCE`` first
 
 ::
@@ -185,17 +187,9 @@ We have the fasta files now. We can use it to generate our annotation files. If 
 you retrieved by ``get_input_files`` is exactly the strain what you want, you can skip this step. Please 
 remember to copy or download the annotation files to ``ANNOgesic/output/target/annotation``.
 
-Before you running it, you have to notice the environment paths. If you are using docker container, the 
-path is alread setup. You don't need to worry about it. However, if you are build ANNOgesic by 
-yourself, remember to assign the paths by running
-
-::
-
-    . $PAGIT_HOME/sourceme.pagit
-
-``$PAGIT_HOME`` is the directory of PAGIT. The better way is change the environment directly. Or you have to run 
-this command everytime. For changing the environment, you just need to copy all the information of 
-``$PAGIT_HOME/sourceme.pagit`` to ``.bashrc``.
+Before you running it, you have to notice the environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
+If you are using docker container, the path is alread setup. If you setup by yourself, please refer to 
+`RATT <http://ratt.sourceforge.net/>`_ to set your environment paths properly.
 
 Now, we can try it.
 
@@ -261,11 +255,12 @@ Before running ``tsspredator``, if you want to use the optimized parameters,
 you need to run ``optimize_TSSpredator`` first. It needs to manual check some TSSs. 
 In our experience, we recommand you detect more than 50 TSSs and longer than 100kb of genome. 
 
-For test case, we prepared the manual TSS file in our Github, you can download it. 
+For test case, we prepared the manual TSS file in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_, 
+you can download it. 
 
 ::
 
-    wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/NC_000915_manual_TSS.gff
+    wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_000915_manual_TSS.gff
 
 Now, we have a manual TSS files which store in ``ANNOgesic/input/manual_TSS``. 
 we can try optimization of TSSs right now (because the manual TSS file only provide the first 200kb, 
@@ -577,11 +572,12 @@ for running, you can also remove it.
 
 Before running ``srna``, we have to get sRNA database(we use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 
-You can download the fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ in our `Github <https://github.com/Sung-Huan/ANNOgesic>`_.
+You can download the fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
-    wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/sRNA_database_BSRD.fa
+    wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 
 Then we need to download `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_. If you already had it, 
 you can skip this step.
@@ -1088,11 +1084,11 @@ Generating riboswitch
 
 If you want to know the riboswitchs, you can use the subcommand ``riboswitch``.
 Before running ``riboswitch``, you need to get the information of known riboswitches in Rfam. 
-You can download it from our `Github <https://github.com/Sung-Huan/ANNOgesic>`_.
+You can download it from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
-    $ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/Rfam_riboswitch_ID.csv
+    $ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
 
 You also need to download Rfam.
 

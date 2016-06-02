@@ -114,7 +114,9 @@ For viewing GFF3 file, you can use a genome browser, for example <a class="refer
 <p>Before we start, please refer to the section of <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">filename</span></code> and
 <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in
 the section of <code class="docutils literal"><span class="pre">subcommands</span></code>. All the details are also in <code class="docutils literal"><span class="pre">subcommands</span></code>.
-Moreover, all the requirements are listed in the section of <code class="docutils literal"><span class="pre">prerequired</span></code>.</p>
+Moreover, all the requirements are listed in the section of <code class="docutils literal"><span class="pre">prerequired</span></code>.
+For the command lines which we will present in the following, please refer to the <code class="docutils literal"><span class="pre">run.sh</span></code>
+in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">Github</a>.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
 <p>First of all, we need to create a working folder, we use <code class="docutils literal"><span class="pre">create</span></code> subcommand.</p>
@@ -130,7 +132,7 @@ ANNOgesic
 </div>
 <div class="section" id="retrieving-the-input-data">
 <h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
-<p>For our test case, we can download from <a class="reference external" href="ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/">NCBI</a>.
+<p>For our test case, we can download from <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1">NCBI</a>.
 We can set the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
 <div class="highlight-python"><div class="highlight"><pre>FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
 </pre></div>
@@ -301,15 +303,9 @@ reference genomoes automatically. For this subcommand, we will go through it lat
 <p>We have the fasta files now. We can use it to generate our annotation files. If the annotaion files which
 you retrieved by <code class="docutils literal"><span class="pre">get_input_files</span></code> is exactly the strain what you want, you can skip this step. Please
 remember to copy or download the annotation files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target/annotation</span></code>.</p>
-<p>Before you running it, you have to notice the environment paths. If you are using docker container, the
-path is alread setup. You don&#8217;t need to worry about it. However, if you are build ANNOgesic by
-yourself, remember to assign the paths by running</p>
-<div class="highlight-python"><div class="highlight"><pre>. $PAGIT_HOME/sourceme.pagit
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">$PAGIT_HOME</span></code> is the directory of PAGIT. The better way is change the environment directly. Or you have to run
-this command everytime. For changing the environment, you just need to copy all the information of
-<code class="docutils literal"><span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> to <code class="docutils literal"><span class="pre">.bashrc</span></code>.</p>
+<p>Before you running it, you have to notice the environment paths of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
+If you are using docker container, the path is alread setup. If you setup by yourself, please refer to
+<a class="reference external" href="http://ratt.sourceforge.net/">RATT</a> to set your environment paths properly.</p>
 <p>Now, we can try it.</p>
 <div class="highlight-python"><div class="highlight"><pre>anngesic annotation_transfer \
     -re ANNOgesic/input/reference/annotation \
@@ -371,8 +367,9 @@ First, we remove the fake files that we generated from previous subcommands.</p>
 <p>Before running <code class="docutils literal"><span class="pre">tsspredator</span></code>, if you want to use the optimized parameters,
 you need to run <code class="docutils literal"><span class="pre">optimize_TSSpredator</span></code> first. It needs to manual check some TSSs.
 In our experience, we recommand you detect more than 50 TSSs and longer than 100kb of genome.</p>
-<p>For test case, we prepared the manual TSS file in our Github, you can download it.</p>
-<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/NC_000915_manual_TSS.gff
+<p>For test case, we prepared the manual TSS file in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">Github</a>,
+you can download it.</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_000915_manual_TSS.gff
 </pre></div>
 </div>
 <p>Now, we have a manual TSS files which store in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSS</span></code>.
@@ -642,8 +639,9 @@ candidates should contain which information. In this test case, we can try to us
 for running, you can also remove it.</p>
 <p>Before running <code class="docutils literal"><span class="pre">srna</span></code>, we have to get sRNA database(we use <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>) and
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (if you have not downloaded before).
-You can download the fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a>.</p>
-<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/sRNA_database_BSRD.fa
+You can download the fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre>wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 </pre></div>
 </div>
 <p>Then we need to download <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a>. If you already had it,
@@ -923,7 +921,7 @@ extend_BAQ/  with_BAQ/    without_BAQ/
   NC_000915.1_NC_000915.1_1_1.fa
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id14"><span class="problematic" id="id15">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id18"><span class="problematic" id="id19">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores the results after filtering and the indices of potential sequence(
 you can see the difference between these potential sequences in <code class="docutils literal"><span class="pre">seqs</span></code>).
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistics and visualization files.</p>
@@ -1075,8 +1073,8 @@ P0001_nusB.png  HP0005_pyrF.png
 <h2>Generating riboswitch<a class="headerlink" href="#generating-riboswitch" title="Permalink to this headline">¶</a></h2>
 <p>If you want to know the riboswitchs, you can use the subcommand <code class="docutils literal"><span class="pre">riboswitch</span></code>.
 Before running <code class="docutils literal"><span class="pre">riboswitch</span></code>, you need to get the information of known riboswitches in Rfam.
-You can download it from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a>.</p>
-<div class="highlight-python"><div class="highlight"><pre>$ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/Rfam_riboswitch_ID.csv
+You can download it from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
+<div class="highlight-python"><div class="highlight"><pre>$ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
 </pre></div>
 </div>
 <p>You also need to download Rfam.</p>
