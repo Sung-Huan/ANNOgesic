@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import extract_info, gen_file
 import annogesiclib.merge_sRNA as ms
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -22,8 +24,8 @@ class Mock_func(object):
             return self.example.genes
 
     def mock_replicate_comparison(self, srna_covers, template_texs,
-                         strand, cutoff_coverage, tex_notex, replicates,
-                         type_, median, coverages, utr_type, texs, notex):
+                         strand, cutoff_coverage, args,
+                         type_, median, coverages, utr_type, notex):
         return {'low': 21, 'start': 3, 'conds': {'frag_1': '1'}, 'end': 4,
                 'best': 22.0, 'high': 23, 'track': 'track_1',
                 'detail': [{'low': 21, 'pos': 0, 'final_end': 4, 'final_start': 3,
@@ -33,6 +35,7 @@ class Mock_func(object):
 class TestMergesRNA(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.example = Example()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
@@ -121,7 +124,8 @@ class TestMergesRNA(unittest.TestCase):
         out_file = os.path.join(self.test_folder, "test_out")
         gen_file(os.path.join(self.test_folder, "aaa.gff"), self.example.gff_file)
         ms.read_gff = Mock_func().mock_read_gff
-        ms.merge_srna_gff("UTR", "inter", out_file, False, 0.5, os.path.join(self.test_folder, "aaa.gff"))
+        gffs = {"merge": out_file, "utr": "UTR", "normal": "inter"}
+        ms.merge_srna_gff(gffs, False, 0.5, os.path.join(self.test_folder, "aaa.gff"))
         datas, attributes = extract_info(out_file, "file")
         self.assertListEqual(datas, ['aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.',
                                      'aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.'])
@@ -135,8 +139,6 @@ class TestMergesRNA(unittest.TestCase):
 
     def test_compare_table(self):
         ms.replicate_comparison = Mock_func().mock_replicate_comparison
-        texs = {"track_tex_track_notex": 0}
-        replicates = {"tex": 1, "frag": 1}
         wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
                                                {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
                                                {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
@@ -162,9 +164,14 @@ class TestMergesRNA(unittest.TestCase):
         cutoff_notex = [0, 0, 0, 30, 10]
         cutoff_frag = [400, 200, 0, 50, 30]
         gen_file("tmp_median", "aaa\t3utr\ttrack_1\t10")
+        args = self.mock_args.mock()
+        args.replicates = replicates = {"tex": 1, "frag": 1}
+        args.texs = texs = {"track_tex_track_notex": 0}
+        args.out_folder = os.getcwd()
+        args.table_best = True
+        args.tex_notex = 2
         ms.compare_table(srna, tables, "utr", wigs, wigs, texs,
-                         True, out, 2, replicates, cutoff_tex,
-                         cutoff_notex, cutoff_frag, tss, 10, os.getcwd())
+                         out, [tss], args)
         self.assertEqual(out.getvalue(), "aaa\tsrna_0\t3\t4\t+\tfrag_1\t1\tTSS_1;cleavage3\tcleavage10\t22.0\t23\t21\ttrack_1(avg=22.0;high=23;low=21)\tCDS1\t0.01415\n")
         os.remove("tmp_median")
 
@@ -174,8 +181,8 @@ class TestMergesRNA(unittest.TestCase):
                                                {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
                                                {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
                                                {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"}]}}}
-        srna_cover = ms.get_coverage(wigs, "aaa", "+", 3, 4)
-        self.assertEqual(srna_cover["frag_1"], [{'avg': 22.0, 'pos': 0, 'final_end': 4, 'type': 'frag', 'track': 'track_1', 'final_start': 3, 'low': 21, 'high': 23}])
+        srna_cover = ms.get_coverage(wigs, self.example.srnas_int[0])
+        self.assertEqual(srna_cover["frag_1"], [{'high': 23, 'final_start': 3, 'track': 'track_1', 'avg': 2.096774193548387, 'type': 'frag', 'low': 21, 'final_end': 33, 'pos': 0}])
 
     def test_get_tss_pro(self):
         srna_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,

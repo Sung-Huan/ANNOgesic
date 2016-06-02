@@ -6,6 +6,7 @@ from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file
 from annogesiclib.circrna import CircRNADetection
+from mock_args_container import MockClass
 
 
 class Mock_segemehl(object):
@@ -14,9 +15,9 @@ class Mock_segemehl(object):
                          index, fasta):
         pass
 
-    def mock_align(self, segemehl_path, fasta_path,
-                   index, fasta, read_folder, read,
-                   sam_file, log_file, alignment_path,
+    def mock_align(self, args,
+                   index, fasta, read,
+                   sam_file, log_file,
                    fasta_prefix):
         return "test"
 
@@ -33,6 +34,7 @@ class TestCircRNADetection(unittest.TestCase):
     def setUp(self):
         self.segemehl = Mock_segemehl()
         self.samtools = Mock_samtools()
+        self.mock_args = MockClass()
         self.example = Example()
         self.test_folder = "test_folder"
         self.fasta_folder = os.path.join(self.test_folder, "fasta")
@@ -43,14 +45,19 @@ class TestCircRNADetection(unittest.TestCase):
             os.mkdir(self.test_folder)
         if (not os.path.exists(self.fasta_folder)):
             os.mkdir(self.fasta_folder)
+            os.mkdir(os.path.join(self.fasta_folder, "tmp"))
         if (not os.path.exists(self.gff_folder)):
             os.mkdir(self.gff_folder)
         if (not os.path.exists(self.out_folder)):
             os.mkdir(self.out_folder)
         if (not os.path.exists(self.read_folder)):
             os.mkdir(self.read_folder)
-        self.circ = CircRNADetection(self.out_folder, self.gff_folder,
-                                     self.fasta_folder, True)
+        args = self.mock_args.mock()
+        args.output_folder = self.out_folder
+        args.gffs = self.gff_folder
+        args.align = True
+        args.fastas = self.fasta_folder
+        self.circ = CircRNADetection(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -76,18 +83,24 @@ class TestCircRNADetection(unittest.TestCase):
         self.circ._run_segemehl_fasta_index = self.segemehl.mock_fasta_index
         self.circ._run_segemehl_align = self.segemehl.mock_align
         self.circ._wait_process = self.segemehl.mock_wait_processes
-        fasta1 = os.path.join(self.fasta_folder, "test1.fa")
-        fasta2 = os.path.join(self.fasta_folder, "test2.fa")
+        fasta1 = os.path.join(os.path.join(self.fasta_folder, "tmp/test1.fa"))
+        fasta2 = os.path.join(os.path.join(self.fasta_folder, "tmp/test2.fa"))
         read1 = os.path.join(self.read_folder, "read1.fa")
         read2 = os.path.join(self.read_folder, "read2.fa")
         gen_file(fasta1, self.example.fasta_file)
         gen_file(fasta2, self.example.fasta_file)
         gen_file(read1, self.example.fasta_file)
         gen_file(read2, self.example.fasta_file)
-        segemehl_path = None
-        align_results, prefixs = self.circ._align(self.fasta_folder,
-                                 segemehl_path, self.out_folder,
-                                 self.read_folder, 2)
+        os.mkdir(os.path.join(self.out_folder, "segemehl_align"))
+        args = self.mock_args.mock()
+        args.output_folder = self.out_folder
+        args.gffs = self.gff_folder
+        args.align = True
+        args.fastas = self.fasta_folder
+        args.segemehl_path = None
+        args.read_folder = self.read_folder
+        args.cores = 2
+        align_results, prefixs = self.circ._align(args)
         self.assertEqual(set(align_results), set(['read1_test1', 'read2_test1',
                                                   'read1_test2', 'read2_test2']))
         self.assertEqual(set(prefixs), set(['test1', 'test2']))

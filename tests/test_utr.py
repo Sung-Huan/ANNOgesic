@@ -7,6 +7,7 @@ sys.path.append(".")
 from mock_helper import gen_file, import_data, extract_info
 import annogesiclib.utr as ut
 from annogesiclib.utr import UTRDetection
+from mock_args_container import MockClass
 
 
 class Mock_func(object):
@@ -14,7 +15,7 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_detect_5utr(self, tss, gff, tran, source, base_5utr, utr5):
+    def mock_detect_5utr(self, tss, gff, tran, source, utr5):
         gen_file("test_5utr_length.png", "test")
 
     def mock_detect_3utr(self, tran, gff, term, fuzzy, utr3):
@@ -48,6 +49,7 @@ class Mock_Multiparser(object):
 class TestsTSSpredator(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.mock = Mock_func()
         self.mock_parser = Mock_Multiparser()
         self.example = Example()
@@ -60,11 +62,17 @@ class TestsTSSpredator(unittest.TestCase):
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.trans)
+            os.mkdir(os.path.join(self.trans, "tmp"))
             os.mkdir(self.out)
             os.mkdir(self.gffs)
             os.mkdir(self.tsss)
+            os.mkdir(os.path.join(self.tsss, "tmp"))
             os.mkdir(self.terms)
-        self.utr = UTRDetection(self.tsss, self.trans, self.out)
+        args = self.mock_args.mock()
+        args.tsss = self.tsss
+        args.trans = self.trans
+        args.out_folder = self.out
+        self.utr = UTRDetection(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -87,8 +95,12 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.trans, "test_transcript.gff"), self.example.tran_file)
         gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
         gen_file(os.path.join(term_path, "test_term.gff"), self.example.term_file)
-        self.utr._compute_utr(self.gffs, utr5_path, utr3_path, self.tsss, self.trans,
-                              "source", self.terms, "fuzzy", "base_5utr")
+        args = self.mock_args.mock()
+        args.gffs = self.gffs
+        args.tsss = self.tsss
+        args.trans = self.trans
+        args.terms = self.terms
+        self.utr._compute_utr(args)
         self.assertTrue(os.path.exists(os.path.join(utr5_stat_path, "test_5utr_length.png")))
         self.assertTrue(os.path.exists(os.path.join(utr3_stat_path, "test_3utr_length.png")))
 
@@ -108,8 +120,13 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file(os.path.join(self.trans, "test_transcript.gff"), self.example.tran_file)
         gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
         gen_file(os.path.join(self.terms, "test_term.gff"), self.example.term_file)
-        self.utr.run_utr_detection(self.tsss, self.gffs, self.trans, self.terms,
-                                   2, self.out, True, "base_5utr")
+        args = self.mock_args.mock()
+        args.tsss = self.tsss
+        args.gffs = self.gffs
+        args.trans = self.trans
+        args.terms = self.terms
+        args.out_folder = self.out
+        self.utr.run_utr_detection(args)
         self.assertTrue(os.path.exists(os.path.join(utr5_stat_path, "test_5utr_length.png")))
         self.assertTrue(os.path.exists(os.path.join(utr3_stat_path, "test_3utr_length.png")))
 

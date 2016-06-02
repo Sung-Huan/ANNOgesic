@@ -9,11 +9,13 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data, gen_file
 import annogesiclib.transcript_SNP as ts
+from mock_args_container import MockClass
 
 
 class TestTranscripSNP(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.example = Example()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
@@ -92,8 +94,11 @@ class TestTranscripSNP(unittest.TestCase):
                        'info': 'MQ=20', 'id': '.', 'qual': 98.0,
                        'ref': 'C', 'strain': 'NC_007795.1',
                        'all_info': 'NC_007795.1\t22181\t.\tC\tA\t98\t.\tDP=89;VDB=8.46526e-15\tGT:PL:DP\t1/1:125,184,0:87'}]
-        ts.stat(max_quals, trans_snps, 50, 2,
-                0.3, 20, stat_file, self.test_folder + "/test")
+        args = self.mock_args.mock()
+        args.depth = 50
+        args.fraction = 0.3
+        args.quality = 20
+        ts.stat(max_quals, trans_snps, 2, stat_file, self.test_folder + "/test", args)
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas), self.example.stat)
 
@@ -216,8 +221,12 @@ class TestTranscripSNP(unittest.TestCase):
         out_seq = os.path.join(self.test_folder, "seq")
         out_snp = os.path.join(self.test_folder, "snp")
         stat_file = os.path.join(self.test_folder, "stat")
-        ts.snp_detect(fasta_file, snp_file, out_snp, 5, out_seq,
-                      5, 0.3, 2, stat_file)
+        args = self.mock_args.mock()
+        args.depth = 5
+        args.fraction = 0.3
+        args.quality = 5
+        ts.snp_detect(fasta_file, snp_file, out_snp, out_seq,
+                      2, stat_file, args)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "seq_NC_007795.1_1_1.fa")))
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "seq_NC_007795.1_1_2.fa")))
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "seq_NC_007795.1_2_1.fa")))

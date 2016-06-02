@@ -5,6 +5,7 @@ import shutil
 from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file, import_data
+from mock_args_container import MockClass
 from annogesiclib.ppi import PPINetwork
 
 
@@ -17,6 +18,7 @@ class TestPPI(unittest.TestCase):
 
     def setUp(self):
         self.test_folder = "test_folder"
+        self.mock_args = MockClass()
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(os.path.join(self.test_folder, "tmp_specific"))
@@ -81,8 +83,13 @@ class TestPPI(unittest.TestCase):
         querys = "all"
         first_output = {"specific_all": True, "specific_best": True,
                         "nospecific_all": True, "nospecific_best": True}
-        self.ppi._get_pubmed(row, self.test_folder, strain_id, mode, actor, score,
-                    id_file, first_output, True, ptt, files, paths, querys)
+        args = self.mock_args.mock()
+        args.out_folder = self.test_folder
+        args.querys = "all"
+        args.no_specific = True
+        args.score = 19
+        self.ppi._get_pubmed(row, strain_id, mode, actor, id_file, first_output,
+                             ptt, files, paths, args)
         data = import_data("test_folder/without_strain/test_ptt/test_aaa_test_bbb.csv")
         self.assertEqual("\n".join(data), self.example.with_out)
         data = import_data("test_folder/with_strain/test_ptt/test_aaa_test_bbb.csv")
@@ -112,7 +119,10 @@ class TestPPI(unittest.TestCase):
     def test_detect_protein(self):
         gen_file(os.path.join(self.test_folder, "test"), self.example.ptt_file)
         strain_id = {"file": "test","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
-        genes = self.ppi._detect_protein(self.test_folder, strain_id, "all")
+        args = self.mock_args.mock()
+        args.ptts = self.test_folder
+        args.querys = "all"
+        genes = self.ppi._detect_protein(strain_id, args)
         self.assertListEqual(genes, [{'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00001'},
                                      {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00002'},
                                      {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00003'}])
@@ -145,8 +155,13 @@ class TestPPI(unittest.TestCase):
                  "all_specific": "", "best_specific": "",
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
         gen_file(os.path.join(self.test_folder, "test.ptt"), self.example.ptt_file)
-        genes = self.ppi._setup_folder_and_read_file(strain_id, "", self.test_folder,
-                                                     self.test_folder, True, files, paths, "all")
+        args = self.mock_args.mock()
+        args.querys = "all"
+        args.no_specific = True
+        args.out_folder = self.test_folder
+        args.ptts = self.test_folder
+        genes = self.ppi._setup_folder_and_read_file(strain_id, "",
+                                                     files, paths, args)
         for index in ("all_specific", "all_nospecific", "best_specific", "best_nospecific",
                       "id_log", "action_log", "pubmed_log"):
             files[index].close()
@@ -177,8 +192,11 @@ class TestPPI(unittest.TestCase):
                  "best": os.path.join(self.test_folder, "best_results")}
         gen_file(os.path.join(self.test_folder, "tmp_specific/test.txt"), "93061\ttest")
         gen_file(os.path.join(self.test_folder, "tmp_action"), self.example.ppi_line)
-        self.ppi._retrieve_actions(files, self.test_folder, strain_id, paths,
-                                   100, True, "all")
+        args = self.mock_args.mock()
+        args.no_specific = True
+        args.querys = "all"
+        args.out_folder = self.test_folder
+        self.ppi._retrieve_actions(files, strain_id, paths, args)
 
 class Example(object):
 

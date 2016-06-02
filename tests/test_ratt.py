@@ -5,6 +5,7 @@ import shutil
 from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file, import_data
+from mock_args_container import MockClass
 from annogesiclib.ratt import RATT
 
 
@@ -13,7 +14,7 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_run_ratt(self, ratt_path, tar, element, transfer_type, ref, out):
+    def mock_run_ratt(self, ratt_path, tar, ref, out):
         gen_file("test_folder/gffs/tmp.gff", self.example.gff_file)
         gen_file("test_folder/gffs/tmp.ptt", self.example.ptt_file)
         gen_file("test_folder/gffs/tmp.rnt", self.example.rnt_file)
@@ -23,6 +24,7 @@ class Mock_func(object):
 class TestRATT(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         self.ref_embls = "test_folder/embls"
         self.output_path = "test_folder/output"
@@ -36,8 +38,13 @@ class TestRATT(unittest.TestCase):
             os.mkdir(self.tar_fastas)
             os.mkdir(self.ref_fastas)
             os.mkdir(self.gff_outfolder)
-        self.ratt = RATT(self.ref_embls, self.output_path, self.tar_fastas,
-                         self.ref_fastas, self.gff_outfolder)
+        args = self.mock_args.mock()
+        args.output_path = self.output_path
+        args.ref_embls = self.ref_embls
+        args.tar_fastas = self.tar_fastas
+        args.ref_fastas = self.ref_fastas
+        args.gff_outfolder = self.gff_outfolder
+        self.ratt = RATT(args)
         self.example = Example()
 
     def tearDown(self):
@@ -59,7 +66,11 @@ class TestRATT(unittest.TestCase):
         files = ["aaa.gff"]
         ratt_result = "chromosome.aaa.final.embl"
         gen_file(os.path.join(self.output_path, ratt_result), self.example.embl_file)
-        self.ratt._convert_to_gff(ratt_result, self.output_path, self.gff_outfolder, files)
+        args = self.mock_args.mock()
+        args.output_path = self.output_path
+        args.gff_outfolder = self.gff_outfolder
+        self.ratt._convert_to_gff(ratt_result, args, files)
+#        self.ratt._convert_to_gff(ratt_result, self.output_path, self.gff_outfolder, files)
         data = import_data(os.path.join(self.output_path, "aaa.gff"))
         self.assertEqual("\n".join(data), self.example.embl_gff)
         data = import_data(os.path.join(self.gff_outfolder, "aaa.gff"))
@@ -81,21 +92,32 @@ class TestRATT(unittest.TestCase):
         self.assertTrue(os.path.exists("test_folder/embls/gbk_tmp"))
 
     def test_format_and_run(self):
-        pairs = ["NC_007795.1:Staphylococcus_aureus_HG003"]
         self.ratt._run_ratt = Mock_func().mock_run_ratt
-        self.ratt._format_and_run(self.test_folder, "test",
-                                  "chromosome", "test", pairs)
+        args = self.mock_args.mock()
+        args.output_path
+        args.pairs = ["NC_007795.1:Staphylococcus_aureus_HG003"]
+        args.element = "chromosome"
+        self.ratt._format_and_run(args)
 
     def test_annotation_transfer(self):    
-        pairs = ["aaa:bbb"]
         gen_file(os.path.join(self.ref_fastas, "aaa.fa"), self.example.fasta_file)
         gen_file(os.path.join(self.tar_fastas, "bbb.fa"), self.example.fasta_file)
         gen_file(os.path.join(self.ref_embls, "aaa.gbk"), self.example.gbk_file.split("//")[0])
         self.ratt._run_ratt = Mock_func().mock_run_ratt
-        self.ratt.annotation_transfer("test", "element", "test_type",
-                                      self.ref_embls, self.tar_fastas,
-                                      self.ref_fastas, self.output_path,
-                                      True, self.gff_outfolder, pairs)
+        args = self.mock_args.mock()
+        args.element = "element"
+        args.ref_embls = self.ref_embls
+        args.tar_fastas = self.tar_fastas
+        args.ref_fastas = self.ref_fastas
+        args.output_path = self.output_path
+        args.gff_outfolder = self.gff_outfolder
+        args.pairs = ["aaa:bbb"]
+        args.convert = True
+        self.ratt.annotation_transfer(args)
+#        self.ratt.annotation_transfer("test", "element", "test_type",
+#                                      self.ref_embls, self.tar_fastas,
+#                                      self.ref_fastas, self.output_path,
+#                                      True, self.gff_outfolder, pairs)
         self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.gff")))
         self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.rnt")))
         self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.ptt")))

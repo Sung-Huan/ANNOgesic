@@ -70,7 +70,7 @@ class TestGeneOntology(unittest.TestCase):
                    'aaa': {'cellular_component': {}, 'biological_process': {}, 'molecular_function': {}}}
         total_nums = {'All_strain': {'cellular_component': 0, 'total': 0, 'biological_process': 0, 'molecular_function': 0},
                       'aaa': {'cellular_component': 0, 'total': 0, 'biological_process': 0, 'molecular_function': 0}}
-        gos = {'aaa': ['GO:0000003']}
+        gos = {'aaa': {"pro": ['GO:0000003']}}
         go.compare_go_slim(gos, self.example.out_obo, self.example.slim_obos, classes, total_nums)
         self.assertDictEqual(classes, {'All_strain': {'molecular_function': {}, 'cellular_component': {},
                                                       'biological_process': {'reproduction': 1}},

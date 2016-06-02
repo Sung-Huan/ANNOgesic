@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_helper import gen_file, import_data
 import annogesiclib.snp as sn
 from annogesiclib.snp import SNPCalling
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -14,17 +16,15 @@ class Mock_func(object):
         self.example = Example()
 
     def mock_run_tools(self, samtools_path, bcftools_path,
-                       fasta_file, out_bcf, out_raw_prefix, type_):
+                       fasta_file, out_bcf, out_raw_prefix):
         pass
 
     def mock_transcript_snp(self, fasta, snp, out_table_prefix, qual,
-                        seq_path, fasta_prefix, read_depth, stat_path,
-                        types, bam_number, fraction, table_path):
+                        seq_path, fasta_prefix, read_depth, stat_path):
         pass
 
-    def mock_run_sub(self, samtools_path, fasta_file, type_, out_raw_prefix,
-                 bcftools_path, seq_path, prefix, out_table_prefix, quality,
-                 depth, stat_path, bam_number, fraction, table_path):
+    def mock_run_sub(self, fasta_file, type_, out_raw_prefix,
+                     prefix, out_table_prefix, quality, table_path):
         gen_file("test_folder/test", "test")
 
     def mock_run_bam(self, samtools_path, sub_command, bam_file):
@@ -37,6 +37,7 @@ class TestSNPCalling(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         self.fasta = os.path.join(self.test_folder, "fasta")
         self.snp_folder = os.path.join(self.test_folder, "snp")
@@ -46,7 +47,15 @@ class TestSNPCalling(unittest.TestCase):
             os.mkdir(self.fasta)
             os.mkdir(self.snp_folder)
             os.mkdir(self.table)
-        self.snp = SNPCalling("reference", self.test_folder, self.fasta)
+            os.mkdir(os.path.join(self.test_folder, "compare_reference"))
+            os.mkdir(os.path.join(self.test_folder, "compare_reference/seqs"))
+            os.mkdir(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ"))
+            os.mkdir(os.path.join(self.test_folder, "compare_reference/statistics"))
+        args = self.mock_args.mock()
+        args.types = "reference"
+        args.out_folder = self.test_folder
+        args.fastas = self.fasta
+        self.snp = SNPCalling(args)
         self.mock = Mock_func()
 
     def tearDown(self):
@@ -66,12 +75,16 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(fasta, self.example.fasta)
         snp = os.path.join(self.test_folder, "NC_007795.1.csv")
         gen_file(snp, self.example.snp)
-        self.snp._transcript_snp(fasta, snp, "test", 10,
-                        self.test_folder, "test", 5, self.snp_folder,
-                        "reference", 2, 0.3, self.table)
-        datas = import_data(os.path.join(self.snp_folder, "stat_test_reference_SNP.csv"))
+        args = self.mock_args.mock()
+        args.depth = 5
+        args.fraction = 0.3
+        args.quality = 2
+        os.mkdir(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ/test"))
+        self.snp._transcript_snp(fasta, snp, "test", "with",
+                                 "test", 10, self.table, args)
+        datas = import_data(os.path.join(self.test_folder, "compare_reference/statistics/stat_test_with_BAQ_SNP.csv"))
         self.assertEqual("\n".join(datas), self.example.out_stat)
-        datas = import_data(os.path.join(self.test_folder, "test_NC_007795.1_1_1.fa"))
+        datas = import_data(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ/test/test_NC_007795.1_1_1.fa"))
         self.assertEqual("\n".join(datas), ">NC_007795.1\nAaTTGaaTCCCGAACGACAGTTAT")
         os.remove("test_seq_reference.csv")
         os.remove("test_depth_only.vcf")
@@ -81,19 +94,19 @@ class TestSNPCalling(unittest.TestCase):
     def test_run_sub(self):
         self.snp._run_tools = self.mock.mock_run_tools
         self.snp._transcript_snp = self.mock.mock_transcript_snp
-        os.mkdir(os.path.join(self.test_folder, "with_BAQ"))
-        self.snp._run_sub("test", "fasta", "with", "no",
-                          "test", self.test_folder, "test", "no", 10,
-                          3, "stat", 2, 0.5, "table")
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "with_BAQ/test")))
+        file_prefixs = {"raw_prefix": "test",
+                        "table_prefix": "test"}
+        args = self.mock_args.mock()
+        self.snp._run_sub(args, "fasta", "with", file_prefixs, "test",
+                          self.test_folder, 10)
+        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ/test")))
 
     def test_run_program(self):
         self.snp._run_sub = self.mock.mock_run_sub
-        self.snp._run_program(["5"], "test", "test", "fasta", "test", "test", 10, "seq",
-                              "test", 10, "stat", 2, 0.5, "out", "table")
-        self.assertFalse(os.path.exists(os.path.join(self.test_folder, "test")))
-        self.snp._run_program(["1"], "test", "test", "fasta", "test", "test", 10, "seq",
-                              "test", 10, "stat", 2, 0.5, "out", "table")
+        args = self.mock_args.mock()
+        args.program = ["1"]
+        self.snp._run_program("fasta", "test", "test", 10,
+                              "table", args)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test")))
 
     def test_detect_fasta(self):
@@ -101,15 +114,17 @@ class TestSNPCalling(unittest.TestCase):
         self.assertEqual(datas, (True, 'test'))
 
     def test_merge_bams(self):
+        args = self.mock_args.mock()
+        args.frag_bams = os.path.join(self.test_folder, "frag_bams")
+        args.normal_bams = os.path.join(self.test_folder, "tex_bams")
+        os.mkdir(args.normal_bams)
+        os.mkdir(args.frag_bams)
         self.snp._run_bam = self.mock.mock_run_bam
-        normal_bams = os.path.join(self.test_folder, "tex_bams")
-        frag_bams = os.path.join(self.test_folder, "frag_bams")
-        os.mkdir(normal_bams)
-        os.mkdir(frag_bams)
-        gen_file(os.path.join(normal_bams, "tex.bam"), "test")
-        gen_file(os.path.join(normal_bams, "notex.bam"), "test")
-        gen_file(os.path.join(frag_bams, "farg.bam"), "test")
-        num = self.snp._merge_bams(normal_bams, frag_bams, "test", self.test_folder)
+        gen_file(os.path.join(args.normal_bams, "tex.bam"), "test")
+        gen_file(os.path.join(args.normal_bams, "notex.bam"), "test")
+        gen_file(os.path.join(args.frag_bams, "farg.bam"), "test")
+        args.samtools_path = "test"
+        num = self.snp._merge_bams(args)
         self.assertEqual(num, 3)
 
     def test_modify_header(self):
@@ -129,20 +144,22 @@ class TestSNPCalling(unittest.TestCase):
         self.snp._run_sub = self.mock.mock_run_sub
         self.snp._run_tools = self.mock.mock_run_tools
         self.snp._transcript_snp = self.mock.mock_transcript_snp
-        normal_bams = os.path.join(self.test_folder, "tex_bams")
-        frag_bams = os.path.join(self.test_folder, "frag_bams")
-        os.mkdir(normal_bams)
-        os.mkdir(frag_bams)
-        gen_file(os.path.join(normal_bams, "tex.bam"), "test")
-        gen_file(os.path.join(normal_bams, "notex.bam"), "test")
-        gen_file(os.path.join(frag_bams, "farg.bam"), "test")
         gen_file(os.path.join(self.fasta, "test.fa"), ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
         gen_file(os.path.join(self.test_folder, "header"), self.example.bam)
         gen_file(os.path.join(self.test_folder, "whole_reads.bam"), "test")
         gen_file(os.path.join(self.test_folder, "whole_reads_sorted.bam"), "test")
-        self.snp.run_snp_calling("test", "test", "reference", ["1"],
-                        self.fasta, normal_bams, frag_bams, 10, 5,
-                        self.test_folder, 0.5)
+        args = self.mock_args.mock()
+        args.types = "reference"
+        args.program = ["1"]
+        args.frag_bams = os.path.join(self.test_folder, "frag_bams")
+        args.normal_bams = os.path.join(self.test_folder, "tex_bams")
+        os.mkdir(args.normal_bams)
+        os.mkdir(args.frag_bams)
+        gen_file(os.path.join(args.normal_bams, "tex.bam"), "test")
+        gen_file(os.path.join(args.normal_bams, "notex.bam"), "test")
+        gen_file(os.path.join(args.frag_bams, "farg.bam"), "test")
+        args.samtools_path = "test"
+        self.snp.run_snp_calling(args)
 
 
 class Example(object):
@@ -164,7 +181,7 @@ the number of QUAL which is between 70 and 80 = 0
 the number of QUAL which is between 80 and 90 = 0
 the number of QUAL which is between 90 and 100 = 1
 the number of QUAL which is between 100 and 110 = 0
-the total numbers of QUAL which is higher than 10 = 2"""
+the total numbers of QUAL which is higher than 2 = 2"""
     bam = """@HD     VN:1.0
 @SQ     SN:NC_007795.1  LN:2821361
 @PG     ID:segemehl     VN:0.1.4-$Rev: 380 $ ($Date: 2012-12-17 12:43:51 +0100 (Mon, 17 Dec 2012) $)    CL:segemehl --query RAPL_analysis/output/read_alignments-processed_reads/pMEM_OD_0.2.fa_processed.fa --index RAPL_analysis/output/read_alignments-index/index.idx --database RAPL_analysis/input/reference_sequences/NC_007795.fa --outfile RAPL_analysis/output/read_alignments-alignments/pMEM_OD_0.2.fa_alignments.sam --hitstrategy 1 --accuracy 95 --evalue 5 --threads 24 --nomatchfilename RAPL_analysis/output/read_alignments-unaligned_reads/pMEM_OD_0.2.fa_unaligned.fa"""

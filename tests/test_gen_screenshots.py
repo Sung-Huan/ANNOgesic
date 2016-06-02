@@ -6,6 +6,8 @@ from io import StringIO
 sys.path.append(".")
 from mock_gff3 import Create_generator
 import annogesiclib.gen_screenshots as gs
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -19,6 +21,7 @@ class TestGenScreenshots(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -45,8 +48,14 @@ class TestGenScreenshots(unittest.TestCase):
         lib_t = "wig1 wig2"
         lib_n = "wig3 wig4"
         lib_f = "wig5"
-        gs.print_batch(out, "+", lib_t, lib_n, lib_f, "fasta", "main_gff", "expend",
-                       "side1 side2", 1000, self.test_folder, "test")
+        args = self.mock_args.mock()
+        args.fasta = "fasta"
+        args.main_gff = "main_gff"
+        args.present = "expend"
+        args.height = 1000
+        args.side_gffs = "side1 side2"
+        args.output_folder = self.test_folder
+        gs.print_batch(args, out, "+", lib_t, lib_n, lib_f, "test")
         self.assertEqual(out.getvalue(), self.example.out)
 
     def test_gen_batch(self):
@@ -59,7 +68,8 @@ class TestGenScreenshots(unittest.TestCase):
                     "end": 6, "phase": ".", "strand": "+", "score": "."}
         attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
-        gs.gen_batch(lib_t, lib_n, lib_f, "+", [gff], out)
+        seq = {"aaa": "ATATGGCCGACGAGTTCGACGATACAACCCGTGGGG"}
+        gs.gen_batch(lib_t, lib_n, lib_f, "+", [gff], out, seq)
         self.assertEqual(out.getvalue(), self.example.out_print_wig)
 
 class Example(object):
@@ -128,7 +138,7 @@ load /home/silas/ANNOgesic/5
 maxPanelHeight 1000
 snapshotDirectory /home/silas/ANNOgesic/test_folder/test/forward
 """
-    out_print_wig = """goto aaa:-197-206
+    out_print_wig = """goto aaa:1-36
 setDataRange 0,10
 snapshot aaa:3-6.png
 """

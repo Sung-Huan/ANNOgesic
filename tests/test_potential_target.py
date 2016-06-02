@@ -6,6 +6,7 @@ from io import StringIO
 sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data, gen_file
+from mock_args_container import MockClass
 import annogesiclib.potential_target as pt
 
 
@@ -13,6 +14,7 @@ class TestPotentialTarget(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -53,7 +55,11 @@ class TestPotentialTarget(unittest.TestCase):
         gff_file = os.path.join(self.test_folder, "gff")
         gen_file(seq_file, self.example.seq_file)
         gen_file(gff_file, self.example.gff_file)
-        pt.potential_target(gff_file, seq_file, self.test_folder, 2, 10, ["CDS"])
+        args = self.mock_args.mock()
+        args.tar_start = 2
+        args.tar_end = 10
+        args.features = ["CDS"]
+        pt.potential_target(gff_file, seq_file, self.test_folder, args)
         data = import_data(os.path.join(self.test_folder, "aaa_target.fa"))
         self.assertTrue("\n".join(data), self.example.all_result)
 

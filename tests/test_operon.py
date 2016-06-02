@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_helper import gen_file
 import annogesiclib.operon as op
 from annogesiclib.operon import OperonDetection
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -25,6 +27,7 @@ class TestOperonDetection(unittest.TestCase):
 
     def setUp(self):
         self.test_folder = "test_folder"
+        self.mock_args = MockClass()
         self.mock = Mock_func()
         self.tsss = os.path.join(self.test_folder, "tsss")
         self.trans = os.path.join(self.test_folder, "trans")
@@ -32,6 +35,7 @@ class TestOperonDetection(unittest.TestCase):
         self.utr3s = os.path.join(self.test_folder, "utr3s")
         self.output = os.path.join(self.test_folder, "output")
         self.gffs = os.path.join(self.test_folder, "gffs")
+        self.out_gff = os.path.join(self.output, "gffs")
         self.stat = os.path.join(self.test_folder, "stat")
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -46,9 +50,16 @@ class TestOperonDetection(unittest.TestCase):
             os.mkdir(self.utr3s)
             os.mkdir(os.path.join(self.utr3s, "tmp"))
             os.mkdir(self.output)
+            os.mkdir(self.out_gff)
             os.mkdir(os.path.join(self.output, "tables"))
-        self.operon = OperonDetection(self.tsss, self.trans, self.utr5s,
-                                      self.utr3s, self.output, None)
+        args = self.mock_args.mock()
+        args.tsss = self.tsss
+        args.trans = self.trans
+        args.utr5s = self.utr5s
+        args.utr3s = self.utr3s
+        args.output_folder = self.output
+        args.terms = None
+        self.operon = OperonDetection(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -59,7 +70,12 @@ class TestOperonDetection(unittest.TestCase):
         gen_file(os.path.join(self.tsss, "tmp", "test_TSS.gff"), "test")
         gen_file(os.path.join(self.trans, "tmp", "test_transcript.gff"), "test")
         gen_file(os.path.join(self.gffs, "test.gff"), "test")
-        self.operon._detect_operon(["test"], self.gffs, 3, 3, 100)        
+        args = self.mock_args.mock()
+        args.gffs = self.out_gff
+        args.term_fuzzy = 3
+        args.tss_fuzzy = 3
+        args.length = 100
+        self.operon._detect_operon(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(self.output, "tables",
                         "operon_test.csv")))
     
@@ -73,14 +89,17 @@ class TestOperonDetection(unittest.TestCase):
 
     def test_combine_gff(self):
         op.combine_gff = self.mock.mock_combine_gff
-        print(os.path.exists(os.path.join(self.tsss, "tmp")))
         gen_file(os.path.join(self.tsss, "tmp", "test_TSS.gff"), "test")
         gen_file(os.path.join(self.trans, "tmp", "test_transcript.gff"), "test")
         gen_file(os.path.join(self.gffs, "test.gff"), "test")
         gen_file(os.path.join(self.utr5s, "tmp", "test_5UTR.gff"), "test")
         gen_file(os.path.join(self.utr3s, "tmp", "test_3UTR.gff"), "test")
-        self.operon._combine_gff(["test"], self.test_folder, self.gffs, 3, 3)
-        self.assertTrue(os.path.exists(os.path.join(self.gffs, "test_all_features.gff")))
+        args = self.mock_args.mock()
+        args.gffs = self.out_gff
+        args.term_fuzzy = 3
+        args.tss_fuzzy = 3
+        self.operon._combine_gff(["test"], args)
+        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_all_features.gff")))
 
 if __name__ == "__main__":
     unittest.main()

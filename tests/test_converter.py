@@ -8,6 +8,8 @@ from io import StringIO
 sys.path.append(".")
 from mock_helper import import_data
 from annogesiclib.converter import Converter
+from mock_args_container import MockClass
+
 
 class Mock_gff3_parser(object):
 
@@ -128,6 +130,7 @@ class TestConverter(unittest.TestCase):
         self.circ_all = self.example.circrna_all
         self.circ_best = self.example.circrna_best
         self.test_folder = "test_folder"
+        self.mock_args = MockClass()
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
 
@@ -259,8 +262,11 @@ class TestConverter(unittest.TestCase):
         out_filter = os.path.join(self.test_folder, "best.gff")  
         with open(circ_file, "w") as ch:
             ch.write(self.circ_file)
-        self.converter.convert_circ2gff(circ_file, 5, 0.5, 0.5,
-                                        out_all, out_filter)
+        args = self.mock_args.mock()
+        args.start_ratio = 0.5
+        args.end_ratio = 0.5
+        args.support = 5
+        self.converter.convert_circ2gff(circ_file, args, out_all, out_filter)
         datas = import_data(out_all)
         self.assertEqual(set(datas), set(self.circ_all.split("\n")))
         datas = import_data(out_filter)

@@ -32,7 +32,7 @@ class TestSeqModifier(unittest.TestCase):
         self.assertEqual(self.seq._seq, "AGTTATATAGGAAGGCCC")
 
     def test_remove(self):
-        self.seq.remove(8)
+        self.seq.remove(8, 1)
         self.assertEqual(self.seq._seq, "AATTATAAGGAAGGCCC")
 
     def test_insert(self):

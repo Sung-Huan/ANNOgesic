@@ -36,7 +36,9 @@ class TestStatTaComparison(unittest.TestCase):
     def test_detect_tas_region(self):
         out = StringIO()
         out_tss = StringIO()
-        stat = stc.detect_tas_region(self.example.tsss, self.example.tas, out, out_tss, 5)
+        tsss = copy.deepcopy(self.example.tsss)
+        trans = copy.deepcopy(self.example.tas)
+        stat = stc.detect_tas_region(tsss, trans, out, out_tss, 5)
         self.assertDictEqual(stat, {'TSS_with_tran': 1, 'TSS_no_tran': 0, 'no_TSS': 0, 'with_TSS': 1})
 
     def test_del_attributes(self):
@@ -110,7 +112,9 @@ class TestStatTaComparison(unittest.TestCase):
                  'aaa': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0}}
         out_t = StringIO()
         out_g = StringIO()
-        stc.detect_tag_region(self.example.gffs, self.example.tas, stats, out_t, out_g, "gene")
+        trans = copy.deepcopy(self.example.tas)
+        gffs = copy.deepcopy(self.example.gffs)
+        stc.detect_tag_region(gffs, trans, stats, out_t, out_g, "gene")
         self.assertDictEqual(stats, {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0},
                                      'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0}})
 
@@ -119,7 +123,9 @@ class TestStatTaComparison(unittest.TestCase):
         check = [0, 0, 0, 0, 0]
         stats = {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0},
                  'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0}}
-        stc.compare_ta_gff(self.example.gffs, self.example.tas[0], check, tran_type, False, stats, "gene")
+        gffs = copy.deepcopy(self.example.gffs)
+        trans = copy.deepcopy(self.example.tas)
+        stc.compare_ta_gff(gffs, trans[0], check, tran_type, False, stats, "gene")
         self.assertListEqual(check, [0, 0, 0, 1, 0])
         self.assertDictEqual(stats, {'aaa': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'gene': 1},
                                      'All': {'asae': 0, 'bsbe': 0, 'asbe': 2, 'bsae': 0, 'other': 0, 'gene': 1}})
@@ -127,14 +133,14 @@ class TestStatTaComparison(unittest.TestCase):
     def test_assign_parent(self):
         gffs = copy.deepcopy(self.example.gffs)
         trans = copy.deepcopy(self.example.tas)
-        stc.assign_parent(gffs[0], trans[0])
+        stc.assign_parent(gffs[0], trans[0], "CDS")
         self.assertDictEqual(gffs[0].attributes, {'Parent_tran': 'tran0',
                                                   'locus_tag': 'SAOUHSC_00001', 'protein_id': 'YP_498609.1',
                                                   'gene': 'dnaA', 'Name': 'YP_498609.1', 'ID': 'gene0'})
-        self.assertDictEqual(trans[0].attributes, {'associated_gene': 'SAOUHSC_00001',
+        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS&cover_CDS',
                                                    'associated_tss': 'TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+',
-                                                   'associated_cds': 'YP_498609.1&YP_498610.1', 'type': 'cover_CDS&cover_CDS',
-                                                   'Name': 'Transcript_00000', 'ID': 'tran0'})
+                                                   'Name': 'Transcript_00000', 'associated_CDS': 'SAOUHSC_00001',
+                                                   'ID': 'tran0', 'associated_cds': 'YP_498609.1&YP_498610.1'})
 
 
     def test_print_tag_stat(self):
@@ -151,9 +157,9 @@ class TestStatTaComparison(unittest.TestCase):
         stat_file = os.path.join(self.test_folder, "stat")
         out_ta_file = os.path.join(self.test_folder, "out_ta.gff")
         out_gff_file = os.path.join(self.test_folder, "out.gff")
-        stc.stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file, "gene")
+        stc.stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file, ["gene"])
         datas = import_data(stat_file)
-        self.assertEqual("\n".join(datas), "All strains:\nThe transcriptome assembly information compares with annotation gff file:\n" + \
+        self.assertEqual("\n".join(datas), "For gene:\n\tAll strains:\n\tThe transcriptome assembly information compares with gene:\n" + \
                                             self.example.print_tag)
         datas, attributes = extract_info(out_ta_file, "file")
         self.assertListEqual(datas, ['aaa\tfragmented_and_normal\tTranscript\t313\t3344\t.\t+\t.'])
@@ -199,12 +205,12 @@ aaa	Refseq	CDS	517	1878	.	+	.	protein_id=YP_498609.1;gene=dnaA;ID=cds0;Parent=ge
 	Transcript has no relationship with TSS:0 (0.0)
 	TSS starts or overlap with transcript:1 (1.0)
 	TSS has no relationship with transcript:0 (0.0)"""
-    print_tag = """	Transcript starts before and ends after gene:1 (1.0)
-	Transcript starts after and ends before gene:0 (0.0)
-	Transcript starts before and ends before gene:0 (0.0)
-	Transcript starts after and ends after gene:0 (0.0)
-	Transcript has no overlap of gene:0 (0.0)
-	Total genes which have gene expression:1 (1.0)"""
+    print_tag = """		Transcript starts before and ends after gene:1 (1.0)
+		Transcript starts after and ends before gene:0 (0.0)
+		Transcript starts before and ends within gene:0 (0.0)
+		Transcript starts within and ends after gene:0 (0.0)
+		Transcript has no overlap of gene:0 (0.0)
+		Total genes which have expression:1 (1.0)"""
 
 
 if __name__ == "__main__":

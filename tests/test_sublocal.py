@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_helper import gen_file, import_data, extract_info
 import annogesiclib.sublocal as su
 from annogesiclib.sublocal import SubLocal
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -43,6 +45,7 @@ class TestSubLocal(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.mock = Mock_func()
         self.test_folder = "test_folder"
         self.out = "test_folder/output"
@@ -54,28 +57,38 @@ class TestSubLocal(unittest.TestCase):
             os.mkdir(self.test_folder)
             os.mkdir(self.out)
             os.mkdir(self.fastas)
+            os.mkdir(os.path.join(self.fastas, "tmp"))
             os.mkdir(self.gffs)
+            os.mkdir(os.path.join(self.gffs, "tmp"))
             os.mkdir(self.stat)
             os.mkdir(self.trans)
-        self.sub = SubLocal(self.gffs, self.fastas, self.out, self.trans)
+        args = self.mock_args.mock()
+        args.gffs = self.gffs
+        args.fastas = self.fastas
+        args.out_folder = self.out
+        args.trans = self.trans
+        self.sub = SubLocal(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
 
     def test_get_protein_seq(self):
-        gen_file(os.path.join(self.fastas, "aaa.fa"), self.example.fasta_file)
+        gen_file(os.path.join(self.fastas, "tmp/aaa.fa"), self.example.fasta_file)
         gff = "aaa.gff"
-        gen_file(os.path.join(self.gffs, gff), self.example.gff_file)
+        gen_file(os.path.join(self.gffs, "tmp", gff), self.example.gff_file)
         gen_file(os.path.join(self.trans, "aaa_transcript.gff"), self.example.tran_file)
-        prefix = self.sub._get_protein_seq(self.fastas, gff, self.test_folder, self.gffs, self.trans)
+        prefix = self.sub._get_protein_seq(gff, self.test_folder, self.trans)
         self.assertEqual(prefix, "aaa")
 
     def test_run_psortb(self):
         self.sub._psortb = self.mock.mock_psortb
         tmp_result = os.path.join(self.out, "tmp_results")
         os.mkdir(tmp_result)
-        self.sub._run_psortb("aaa", self.out, "positive", "psortb_path", self.test_folder, tmp_result)
+        args = self.mock_args.mock()
+        args.psortb_path = "psortb_path"
+        args.gram = "positive"
+        self.sub._run_psortb(args, "aaa", self.out, self.test_folder, tmp_result)
         self.assertTrue(os.path.exists(os.path.join(self.out, "tmp_log")))
         self.assertTrue(os.path.exists(os.path.join(tmp_result,
                        "_".join(["aaa", "raw.txt"]))))

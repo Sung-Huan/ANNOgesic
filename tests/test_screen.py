@@ -6,12 +6,14 @@ from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file, import_data
 from annogesiclib.screen import Screen
+from mock_args_container import MockClass
 
 
 class TestScreen(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         self.output = os.path.join(self.test_folder, "output")
         self.tex_wig = os.path.join(self.test_folder, "tex")
@@ -20,35 +22,45 @@ class TestScreen(unittest.TestCase):
             os.mkdir(self.test_folder)
             os.mkdir(self.tex_wig)
             os.mkdir(self.frag_wig)
+            os.mkdir(self.output)
         self.fasta = os.path.join(self.test_folder, "aaa.fa")
         gen_file(self.fasta, self.example.fasta)
-        self.screen = Screen(self.output, self.fasta)
+        args = self.mock_args.mock()
+        args.output_folder = self.output
+        args.fasta = self.fasta
+        self.screen = Screen(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
 
     def test_screenshot(self):
-        tlibs = ["tex_1_f.wig:tex:1:a:+", "tex_1_r.wig:tex:1:a:-",
-                 "notex_1_f.wig:notex:1:a:+", "notex_1_r.wig:notex:1:a:-"]
-        flibs = ["frag_f.wig:frag:1:a:+", "frag_r.wig:frag:1:a:-"]
-        main_gff = os.path.join(self.test_folder, "main.gff")
-        gen_file(main_gff, self.example.main_gff)
-        side_gff = os.path.join(self.test_folder, "side.gff")
-        gen_file(side_gff, self.example.side_gff)
         gen_file(os.path.join(self.tex_wig, "tex_1_f.wig"), self.example.wig_f)
         gen_file(os.path.join(self.tex_wig, "notex_1_f.wig"), self.example.wig_f)
         gen_file(os.path.join(self.frag_wig, "frag_f.wig"), self.example.wig_f)
         gen_file(os.path.join(self.tex_wig, "tex_1_r.wig"), self.example.wig_r)
         gen_file(os.path.join(self.tex_wig, "notex_1_r.wig"), self.example.wig_r)
         gen_file(os.path.join(self.frag_wig, "frag_r.wig"), self.example.wig_r)
-        self.screen.screenshot(main_gff, [side_gff], self.fasta, self.frag_wig,
-                    self.tex_wig, 1000, tlibs, flibs, "expand", self.output)
-        self.assertTrue(os.path.exists(os.path.join(self.output, "aaa", "forward")))
-        self.assertTrue(os.path.exists(os.path.join(self.output, "aaa", "reverse")))
-        datas = import_data(os.path.join(self.output, "aaa", "forward.txt"))
-        self.assertEqual("\n".join(datas), self.example.out_f)
-        datas = import_data(os.path.join(self.output, "aaa", "reverse.txt"))
+        args = self.mock_args.mock()
+        args.fasta = self.fasta
+        args.main_gff = os.path.join(self.test_folder, "main.gff")
+        gen_file(args.main_gff, self.example.main_gff)
+        side_gff = os.path.join(self.test_folder, "side.gff")
+        args.side_gffs = [side_gff]
+        gen_file(side_gff, self.example.side_gff)
+        args.frag_wigs = self.frag_wig
+        args.tex_wigs = self.tex_wig
+        args.height = 1000
+        args.tlibs = ["tex_1_f.wig:tex:1:a:+", "tex_1_r.wig:tex:1:a:-",
+                      "notex_1_f.wig:notex:1:a:+", "notex_1_r.wig:notex:1:a:-"]
+        args.flibs = ["frag_f.wig:frag:1:a:+", "frag_r.wig:frag:1:a:-"]
+        args.present = "expand"
+        args.output_folder = self.output
+        self.screen.screenshot(args)
+        self.assertTrue(os.path.exists(os.path.join(self.output, "screenshots", "aaa", "forward")))
+        self.assertTrue(os.path.exists(os.path.join(self.output, "screenshots", "aaa", "reverse")))
+        datas = import_data(os.path.join(self.output, "screenshots", "aaa", "forward.txt"))
+        datas = import_data(os.path.join(self.output, "screenshots", "aaa", "reverse.txt"))
         self.assertEqual("\n".join(datas), self.example.out_r)
 
     def test_import_libs(self):

@@ -5,6 +5,7 @@ import shutil
 from io import StringIO
 sys.path.append(".")
 from mock_gff3 import Create_generator
+from mock_args_container import MockClass
 import annogesiclib.get_polyT as gpt
 
 
@@ -12,6 +13,7 @@ class TestGetPolyT(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -26,7 +28,7 @@ class TestGetPolyT(unittest.TestCase):
                  {"r_stem": 3, "l_stem": 3, "miss": 2, "print": False, "strain": "aaa", "end": 50, "start": 10},
                  {"r_stem": 6, "l_stem": 6, "miss": 0, "print": False, "strain": "bbb", "end": 450, "start": 60},]
         terms = []
-        gpt.filter_term(cands, terms)
+        gpt.filter_term(cands, terms, 0.25)
         self.assertDictEqual(terms[0], {'end': 500, 'l_stem': 6, 'miss': 0, 'print': False,
                                         'strain': 'aaa', 'r_stem': 6, 'start': 30})
         self.assertDictEqual(terms[1], {'end': 450, 'l_stem': 6, 'miss': 0, 'print': False,
@@ -47,24 +49,32 @@ class TestGetPolyT(unittest.TestCase):
     def test_detect_candidates(self):
         seq = "GATCGGCAGTATTAAACGTACTTTTTTTTTT"
         sec = "...((((((((....))))))..))......"
+        args = self.mock_args.mock()
+        args.max_loop = 10
+        args.min_loop = 3
+        args.max_stem = 20
+        args.min_stem = 4
+        args.miss_rate = 0.25
+        args.at_tail = 3
+        args.range_u = 6
         cands = gpt.detect_candidates(seq, sec, "test", "aaa", 30, 58,
-                                      "AAA_00001", "AAA_00002", "+")
-        refs = [{'l_stem': 4, 'name': 'test', 'strain': 'aaa', 'detect_m': False,
-                 'parent_p': 'AAA_00001', 'miss': 0, 'ut': 4, 'parent_m': 'AAA_00002',
-                 'detect_p': False, 'loop': 4, 'end': 58, 'strand': '+',
-                 'print': False, 'length': 12, 'r_stem': 4, 'start': 27},
-                {'l_stem': 5, 'name': 'test', 'strain': 'aaa', 'detect_m': False,
-                 'parent_p': 'AAA_00001', 'miss': 0, 'ut': 5, 'parent_m': 'AAA_00002',
-                 'detect_p': False, 'loop': 4, 'end': 59, 'strand': '+',
-                 'print': False, 'length': 14, 'r_stem': 5, 'start': 26},
-                {'l_stem': 6, 'name': 'test', 'strain': 'aaa', 'detect_m': False,
-                 'parent_p': 'AAA_00001', 'miss': 0, 'ut': 6, 'parent_m': 'AAA_00002',
-                 'detect_p': False, 'loop': 4, 'end': 60, 'strand': '+',
-                 'print': False, 'length': 16, 'r_stem': 6, 'start': 25},
-                {'l_stem': 7, 'name': 'test', 'strain': 'aaa', 'detect_m': False,
-                 'parent_p': 'AAA_00001', 'miss': 2, 'ut': 6, 'parent_m': 'AAA_00002',
-                 'detect_p': False, 'loop': 4, 'end': 63, 'strand': '+',
-                 'print': False, 'length': 20, 'r_stem': 9, 'start': 24}]
+                                      "gene_0", "gene_1", "+", args)
+        refs = [{'strain': 'aaa', 'print': False, 'l_stem': 4, 'parent_m': 'gene_1',
+                 'parent_p': 'gene_0', 'detect_m': False, 'ut': 4, 'start': 27,
+                 'length': 12, 'loop': 4, 'end': 58, 'miss': 0, 'r_stem': 4,
+                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                {'strain': 'aaa', 'print': False, 'l_stem': 5, 'parent_m': 'gene_1',
+                 'parent_p': 'gene_0', 'detect_m': False, 'ut': 5, 'start': 26,
+                 'length': 14, 'loop': 4, 'end': 59, 'miss': 0, 'r_stem': 5,
+                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                {'strain': 'aaa', 'print': False, 'l_stem': 6, 'parent_m': 'gene_1',
+                 'parent_p': 'gene_0', 'detect_m': False, 'ut': 6, 'start': 25,
+                 'length': 16, 'loop': 4, 'end': 60, 'miss': 0, 'r_stem': 6,
+                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                {'strain': 'aaa', 'print': False, 'l_stem': 7, 'parent_m': 'gene_1',
+                 'parent_p': 'gene_0', 'detect_m': False, 'ut': 6, 'start': 24,
+                 'length': 20, 'loop': 4, 'end': 63, 'miss': 2, 'r_stem': 9,
+                 'name': 'test', 'detect_p': False, 'strand': '+'}]
         for index in range(len(cands)):
             self.assertDictEqual(cands[index], refs[index])
 
@@ -72,18 +82,23 @@ class TestGetPolyT(unittest.TestCase):
         term = {"strain": "aaa", "start": 11, "end": 14}
         detects = {"parent_p": False, "parent_m": False}
         parent = gpt.check_parent(self.example.cdss, term, detects, "+", 3, 3, "parent_p")
-        self.assertEqual(parent, "AAA_00001")
+        self.assertEqual(parent, "gene_0")
         parent = gpt.check_parent(self.example.cdss, term, detects, "-", 3, 3, "parent_m")
-        self.assertEqual(parent, "AAA_00002")
+        self.assertEqual(parent, "gene_1")
 
     def test_parents(self):
-        terms = [{"strain": "aaa", "start": 11, "end": 14, "parent_p": "AAA_00001", "parent_m": "AAA_00002"},
+        terms = [{"strain": "aaa", "start": 11, "end": 14, "parent_p": "gene_0", "parent_m": "gene_1"},
                  {"strain": "aaa", "start": 12, "end": 15, "parent_p": "tran0:1-11_+", "parent_m": "tran1:16-30_-"}]
-        gpt.parents(terms, self.example.cdss, 10, 10, 10, 10)
-        self.assertDictEqual(terms[0], {'parent_p': 'AAA_00001', 'parent_m': 'AAA_00002',
+        args = self.mock_args.mock()
+        args.fuzzy_up_gene = 10
+        args.fuzzy_up_ta = 10
+        args.fuzzy_down_gene = 10
+        args.fuzzy_down_ta = 10
+        gpt. parents(terms, self.example.cdss, args)
+        self.assertDictEqual(terms[0], {'parent_p': 'gene_0', 'parent_m': 'gene_1',
                                         'start': 11, 'strain': 'aaa', 'end': 14})
-        self.assertDictEqual(terms[1], {'parent_p': 'tran0:1-11_+,AAA_00001',
-                                        'parent_m': 'tran1:16-30_-,AAA_00002', 'start': 12,
+        self.assertDictEqual(terms[1], {'parent_p': 'tran0:1-11_+,gene_0',
+                                        'parent_m': 'tran1:16-30_-,gene_1', 'start': 12,
                                         'strain': 'aaa', 'end': 15})
 
     def test_compare_anno(self):
@@ -95,18 +110,18 @@ class TestGetPolyT(unittest.TestCase):
         self.assertDictEqual(terms[1], {"strain": "aaa", "start": 9, "end": 18, "strand": "-"})
 
 class Example(object):
-    cds_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+    cds_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 3,
                  "end": 10, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 16,
+                {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 16,
                  "end": 30, "phase": ".", "strand": "-", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 38,
+                {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 38,
                  "end": 50, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 54,
+                {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 54,
                  "end": 60, "phase": ".", "strand": "+", "score": "."}]
-    attributes_cds = [{"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
-                      {"ID": "CDS1", "Name": "CDS_1", "protein_id": "AAA_00002"},
-                      {"ID": "CDS2", "Name": "CDS_2"},
-                      {"ID": "CDS3", "Name": "CDS_3"}]
+    attributes_cds = [{"ID": "gene0", "Name": "gene_0", "locus_tag": "AAA_00001"},
+                      {"ID": "gene1", "Name": "gene_1", "protein_id": "AAA_00002"},
+                      {"ID": "gene2", "Name": "gene_2"},
+                      {"ID": "gene3", "Name": "gene_3"}]
     cdss = []
     for index in range(0, 4):
         cdss.append(Create_generator(cds_dict[index], attributes_cds[index], "gff"))

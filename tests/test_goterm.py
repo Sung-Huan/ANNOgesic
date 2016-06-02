@@ -5,11 +5,13 @@ import shutil
 from io import StringIO
 sys.path.append(".")
 from annogesiclib.goterm import GoTermFinding
+from mock_args_container import MockClass
 
 
 class TestGetPolyT(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -23,7 +25,11 @@ class TestGetPolyT(unittest.TestCase):
         self.trans = os.path.join(self.test_folder, "tran_folder")
         if (not os.path.exists(self.trans)):
             os.mkdir(self.trans)
-        self.go = GoTermFinding(self.test_folder, self.gffs, self.trans)
+        args = self.mock_args.mock()
+        args.out_folder = self.test_folder
+        args.gffs = self.gffs
+        args.trans = self.trans
+        self.go = GoTermFinding(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):

@@ -8,11 +8,14 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data, gen_file, extract_info
 import annogesiclib.sRNA_class as sc
+from mock_args_container import MockClass
+
 
 class TestsRNAClass(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -37,7 +40,12 @@ class TestsRNAClass(unittest.TestCase):
         strain = "aaa"
         checks = {"limit": False, "first": True, "utr": False, "inter": False}
         srna_datas = {"aaa": self.example.srnas, "all": self.example.srnas}
-        class_num, index = sc.print_stat_title(checks, out_stat, strain, srna_datas, 0, 0, 1)
+        args = self.mock_args.mock()
+        args.energy = 0
+        args.nr_hits_num = 0
+        args.import_info = ["tss", "sec_str", "blast_nr", "blast_srna"]
+        class_num, index = sc.print_stat_title(checks, out_stat, strain, srna_datas,
+                                               1, args)
         self.assertEqual(out_stat.getvalue(), """1 - the normalized(by length of sRNA) free energy change of secondary structure below to 0
 2 - sRNA candidates start with TSS (3'UTR derived and interCDS sRNA also includes the sRNA candidates which start with processing site.)
 3 - blast can not find the homology from nr database (the cutoff is 0).
@@ -68,7 +76,7 @@ All strains:
         num_srna = {"total": 0, "intergenic": 0, "5'UTR_derived": 0,
                     "3'UTR_derived": 0, "interCDS": 0, "in_CDS": 0}
         checks = {"limit": False, "first": True, "utr": True,
-                  "inter": True, "in_CDS": True}
+                  "inter": True, "in_CDS": True, "antisense": False}
         datas_rna = sc.import_data(5, datas, index, num_srna,
                                    "aaa", checks, 0, 0)
         self.assertEqual(datas_rna["5'UTR_derived"]["class_4"][0].start, 230)
@@ -98,7 +106,7 @@ All strains:
         self.assertEqual(srna_datas["aaa"][1].start, 230)
         self.assertEqual(srna_datas["bbb"][0].start, 5166)
         self.assertListEqual(strains, ['all', 'aaa', 'bbb'])
-        self.assertDictEqual(checks, {'first': True, 'utr': True, 'limit': False, 'inter': True, 'in_CDS': True})
+        self.assertDictEqual(checks, {'inter': True, 'limit': False, 'utr': True, 'antisense': False, 'in_CDS': True, 'first': True})
 
     def test_sort_keys(self):
         keys = ["class_3", "class_1", "class_5"]
@@ -109,7 +117,12 @@ All strains:
         out_stat_file = os.path.join(self.test_folder, "stat")
         srna_file = os.path.join(self.test_folder, "srna.gff")
         gen_file(srna_file, self.example.gff_file)
-        sc.classify_srna(srna_file, self.test_folder, 0, 0, out_stat_file, True)
+        args = self.mock_args.mock()
+        args.energy = 0
+        args.nr_hits_num = 0
+        args.in_cds = True
+        args.import_info = ["tss", "sec_str"]
+        sc.classify_srna(srna_file, self.test_folder, out_stat_file, args)
 
 
 class Example(object):

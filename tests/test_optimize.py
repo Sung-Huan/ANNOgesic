@@ -5,6 +5,7 @@ import shutil
 from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file, import_data
+from mock_args_container import MockClass
 import annogesiclib.optimize as opt
 
 
@@ -39,17 +40,13 @@ class Mock_multiparser(object):
 
 class Mock_func(object):
 
-    def mock_optimization(self, tsspredator_path, max_height, max_height_reduction,
-                          max_factor, max_factor_reduction, max_base_height,
-                          max_enrichment, max_processing, output_folder, core,
-                          wig_path, project_name, fasta_file, replicate_name, steps,
-                          gff_file, program, manual, libs, length, cluster,
-                          utr_length, replicate):
-        gen_file(os.path.join(output_folder, "test.csv"), "test")
+    def mock_optimization(self, wig_path, fasta_file, gff_file, args):
+        gen_file(os.path.join(args.output_folder, "test.csv"), "test")
 
 class TestOptimizeTSS(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         self.fastas = os.path.join(self.test_folder, "fasta")
         self.wigs = os.path.join(self.test_folder, "wigs")
@@ -73,9 +70,34 @@ class TestOptimizeTSS(unittest.TestCase):
         opt.optimization = Mock_func().mock_optimization
         gen_file(os.path.join(self.gffs, "tmp", "test.gff"), "test")
         gen_file(os.path.join(self.fastas, "tmp", "test.fa"), "test")
-        opt.optimize_tss("test", self.fastas, self.gffs, self.wigs, "test", self.test_folder,
-                         "test", 9, 9, 9, 9, 9, 9, 9, 200, "test", "test", 3,
-                         100, 4, "TSS", "test", 5000)
+        args = self.mock_args.mock()
+        args.fastas = self.fastas
+        args.gffs = self.gffs
+        args.wigs = self.wigs
+        args.tsspredator_path = "test"
+        args.manual = "test"
+        args.output_folder = self.test_folder
+        args.project_strain = "test"
+        args.height = 9
+        args.height_reduction = 9
+        args.factor = 9
+        args.factor_reduction = 9
+        args.base_height = 9
+        args.enrichment = 9
+        args.processing = 9
+        args.utr = 200
+        args.libs = "test"
+        args.replicate_name = "test"
+        args.cluster = 2
+        args.length = 100
+        args.cores = 4
+        args.program = "TSS"
+        args.replicate = 2
+        args.steps = 2000
+        opt.optimize_tss(args)
+#        opt.optimize_tss("test", self.fastas, self.gffs, self.wigs, "test", self.test_folder,
+#                         "test", 9, 9, 9, 9, 9, 9, 9, 200, "test", "test", 3,
+#                         100, 4, "TSS", "test", 5000)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test.csv")))
 
 if __name__ == "__main__":

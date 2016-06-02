@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data
 import annogesiclib.detect_utr as du
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
@@ -29,6 +31,7 @@ class TestDetectUTR(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -38,16 +41,19 @@ class TestDetectUTR(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_import_utr(self):
+        args = self.mock_args.mock()
         utr_all = {"pri": [], "all": [], "sec": []}
         utr_strain = {"pri": {"aaa": []}, "all": {"aaa": []}, "sec": {"aaa": []}}
-        detect = du.import_utr(True, self.example.tss_fit, utr_strain,
-                               utr_all, 140, 340, self.example.tas, 200, "both")
-        self.assertTrue(detect)
+        args.source = True
+        args.base_5utr = "both"
+        detect = du.import_utr(self.example.tss_fit, utr_strain, utr_all, 140, 340,
+                               self.example.tas, 200, args)
+        self.assertTrue(detect[0])
         self.assertDictEqual(utr_strain, {'pri': {'aaa': [200]}, 'all': {'aaa': [200]}, 'sec': {'aaa': []}})
         self.assertDictEqual(utr_all, {'pri': [200], 'all': [200], 'sec': []})
-        detect = du.import_utr(True, self.example.tss_nofit, utr_strain, utr_all,
-                               1140, 1190, self.example.tas, 50, "both")
-        self.assertFalse(detect)
+        detect = du.import_utr(self.example.tss_nofit, utr_strain, utr_all, 1140, 1190,
+                               self.example.tas, 50, args)
+        self.assertFalse(detect[0])
         self.assertDictEqual(utr_strain, {'pri': {'aaa': [200]}, 'all': {'aaa': [200]}, 'sec': {'aaa': []}})
         self.assertDictEqual(utr_all, {'pri': [200], 'all': [200], 'sec': []})
 
@@ -94,80 +100,54 @@ class TestDetectUTR(unittest.TestCase):
 
     def test_get_5utr_from_other(self):
         utr_datas = du.get_5utr_from_other(self.example.tss_fit, self.example.genes,
-                                           self.example.cdss)
+                                           self.example.cdss, 300)
         self.assertTrue(utr_datas["check"])
         self.assertEqual(utr_datas["cds_name"], 'YP_000001')
         self.assertEqual(utr_datas["locus"], 'AAA_00001')
         self.assertEqual(utr_datas["near_cds"].start, 148)
         utr_datas = du.get_5utr_from_other(self.example.tss_nofit, self.example.genes,
-                                           self.example.cdss)
+                                           self.example.cdss, 300)
         self.assertFalse(utr_datas["check"])
         self.assertEqual(utr_datas["cds_name"], None)
         self.assertEqual(utr_datas["locus"], None)
         self.assertEqual(utr_datas["near_cds"], None)
 
-    def test_compare_ta_tss(self):
-        ta_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 138,
-                   "end": 540, "phase": ".", "strand": "+", "score": "."}
-        attributes_ta = {"ID": "tran0", "Name": "Transcript_0"}
-        ta = Create_generator(ta_dict, attributes_ta, "gff")
-        tss_name = du.compare_ta_tss(self.example.tsss, ta, True)
-        self.assertEqual(tss_name, "TSS_0")
-        ta_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 508,
-                   "end": 540, "phase": ".", "strand": "+", "score": "."}
-        attributes_ta = {"ID": "tran0", "Name": "Transcript_0"}
-        ta = Create_generator(ta_dict, attributes_ta, "gff")
-        tss_name = du.compare_ta_tss(self.example.tsss, ta, True)
-        self.assertEqual(tss_name, "NA")
-
-    def test_compare_ta_cds_gene(self):
-        ta_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 138,
-                   "end": 1540, "phase": ".", "strand": "+", "score": "."}
-        attributes_ta = {"ID": "tran0", "Name": "Transcript_0"}
-        ta = Create_generator(ta_dict, attributes_ta, "gff")
-        cds_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 148,
-                    "end": 360, "phase": ".", "strand": "+", "score": "."}
-        attributes_cds = {"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
-        cds = Create_generator(cds_dict, attributes_cds, "gff")
-        datas = du.compare_ta_cds_gene(cds, ta, self.example.tsss, self.example.genes,
-                                       140, 208, None, True)
-        self.assertEqual(set(datas), set(['AAA_00001', 'AAA_00001', True, 68, 140, 208]))
-        ta_dict = {"seq_id": "bbb", "source": "Refseq", "feature": "TSS", "start": 4138,
-                   "end": 7540, "phase": ".", "strand": "-", "score": "."}
-        attributes_ta = {"ID": "tran0", "Name": "Transcript_0"}
-        ta = Create_generator(ta_dict, attributes_ta, "gff")
-        cds_dict = {"seq_id": "bbb", "source": "Refseq", "feature": "CDS", "start": 5158,
-                    "end": 5460, "phase": ".", "strand": "-", "score": "."}
-        attributes_cds = {"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
-        cds = Create_generator(cds_dict, attributes_cds, "gff")
-        datas = du.compare_ta_cds_gene(cds, ta, self.example.tsss, self.example.genes,
-                                       4130, 5460, 4000, True)
-        self.assertEqual(set(datas), set(['AAA_00001', 'NA', True, 5166, 5460, 294]))
-
     def test_compare_ta(self):
+        args = self.mock_args.mock()
+        args.length = 300
         out = StringIO()
         utr_all = {"pri": [], "all": [], "sec": []}
         utr_strain = {"pri": {"aaa": []}, "all": {"aaa": []}, "sec": {"aaa": []}}
-        du.compare_ta(self.example.tas, self.example.tsss, self.example.genes,
-                      self.example.cdss, utr_strain, utr_all, out, True)
+        du.compare_ta(self.example.tas, self.example.genes,
+                      self.example.cdss, utr_strain, utr_all, out, args)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]), set([self.example.out_5utr]))
         out.close()
 
     def test_detect_5utr(self):
+        args = self.mock_args.mock()
         du.read_file = Mock_func().mock_read_file
         du.plot = Mock_func().mock_plot
         out_file = os.path.join(self.test_folder, "5utr.gff")
-        du.detect_5utr("test.tss", "test.gff", "test.ta", True, "both", out_file)
+        args.source = True
+        args.base_5utr = "both"
+        args.length = 300
+        du.detect_5utr("test.tss", "test.gff", "test.ta", out_file, args)
         header = ["##gff-version 3"]
-        datas = import_data(out_file)
-        ref = header + [self.example.out_5utr_tsspredator]
-        self.assertEqual(set(datas), set(ref))
-        du.detect_5utr("test.tss", "test.gff", "test.ta", False, "both", out_file)
+        args.source = False
+        args.base_5utr = "both"
+        du.detect_5utr("test.tss", "test.gff", "test.ta", out_file, args)
         datas = import_data(out_file)
         ref = header + [self.example.out_5utr_other]
+        self.assertEqual(datas[1], ref[1])
+        args.base_5utr = "transcript"
+        du.detect_5utr("test.tss", "test.gff", "test.ta", out_file, args)
         self.assertEqual(set(datas), set(ref))
-        du.detect_5utr("test.tss", "test.gff", "test.ta", False, "transcript", out_file)
-        self.assertEqual(set(datas), set(ref))
+        args.source = True
+        args.base_5utr = "both"
+        du.detect_5utr("test.tss", "test.gff", "test.ta", out_file, args)
+        datas = import_data(out_file)
+        ref = header + [self.example.out_5utr_tsspredator]
+        self.assertListEqual(datas, ref)
 
     def test_compare_term(self):
         ta_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 138,
@@ -190,7 +170,10 @@ class TestDetectUTR(unittest.TestCase):
         out = StringIO()
         utr_all = []
         utr_strain = {"aaa": []}
-        du.get_3utr(ta, cds, utr_all, utr_strain, attributes, 0, out)
+        args = self.mock_args.mock()
+        args.length = 300
+        args.base_3utr = "transcript"
+        du.get_3utr(ta, cds, utr_all, utr_strain, attributes, 0, out, args)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]), set(self.example.out_3utr.split("\n")))
         out.close()
 
@@ -204,10 +187,15 @@ class TestDetectUTR(unittest.TestCase):
         self.assertEqual(near_cds.start, 148)
 
     def test_detect_3utr(self):
+        args = self.mock_args.mock()
+        args.fuzzy = 5
+        args.base_3utr = "transcript"
+        args.length = 300
         du.read_file = Mock_func().mock_read_file
         du.plot = Mock_func().mock_plot
         out_file = os.path.join(self.test_folder, "3utr.gff")
-        du.detect_3utr("test.ta", "test.gff", "test.term", 5, out_file)
+        du.detect_3utr("test.ta", "test.gff", "test.term", out_file, args)
+#        du.detect_3utr("test.ta", "test.gff", "test.term", 5, out_file)
         datas = import_data(out_file)
         self.assertEqual(set(datas), set(self.example.out_3utr_gff.split("\n")))
 
@@ -265,12 +253,12 @@ class Example(object):
     attributes_cds = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001", "protein_id": "YP_000001", "Parent": "gene0"},
                       {"ID": "rna0", "Name": "rRNA_0", "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
-    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
-    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;TSS_type=Primary;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0"""
-    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS:140_+"""
-    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_tran0;ID=3utr0;length=40;associated_tran=tran0"""
+    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tran=Transcript:140-367_+"""
+    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;TSS_type=Primary;associated_tran=Transcript:140-367_+"""
+    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;associated_tran=Transcript:140-367_+"""
+    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;associated_tran=Transcript:138-540_+"""
     out_3utr_gff = """##gff-version 3
-aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_tran0;associated_term=term0;length=7;associated_tran=tran0"""
+aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;associated_tran=Transcript:140-367_+"""
     tas = []
     tsss = []
     terms = []

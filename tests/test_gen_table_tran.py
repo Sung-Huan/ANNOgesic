@@ -34,11 +34,10 @@ class TestGenTableTran(unittest.TestCase):
         out = StringIO()
         out_gff = StringIO()
         gtt.print_coverage(self.example.tas, out, out_gff, self.example.wigs, self.example.wigs, True)
-        self.assertEqual(out.getvalue(), "aaa\tTranscript_0\t4\t20\t+\tfragmented&TEX+/-\tNA\tNA\ttrack_1(avg=33.411764705882355)\n")
+        self.assertEqual(out.getvalue(), "aaa\tTranscript_0\t4\t20\t+\tfragmented&TEX+/-\tNA\tNA\tNA\ttrack_1(avg=33.411764705882355)\n")
         self.assertListEqual(out_gff.getvalue().split("\t")[:-1], ["aaa", "ANNOgesic", "Transcript", "4", "20", ".", "+", "."])
         self.assertEqual(set(out_gff.getvalue().split("\t")[-1].strip().split(";")), set(["Name=Transcript_0", "detect_lib=fragmented&TEX+/-",
                                                                                           "best_avg_coverage=33.411764705882355", "ID=tran0"]))
-
 class Example(object):
     wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
                                            {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},

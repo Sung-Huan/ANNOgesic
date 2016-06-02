@@ -50,7 +50,7 @@ class TestRiboGff(unittest.TestCase):
               'strand': '+', 'e': '1.6e-18', 'rfam': 'RF00162', 'end_seq': 16046, "rfam_name": "SAM"}
         rg.print_gff(1, ribo, out, stats, "test_1")
         self.assertDictEqual(stats, {'total': {'total': 1}, 'test_1': {'total': 1}, 'test_2': {'total': 0}})
-        self.assertEqual(out.getvalue(), "test_1\tANNOgesic\triboswitch\t15948\t16046\t.\t+\t.\tID=ribo_1;Name=Riboswitch_00001;Type=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam\n")
+        self.assertEqual(out.getvalue(), "test_1\tANNOgesic\triboswitch\t15948\t16046\t.\t+\t.\tID=ribo_1;Name=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam\n")
 
     def test_import_stat(self):
         ribo = {'associate': 'SAOUHSC_00013', 'start_seq': 15948, 'start_align': 1,
@@ -111,10 +111,10 @@ overlap candidates set 1:
 
 class Example(object):
 
-    table = """#ID|strain|strand|associated_CDS|start|end	Rfam	e_value	start_align	end_align
-riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|15948|16046	RF00162	1.6e-18	1	99
-riboswitch_11|Staphylococcus_aureus_HG003|-|SAOUHSC_00007|27955|28053	RF00162	1.6e-18	1	99
-riboswitch_183|Staphylococcus_aureus_HG003|+|SAOUHSC_00372|377996|378098	RF00167	2.2e-18	1	103"""
+    table = """#ID\tstrain\tstrand\tassociated_CDS\tstart\tend	Rfam	e_value	start_align	end_align
+riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t15948\t16046	RF00162	1.6e-18	1	99
+riboswitch_11\tStaphylococcus_aureus_HG003\t-\tSAOUHSC_00007\t27955\t28053	RF00162	1.6e-18	1	99
+riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098	RF00167	2.2e-18	1	103"""
 
     rfam = """RF00162	SAM	SAM riboswitch box leader
 RF00059	TPP	TPP riboswitch THI element
@@ -139,16 +139,15 @@ RF00520	ybhL	ybhL leader"""
              {'class': 'ybhL', 'ID': 'RF00520'}]
 
     out_gff = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	15948	16046	.	+	.	ID=ribo_0;Name=Riboswitch_00000;Type=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	27955	28053	.	-	.	ID=ribo_1;Name=Riboswitch_00001;Type=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	377996	378098	.	+	.	ID=ribo_2;Name=Riboswitch_00002;Type=Purine;Rfam_ID=RF00167;E_value=2.2e-18;Method=infernal_to_Rfam"""
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	15948	16046	.	+	.	ID=ribo_0;Name=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	27955	28053	.	-	.	ID=ribo_1;Name=SAM;Rfam_ID=RF00162;E_value=1.6e-18;Method=infernal_to_Rfam
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	377996	378098	.	+	.	ID=ribo_2;Name=Purine;Rfam_ID=RF00167;E_value=2.2e-18;Method=infernal_to_Rfam"""
     out_stat = """Staphylococcus_aureus_HG003:
 Total number of potential riboswitch are 3
 The number of potential riboswitch which have overlap region with others are 0
 riboswitch_type	numbers
 Purine	1
 SAM	2"""
-
 if __name__ == "__main__":
     unittest.main()
 

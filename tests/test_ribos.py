@@ -7,6 +7,7 @@ sys.path.append(".")
 import annogesiclib.meme as me
 from mock_helper import gen_file, import_data
 import annogesiclib.ribos as rb
+from mock_args_container import MockClass
 from annogesiclib.ribos import Ribos
 
 
@@ -15,7 +16,7 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_run_infernal(self, infernal_path, e_value,
+    def mock_run_infernal(self, e_value,
                           seq, type_, prefix):
         if type_ == "txt":
             gen_file("test_folder/output/test_RBS.txt", self.example.scan_file)
@@ -31,6 +32,7 @@ class TestRibos(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.mock = Mock_func()
         self.test_folder = "test_folder"
         self.gffs = os.path.join(self.test_folder, "gffs")
@@ -38,23 +40,41 @@ class TestRibos(unittest.TestCase):
         self.out_folder = os.path.join(self.test_folder, "output")
         self.database = os.path.join(self.test_folder, "database")
         self.seq_path = os.path.join(self.test_folder, "seqs")
-        self.tables = os.path.join(self.test_folder, "table")
-        self.stat = os.path.join(self.test_folder, "stat")
+        self.tables = os.path.join(self.out_folder, "tables")
+        self.stat = os.path.join(self.out_folder, "statistics")
         self.scan = os.path.join(self.test_folder, "scan")
+        self.tsss = os.path.join(self.test_folder, "tsss")
+        self.trans = os.path.join(self.test_folder, "trans")
+        self.out_gff = os.path.join(self.out_folder, "gffs")
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
+            os.mkdir(self.tsss)
+            os.mkdir(os.path.join(self.tsss, "tmp"))
+            os.mkdir(self.trans)
+            os.mkdir(os.path.join(self.trans, "tmp"))
             os.mkdir(self.gffs)
+            os.mkdir(os.path.join(self.gffs, "tmp"))
             os.mkdir(self.fastas)
+            os.mkdir(os.path.join(self.fastas, "tmp"))
             os.mkdir(self.out_folder)
             os.mkdir(self.database)
             os.mkdir(self.seq_path)
             os.mkdir(os.path.join(self.out_folder, "tmp_table"))
             os.mkdir(os.path.join(self.out_folder, "tmp_scan"))
+            os.mkdir(os.path.join(self.out_folder, "tmp_fasta"))
+            os.mkdir(os.path.join(self.out_folder, "scan_Rfam"))
             os.mkdir(self.tables)
             os.mkdir(self.scan)
             os.mkdir(self.stat)
-        self.ribo = Ribos(self.gffs, self.fastas,
-                          self.out_folder, self.database)
+            os.mkdir(self.out_gff)
+        args = self.mock_args.mock()
+        args.gffs = self.gffs
+        args.fastas = self.fastas
+        args.out_folder = self.out_folder
+        args.database = self.database
+        args.tsss = self.tsss
+        args.trans = self.trans
+        self.ribo = Ribos(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -64,23 +84,40 @@ class TestRibos(unittest.TestCase):
         self.ribo._run_infernal = self.mock.mock_run_infernal
         rb.modify_table = self.mock.mock_modify_table
         prefixs = []
-        gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.fastas, "test.fa"), self.example.fasta_file)
+        gen_file(os.path.join(self.gffs, "tmp/test.gff"), self.example.gff_file)
+        gen_file(os.path.join(self.fastas, "tmp/test.fa"), self.example.fasta_file)
         gen_file(os.path.join(self.seq_path, "test.fa"), self.example.fasta_file)
-        self.ribo._scan_extract_rfam(self.gffs, "0.001", self.seq_path, prefixs,
-                           self.fastas, self.out_folder, "test", True, "test",
-                           ["ATG"], 5, 9, 2)
+        gen_file(os.path.join(self.tsss, "tmp/test_TSS.gff"), self.example.tss_file)
+        gen_file(os.path.join(self.trans, "tmp/test_transcript.gff"), self.example.tran_file)
+        gen_file(os.path.join(self.out_folder, "tmp_fasta", "test.fa"), self.example.fasta_file)
+        args = self.mock_args.mock()
+        args.start_codons = ["ATG"]
+        args.fastas = self.fastas
+        args.out_folder = self.out_folder
+        args.gffs = self.gffs
+        args.fuzzy = 5
+        args.fuzzy_rbs = 2
+        args.utr = True
+        args.output_all = "test"
+        self.ribo._scan_extract_rfam(prefixs, args)
         self.assertListEqual(prefixs, ["test"])
-        self.assertTrue(os.path.exists(os.path.join(self.seq_path, "test_regenerate.fa")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "tmp_fasta", "test_regenerate.fa")))
 
     def test_merge_results(self):
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file) 
         gen_file(os.path.join(self.out_folder, "tmp_table/test_riboswitch.csv"), self.example.table)
-        gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch.txt"), self.example.rescan_file)
+        gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch_prescan.txt"), self.example.rescan_file)
+        gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch_scan.txt"), self.example.rescan_file)
         gen_file(os.path.join(self.test_folder, "ids"), self.example.ids)
-        self.ribo._merge_results(self.gffs, self.scan, self.tables,
-                                 self.stat, os.path.join(self.test_folder, "ids"),
-                                 3, self.out_folder, False)
+        gen_file(os.path.join(self.tables, "test_riboswitch.csv"), self.example.table)
+        args = self.mock_args.mock()
+        args.start_codons = ["ATG"]
+        args.fastas = self.fastas
+        args.out_folder = self.out_folder
+        args.gffs = self.gffs
+        args.ribos_id = os.path.join(self.test_folder, "ids")
+        args.fuzzy = 3
+        self.ribo._merge_results(args)
 
 
 class Example(object):
@@ -88,8 +125,8 @@ class Example(object):
     ids = """RF00162	SAM	SAM	riboswitch box leader
 RF00174	Cobalamin	Cobalamin	riboswitch
 RF00634	SAM-IV	S adenosyl methionine SAM	riboswitch"""
-    table = """riboswitch_5|test|+|SAOUHSC_00013|15948|16046	RF00162	1.6e-18	1	99
-riboswitch_11|test|-|SAOUHSC_00007|27955|28053	RF00162	1.6e-18	1	99"""
+    table = """riboswitch_5\ttest\t+\tSAOUHSC_00013\t15948\t16046	RF00162	1.6e-18	1	99
+riboswitch_11\ttest\t-\tSAOUHSC_00007\t27955\t28053	RF00162	1.6e-18	1	99"""
     fasta_file = """>test
 AAAAGATAGCCGCTCGCTAAATAGGAGATCCCTCGAAGAATGATATGTGTG"""
     gff_file = """##gff-version 3
@@ -97,6 +134,12 @@ test	Refseq	gene	10	16	.	+	.	ID=gene0;Name=gene_0;locus_tag=AAA_00001
 test	Refseq	CDS	10	16	.	+	.	ID=cds0;Name=CDS_0;locus_tag=AAA_00001
 test	Refseq	gene	30	40	.	-	.	ID=gene1;Name=gene_1;locus_tag=AAA_00002
 test	Refseq	CDS	30	40	.	-	.	ID=cds1;Name=CDS_1;locus_tag=AAA_00002"""
+    tss_file = """##gff-version 3
+test	Refseq	TSS	10	10	.	+	.	ID=tss0;Name=TSS_0
+test	Refseq	TSS	30	30	.	-	.	ID=tss1;Name=TSS_1"""
+    tran_file = """##gff-version 3
+test	Refseq	Transcript	1	150	.	+	.	ID=ta0;Name=TA_0
+test	Refseq	Transcript	30	230	.	-	.	ID=ta1;Name=TA_1"""
     rescan_file = """# cmscan :: search sequence(s) against a CM database
 # INFERNAL 1.1.1 (July 2014)
 # Copyright (C) 2014 Howard Hughes Medical Institute.

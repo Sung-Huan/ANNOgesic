@@ -6,6 +6,7 @@ from io import StringIO
 sys.path.append(".")
 import annogesiclib.meme as me
 from mock_helper import gen_file
+from mock_args_container import MockClass
 from annogesiclib.meme import MEME 
 
 
@@ -20,9 +21,13 @@ class Mock_func(object):
 class TestMEME(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
+        self.out_folder = "test_folder/output"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
+            os.mkdir(self.out_folder)
+            os.mkdir(os.path.join(self.out_folder, "fasta_output"))
         self.tss_folder = os.path.join(self.test_folder, "tss_folder")
         if (not os.path.exists(self.tss_folder)):
             os.mkdir(self.tss_folder)
@@ -32,7 +37,12 @@ class TestMEME(unittest.TestCase):
         self.fa_folder = os.path.join(self.test_folder, "fa_folder")
         if (not os.path.exists(self.fa_folder)):
             os.mkdir(self.fa_folder)
-        self.meme = MEME(self.tss_folder, self.gff_folder, self.fa_folder)
+        args = self.mock_args.mock()
+        args.tsss = self.tss_folder
+        args.fastas = self.fa_folder
+        args.gffs = self.gff_folder
+        args.output_folder = self.out_folder
+        self.meme = MEME(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):

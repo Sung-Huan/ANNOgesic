@@ -8,10 +8,10 @@ import annogesiclib.blast_class as blast_class
 
 class Mock_func(object):
 
-    def mock_read_file(self, blast_file):
-        repeats = {'RNA_test1': ['hit_1|strain_b|dnaA', 'hit_2|strain_c|dnaa']}
-        return Example().read_out, repeats
-
+    def mock_read_file(self, blast_file, nums):
+        nums['total']['dnaA'] = 2
+        nums['aaa'] = {}
+        nums['aaa']['dnaA'] = 2
 
 class TestBlastClass(unittest.TestCase):
 
@@ -29,10 +29,10 @@ class TestBlastClass(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_read_file(self):
-        datas, repeats = blast_class.read_file(self.blast_file)
-        for index in range(0, 3):
-            self.assertDictEqual(datas[index], self.example.read_out[index])
-        self.assertDictEqual(repeats, {'RNA_test1': ['hit_1|strain_b|dnaA', 'hit_2|strain_c|dnaa']})
+        nums = {}
+        nums["total"] = {}
+        blast_class.read_file(self.blast_file, nums)
+        self.assertDictEqual(nums, {'aaa': {'dnaA': 2}, 'total':{'dnaA': 2}})
 
     def test_blast_class(self):
         blast_class.read_file = Mock_func().mock_read_file
@@ -46,20 +46,14 @@ class TestBlastClass(unittest.TestCase):
         self.assertEqual(set(lines), set(self.example.blast_table.split("\n")))
 
 class Example(object):
-    blast = """aaa	RNA_test1	+	100	200	hit_1|strain_b|dnaA	0.0005
-aaa	RNA_test1	+	100	200	hit_2|strain_c|dnaa	0.0007
-aaa	RNA_test2	-	400	450	hit_3|strain_b|dnaC	0.000002"""
+    blast = """1\taaa\tdnaA\t2377296\t2377454\t-\tTSS:2377454_-\tNA\t2377296-2377454\tTEX+/-;Fragmented\t260123.91873361162\t446839.7634471806\t-0.0\tpMEM_t2_TEX_reverse(avg=155022.7050613754;high=266113.8349051722;low=0.6611942741842581)\t-0.2075\tIntergenic\tNA\tNA\t6\tNA\tsrn_4390|S._aureus_NCTC8325|dnaA|3e-55\tNA\tNA\tNA"""
     read_out = [{'ID': 'hit_1', 'srna_name': 'dnaA', 'blast_strain': 'strain_b', 'strain': 'aaa', 'start': '100', 'name': 'RNA_test1', 'strand': '+', 'end': '200', 'e': '0.0005'},
                 {'ID': 'hit_2', 'srna_name': 'dnaa', 'blast_strain': 'strain_c', 'strain': 'aaa', 'start': '100', 'name': 'RNA_test1', 'strand': '+', 'end': '200', 'e': '0.0007'},
                 {'ID': 'hit_3', 'srna_name': 'dnaC', 'blast_strain': 'strain_b', 'strain': 'aaa', 'start': '400', 'name': 'RNA_test2', 'strand': '-', 'end': '450', 'e': '0.000002'}]
 
-    blast_table = """All strain:
+    blast_table = """aaa:
 sRNA_name	amount
-dnaA	2
-dnaC	1
-
-repeat counting:
-RNA_test1:hit_1|strain_b|dnaA;hit_2|strain_c|dnaa"""
+dnaA	2"""
 
 if __name__ == "__main__":
     unittest.main()

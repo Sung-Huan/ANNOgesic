@@ -37,7 +37,7 @@ class TestRecomputeRBS(unittest.TestCase):
         seqs = [{"name": "test_1|test_strain|+|AAA_0001|206|304", "seq": "ATATAGCGTAGCCGACGTCGCAT"}]
         seq_name = "test_1|test_strain|+|AAA_0001|206|304"
         rr.print_file(ribos, out_t, out_s, seq_name, seqs)
-        self.assertEqual(out_t.getvalue(), "test_1|test_strain|+|AAA_0001|206|304\tRF00162\t6.2e-18\t206\t304\n")
+        self.assertEqual(out_t.getvalue(), "test_1\ttest_strain\t+\tAAA_0001\t206\t304\tRF00162\t6.2e-18\t206\t304\n")
         self.assertEqual(out_s.getvalue(), ">test_1|test_strain|+|AAA_0001|411|509\n\n")
 
     def test_regenerate_seq(self):
@@ -49,7 +49,7 @@ class TestRecomputeRBS(unittest.TestCase):
         gen_file(seq_file, self.example.seq_file)
         rr.regenerate_seq(align_file, seq_file, out_table, out_seq)
         data = import_data(out_table)
-        self.assertEqual("\n".join(data), "riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|10|16\tRF00162\t6.2e-18\t5\t12")
+        self.assertEqual("\n".join(data), "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t5\t12")
         data = import_data(out_seq)
         self.assertEqual("\n".join(data), ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC")
 
@@ -72,19 +72,19 @@ class TestRecomputeRBS(unittest.TestCase):
         align_file = os.path.join(self.test_folder, "align")
         first_file = os.path.join(self.test_folder, "first")
         output_file = os.path.join(self.test_folder, "output")
-        first_content = """riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|10|16	RF00162	6.2e-18	5	12"""
+        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	5	12"""
         gen_file(align_file, self.example.scan_file)
         gen_file(first_file, first_content)
         rr.reextract_rbs(align_file, first_file, output_file)
         data = import_data(output_file)
         self.assertEqual("\n".join(data), first_content)
-        first_content = """riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|10|16	RF00178	6.2e-20	13	17"""
+        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	13	17"""
         gen_file(first_file, first_content)
         rr.reextract_rbs(align_file, first_file, output_file)
         data = import_data(output_file)
         self.assertEqual("\n".join(data), 
-"""riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|10|16	RF00162	6.2e-18	5	12
-riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|10|16	RF00178	6.2e-20	13	17""")
+"""riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	5	12
+riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	13	17""")
 
 class Example(object):
 

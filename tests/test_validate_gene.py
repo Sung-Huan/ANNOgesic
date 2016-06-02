@@ -41,7 +41,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         num_strain = {"test": {"all_cds": 0, "all_tRNA": 0,
                                "all_rRNA": 0, "cds": 0,
                                "tRNA": 0, "rRNA": 0}}
-        vg.compare_tss(self.example.tsss, self.example.gffs[0], 300, num_all, num_strain)
+        vg.compare_tss(self.example.tsss, self.example.gffs[0], 300, num_all, num_strain, "tss")
         self.assertDictEqual(num_all, {'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
                                        'cds': 1, 'all_cds': 0, 'all_rRNA': 0})
         self.assertDictEqual(num_strain, {'test': {'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
@@ -75,7 +75,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         gen_file(tss_file, self.example.tss_file)
         out_cds_file = os.path.join(self.test_folder, "cds_file")
         stat_file = os.path.join(self.test_folder, "stat_file")
-        vg.validate_gff(tss_file, gff_file, stat_file, out_cds_file, 300)
+        vg.validate_gff(tss_file, gff_file, stat_file, out_cds_file, 300, "tss")
         datas, attribute = extract_info(out_cds_file, "file")
         self.assertEqual("\n".join(datas), "test\tRefSeq\tCDS\t5\t10\t.\t+\t.")
         datas = import_data(stat_file)

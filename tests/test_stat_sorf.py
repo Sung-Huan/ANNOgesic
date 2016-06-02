@@ -25,20 +25,18 @@ class TestStatsORF(unittest.TestCase):
     def test_create_dict(self):
         nums = {}
         datas = ss.create_dict(nums, "aaa", True)
-        self.assertDictEqual(datas, {'aaa': {'intergenic': {'all': 0,
-                                     'RBS': 0, 'sRNA': 0, 'RBS_sRNA': 0,
-                                     'TSS_sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
-                                     'TSS_sRNA_RBS': 0}, 'all': {'all': 0,
-                                     'RBS': 0, 'sRNA': 0, 'RBS_sRNA': 0,
-                                     'TSS_sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
-                                     'TSS_sRNA_RBS': 0}, 'interCDS': {'all': 0,
-                                     'RBS': 0, 'sRNA': 0, 'RBS_sRNA': 0, 'TSS_sRNA': 0,
-                                     'TSS': 0, 'TSS_RBS': 0, 'TSS_sRNA_RBS': 0},
-                                     "5'UTR_derived": {'all': 0, 'RBS': 0, 'sRNA': 0,
-                                     'RBS_sRNA': 0, 'TSS_sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
-                                     'TSS_sRNA_RBS': 0}, "3'UTR_derived": {'all': 0,
-                                     'RBS': 0, 'sRNA': 0, 'RBS_sRNA': 0, 'TSS_sRNA': 0,
-                                     'TSS': 0, 'TSS_RBS': 0, 'TSS_sRNA_RBS': 0}}})
+        self.assertDictEqual(datas, {'aaa': {'interCDS': {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0,
+                                     'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0},
+                                     'intergenic': {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
+                                     'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0},
+                                     'antisense': {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
+                                     'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0},
+                                     "5'UTR_derived": {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0,
+                                     'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0},
+                                     'all': {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0, 'TSS_RBS': 0,
+                                     'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0},
+                                     "3'UTR_derived": {'TSS_sRNA_RBS': 0, 'sRNA': 0, 'TSS': 0,
+                                     'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'RBS': 0, 'TSS_sRNA': 0}}})
 
     def test_plus_data(self):
         nums = {"aaa": {"3utr": {"CDS": 0}, "5utr": {"CDS": 2, "tRNA": 1}}}
@@ -77,29 +75,31 @@ class TestStatsORF(unittest.TestCase):
     def test_check_class(self):
         nums = copy.deepcopy(self.example.nums)
         ss.check_class(self.example.sorfs[0], nums, "5'UTR_derived", True, "aaa")
-        self.assertDictEqual(nums, {'total': {'intergenic': {'RBS': 0, 'TSS_RBS': 0,
-                                    'all': 0, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0, 'sRNA': 0,
-                                    'TSS': 0, 'TSS_sRNA': 0}, 'interCDS': {'RBS': 0,
-                                    'TSS_RBS': 0, 'all': 0, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0,
-                                    'sRNA': 0, 'TSS': 0, 'TSS_sRNA': 0}, 'all': {'RBS': 2,
-                                    'TSS_RBS': 0, 'all': 2, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 2,
-                                    'sRNA': 2, 'TSS': 0, 'TSS_sRNA': 0},
-                                    "3'UTR_derived": {'RBS': 0, 'TSS_RBS': 0, 'all': 0,
-                                    'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'TSS': 0,
-                                    'TSS_sRNA': 0}, "5'UTR_derived": {'RBS': 2, 'TSS_RBS': 0,
-                                    'all': 2, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 2, 'sRNA': 2,
-                                    'TSS': 0, 'TSS_sRNA': 0}}, 'aaa': {'intergenic': {'RBS': 0,
-                                    'TSS_RBS': 0, 'all': 0, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0,
-                                    'sRNA': 0, 'TSS': 0, 'TSS_sRNA': 0}, 'interCDS': {'RBS': 0,
-                                    'TSS_RBS': 0, 'all': 0, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0,
-                                    'sRNA': 0, 'TSS': 0, 'TSS_sRNA': 0}, 'all': {'RBS': 2,
-                                    'TSS_RBS': 0, 'all': 2, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 2,
-                                    'sRNA': 2, 'TSS': 0, 'TSS_sRNA': 0},
-                                    "3'UTR_derived": {'RBS': 0, 'TSS_RBS': 0, 'all': 0,
-                                    'TSS_sRNA_RBS': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'TSS': 0,
-                                    'TSS_sRNA': 0}, "5'UTR_derived": {'RBS': 2, 'TSS_RBS': 0,
-                                    'all': 2, 'TSS_sRNA_RBS': 0, 'RBS_sRNA': 2, 'sRNA': 2,
-                                    'TSS': 0, 'TSS_sRNA': 0}}})
+        self.assertDictEqual(nums, {'total': {"3'UTR_derived": {'TSS_RBS': 0,
+                                    'sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS': 0,
+                                    'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'all': {'TSS_RBS': 0, 'sRNA': 2, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 2, 'TSS_sRNA': 0, 'RBS': 2, 'RBS_sRNA': 2},
+                                    'interCDS': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'antisense': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'intergenic': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    "5'UTR_derived": {'TSS_RBS': 0, 'sRNA': 2, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 2, 'TSS_sRNA': 0, 'RBS': 2, 'RBS_sRNA': 2}},
+                                    'aaa': {"3'UTR_derived": {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'all': {'TSS_RBS': 0, 'sRNA': 2, 'TSS_sRNA_RBS': 0, 'TSS': 0,
+                                    'all': 2, 'TSS_sRNA': 0, 'RBS': 2, 'RBS_sRNA': 2},
+                                    'interCDS': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'antisense': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS': 0,
+                                    'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    'intergenic': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 0, 'TSS_sRNA': 0, 'RBS': 0, 'RBS_sRNA': 0},
+                                    "5'UTR_derived": {'TSS_RBS': 0, 'sRNA': 2, 'TSS_sRNA_RBS': 0,
+                                    'TSS': 0, 'all': 2, 'TSS_sRNA': 0, 'RBS': 2, 'RBS_sRNA': 2}}})
 
     def test_stat(self):
         sorf_all = os.path.join(self.test_folder, "aaa_all.gff")
@@ -122,26 +122,7 @@ class Example(object):
     sorf_all = """Staphylococcus_aureus_HG003	UTR_derived	sORF	399365	399439	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_TSS_399320+;with_TSS=TSS_399320+;sRNA=NA;RBS=RBS_399354;sORF_type=5utr
 Staphylococcus_aureus_HG003	UTR_derived	sORF	330	497	.	+	.	ID=sorf0;Name=sORF_00000;start_TSS=TSS_313+;with_TSS=TSS_313+;sRNA=NA;RBS=NA;sORF_type=5utr
 Staphylococcus_aureus_HG003	intergenic	sORF	4090	4158	.	-	.	ID=sorf1;Name=sORF_00001;start_TSS=TSS_4368-;with_TSS=TSS_4159-&TSS_4368-;sRNA=NA;RBS=NA;sORF_type=intergenic"""
-
-    nums = {'total': {'intergenic': {'TSS': 0,'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
-            'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'RBS': 0},
-            'all': {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS_RBS': 0,
-            'all': 1, 'RBS_sRNA': 1, 'sRNA': 1, 'RBS': 1},
-            "3'UTR_derived": {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
-            'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'RBS': 0},
-            'interCDS': {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS_RBS': 0,
-            'all': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'RBS': 0},
-            "5'UTR_derived": {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
-            'TSS_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'sRNA': 1, 'RBS': 1}},
-            'aaa': {'intergenic': {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
-            'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'sRNA': 0, 'RBS': 0},
-            'all': {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS_RBS': 0,
-            'all': 1, 'RBS_sRNA': 1, 'sRNA': 1, 'RBS': 1}, "3'UTR_derived": {'TSS': 0,
-            'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0,
-            'sRNA': 0, 'RBS': 0}, 'interCDS': {'TSS': 0, 'TSS_sRNA': 0,
-            'TSS_sRNA_RBS': 0, 'TSS_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'sRNA': 0,
-            'RBS': 0}, "5'UTR_derived": {'TSS': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0,
-            'TSS_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'sRNA': 1, 'RBS': 1}}}
+    nums = {'aaa': {"5'UTR_derived": {'TSS_RBS': 0, 'sRNA': 1, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'TSS': 0, 'RBS': 1}, "3'UTR_derived": {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'antisense': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'interCDS': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'all': {'TSS_RBS': 0, 'sRNA': 1, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'TSS': 0, 'RBS': 1}, 'intergenic': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}}, 'total': {"5'UTR_derived": {'TSS_RBS': 0, 'sRNA': 1, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'TSS': 0, 'RBS': 1}, "3'UTR_derived": {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'antisense': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'interCDS': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}, 'all': {'TSS_RBS': 0, 'sRNA': 1, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 1, 'RBS_sRNA': 1, 'TSS': 0, 'RBS': 1}, 'intergenic': {'TSS_RBS': 0, 'sRNA': 0, 'TSS_sRNA': 0, 'TSS_sRNA_RBS': 0, 'all': 0, 'RBS_sRNA': 0, 'TSS': 0, 'RBS': 0}}}
     sorf_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 5,
                 "end": 8, "phase": ".", "strand": "+", "score": "."}]
     attributes_sorf = [{"ID": "sorf0", "Name": "sORF_0", "sORF_type": "5utr",

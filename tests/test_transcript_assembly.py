@@ -9,15 +9,14 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data, gen_file
 import annogesiclib.transcript_assembly as ta
-
-#class Mock_func(object):
+from mock_args_container import MockClass
 
 
 class TestTranscriptAssembly(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
-#        self.mock = Mock_func()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -67,8 +66,12 @@ class TestTranscriptAssembly(unittest.TestCase):
         tmp_texs = {"test1_test2": 2}
         tolers = []
         trans = {"aaa": []}
-        cover_best, conds, tracks, texs, pos = ta.elongation(covers, 5, tmp_texs,
-                                               libs, reps, 2, "+", trans, "aaa", tolers)
+        args = self.mock_args.mock()
+        args.replicates = reps
+        args.height = 5
+        args.tex = 2
+        cover_best, conds, tracks, texs, pos = ta.elongation(covers, tmp_texs,
+                                               libs, "+", trans, args, "aaa", tolers)
         self.assertEqual(cover_best, 100)
         self.assertListEqual(tracks, ['test1', 'test2'])
         self.assertDictEqual(texs, {'test1_test2': 2})
@@ -80,8 +83,11 @@ class TestTranscriptAssembly(unittest.TestCase):
         tmp_texs = {"test1": 2}
         libs = [{"name": "test1", "type": "frag",
                  "cond": "1", "strand": "+", "rep": "a"}]
-        tolers, trans = ta.transfer_to_tran(self.example.wigs_f, 10, libs,
-                                            tmp_texs, "+", reps, 1)
+        args = self.mock_args.mock()
+        args.height = 10
+        args.tex = 1
+        args.replicates = reps
+        tolers, trans = ta.transfer_to_tran(self.example.wigs_f, libs, tmp_texs, "+", args)
         self.assertDictEqual(tolers, {'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 7.0]})
         self.assertDictEqual(trans, {'aaa': [{'pos': 3, 'cond': 1, 'strand': '+', 'coverage': 41.0},
                                              {'pos': 4, 'cond': 1, 'strand': '+', 'coverage': 47.0},
@@ -95,8 +101,11 @@ class TestTranscriptAssembly(unittest.TestCase):
                          {'pos': 8, 'cond': 1, 'strand': '+', 'coverage': 47.0}]}
         out = StringIO()
         tolers = {'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 20]}
-        ta.fill_gap_and_print(trans, "+", 3, 1, out,
-                              5, tolers, "TEX")
+        args = self.mock_args.mock()
+        args.tolerance = 3
+        args.low_cutoff = 5
+        args.width = 1
+        ta.fill_gap_and_print(trans, "+", out, tolers, "TEX", args)
         self.assertEqual(out.getvalue(), self.example.out_tran + "\n")
 
     def test_print_transctipt(self):
@@ -121,8 +130,15 @@ class TestTranscriptAssembly(unittest.TestCase):
                      "aaa_reverse.wig:frag:1:a:-",
                      "aaa2_forward.wig:tex:1:a:+",
                      "aaa2_reverse.wig:tex:1:a:-"]
-        ta.assembly(wig_f_file, wig_r_file, 10, 1, 3, 5,
-                    self.test_folder, 2, input_lib, reps, out_file, "TEX")
+        args = self.mock_args.mock()
+        args.replicates = reps
+        args.height = 10
+        args.width = 1
+        args.tolerance = 3
+        args.tex = 2
+        args.low_cutoff = 5
+        ta.assembly(wig_f_file, wig_r_file, self.test_folder, input_lib,
+                    out_file, "TEX", args)
         datas = import_data(out_file)
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.out_tran)
 

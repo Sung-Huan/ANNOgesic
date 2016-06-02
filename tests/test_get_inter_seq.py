@@ -22,9 +22,9 @@ class TestGetInterSeq(unittest.TestCase):
 
     def test_get_inter(self):
         inters = gis.get_inter(self.example.cdss, self.example.seq, "cds")
-        self.assertDictEqual(inters[0], {'parent_m': 'AAA_00002', 'print': False,
-                                         'strain': 'aaa', 'end': 16, 'start': 10,
-                                         'parent_p': 'AAA_00001'})
+        self.assertDictEqual(inters[0], {'parent_m': 'CDS_1', 'strain': 'aaa',
+                                         'start': 10, 'end': 16,
+                                         'print': False, 'parent_p': 'CDS_0'})
 
     def test_get_overlap_inters(self):
         inter1 = {'parent_m': 'AAA_00002', 'print': False, 'strain': 'aaa',

@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data
 import annogesiclib.circRNA as circ
+from mock_args_container import MockClass
+
 
 class Mock_read_file(object):
 
@@ -28,6 +30,7 @@ class TestCircRNA(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -58,8 +61,13 @@ class TestCircRNA(unittest.TestCase):
         attributes_circ = {"ID": "circrna0", "Name": "circRNA_0"}
         circrna = Create_generator(circ_dict, attributes_circ, "circ")
         gffs = [Create_generator(self.example.cds_dict, self.example.attributes_cds, "gff")]
+        args = self.mock_args.mock()
+        args.start_ratio = 0.3
+        args.end_ratio = 0.3
+        args.support = 5
         out = StringIO()
-        circ.detect_conflict(gffs, circrna, 0, out)
+        out_best = StringIO()
+        circ.detect_conflict(gffs, circrna, 0, out, out_best, args)
         self.assertEqual(out.getvalue(), "circRNA_0	aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571\n")
         out.close()
 
@@ -73,7 +81,12 @@ class TestCircRNA(unittest.TestCase):
             gffs.append(Create_generator(self.example.gffs_dict[index],
                                          self.example.attributes_gffs[index], "gff"))
         out = StringIO()
-        nums = circ.get_circrna(circs, gffs, 50, 0.5, 0.5, out)
+        out_best = StringIO()
+        args = self.mock_args.mock()
+        args.start_ratio = 0.3
+        args.end_ratio = 0.3
+        args.support = 5
+        nums = circ.get_circrna(circs, gffs, 50, out, out_best, args)
         self.assertDictEqual(nums["support"], {'aaa': {0: 2, 20: 1, 5: 2, 25: 1, 10: 2, 30: 1, 15: 1},
                                                'all': {0: 3, 20: 1, 5: 3, 25: 1, 10: 2, 30: 1, 15: 1},
                                                'bbb': {0: 1, 5: 1}})
@@ -83,11 +96,15 @@ class TestCircRNA(unittest.TestCase):
                                                 'all': {0: 1, 5: 1}})
 
     def test_detect_circrna(self):
-        out_file = os.path.join(self.test_folder, "out.csv")
+        out_file = os.path.join(self.test_folder, "out_all.csv")
         stat_file = os.path.join(self.test_folder, "stat.csv")
         circ.read_file = Mock_read_file().read_file
-        circ.detect_circrna("test.circ", "test.gff", out_file,
-                            0.5, 0.5, stat_file, True)
+        args = self.mock_args.mock()
+        args.start_ratio = 0.5
+        args.end_ratio = 0.5
+        args.support = 5
+        args.hypo = True
+        circ.detect_circrna("test.circ", "test.gff", out_file, args, stat_file)
         circs = import_data(out_file)
         stats = import_data(stat_file)
         self.assertEqual(set(circs), set(self.example.out_file.split("\n")))

@@ -7,6 +7,8 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import read_dict
 import annogesiclib.detect_coverage_term as dct
+from mock_args_container import MockClass
+
 
 class Mock_coverage(object):
 
@@ -59,6 +61,7 @@ class TestCoverageTerminator(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
+        self.mock_args = MockClass()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -90,7 +93,9 @@ class TestCoverageTerminator(unittest.TestCase):
 
     def test_compare_replicates(self):
         texs = {"track_tex_track_notex": 0}
-        replicates = {"tex": 1, "frag": 1}
+        args = self.mock_args.mock()
+        args.replicates = {"tex": 1, "frag": 1}
+        args.tex_notex = 2
         cond = "texnotex"
         term_covers = [{"track": "track_tex", "high": 300,
                         "low": 50, "detect": "True",
@@ -99,7 +104,7 @@ class TestCoverageTerminator(unittest.TestCase):
                         "low": 50, "detect": "True",
                         "diff": 150, "type": "notex"}]
         diff_cover, diff, term_datas, detect_num = \
-            dct.compare_replicates(term_covers, texs, cond, 2, replicates)
+            dct.compare_replicates(term_covers, texs, cond, args)
         self.assertEqual(diff_cover, 250)
         self.assertDictEqual(diff, {'track': 'track_tex', 'detect': 'True',
                                     'high': 300, 'low': 50, 'type': 'tex', 'diff': 250})
@@ -108,13 +113,13 @@ class TestCoverageTerminator(unittest.TestCase):
         for index in range(0, 2):
             self.assertDictEqual(ref_datas[index], term_datas[index])
         self.assertEqual(detect_num, 1)
-        replicates = {"tex": 1, "frag": 1}
+        args.replicates = {"tex": 1, "frag": 1}
         cond = "frag"
         term_covers = [{"track": "frag", "high": 10,
                         "low": 0, "detect": "False",
                         "diff": 10, "type": "frag"}]
         diff_cover, diff, term_datas, detect_num = \
-            dct.compare_replicates(term_covers, texs, cond, 2, replicates)
+            dct.compare_replicates(term_covers, texs, cond, args)
         self.assertEqual(diff_cover, 10)
         self.assertDictEqual(diff, {'detect': 'False', 'type': 'frag', 'low': 0, 'diff': 10, 'track': 'frag', 'high': 10})
         self.assertDictEqual(term_datas[0], {'detect': 'False', 'type': 'frag', 'low': 0, 'diff': 10, 'track': 'frag', 'high': 10})
@@ -131,22 +136,28 @@ class TestCoverageTerminator(unittest.TestCase):
                   {"coverage": 21, "pos": 4, "type": "frag"},
                   {"coverage": 21, "pos": 5, "type": "frag"},]
         term_covers = []
-        dct.coverage2term(covers, term, 1, hl_covers, hl_poss, "+",
-                          0.5, term_covers, "track_1")
+        args = self.mock_args.mock()
+        args.fuzzy = 1
+        args.decrease = 0.5
+        dct.coverage2term(covers, term, hl_covers, hl_poss, "+",
+                          term_covers, "track_1", args)
         self.assertDictEqual(term_covers[0], {'diff': 70, 'track': 'track_1', 'type': 'frag', 'high': 100, 'low': 30, 'detect': 'True'})
 
     def test_get_coverage(self):
         term = {"start": 2, "end": 4, "strain": "aaa", "strand": "+"}
         texs = {"track_tex_track_notex": 0}
-        replicates = {"tex": 1, "frag": 1}
         wigs = {"aaa": {"frag_1": {"track_1": [{"pos": 1, "coverage": 100, "type": "frag"},
                                                {"pos": 2, "coverage": 30, "type": "frag"},
                                                {"pos": 3, "coverage": 23, "type": "frag"},
                                                {"pos": 4, "coverage": 21, "type": "frag"},
                                                {"pos": 5, "coverage": 21, "type": "frag"}]}}}
+        args = self.mock_args.mock()
+        args.fuzzy = 1
+        args.decrease = 0.5
+        args.replicates = {"tex": 1, "frag": 1}
+        args.tex_notex = 2
         diff_cover, diff, term_datas, detect_nums = dct.get_coverage(
-                                                    term, wigs, "+", texs, 1,
-                                                    0.5, replicates, 2)
+                                                    term, wigs, "+", texs, args)
         self.assertEqual(diff_cover, 70)
         self.assertDictEqual(diff, {'track': 'track_1', 'high': 100, 'type': 'frag', 'detect': 'True', 'diff': 70, 'low': 30})
         self.assertDictEqual(term_datas["frag_1"][0],
@@ -187,30 +198,33 @@ class TestCoverageTerminator(unittest.TestCase):
         self.assertDictEqual(detect_terms["undetect"][0], term)
 
     def test_print_table(self):
-        cutoff_coverage = 5
+        args = self.mock_args.mock()
+        args.cutoff_coverage = 5
+        args.table_best = True
         out_t = StringIO()
         term = {"express": "True", "diff_cover": 70, "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
                                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
-        dct.print_table(term, cutoff_coverage, out_t, True)
+        dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set(["	True	track_1(diff=70;high=100;low=30)"]))
         out_t.close()
         out_t = StringIO()
-        dct.print_table(term, cutoff_coverage, out_t, False)
+        args.table_best = False
+        dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set(["	True	track_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)"]))
         term = {"express": "False", "diff_cover": 70, "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
                                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         out_t.close()
         out_t = StringIO()
-        dct.print_table(term, cutoff_coverage, out_t, False)
+        dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set(["	False	NA"]))
         term = {"express": "True", "diff_cover": -1, "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
                                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         out_t.close()
         out_t = StringIO()
-        dct.print_table(term, cutoff_coverage, out_t, False)
+        dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set(["	False	No_coverage_decreasing"]))
         out_t.close()
 
@@ -222,8 +236,12 @@ class TestCoverageTerminator(unittest.TestCase):
                 "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
                                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
-        dct.print2file(0, term, "70", "test", out, out_t,
-                       "test_method", True, 5)
+        args = self.mock_args.mock()
+        args.cutoff_coverage = 5
+        args.table_best = True
+        dct.print2file(0, term, "70", "test", out, out_t, "test_method", args)
+#        dct.print2file(0, term, "70", "test", out, out_t,
+#                       "test_method", True, 5)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]), set([self.example.gff_file]))
         self.assertEqual(set(out_t.getvalue().split("\n")[:-1]), set([self.example.table]))
         out.close()
@@ -255,8 +273,8 @@ class Example(object):
     attributes_tran = [{"ID": "tran0", "Name": "Tran_0"},
                        {"ID": "tran1", "Name": "Tran_1"},
                        {"ID": "tran2", "Name": "Tran_2"}]
-    gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associate=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;Method=test_method"""
-    table = """aaa	Term_00000	2	4	+	TransTermHP	True	track_1(diff=70;high=100;low=30)"""
+    gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associated_gene=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;Method=test_method"""
+    table = """aaa	Term_00000	2	4	+	TransTermHP	test	True	track_1(diff=70;high=100;low=30)"""
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,11 +7,12 @@ sys.path.append(".")
 from mock_helper import gen_file, import_data, extract_info
 import annogesiclib.transcript as tr
 from annogesiclib.transcript import TranscriptAssembly
+from mock_args_container import MockClass
+
 
 class Mock_func(object):
 
-    def mock_assembly(self, wig_f, wig_r, height, width, tolerance, low_cutoff,
-                      wig_folder, tex, libs, replicates, out, wig_type):
+    def mock_assembly(self, wig_f, wig_r, wig_folder, libs, out, wig_type, args):
         pass
 
     def mock_combine(self, frag, tex, tolerance, out):
@@ -31,8 +32,7 @@ class Mock_func(object):
     def mock_stat_ta_tss(self, ta_file, tss_file, stat_tss_out, ta, tss, fuzzy):
         pass
 
-    def mock_gen_table_tran(self, gff_outfolder, frag_wigs, tex_wigs,
-                            tlibs, flibs, table_best, out_folder, gffs):
+    def mock_gen_table_tran(self, gff_outfolder, args):
         pass
 
 class Mock_Multiparser(object):
@@ -59,6 +59,7 @@ class Mock_Multiparser(object):
 class TestsTranscriptAssembly(unittest.TestCase):
 
     def setUp(self):
+        self.mock_args = MockClass()
         self.mock = Mock_func()
         self.mock_parser = Mock_Multiparser()
         self.example = Example()
@@ -69,102 +70,122 @@ class TestsTranscriptAssembly(unittest.TestCase):
         self.frag = "test_folder/frag"
         self.gffs = "test_folder/gffs"
         self.tsss = "test_folder/tsss"
+        self.terms = "test_folder/terms"
+        self.stat = "test_folder/output/statistics"
+        self.out_gff = "test_folder/output/gffs"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.trans)
             os.mkdir(self.out)
             os.mkdir(self.tex)
             os.mkdir(self.frag)
+            os.mkdir(os.path.join(self.frag, "tmp"))
             os.mkdir(self.gffs)
+            os.mkdir(os.path.join(self.gffs, "tmp"))
             os.mkdir(self.tsss)
-        self.tran = TranscriptAssembly(self.out)
+            os.mkdir(self.terms)
+            os.mkdir(self.stat)
+            os.mkdir(self.out_gff)
+        args = self.mock_args.mock()
+        args.out_folder = self.out
+        self.tran = TranscriptAssembly(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
 
-    def test_combine_wigs(self):
-        gen_file(os.path.join(self.frag, "aaa_forward.wig_STRAIN_test.wig"), "test")
-        gen_file(os.path.join(self.frag, "aaa_reverse.wig_STRAIN_test.wig"), "test")
-        libs = ["aaa_forward.wig_STRAIN_test.wig:frag:1:a:+", "aaa_reverse.wig_STRAIN_test.wig:frag:1:a:-"]
-        self.tran._combine_wigs(self.frag, self.test_folder, "bbb_forward.wig", libs, "test")
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "bbb_forward.wig")))
-
     def test_compute(self):
         tr.assembly = self.mock.mock_assembly
-        os.mkdir(os.path.join(self.frag, "tmp"))
-        gen_file(os.path.join(self.frag, "tmp/aaa_forward_STRAIN_test.wig"), "test")
-        strains = self.tran._compute(self.test_folder, self.frag, "tex", 5, 20, 5,
-                                     "replicates", self.out, "frag", "libs", 0)
+        gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
+        args = self.mock_args.mock()
+        args.replicates = "rep"
+        args.out_foler = self.out
+        strains = self.tran._compute("frag", self.frag, "libs", args)
         self.assertListEqual(strains, ['test'])
 
     def test_for_one_wig(self):
         tr.assembly = self.mock.mock_assembly
         self.tran.multiparser = self.mock_parser
-        os.mkdir(os.path.join(self.frag, "tmp"))
-        gen_file(os.path.join(self.frag, "tmp/aaa_forward_STRAIN_test.wig"), "test")
+        gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
         gen_file(os.path.join(self.out, "test_frag"), self.example.tran_file)
-        strains = self.tran._for_one_wig("frag", self.frag, "tex", 5, 20, 5,
-                                         "replicates", self.out, "libs", self.gffs, 0)
+        args = self.mock_args.mock()
+        args.replicates = "rep"
+        args.libs = "libs"
+        args.gffs = self.gffs
+        args.out_folder = self.out
+        args.frag_wigs = self.frag
+        args.flibs = "flibs"
+        strains = self.tran._for_one_wig("frag", args)
         self.assertListEqual(strains, ['test'])
-        datas = import_data(os.path.join(self.gffs, "test_transcript_assembly_frag.gff"))
+        datas = import_data(os.path.join(self.out_gff, "test_transcript_assembly_frag.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
 
     def test_for_two_wigs(self):
         tr.combine = self.mock.mock_combine
-        gen_file(os.path.join(self.gffs, "test_transcript_assembly_fragment.gff"), "test")
-        gen_file(os.path.join(self.gffs, "test_transcript_assembly_tex_notex.gff"), "test")
-        
-        self.tran._for_two_wigs(self.frag, self.tex, ["test"],
-                                self.gffs, 5)
-        self.assertTrue(os.path.exists(os.path.join(self.gffs, "test_transcript.gff")))
+        gen_file(os.path.join(self.out_gff, "test_transcript_assembly_fragment.gff"), "test")
+        gen_file(os.path.join(self.out_gff, "test_transcript_assembly_tex_notex.gff"), "test")
+        args = self.mock_args.mock()
+        args.frag_wigs = self.frag
+        args.tex_wigs = self.tex
+        args.gffs = self.gffs
+        args.tolerance = 5
+        self.tran._for_two_wigs(["test"], args)
+        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_transcript.gff")))
 
     def test_post_modify(self):
         tr.longer_ta = self.mock.mock_longer_ta
         tr.fill_gap = self.mock.mock_fill_gap
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
         gff_out = os.path.join(self.out, "gffs")
-        os.mkdir(gff_out)
         os.mkdir(os.path.join(self.out, "tmp_tran"))
         gen_file(os.path.join(gff_out, "tmp_uni"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_overlap"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "final_test"), self.example.tran_file)
-        self.tran._post_modify(["test"], self.gffs, self.trans, 20,
-                               gff_out, self.out)
+        args = self.mock_args.mock()
+        args.gffs = self.gffs
+        args.out_folder = self.out
+        args.length = 20
+        self.tran._post_modify(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(gff_out, "test_transcript.gff")))
 
     def test_compare_cds(self):
         tr.stat_ta_gff = self.mock.mock_stat_ta_gff
         self.tran.multiparser = self.mock_parser
-        os.mkdir(os.path.join(self.gffs, "tmp"))
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
         gen_file(os.path.join(self.gffs, "tmp/test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.out, "test_transcript.gff"), self.example.tran_file)
+        gen_file(os.path.join(self.out_gff, "test_transcript.gff"), self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
-        os.mkdir(gff_out)
         gen_file(os.path.join(gff_out, "tmp_ta_gff"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_gff_ta"), self.example.gff_file)
-        self.tran._compare_cds(["test"], self.out, self.gffs, self.trans, "CDS")
+        args = self.mock_args.mock()
+        args.out_folder = self.out
+        args.trans = self.trans
+        args.compare_cds = self.gffs
+        args.c_feature = "CDS"
+        self.tran._compare_cds(["test"], args)
         datas = import_data(os.path.join(self.gffs, "test.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
-        datas = import_data(os.path.join(self.out, "test_transcript.gff"))
+        datas = import_data(os.path.join(self.out_gff, "test_transcript.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
 
     def test_compare_tss(self):
         tr.stat_ta_tss = self.mock.mock_stat_ta_tss
         self.tran.multiparser = self.mock_parser
-        os.mkdir(os.path.join(self.gffs, "tmp"))
         gen_file(os.path.join(self.gffs, "test_TSS.gff"), self.example.gff_file)
         gen_file(os.path.join(self.gffs, "tmp/test_TSS.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.out, "test_transcript.gff"), self.example.tran_file)
+        gen_file(os.path.join(self.out_gff, "test_transcript.gff"), self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
-        os.mkdir(gff_out)
         gen_file(os.path.join(gff_out, "tmp_ta_tss"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_tss_ta"), self.example.gff_file)
-        self.tran._compare_tss(["test"], self.out, self.gffs, self.trans, 2)
+        args = self.mock_args.mock()
+        args.out_folder = self.out
+        args.trans = self.trans
+        args.compare_tss = self.gffs
+        args.fuzzy = 2
+        self.tran._compare_tss(["test"], args)
         datas = import_data(os.path.join(self.gffs, "test_TSS.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
-        datas = import_data(os.path.join(self.out, "test_transcript.gff"))
+        datas = import_data(os.path.join(self.out_gff, "test_transcript.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
 
     def test_run_transcript_assembly(self):
@@ -174,22 +195,30 @@ class TestsTranscriptAssembly(unittest.TestCase):
         tr.fill_gap = self.mock.mock_fill_gap
         tr.combine = self.mock.mock_combine
         tr.assembly = self.mock.mock_assembly
-        self.tran._gen_table = self.mock.mock_gen_table_tran
-        gen_file(os.path.join(self.frag, "test1_forward.wig"), self.example.wig_f)
-        gen_file(os.path.join(self.frag, "test1_reverse.wig"), self.example.wig_r)
+        tr.gen_table_transcript = self.mock.mock_gen_table_tran
+        gen_file(os.path.join(self.frag, "tmp/test1_forward.wig"), self.example.wig_f)
+        gen_file(os.path.join(self.frag, "tmp/test1_reverse.wig"), self.example.wig_r)
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
         gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
-        gen_file("test_folder/output/test_fragment", self.example.tran_file)
+        gen_file(os.path.join(self.terms, "test_term.gff"), self.example.term_file)
+        gen_file("test_folder/output/test1_fragment", self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
-        os.mkdir(gff_out)
         gen_file(os.path.join(gff_out, "test_transcript_assembly_fragment.gff"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_uni"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_overlap"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "final_test"), self.example.tran_file)
-        self.tran.run_transcript_assembly(self.frag, None, True, "tex", 1,
-                                          self.gffs, 5, 1, 5, 0, 1, 1, self.out,
-                                          None, None, 5, "tlibs", "flibs", "CDS", False)
-        self.assertTrue(os.path.exists(os.path.join(gff_out, "test_transcript.gff")))
+        args = self.mock_args.mock()
+        args.out_folder = self.out
+        args.frag_wigs = self.frag
+        args.tex_wigs = None
+        args.flibs = "flibs"
+        args.tlibs = "tlibs"
+        args.gffs = self.gffs
+        args.terms = None
+        args.compare_tss = None
+        args.compare_cds = None
+        args.fuzzy_term = 1
+        self.tran.run_transcript_assembly(args)
 
 
 class Example(object):
@@ -197,6 +226,7 @@ class Example(object):
     tran_file = """test	Transcript	Transcript	3	25	.	+	.	ID=tran0;Name=Transcript_0"""
     gff_file = """test	RefSeq	CDS	5	10	.	+	.	ID=cds0;Name=CDS_0"""
     tss_file = """test	RefSeq	TSS	3	3	.	+	.	ID=tss0;Name=TSS_0"""
+    term_file = """test	RefSeq	terminator	25	33	.	+	.	ID=term0;Name=Term_0"""
     wig_f = """track type=wiggle_0 name="test1_forward.wig"
 variableStep chrom=test span=1
 2 2.0
