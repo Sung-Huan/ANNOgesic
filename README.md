@@ -20,9 +20,6 @@ positional arguments:
     annotation_transfer
                         Run RATT to transfer the annotation files from
                         reference to target.
-    expression_analysis
-                        Run gene expression analysis to compare which CDS is
-                        expressing in which libraries.
     tsspredator         Run TSSpredator to predict TSSs or processing sites.
     optimize_tsspredator
                         Optimize TSSpredator based on (partial)manual detect
