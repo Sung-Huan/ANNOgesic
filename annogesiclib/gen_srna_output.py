@@ -43,6 +43,7 @@ def import_data(row, type_, import_info):
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]), "hits": row[5]}
 
+
 def merge_info(blasts):
     first = True
     finals = []
@@ -67,6 +68,7 @@ def merge_info(blasts):
                     pre_blast = blast.copy()
         finals.append(pre_blast)
     return finals
+
 
 def compare_srna_table(srna_tables, srna, final, args_srna):
     for table in srna_tables:
@@ -108,6 +110,7 @@ def compare_srna_table(srna_tables, srna, final, args_srna):
                 final["type"] = "Fragmented"
     return final
 
+
 def compare_blast(blasts, srna, final, hit):
     for blast in blasts:
         if (srna.seq_id == blast["strain"]) and (
@@ -116,6 +119,7 @@ def compare_blast(blasts, srna, final, hit):
                 srna.end == blast["end"]):
             final[hit] = blast["hits"]
     return final
+
 
 def compare_promoter(final, args_srna):
     if "promoter" in final.keys():
@@ -127,11 +131,13 @@ def compare_promoter(final, args_srna):
         final["score"] = final["avg"]
     return final
 
+
 def check_keys(ref_key, final_key, srna, final):
     if ref_key in srna.attributes.keys():
         final[final_key] = srna.attributes[ref_key]
     else:
         final[final_key] = "NA"
+
 
 def compare(srnas, srna_tables, nr_blasts, srna_blasts, args_srna):
     finals = []
@@ -166,6 +172,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, args_srna):
         finals.append(final)
     return finals
 
+
 def change_srna_name(final):
     names = []
     num = 0
@@ -182,6 +189,7 @@ def change_srna_name(final):
         if num == 3:
             break
     return names
+
 
 def print_file(finals, out, srnas, out_gff):
     rank = 1
@@ -223,6 +231,7 @@ def print_file(finals, out, srnas, out_gff):
         out_gff.write("\t".join([srna.info_without_attributes,
                                  attribute_string]) + "\n")
 
+
 def read_table(srna_table_file, nr_blast, srna_blast_file, import_info):
     srna_tables = []
     nr_blasts = []
@@ -243,12 +252,14 @@ def read_table(srna_table_file, nr_blast, srna_blast_file, import_info):
         f_h.close()
     return srna_tables, nr_blasts, srna_blasts
 
+
 def read_gff(srna_gff):
     srnas = []
     for entry in Gff3Parser().entries(open(srna_gff)):
         srnas.append(entry)
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return srnas
+
 
 def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
                    args_srna, out_file):
@@ -278,6 +289,7 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
     out_gff.close()
     shutil.move(tmp_gff, srna_gff)
 
+
 def print_best(detect, out, srna):
     no_print = False
     for key, value in detect.items():
@@ -286,12 +298,14 @@ def print_best(detect, out, srna):
     if not no_print:
         out.write(srna.info + "\n")
 
+
 def check_energy(srna, energy, detect):
     if "2d_energy" in srna.attributes.keys():
         if float(srna.attributes["2d_energy"]) < energy:
             detect["energy"] = True
     else:
         detect["energy"] = True
+
 
 def check_tss(import_info, srna, detect):
     if "tss" in import_info:
@@ -308,6 +322,7 @@ def check_tss(import_info, srna, detect):
     else:
         detect["TSS"] = True
 
+
 def check_nr_hit(srna, nr_hits_num, detect):
     if "nr_hit" in srna.attributes.keys():
         if (srna.attributes["nr_hit"] == "NA") or (
@@ -316,6 +331,7 @@ def check_nr_hit(srna, nr_hits_num, detect):
     else:
         detect["nr_hit"] = True
 
+
 def check_sorf(best_sorf, srna, detect):
     if (best_sorf):
         if ("sORF" in srna.attributes.keys()):
@@ -323,6 +339,7 @@ def check_sorf(best_sorf, srna, detect):
                 detect["sORF"] = True
     else:
         detect["sORF"] = True
+
 
 def check_srna_hit(srna, all_hit, detect):
     if ("sRNA_hit" in srna.attributes.keys()) and (all_hit):
@@ -339,6 +356,7 @@ def check_srna_hit(srna, all_hit, detect):
     else:
         detect["sRNA_hit"] = True
 
+
 def check_term(best_term, srna, detect):
     if best_term:
         if ("with_term" in srna.attributes.keys()):
@@ -350,6 +368,7 @@ def check_term(best_term, srna, detect):
     else:
         detect["term"] = True
 
+
 def check_promoter(best_promoter, srna, detect):
     if best_promoter:
         if ("promoter" in srna.attributes.keys()):
@@ -357,6 +376,7 @@ def check_promoter(best_promoter, srna, detect):
                 detect["promoter"] = True
     else:
         detect["promoter"] = True
+
 
 def gen_best_srna(srna_file, out_file, args_srna):
     srnas = read_gff(srna_file)

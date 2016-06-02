@@ -9,6 +9,7 @@ def _boolean(data):
         result = True
     return result
 
+
 def row_to_location(row):
     if row[4] == "0":
         sub = False
@@ -21,11 +22,13 @@ def row_to_location(row):
     return {"have no sub-operons": nosub, "have sub-operons": sub,
             "start with tss": tss, "stop with terminator": term}
 
+
 def plus_num(num_total, strain, type_):
     num_total["total"][type_] += 1
     num_total[strain][type_] += 1
     num_total["total"]["total"] += 1
     num_total[strain]["total"] += 1
+
 
 def print_stat(operons, total_num, class_operon, out):
     num_features = {}
@@ -62,6 +65,7 @@ def print_stat(operons, total_num, class_operon, out):
     out.write("\tpolycistronic: {0} ({1})\n".format(
               class_operon["poly"],
               float(class_operon["poly"]) / float(class_operon["total"])))
+
 
 def stat(input_file, out_file):
     out = open(out_file, "w")

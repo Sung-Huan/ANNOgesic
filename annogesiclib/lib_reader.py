@@ -41,6 +41,7 @@ def read_libs(input_libs, wig_folder):
             sys.exit()
     return libs, texs
 
+
 def read_wig(filename, strand, libs):
     wig_parser = WigParser()
     wigs = {}

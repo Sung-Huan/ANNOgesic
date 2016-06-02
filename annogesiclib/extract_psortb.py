@@ -25,6 +25,7 @@ def import_psortb(seq_name, psortbs, local_name, local_score, type_, results):
                         "score": results[-1]})
     return {"datas": seq_datas, "features": features, "prot_id": prot_id}
 
+
 def get_results(line, scores, psortbs, out_p, seq_name, fuzzy):
     local_name = []
     local_score = []
@@ -64,6 +65,7 @@ def get_results(line, scores, psortbs, out_p, seq_name, fuzzy):
                                results[0], results[-1]]) + "\n")
     return local_name, local_score
 
+
 def get_information(psortb_table, out_p, fuzzy):
     scores = []
     psortbs = []
@@ -93,6 +95,7 @@ def get_information(psortb_table, out_p, fuzzy):
                 detects["score"] = True
     return psortbs
 
+
 def print_gff(gffs, psortbs, out_m):
     for gff in gffs:
         detect = False
@@ -121,6 +124,7 @@ def print_gff(gffs, psortbs, out_m):
                                    gff.attribute_string + "\n"]))
         else:
             out_m.write(gff.info + "\n")
+
 
 def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge, fuzzy):
     gffs = []

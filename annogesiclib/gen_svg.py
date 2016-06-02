@@ -37,6 +37,7 @@ def print_track(track_num, svg_out, figure_width):
                           "stroke-opacity:0.25\" />\n")
         id_num += 1
 
+
 def gen_svg(input_png, track_num, figure_height, figure_width):
     svg_out = open(input_png[:-4] + ".svg", "w")
     svg_out.write("""<?xml version="1.0" encoding="UTF-8" standalone="no"?>

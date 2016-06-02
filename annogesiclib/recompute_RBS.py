@@ -11,6 +11,7 @@ def read_file(seq_file, seqs):
             else:
                 seqs.append({"name": header, "seq": line})
 
+
 def import_ribo(line, ribos, seq_name):
     if line.startswith("("):
         num = 0
@@ -38,6 +39,7 @@ def import_ribo(line, ribos, seq_name):
                                       "e": e, "seq_name": seq_name,
                                       "start": end, "end": start})
 
+
 def print_file(ribos, out_t, out_s, seq_name, seqs):
     if len(ribos) != 0:
         for rbs in ribos:
@@ -62,6 +64,7 @@ def print_file(ribos, out_t, out_s, seq_name, seqs):
                                 str(int(tags[-1]) - rbs["end"] + 1)]) + "\n")
                         out_s.write(seq["seq"][
                             (rbs["start"] - 1): (rbs["end"])] + "\n")
+
 
 def regenerate_seq(align_file, seq_file, out_table, out_seq):
     hit = False
@@ -89,6 +92,7 @@ def regenerate_seq(align_file, seq_file, out_table, out_seq):
                     print_file(ribos, out_t, out_s, seq_name, seqs)
     out_t.close()
     out_s.close()
+
 
 def compare_first_result(ribos, firsts, seq_name, out, extras):
     if len(ribos) != 0:
@@ -137,6 +141,7 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
                         if not check:
                             extras.append(rbs)
 
+
 def read_gff(gff_file):
     cdss = []
     g_h = open(gff_file)
@@ -148,6 +153,7 @@ def read_gff(gff_file):
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     g_h.close()
     return cdss
+
 
 def reextract_rbs(align_file, first_file, output_file):
     hit = False

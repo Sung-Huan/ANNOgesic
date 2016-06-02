@@ -11,10 +11,12 @@ def get_feature(cds):
         feature = cds.attributes["ID"]
     return feature
 
+
 def import_data(seq, cds, start, end):
     feature = get_feature(cds)
     return {"seq": seq, "strain": cds.seq_id, "strand": cds.strand,
             "protein": feature, "start": start, "end": end}
+
 
 def detect_site(inters, args_ribo):
     rbss = []
@@ -52,6 +54,7 @@ def detect_site(inters, args_ribo):
                 break
     return rbss
 
+
 def read_file(seq_file, gff_file, tss_file, tran_file):
     cdss = []
     tsss = []
@@ -83,6 +86,7 @@ def read_file(seq_file, gff_file, tss_file, tran_file):
     t_h.close()
     return cdss, seq, tsss, trans
 
+
 def extract_inter_seq(inter, cds, seq, fuzzy, inters):
     helper = Helper()
     start = inter["start"] - fuzzy
@@ -98,6 +102,7 @@ def extract_inter_seq(inter, cds, seq, fuzzy, inters):
         inter_seq = helper.extract_gene(seq[cds.seq_id], start,
                                         end, "-")
     inters.append(import_data(inter_seq, cds, inter["start"], inter["end"]))
+
 
 def compare_tss(tsss, cds, inters, fuzzy, seq, utr):
     for tss in tsss:
@@ -115,6 +120,7 @@ def compare_tss(tsss, cds, inters, fuzzy, seq, utr):
                     inter = {"start": cds.end, "end": tss.end,
                              "strain": cds.seq_id, "strand": cds.strand}
                     extract_inter_seq(inter, cds, seq, fuzzy, inters)
+
 
 def compare_pre_cds(first, cdss, cds, seq):
     detect_cds = False
@@ -144,6 +150,7 @@ def compare_pre_cds(first, cdss, cds, seq):
         start = cds.end
         end = len(seq[cds.seq_id])
     return first, start, end
+
 
 def compare_tran(cds, trans, seq, inters, fuzzy, start, end):
     detect = False
@@ -189,6 +196,7 @@ def compare_tran(cds, trans, seq, inters, fuzzy, start, end):
                     extract_inter_seq(inter, cds, seq, fuzzy, inters)
                     break
 
+
 def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
     first = True
     inters = []
@@ -197,6 +205,7 @@ def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
         first, start, end = compare_pre_cds(first, cdss, cds, seq)
         compare_tran(cds, trans, seq, inters, fuzzy, start, end)
     return inters
+
 
 def extract_potential_rbs(seq_file, gff_file, tss_file, tran_file,
                           out_file, args_ribo):

@@ -37,12 +37,14 @@ def print_intersection(datas, keys, num_srna, gff_name, type_, out_stat):
     if type_ == "total":
         out.close()
 
+
 def initiate(key, key_list, class_name, class_num, index, out, content):
     if key in key_list:
         class_num += 1
         index[class_name] = class_num
         out.write(str(class_num) + content + "\n")
     return class_num
+
 
 def create_class(data, energy, datas_srna, index, type_, nr_hits_num):
     if "2d_energy" in data.attributes.keys():
@@ -82,6 +84,7 @@ def create_class(data, energy, datas_srna, index, type_, nr_hits_num):
             if (data.attributes["promoter"] != "NA"):
                 datas_srna["class_" + str(index["promoter"])].append(data)
 
+
 def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                  type_, srna_type, energy, nr_hits_num):
     for num in range(1, class_num + 1):
@@ -99,6 +102,7 @@ def import_class(class_num, datas_srna, datas, index, num_srna, strain,
                 create_class(data, energy, datas_srna, index,
                              type_, nr_hits_num)
     return num_srna
+
 
 def import_data(class_num, datas, index, num_srna,
                 strain, checks, energy, nr_hits_num):
@@ -144,6 +148,7 @@ def import_data(class_num, datas, index, num_srna,
             energy, nr_hits_num)
     return datas_srna
 
+
 def sort_keys(keys):
     nums = []
     final_keys = []
@@ -153,6 +158,7 @@ def sort_keys(keys):
     for num in nums:
         final_keys.append("_".join(["class", str(num)]))
     return final_keys
+
 
 def print_stat_title(checks, out_stat, strain, srna_datas,
                      num_strain, args_srna):
@@ -211,6 +217,7 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
             out_stat.write(strain + ":\n")
     return class_num, index
 
+
 def read_file(srna_file):
     strains = []
     checks = {"limit": False, "first": True, "utr": False,
@@ -244,9 +251,11 @@ def read_file(srna_file):
     fh.close()
     return srna_datas, strains, checks
 
+
 def set_num(num_srna, types):
     for type_ in types:
         num_srna[type_] = 0
+
 
 def check_and_set_num(checks):
     num_srna = {"total": 0}
@@ -259,6 +268,7 @@ def check_and_set_num(checks):
     if checks["in_CDS"]:
         set_num(num_srna, ["in_CDS"])
     return num_srna
+
 
 def classify_srna(srna_file, out_folder, out_stat_file, args_srna):
     srna_datas, strains, checks = read_file(srna_file)

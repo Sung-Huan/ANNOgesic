@@ -25,7 +25,7 @@ class Expression(object):
 
     def _get_replicates(self, replicates_tex, replicates_frag):
         if (replicates_tex is not None) and (
-            replicates_frag is not None):
+                replicates_frag is not None):
             replicates = {"tex": int(replicates_tex),
                           "frag": int(replicates_frag)}
         elif replicates_tex is not None:
@@ -72,14 +72,16 @@ class Expression(object):
         for wig in os.listdir(merge_wigs):
             for lib in input_libs:
                 if (wig in lib) and (lib[-1] == "+"):
-                    self.helper.merge_file(os.path.join(merge_wigs, wig), wig_f_file)
+                    self.helper.merge_file(os.path.join(merge_wigs, wig),
+                                           wig_f_file)
                 elif (wig in lib) and (lib[-1] == "-"):
-                    self.helper.merge_file(os.path.join(merge_wigs, wig), wig_r_file)
+                    self.helper.merge_file(os.path.join(merge_wigs, wig),
+                                           wig_r_file)
         print("Computing expression analysis...")
-        gene_expression(input_libs, gffs, percent_tex, percent_frag, wig_f_file,
-                        wig_r_file, features, merge_wigs, cutoff_coverage,
-                        tex_notex, replicates, self.stat, self.gff_folder,
-                        cover_type, max_color, min_color)
+        gene_expression(input_libs, gffs, percent_tex, percent_frag,
+                        wig_f_file, wig_r_file, features, merge_wigs,
+                        cutoff_coverage, tex_notex, replicates, self.stat,
+                        self.gff_folder, cover_type, max_color, min_color)
         os.remove(wig_f_file)
         os.remove(wig_r_file)
         if os.path.exists(self.merge_wigs):

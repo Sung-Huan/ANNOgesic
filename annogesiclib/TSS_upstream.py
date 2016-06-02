@@ -14,6 +14,7 @@ def get_upstream(seq, tss, out, name, nt_before):
                                       tss.start + nt_before - 1, tss.strand)
     out.write("{0}\n{1}\n".format(name, fasta))
 
+
 def print_fasta(seq, tss, files, name, nt_before):
     for key in seq.keys():
         if tss.seq_id == key:
@@ -27,6 +28,7 @@ def print_fasta(seq, tss, files, name, nt_before):
                 get_upstream(seq[key], tss, files["anti"], name, nt_before)
             if "Orphan" in tss.attributes["type"]:
                 get_upstream(seq[key], tss, files["orph"], name, nt_before)
+
 
 def read_wig(filename, strand):
     wigs = {}
@@ -45,6 +47,7 @@ def read_wig(filename, strand):
     wig_fh.close()
     return wigs
 
+
 def read_data(tss_file, fasta_file):
     seq = {}
     tsss = []
@@ -62,6 +65,7 @@ def read_data(tss_file, fasta_file):
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return tsss, seq
 
+
 def read_gff(gff_file):
     cdss = []
     genes = []
@@ -76,6 +80,7 @@ def read_gff(gff_file):
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return cdss, genes
+
 
 def read_libs(input_libs, wig_folder):
     libs = {}
@@ -92,6 +97,7 @@ def read_libs(input_libs, wig_folder):
             Helper().merge_file(os.path.join(wig_folder, datas[0]),
                                 os.path.join("tmp", "merge_reverse.wig"))
     return libs
+
 
 def upstream(tss_file, fasta_file, gff_file, out_class, args_pro):
     files = {"pri": open("tmp/primary.fa", "w"),
@@ -131,6 +137,7 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro):
                             tss.end, tss.score, tss.strand, tss.phase,
                             tss.attribute_string]]) + "\n")
             print_fasta(seq, tss, files, name, args_pro.nt_before)
+
 
 def del_repeat_fasta(input_file, out_file):
     data = {}

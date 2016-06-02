@@ -16,6 +16,7 @@ def read_gff(gff_file):
     g_h.close()
     return cdss
 
+
 def check_repeat(tab, strain, strand, start, end):
     if (tab["strain"] == strain) and (
             tab["strand"] == strand):
@@ -30,6 +31,7 @@ def check_repeat(tab, strain, strand, start, end):
                  tab["start"] <= end) and (
                  tab["end"] >= end)):
             return True
+
 
 def rbs_overlap(table_file, gff_file):
     tmp_tab = table_file + "_tmp"

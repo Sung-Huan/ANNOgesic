@@ -65,6 +65,7 @@ def compute_stat(stat_value, best, best_para, cores,
     indexs["count"] += 1
     return (best_para, best)
 
+
 def scoring_function(best, stat_value, indexs, num_manual):
     indexs["change"] = False
     if (stat_value["tp_rate"] == best["tp_rate"]) and (
@@ -93,6 +94,7 @@ def scoring_function(best, stat_value, indexs, num_manual):
                 if float(stat_value["fp"] - best["fp"]) <= 5 * tp_diff:
                     indexs["change"] = True
 
+
 def check_overlap(overlap, pre_tss, nums, length, manual, predict, pre_pos):
     if overlap:
         if pre_tss:
@@ -114,6 +116,7 @@ def check_overlap(overlap, pre_tss, nums, length, manual, predict, pre_pos):
         if (manual.start <= int(length)):
             nums["manual"] += 1
     return (overlap, pre_pos)
+
 
 def comparison(manuals, predicts, nums, args_ops):
     overlap = False
@@ -146,6 +149,7 @@ def comparison(manuals, predicts, nums, args_ops):
             if (tss_p.start <= int(args_ops.gene_length)):
                 nums["predict"] += 1
 
+
 def read_predict_manual_gff(gff_file, args_ops):
     num = 0
     gffs = []
@@ -157,6 +161,7 @@ def read_predict_manual_gff(gff_file, args_ops):
             gffs.append(entry)
     f_h.close()
     return num, gffs
+
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path,
                            out, args_ops):
@@ -202,6 +207,7 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
     manual_fh.close()
     return stats
 
+
 def convert2gff(out_path, gff_files, args_ops):
     for core in range(1, args_ops.cores+1):
         output_folder = os.path.join(
@@ -214,6 +220,7 @@ def convert2gff(out_path, gff_files, args_ops):
                     args_ops.project_strain, gff_file)
         gff_files.append(gff_file)
 
+
 def run_TSSpredator(tsspredator_path, config_file):
     folders = config_file.split("/")
     out_path = "/".join(folders[:-1])
@@ -221,6 +228,7 @@ def run_TSSpredator(tsspredator_path, config_file):
     p = Popen(["java", "-Xmx2G", "-jar",
                tsspredator_path, config_file], stdout=out)
     return p
+
 
 def run_TSSpredator_paralle(config_files, tsspredator_path, processes):
     for config_file in config_files:
@@ -240,6 +248,7 @@ def run_TSSpredator_paralle(config_files, tsspredator_path, processes):
             pass
     time.sleep(5)
 
+
 def print_lib(lib_num, lib_list, out, wig_folder, prefix):
     for num_id in range(1, lib_num+1):
         cond_list = []
@@ -252,12 +261,14 @@ def print_lib(lib_num, lib_list, out, wig_folder, prefix):
                       prefix, cond["condition"], cond["replicate"],
                       wig_folder, cond["wig"]))
 
+
 def assign_dict(lib_datas):
     return {"wig": lib_datas[0],
             "tex": lib_datas[1],
             "condition": int(lib_datas[2]),
             "replicate": lib_datas[3],
             "strand": lib_datas[4]}
+
 
 def import_lib(wig_folder, rep_set, lib_dict, out, gff,
                list_num_id, fasta, args_ops):
@@ -308,6 +319,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
     for num_id in range(1, lib_num+1):
         list_num_id.append(str(num_id))
     return lib_num
+
 
 def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
     files = os.listdir(out_path)
@@ -363,6 +375,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
     out.close()
     return filename
 
+
 def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
                      out_path, stat_out, best_para, current_para,
                      wig, fasta, gff, best, num_manual, args_ops):
@@ -384,10 +397,6 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
             gff_files = []
             for para in list_num[-1 * args_ops.cores:]:
                 index += 1
-#                print("_".join([str(para["height"]), str(para["re_height"]),
-#                      str(para["factor"]), str(para["re_factor"]),
-#                      str(para["base_height"]), str(para["enrichment"]),
-#                      str(para["processing"])]))
                 config_files.append(gen_config(para, out_path, index, wig,
                                     fasta, gff, args_ops))
             indexs["count"] = 0
@@ -414,8 +423,8 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
             indexs["switch"] += 1
             stat_values = []
             indexs["num"] = 0
-        current_para = copy.deepcopy(best_para)
     return (False, best_para, best)
+
 
 def minus_process(num_type, new_para, max_num, best_num,
                   actions, list_num, compare):
@@ -465,6 +474,7 @@ def minus_process(num_type, new_para, max_num, best_num,
                 return new_para[num_type]
     return None
 
+
 def plus_process(num_type, new_para, max_num,
                  best_num, actions, list_num, compare):
     if num_type == "base_height":
@@ -508,6 +518,7 @@ def plus_process(num_type, new_para, max_num,
                 return new_para[num_type]
     return None
 
+
 def small_change(max_num, num_type, compare, list_num, best_num, best_para):
     new_para = copy.deepcopy(best_para)
     actions = {"plus": False, "minus": False}
@@ -533,6 +544,7 @@ def small_change(max_num, num_type, compare, list_num, best_num, best_para):
                                      actions, list_num, compare)
         if tmp_para is not None:
             return tmp_para
+
 
 def run_small_change_part(seeds, features, indexs, current_para,
                           best_para, list_num, max_num):
@@ -578,6 +590,7 @@ def run_small_change_part(seeds, features, indexs, current_para,
                 list_num, best_para["processing"], best_para)
     return current_para
 
+
 def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                      best_para, index_large, indexs):
     new_para = copy.deepcopy(best_para)
@@ -618,6 +631,7 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
             else:
                 list_num.append(copy.deepcopy(new_para))
                 return new_para
+
 
 def run_large_change_part(seeds, features, indexs, current_para, max_num,
                           best_para, list_num):
@@ -664,6 +678,7 @@ def run_large_change_part(seeds, features, indexs, current_para, max_num,
                 best_para["processing"], best_para, index_large, indexs)
     return current_para
 
+
 def run_random_part(current_para, list_num, max_num, steps, indexs):
     tmp_random_step = 0
     while True:
@@ -691,6 +706,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
             indexs["switch"] += 1
             return None
     return current_para
+
 
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
@@ -753,6 +769,7 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
         if indexs["step"] >= args_ops.steps:
             break
 
+
 def start_data(current_para, list_num):
     current_para["height"] = 0.3
     current_para["re_height"] = 0.2
@@ -763,6 +780,7 @@ def start_data(current_para, list_num):
     current_para["base_height"] = 0.000
     list_num.append(copy.deepcopy(current_para))
     return current_para
+
 
 def extend_data(out_path, best, best_para, step):
     print("extend step from {0}".format(step))
@@ -782,6 +800,7 @@ def extend_data(out_path, best, best_para, step):
               best["fn"], best["missing_ratio"]))
     current_para = copy.deepcopy(best_para)
     return current_para
+
 
 def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
     f_h = open(os.path.join(out_path, "stat.csv"), "r")
@@ -823,6 +842,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
     f_h.close()
     return (line_num, best, best_para)
 
+
 def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
     indexs["switch"] = 1
     indexs["exist"] = True
@@ -851,6 +871,7 @@ def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
     new_stat.close()
     return (best_para, best)
 
+
 def get_gene_length(fasta, strain):
     seq = ""
     detect = False
@@ -865,6 +886,7 @@ def get_gene_length(fasta, strain):
                 if detect:
                     seq = seq + line
     return len(seq)
+
 
 def initiate(args_ops):
     max_num = {"height": args_ops.height,
@@ -886,6 +908,7 @@ def initiate(args_ops):
               "first": True, "num": 0, "length": 0, "change": False,
               "count": 0}
     return max_num, best_para, current_para, indexs
+
 
 def optimization(wig, fasta, gff, args_ops):
     best = {}

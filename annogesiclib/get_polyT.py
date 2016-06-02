@@ -12,6 +12,7 @@ def import_candidate(cands, term_features, strain, start, end, ut, name,
                   "l_stem": term_features["l_stem"], "parent_p": parent_p,
                   "parent_m": parent_m, "detect_p": False, "detect_m": False})
 
+
 def get_feature(gene):
     if "Name" in gene.attributes.keys():
         feature = gene.attributes["Name"]
@@ -23,12 +24,14 @@ def get_feature(gene):
                            "-", str(gene.end), "_", strand])
     return feature
 
+
 def check_miss(cand1, cand2, cutoff_miss):
     stem_len = (cand2["r_stem"] + cand2["l_stem"] - cand2["miss"])
     if (float(cand2["miss"]) / float(stem_len)) <= cutoff_miss:
         cand1["miss"] = cand2["miss"]
         cand1["r_stem"] = cand2["r_stem"]
         cand1["l_stem"] = cand2["l_stem"]
+
 
 def filter_term(cands, terms, miss_rate):
     cutoff_miss = miss_rate
@@ -64,6 +67,7 @@ def filter_term(cands, terms, miss_rate):
                         check_miss(tmp_term, cand2, cutoff_miss)
             terms.append(tmp_term)
 
+
 def check_sec(sec, nts):
     term_features = {"st_pos": 0, "rights": 0, "lefts": 0,
                      "tmp_miss": 0, "real_miss": 0, "loop": 0,
@@ -97,6 +101,7 @@ def check_sec(sec, nts):
             if term_features["lefts"] == term_features["rights"]:
                 break
     return term_features, detects
+
 
 def detect_candidates(seq, sec, name, strain, start, end,
                       parent_p, parent_m, strand, args_term):
@@ -148,6 +153,7 @@ def detect_candidates(seq, sec, name, strain, start, end,
                                 parent_p, parent_m)
     return cands
 
+
 def check_parent(genes, term, detects, strand, fuzzy_up, fuzzy_down, type_):
     tmp = None
     for gene in genes:
@@ -177,6 +183,7 @@ def check_parent(genes, term, detects, strand, fuzzy_up, fuzzy_down, type_):
                 elif (gene.start - term["end"] > fuzzy_down):
                     break
     return tmp
+
 
 def parents(terms, genes, args_term):
     for term in terms:
@@ -216,6 +223,7 @@ def parents(terms, genes, args_term):
             else:
                 term["parent_m"] = ",".join([term["parent_m"], tmp_m])
 
+
 def read_gff(seq_file, gff_file, tran_file):
     genome = {}
     genes = []
@@ -236,6 +244,7 @@ def read_gff(seq_file, gff_file, tran_file):
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     trans = sorted(trans, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return genes, genome, trans
+
 
 def compare_anno(gffs, cands, fuzzy_up, fuzzy_down):
     detect = False
@@ -277,6 +286,7 @@ def compare_anno(gffs, cands, fuzzy_up, fuzzy_down):
             new_cands.append(cand)
     return new_cands
 
+
 def merge_cands(new_cands_gene, new_cands_ta):
     new_cands = []
     for cand_gene in new_cands_gene:
@@ -288,6 +298,7 @@ def merge_cands(new_cands_gene, new_cands_ta):
                                                  k["end"], k["strand"]))
     return new_cands
 
+
 def get_seq_sec(s_h, sec_seq):
     for line in s_h:
         if ("(" in line) or ("." in line) or (")" in line):
@@ -296,6 +307,7 @@ def get_seq_sec(s_h, sec_seq):
             break
         else:
             sec_seq["seq"] = line
+
 
 def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
     terms = []

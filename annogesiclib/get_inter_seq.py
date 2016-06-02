@@ -15,6 +15,7 @@ def get_feature(gene, file_type):
                            "-", str(gene.end), "_", strand])
     return feature
 
+
 def import_data(f_1, f_2, start, end, file_type):
     if f_1 != "terminal":
         feature_1 = get_feature(f_1, file_type)
@@ -29,6 +30,7 @@ def import_data(f_1, f_2, start, end, file_type):
     return {"strain": strain, "start": start, "end": end,
             "parent_p": feature_1, "parent_m": feature_2, "print": False}
 
+
 def get_terminal(genes, inters, gene_len, type_, file_type):
     if type_ == "start":
         for gene in genes:
@@ -42,6 +44,7 @@ def get_terminal(genes, inters, gene_len, type_, file_type):
                 inters.append(import_data(gene.strand, gene.seq_id, gene.end,
                                           gene_len, file_type))
                 break
+
 
 def get_inter(features, seq, file_type):
     inters = []
@@ -81,10 +84,12 @@ def get_inter(features, seq, file_type):
         pre_strain = feature1.seq_id
     return inters
 
+
 def import_merge(id_, strain, start, end, parent_p, parent_m):
     return {"ID": "_".join(["inter_" + str(id_)]), "strain": strain,
             "start": start, "end": end, "parent_p": parent_p,
             "parent_m": parent_m, "print": False}
+
 
 def get_overlap_inters(inter1, inter2, merges, id_):
     if (inter1["end"] < inter2["end"]) and (
@@ -119,6 +124,7 @@ def get_overlap_inters(inter1, inter2, merges, id_):
         id_ += 1
     return id_
 
+
 def merge_inter(inters1, inters2):
     merges = []
     id_ = 0
@@ -142,6 +148,7 @@ def merge_inter(inters1, inters2):
     sort_merges = sorted(merges, key=lambda x: (x["strain"],
                                                 x["start"], x["end"]))
     return sort_merges
+
 
 def detect_confliction(gc, genes, seq):
     corr_merges = []
@@ -190,6 +197,7 @@ def detect_confliction(gc, genes, seq):
     corr_merges[-1]["strand"] = "-"
     return corr_merges
 
+
 def read_file(seq_file, tran_file, gff_file):
     seq = {}
     tas = []
@@ -214,6 +222,7 @@ def read_file(seq_file, tran_file, gff_file):
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return seq, tas, merges, genes
+
 
 def intergenic_seq(seq_file, tran_file, gff_file, out_file):
     out = open(out_file, "w")

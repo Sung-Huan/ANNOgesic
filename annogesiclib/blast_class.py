@@ -1,5 +1,3 @@
-"""for compute the statsitics of the results of sRNA blast"""
-
 import csv
 
 

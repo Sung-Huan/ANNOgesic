@@ -24,6 +24,7 @@ def uni(tas, genes, out):
             stop_tmp = ta.end
         detect = False
 
+
 def overlap(tas, genes, print_list, out):
     start_tmp = 0
     stop_tmp = 0
@@ -76,6 +77,7 @@ def overlap(tas, genes, print_list, out):
                           start_tmp, stop_tmp, tmp_ta.score, tmp_ta.strand,
                           tmp_ta.phase, tmp_ta.attribute_string]]) + "\n")
 
+
 def fill_gap(gff_file, ta_file, type_, output):
     tas = []
     genes = []
@@ -101,6 +103,7 @@ def fill_gap(gff_file, ta_file, type_, output):
     elif type_ == "uni":
         uni(tas, genes, out)
 
+
 def print_file(ta, num, out):
     ta.attributes["ID"] = "tran" + str(num)
     ta.attributes["Name"] = "Transcript_" + ('%0*d' % (5, num))
@@ -110,6 +113,7 @@ def print_file(ta, num, out):
               ta.seq_id, ta.source, ta.feature, ta.start,
               ta.end, ta.score, ta.strand, ta.phase,
               attribute_string]]) + "\n")
+
 
 def longer_ta(ta_file, length, out_file):
     tas = []

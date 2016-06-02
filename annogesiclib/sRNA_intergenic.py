@@ -38,6 +38,7 @@ def get_differential_cover(num, checks, cover_sets, poss, cover, args_srna):
             cover_sets["diff"] = cover["coverage"]
     return go_out
 
+
 def check_coverage_pos(start, end, cover, cutoff_coverage, tmps, cover_sets,
                        checks, poss, strand, tolerance):
     go_out = False
@@ -79,6 +80,7 @@ def check_coverage_pos(start, end, cover, cutoff_coverage, tmps, cover_sets,
             tmps["toler"] = 0
             go_out = True
     return go_out, tmps
+
 
 def get_best(wigs, strain, strand, start, end, type_, args_srna, cutoff):
     cover_sets = {"low": -1, "high": -1, "total": 0, "diff": 0}
@@ -127,6 +129,7 @@ def get_best(wigs, strain, strand, start, end, type_, args_srna, cutoff):
                                                   "pos": poss["stop_point"],
                                                   "type": cover["type"]})
     return srna_covers
+
 
 def get_attribute_string(srna_datas, tss_pro, num, name, srna_type):
     attribute_string = ";".join(
@@ -179,6 +182,7 @@ def get_attribute_string(srna_datas, tss_pro, num, name, srna_type):
             attribute_string = ";".join([attribute_string, srna_data_string])
     return attribute_string
 
+
 def print_file(string, tss, srna_datas, srna_type, args_srna):
     name = '%0*d' % (5, args_srna.nums["uni"])
     datas = string.split("\t")
@@ -225,6 +229,7 @@ def print_file(string, tss, srna_datas, srna_type, args_srna):
         args_srna.out_table.write("\n")
     args_srna.nums["uni"] += 1
 
+
 def get_coverage(start, end, strain, wigs, strand, ta, tss, cutoff_coverage,
                  notex, args_srna):
     srna_covers = get_best(wigs, strain, strand, start, end, "total",
@@ -238,6 +243,7 @@ def get_coverage(start, end, strain, wigs, strand, ta, tss, cutoff_coverage,
     if srna_datas["best"] != 0:
         print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
                    args_srna)
+
 
 def check_pro(ta, start, end, srna_datas, type_, cutoff,
               wigs, notex, args_srna):
@@ -288,6 +294,7 @@ def check_pro(ta, start, end, srna_datas, type_, cutoff,
                 new_srna_datas = None
     return pro_pos, new_srna_datas, detect_pro
 
+
 def exchange_to_pro(args_srna, srna_datas, ta, start,
                     end, cutoff, wigs, notex):
     detect = False
@@ -316,6 +323,7 @@ def exchange_to_pro(args_srna, srna_datas, ta, start,
         pro = None
     return detect, srna_datas, pro
 
+
 def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
     srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, end,
                            "differential", args_srna, cutoff)
@@ -342,6 +350,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
                 tss = ";".join([tss, pro])
             print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
                        args_srna)
+
 
 def detect_longer(ta, args_srna):
     notex = None
@@ -391,6 +400,7 @@ def detect_longer(ta, args_srna):
                 detect_wig_pos(args_srna.wigs_r, ta, ta.start, ta.end, "NA",
                                cutoff, notex, args_srna)
 
+
 def get_tss_type(tss, cutoff_coverage):
     types = []
     for type_, cover in cutoff_coverage.items():
@@ -410,6 +420,7 @@ def get_tss_type(tss, cutoff_coverage):
         else:
             cover = cutoff_coverage["no_tss"]
     return cover
+
 
 def compare_ta_tss(tss_pos, ta_start, ta_end, ta, tss, diff, cutoff_coverage,
                    notex, wigs, args_srna):
@@ -434,6 +445,7 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, ta, tss, diff, cutoff_coverage,
                        ta.attributes["sRNA_type"], args_srna)
         if args_srna.detects is not None:
             args_srna.detects["uni_with_tss"] = True
+
 
 def detect_include_tss(ta, args_srna):
     args_srna.detects["uni_with_tss"] = False
@@ -470,6 +482,7 @@ def detect_include_tss(ta, args_srna):
                 ta.info_without_attributes.replace("Transcript", "sRNA"),
                 "False", None, ta.attributes["sRNA_type"], args_srna)
 
+
 def get_proper_tss(tss_file, cutoff_coverage):
     types = []
     gff_parser = Gff3Parser()
@@ -493,6 +506,7 @@ def get_proper_tss(tss_file, cutoff_coverage):
         tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
         tss_f.close()
     return tsss, num_tss
+
 
 def read_data(args_srna):
     cdss = []
@@ -538,6 +552,7 @@ def read_data(args_srna):
     t_h.close()
     return nums, cdss, tas, pros, genes
 
+
 def read_tss(tss_file):
     tsss = []
     tss_f = open(tss_file, "r")
@@ -547,6 +562,7 @@ def read_tss(tss_file):
     num_tss = None
     tss_f.close()
     return tsss, num_tss
+
 
 def check_overlap(cds, ta):
     if ((cds.end < ta.end) and (
@@ -560,6 +576,7 @@ def check_overlap(cds, ta):
             (cds.end <= ta.end) and (
              cds.start >= ta.start)):
         return True
+
 
 def compare_ta_cds(cdss, ta, detects):
     for cds in cdss:
@@ -575,6 +592,7 @@ def compare_ta_cds(cdss, ta, detects):
                 ta.attributes["sRNA_type"] = "antisense"
     if (not detects["overlap"]) and (not detects["anti"]):
         ta.attributes["sRNA_type"] = "intergenic"
+
 
 def check_srna_condition(ta, args_srna):
     if ((ta.end - ta.start) >= args_srna.min_len) and (
@@ -598,6 +616,7 @@ def check_srna_condition(ta, args_srna):
                            args_srna)
     if ((ta.end - ta.start) > args_srna.max_len):
         detect_longer(ta, args_srna)
+
 
 def get_cutoff(cutoffs, out_folder, file_type):
     out = open(os.path.join(out_folder, "tmp_cutoff_inter"), "a")
@@ -631,6 +650,7 @@ def get_cutoff(cutoffs, out_folder, file_type):
     out.close()
     return coverages
 
+
 def modify_wigs_for_tss_type(wigs, strand):
     new_wigs = {}
     for strain, conds in wigs.items():
@@ -646,6 +666,7 @@ def modify_wigs_for_tss_type(wigs, strand):
                                     "coverage": cover["coverage"],
                                     "strand": strand})
     return new_wigs
+
 
 def compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r):
     tsss, num_tss = read_tss(args_srna.tss_file)
@@ -676,6 +697,7 @@ def compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r):
     wigs_fm = {}
     wigs_rm = {}
 
+
 def get_intergenic_antisense_cutoff(args_srna):
     cutoff_coverage = get_cutoff(args_srna.cutoffs, args_srna.out_folder,
                                  args_srna.file_type)
@@ -684,9 +706,11 @@ def get_intergenic_antisense_cutoff(args_srna):
         notex = get_cutoff(args_srna.cut_notex, args_srna.out_folder, "notex")
     return cutoff_coverage, notex
 
+
 def free_memory(paras):
     for data in paras:
         del(data)
+
 
 def intergenic_srna(args_srna):
     inter_cutoff_coverage, inter_notex = get_intergenic_antisense_cutoff(

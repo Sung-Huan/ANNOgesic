@@ -6,6 +6,7 @@ def plus_num(nums, strain, feature):
     nums[strain][feature] += 1
     nums["total"][feature] += 1
 
+
 def print_percent(out, total, fract, name):
     if total != 0:
         out.write("\t\t(percentage of total {0}terminators = {1})\n".format(
@@ -14,6 +15,7 @@ def print_percent(out, total, fract, name):
         out.write("\t\t(percentage of total {0}terminators = 0.0)\n".format(
                   name))
 
+
 def print_express(out, total, fract, name):
     if total != 0:
         out.write("\t\t(percentage of total {0}terminators which have "
@@ -21,6 +23,7 @@ def print_express(out, total, fract, name):
     else:
         out.write("\t\t(percentage of total {0}terminators which have "
                   "gene expression = 0.0)\n".format(name))
+
 
 def print_decrease(out, total, fract, name):
     if total != 0:
@@ -31,6 +34,7 @@ def print_decrease(out, total, fract, name):
         out.write("\t\t(percentage of total {0}terminators "
                   "which have dramatic coverage decreasing = 0.0)\n".format(
                       name))
+
 
 def print_method(nums, method_name, method, express, detect, only, out):
     out.write(method_name + "\n")
@@ -63,15 +67,18 @@ def print_method(nums, method_name, method, express, detect, only, out):
                    method_name + " ")
     out.write("\n")
 
+
 def print_intersection_number(out, nums, type_):
     print_percent(out, float(nums["total"]), float(nums[type_]), "")
     print_percent(out, float(nums["fr"]), float(nums[type_]), "method_1 ")
     print_percent(out, float(nums["hp"]), float(nums[type_]), "method_2 ")
 
+
 def print_intersection_express(out, nums, type_):
     print_express(out, float(nums["total_ex"]), float(nums[type_]), "")
     print_express(out, float(nums["ex_fr"]), float(nums[type_]), "method_1 ")
     print_express(out, float(nums["ex_hp"]), float(nums[type_]), "method_2 ")
+
 
 def print_file(nums, out, strain):
     out.write(strain + ":\n")
@@ -104,6 +111,7 @@ def print_file(nums, out, strain):
                   float(nums["de_frhp"]), "method_1 ")
     print_express(out, float(nums["de_hp"]),
                   float(nums["de_frhp"]), "method_2 ")
+
 
 def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
     for term in terms:
@@ -157,6 +165,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "ex_fr")
                 plus_num(nums, strain, "ex_hp")
                 plus_num(nums, strain, "total_ex")
+
 
 def stat_term(term_gff, term_table, stat, output_decrease,
               output_expression, output_non):

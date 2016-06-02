@@ -26,9 +26,11 @@ def import_data(strand, strain, pos, utr, type_, name, srna_cover, pro):
     del(srna_cover)
     return data
 
+
 def import_inter(strand, strain, start, end, length):
     return {"strand": strand, "strain": strain,
             "start": start, "end": end, "len_CDS": length}
+
 
 def get_terminal(cdss, inters, seq, type_):
     first_p = True
@@ -65,6 +67,7 @@ def get_terminal(cdss, inters, seq, type_):
                     cds.strand, cds.seq_id, cds.start,
                     len(seq[cds.seq_id]), cds.end - cds.start))
 
+
 def check_pos(cover, check_point, checks):
     if (cover["pos"] >= min(check_point["utr_start"],
                             check_point["utr_end"])) and (
@@ -76,6 +79,7 @@ def check_pos(cover, check_point, checks):
         cover["pos"] <= max(check_point["srna_start"],
                             check_point["srna_end"])):
         checks["srna"] = True
+
 
 def set_cover_and_point(cover_results, inter, covers, pos, fuzzy_end):
     check_point = {"srna_start": 0, "srna_end": 0,
@@ -99,6 +103,7 @@ def set_cover_and_point(cover_results, inter, covers, pos, fuzzy_end):
         check_point["utr_end"] = pos["ori_end"]
     cover_results["check_point"] = check_point
     cover_results["covers"] = covers
+
 
 def detect_cover_utr_srna(cover_results, pos, inter, cond, track, args_srna):
     datas = {"num": 0, "cover_tmp": {"5utr": 0, "total": 0, "ori_total": 0},
@@ -140,6 +145,7 @@ def detect_cover_utr_srna(cover_results, pos, inter, cond, track, args_srna):
         check_import_srna_covers(datas, cover_results, inter, cond, track,
                                  cover, pos, args_srna)
 
+
 def get_coverage(wigs, inter, pos, type_, intercds_type, args_srna):
     cover_results = {"srna_covers": {}, "utr_covers": {},
                      "cover_sets": {"high": 0, "low": 0, "best": -1},
@@ -156,6 +162,7 @@ def get_coverage(wigs, inter, pos, type_, intercds_type, args_srna):
                     detect_cover_utr_srna(cover_results, pos, inter,
                                           cond, track, args_srna)
     return cover_results["srna_covers"], cover_results["utr_covers"]
+
 
 def get_cover_5utr(datas, cover_sets, cover, inter, args_srna):
     go_out = False
@@ -183,6 +190,7 @@ def get_cover_5utr(datas, cover_sets, cover, inter, args_srna):
         datas["num"] += 1
     return go_out
 
+
 def import_cover(inter, covers, track, cover_sets, avgs, cover,
                  final_poss, pos):
     if final_poss["start"] < final_poss["end"]:
@@ -197,6 +205,7 @@ def import_cover(inter, covers, track, cover_sets, avgs, cover,
                        "ori_avg": avgs["ori_avg"],
                        "final_start": final_poss["start"],
                        "final_end": final_poss["end"]})
+
 
 def check_import_srna_covers(datas, cover_results, inter, cond, track,
                              cover, pos, args_srna):
@@ -232,6 +241,7 @@ def check_import_srna_covers(datas, cover_results, inter, cond, track,
         import_cover(inter, cover_results["utr_covers"][cond], track,
                      cover_results["cover_sets"], avgs, cover,
                      datas["final_poss"], pos)
+
 
 def detect_3utr_pro(inter, pos, wigs, utr_type, args_srna):
     for pro in args_srna.pros:
@@ -279,6 +289,7 @@ def detect_3utr_pro(inter, pos, wigs, utr_type, args_srna):
             if (pro.start > pos["end"] + args_srna.fuzzy_tsss[utr_type]):
                 break
 
+
 def detect_twopro(inter, pos, wigs, utr_type, import_type, args_srna):
     pros = []
     for pro in args_srna.pros:
@@ -310,6 +321,7 @@ def detect_twopro(inter, pos, wigs, utr_type, import_type, args_srna):
                         [str(pro.start), pro.strand])))
         pre_pro = pro
 
+
 def decrease_pos(covers, pos, strand):
     longer = -1
     for cond, datas in covers.items():
@@ -325,6 +337,7 @@ def decrease_pos(covers, pos, strand):
                             longer != -1):
                         longer = value
     return longer
+
 
 def get_decrease(inter, wigs, tss, pos, utr_type, args_srna):
     if inter["strand"] == "+":
@@ -366,6 +379,7 @@ def get_decrease(inter, wigs, tss, pos, utr_type, args_srna):
                 "TSS:" + "_".join([str(tss.start), tss.strand]),
                 srna_covers, "NA"))
 
+
 def import_append_normal(inter, tss, pro, pos, wigs, utr_type, args_srna):
     if inter["strand"] == "+":
         n_pos = import_position(tss.start, pro.start,
@@ -391,6 +405,7 @@ def import_append_normal(inter, tss, pro, pos, wigs, utr_type, args_srna):
             inter["strand"], inter["strain"], n_pos, utr_type, "TSS",
             "TSS:" + "_".join([str(tss.start), tss.strand]), srna_covers,
             "Cleavage:" + "_".join([str(pro.start), pro.strand])))
+
 
 def detect_normal(diff, wigs, inter, pos, utr_type, tss, args_srna):
     if (diff >= args_srna.min_len) and (
@@ -418,9 +433,11 @@ def detect_normal(diff, wigs, inter, pos, utr_type, tss, args_srna):
         if not detect:
             get_decrease(inter, wigs, tss, pos, utr_type, args_srna)
 
+
 def import_position(start, end, ori_start, ori_end):
     return {"start": start, "end": end,
             "ori_start": ori_start, "ori_end": ori_end}
+
 
 def detect_utr(start, end, inter, utr_type, wigs, args_srna):
     ori_fuzzy = args_srna.fuzzy_tsss[utr_type]
@@ -457,6 +474,7 @@ def detect_utr(start, end, inter, utr_type, wigs, args_srna):
         detect_twopro(inter, pos, wigs, utr_type, "interCDS", args_srna)
     args_srna.fuzzy_tsss[utr_type] = ori_fuzzy
 
+
 def run_utr_detection(wigs, inter, start, end, utr_type, args_srna):
     if end - start >= 0:
         if (utr_type == "3utr") or (
@@ -470,6 +488,7 @@ def run_utr_detection(wigs, inter, start, end, utr_type, args_srna):
             args_srna.utrs.append(import_data(
                 inter["strand"], inter["strain"],
                 pos, utr_type, "NA", "NA", utr_covers, "NA"))
+
 
 def class_utr(inter, ta, args_srna):
     if inter["strand"] == "+":
@@ -501,6 +520,7 @@ def class_utr(inter, ta, args_srna):
             run_utr_detection(args_srna.wig_rs, inter,  inter["start"] + 1,
                               inter["end"] - 1, "interCDS", args_srna)
 
+
 def median_score(lst, per):
     sortedLst = sorted(lst)
     lstLen = len(lst)
@@ -509,6 +529,7 @@ def median_score(lst, per):
         return sortedLst[index]
     else:
         return 0
+
 
 def print_file(num, srna, start, end, srna_datas, args_srna):
     name = '%0*d' % (5, num)
@@ -550,6 +571,7 @@ def print_file(num, srna, start, end, srna_datas, args_srna):
                               srna_datas["high"], srna_datas["low"]))
     args_srna.out_t.write("\n")
 
+
 def detect_srna(median, args_srna):
     num = 0
     if len(args_srna.srnas) != 0:
@@ -574,6 +596,7 @@ def detect_srna(median, args_srna):
                         print_file(num, srna, start, end,
                                    srna_datas, args_srna)
                         num += 1
+
 
 def read_data(args_srna):
     cdss = []
@@ -622,6 +645,7 @@ def read_data(args_srna):
     fh.close()
     return cdss, tas, tsss, pros, seq
 
+
 def get_utr_coverage(utrs):
     covers = {}
     for utr in utrs:
@@ -636,6 +660,7 @@ def get_utr_coverage(utrs):
                 covers[utr["strain"]][utr["utr"]][cover["track"]].append(
                         cover["ori_avg"])
     return covers
+
 
 def get_inter(cdss, inters):
     for cds1 in cdss:
@@ -652,6 +677,7 @@ def get_inter(cdss, inters):
                                       cds1.end, cds2.start, length))
                     break
 
+
 def mean_score(lst):
     total = 0
     for li in lst:
@@ -660,6 +686,7 @@ def mean_score(lst):
         return (total / len(lst))
     else:
         return 0
+
 
 def get_utr_cutoff(coverage, mediandict, avgs, strain, utr, track):
     if "n_" in coverage:
@@ -670,6 +697,7 @@ def get_utr_cutoff(coverage, mediandict, avgs, strain, utr, track):
         cutoff = float(coverage.split("_")[-1])
         mediandict[strain][utr][track] = {"median": median_score(avgs, cutoff),
                                           "mean": mean_score(avgs)}
+
 
 def set_cutoff(covers, args_srna):
     mediandict = {}
@@ -698,6 +726,7 @@ def set_cutoff(covers, args_srna):
                                        avgs, strain, utr, track)
     return mediandict
 
+
 def print_median(out_folder, mediandict):
     out = open(os.path.join(out_folder, "tmp_median"), "a")
     for strain, utrs in mediandict.items():
@@ -707,9 +736,11 @@ def print_median(out_folder, mediandict):
                                      str(value["median"])]) + "\n")
     out.close()
 
+
 def free_memory(paras):
     for data in (paras):
         del(data)
+
 
 def utr_derived_srna(args_srna):
     inters = []

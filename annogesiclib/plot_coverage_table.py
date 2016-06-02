@@ -1,7 +1,7 @@
-import matplotlib as mpl
 from copy import deepcopy
-import matplotlib.pyplot as plt
+import matplotlib as mpl
 mpl.use('Agg')
+import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 
@@ -19,6 +19,7 @@ def fig(rowlabels, collabels, cells, filename, max_color, min_color):
     plt.colorbar(fraction=0.046, pad=0.04)
     img.set_clim(vmin=min_color, vmax=max_color)
     plt.savefig(filename)
+
 
 def plot_table(plots, max_color, min_color, filename):
     rowlabels = []

@@ -8,6 +8,7 @@ def import_data(row):
            "start_align": int(row[8]), "end_align": int(row[9]),
            "info": "|".join(row[0:6]), "ID": row[0]}
 
+
 def read_file(ribo_table, rfam_table):
     ribos = []
     rfams = []
@@ -22,6 +23,7 @@ def read_file(ribo_table, rfam_table):
     f_h.close()
     r_h.close()
     return ribos, rfams
+
 
 def get_overlap(pre_ribo, ribo, overlap, overlaps):
     if (pre_ribo["strain"] == ribo["strain"]) and \
@@ -38,6 +40,7 @@ def get_overlap(pre_ribo, ribo, overlap, overlaps):
             overlaps[ribo["strain"]].append(
                      pre_ribo["info"] + ";" + ribo["info"])
 
+
 def print_gff(num, ribo, out, stats, strain):
     attribute = ";".join(["=".join(items) for items in [
                           ("ID", "ribo_" + str(num)),
@@ -52,6 +55,7 @@ def print_gff(num, ribo, out, stats, strain):
     stats["total"]["total"] += 1
     stats[strain]["total"] += 1
 
+
 def import_stat(rfams, ribo, stats, strain):
     for rfam in rfams:
         if ribo["rfam"] == rfam["ID"]:
@@ -65,6 +69,7 @@ def import_stat(rfams, ribo, stats, strain):
             else:
                 stats[strain][rfam["class"]] += 1
 
+
 def print_number(stats, repeat, out, strain):
     out.write("Total number of potential riboswitch are {0}\n".format(
                stats[strain]["total"]))
@@ -75,6 +80,7 @@ def print_number(stats, repeat, out, strain):
     for type_, num in stats[strain].items():
         if type_ != "total":
             out.write("{0}\t{1}\n".format(type_, num))
+
 
 def print_stat(stats, out_stat, overlaps):
     out = open(out_stat, "w")
@@ -116,6 +122,7 @@ def print_stat(stats, out_stat, overlaps):
                 for data in datas:
                     out.write("\t{0}\n".format(data))
     out.close()
+
 
 def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
     stats = {}

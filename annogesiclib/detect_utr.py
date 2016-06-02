@@ -3,8 +3,8 @@ import matplotlib as mpl
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 import numpy as np
-mpl.use('Agg')
 import matplotlib.pyplot as plt
+mpl.use('Agg')
 plt.style.use('ggplot')
 
 
@@ -29,6 +29,7 @@ def plot(utr, utr_pri, utr_sec, filename, source, utr_type, base_5utr):
     plt.savefig(filename)
     plt.clf()
 
+
 def get_feature(cds):
     if "protein_id" in cds.attributes.keys():
         cds_name = cds.attributes["protein_id"]
@@ -40,6 +41,7 @@ def get_feature(cds):
                             "-", str(cds.end), "_", strand])
     return cds_name
 
+
 def check_ta(tas, utr_start, utr_end, seq_id, strand):
     detect = False
     for ta in tas:
@@ -50,6 +52,7 @@ def check_ta(tas, utr_start, utr_end, seq_id, strand):
                 detect = True
                 break
     return detect, ta
+
 
 def import_utr(tss, utr_strain, utr_all, start, end, tas, length, args_utr):
     if args_utr.source:
@@ -81,6 +84,7 @@ def import_utr(tss, utr_strain, utr_all, start, end, tas, length, args_utr):
         ta = None
     return detect, ta
 
+
 def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
                           locus_tag, ta, source, out, start, end):
     attribute_string = ";".join(
@@ -103,6 +107,7 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
               tss.seq_id, start, end,
               tss.strand, attribute_string))
 
+
 def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
              cds_name, locus_tag, out, args_utr):
     if tss.strand == "+":
@@ -123,6 +128,7 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
                               locus_tag, ta, args_utr.source, out, start, end)
         num_utr += 1
     return num_utr
+
 
 def detect_cds(cdss, gene):
     detect = False
@@ -153,6 +159,7 @@ def detect_cds(cdss, gene):
     else:
         return near_cds, cds_name, check_utr
 
+
 def read_file(tss_file, gff_file, ta_file, term_file):
     genes = []
     cdss = []
@@ -181,6 +188,7 @@ def read_file(tss_file, gff_file, ta_file, term_file):
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return genes, cdss, terms, tsss, tas
+
 
 def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
     near_cds = None
@@ -211,6 +219,7 @@ def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
                                     cds_name = get_feature(cds)
                                     check_utr = True
     return check_utr, cds_name, near_cds
+
 
 def get_5utr_from_TSSpredator(tss, genes, cdss):
     check_utr = False
@@ -249,6 +258,7 @@ def get_5utr_from_TSSpredator(tss, genes, cdss):
                      "near_cds": None, "locus": None}
     return utr_datas
 
+
 def get_5utr_from_other(tss, genes, cdss, length):
     check_utr = False
     cds_name = "NA"
@@ -281,6 +291,7 @@ def get_5utr_from_other(tss, genes, cdss, length):
                      "near_cds": None, "locus": None}
     return utr_datas
 
+
 def get_attribute_string(num_utr, length, cds, gene_name, ta, id_name, name,
                          feature, feature_name):
     name_utr = '%0*d' % (5, num_utr)
@@ -295,6 +306,7 @@ def get_attribute_string(num_utr, length, cds, gene_name, ta, id_name, name,
                   (feature, feature_name + str(ta.start) + "-" +
                    str(ta.end) + "_" + ta.strand)]])
     return attribute_string
+
 
 def get_gene_name(genes, cds):
     for gene in genes:
@@ -319,9 +331,11 @@ def get_gene_name(genes, cds):
                 break
     return gene_name
 
+
 def set_utr_strain(ta, type_, utr_strain):
     if ta.seq_id not in utr_strain[type_].keys():
         utr_strain[type_][ta.seq_id] = []
+
 
 def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
     num_utr = 0
@@ -379,6 +393,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
                               ta.seq_id, start, end, ta.strand, string))
                 num_utr += 1
 
+
 def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
     num_utr = 0
     utr_all = {"all": [], "pri": [], "sec": []}
@@ -420,6 +435,7 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
                  "5utr", args_utr.base_5utr)
     out.close()
 
+
 def compare_term(ta, terms, fuzzy):
     for term in terms:
         if ta.strand == term.strand:
@@ -431,6 +447,7 @@ def compare_term(ta, terms, fuzzy):
                 if (math.fabs(ta.start - term.end) <= fuzzy) or \
                    ((ta.start >= term.start) and (ta.start <= term.end)):
                     return term
+
 
 def get_3utr(ta, near_cds, utr_all, utr_strain,
              attributes, num_utr, out, args_utr):
@@ -469,6 +486,7 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
                                      ta.score, ta.strand, ta.phase,
                                      attribute_string]) + "\n")
     return num_utr
+
 
 def get_near_cds(cdss, genes, ta, attributes):
     first = True
@@ -509,6 +527,7 @@ def get_near_cds(cdss, genes, ta, attributes):
                                         str(near_cds.start), str(near_cds.end),
                                         near_cds.strand])]))
     return near_cds
+
 
 def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
     num_utr = 0

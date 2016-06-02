@@ -27,12 +27,14 @@ def assign_tss(tss, tran):
         tran.attributes["associated_tss"] = \
             "&".join([tran.attributes["associated_tss"], tss_name])
 
+
 def del_attributes(entry, features):
     attributes = {}
     for key, value in entry.attributes.items():
         if (key not in features):
             attributes[key] = value
     return attributes
+
 
 def compare_tran_tss(trans, tsss, fuzzy, stat, out):
     num_tran = 0
@@ -77,6 +79,7 @@ def compare_tran_tss(trans, tsss, fuzzy, stat, out):
                        tran.attribute_string + "\n"]]))
         num_tran += 1
 
+
 def detect_tas_region(tsss, trans, out, out_tss, fuzzy):
     stat = {"with_TSS": 0, "no_TSS": 0, "TSS_no_tran": 0, "TSS_with_tran": 0}
     compare_tran_tss(trans, tsss, fuzzy, stat, out)
@@ -102,6 +105,7 @@ def detect_tas_region(tsss, trans, out, out_tss, fuzzy):
                           tss.attribute_string]]) + "\n")
     return stat
 
+
 def print_tas_stat(stat, out):
     total_tran = stat["with_TSS"] + stat["no_TSS"]
     total_TSS = stat["TSS_no_tran"] + stat["TSS_with_tran"]
@@ -115,6 +119,7 @@ def print_tas_stat(stat, out):
     out.write("\tTSS has no relationship with transcript:{0} ({1})\n".format(
               stat["TSS_no_tran"],
               float(stat["TSS_no_tran"]) / float(total_TSS)))
+
 
 def read_tas_file(tss_file, ta_file):
     tsss_uni = {}
@@ -144,6 +149,7 @@ def read_tas_file(tss_file, ta_file):
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return tsss_uni, tsss, tas_uni, tas
 
+
 def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file,
                 out_tss_file, fuzzy):
     tsss_uni, tsss, tas_uni, tas = read_tas_file(tss_file, ta_file)
@@ -168,6 +174,7 @@ def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file,
     out_stat.close()
     out_ta.close()
     out_tss.close()
+
 
 def assign_parent(gff, tran, feature):
     if "Parent_tran" not in gff.attributes.keys():
@@ -210,6 +217,7 @@ def assign_parent(gff, tran, feature):
                     ["associated", feature])], "".join(
                         [gff.feature, ":", str(gff.start),
                          "-", str(gff.end), "_", strand])]))
+
 
 def compare_ta_gff(gffs, tran, check, tran_type, detect, stats, c_feature):
     for gff in gffs:
@@ -256,6 +264,7 @@ def compare_ta_gff(gffs, tran, check, tran_type, detect, stats, c_feature):
                     detect = True
     return detect
 
+
 def detect_tag_region(gffs, trans, stats, out_t, out_g, c_feature):
     detect = False
     for tran in trans:
@@ -283,6 +292,7 @@ def detect_tag_region(gffs, trans, stats, out_t, out_g, c_feature):
         out_g.write(gff.info_without_attributes + "\t" +
                     attribute_string + "\n")
 
+
 def detect_express_gene(gffs, c_feature, strain):
     express_gene = 0
     for gff in gffs:
@@ -292,6 +302,7 @@ def detect_express_gene(gffs, c_feature, strain):
                 "Parent_tran" in gff.attributes.keys()):
             express_gene += 1
     return express_gene
+
 
 def print_tag_stat(stats, out, express_gene, c_feature):
     total = (stats["bsae"] + stats["bsbe"] + stats["asae"] +
@@ -318,6 +329,7 @@ def print_tag_stat(stats, out, express_gene, c_feature):
     out.write("\t\tTotal {0}s which have expression:{1} ({2})\n".format(
                   c_feature, str(express_gene),
                   str(float(express_gene) / float(stats["gene"]))))
+
 
 def read_tag_file(gff_file, ta_file, c_feature):
     gffs = []
@@ -348,6 +360,7 @@ def read_tag_file(gff_file, ta_file, c_feature):
     g_f.close()
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return gffs, tas, stats
+
 
 def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
                 c_feature):

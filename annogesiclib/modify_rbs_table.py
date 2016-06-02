@@ -9,6 +9,7 @@ def import_data(row):
            "start_align": int(row[8]), "end_align": int(row[9]),
            "info": row[0:6], "ID": row[0]}
 
+
 def modify_table(table, output_all):
     first = True
     rbss = []

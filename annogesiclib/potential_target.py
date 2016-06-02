@@ -21,6 +21,7 @@ def print_fasta(entry, seq, out):
                       entry.feature, entry.start, entry.end,
                       entry.strand, seq))
 
+
 def read_file(seq_file, gff_file, target_folder, features):
     fastas = []
     cdss_f = []
@@ -49,6 +50,7 @@ def read_file(seq_file, gff_file, target_folder, features):
             genes.append(entry)
     g_h.close()
     return fasta, cdss_f, cdss_r, genes
+
 
 def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
     pre_id = ""
@@ -80,6 +82,7 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
     if out is not None:
         out.close()
 
+
 def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
     pre_id = ""
     out = None
@@ -108,6 +111,7 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
         print_fasta(target, seq, out)
     if out is not None:
         out.close()
+
 
 def potential_target(gff_file, seq_file, target_folder, args_tar):
     fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file,

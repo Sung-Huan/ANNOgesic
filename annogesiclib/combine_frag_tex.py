@@ -9,6 +9,7 @@ def modify_position(frag, norm):
     norm.attributes["print"] = True
     frag.attributes["print"] = True
 
+
 def print_file(data, out, name, num):
     attributes = {}
     attributes["ID"] = "tran" + str(num)
@@ -21,10 +22,12 @@ def print_file(data, out, name, num):
                         data.end, data.score, data.strand, data.phase,
                         attribute_string]]) + "\n")
 
+
 def store(data, source, finals):
     data.attributes["detect_lib"] = source
     data.attributes["print"] = False
     finals.append(data)
+
 
 def compare(data1, data2, overlap, tolerance):
     if (data1.seq_id == data2.seq_id) and (data1.strand == data2.strand):
@@ -41,6 +44,7 @@ def compare(data1, data2, overlap, tolerance):
             modify_position(data1, data2)
             overlap = True
     return overlap
+
 
 def combine(frag_file, tex_file, tolerance, output_file):
     frags = []

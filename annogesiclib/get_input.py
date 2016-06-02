@@ -1,5 +1,6 @@
 import os
 import csv
+import shutil
 from subprocess import call
 from annogesiclib.seq_editer import SeqEditer
 
@@ -7,9 +8,10 @@ from annogesiclib.seq_editer import SeqEditer
 def wget(input_folder, ftp, files_type):
     os.system(" ".join(["wget", "-cP", input_folder, ftp + "/*" + files_type]))
 
+
 def deal_detect(input_file, file_path, change, input_folder):
     if change:
-        os.rename(input_file, file_path)
+        shutil.move(input_file, file_path)
         change = False
     SeqEditer().modify_header(file_path)
     with open(os.path.join(file_path)) as fh:
@@ -17,9 +19,10 @@ def deal_detect(input_file, file_path, change, input_folder):
             line = line.strip()
             if line.startswith(">"):
                 seq_name = line[1:]
-    os.rename(file_path,
-              os.path.join(input_folder, seq_name + ".fa"))
+    shutil.move(file_path,
+                os.path.join(input_folder, seq_name + ".fa"))
     return change, seq_name
+
 
 def get_file(ftp, input_folder, files_type, target):
     detect = False
@@ -40,11 +43,15 @@ def get_file(ftp, input_folder, files_type, target):
             detect = True
             change = False
         elif (file_[-6:] == "fna.gz") and ("_genomic" in file_):
-            filename = file_[0:-6] + "fa"
-            detect = True
-            change = True
-            call(["gunzip", input_file])
-            input_file = input_file[:-3]
+            if ("_cds_from_genomic" in file_) or (
+                    "_rna_from_genomic" in file_):
+                os.remove(input_file)
+            else:
+                filename = file_[0:-6] + "fa"
+                detect = True
+                change = True
+                call(["gunzip", input_file])
+                input_file = input_file[:-3]
         elif (file_[-6:] == "gff.gz") or (file_[-3:] == "gff"):
             if ("_genomic" in file_) and (file_[-6:] == "gff.gz"):
                 call(["gunzip", input_file])
@@ -69,7 +76,6 @@ def get_file(ftp, input_folder, files_type, target):
                         break
             os.rename(input_file, os.path.join(input_folder, data[0] + ".gbk"))
         if detect:
-            file_path = os.path.join(input_folder, filename)
             detect = False
             change, seq_name = deal_detect(input_file, filename,
                                            change, input_folder)

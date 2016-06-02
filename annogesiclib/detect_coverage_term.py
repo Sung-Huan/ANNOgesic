@@ -13,6 +13,7 @@ def import_data(row):
             "ut": int(row[12]), "print": False, "detect_p": False,
             "detect_m": False, "express": "False"}
 
+
 def compare_ta(terms, tas, fuzzy):
     for term in terms:
         for ta in tas:
@@ -31,6 +32,7 @@ def compare_ta(terms, tas, fuzzy):
                         (start <= term["start"]) and (
                          end >= term["end"])):
                     term["express"] = "True"
+
 
 def compare_transtermhp(hps, fr_terms):
     terms = []
@@ -80,6 +82,7 @@ def compare_transtermhp(hps, fr_terms):
                                          x["end"], x["strand"]))
     return terms
 
+
 def compare_replicates(term_covers, template_texs, cond, args_term):
     detect_num = 0
     term_datas = []
@@ -97,6 +100,7 @@ def compare_replicates(term_covers, template_texs, cond, args_term):
                 diff_cover = term["diff"]
                 diff = term
     return diff_cover, diff, term_datas, detect_num
+
 
 def coverage2term(covers, term, hl_covers, hl_poss, strand,
                   term_covers, track, args_term):
@@ -123,6 +127,7 @@ def coverage2term(covers, term, hl_covers, hl_poss, strand,
                     "diff": (hl_covers["high"] - hl_covers["low"]),
                     "type": cover["type"]})
                 break
+
 
 def get_coverage(term, wigs, strand, template_texs, args_term):
     hl_poss = {"high": 0, "low": 0}
@@ -164,6 +169,7 @@ def get_coverage(term, wigs, strand, template_texs, args_term):
                 term["detect_m"] = True
     return diff_cover, diff, term_datas, detect_nums
 
+
 def compare_term(term, terms):
     if len(terms) != 0:
         for tmp in terms:
@@ -190,6 +196,7 @@ def compare_term(term, terms):
         terms.append(term)
     return terms
 
+
 def first_term(strand, term, detect_terms, detect):
     if (strand == "+"):
         if (term["detect_p"]):
@@ -205,6 +212,7 @@ def first_term(strand, term, detect_terms, detect):
             detect_terms["undetect"].append(term)
     return detect
 
+
 def get_attribute_string(num, name, parent, diff, term, coverage, method):
     attribute_string = ";".join(
                  ["=".join(items) for items in [("ID", "term_" + str(num)),
@@ -214,6 +222,7 @@ def get_attribute_string(num, name, parent, diff, term, coverage, method):
                   ("express", term["express"]),
                   ("Method", method)]])
     return attribute_string
+
 
 def print_table(term, out_t, args_term):
     first = True
@@ -250,6 +259,7 @@ def print_table(term, out_t, args_term):
         out_t.write("\tFalse\t")
         out_t.write("NA")
 
+
 def print2file(num, term, coverage, parent, out, out_t, method, args_term):
     name = 'Term_%0*d' % (5, num)
     if ("detect_num" in term.keys()) and \
@@ -285,6 +295,7 @@ def print2file(num, term, coverage, parent, out, out_t, method, args_term):
     print_table(term, out_t, args_term)
     out_t.write("\n")
 
+
 def print_detect_undetect(terms, num, out, out_t, detect, args_term):
     for term in terms:
         if term["strand"] == "+":
@@ -296,6 +307,7 @@ def print_detect_undetect(terms, num, out, out_t, detect, args_term):
                        out_t, term["method"], args_term)
             num += 1
     return num
+
 
 def term_validation(pre_term, term, detect, detect_terms, out,
                     out_t, num, args_term):
@@ -330,6 +342,7 @@ def term_validation(pre_term, term, detect, detect_terms, out,
                     detect_terms["undetect"] = compare_term(
                                                term, detect_terms["undetect"])
     return num, detect
+
 
 def print_term(terms, out, out_t, args_term):
     first = True
@@ -396,6 +409,7 @@ def del_repeat_term(terms):
     new_terms.append(term)
     return new_terms
 
+
 def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
     gff_parser = Gff3Parser()
     gffs = []
@@ -427,6 +441,7 @@ def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
     hps = sorted(hps, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
     return gffs, tas, hps, new_terms, seq
 
+
 def compute_wig(wig_file, libs, terms, strand, texs, args_term):
     wigs = {}
     wigs = read_wig(wig_file, strand, libs)
@@ -438,6 +453,7 @@ def compute_wig(wig_file, libs, terms, strand, texs, args_term):
             term["detect_num"] = {}
             for cond, num in detect_nums.items():
                 term["detect_num"][cond] = str(num)
+
 
 def detect_coverage(term_table, gff_file, tran_file, seq_file,
                     wig_f_file, wig_r_file, tranterm_file, wig_folder,

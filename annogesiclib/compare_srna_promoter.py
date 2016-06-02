@@ -18,6 +18,7 @@ def read_file(gff_file, args_srna):
                          "strand": row[2], "name": row[3]})
     return srnas, pros
 
+
 def print_table(srna_table, out_t, srnas):
     fh = open(srna_table, "r")
     for row in csv.reader(fh, delimiter='\t'):
@@ -31,6 +32,7 @@ def print_table(srna_table, out_t, srnas):
                 else:
                     promoter = ["NA"]
                 out_t.write("\t".join(row + promoter) + "\n")
+
 
 def compare_srna_promoter(srna_gff, srna_table, args_srna):
     srnas, pros = read_file(srna_gff, args_srna)

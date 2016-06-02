@@ -3,6 +3,7 @@ import csv
 import shutil
 from annogesiclib.gff3 import Gff3Parser
 
+
 def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
     if (ta.seq_id == ter.seq_id) and (
             ta.strand == ter.strand):
@@ -34,6 +35,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ter.attributes["associated_tran"] = (
                     "transcript:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
+
 
 def output_term(ters, term_file, type_):
     out = open(term_file + "tmp", "w")
@@ -72,6 +74,7 @@ def output_term(ters, term_file, type_):
         os.remove(table_file)
         shutil.move(table_file + "tmp", table_file)
 
+
 def read_gff(filename, index):
     gf = open(filename, "r")
     gff_parser = Gff3Parser()
@@ -83,6 +86,7 @@ def read_gff(filename, index):
                                              k.end, k.strand))
     gf.close()
     return datas
+
 
 def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
                       out_folder, type_):

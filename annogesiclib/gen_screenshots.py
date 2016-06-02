@@ -3,6 +3,7 @@ import sys
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.parser_wig import WigParser
 
+
 def load_wigs(out, lib_t, lib_n, lib_f):
     if lib_t and lib_n:
         for index in range(len(lib_t)):
@@ -20,6 +21,7 @@ def load_wigs(out, lib_t, lib_n, lib_f):
         for lib in lib_f:
             out.write("load {0}\n".format(os.path.join(os.getcwd(), lib)))
 
+
 def set_data_range(out, gff, wigs, strand):
     max_range = 0
     for strains in wigs.values():
@@ -34,6 +36,7 @@ def set_data_range(out, gff, wigs, strand):
     else:
         max_range = max_range * -1
         out.write("setDataRange 0,{0}\n".format(max_range))
+
 
 def print_batch(args_sc, out, strand, lib_t, lib_n, lib_f, strain):
     out.write("new\n")
@@ -56,6 +59,7 @@ def print_batch(args_sc, out, strand, lib_t, lib_n, lib_f, strain):
                       os.path.join(os.getcwd(), args_sc.output_folder,
                                    strain, "reverse")))
 
+
 def import_wig(lib, wigs, strand):
     wig_parser = WigParser()
     for wig in lib:
@@ -68,6 +72,7 @@ def import_wig(lib, wigs, strand):
                 strain = entry.strain
             wigs[wig][strain].append(entry)
         wig_fh.close()
+
 
 def gen_batch(lib_t, lib_n, lib_f, strand, gffs, out, seq):
     wigs = {}
@@ -103,6 +108,7 @@ def gen_batch(lib_t, lib_n, lib_f, strand, gffs, out, seq):
         out.write("snapshot {0}:{1}-{2}.png\n".format(
                   gff.seq_id, gff.start, gff.end))
 
+
 def get_length(fasta_file):
     seq = {}
     with open(fasta_file) as fh:
@@ -114,6 +120,7 @@ def get_length(fasta_file):
             else:
                 seq[strain] = seq[strain] + line
     return seq
+
 
 def gen_screenshot(args_sc, libs, forward_file, reverse_file, strain):
     gffs_f = []

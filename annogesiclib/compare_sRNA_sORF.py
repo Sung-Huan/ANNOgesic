@@ -13,12 +13,14 @@ def print_file(datas, out, feature):
         out.write("\t".join([data.info_without_attributes,
                   data.attribute_string]) + "\n")
 
+
 def del_attributes(feature, entry):
     attributes = {}
     for key, value in entry.attributes.items():
         if feature not in key:
             attributes[key] = value
     return attributes
+
 
 def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
     sorfs = []

@@ -15,6 +15,7 @@ def create_dict(nums, strain, utr_detect):
             nums[strain][type_][feature] = 0
     return nums
 
+
 def plus_data(nums, strain, sorf_types, features, utr_detect):
     for sorf_type in sorf_types:
         if ((not utr_detect) and (
@@ -23,6 +24,7 @@ def plus_data(nums, strain, sorf_types, features, utr_detect):
                 utr_detect):
             for feature in features:
                 nums[strain][sorf_type][feature] += 1
+
 
 def print_num(out, num, nums, strain, type_):
     out.write("(for strain {0}; ".format(
@@ -33,6 +35,7 @@ def print_num(out, num, nums, strain, type_):
     else:
         out.write("for {0} - {1})\n".format(
                   type_, float(num) / float(nums[strain][type_]["all"])))
+
 
 def print_stat(nums, nums_best, strain, out, utr_detect):
     out.write(strain + ":\n")
@@ -85,6 +88,7 @@ def print_stat(nums, nums_best, strain, out, utr_detect):
         print_num(out, nums_best[strain][type_]["sRNA"],
                   nums_best, strain, type_)
 
+
 def read_file(sorf_gff):
     sorfs = []
     fh = open(sorf_gff)
@@ -93,6 +97,7 @@ def read_file(sorf_gff):
     sorfs = sorted(sorfs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     fh.close()
     return sorfs
+
 
 def get_stat_num(sorfs_all, utr_detect):
     strain = ""
@@ -115,6 +120,7 @@ def get_stat_num(sorfs_all, utr_detect):
                 sorf_type = "interCDS"
         check_class(sorf, nums, sorf_type, utr_detect, strain)
     return nums
+
 
 def check_class(sorf, nums, sorf_type, utr_detect, strain):
     if (sorf.attributes["with_TSS"] != "NA") and \
@@ -162,6 +168,7 @@ def check_class(sorf, nums, sorf_type, utr_detect, strain):
     else:
         plus_data(nums, "total", [sorf_type, "all"], ["all"], utr_detect)
         plus_data(nums, strain, [sorf_type, "all"], ["all"], utr_detect)
+
 
 def stat(sorf_all, sorf_best, stat_file, utr_detect):
     sorfs_all = read_file(sorf_all)

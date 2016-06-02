@@ -13,6 +13,7 @@ def read_gff(input_file):
     datas = sorted(datas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return datas
 
+
 def get_coverage(tar, wigs):
     coverage = 0
     for strain, conds in wigs.items():
@@ -23,12 +24,14 @@ def get_coverage(tar, wigs):
                         coverage = wigs[tar.start - 1]["coverage"]
     return coverage
 
+
 def compare_wig(tars, wig_fs, wig_rs):
     for tar in tars:
         if tar.strand == "+":
             tar.attributes["coverage"] = get_coverage(tar, wig_fs)
         elif tar.strand == "-":
             tar.attributes["coverage"] = get_coverage(tar, wig_rs)
+
 
 def stat(tars, refs, cutoff, gene_length, cluster):
     stats = {"tp": 0, "fp": 0, "miss": 0, "fp_rate": 0,
@@ -58,11 +61,13 @@ def stat(tars, refs, cutoff, gene_length, cluster):
     stats["miss_rate"] = float(stats["miss"]) / float(num_ref)
     return stats, num_ref
 
+
 def print_file(tars, cutoff, out_file):
     out = open(out_file, "w")
     for tar in tars:
         if tar.attributes["coverage"] >= cutoff:
             out.write(tar.info + "\n")
+
 
 def change_best(num_ref, best, stat_value):
     change = False
@@ -101,6 +106,7 @@ def change_best(num_ref, best, stat_value):
                     best = stat_value.copy()
                     change = True
     return best, change
+
 
 def filter_low_expression(gff_file, args_tss, wig_f_file,
                           wig_r_file, out_file):

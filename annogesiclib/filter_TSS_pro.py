@@ -13,6 +13,7 @@ def read_gff(input_file):
     datas = sorted(datas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return datas
 
+
 def compare_tss_pro(tars, refs, out, cluster):
     for tar in tars:
         for ref in refs:
@@ -23,6 +24,7 @@ def compare_tss_pro(tars, refs, out, cluster):
                 elif (ref.start - tar.start) > cluster:
                     out.write(tar.info + "\n")
                     break
+
 
 def filter_tss_pro(tss_file, pro_file, feature, cluster):
     tsss = read_gff(tss_file)

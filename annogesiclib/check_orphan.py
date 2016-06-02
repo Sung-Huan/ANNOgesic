@@ -16,6 +16,7 @@ def read_gff(gff_file, features):
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start))
     return gffs
 
+
 def is_primary(cds_start, cds_end, tss_pos, strand):
     if strand == "+":
         if is_utr(cds_start, tss_pos, 300) and (cds_start >= tss_pos):
@@ -24,11 +25,13 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
         if is_utr(tss_pos, cds_end, 300) and (cds_end <= tss_pos):
             return True
 
+
 def is_internal(cds_start, cds_end, tss_pos, strand):
     if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
             (strand == "+") and (tss_pos == cds_end)) or (
             (strand == "-") and (tss_pos == cds_start)):
         return True
+
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
     if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
@@ -36,9 +39,11 @@ def is_antisense(cds_start, cds_end, tss_pos, strand):
             is_internal(cds_start, cds_end, tss_pos, strand)):
         return True
 
+
 def is_utr(pos1, pos2, length):
     if pos1 - pos2 <= length:
         return True
+
 
 def get_attributes(tss, cds):
     if tss.attributes["associated_gene"] == "orphan":
@@ -59,6 +64,7 @@ def get_attributes(tss, cds):
                 tss.attributes["associated_gene"],
                 cds.feature + ":" + str(cds.start) + "-" +
                 str(cds.end) + "_" + strand])
+
 
 def detect_coverage(wigs, tss, ref):
     tss_cover = -1
@@ -83,6 +89,7 @@ def detect_coverage(wigs, tss, ref):
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
     return tss_cover, ref_cover
+
 
 def del_repeat(tsss):
     for tss in tsss:
@@ -133,6 +140,7 @@ def del_repeat(tsss):
         tss.attributes["UTR_length"] = "&".join(final_utrs)
         tss.attributes["associated_gene"] = "&".join(final_genes)
 
+
 def fix_attributes(tss, tss_entry):
     index = 0
     genes = tss.attributes["associated_gene"].split("&")
@@ -145,6 +153,7 @@ def fix_attributes(tss, tss_entry):
         index += 1
     tss.attributes["UTR_length"] = "&".join(utrs)
     tss.attributes["type"] = "&".join(types)
+
 
 def get_primary_locus_tag(tss):
     tsss = []
@@ -159,6 +168,7 @@ def get_primary_locus_tag(tss):
                          "type": tss_type})
         index += 1
     return tsss
+
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
     for tss in tsss:
@@ -198,6 +208,7 @@ def fix_primary_type(tsss, wigs_f, wigs_r):
     del_repeat(tsss)
     return tsss
 
+
 def read_wig(filename, strand):
     wigs = {}
     wig_parser = WigParser()
@@ -215,6 +226,7 @@ def read_wig(filename, strand):
         wig_fh.close()
     return wigs
 
+
 def get_attributes_int_anti(tss, cds, type_):
     if tss.attributes["type"] != "Orphan":
         tss.attributes["type"] = "&".join(
@@ -226,6 +238,7 @@ def get_attributes_int_anti(tss, cds, type_):
         tss.attributes["type"] = type_
         tss.attributes["UTR_length"] = type_ + "_NA"
     get_attributes(tss, cds)
+
 
 def compare_cds_check_orphan(tsss, cdss):
     for tss in tsss:
@@ -276,6 +289,7 @@ def compare_cds_check_orphan(tsss, cdss):
                                 "-", str(cds.end), "_", strand]) not in
                                     tss.attributes["associated_gene"]):
                                 get_attributes_int_anti(tss, cds, "Antisense")
+
 
 def check_orphan(tss_file, gff_file, wig_f_file, wig_r_file, out_gff):
     cdss = read_gff(gff_file, ["CDS", "tRNA", "rRNA"])

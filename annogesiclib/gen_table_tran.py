@@ -23,11 +23,13 @@ def detect_coverage(wigs, tran, infos):
                     infos[track]["avg"] = (float(total) /
                                            float(tran.end - tran.start + 1))
 
+
 def print_associate(associate, tran, out):
     if associate in tran.attributes.keys():
         out.write("\t" + tran.attributes[associate])
     else:
         out.write("\tNA")
+
 
 def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best):
     for tran in trans:
@@ -72,6 +74,7 @@ def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best):
             ["=".join(items) for items in new_attrs.items()])
         out_gff.write("\t".join([tran.info_without_attributes,
                                  attribute_string]) + "\n")
+
 
 def gen_table_transcript(gff_folder, args_tran):
     libs, texs = read_libs(args_tran.libs, args_tran.merge_wigs)

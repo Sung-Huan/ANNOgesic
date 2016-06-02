@@ -26,6 +26,7 @@ def compare_srna_gff(gffs, strain, strand, start, end, srna_types, file_type):
                         srna_types = srna_types + "&" + "Antisense"
     return srna_types
 
+
 def srna_antisense(srna_gff, srna_table, gff_file):
     tmp_srna_gff = srna_gff + "tmp"
     tmp_srna_table = srna_table + "tmp"

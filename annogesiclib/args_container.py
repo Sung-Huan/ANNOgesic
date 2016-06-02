@@ -59,10 +59,10 @@ class ArgsContainer(object):
             self.merge_wigs = self.frag_wigs
             self.wig_path = self.frag_path
         if (self.tex_path is not None) and (
-            self.frag_path is not None):
+                self.frag_path is not None):
             self = self._merge_wig()
         if (self.tex_path is None) and (
-            self.frag_path is None):
+                self.frag_path is None):
             print("Error: There is no proper wig files assigned!!")
             sys.exit()
         return self
@@ -70,7 +70,7 @@ class ArgsContainer(object):
     def _merge_wig(self):
         self.merge_wigs = os.path.join(self.out_folder, "merge_wigs")
         if (self.tex_wigs is not None) and (
-            self.frag_wigs is not None):
+                self.frag_wigs is not None):
             self.helper.check_make_folder(self.merge_wigs)
             self.wig_path = os.path.join(self.merge_wigs, "tmp")
             self.helper.check_make_folder(self.wig_path)
@@ -171,7 +171,7 @@ class ArgsContainer(object):
         self.references = reference_gff_folder
         self.remove_low_expression = remove_low_expression
         return self
-       
+
     def container_optimize(self, TSSpredator_path, fasta_file, annotation_file,
                            wig_folder, manual, out_folder, strain_name,
                            max_height, max_height_reduction, max_factor,
@@ -205,18 +205,16 @@ class ArgsContainer(object):
         self.steps = steps
         return self
 
-    def container_terminator(self, TransTermHP_path, expterm_path, RNAfold_path,
-                             out_folder, fasta_folder, annotation_folder,
-                             transcript_folder, srna, statistics, tex_wig_folder,
-                             frag_wig_folder, decrease, highest_coverage,
-                             fuzzy_detect_coverage, fuzzy_within_transcript,
-                             fuzzy_downstream_transcript, fuzzy_within_gene,
-                             fuzzy_downstream_gene, transtermhp_folder,
-                             tex_notex_libs, frag_libs, tex_notex,
-                             replicates_tex, replicates_frag, table_best,
-                             min_loop_length, max_loop_length, min_stem_length,
-                             max_stem_length, min_AT_tail_length, miss_rate,
-                             range_u):
+    def container_terminator(
+            self, TransTermHP_path, expterm_path, RNAfold_path, out_folder,
+            fasta_folder, annotation_folder, transcript_folder, srna,
+            statistics, tex_wig_folder, frag_wig_folder, decrease,
+            highest_coverage, fuzzy_detect_coverage, fuzzy_within_transcript,
+            fuzzy_downstream_transcript, fuzzy_within_gene,
+            fuzzy_downstream_gene, transtermhp_folder, tex_notex_libs,
+            frag_libs, tex_notex, replicates_tex, replicates_frag, table_best,
+            min_loop_length, max_loop_length, min_stem_length, max_stem_length,
+            min_AT_tail_length, miss_rate, range_u):
         self.TransTermHP_path = TransTermHP_path
         self.expterm_path = expterm_path
         self.RNAfold_path = RNAfold_path
@@ -242,7 +240,8 @@ class ArgsContainer(object):
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
-        self.replicates = self._check_replicates(replicates_tex, replicates_frag)
+        self.replicates = self._check_replicates(
+                replicates_tex, replicates_frag)
         self.table_best = table_best
         self.min_loop = min_loop_length
         self.max_loop = max_loop_length
@@ -254,14 +253,13 @@ class ArgsContainer(object):
         self = self._parser_combine_wigs("terminator")
         return self
 
-    def container_transcript(self, frag_wig_path, tex_wig_path, tex_notex,
-                             length, annotation_folder, height, width,
-                             tolerance, tolerance_coverage, replicates_tex,
-                             replicates_frag, transcript_assembly_output_folder,
-                             compare_TSS, compare_genome_annotation, TSS_fuzzy,
-                             tex_treated_libs, fragmented_libs,
-                             compare_feature_genome, table_best,
-                             terminator_folder, fuzzy_term):
+    def container_transcript(
+            self, frag_wig_path, tex_wig_path, tex_notex, length,
+            annotation_folder, height, width, tolerance, tolerance_coverage,
+            replicates_tex, replicates_frag, transcript_assembly_output_folder,
+            compare_TSS, compare_genome_annotation, TSS_fuzzy,
+            tex_treated_libs, fragmented_libs, compare_feature_genome,
+            table_best, terminator_folder, fuzzy_term):
         self.frag_wigs = frag_wig_path
         self.tex_wigs = tex_wig_path
         self.tex = tex_notex
@@ -273,7 +271,8 @@ class ArgsContainer(object):
         self.low_cutoff = tolerance_coverage
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
-        self.replicates = self._check_replicates(replicates_tex, replicates_frag)
+        self.replicates = self._check_replicates(
+                replicates_tex, replicates_frag)
         self.out_folder = transcript_assembly_output_folder
         self.compare_tss = compare_TSS
         self.compare_cds = compare_genome_annotation
@@ -284,7 +283,7 @@ class ArgsContainer(object):
                                              None)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.c_feature = self._deal_multi_inputs(compare_feature_genome, "str",
-                                             None, None)
+                                                 None, None)
         self.table_best = table_best
         self.terms = terminator_folder
         self.fuzzy_term = fuzzy_term
@@ -307,30 +306,29 @@ class ArgsContainer(object):
         self.length = length
         return self
 
-    def container_srna(self, Vienna_folder, Vienna_utils, blast_plus_folder,
-                       ps2pdf14_path, srna_folder, UTR_derived_sRNA,
-                       annotation_folder, TSS_folder, transcript_assembly_folder,
-                       TSS_intergenic_fuzzy, TSS_5UTR_fuzzy, TSS_3UTR_fuzzy,
-                       TSS_interCDS_fuzzy, import_info, tex_wig_folder,
-                       frag_wig_folder, processing_site_folder, fasta_folder,
-                       mountain_plot, nr_format, srna_format, sRNA_database_path,
-                       nr_database_path, cutoff_energy,
-                       run_intergenic_TEX_coverage, run_intergenic_noTEX_coverage,
-                       run_intergenic_fragmented_coverage,
-                       run_antisense_TEX_coverage, run_antisense_noTEX_coverage,
-                       run_antisense_fragmented_coverage, intergenic_tolerance,
-                       run_utr_TEX_coverage, run_utr_noTEX_coverage,
-                       run_utr_fragmented_coverage, max_length, min_length,
-                       tex_notex_libs, frag_libs, replicates_tex, replicates_frag,
-                       tex_notex, blast_e_nr, blast_e_srna, detect_sRNA_in_CDS,
-                       table_best, decrease_intergenic, decrease_utr,
-                       fuzzy_intergenic, fuzzy_utr, cutoff_nr_hit, sORF,
-                       best_with_all_sRNAhit, best_without_sORF_candidate,
-                       overlap_percent_CDS, terminator_folder,
-                       terminator_fuzzy_in_CDS, terminator_fuzzy_out_CDS,
-                       best_with_terminator, ignore_hypothetical_protein,
-                       TSS_source, min_utr_coverage, promoter_table,
-                       best_with_promoter, ranking_promoter, promoter_name):
+    def container_srna(
+            self, Vienna_folder, Vienna_utils, blast_plus_folder,
+            ps2pdf14_path, srna_folder, UTR_derived_sRNA, annotation_folder,
+            TSS_folder, transcript_assembly_folder, TSS_intergenic_fuzzy,
+            TSS_5UTR_fuzzy, TSS_3UTR_fuzzy, TSS_interCDS_fuzzy, import_info,
+            tex_wig_folder, frag_wig_folder, processing_site_folder,
+            fasta_folder, mountain_plot, nr_format, srna_format,
+            sRNA_database_path, nr_database_path, cutoff_energy,
+            run_intergenic_TEX_coverage, run_intergenic_noTEX_coverage,
+            run_intergenic_fragmented_coverage, run_antisense_TEX_coverage,
+            run_antisense_noTEX_coverage, run_antisense_fragmented_coverage,
+            intergenic_tolerance, run_utr_TEX_coverage, run_utr_noTEX_coverage,
+            run_utr_fragmented_coverage, max_length, min_length,
+            tex_notex_libs, frag_libs, replicates_tex, replicates_frag,
+            tex_notex, blast_e_nr, blast_e_srna, detect_sRNA_in_CDS,
+            table_best, decrease_intergenic, decrease_utr, fuzzy_intergenic,
+            fuzzy_utr, cutoff_nr_hit, sORF, best_with_all_sRNAhit,
+            best_without_sORF_candidate, overlap_percent_CDS,
+            terminator_folder, terminator_fuzzy_in_CDS,
+            terminator_fuzzy_out_CDS, best_with_terminator,
+            ignore_hypothetical_protein, TSS_source, min_utr_coverage,
+            promoter_table, best_with_promoter, ranking_promoter,
+            promoter_name):
         self.vienna_path = Vienna_folder
         self.vienna_util = Vienna_utils
         self.blast_path = blast_plus_folder
@@ -360,25 +358,32 @@ class ArgsContainer(object):
         self.srna_database = sRNA_database_path
         self.nr_database = nr_database_path
         self.energy = cutoff_energy
-        self.coverage_tex = self._deal_multi_inputs(run_intergenic_TEX_coverage,
-                            "float", 5, "--run_intergenic_TEX_coverage")
-        self.coverage_notex = self._deal_multi_inputs(run_intergenic_noTEX_coverage,
-                              "float", 5, "--run_intergenic_noTEX_coverage")
-        self.coverage_frag = self._deal_multi_inputs(run_intergenic_fragmented_coverage,
-                             "float", 5, "--run_intergenic_fragmented_coverage")
-        self.anti_cover_tex = self._deal_multi_inputs(run_antisense_TEX_coverage,
-                              "float", 5, "--run_antisense_TEX_coverage")
-        self.anti_cover_notex = self._deal_multi_inputs(run_antisense_noTEX_coverage,
-                                "float", 5, "--run_antisense_noTEX_coverage")
-        self.anti_cover_frag = self._deal_multi_inputs(run_antisense_fragmented_coverage,
-                               "float", 5, "--run_antisense_fragmented_coverage")
+        self.coverage_tex = self._deal_multi_inputs(
+                run_intergenic_TEX_coverage, "float", 5,
+                "--run_intergenic_TEX_coverage")
+        self.coverage_notex = self._deal_multi_inputs(
+                run_intergenic_noTEX_coverage, "float", 5,
+                "--run_intergenic_noTEX_coverage")
+        self.coverage_frag = self._deal_multi_inputs(
+                run_intergenic_fragmented_coverage, "float", 5,
+                "--run_intergenic_fragmented_coverage")
+        self.anti_cover_tex = self._deal_multi_inputs(
+                run_antisense_TEX_coverage, "float", 5,
+                "--run_antisense_TEX_coverage")
+        self.anti_cover_notex = self._deal_multi_inputs(
+                run_antisense_noTEX_coverage, "float", 5,
+                "--run_antisense_noTEX_coverage")
+        self.anti_cover_frag = self._deal_multi_inputs(
+                run_antisense_fragmented_coverage, "float", 5,
+                "--run_antisense_fragmented_coverage")
         self.tolerance = intergenic_tolerance
-        self.utr_tex_cover = self._deal_multi_inputs(run_utr_TEX_coverage,
-                             "str", 3, "--run_utr_TEX_coverage")
-        self.utr_notex_cover = self._deal_multi_inputs(run_utr_noTEX_coverage,
-                               "str", 3, "--run_utr_TEX_coverage")
-        self.utr_frag_cover = self._deal_multi_inputs(run_utr_fragmented_coverage,
-                              "str", 3, "--run_utr_fragmented_coverage")
+        self.utr_tex_cover = self._deal_multi_inputs(
+                run_utr_TEX_coverage, "str", 3, "--run_utr_TEX_coverage")
+        self.utr_notex_cover = self._deal_multi_inputs(
+                run_utr_noTEX_coverage, "str", 3, "--run_utr_TEX_coverage")
+        self.utr_frag_cover = self._deal_multi_inputs(
+                run_utr_fragmented_coverage, "str", 3,
+                "--run_utr_fragmented_coverage")
         self.max_len = max_length
         self.min_len = min_length
         self.tlibs = self._deal_multi_inputs(tex_notex_libs, "str", None, None)
@@ -386,7 +391,8 @@ class ArgsContainer(object):
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
-        self.replicates = self._check_replicates(replicates_tex, replicates_frag)
+        self.replicates = self._check_replicates(
+                replicates_tex, replicates_frag)
         self.tex_notex = tex_notex
         self.e_nr = blast_e_nr
         self.e_srna = blast_e_srna
@@ -429,10 +435,10 @@ class ArgsContainer(object):
         args_srna.fuzzy = fuzzy
         args_srna.prefix = prefix
         if file_type == "frag":
-            args_srna.wig_f_file = os.path.join(args_srna.frag_path,
-                                   "_".join([prefix, "forward.wig"]))
-            args_srna.wig_r_file = os.path.join(args_srna.frag_path,
-                                   "_".join([prefix, "reverse.wig"]))
+            args_srna.wig_f_file = os.path.join(
+                    args_srna.frag_path, "_".join([prefix, "forward.wig"]))
+            args_srna.wig_r_file = os.path.join(
+                    args_srna.frag_path, "_".join([prefix, "reverse.wig"]))
             args_srna.wig_folder = args_srna.frag_wigs
             args_srna.input_libs = args_srna.flibs
             args_srna.output_file = files["frag_gff"]
@@ -442,10 +448,10 @@ class ArgsContainer(object):
             args_srna.cut_notex = None
             args_srna.anti_notex_cutoff = None
         else:
-            args_srna.wig_f_file = os.path.join(args_srna.tex_path,
-                                      "_".join([prefix, "forward.wig"]))
-            args_srna.wig_r_file = os.path.join(args_srna.tex_path,
-                                      "_".join([prefix, "reverse.wig"]))
+            args_srna.wig_f_file = os.path.join(
+                    args_srna.tex_path, "_".join([prefix, "forward.wig"]))
+            args_srna.wig_r_file = os.path.join(
+                    args_srna.tex_path, "_".join([prefix, "reverse.wig"]))
             args_srna.wig_folder = args_srna.tex_wigs
             args_srna.input_libs = args_srna.tlibs
             args_srna.output_file = files["tex_gff"]
@@ -466,10 +472,10 @@ class ArgsContainer(object):
         args_srna.prefix = prefix
         args_srna.seq_file = fasta
         if file_type == "frag":
-            args_srna.wig_f_file = os.path.join(args_srna.frag_path,
-                                   "_".join([prefix, "forward.wig"]))
-            args_srna.wig_r_file = os.path.join(args_srna.frag_path,
-                                   "_".join([prefix, "reverse.wig"]))
+            args_srna.wig_f_file = os.path.join(
+                    args_srna.frag_path, "_".join([prefix, "forward.wig"]))
+            args_srna.wig_r_file = os.path.join(
+                    args_srna.frag_path, "_".join([prefix, "reverse.wig"]))
             args_srna.wig_folder = args_srna.frag_wigs
             args_srna.input_libs = args_srna.flibs
             args_srna.output_file = files["frag_gff"]
@@ -477,10 +483,10 @@ class ArgsContainer(object):
             args_srna.utr_coverages = args_srna.utr_frag_cover
             args_srna.notex = None
         else:
-            args_srna.wig_f_file = os.path.join(args_srna.tex_path,
-                                      "_".join([prefix, "forward.wig"]))
-            args_srna.wig_r_file = os.path.join(args_srna.tex_path,
-                                      "_".join([prefix, "reverse.wig"]))
+            args_srna.wig_f_file = os.path.join(
+                    args_srna.tex_path, "_".join([prefix, "forward.wig"]))
+            args_srna.wig_r_file = os.path.join(
+                    args_srna.tex_path, "_".join([prefix, "reverse.wig"]))
             args_srna.wig_folder = args_srna.tex_wigs
             args_srna.input_libs = args_srna.tlibs
             args_srna.output_file = files["tex_gff"]
@@ -562,12 +568,14 @@ class ArgsContainer(object):
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
-        self.replicates = self._check_replicates(replicates_tex, replicates_frag)
+        self.replicates = self._check_replicates(
+                replicates_tex, replicates_frag)
         self.table_best = table_best
         self.srnas = sRNA_folder
         self.start_codon = self._deal_multi_inputs(start_codon, "str",
                                                    None, None)
-        self.stop_codon = self._deal_multi_inputs(stop_codon, "str", None, None)
+        self.stop_codon = self._deal_multi_inputs(stop_codon, "str",
+                                                  None, None)
         self.background = cutoff_background
         self.fuzzy_rbs = fuzzy_rbs
         self.noafter_tss = rbs_not_after_TSS

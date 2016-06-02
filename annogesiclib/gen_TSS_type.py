@@ -30,6 +30,7 @@ def remove_primary(tss, tss_entry):
                            "=".join(["Name", tss_dict["Name"]])])
     return (tss_string, tss_dict)
 
+
 def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
     if cds_pos == "NA":
         utr = "_".join([tss_type, "NA"])
@@ -71,6 +72,7 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
                            "=".join(["Name", tss_dict["Name"]])])
     return (tss_string, tss_dict)
 
+
 def is_primary(cds_start, cds_end, tss_pos, strand):
     if strand == "+":
         if (is_utr(cds_start, tss_pos, 300) and (cds_start >= tss_pos)):
@@ -79,11 +81,13 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
         if (is_utr(tss_pos, cds_end, 300) and (cds_end <= tss_pos)):
             return True
 
+
 def is_internal(cds_start, cds_end, tss_pos, strand):
     if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
             (strand == "+") and (tss_pos == cds_end)) or (
             (strand == "-") and (tss_pos == cds_start)):
         return True
+
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
     if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
@@ -91,9 +95,11 @@ def is_antisense(cds_start, cds_end, tss_pos, strand):
              is_internal(cds_start, cds_end, tss_pos, strand)):
         return True
 
+
 def is_utr(pos1, pos2, length):
     if (pos1 - pos2 <= length):
         return True
+
 
 def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
@@ -138,6 +144,7 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         checks["orphan"] = False
     return tss_entry
 
+
 def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
     if is_antisense(gene.start, gene.end, tss.start, tss.strand):
         checks["int_anti"] = False
@@ -161,6 +168,7 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
         checks["orphan"] = False
     return tss_entry
 
+
 def compare_tss_cds(tss, cdss, genes):
     tss_entry = []
     gene_ends = {"forward": -1, "reverse": -1}
@@ -183,6 +191,7 @@ def compare_tss_cds(tss, cdss, genes):
         tss_entry = import_to_tss("Orphan", "NA", tss, "NA", ori_entry)
     return tss_entry
 
+
 def fix_attributes(tss, tss_entry):
     index = 0
     genes = tss.attributes["associated_gene"].split("&")
@@ -195,6 +204,7 @@ def fix_attributes(tss, tss_entry):
         index += 1
     tss.attributes["UTR_length"] = "&".join(utrs)
     tss.attributes["type"] = "&".join(types)
+
 
 def detect_coverage(wigs, tss, ref):
     tss_cover = -1
@@ -219,6 +229,7 @@ def detect_coverage(wigs, tss, ref):
                     tss_cover = tss_cover + diff_t
                     ref_cover = ref_cover + diff_r
     return (tss_cover, ref_cover)
+
 
 def del_repeat(tsss):
     for tss in tsss:
@@ -270,6 +281,7 @@ def del_repeat(tsss):
         tss.attributes["UTR_length"] = "&".join(final_utrs)
         tss.attributes["associated_gene"] = "&".join(final_genes)
 
+
 def get_primary_locus_tag(tss):
     tsss = []
     tss_types = tss.attributes["type"].split("&")
@@ -283,6 +295,7 @@ def get_primary_locus_tag(tss):
                          "type": tss_type})
         index += 1
     return tsss
+
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
     for tss in tsss:

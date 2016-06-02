@@ -13,6 +13,7 @@ def print_stat(feature, num, out):
                   "from TSS: {1} ({2})\n".format(
                       feature, num[feature], "NA"))
 
+
 def read_gff(gff_file, tss_file):
     tsss = []
     gffs = []
@@ -28,6 +29,7 @@ def read_gff(gff_file, tss_file):
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     tss_f.close()
     return gffs, tsss
+
 
 def compare_tss(tsss, gff, utr_length, num_all, num_strain, program):
     detect = False
@@ -78,6 +80,7 @@ def compare_tss(tsss, gff, utr_length, num_all, num_strain, program):
             num_all["rRNA"] += 1
             num_strain[gff.seq_id]["rRNA"] += 1
 
+
 def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
     out_cds = open(out_cds_file, "w")
     out_cds.write("##gff-version 3\n")
@@ -101,6 +104,7 @@ def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
             print_stat("rRNA", num_strain[strain], out)
     out_cds.close()
     out.close()
+
 
 def validate_gff(tss_file, gff_file, stat_file, out_cds_file, utr_length,
                  program):

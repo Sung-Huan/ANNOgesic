@@ -6,6 +6,7 @@ from annogesiclib.helper import Helper
 def import_to_operon(start, end, strand):
     return {"start": start, "end": end, "strand": strand}
 
+
 def get_gene_info(cds):
     if "locus_tag" in cds.attributes.keys():
         feature = cds.attributes["locus_tag"]
@@ -14,6 +15,7 @@ def get_gene_info(cds):
         feature = "".join([cds.feature, ":", str(cds.start),
                            "-", str(cds.end), "_", strand])
     return feature
+
 
 def get_term_feature(ta, data, term_fuzzy, features, datas,
                      ta_check_point, data_check_start, data_check_end):
@@ -40,6 +42,7 @@ def get_term_feature(ta, data, term_fuzzy, features, datas,
         jump = True
     return jump
 
+
 def get_tss_feature(ta, data, features, tss_fuzzy, datas, ta_check_point,
                     data_check_start, data_check_end):
     jump = False
@@ -57,6 +60,7 @@ def get_tss_feature(ta, data, features, tss_fuzzy, datas, ta_check_point,
             data_check_end > ta.end):
         jump = True
     return jump
+
 
 def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
     features = {"num": 0, "detect": False}
@@ -105,6 +109,7 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
     return {"data_list": datas, "num_feature": features["num"],
             "with_feature": features["detect"]}
 
+
 def check_conflict(genes, pos, strand):
     conflict = False
     for gene in genes["data_list"]:
@@ -114,6 +119,7 @@ def check_conflict(genes, pos, strand):
                 conflict = True
                 break
     return conflict
+
 
 def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
                operons, operon_pos):
@@ -156,6 +162,7 @@ def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
                         end, operons, operon_pos)
                     break
 
+
 def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
                              end, operons, operon_pos):
     new_tsss = []
@@ -165,6 +172,7 @@ def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
             new_tsss.append(tss)
     check_gene(new_tsss, genes, strand, ta_pos, first,
                min_length, end, operons, operon_pos)
+
 
 def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
     first = True
@@ -183,6 +191,7 @@ def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
             min_length, end, operons, operon_pos)
     return operons
 
+
 def compute_sub_operon(strand, point, ta_pos, first,
                        min_length, end, operons, operon_pos):
     if first:
@@ -198,6 +207,7 @@ def compute_sub_operon(strand, point, ta_pos, first,
                            operon_pos, strand))
             operon_pos = point
     return operon_pos, first
+
 
 def read_gff(ta_file, gff_file, tss_file, terminator_file):
     tas = []
@@ -221,6 +231,7 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
     tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start,
                                                k.end, k.strand))
     return tas, gffs, tss_gffs, term_gffs
+
 
 def print_file(ta, operons, out, operon_id, whole_operon, tsss,
                terms, genes, whole_gene):
@@ -258,6 +269,7 @@ def print_file(ta, operons, out, operon_id, whole_operon, tsss,
                       str(terms["with_feature"]), str(terms["num_feature"]),
                       str(num_sub_gene), str(genes["num_feature"]),
                       ", ".join(sub_gene), ", ".join(whole_gene)]) + "\n")
+
 
 def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
            term_fuzzy, min_length, out_file):

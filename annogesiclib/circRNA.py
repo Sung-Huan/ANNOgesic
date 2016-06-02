@@ -20,6 +20,7 @@ def get_feature(cds):
                            "_", strand])
     return feature
 
+
 def detect_conflict(gffs, circ, num, out, out_best, args_circ):
     detect = False
     gff = None
@@ -62,6 +63,7 @@ def detect_conflict(gffs, circ, num, out, out_best, args_circ):
                   start_read, end_read))
     return detect
 
+
 def import_num(support, nums, strain):
     if support not in nums[strain].keys():
         nums[strain][support] = 0
@@ -70,11 +72,13 @@ def import_num(support, nums, strain):
     nums[strain][support] += 1
     nums["all"][support] += 1
 
+
 def print_file(nums, stat, strain):
     for key in sorted(nums[strain].keys()):
         stat.write("\tthe number of potential circular RNAs, ")
         stat.write("more than {0} supported it = {1}\n".format(
                    key, nums[strain][key]))
+
 
 def read_file(input_file, gff_file, hypo):
     circs = []
@@ -98,6 +102,7 @@ def read_file(input_file, gff_file, hypo):
                    reverse=True)
     splice_fh.close()
     return circs, gffs, high
+
 
 def get_circrna(circs, gffs, high, out, out_best, args_circ):
     num_circular = {}
@@ -132,6 +137,7 @@ def get_circrna(circs, gffs, high, out, out_best, args_circ):
         pre_seq_id = circ.strain
     return {"circular": num_circular, "support": num_support,
             "conflict": num_conflict}
+
 
 def detect_circrna(input_file, gff_file, output_file, args_circ, statistics):
     circs, gffs, high = read_file(input_file, gff_file, args_circ.hypo)

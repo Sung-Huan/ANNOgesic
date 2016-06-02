@@ -4,6 +4,7 @@ from annogesiclib.gff3 import Gff3Parser
 def line_to_dict(hit, strain, e_value):
     return {"hit": hit, "strain": strain, "e_value": e_value}
 
+
 def get_proteins(datas, checks, blast_f):
     proteins = []
     nums = {"index": 0, "hypo": 0}
@@ -43,6 +44,7 @@ def get_proteins(datas, checks, blast_f):
         nums["index"] += 1
     return proteins, nums
 
+
 def detect_hypo(proteins, blasts, type_):
     protein_names = {}
     for protein in proteins:
@@ -61,6 +63,7 @@ def detect_hypo(proteins, blasts, type_):
             if type_ != "equal":
                 blasts["blast"] = True
     return protein_names, protein["e"]
+
 
 def detect_nr(line, blast_f, out_t, blasts, prefix):
     checks = {"print": False, "detect": False}
@@ -83,6 +86,7 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
                                     prefix, key, ",".join(value), e))
                     blasts["hit_num"] += 1
 
+
 def detect_srna(line, blast_f, out_t, blasts, prefix):
     print_ = False
     blasts["name"] = ""
@@ -99,6 +103,7 @@ def detect_srna(line, blast_f, out_t, blasts, prefix):
         out_t.write("{0}\t{1}\t{2}\n".format(
                     prefix, blasts["name"], e_value))
         blasts["blast"] = True
+
 
 def read_gff(srna_file, data_type):
     srnas = []
@@ -121,11 +126,13 @@ def read_gff(srna_file, data_type):
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return srnas
 
+
 def print_file(database, out_f, info, srna_hit, nr_hit):
     if database == "sRNA":
         out_f.write("{0};sRNA_hit={1}\n".format(info, srna_hit))
     elif database == "nr":
         out_f.write("{0};nr_hit={1}\n".format(info, nr_hit))
+
 
 def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
     if not blasts["blast"]:
@@ -135,6 +142,7 @@ def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
     else:
         print_file(database, out_f, srna.info,
                    len(names), blasts["hit_num"])
+
 
 def extract_blast(blast_result, srna_file, output_file,
                   output_table, database):
@@ -186,6 +194,7 @@ def extract_blast(blast_result, srna_file, output_file,
                                 break
     out_f.close()
     out_t.close()
+
 
 def extract_energy(srna_file, sec_file, out_file):
     s_f = open(srna_file, "r")

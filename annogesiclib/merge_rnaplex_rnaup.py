@@ -9,6 +9,7 @@ def detect_energy(line, srna):
         if energy < srna["energy"]:
             srna["energy"] = energy
 
+
 def print_rank_one(srnas, out, feature, gffs, srna_gffs, top):
     out.write("\t".join(["sRNA", "strain", "sRNA_start", "sRNA_end",
                          "sRNA_strand", "target", "target_start",
@@ -39,6 +40,7 @@ def print_rank_one(srnas, out, feature, gffs, srna_gffs, top):
                                     target_info.strand, method,
                                     str(target["energy"]),
                                     str(target["rank"])]) + "\n")
+
 
 def read_table(gffs, rnaplex, rnaup):
     srnas = {"RNAup": {}, "RNAplex": {}}
@@ -86,6 +88,7 @@ def read_table(gffs, rnaplex, rnaup):
                     detect_energy(line, srnas["RNAup"][srna][-1])
     return srnas
 
+
 def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info):
     merges.append([name, srna_info.seq_id,
                    str(srna_info.start),
@@ -97,6 +100,7 @@ def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info):
                    str(srna_plex["rank"]),
                    "RNAup", str(srna_up["energy"]),
                    str(srna_up["rank"])])
+
 
 def get_srna_name(gffs, srna):
     detect_name = False
@@ -115,6 +119,7 @@ def get_srna_name(gffs, srna):
         name = srna
     return (name, srna_info)
 
+
 def get_target_info(gffs, target):
     name = target.split("|")
     for gff in gffs:
@@ -131,10 +136,12 @@ def get_target_info(gffs, target):
                 target_info = gff
                 return target_info
 
+
 def print_file(merges, out):
     merges = sorted(merges, key=lambda k: (k[0], int(k[11])))
     for merge in merges:
         out.write("\t".join(merge) + "\n")
+
 
 def read_gff(filename):
     gffs = []
@@ -143,11 +150,13 @@ def read_gff(filename):
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return gffs
 
+
 def print_title(out):
     out.write("\t".join(["sRNA", "strain", "srna_start", "srna_end",
                          "srna_strand", "target", "target_start",
                          "target_end", "target_strand", "method",
                          "energy", "rank", "method", "energy", "rank"]) + "\n")
+
 
 def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
     overlaps = []
@@ -186,6 +195,7 @@ def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
                                 srna_plex["print"] = True
     return overlaps
 
+
 def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
     for srna, srna_ups in srnas["RNAup"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
@@ -205,6 +215,7 @@ def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
                                 import_merge(merges, name, srna_info,
                                              srna_plex, srna_up, target_info)
                                 srna_up["print"] = True
+
 
 def merge_srna_target(rnaplex, rnaup, top, out_rnaplex, out_rnaup, output,
                       out_overlap, srna_gff_file, annotation_gff):

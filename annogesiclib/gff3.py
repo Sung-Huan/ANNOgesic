@@ -1,5 +1,6 @@
 import csv
 
+
 class Gff3Parser(object):
     """
 A format description can be found at:
@@ -26,6 +27,7 @@ parse file not following the standard.
 
     def _dict_to_entry(self, entry_dict):
         return Gff3Entry(entry_dict)
+
 
 class Gff3Entry(object):
 

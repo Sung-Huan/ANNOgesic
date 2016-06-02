@@ -1,8 +1,8 @@
 import itertools
 import numpy as np
 from annogesiclib.gff3 import Gff3Parser
-import matplotlib as mpl
-mpl.use('Agg')
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
@@ -34,6 +34,7 @@ def plot(pri, sec, anti, inter, orph, total, total_more, name,
         plt.text(rect.get_x()+rect.get_width()/2., 1.05*height,
                  '%d' % int(height), ha='center', va='bottom')
     plt.savefig(file_type + "_class_" + name + ".png")
+
 
 def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
     tss_type = {"Primary": [], "Secondary": [], "Internal": [],
@@ -87,6 +88,7 @@ def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
                            '-'.join(tss), len(union),
                            float(len(union)) / float(num_tss)))
     out_stat.write("\n")
+
 
 def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
     if file_type == "processing":

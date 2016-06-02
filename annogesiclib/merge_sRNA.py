@@ -25,12 +25,14 @@ def modify_attributes(pre_srna, srna, srna_type, input_type):
                     srna.attributes["sRNA_type"] = (
                         pre_srna.attributes["sRNA_type"])
 
+
 def del_attributes(feature, entry):
     attributes = {}
     for key, value in entry.attributes.items():
         if feature not in key:
             attributes[key] = value
     return attributes
+
 
 def detect_overlap(srna, pre_srna, srna_type, overlap):
     if (srna.seq_id == pre_srna.seq_id) and (
@@ -55,6 +57,7 @@ def detect_overlap(srna, pre_srna, srna_type, overlap):
             modify_attributes(pre_srna, srna, srna_type, "pre")
     return overlap
 
+
 def merge_tss_pro(pre_srna, srna, feature):
     if (feature not in pre_srna.attributes.keys()) and (
             feature in srna.attributes.keys()):
@@ -72,6 +75,7 @@ def merge_tss_pro(pre_srna, srna, feature):
                                               [pre_srna.attributes[feature],
                                                srna.attributes[feature]])
 
+
 def modify_overlap(pre_srna, srna):
     merge_tss_pro(pre_srna, srna, "with_TSS")
     merge_tss_pro(pre_srna, srna, "end_cleavage")
@@ -84,6 +88,7 @@ def modify_overlap(pre_srna, srna):
     if (srna.end > pre_srna.end):
         pre_srna.end = srna.end
     return pre_srna
+
 
 def merge_srna(srnas, srna_type):
     final_srnas = []
@@ -120,6 +125,7 @@ def merge_srna(srnas, srna_type):
         final_srnas.append(srna)
     return final_srnas
 
+
 def read_gff(gff_file, type_):
     datas = []
     if os.path.exists(gff_file):
@@ -137,6 +143,7 @@ def read_gff(gff_file, type_):
                                              k.end, k.strand))
     return datas
 
+
 def read_table(table_file, file_type):
     datas = []
     if os.path.exists(table_file):
@@ -144,6 +151,7 @@ def read_table(table_file, file_type):
         for row in csv.reader(f_h, delimiter='\t'):
             datas.append(import_data(row, file_type))
     return datas
+
 
 def merge_incds_utr(utrs, inters):
     new_inters = []
@@ -169,6 +177,7 @@ def merge_incds_utr(utrs, inters):
         if not remove:
             new_inters.append(inter)
     return new_inters
+
 
 def compare_srna_cds(srna, cdss, cutoff_overlap):
     detect = False
@@ -219,6 +228,7 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
     else:
         return None
 
+
 def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
     out = open(gffs["merge"], "w")
     out.write("##gff-version 3\n")
@@ -262,6 +272,7 @@ def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
             num_srna += 1
     out.close()
 
+
 def import_data(row, type_):
     if type_ == "inter":
         return {"strain": row[0], "name": row[1],
@@ -278,6 +289,7 @@ def import_data(row, type_):
                 "high": row[8], "low": row[9],
                 "detail": row[10]}
 
+
 def check_real_cut(inter_cuts, tss_type, cut):
     for tss, value in inter_cuts.items():
         if tss in tss_type.lower():
@@ -292,6 +304,7 @@ def check_real_cut(inter_cuts, tss_type, cut):
         else:
             cut = inter_cuts["no_tss"]
     return cut
+
 
 def get_cutoff(srna, tsss, type_, tables, args_srna):
     if type_ == "inter":
@@ -333,6 +346,7 @@ def get_cutoff(srna, tsss, type_, tables, args_srna):
     fh.close()
     return cut
 
+
 def devide_covers(covers):
     frag_covers = {}
     tex_covers = {}
@@ -342,6 +356,7 @@ def devide_covers(covers):
         elif "tex" in cond:
             tex_covers[cond] = tracks
     return frag_covers, tex_covers
+
 
 def merge_srna_datas(srna_datas_tex, srna_datas_frag):
     if (len(srna_datas_tex["conds"]) != 0) and (
@@ -365,6 +380,7 @@ def merge_srna_datas(srna_datas_tex, srna_datas_frag):
     else:
         srna_datas = copy.deepcopy(srna_datas_tex)
     return srna_datas
+
 
 def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                   out, tsss, args_srna):
@@ -424,6 +440,7 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                       srna.attributes["overlap_cds"].replace("&", ";"),
                       srna.attributes["overlap_percent"].replace("&", ";")))
 
+
 def get_coverage(wigs, srna):
     cover_sets = {"high": -1, "low": -1, "total": 0, "diff": 0}
     poss = {"high": 0, "low": 0, "pos": 0}
@@ -470,6 +487,7 @@ def get_coverage(wigs, srna):
                                               "final_end": srna.end})
     return srna_covers
 
+
 def get_tss_pro(type_, srna):
     if type_ == "utr":
         if (srna.attributes["with_TSS"] != "NA") and (
@@ -501,9 +519,11 @@ def get_tss_pro(type_, srna):
             end_pro = "NA"
     return tss_pro, end_pro
 
+
 def free_memory(paras):
     for data in paras:
         del(data)
+
 
 def merge_srna_table(srna_file, csvs, wig_f_file, wig_r_file,
                      tss_file, args_srna):

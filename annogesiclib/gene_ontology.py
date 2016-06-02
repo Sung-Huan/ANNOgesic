@@ -1,10 +1,10 @@
 import os
 import csv
-import matplotlib
-import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
+import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 
@@ -12,6 +12,7 @@ def import_uniprot_data(entry, name_list, feature):
     ref_name = entry.attributes[feature]
     if ref_name not in name_list:
         name_list.add(ref_name)
+
 
 def compare_cds_tran(gffs, trans):
     new_gffs = []
@@ -32,6 +33,7 @@ def compare_cds_tran(gffs, trans):
                     new_gffs.append(gff)
                     break
     return new_gffs
+
 
 def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     name_list = set()
@@ -87,6 +89,7 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     out.close()
     idmapping.close()
 
+
 def plot(total_nums, strain, filename, total, out_folder):
     sort_total_nums = sorted(total_nums.items(),
                              key=lambda x: (x[1]), reverse=True)
@@ -113,6 +116,7 @@ def plot(total_nums, strain, filename, total, out_folder):
     plt.savefig(os.path.join(out_folder,
                              "_".join([strain, filename + ".png"])))
 
+
 def import_obo(filename):
     obos = []
     start = False
@@ -136,14 +140,17 @@ def import_obo(filename):
                         obo[datas[0]] = datas[1].strip()
     return obos
 
+
 def import_class(slim_obo, classes, strain):
     if slim_obo["name"] not in classes[strain][slim_obo["namespace"]]:
         classes[strain][slim_obo["namespace"]][slim_obo["name"]] = 0
     classes[strain][slim_obo["namespace"]][slim_obo["name"]] += 1
 
+
 def import_total(slim_obo, total_nums, strain):
     total_nums[strain][slim_obo["namespace"]] += 1
     total_nums[strain]["total"] += 1
+
 
 def print_file(classes, total_nums, out_folder, stat):
     out_stat = open(stat, "w")
@@ -171,6 +178,7 @@ def print_file(classes, total_nums, out_folder, stat):
             printed = True
     out_stat.close()
 
+
 def initiate_dict(classes, total_nums, index):
     classes[index] = {"biological_process": {},
                       "cellular_component": {},
@@ -179,6 +187,7 @@ def initiate_dict(classes, total_nums, index):
                          "cellular_component": 0,
                          "molecular_function": 0,
                          "total": 0}
+
 
 def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
     detect = False
@@ -217,6 +226,7 @@ def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
                     if detect:
                         detect = False
                         break
+
 
 def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     gos = {}

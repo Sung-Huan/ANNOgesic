@@ -42,6 +42,7 @@ def get_type(inter, gffs):
     else:
         inter["source"] = "intergenic"
 
+
 def read_gff(gff_file, tran_file, hypo):
     trans = []
     gffs = []
@@ -64,6 +65,7 @@ def read_gff(gff_file, tran_file, hypo):
     gh.close()
     th.close()
     return gffs, trans
+
 
 def compare_tran_cds(trans, gffs):
     inters = []
@@ -94,6 +96,7 @@ def compare_tran_cds(trans, gffs):
                 inters.append({"strain": tran.seq_id, "strand": tran.strand,
                                "start": pos["start"], "end": pos["end"]})
     return inters
+
 
 def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
     gffs, trans = read_gff(gff_file, tran_file, hypo)

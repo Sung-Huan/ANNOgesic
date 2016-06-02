@@ -1,8 +1,8 @@
 import os
-import matplotlib
-import matplotlib.pyplot as plt
 import networkx as nx
+import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 plt.rcParams['image.cmap'] = 'RdBu_r'
 
 
@@ -21,6 +21,7 @@ def node(item, nodes, center, colors, labels1, labels2):
         else:
             colors[item] = '#CCFFCC'
 
+
 def get_largest_compare(tick, score):
     same = True
     if (score >= 20) and tick >= 20:
@@ -35,12 +36,15 @@ def get_largest_compare(tick, score):
             tick = score
     return (tick, same)
 
+
 def add_edge(G, ppi, style, weight, colorppi):
     G.add_edge(ppi["item_a"], ppi["item_b"],
                color=float(colorppi), style=style, weight=weight)
 
+
 def add_node(G, nodes):
     G.add_nodes_from(nodes)
+
 
 def best_assign_attributes(check_na, G, ppi, pre_ppi, first, style):
     check_na["best"] = True
@@ -58,6 +62,7 @@ def best_assign_attributes(check_na, G, ppi, pre_ppi, first, style):
     if not first:
         if pre_ppi["best"] != ppi["best"]:
             check_na["same_best"] = True
+
 
 def create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
                 G, cutoff_score, check_na, pre_ppi):
@@ -82,12 +87,14 @@ def create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
     add_node(G, nodes)
     return pre_ppi
 
+
 def modify_label(labels2, new_labels):
     for key, value in labels2.items():
         if "_" in value:
             new_labels[key] = value.replace("_", "\n")
         else:
             new_labels[key] = value
+
 
 def plot_text(check_na, plt, ppis, ppi, color_edge):
     if check_na["best"]:
@@ -107,10 +114,12 @@ def plot_text(check_na, plt, ppis, ppi, color_edge):
             cbar = plt.colorbar(color_edge)
             cbar.ax.tick_params(labelsize=16)
 
+
 def nx_node(G, pos, node_size, colors, color_list):
     nx.draw_networkx_nodes(G, pos, node_size=node_size, node_shape='o',
                            nodelist=colors.keys(), node_color=color_list,
                            linewidths=1)
+
 
 def nx_edge(G, pos, edges, colors, styles, weights):
     color_edge = (nx.draw_networkx_edges(G, pos, edges=edges,
@@ -118,13 +127,16 @@ def nx_edge(G, pos, edges, colors, styles, weights):
                   edge_vmin=-1, edge_vmax=1, vmin=-1, vmax=1))
     return color_edge
 
+
 def nx_label(G, pos, labels, size):
     nx.draw_networkx_labels(G, pos, labels, font_size=size, font_weight='bold')
+
 
 def nx_color_style(G, edges):
     colors = [G[u][v]['color'] for u, v in edges]
     styles = [G[u][v]['style'] for u, v in edges]
     return colors, styles
+
 
 def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     nodes = []
@@ -173,6 +185,7 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     plt.clf()
     plt.close('all')
 
+
 def score_compare(score, scores, cutoff_score, ppi):
     if score == "NA":
         ppi["score"] = 0
@@ -182,12 +195,14 @@ def score_compare(score, scores, cutoff_score, ppi):
     else:
         scores["below"] += 1
 
+
 def assign_score_below(pre_ppi, scores, ppis):
     if "score" not in pre_ppi.keys():
         pre_ppi["score"] = scores["score"]
     if "below" not in pre_ppi.keys():
         pre_ppi["below"] = scores["below"]
     ppis.append(pre_ppi)
+
 
 def get_best(pre_ppi, ppi, row):
     if "best" not in pre_ppi.keys():
@@ -200,6 +215,7 @@ def get_best(pre_ppi, ppi, row):
                 ppi["best"] = row[8]
             else:
                 ppi["best"] = pre_ppi["best"]
+
 
 def interaction(first, pre_ppi, scores, ppis, match, center, cutoff_score,
                 node_size, out_folder):
@@ -218,6 +234,7 @@ def interaction(first, pre_ppi, scores, ppis, match, center, cutoff_score,
         ppis = []
         first = True
     return first, scores, match, ppis
+
 
 def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
     ppis = []

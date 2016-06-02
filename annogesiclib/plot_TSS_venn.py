@@ -1,7 +1,7 @@
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 from annogesiclib.gff3 import Gff3Parser
+import matplotlib as mpl
 mpl.use('Agg')
+import matplotlib.pyplot as plt
 
 
 def ellipse(x, y, angle, face, al, plt):
@@ -10,6 +10,7 @@ def ellipse(x, y, angle, face, al, plt):
     plt.gca().add_artist(ellipse_)
     return plt
 
+
 def line(x, y, angle, plt):
     line_ = mpl.patches.Ellipse(xy=(x, y), width=0.8, height=0.3,
                                 angle=angle, facecolor="none",
@@ -17,15 +18,18 @@ def line(x, y, angle, plt):
     plt.gca().add_artist(line_)
     return plt
 
+
 def plot_text(plt, xy1, xy2, tss_type, size, color_text):
     plt.text(xy1, xy2, tss_type, ha="center",
              va="center", fontsize=15, fontweight='bold',
              color=color_text)
 
+
 def text_total(xy, tss_type, num, plt):
     plot_text(plt, xy[0], xy[1], tss_type, 15, "black")
     if tss_type != "Orphan":
         plot_text(plt, xy[0], xy[1] - 0.05, str(num), 15, "black")
+
 
 def text(xy, tss_type, num, plt):
     if (tss_type == "Primary") or (
@@ -35,11 +39,13 @@ def text(xy, tss_type, num, plt):
     else:
         plot_text(plt, xy[0], xy[1], str(num), 16, "black")
 
+
 def check_tss_class(total_types, strain, tss, tss_type):
     if tss_type not in total_types[strain].keys():
         total_types[strain][tss_type] = 0
     if tss_type in tss.attributes["type"]:
         total_types[strain][tss_type] += 1
+
 
 def import_types(tsss):
     types = {"all": {}}
@@ -67,6 +73,7 @@ def import_types(tsss):
             types[strain][ty] += 1
     return types, total_types
 
+
 def read_gff(tss_file):
     tsss = {"all": []}
     tss_num = {"all": 0}
@@ -86,6 +93,7 @@ def read_gff(tss_file):
         tsss[strain] = sorted(tsss[strain], key=lambda k: (k.seq_id, k.start))
     f_h.close()
     return tsss, tss_num
+
 
 def plot(types, file_type, feature_name, total_types, tss_num):
     for strain, tss_types in types.items():
@@ -137,6 +145,7 @@ def plot(types, file_type, feature_name, total_types, tss_num):
         plt.axis('off')
         plt.savefig("_".join([file_type, "venn", strain + ".png"]))
         plt.clf()
+
 
 def plot_venn(tss_file, file_type):
     if file_type == "processing":

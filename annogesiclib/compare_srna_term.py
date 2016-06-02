@@ -11,6 +11,7 @@ def read_gff(gff_file):
     datas = sorted(datas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return datas
 
+
 def print_table(srna_table, out_t, srnas):
     fh = open(srna_table, "r")
     for row in csv.reader(fh, delimiter='\t'):
@@ -24,6 +25,7 @@ def print_table(srna_table, out_t, srnas):
                 else:
                     with_term = ["NA"]
                 out_t.write("\t".join(row + with_term) + "\n")
+
 
 def compare_srna_term(srna_gff, srna_table, term_file, fuzzy_b, fuzzy_a):
     srnas = read_gff(srna_gff)

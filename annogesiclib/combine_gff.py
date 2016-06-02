@@ -10,14 +10,17 @@ def read_file(filename):
     f_h.close()
     return datas
 
+
 def del_attributes(entry):
     if "Parent_tran" in entry.attributes.keys():
         del entry.attributes["Parent_tran"]
+
 
 def print_file(entry, tran, out):
     out.write("".join([entry.info, ";Parent_tran=",
                        str(tran.attributes["ID"]), "\n"]))
     entry.attributes["print"] = True
+
 
 def compare_tran(datas, tran, out):
     for data in datas:
@@ -28,10 +31,12 @@ def compare_tran(datas, tran, out):
                     data.end <= tran.end):
                 print_file(data, tran, out)
 
+
 def print_rest(datas, out):
     for data in datas:
         if "print" not in data.attributes.keys():
             out.write(data.info + "\n")
+
 
 def compare_tran_term(term, tran, out, fuzzy_term):
     if (term.seq_id == tran.seq_id) and (
@@ -54,6 +59,7 @@ def compare_tran_term(term, tran, out, fuzzy_term):
                 elif (term.start <= tran.start) and (
                         term.end >= tran.start):
                     print_file(term, tran, out)
+
 
 def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file,
                 term_file, fuzzy_tss, fuzzy_term, out_file):

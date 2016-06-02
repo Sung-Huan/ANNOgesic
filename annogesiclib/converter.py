@@ -6,6 +6,7 @@ from annogesiclib.gff3 import Gff3Parser, Gff3Entry
 from annogesiclib.TSSpredator import TSSPredatorReader
 from annogesiclib.helper import Helper
 
+
 class Converter(object):
 
     def __init__(self):

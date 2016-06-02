@@ -25,6 +25,7 @@ def coverage_comparison(cover, cover_sets, poss, first, strand):
             cover_sets["low"] = cover["coverage"]
     return first
 
+
 def define_cutoff(coverages, median, utr_type):
     cutoffs = {}
     if coverages[utr_type] == "mean":
@@ -34,6 +35,7 @@ def define_cutoff(coverages, median, utr_type):
         for track, values in median.items():
             cutoffs[track] = values["median"]
     return cutoffs
+
 
 def check_notex(cover, texs, cutoff, notex):
     if notex is not None:
@@ -48,6 +50,7 @@ def check_notex(cover, texs, cutoff, notex):
     else:
         if cover["avg"] > cutoff:
             return True
+
 
 def run_tex(cover, texs, check_texs, tex_notex, type_,
             detect_num, poss, target_datas):
@@ -82,6 +85,7 @@ def run_tex(cover, texs, check_texs, tex_notex, type_,
         target_datas.append(cover)
     return detect_num
 
+
 def check_tex(template_texs, covers, target_datas, notex, type_, poss, median,
               coverages, utr_type, cutoff_coverage, tex_notex):
     detect_num = 0
@@ -114,11 +118,13 @@ def check_tex(template_texs, covers, target_datas, notex, type_, poss, median,
                                  type_, detect_num, poss, target_datas)
     return detect_num
 
+
 def exchange_start_end(poss, cover):
     if poss["start"] > cover["final_start"]:
         poss["start"] = cover["final_start"]
     if poss["end"] < cover["final_end"]:
         poss["end"] = cover["final_end"]
+
 
 def replicate_comparison(args_srna, srna_covers, strand, type_, median,
                          coverages, utr_type, notex, cutoff_coverage, texs):

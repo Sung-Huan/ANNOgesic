@@ -28,6 +28,7 @@ def check_tex_conds(tracks, libs, texs, check_tex, conds, tex_notex):
                     else:
                         conds[index] += 1
 
+
 def detect_hight_toler(cover, height, tmp_covers, tracks):
     if cover["coverage"] > height:
         if tmp_covers["best"] < cover["coverage"]:
@@ -36,6 +37,7 @@ def detect_hight_toler(cover, height, tmp_covers, tracks):
     else:
         if cover["coverage"] > tmp_covers["toler"]:
             tmp_covers["toler"] = cover["coverage"]
+
 
 def elongation(covers, template_texs, libs, strand, trans,
                args_tran, strain, tolers):
@@ -81,6 +83,7 @@ def elongation(covers, template_texs, libs, strand, trans,
         pre_pos = cover["pos"]
     return tmp_covers["best"], conds, tracks, texs, pre_pos
 
+
 def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
     tolers = {}
     trans = {}
@@ -121,6 +124,7 @@ def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
                                   "coverage": best_cover, "cond": num})
     return tolers, trans
 
+
 def print_transctipt(start, end, width, num, high_cover, wig_type,
                      low_cover, out, strain, strand):
     if (start != -1) and (end != -1) and (
@@ -132,6 +136,7 @@ def print_transctipt(start, end, width, num, high_cover, wig_type,
                   strain, "ANNOgesic", "Transcript", str(start),
                   str(end), ".", strand, ".", attribute]]) + "\n")
 
+
 def gen_attribute_string(num, name, high_cover, low_cover, wig_type):
     attribute = ";".join(
                 ["=".join(items) for items in ([
@@ -141,6 +146,7 @@ def gen_attribute_string(num, name, high_cover, low_cover, wig_type):
                     ("low_coverage", str(low_cover)),
                     ("detect_lib", wig_type)])])
     return attribute
+
 
 def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
     for strain, datas in tolers.items():
@@ -198,6 +204,7 @@ def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
             print_transctipt(start, end, args_tran.width, num, high_cover,
                              wig_type, low_cover, out, strain, strand)
 
+
 def read_wig(filename, libs, strand):
     wigs = {}
     tracks = []
@@ -222,6 +229,7 @@ def read_wig(filename, libs, strand):
                         break
     wig_fh.close()
     return wigs
+
 
 def assembly(wig_f_file, wig_r_file, wig_folder, input_lib,
              out_file, wig_type, args_tran):

@@ -1,6 +1,6 @@
 import matplotlib as mpl
-import matplotlib.pyplot
 mpl.use('Agg')
+import matplotlib.pyplot
 matplotlib.pyplot.style.use('ggplot')
 
 

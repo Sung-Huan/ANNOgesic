@@ -1,8 +1,8 @@
 import csv
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib as mpl
 mpl.use('Agg')
+import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 
@@ -47,6 +47,7 @@ def plot(subs, total, unknown, strain, prefix_name):
     plt.tight_layout(2, None, None, None)
     plt.savefig("_".join([prefix_name, strain + ".png"]))
 
+
 def read_table(psortb_file):
     subs = {}
     subs["all_strain"] = {}
@@ -86,6 +87,7 @@ def read_table(psortb_file):
     f_h.close()
     return subs, total_nums, unknown_nums
 
+
 def print_file_and_plot(sub, total_nums, unknown_nums,
                         strain, out_stat, prefix_name):
     plot(sub, total_nums[strain], unknown_nums[strain], strain, prefix_name)
@@ -105,6 +107,7 @@ def print_file_and_plot(sub, total_nums, unknown_nums,
         else:
             out_stat.write("\t{0}\t{1}(include Unknown {2})\n".format(
                 local, num, float(num) / float(total_nums[strain])))
+
 
 def stat_sublocal(psortb_file, prefix_name, stat_file):
     subs, total_nums, unknown_nums = read_table(psortb_file)
