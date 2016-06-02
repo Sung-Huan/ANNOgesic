@@ -1,51 +1,23 @@
-FROM debian
+FROM ubuntu
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get upgrade --yes
 RUN apt-get update
-RUN apt-get install --yes \
-default-jre \
-default-jdk \
-python3 \
-python3-scipy \
-vim \
-make \
-gcc \
-g++ \
-gfortran \
-libx11-dev \
-wget \
-zip unzip \
-python3-biopython \
-software-properties-common \
-python3-software-properties \
-bioperl \
-ncbi-blast+ \
-pkg-config \
-python3-dev \
-libfreetype6-dev \
-libxft-dev \
-libpng-dev \
-python3-pip \
-python3-numpy \
-imagemagick \
-infernal \
-git \
-openssh-client \
-apache2 \
-curl \
-build-essential \
-net-tools \
-librpc-xml-perl \
-ncbi-blast+-legacy \
-nano \
-libf2c2 \
-apache2-dev \
-libapache-singleton-perl \
-libjson-rpc-perl \
-libncurses5-dev
-
+RUN apt-get install default-jre default-jdk python3 python3-scipy \
+vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
+software-properties-common python3-software-properties bioperl \
+ncbi-blast+ pkg-config python3-dev libfreetype6-dev libxft-dev \
+libpng-dev python3-pip python3-numpy imagemagick infernal git \
+openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
+ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
+libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
+snap cpanminus mummer exonerate mafft fasttree circos libsvg-perl \
+libgd-svg-perl python-setuptools libc6-i386 lib32stdc++6 lib32gcc1 \
+netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
+libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
+libbio-perl-perl libsqlite3-dev --yes --fix-missing
+RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
 RUN apt-get update
 
 RUN pip3 install \
@@ -53,55 +25,48 @@ matplotlib \
 networkx \
 ANNOgesic
 
-RUN pip3 install --upgrade ANNOgesic
+RUN pip3 install ANNOgesic --upgrade
             
 RUN mkdir tools
 WORKDIR tools
 
 # vienna package
-# RUN apt-add-repository ppa:j-4/vienna-rna --yes
-# RUN apt-get update --yes
-# RUN apt-get install vienna-rna --yes
-RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.1.9.tar.gz && \
-tar -zxvf ViennaRNA-2.1.9.tar.gz && cd ViennaRNA-2.1.9 && ./configure && make && make install && \
-cp Utils/relplot.pl /usr/local/bin && \
-cp Utils/mountain.pl /usr/local/bin
+RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.2.5.tar.gz && \
+tar -zxvf ViennaRNA-2.2.5.tar.gz && cd ViennaRNA-2.2.5 && ./configure  --without-perl --without-python && make && make install && \
+cp src/Utils/relplot.pl /usr/local/bin && \
+cp src/Utils/mountain.pl /usr/local/bin
 
 # TSSpredator
-RUN wget http://it.informatik.uni-tuebingen.de/software/tsspredator/TSSpredator_v1-04.zip && \
-unzip TSSpredator_v1-04.zip && \
-cp TSSpredator_v1-04/TSSpredator.jar /usr/local/bin
+RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/releases/org/uni-tuebingen/it/TSSpredator/1.06/TSSpredator-1.06.jar && \
+cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
 
 # MEME
-RUN wget http://ebi.edu.au/ftp/software/MEME/4.10.1/meme_4.10.1_1.tar.gz && \
-tar -zxvf meme_4.10.1_1.tar.gz
+RUN wget http://meme-suite.org/meme-software/4.11.1/meme_4.11.1.tar.gz && \
+tar -zxvf meme_4.11.1.tar.gz
 
 RUN perl -MCPAN -e 'install HTML::Template; \
 install XML::Compile::SOAP11; install XML::Compile::WSDL11; \
 install XML::Compile::Transport::SOAPHTTP; install XML::RPC'
 
-RUN cd meme_4.10.1 && ./configure --prefix=/tools/meme \
+RUN cpan install HTML::Template
+RUN cpan HTML::PullParser
+RUN cpan XML::Simple
+RUN cpan XML::Compile::WSDL11
+RUN cpan XML::Compile::SOAP11
+
+RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --with-url=http://meme.nbcr.net/meme \
 --enable-build-libxml2 \
 --enable-build-libxslt && \
 make && make test && make install && cp /tools/meme/bin/meme /usr/local/bin
 
 # RATT
-RUN wget ftp://ftp.sanger.ac.uk/pub/resources/software/pagit/PAGIT.V1.64bit.tgz && \
-tar xzf PAGIT.V1.64bit.tgz && ./installme.sh
+RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git
+RUN mv rapid_annotation_transfer_tool /opt/RATT
 
-ENV PAGIT_HOME /tools/PAGIT
-ENV PATH /tools/PAGIT/bin/:/tools/PAGIT/bin/pileup_v0.5/:/tools/PAGIT/bin/pileup_v0.5/ssaha2:\
-/tools/PAGIT/bin/pileup_v0.5/:/tools/PAGIT/IMAGE/:/tools/PAGIT/ABACAS:\
-/tools/PAGIT/ICORN/:/tools/PAGIT/RATT/:$PATH
-
-ENV PILEUP_HOME /tools/PAGIT/bin/pileup_v0.5/
-ENV ICORN_HOME /tools/PAGIT/ICORN/
-ENV SNPOMATIC_HOME /tools/PAGIT/bin/
-ENV RATT_HOME /tools/PAGIT/RATT
-ENV RATT_CONFIG $RATT_HOME/RATT.config
-ENV PERL5LIB /usr/lib/perl5/:/tools/PAGIT/lib
-RUN cp PAGIT/RATT/start.ratt.sh /usr/local/bin
+ENV RATT_HOME /opt/RATT
+ENV PERL5LIB /opt/ORTHOMCLV1.4/:/opt/RATT/:/opt/ABACAS2/:$PERL5LIB
+ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/augustus/bin:/opt/augustus/scripts:/opt/ORTHOMCLV1.4:/opt/RATT:/opt/ABACAS2:$PATH
 
 # segemehl
 RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_0_2_0.tar.gz && \
@@ -178,8 +143,7 @@ RUN rm -r pft2.3.4.docker64bit.tar.gz \
 libpsortb-1.0.tar.gz \
 libpsortb-1.0 \
 bio-tools-psort-all.3.0.4.tar.gz \
-bio-tools-psort-all \
-/tools/ViennaRNA-2.1.9
+bio-tools-psort-all
 
 RUN /etc/init.d/apache2 restart
 EXPOSE 80
@@ -191,22 +155,19 @@ RUN cp /usr/local/psortb/bin/psort /usr/local/bin
 WORKDIR /tools
 
 # htslib, samtools, bcftools
-RUN wget https://github.com/samtools/htslib/releases/download/1.2.1/htslib-1.2.1.tar.bz2
-RUN tar -jxvf htslib-1.2.1.tar.bz2 && cd htslib-1.2.1 && make all && make install && cd ..
-RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2
-RUN tar -jxvf samtools-1.2.tar.bz2 && cd samtools-1.2 && make all && make install && cd ..
-RUN wget https://github.com/samtools/bcftools/releases/download/1.2/bcftools-1.2.tar.bz2
-RUN tar -jxvf bcftools-1.2.tar.bz2 && cd bcftools-1.2 && make all && make install && cd ..
+RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
+RUN tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && make all && make install && cd ..
+RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+RUN tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make install && cd ..
+RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+RUN tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
 
-# replace the old version of samtools in PAGIT
-RUN cp /tools/samtools-1.2/samtools /tools/PAGIT/bin/samtools
-
-RUN rm TSSpredator_v1-04.zip \
-meme_4.10.1_1.tar.gz \
-PAGIT.V1.64bit.tgz \
+RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
-ViennaRNA-2.1.9.tar.gz \
-htslib-1.2.1.tar.bz2 \
-samtools-1.2.tar.bz2 \
-bcftools-1.2.tar.bz2
+ViennaRNA-2.2.5.tar.gz \
+htslib-1.3.1.tar.bz2 \
+samtools-1.3.1.tar.bz2 \
+bcftools-1.3.1.tar.bz2
+
+WORKDIR /home
