@@ -4,7 +4,7 @@ import csv
 def read_file(srna_file, nums):
     srna_f = open(srna_file, "r")
     for row in csv.reader(srna_f, delimiter="\t"):
-        if (row[-4] != "NA") and (row[0] != "rank"):
+        if (row[-5] != "NA") and (row[0] != "rank"):
             if row[1] not in nums.keys():
                 nums[row[1]] = {}
             if row[2] not in nums[row[1]].keys():
