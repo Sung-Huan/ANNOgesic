@@ -1,5 +1,5 @@
 test:
-	eython3 tests/run_test.py
+	python3 tests/run_test.py
 
 coverage:
 	python3 -m coverage run tests/run_test.py
