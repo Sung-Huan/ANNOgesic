@@ -10,37 +10,75 @@ def detect_energy(line, srna):
             srna["energy"] = energy
 
 
-def print_rank_one(srnas, out, feature, gffs, srna_gffs, top):
-    out.write("\t".join(["sRNA", "strain", "sRNA_start", "sRNA_end",
-                         "sRNA_strand", "target", "target_start",
-                         "target_end", "target_strand",
-                         "method", "energy", "rank"]) + "\n")
+def mod_srna_tar_pos(gff, pos, type_, pre_target, suf_target):
+    start = int(pos.split(",")[0])
+    end = int(pos.split(",")[-1])
+    if (gff.strand == "+"):
+        if type_ == "srna":
+            g_start = gff.start + start - 1
+            g_end = gff.start + end - 1
+        else:
+            g_start = gff.start - pre_target + start - 1
+            g_end = gff.start - pre_target + end - 1
+    else:
+        if type_ == "srna":
+            g_end = gff.end - start + 1
+            g_start = gff.end - end + 1
+        else:
+            g_start = gff.start + suf_target - start + 1
+            g_end = gff.start + suf_target - end + 1
+    return g_start, g_end
+
+def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar):
+    out.write("\t".join(["sRNA", "strain", "sRNA_position",
+                         "sRNA_interacted_position_" + list(srnas)[0],
+                         "sRNA_strand",
+                         "target", "target_position",
+                         "target_interacted_position_" + list(srnas)[0],
+                         "target_strand", "energy_" + list(srnas)[0],
+                         "rank_" + list(srnas)[0]]) + "\n")
     for method, srna_datas in srnas.items():
-        for srna_name, targets in srna_datas.items():
+        for srna_id, targets in srna_datas.items():
             rank = 0
             sort_targets = sorted(targets, key=lambda k: (k["energy"]))
             for target in sort_targets:
                 if target["energy"] < 0:
                     rank += 1
                     target["rank"] = rank
-                    if rank <= top:
+                    if rank <= args_tar.top:
                         if method == feature:
-                            srna_infos = get_srna_name(srna_gffs, srna_name)
+                            srna_infos = get_srna_name(srna_gffs, srna_id)
                             name = srna_infos[0]
                             srna_info = srna_infos[1]
                             target_info = get_target_info(
                                 gffs, target["target"])
+                            s_start, s_end = mod_srna_tar_pos(
+                                    srna_info, target["srna_pos"], "srna",
+                                    args_tar.tar_start, args_tar.tar_end)
+                            t_start, t_end = mod_srna_tar_pos(
+                                    target_info, target["tar_pos"], "tar",
+                                    args_tar.tar_start, args_tar.tar_end)
                             if srna_info is not None:
                                 out.write("\t".join([
                                     name, str(srna_info.seq_id),
-                                    str(srna_info.start), str(srna_info.end),
+                                    "-".join([str(srna_info.start),
+                                              str(srna_info.end)]),
+                                    "-".join([str(s_start), str(s_end)]),
                                     srna_info.strand, target["target"],
-                                    str(target_info.start),
-                                    str(target_info.end),
-                                    target_info.strand, method,
-                                    str(target["energy"]),
+                                    "-".join([str(target_info.start),
+                                              str(target_info.end)]),
+                                    "-".join([str(t_start), str(t_end)]),
+                                    target_info.strand, str(target["energy"]),
                                     str(target["rank"])]) + "\n")
 
+def extract_pos(line, srnas, method):
+    if (line.startswith("(")) or (
+            line.startswith(")")) or (
+            line.startswith(".")):
+        tar_pos = line.split(":")[0].strip().split(" ")[-1]
+        srna_pos = line.split(":")[-1].strip().split(" ")[0]
+        srnas["tar_pos"] = tar_pos
+        srnas["srna_pos"] = srna_pos
 
 def read_table(gffs, rnaplex, rnaup):
     srnas = {"RNAup": {}, "RNAplex": {}}
@@ -69,6 +107,7 @@ def read_table(gffs, rnaplex, rnaup):
                 else:
                     if start:
                         detect_energy(line, srnas["RNAplex"][srna][-1])
+                        extract_pos(line, srnas["RNAplex"][srna][-1], "RNAplex")
     if rnaup is not None:
         with open(rnaup, "r") as u_h:
             for line in u_h:
@@ -86,20 +125,31 @@ def read_table(gffs, rnaplex, rnaup):
                                                          "energy": 0})
                 else:
                     detect_energy(line, srnas["RNAup"][srna][-1])
+                    extract_pos(line, srnas["RNAup"][srna][-1], "RNAplex")
     return srnas
 
 
-def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info):
+def import_merge(merges, name, srna_info, srna_plex, srna_up, target_info,
+                 pre_target, suf_target):
+    ps_start, ps_end = mod_srna_tar_pos(srna_info, srna_plex["srna_pos"],
+                                        "srna", pre_target, suf_target)
+    pt_start, pt_end = mod_srna_tar_pos(target_info, srna_plex["tar_pos"],
+                                        "tar", pre_target, suf_target)
+    us_start, us_end = mod_srna_tar_pos(srna_info, srna_up["srna_pos"],
+                                        "srna", pre_target, suf_target)
+    ut_start, ut_end = mod_srna_tar_pos(target_info, srna_up["tar_pos"],
+                                        "tar", pre_target, suf_target)
     merges.append([name, srna_info.seq_id,
-                   str(srna_info.start),
-                   str(srna_info.end),
+                   "-".join([str(srna_info.start), str(srna_info.end)]),
+                   "-".join([str(ps_start), str(ps_end)]),
+                   "-".join([str(us_start), str(us_end)]),
                    srna_info.strand, srna_plex["target"],
-                   str(target_info.start),
-                   str(target_info.end), target_info.strand,
-                   "RNAplex", str(srna_plex["energy"]),
-                   str(srna_plex["rank"]),
-                   "RNAup", str(srna_up["energy"]),
-                   str(srna_up["rank"])])
+                   "-".join([str(target_info.start), str(target_info.end)]),
+                   "-".join([str(pt_start), str(pt_end)]),
+                   "-".join([str(ut_start), str(ut_end)]),
+                   target_info.strand,
+                   str(srna_plex["energy"]), str(srna_plex["rank"]),
+                   str(srna_up["energy"]), str(srna_up["rank"])])
 
 
 def get_srna_name(gffs, srna):
@@ -138,7 +188,7 @@ def get_target_info(gffs, target):
 
 
 def print_file(merges, out):
-    merges = sorted(merges, key=lambda k: (k[0], int(k[11])))
+    merges = sorted(merges, key=lambda k: (k[0], int(k[12])))
     for merge in merges:
         out.write("\t".join(merge) + "\n")
 
@@ -152,13 +202,17 @@ def read_gff(filename):
 
 
 def print_title(out):
-    out.write("\t".join(["sRNA", "strain", "srna_start", "srna_end",
-                         "srna_strand", "target", "target_start",
-                         "target_end", "target_strand", "method",
-                         "energy", "rank", "method", "energy", "rank"]) + "\n")
+    out.write("\t".join(["sRNA", "strain", "sRNA_position",
+                         "sRNA_interacted_position_RNAplex",
+                         "sRNA_interacted_position_RNAup", "sRNA_strand",
+                         "target", "target_position",
+                         "target_interacted_position_RNAplex",
+                         "target_interacted_position_RNAup", "target_strand",
+                         "energy_RNAplex", "rank_RNAplex",
+                         "energy_RNAup", "rank_RNAup"]) + "\n")
 
 
-def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
+def merge_base_rnaplex(srnas, srna_gffs, args_tar, gffs, merges):
     overlaps = []
     for srna, srna_plexs in srnas["RNAplex"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
@@ -167,36 +221,39 @@ def merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges):
         for srna_plex in srna_plexs:
             if "rank" in srna_plex.keys():
                 if ("print" not in srna_plex.keys()) and (
-                        srna_plex["rank"] <= top):
+                        srna_plex["rank"] <= args_tar.top):
                     for srna_up in srnas["RNAup"][srna]:
                         if "rank" in srna_up.keys():
                             if (srna_plex["target"] == srna_up["target"]) and (
-                                (srna_plex["rank"] <= top) and (
-                                 srna_up["rank"] <= top)) and (
+                                (srna_plex["rank"] <= args_tar.top) and (
+                                 srna_up["rank"] <= args_tar.top)) and (
                                  "print" not in srna_up.keys()):
                                 target_info = get_target_info(
                                     gffs, srna_plex["target"])
-                                import_merge(overlaps, name, srna_info,
-                                             srna_plex,
-                                             srna_up, target_info)
+                                import_merge(
+                                    overlaps, name, srna_info, srna_plex,
+                                    srna_up, target_info,
+                                    args_tar.tar_start, args_tar.tar_end)
                                 srna_plex["print"] = True
                                 srna_up["print"] = True
-                                import_merge(merges, name, srna_info,
-                                             srna_plex,
-                                             srna_up, target_info)
+                                import_merge(
+                                    merges, name, srna_info, srna_plex,
+                                    srna_up, target_info,
+                                    args_tar.tar_start, args_tar.tar_end)
                             elif (srna_plex["target"] ==
                                   srna_up["target"]) and (
                                       "print" not in srna_up.keys()):
                                 target_info = get_target_info(
                                     gffs, srna_plex["target"])
-                                import_merge(merges, name, srna_info,
-                                             srna_plex,
-                                             srna_up, target_info)
+                                import_merge(
+                                    merges, name, srna_info, srna_plex,
+                                    srna_up, target_info,
+                                    args_tar.tar_start, args_tar.tar_end)
                                 srna_plex["print"] = True
     return overlaps
 
 
-def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
+def merge_base_rnaup(srnas, srna_gffs, args_tar, gffs, merges):
     for srna, srna_ups in srnas["RNAup"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
         name = srna_datas[0]
@@ -204,7 +261,7 @@ def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
         for srna_up in srna_ups:
             if "rank" in srna_up.keys():
                 if ("print" not in srna_up.keys()) and (
-                        srna_up["rank"] <= top) and (
+                        srna_up["rank"] <= args_tar.top) and (
                         srna in srnas["RNAplex"].keys()):
                     for srna_plex in srnas["RNAplex"][srna]:
                         if "rank" in srna_plex.keys():
@@ -212,12 +269,14 @@ def merge_base_rnaup(srnas, srna_gffs, top, gffs, merges):
                                     "print" not in srna_plex.keys()):
                                 target_info = get_target_info(
                                     gffs, srna_up["target"])
-                                import_merge(merges, name, srna_info,
-                                             srna_plex, srna_up, target_info)
+                                import_merge(
+                                    merges, name, srna_info, srna_plex,
+                                    srna_up, target_info,
+                                    args_tar.tar_start, args_tar.tar_end)
                                 srna_up["print"] = True
 
 
-def merge_srna_target(rnaplex, rnaup, top, out_rnaplex, out_rnaup, output,
+def merge_srna_target(rnaplex, rnaup, args_tar, out_rnaplex, out_rnaup, output,
                       out_overlap, srna_gff_file, annotation_gff):
     merges = []
     srna_gffs = read_gff(srna_gff_file)
@@ -225,17 +284,17 @@ def merge_srna_target(rnaplex, rnaup, top, out_rnaplex, out_rnaup, output,
     srnas = read_table(srna_gffs, rnaplex, rnaup)
     if out_rnaplex is not None:
         out_p = open(out_rnaplex, "w")
-        print_rank_one(srnas, out_p, "RNAplex", gffs, srna_gffs, top)
+        print_rank_one(srnas, out_p, "RNAplex", gffs, srna_gffs, args_tar)
     if out_rnaup is not None:
         out_u = open(out_rnaup, "w")
-        print_rank_one(srnas, out_u, "RNAup", gffs, srna_gffs, top)
+        print_rank_one(srnas, out_u, "RNAup", gffs, srna_gffs, args_tar)
     if (out_rnaup is not None) and (out_rnaplex is not None):
         out_m = open(output, "w")
         out_o = open(out_overlap, "w")
         print_title(out_m)
         print_title(out_o)
         print("Merging now...")
-        overlaps = merge_base_rnaplex(srnas, srna_gffs, top, gffs, merges)
-        merge_base_rnaup(srnas, srna_gffs, top, gffs, merges)
+        overlaps = merge_base_rnaplex(srnas, srna_gffs, args_tar, gffs, merges)
+        merge_base_rnaup(srnas, srna_gffs, args_tar, gffs, merges)
         print_file(merges, out_m)
         print_file(overlaps, out_o)
