@@ -93,7 +93,7 @@ def print_file_and_plot(sub, total_nums, unknown_nums,
     plot(sub, total_nums[strain], unknown_nums[strain], strain, prefix_name)
     out_stat.write(strain + ":\n")
     out_stat.write("Total with Unknown is {0}; "
-                   "Total_withou_Unknown is {1}\n".format(
+                   "Total_without_Unknown is {1}\n".format(
                        total_nums[strain],
                        total_nums[strain] - unknown_nums[strain]))
     for local, num in sub.items():
