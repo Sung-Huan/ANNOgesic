@@ -31,12 +31,12 @@ def mod_srna_tar_pos(gff, pos, type_, pre_target, suf_target):
 
 def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar):
     out.write("\t".join(["sRNA", "strain", "sRNA_position",
-                         "sRNA_interacted_position_" + list(srnas)[0],
+                         "sRNA_interacted_position_" + feature,
                          "sRNA_strand",
                          "target", "target_position",
-                         "target_interacted_position_" + list(srnas)[0],
-                         "target_strand", "energy_" + list(srnas)[0],
-                         "rank_" + list(srnas)[0]]) + "\n")
+                         "target_interacted_position_" + feature,
+                         "target_strand", "energy_" + feature,
+                         "rank_" + feature]) + "\n")
     for method, srna_datas in srnas.items():
         for srna_id, targets in srna_datas.items():
             rank = 0

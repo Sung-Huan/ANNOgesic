@@ -75,7 +75,7 @@ class TestRiboGff(unittest.TestCase):
         rg.print_number(stats, 2, out, "Staphylococcus_aureus_HG003")
         ref = """Total number of potential riboswitch are 100
 The number of potential riboswitch which have overlap region with others are 2
-riboswitch_type\tnumbers
+riboswitch_name\tnumbers
 """
         self.assertEqual(out.getvalue(), ref)
 
@@ -90,7 +90,7 @@ riboswitch_type\tnumbers
         ref = """Staphylococcus_aureus_HG003:
 Total number of potential riboswitch are 100
 The number of potential riboswitch which have overlap region with others are 2
-riboswitch_type	numbers
+riboswitch_name	numbers
 
 overlap candidates set 1:
 	test_1

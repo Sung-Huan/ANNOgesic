@@ -46,7 +46,7 @@ class TestStatSubLocal(unittest.TestCase):
         datas = out_stat.getvalue().split("\n")
         for data in datas:
             if "Total with Unknown" in data:
-                self.assertEqual(data, "Total with Unknown is 4; Total_wihout_Unknown is 3")
+                self.assertEqual(data, "Total with Unknown is 4; Total_without_Unknown is 3")
             elif "CellWall" in data:
                 self.assertEqual(data, "\tCellWall\t1(include Unknown 0.25; exclude Unknonwn 0.3333333333333333)")
             elif "Cytoplasmic" in data:

@@ -8,6 +8,7 @@ sys.path.append(".")
 from io import StringIO
 from mock_gff3 import Create_generator
 from mock_helper import convert_dict, gen_file
+from mock_args_container import MockClass
 import annogesiclib.merge_rnaplex_rnaup as mrr
 
 
@@ -19,6 +20,7 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
             shutil.rmtree(self.test_folder)
         os.mkdir(self.test_folder)
         self.example = Example()
+        self.mock_args = MockClass()
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -34,7 +36,11 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
 
     def test_print_rank_one(self):
         out = StringIO()
-        mrr.print_rank_one(self.example.srnas, out, "RNAplex", self.example.gffs, self.example.srna_gffs, 2)
+        args_tar = self.mock_args.mock()
+        args_tar.top = 2
+        args_tar.tar_start = 20
+        args_tar.tar_end = 15
+        mrr.print_rank_one(self.example.srnas, out, "RNAplex", self.example.gffs, self.example.srna_gffs, args_tar)
         datas = convert_dict(out.getvalue().split("\n"))
         refs = convert_dict(self.example.out_print.split("\n"))
         self.assertDictEqual(datas, refs)
@@ -45,11 +51,15 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         gen_file(rnaplex, self.example.rnaplex)
         gen_file(rnaup, self.example.rnaup)
         srnas = mrr.read_table(self.example.gffs, rnaplex, rnaup)
-        self.assertDictEqual(srnas, {'RNAplex': {'srna1023': [{'target': 'SAOUHSC_00001|dnaA', 'energy': -5.3}],
-                                                 'srna352': [{'target': 'SAOUHSC_00001|dnaA', 'energy': -1.91}]},
-                                     'RNAup': {'srna352': [{'target': 'srna1023', 'energy': 0},
-                                                           {'target': 'SAOUHSC_00001|dnaA', 'energy': -4.87},
-                                                           {'target': 'SAOUHSC_00002', 'energy': -5.91}]}})
+        self.assertDictEqual(srnas, {'RNAup': {'srna352': [{'target': 'srna1023', 'energy': 0},
+                                    {'tar_pos': '571,576', 'target': 'SAOUHSC_00001|dnaA',
+                                     'energy': -4.87, 'srna_pos': '20,25'},
+                                    {'tar_pos': '14,30', 'target': 'SAOUHSC_00002',
+                                     'energy': -5.91, 'srna_pos': '11,26'}]},
+                                     'RNAplex': {'srna1023': [{'tar_pos': '571,576',
+                                     'target': 'SAOUHSC_00001|dnaA', 'energy': -5.3, 'srna_pos': '20,25'}],
+                                     'srna352': [{'tar_pos': '163,170', 'target': 'SAOUHSC_00001|dnaA',
+                                     'energy': -1.91, 'srna_pos': '24,31'}]}})
 
     def test_get_srna_name(self):
         output = mrr.get_srna_name(self.example.srna_gffs, "srna0")
@@ -61,16 +71,20 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         self.assertEqual(output.start, 100)
 
     def test_merge_base_rnaplex(self):
+        args_tar = self.mock_args.mock()
+        args_tar.top = 2
+        args_tar.tar_start = 20
+        args_tar.tar_end = 15
         merges = []
-        overlap = mrr.merge_base_rnaplex(self.example.srnas, self.example.srna_gffs, 2, self.example.gffs, merges)
-        output = [['sRNA_0', 'aaa', '6', '15', '+', 'AAA_00001', '100', '150', '+',
-                   'RNAplex', '-6.5', '1', 'RNAup', '-6.5', '1'],
-                  ['sRNA_0', 'aaa', '6', '15', '+', 'AAA_00002|dnaA', '2348', '2934', '+',
-                   'RNAplex', '-3.5', '2', 'RNAup', '-3.5', '2'],
-                  ['sRNA_1', 'aaa', '1258', '2234', '+', 'AAA_00003', '5544', '5597', '-',
-                   'RNAplex', '-10.5', '1', 'RNAup', '-10.5', '1'],
-                  ['sRNA_2', 'aaa', '3544', '6517', '-', 'AAA_00001', '100', '150', '+',
-                   'RNAplex', '-23.5', '1', 'RNAup', '-23.5', '1']]
+        overlap = mrr.merge_base_rnaplex(self.example.srnas, self.example.srna_gffs, args_tar, self.example.gffs, merges)
+        output = [['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'AAA_00001',
+                   '100-150', '89-94', '89-94', '+', '-6.5', '1', '-6.5', '1'],
+                  ['sRNA_0', 'aaa', '6-15', '7-12', '7-15', '+', 'AAA_00002|dnaA',
+                   '2348-2934', '2330-2342', '2337-2342', '+', '-3.5', '2', '-3.5', '2'],
+                  ['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267', '+', 'AAA_00003',
+                   '5544-5597', '5550-5545', '5550-5545', '-', '-10.5', '1', '-10.5', '1'],
+                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516', '-', 'AAA_00001',
+                   '100-150', '89-94', '89-94', '+', '-23.5', '1', '-23.5', '1']]
         count = 0
         for out in output:
             for data in overlap:
@@ -85,26 +99,30 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         self.assertEqual(count, 4)
 
     def test_merge_base_rnaup(self):
-        srnas = {"RNAplex": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1},
-                                       {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2}],
-                             "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1}],
-                             "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1},
-                                       {"target": "AAA_00002|dnaA", "energy": -3.43, "rank": 3},
-                                       {"target": "AAA_00003", "energy": -6.5, "rank": 2}]},
-                 "RNAup": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1},
-                                     {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2}],
-                           "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1}],
-                           "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1}]}}
+        args_tar = self.mock_args.mock()
+        args_tar.top = 2
+        args_tar.tar_start = 20
+        args_tar.tar_end = 15
+        srnas = {"RNAplex": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                       {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                             "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                             "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                       {"target": "AAA_00002|dnaA", "energy": -3.43, "rank": 3, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                       {"target": "AAA_00003", "energy": -6.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}]},
+                 "RNAup": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                     {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                           "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                           "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}]}}
         merges = []
-        mrr.merge_base_rnaup(srnas, self.example.srna_gffs, 2, self.example.gffs, merges)
-        output = [['sRNA_1', 'aaa', '1258', '2234', '+', 'AAA_00003', '5544', '5597', '-',
-                   'RNAplex', '-10.5', '1', 'RNAup', '-10.5', '1'],
-                  ['sRNA_2', 'aaa', '3544', '6517', '-', 'AAA_00001', '100', '150', '+',
-                   'RNAplex', '-23.5', '1', 'RNAup', '-23.5', '1'],
-                  ['sRNA_0', 'aaa', '6', '15', '+', 'AAA_00001', '100', '150', '+',
-                   'RNAplex', '-6.5', '1', 'RNAup', '-6.5', '1'],
-                  ['sRNA_0', 'aaa', '6', '15', '+', 'AAA_00002|dnaA', '2348', '2934', '+',
-                   'RNAplex', '-3.5', '2', 'RNAup', '-3.5', '2']]
+        mrr.merge_base_rnaup(srnas, self.example.srna_gffs, args_tar, self.example.gffs, merges)
+        output = [['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267', '+', 'AAA_00003',
+                   '5544-5597', '5550-5545', '5550-5545', '-', '-10.5', '1', '-10.5', '1'],
+                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516', '-', 'AAA_00001',
+                   '100-150', '89-94', '89-94', '+', '-23.5', '1', '-23.5', '1'],
+                  ['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'AAA_00001',
+                   '100-150', '89-94', '89-94', '+', '-6.5', '1', '-6.5', '1'],
+                  ['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'AAA_00002|dnaA',
+                   '2348-2934', '2337-2342', '2337-2342', '+', '-3.5', '2', '-3.5', '2']]
         count = 0
         for out in output:
             for data in merges:
@@ -113,16 +131,16 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         self.assertEqual(count, 4)
 
 class Example(object):
-    srnas = {"RNAplex": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1},
-                                   {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2}],
-                         "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1}],
-                         "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1},
-                                   {"target": "AAA_00002|dnaA", "energy": -3.43, "rank": 3},
-                                   {"target": "AAA_00003", "energy": -6.5, "rank": 2}]},
-             "RNAup": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1},
-                                 {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2}],
-                       "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1}],
-                       "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1}]}}
+    srnas = {"RNAplex": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                   {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2, "srna_pos": "2,7", "tar_pos": "3,15"}],
+                         "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                         "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                   {"target": "AAA_00002|dnaA", "energy": -3.43, "rank": 3, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                   {"target": "AAA_00003", "energy": -6.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}]},
+             "RNAup": {"srna0": [{"target": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
+                                 {"target": "AAA_00002|dnaA", "energy": -3.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                       "srna1": [{"target": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
+                       "srna2": [{"target": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}]}}
     srna_dict = [{"start": 6, "end": 15, "phase": ".",
                   "strand": "+", "seq_id": "aaa", "score": ".",
                   "source": "Refseq", "feature": "sRNA"},
@@ -155,12 +173,12 @@ class Example(object):
     out_rna_txt = """>SAOUHSC_00001|dnaA
 >srna1023
 ((((((&)))))) 571,576 :  20,25  (-5.30 = -7.89 +  0.18 +  2.41)"""
-    out_print = """sRNA	strain	sRNA_start	sRNA_end	sRNA_strand	target	target_start	target_end	target_strand	method	energy	rank
-sRNA_2	aaa	3544	6517	-	AAA_00001	100	150	+	RNAplex	-23.5	1
-sRNA_2	aaa	3544	6517	-	AAA_00003	5544	5597	-	RNAplex	-6.5	2
-sRNA_0	aaa	6	15	+	AAA_00001	100	150	+	RNAplex	-6.5	1
-sRNA_0	aaa	6	15	+	AAA_00002|dnaA	2348	2934	+	RNAplex	-3.5	2
-sRNA_1	aaa	1258	2234	+	AAA_00003	5544	5597	-	RNAplex	-10.5	1
+    out_print = """sRNA	strain	sRNA_position	sRNA_interacted_position_RNAplex	sRNA_strand	target	target_position	target_interacted_position_RNAplex	target_strand	energy_RNAplex	rank_RNAplex
+sRNA_1	aaa	1258-2234	1259-1267	+	AAA_00003	5544-5597	5550-5545	-	-10.5	1
+sRNA_2	aaa	3544-6517	6508-6516	-	AAA_00001	100-150	89-94	+	-23.5	1
+sRNA_2	aaa	3544-6517	6508-6516	-	AAA_00003	5544-5597	5550-5545	-	-6.5	2
+sRNA_0	aaa	6-15	7-15	+	AAA_00001	100-150	89-94	+	-6.5	1
+sRNA_0	aaa	6-15	7-12	+	AAA_00002|dnaA	2348-2934	2330-2342	+	-3.5	2
 """
     rnaup = """>srna1023
 >SAOUHSC_00001|dnaA
