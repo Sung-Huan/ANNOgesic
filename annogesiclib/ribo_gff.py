@@ -76,7 +76,7 @@ def print_number(stats, repeat, out, strain):
     out.write("The number of potential riboswitch which "
               "have overlap region with others are {0}\n".format(
                   repeat))
-    out.write("riboswitch_type\tnumbers\n")
+    out.write("riboswitch_name\tnumbers\n")
     for type_, num in stats[strain].items():
         if type_ != "total":
             out.write("{0}\t{1}\n".format(type_, num))

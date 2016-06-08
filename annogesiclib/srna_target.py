@@ -358,7 +358,7 @@ class sRNATargetPrediction(object):
                                           "_".join([prefix, "RNAup.txt"]))
                 out_rnaup = os.path.join(self.rnaup_path, prefix,
                                          "_".join([prefix, "RNAup_rank.csv"]))
-            merge_srna_target(rnaplex_file, rnaup_file, args_tar.top,
+            merge_srna_target(rnaplex_file, rnaup_file, args_tar,
                               out_rnaplex, out_rnaup,
                               os.path.join(self.merge_path, prefix,
                                            "_".join([prefix, "merge.csv"])),
