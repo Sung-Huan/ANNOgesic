@@ -367,7 +367,7 @@ snp
 ``snp`` can detect the potential mutations by comparing the results of alignment and fasta files.
 `Samtools <https://github.com/samtools>`_, `Bcftools <https://github.com/samtools>`_ are the main tools
 for detection of mutations. User can choose programs (with BAQ, without BAQ and extend BAQ) to run ``snp``.
-User can also set the quality, read depth and the fraction of maximum read depth which support for indel.
+User can also set the QUAL, DP, DP4, etc. For Indel, IMF and IDV can be setted as well.
 If you have no fasta file of "target strain" and want to generate it, ``snp`` can get it from 
 the alignment results of "reference strain".
 
@@ -390,8 +390,11 @@ Reference or target genome fasta files.
 	                     [--program PROGRAM] [--fasta_path FASTA_PATH]
 	                     [--tex_bam_path TEX_BAM_PATH]
 	                     [--frag_bam_path FRAG_BAM_PATH] [--quality QUALITY]
-	                     [--read_depth READ_DEPTH]
-	                     [--indel_fraction INDEL_FRACTION] [--ploidy PLOIDY]
+	                     [--read_depth_range READ_DEPTH_RANGE] [--ploidy PLOIDY]
+	                     [--RG_tag] [--min_sample_number MIN_SAMPLE_NUMBER]
+	                     [--caller CALLER] [--DP4_cutoff DP4_CUTOFF]
+	                     [--indel_fraction INDEL_FRACTION]
+	                     [--filter_tag_info FILTER_TAG_INFO]
 	                     [project_path]
 	
 	positional arguments:
@@ -428,13 +431,73 @@ Reference or target genome fasta files.
 	  --quality QUALITY, -q QUALITY
 	                        The minimum quality which considers a real snp.
 	                        Default is 40.
-	  --read_depth READ_DEPTH, -d READ_DEPTH
-	                        The minimum read depth. Default is 100.
-	  --indel_fraction INDEL_FRACTION, -imf INDEL_FRACTION
-	                        The fraction of maximum read depth, which supports
-	                        insertion of deletion. Default is 0.5.
+	  --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
+	                        The range of read depth. If the read depth higher or
+	                        lower than the range, it will be excluded. You can
+	                        assign real number (r), the read depth based on the
+	                        number of samples (n) or times of average read depth
+	                        (a). For example, n_10,a_2 means the range of read
+	                        depth should be higher than average 10 reads of
+	                        --min_sample_number (if --min_sample_number is 2, DP
+	                        value in output will be higher than 20) and lower than
+	                        2 times of average read depth.If you assign r_10,a_2
+	                        which means the minimum read depth become 10 without
+	                        considering the number of samples. Default is
+	                        n_10,a_2.
 	  --ploidy PLOIDY, -pl PLOIDY
 	                        haploid or diploid. Default is haploid.
+	  --RG_tag, -R          It is opposite of --ignore-RG in samtools. If you want
+	                        to run with RG tag (one BAM file includes multi
+	                        samples), turn it on. Default is False.
+	  --min_sample_number MIN_SAMPLE_NUMBER, -ms MIN_SAMPLE_NUMBER
+	                        The minimum numbers of samples should be considered
+	                        for --read_depth_range, --DP4_cutoff and
+	                        --indel_fraction.
+	  --caller CALLER, -c CALLER
+	                        Which caller that you want to use - consensus-caller
+	                        or multiallelic-caller. For details, please check
+	                        bcftools. If you want to use consensus-caller, please
+	                        type "c". If you want to use multiallelic-caller,
+	                        please type "m". Default is m.
+	  --DP4_cutoff DP4_CUTOFF, -D DP4_CUTOFF
+	                        DP4 is compose of four numbers: high-quality reference
+	                        forward bases (number 1), reference reverse bases
+	                        (number 2), alternate forward bases (number 3) and
+	                        alternative reverse bases (number 4). You can set the
+	                        cutoff of DP4 here. First cutoff that you can assign
+	                        is (number 3 + number 4). You can assign real number
+	                        (r), the read depth based on the number of samples (n)
+	                        or the times of average read depth (a). The second
+	                        cutoff that you can assign is (number 3 + number 4) /
+	                        (number 1 + number 2 + number 3 + number 4). These two
+	                        cutoff is splited by comma. For example, n_10,0.8
+	                        means the sum of read depth of number 3 and number 4
+	                        should be higher than average 10 reads of
+	                        --min_sample_number (if --min_sample_number is 2, DP
+	                        value in output will be higher than 20). And the
+	                        fraction should be higher than 0.8. If you assign
+	                        r_10,0.8 which means the sum of read depth of number 3
+	                        and number 4 become 10 without considering the number
+	                        of samples. Default is n_10,0.8.
+	  --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
+	                        The fraction of maximum read depth (IMF) and read
+	                        number of each sample (IDV), which supports insertion
+	                        of deletion. You can assign real number (r), the read
+	                        depth based on the number of samples (n) or the times
+	                        of average read depth (a) for IDV. For example,
+	                        n_10,0.8 means the IDV should be higher than average
+	                        10 reads of --min_sample_number (if
+	                        --min_sample_number, DP value in output will be higher
+	                        than 20). And IMF should be higher than 0.8. If you
+	                        assign r_10,0.8 which means IDV become 10 without
+	                        considering the number of samples. Default is
+	                        n_10,0.8.
+	  --filter_tag_info FILTER_TAG_INFO, -ft FILTER_TAG_INFO
+	                        You can assign the filter here. Please type the tag,
+	                        bigger or samller and value. For example,
+	                        "RPB_b0.1,MQ0F_s0" means RPB should bigger than 0.1
+	                        and MQ0F should smaller than 0. Default is
+	                        RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
 
 - Output files
 
@@ -449,9 +512,11 @@ The results will store in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table``.
 
 The meaning of file names are:
 
-``$STRAIN_$PROGRAM_depth_only.vcf`` means the results only match the condition of read depth.
+``$STRAIN_$PROGRAM_best.vcf`` which is in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table/$STRAIN``. 
+It means the results after filtering by cutoff.
 
-``$STRAIN_$PROGRAM_depth_quality.vcf`` means the results match the condition of read depth and quality.
+``$STRAIN_$PROGRAM.vcf`` which is in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_raw_output/$STRAIN``. 
+It means the results match the condition of read depth and quality.
 
 ``$STRAIN_$PROGRAM_seq_reference.csv`` is the index of fasta files which generated by ``snp``.
 

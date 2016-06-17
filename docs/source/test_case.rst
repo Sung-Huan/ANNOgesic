@@ -921,12 +921,13 @@ you can see the difference between these potential sequences in ``seqs``).
     $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_000915.1/
     NC_000915.1_extend_BAQ.vcf  NC_000915.1_with_BAQ.vcf  NC_000915.1_without_BAQ.vcf
     $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_table/NC_000915.1/
-    NC_000915.1_extend_BAQ_depth_only.vcf     NC_000915.1_with_BAQ_depth_only.vcf     NC_000915.1_without_BAQ_depth_only.vcf
-    NC_000915.1_extend_BAQ_depth_quality.vcf  NC_000915.1_with_BAQ_depth_quality.vcf  NC_000915.1_without_BAQ_depth_quality.vcf
+    NC_000915.1_extend_BAQ_best.vcf     NC_000915.1_with_BAQ_best.vcf     NC_000915.1_without_BAQ_best.vcf
     NC_000915.1_extend_BAQ_seq_reference.csv  NC_000915.1_with_BAQ_seq_reference.csv  NC_000915.1_without_BAQ_seq_reference.csv
     $ ls ANNOgesic/output/SNP_calling/validate_target/statistics/
-    NC_000915.1_extend_BAQ_NC_000915.1_SNP_QUAL.png  NC_000915.1_without_BAQ_NC_000915.1_SNP_QUAL.png  stat_NC_000915.1_with_BAQ_SNP.csv
-    NC_000915.1_with_BAQ_NC_000915.1_SNP_QUAL.png    stat_NC_000915.1_extend_BAQ_SNP.csv               stat_NC_000915.1_without_BAQ_SNP.csv
+    NC_000915.1_extend_BAQ_NC_000915.1_SNP_QUAL_best.png  NC_000915.1_without_BAQ_NC_000915.1_SNP_QUAL_best.png  NC_000915.1_with_BAQ_NC_000915.1_SNP_QUAL_best.png 
+    NC_000915.1_extend_BAQ_NC_000915.1_SNP_QUAL_raw.png   NC_000915.1_without_BAQ_NC_000915.1_SNP_QUAL_raw.png   NC_000915.1_with_BAQ_NC_000915.1_SNP_QUAL_raw.png
+    stat_NC_000915.1_extend_BAQ_SNP_best.csv              stat_NC_000915.1_without_BAQ_SNP_best.csv              stat_NC_000915.1_with_BAQ_SNP_best.csv
+    stat_NC_000915.1_extend_BAQ_SNP_raw.csv               stat_NC_000915.1_without_BAQ_SNP_raw.csv               stat_NC_000915.1_with_BAQ_SNP_raw.csv
 
 Mapping Gene ontology
 ------------------

@@ -24,14 +24,14 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="ANNOgesic 0.1.3 documentation" href="#" />
-    <link rel="next" title="ANNOgesic - Transcriptome annotation pipeline" href="" /> 
+    <link rel="next" title="Pre-required tools or databases" href="prerequired.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="#" title="ANNOgesic - Transcriptome annotation pipeline"
+          <a href="prerequired.html" title="Pre-required tools or databases"
              accesskey="N">next</a></li>
         <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.1.3 documentation</a> &raquo;</li> 
       </ul>
@@ -55,19 +55,16 @@
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href=""
-                        title="next chapter">ANNOgesic - Transcriptome annotation pipeline</a></p>
+  <p class="topless"><a href="prerequired.html"
+                        title="next chapter">Pre-required tools or databases</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -84,7 +81,7 @@
 <h2>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">ANNOgesic - Transcriptome annotation pipeline</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ANNOgesic - Transcriptome annotation pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="prerequired.html">Pre-required tools or databases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker.html">Dockfiles</a></li>
@@ -109,59 +106,59 @@ e) untranslated region (UTRs), f) sRNA, g) promoters, h) processing sites,
 i) circular RNAs, j) protein-protein interaction networks, k) potential
 sRNA target, l) single-nucleotide polymorphism (SNP), m) operons,
 n) GO terms, o) subcellular localization, p) riboswitch, q) potential sORF.</p>
-<div class="highlight-python"><div class="highlight"><pre>usage: annogesic [-h] [--version]
-                 {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
-                 ...
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span>
+                 <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tsspredator</span><span class="p">,</span><span class="n">optimize_tsspredator</span><span class="p">,</span><span class="n">color_png</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcript_assembly</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch</span><span class="p">,</span><span class="n">screenshot</span><span class="p">}</span>
+                 <span class="o">...</span>
 
-positional arguments:
-  {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
-                        commands
-    create              Create a project
-    get_input_files     Get required files. (i.e. annotation files, fasta
-                        files)
-    get_target_fasta    Get target fasta.
-    annotation_transfer
-                        Run RATT to transfer the annotation files from
-                        reference to target.
-    tsspredator         Run TSSpredator to predict TSSs or processing sites.
-    optimize_tsspredator
-                        Optimize TSSpredator based on (partial)manual detect
-                        one.
-    color_png           Generating color screenshots of TSS or processing
-                        site. It only works after running batch script.
-    terminator          Detect Terminators.
-    transcript_assembly
-                        Run transcriptome assembly for detecting transcripts.
-    utr                 Run UTR detection to detect 5&#39;UTR and 3&#39;UTR.
-    srna                Run sRNA detection to detect sRNA candidates.
-    sorf                Run sORF detection to detect sORF candidates which has
-                        expression.
-    promoter            Run MEME to dicover promoter.
-    operon              Detect operon and combine features together.
-    circrna             Detect circular RNA.
-    go_term             Extract and find Go terms.
-    srna_target         sRNA target prediction.
-    snp                 Detection of SNP of transcripts.
-    ppi_network         Generate protein-protein interaction with literature
-                        supported.
-    subcellular_localization
-                        Prediction of subcellular localization of genomic CDS.
-    riboswitch          Prediction of riboswitch.
-    screenshot          Generate screenshot for selected feature.
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tsspredator</span><span class="p">,</span><span class="n">optimize_tsspredator</span><span class="p">,</span><span class="n">color_png</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcript_assembly</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch</span><span class="p">,</span><span class="n">screenshot</span><span class="p">}</span>
+                        <span class="n">commands</span>
+    <span class="n">create</span>              <span class="n">Create</span> <span class="n">a</span> <span class="n">project</span>
+    <span class="n">get_input_files</span>     <span class="n">Get</span> <span class="n">required</span> <span class="n">files</span><span class="o">.</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span> <span class="n">annotation</span> <span class="n">files</span><span class="p">,</span> <span class="n">fasta</span>
+                        <span class="n">files</span><span class="p">)</span>
+    <span class="n">get_target_fasta</span>    <span class="n">Get</span> <span class="n">target</span> <span class="n">fasta</span><span class="o">.</span>
+    <span class="n">annotation_transfer</span>
+                        <span class="n">Run</span> <span class="n">RATT</span> <span class="n">to</span> <span class="n">transfer</span> <span class="n">the</span> <span class="n">annotation</span> <span class="n">files</span> <span class="kn">from</span>
+                        <span class="nn">reference</span> <span class="n">to</span> <span class="n">target</span><span class="o">.</span>
+    <span class="n">tsspredator</span>         <span class="n">Run</span> <span class="n">TSSpredator</span> <span class="n">to</span> <span class="n">predict</span> <span class="n">TSSs</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">sites</span><span class="o">.</span>
+    <span class="n">optimize_tsspredator</span>
+                        <span class="n">Optimize</span> <span class="n">TSSpredator</span> <span class="n">based</span> <span class="n">on</span> <span class="p">(</span><span class="n">partial</span><span class="p">)</span><span class="n">manual</span> <span class="n">detect</span>
+                        <span class="n">one</span><span class="o">.</span>
+    <span class="n">color_png</span>           <span class="n">Generating</span> <span class="n">color</span> <span class="n">screenshots</span> <span class="n">of</span> <span class="n">TSS</span> <span class="ow">or</span> <span class="n">processing</span>
+                        <span class="n">site</span><span class="o">.</span> <span class="n">It</span> <span class="n">only</span> <span class="n">works</span> <span class="n">after</span> <span class="n">running</span> <span class="n">batch</span> <span class="n">script</span><span class="o">.</span>
+    <span class="n">terminator</span>          <span class="n">Detect</span> <span class="n">Terminators</span><span class="o">.</span>
+    <span class="n">transcript_assembly</span>
+                        <span class="n">Run</span> <span class="n">transcriptome</span> <span class="n">assembly</span> <span class="k">for</span> <span class="n">detecting</span> <span class="n">transcripts</span><span class="o">.</span>
+    <span class="n">utr</span>                 <span class="n">Run</span> <span class="n">UTR</span> <span class="n">detection</span> <span class="n">to</span> <span class="n">detect</span> <span class="mi">5</span><span class="s1">&#39;UTR and 3&#39;</span><span class="n">UTR</span><span class="o">.</span>
+    <span class="n">srna</span>                <span class="n">Run</span> <span class="n">sRNA</span> <span class="n">detection</span> <span class="n">to</span> <span class="n">detect</span> <span class="n">sRNA</span> <span class="n">candidates</span><span class="o">.</span>
+    <span class="n">sorf</span>                <span class="n">Run</span> <span class="n">sORF</span> <span class="n">detection</span> <span class="n">to</span> <span class="n">detect</span> <span class="n">sORF</span> <span class="n">candidates</span> <span class="n">which</span> <span class="n">has</span>
+                        <span class="n">expression</span><span class="o">.</span>
+    <span class="n">promoter</span>            <span class="n">Run</span> <span class="n">MEME</span> <span class="n">to</span> <span class="n">dicover</span> <span class="n">promoter</span><span class="o">.</span>
+    <span class="n">operon</span>              <span class="n">Detect</span> <span class="n">operon</span> <span class="ow">and</span> <span class="n">combine</span> <span class="n">features</span> <span class="n">together</span><span class="o">.</span>
+    <span class="n">circrna</span>             <span class="n">Detect</span> <span class="n">circular</span> <span class="n">RNA</span><span class="o">.</span>
+    <span class="n">go_term</span>             <span class="n">Extract</span> <span class="ow">and</span> <span class="n">find</span> <span class="n">Go</span> <span class="n">terms</span><span class="o">.</span>
+    <span class="n">srna_target</span>         <span class="n">sRNA</span> <span class="n">target</span> <span class="n">prediction</span><span class="o">.</span>
+    <span class="n">snp</span>                 <span class="n">Detection</span> <span class="n">of</span> <span class="n">SNP</span> <span class="n">of</span> <span class="n">transcripts</span><span class="o">.</span>
+    <span class="n">ppi_network</span>         <span class="n">Generate</span> <span class="n">protein</span><span class="o">-</span><span class="n">protein</span> <span class="n">interaction</span> <span class="k">with</span> <span class="n">literature</span>
+                        <span class="n">supported</span><span class="o">.</span>
+    <span class="n">subcellular_localization</span>
+                        <span class="n">Prediction</span> <span class="n">of</span> <span class="n">subcellular</span> <span class="n">localization</span> <span class="n">of</span> <span class="n">genomic</span> <span class="n">CDS</span><span class="o">.</span>
+    <span class="n">riboswitch</span>          <span class="n">Prediction</span> <span class="n">of</span> <span class="n">riboswitch</span><span class="o">.</span>
+    <span class="n">screenshot</span>          <span class="n">Generate</span> <span class="n">screenshot</span> <span class="k">for</span> <span class="n">selected</span> <span class="n">feature</span><span class="o">.</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --version, -v         show version
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">version</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span>         <span class="n">show</span> <span class="n">version</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:Sung-Huan/ANNOgesic.git
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Sung</span><span class="o">-</span><span class="n">Huan</span><span class="o">/</span><span class="n">ANNOgesic</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
 <p>or</p>
-<div class="highlight-python"><div class="highlight"><pre>pip3 install annogesic
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">annogesic</span>
 </pre></div>
 </div>
 </div>
@@ -188,14 +185,14 @@ optional arguments:
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="#" title="ANNOgesic - Transcriptome annotation pipeline"
+          <a href="prerequired.html" title="Pre-required tools or databases"
              >next</a></li>
         <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.1.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Sung-Huan Yu.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.3.
     </div>
   </body>
 </html>

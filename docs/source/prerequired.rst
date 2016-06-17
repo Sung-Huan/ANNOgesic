@@ -20,7 +20,7 @@ Tools
 
 `Networkx <https://networkx.github.io/>`_ : version higher or equal than 1.10 (for generate PPI figure)
 
-`MEME <http://meme-suite.org/tools/meme>`_ : version higher or equal than 4.10.0 (for promoter detection)
+`MEME <http://meme-suite.org/tools/meme>`_ : version higher or equal than 4.11.1 (for promoter detection)
 
 `PAGIT and RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal than 1.64 (for annotation transfer)
 Please be attation, before you start to run RATT(annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. it will
@@ -28,17 +28,17 @@ modify the path for execute RATT.
 
 `Psortb <http://www.psort.org/psortb/>`_ : version higher or equal than 3.0 (for subcellular localization detection)
 
-`Samtools <https://github.com/samtools>`_ : version higher or equal than 1.0 (using htslib 1.0) (for SNP calling, CircRNA_detection)
+`Samtools <https://github.com/samtools>`_ : version higher or equal than 1.3.1 (using htslib 1.3.1) (for SNP calling, CircRNA_detection)
 
-`Bcftools <https://github.com/samtools>`_ : version higher or equal than 1.0 (using htslib 1.0) (for SNP calling)
+`Bcftools <https://github.com/samtools>`_ : version higher or equal than 1.3.1 (using htslib 1.3.1) (for SNP calling)
 
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ : version higher or equal than 0.1.9 (for CircRNA_detection)
 
 `TranstermHP <http://transterm.cbcb.umd.edu/>`_ : version higher or equal than 2.09 (for rho-independent terminator prediction)
 
-`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_ : version higher or equal than 1.04 (for TSS and processing site prediction, TSS optimization)
+`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_ : version higher or equal than 1.06 (for TSS and processing site prediction, TSS optimization)
 
-`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal than 2.1.7 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection)
+`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal than 2.2.5 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection)
 
 `Ps2pdf14 <http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm>`_ (for sRNA detection)
 

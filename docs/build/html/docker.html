@@ -54,14 +54,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -78,31 +75,31 @@
 It is light and easy to manage. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> includes a <code class="docutils literal"><span class="pre">Dockfile</span></code> which
 is for build up a environment and install all required tools for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>.</p>
 <p>Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo docker build -t=&quot;annogesic&quot; .
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span><span class="o">=</span><span class="s2">&quot;annogesic&quot;</span> <span class="o">.</span>
 </pre></div>
 </div>
 <p>It will build up an image called annogesic. You can see the images by typing <code class="docutils literal"><span class="pre">docker</span> <span class="pre">images</span></code></p>
-<div class="highlight-python"><div class="highlight"><pre>REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-annogesic           latest              d35f555694ad        3 days ago          2.782 GB
-ubuntu              14.04               d2a0ecffe6fa        11 days ago         188.4 MB
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">REPOSITORY</span>          <span class="n">TAG</span>                 <span class="n">IMAGE</span> <span class="n">ID</span>            <span class="n">CREATED</span>             <span class="n">VIRTUAL</span> <span class="n">SIZE</span>
+<span class="n">annogesic</span>           <span class="n">latest</span>              <span class="n">d35f555694ad</span>        <span class="mi">3</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mf">2.782</span> <span class="n">GB</span>
+<span class="n">ubuntu</span>              <span class="mf">14.04</span>               <span class="n">d2a0ecffe6fa</span>        <span class="mi">11</span> <span class="n">days</span> <span class="n">ago</span>         <span class="mf">188.4</span> <span class="n">MB</span>
 </pre></div>
 </div>
 <p>Then we can use the image to create a container for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>. Please type</p>
-<div class="highlight-python"><div class="highlight"><pre>docker run -t -i annogesic bash
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="n">annogesic</span> <span class="n">bash</span>
 </pre></div>
 </div>
 <p>Then you will jump into the container.</p>
-<div class="highlight-python"><div class="highlight"><pre>root@c9de31fcd7e3:~# ls
-ANNOgesic
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@c9de31fcd7e3</span><span class="p">:</span><span class="o">~</span><span class="c1"># ls</span>
+<span class="n">ANNOgesic</span>
 </pre></div>
 </div>
 <p>If you want to mount the files from your host to the container, just add <code class="docutils literal"><span class="pre">-v</span></code> to the command.</p>
-<div class="highlight-python"><div class="highlight"><pre>docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">target</span><span class="p">:</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">within</span><span class="o">/</span><span class="n">container</span> <span class="n">annogesic</span> <span class="n">bash</span>
 </pre></div>
 </div>
 <p>The paths should be absolute path. If we go to <code class="docutils literal"><span class="pre">root</span></code> in container. We can see the file.</p>
 <p>If you want to copy the files from container to host, you can use <code class="docutils literal"><span class="pre">cp</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre>docker cp &lt;containerId&gt;:/file/path/within/container /host/path/target
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">cp</span> <span class="o">&lt;</span><span class="n">containerId</span><span class="o">&gt;</span><span class="p">:</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">within</span><span class="o">/</span><span class="n">container</span> <span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">target</span>
 </pre></div>
 </div>
 </div>
@@ -127,7 +124,7 @@ ANNOgesic
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Sung-Huan Yu.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.3.
     </div>
   </body>
 </html>
