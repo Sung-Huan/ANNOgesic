@@ -42,7 +42,7 @@ class PPINetwork(object):
 
     def _run_wget(self, source, folder, log):
         call(["wget", source, "-O", folder], stderr=log)
-        time.sleep(1)
+        time.sleep(2)
 
     def _wget_id(self, strain, locus, strain_id, files):
         detect_id = False

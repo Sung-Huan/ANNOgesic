@@ -25,31 +25,28 @@ def deal_detect(input_file, file_path, change, input_folder):
 
 
 def get_file(ftp, input_folder, files_type, target):
-    detect = False
+    checks = {"detect": False, "change": None}
     filename = None
+    files = []
     wget(input_folder, ftp, files_type)
     for file_ in os.listdir(input_folder):
         input_file = os.path.join(input_folder, file_)
         if (file_[-3:] == "fna"):
             filename = file_[0:-3] + "fa"
-            detect = True
-            change = True
+            checks = {"detect": True, "change": True}
         elif (file_[-5:] == "fasta"):
             filename = file_[0:-5] + "fa"
-            detect = True
-            change = True
+            checks = {"detect": True, "change": True}
         elif (file_[-2:] == "fa"):
             filename = file_[0:-2] + "fa"
-            detect = True
-            change = False
+            checks = {"detect": True, "change": True}
         elif (file_[-6:] == "fna.gz") and ("_genomic" in file_):
             if ("_cds_from_genomic" in file_) or (
                     "_rna_from_genomic" in file_):
                 os.remove(input_file)
             else:
                 filename = file_[0:-6] + "fa"
-                detect = True
-                change = True
+                checks = {"detect": True, "change": True}
                 call(["gunzip", input_file])
                 input_file = input_file[:-3]
         elif (file_[-6:] == "gff.gz") or (file_[-3:] == "gff"):
@@ -75,7 +72,7 @@ def get_file(ftp, input_folder, files_type, target):
                         data = line[12:].split(" ")
                         break
             os.rename(input_file, os.path.join(input_folder, data[0] + ".gbk"))
-        if detect:
-            detect = False
-            change, seq_name = deal_detect(input_file, filename,
-                                           change, input_folder)
+        if checks["detect"]:
+            checks["detect"] = False
+            checks["change"], seq_name = deal_detect(
+                    input_file, filename, checks["change"], input_folder)

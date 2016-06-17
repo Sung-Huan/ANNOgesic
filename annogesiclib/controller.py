@@ -296,7 +296,9 @@ class Controller(object):
         self.check_folder([self._args.fasta_folder,
                            self._args.annotation_folder,
                            self._args.transcript_folder])
-        self.check_no_require_folder([self._args.sRNA])
+        self.check_no_require_folder([
+            self._args.sRNA, self._args.tex_wig_folder,
+            self._args.frag_wig_folder])
         project_creator.create_subfolders(
             self._paths.required_folders("terminator"))
         args_term = self.args_container.container_terminator(
@@ -328,7 +330,8 @@ class Controller(object):
         self.check_folder([self._args.annotation_folder])
         self.check_no_require_folder([
             self._args.compare_TSS, self._args.compare_genome_annotation,
-            self._args.terminator_folder])
+            self._args.terminator_folder, self._args.frag_wig_path,
+            self._args.tex_wig_path])
         project_creator.create_subfolders(
             self._paths.required_folders("transcript_assembly"))
         args_tran = self.args_container.container_transcript(
@@ -370,9 +373,10 @@ class Controller(object):
         print("Running sRNA prediction...")
         self.check_folder([self._args.annotation_folder,
                            self._args.transcript_assembly_folder])
-        self.check_no_require_folder([self._args.fasta_folder,
-                                      self._args.sORF,
-                                      self._args.terminator_folder])
+        self.check_no_require_folder([
+            self._args.fasta_folder, self._args.sORF,
+            self._args.terminator_folder, self._args.tex_wig_folder,
+            self._args.frag_wig_folder])
         self.check_file([self._args.promoter_table],
                         ["--promoter_table"], False)
         if self._args.UTR_derived_sRNA:
@@ -435,7 +439,8 @@ class Controller(object):
                            self._args.annotation_folder,
                            self._args.fasta_folder])
         self.check_no_require_folder([
-            self._args.sRNA_folder, self._args.TSS_folder])
+            self._args.sRNA_folder, self._args.TSS_folder,
+            self._args.tex_wig_folder, self._args.frag_wig_folder])
         project_creator.create_subfolders(
             self._paths.required_folders("sorf"))
         args_sorf = self.args_container.container_sorf(
@@ -467,6 +472,7 @@ class Controller(object):
         """promoter detectopn"""
         print("Running promoter detection...")
         self.check_folder([self._args.TSS_folder, self._args.fasta_folder])
+        self.check_no_require_folder([self._args.tex_wig_path])
         if not self._args.TSS_source:
             self.check_folder([self._args.annotation_folder])
         project_creator.create_subfolders(
@@ -579,15 +585,20 @@ class Controller(object):
                 self._args.ploidy != "diploid"):
             print("Error: please assign \"haploid\" or"
                   " \"diploid\" to --chromosome_type!!")
+        if (self._args.caller != "c") and (
+                self._args.caller != "m"):
+            print("Error: please assign \"c\" or"
+                  " \"m\" to --caller!!")
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         args_snp = self.args_container.container_snp(
             self._args.samtools_path, self._args.bcftools_path,
-            self._args.bam_type,
+            self._args.bam_type, self._args.min_sample_number,
             self._args.program, self._args.fasta_path,
             self._args.tex_bam_path, self._args.frag_bam_path,
-            self._args.quality, self._args.read_depth,
+            self._args.quality, self._args.read_depth_range,
             self._paths.snp_output_folder, self._args.indel_fraction,
-            self._args.ploidy)
+            self._args.ploidy, self._args.RG_tag, self._args.caller,
+            self._args.filter_tag_info, self._args.DP4_cutoff)
         snp = SNPCalling(args_snp)
         snp.run_snp_calling(args_snp)
 

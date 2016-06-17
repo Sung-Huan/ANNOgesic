@@ -170,7 +170,8 @@ class sRNADetection(object):
         files["merge_csv"] = "_".join([self.prefixs["normal_table"], prefix])
         files["merge_gff"] = "_".join([self.prefixs["normal"], prefix])
         self._merge_frag_tex_file(files, args_srna)
-        if "TSS_class" in os.listdir(args_srna.out_folder):
+        if ("TSS_class" in os.listdir(args_srna.out_folder)) and (
+                not args_srna.tss_source):
             tss = os.path.join(args_srna.out_folder,
                                "TSS_class", prefix + "_TSS.gff")
         return tss

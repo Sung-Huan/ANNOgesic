@@ -66,21 +66,24 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     for uni_id in idmapping:
         uni_line = uni_id.rstrip("\n")
         uni_lines = uni_line.split("\t")
-        if uni_lines[3] in name_list:
-            detect = False
-            for gff in gffs:
-                if ("Name" in gff.attributes.keys()):
-                    if (uni_lines[3] == gff.attributes["Name"]):
-                        detect = True
-                if ("protein_id" in gff.attributes.keys()):
-                    if (uni_lines[3] == gff.attributes["protein_id"]):
-                        detect = True
-                if detect:
-                    detect = False
-                    gos.append({"strain": gff.seq_id, "strand": gff.strand,
-                                "start": gff.start, "end": gff.end,
-                                "protein_id": uni_lines[3],
-                                "go": uni_lines[6]})
+        uni_ids = uni_lines[3].split(";")
+        for id_ in uni_ids:
+            id_ = id_.strip()
+            if id_ in name_list:
+                detect = False
+                for gff in gffs:
+                    if ("Name" in gff.attributes.keys()):
+                        if (id_ == gff.attributes["Name"]):
+                            detect = True
+                    if ("protein_id" in gff.attributes.keys()):
+                        if (id_ == gff.attributes["protein_id"]):
+                            detect = True
+                    if detect:
+                        detect = False
+                        gos.append({"strain": gff.seq_id, "strand": gff.strand,
+                                    "start": gff.start, "end": gff.end,
+                                    "protein_id": id_,
+                                    "go": uni_lines[6]})
     gos = sorted(gos, key=lambda x: (x["strain"], x["start"],
                                      x["end"], x["strand"]))
     for go in gos:
@@ -102,16 +105,16 @@ def plot(total_nums, strain, filename, total, out_folder):
         num = total_num[1]
         if class_ != "total":
             percent = (float(num) / float(total)) * 100
-            if percent >= 3:
-                classes.append(class_)
-                nums.append(num)
+#            if percent >= 3:
+            classes.append(class_)
+            nums.append(num)
     ind = np.arange(len(nums))
     plt.bar(ind, nums, width, color='#FF9999')
-    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=24)
-    plt.ylabel('Amount', fontsize=20)
+    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=22)
+    plt.ylabel('Amount', fontsize=16)
     plt.xlim([0, len(nums) + 1])
     plt.yticks(fontsize=16)
-    plt.xticks(ind+width, classes, rotation=45, fontsize=20, ha='right')
+    plt.xticks(ind+width, classes, rotation=45, fontsize=16, ha='right')
     plt.tight_layout(3, None, None, None)
     plt.savefig(os.path.join(out_folder,
                              "_".join([strain, filename + ".png"])))

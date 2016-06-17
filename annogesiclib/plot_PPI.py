@@ -2,6 +2,7 @@ import os
 import networkx as nx
 import matplotlib
 matplotlib.use('Agg')
+from matplotlib.offsetbox import AnchoredText
 import matplotlib.pyplot as plt
 plt.rcParams['image.cmap'] = 'RdBu_r'
 
@@ -75,7 +76,7 @@ def create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
            ((ppi["item_b"], ppi["item_a"]) not in edges):
             edges.append((ppi["item_a"], ppi["item_b"]))
             if ppi["best"] == "NA":
-                add_edge(G, ppi, 'dotted', 2, -1)
+                add_edge(G, ppi, 'dashed', 1, -1)
             elif float(ppi["best"]) <= cutoff_score:
                 best_assign_attributes(check_na, G, ppi,
                                        pre_ppi, first, "dashdot")
@@ -97,22 +98,16 @@ def modify_label(labels2, new_labels):
 
 
 def plot_text(check_na, plt, ppis, ppi, color_edge):
-    if check_na["best"]:
+    na = False
+    if check_na["na"]:
+        na = True
+    elif check_na["best"]:
         if len(ppis) < 2:
-            plt.text(0.0, -0.1,
-                     " ".join(["the number of literatures supported is",
-                               str(ppi["best"])]),
-                     color='blue', verticalalignment='bottom',
-                     horizontalalignment='center', fontsize=12)
-        elif not check_na["same_best"]:
-            plt.text(0.0, -0.1,
-                     " ".join(["all numbers of literature supported are",
-                               str(ppi["best"])]),
-                     color='blue', verticalalignment='bottom',
-                     horizontalalignment='center', fontsize=12)
+            na = True
         else:
             cbar = plt.colorbar(color_edge)
             cbar.ax.tick_params(labelsize=16)
+    return na
 
 
 def nx_node(G, pos, node_size, colors, color_list):
@@ -133,10 +128,30 @@ def nx_label(G, pos, labels, size):
 
 
 def nx_color_style(G, edges):
-    colors = [G[u][v]['color'] for u, v in edges]
-    styles = [G[u][v]['style'] for u, v in edges]
-    return colors, styles
+    colors = []
+    styles = []
+    check_na = True
+    for u, v in edges:
+        colors.append(G[u][v]['color'])
+        styles.append(G[u][v]['style'])
+        if (G[u][v]['style'] == "solid") or (
+                G[u][v]['style'] == "dashdot"):
+            check_na = False
+    return colors, styles, check_na
 
+
+def print_title(plt, na, center):
+    if not na:
+        plt.title("|".join([center["locus_tag"],
+                           " ".join([center["gene_name"],
+                                     "(based on the score of best literature)"])]),
+                  fontsize="16")
+    else:
+        plt.title("|".join([center["locus_tag"],
+                           " ".join([center["gene_name"],
+                                     "(based on the score of best literature)"])]) + \
+                  "\n the numbers of supported literatures in all interactions are 0",
+                  fontsize="16")
 
 def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     nodes = []
@@ -144,12 +159,12 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     labels1 = {}
     labels2 = {}
     colors = {}
-    check_na = {"number": False, "best": False,
+    check_na = {"number": False, "best": False, "na": False,
                 "same_number": False, "same_best": False}
     pre_ppi = ""
     scores = []
     weights = []
-    plt.figure(figsize=(20, 20))
+    plt.figure(figsize=(15, 15))
     G = nx.Graph()
     pre_ppi = create_node(ppis, scores, nodes, center, colors,
                           labels1, labels2, edges, G,
@@ -165,17 +180,14 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
             weights.append(weight[2]["weight"])
         else:
             weights.append(30)
-    colors, styles = nx_color_style(G, connects)
+    colors, styles, check_na["na"] = nx_color_style(G, connects)
     color_edge = nx_edge(G, pos, connects, colors, styles, weights)
     nx_label(G, pos, labels1, 12)
     new_labels = {}
     modify_label(labels2, new_labels)
     nx_label(G, pos, new_labels, 10)
-    plt.title("|".join([center["locus_tag"],
-                       " ".join([center["gene_name"],
-                                 "(based on the score of best literature)"])]),
-              fontsize="16")
-    plot_text(check_na, plt, ppis, pre_ppi, color_edge)
+    na = plot_text(check_na, plt, ppis, pre_ppi, color_edge)
+    print_title(plt, na, center)
     plt.axis('off')
     if strain not in os.listdir(out_folder):
         os.mkdir(os.path.join(out_folder, strain))
@@ -184,7 +196,7 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
                 bbox_inches="tight")
     plt.clf()
     plt.close('all')
-
+    return check_na
 
 def score_compare(score, scores, cutoff_score, ppi):
     if score == "NA":

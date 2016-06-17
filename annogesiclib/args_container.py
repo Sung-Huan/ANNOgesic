@@ -702,9 +702,10 @@ class ArgsContainer(object):
         self.stat_folder = operon_statistics_folder
         return self
 
-    def container_snp(self, samtools_path, bcftools_path, bam_type, program,
-                      fasta_path, tex_bam_path, frag_bam_path, quality,
-                      read_depth, snp_output_folder, indel_fraction, chrom):
+    def container_snp(self, samtools_path, bcftools_path, bam_type, min_sample,
+                      program, fasta_path, tex_bam_path, frag_bam_path,
+                      quality, read_depth_range, snp_output_folder,
+                      indel_fraction, chrom, rg, caller, filters, DP4_cutoff):
         self.samtools_path = samtools_path
         self.bcftools_path = bcftools_path
         self.types = bam_type
@@ -713,14 +714,22 @@ class ArgsContainer(object):
         self.normal_bams = tex_bam_path
         self.frag_bams = frag_bam_path
         self.quality = quality
-        self.depth = read_depth
+        self.depth_s = read_depth_range.split(",")[0]
+        self.depth_b = read_depth_range.split(",")[-1]
         self.out_folder = snp_output_folder
-        self.fraction = indel_fraction
+        self.idv = indel_fraction.split(",")[0]
+        self.imf = indel_fraction.split(",")[-1]
         if chrom == "haploid":
             chrom = "1"
         elif chrom == "diploid":
             chrom = "2"
         self.chrom = chrom
+        self.rg = rg
+        self.caller = caller
+        self.filters = filters.split(",")
+        self.dp4_sum = DP4_cutoff.split(",")[0]
+        self.dp4_frac = DP4_cutoff.split(",")[-1]
+        self.min_sample = min_sample
         return self
 
     def container_circrna(self, align, process, fasta_path, annotation_path,

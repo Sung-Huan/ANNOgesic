@@ -8,6 +8,7 @@ def read_libs(input_libs, wig_folder):
     texs = {}
     for lib in input_libs:
         datas = lib.split(":")
+        name = None
         for wig in os.listdir(wig_folder):
             if wig == datas[0]:
                 with open(os.path.join(wig_folder, wig), "r") as w_h:
@@ -16,6 +17,8 @@ def read_libs(input_libs, wig_folder):
                         if line.startswith("track"):
                             name = line.split("=")[-1][1:-1]
                             break
+        if name is None:
+            print("Error: The {0} can not be found in lib name!!!".format(wig)) 
         if (datas[1] == "tex") or (datas[1] == "notex"):
             cond = "texnotex"
         else:

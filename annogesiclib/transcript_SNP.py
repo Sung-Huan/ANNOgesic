@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 
-def plot_bar(cutoffs, strain, out_snp):
+def plot_bar(cutoffs, strain, out_snp, type_):
     name = []
     for index in range(0, len(cutoffs) + 1):
         name.append(index * 10)
@@ -20,7 +20,7 @@ def plot_bar(cutoffs, strain, out_snp):
     plt.xlim([0, len(cutoffs) + 1])
     plt.xticks(ind+width-0.75, name, fontsize=18, rotation=40)
     plt.yticks(fontsize=18)
-    plt.savefig(out_snp + "_" + strain + "_SNP_QUAL.png")
+    plt.savefig("_".join([out_snp, strain, "SNP_QUAL", type_]))
     plt.clf()
 
 
@@ -29,15 +29,16 @@ def row_in_list(row):
     filt = "."
     snps = {"strain": None, "pos": -1, "id": "", "ref": "",
             "alt": "", "qual": -1, "filter": "", "info": "",
-            "depth": -1, "all_info": "", "indel": -1, "frac": -1}
+            "depth": -1, "all_info": "", "indel": -1, "frac": -1,
+            "dp4_sum": -1, "dp4_frac": -1}
     if len(row) >= 8:
         snps = {"strain": row[0], "pos": int(row[1]), "id": row[2],
                 "ref": row[3], "alt": row[4], "qual": float(row[5]),
                 "filter": filt, "info": "", "depth": -1,
                 "all_info": "\t".join(row), "indel": -1, "frac": -1}
         infos = row[7].split(";")
+        snps["info"] = infos
         for info in infos:
-            snps["info"] = info
             datas = info.split("=")
             if len(datas) > 1:
                 if datas[0] == "DP":
@@ -46,6 +47,12 @@ def row_in_list(row):
                     snps["indel"] = int(datas[1])
                 if datas[0] == "IMF":
                     snps["frac"] = float(datas[1])
+                if datas[0] == "DP4":
+                    dp4s = datas[1].split(",")
+                    snps["dp4_sum"] = int(dp4s[2]) + int(dp4s[3])
+                    total = (int(dp4s[0]) + int(dp4s[1]) + 
+                             int(dp4s[2]) + int(dp4s[3]))
+                    snps["dp4_frac"] = float(snps["dp4_sum"] / total)
         return snps
     else:
         return snps
@@ -85,17 +92,68 @@ def change(snp, seq):
                     len(snp["ref"]) - len(snp["alt"]))
 
 
-def import_data(snp_file, read_depth, bam_number, indel_fraction):
+def get_n_a_value(para, depth_file, min_sample):
+    tag = para.split("_")[0]
+    value = float(para.split("_")[-1])
+    if tag == "a":
+        fh = open(depth_file, "r")
+        total = 0
+        num = 0
+        for row in csv.reader(fh, delimiter='\t'):
+            total = total + int(row[-1])
+            num += 1
+        avg_dep = float(total / num)
+        fh.close()
+        value = avg_dep * value
+    elif tag == "n":
+        value = (min_sample * value)
+    elif tag == "r":
+        pass
+    return value
+
+def apply_filter(filters, snp, snps):
+    exclude = False
+    for filt in filters:
+        tag = filt.split("_")[0]
+        cutoff = filt.split("_")[-1]
+        for info in snp["info"]:
+            if tag in info:
+                value = float(info.split("=")[-1])
+                if cutoff[0] == "b":
+                    if value < float(cutoff[1:]):
+                        exclude = True
+                if cutoff[0] == "s":
+                    if value > float(cutoff[1:]):
+                        exclude = True
+    if not exclude:
+        snps.append(snp)
+
+def import_data(snp_file, args_snp, bam_number, depth_file):
     snps = []
+    raw_snps = []
+    dess = []
     max_quals = {}
     max_quals["All_strain"] = 0
     pre_strain = ""
+    cutoff_sum = get_n_a_value(args_snp.dp4_sum, depth_file,
+                               args_snp.min_sample)
+    cutoff_frac = float(args_snp.dp4_frac)
+    depth_s = get_n_a_value(args_snp.depth_s, depth_file,
+                            args_snp.min_sample)
+    depth_b = get_n_a_value(args_snp.depth_b, depth_file,
+                            args_snp.min_sample)
+    idv = get_n_a_value(args_snp.idv, depth_file,
+                        args_snp.min_sample)
+    imf = float(args_snp.imf)
     fh = open(snp_file, "r")
     for row in csv.reader(fh, delimiter="\t"):
+        if row[0].startswith("##"):
+            dess.append(row[0])
         if row[0].startswith("#"):
             continue
         else:
             snp = row_in_list(row)
+            raw_snps.append(snp)
             if snp["strain"]:
                 if snp["strain"] != pre_strain:
                     pre_strain = snp["strain"]
@@ -104,20 +162,18 @@ def import_data(snp_file, read_depth, bam_number, indel_fraction):
                     max_quals[snp["strain"]] = snp["qual"]
                 if snp["qual"] > max_quals["All_strain"]:
                     max_quals["All_strain"] = snp["qual"]
-                if read_depth is None:
-                    depth = 5 * bam_number
-                    if depth > 40:
-                        depth = 40
-                else:
-                    depth = read_depth
-                if snp["depth"] >= depth:
+                if (snp["depth"] >= depth_s) and (
+                        snp["depth"] <= depth_b) and (
+                        snp["dp4_sum"] >= cutoff_sum) and (
+                        snp["dp4_frac"] >= cutoff_frac):
                     if snp["indel"] == -1:
-                        snps.append(snp)
+                        apply_filter(args_snp.filters, snp, snps)
                     else:
-                        if (snp["frac"] >= indel_fraction):
-                            snps.append(snp)
+                        if (snp["frac"] >= imf) and (
+                                snp["indel"] >= idv):
+                            apply_filter(args_snp.filters, snp, snps)
     fh.close()
-    return max_quals, snps
+    return max_quals, snps, dess, raw_snps
 
 
 def check_overlap(new_snps, overlaps):
@@ -251,8 +307,9 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
             out_fasta.close()
 
 
-def stat(max_quals, trans_snps, bam_number, stat_file, out_snp, args_snp):
-    out_stat = open(stat_file, "w")
+def stat(max_quals, trans_snps, bam_number, stat_prefix,
+         out_snp, args_snp, type_):
+    out_stat = open("_".join([stat_prefix, type_]), "w")
     printed = False
     for strain, max_qual in max_quals.items():
         max_qual = int(((max_qual / 10) + 1) * 10)
@@ -271,20 +328,6 @@ def stat(max_quals, trans_snps, bam_number, stat_file, out_snp, args_snp):
             num_cutoff = 10
             num_quality = 0
             out_stat.write(strain + ":\n")
-            if args_snp.depth is None:
-                if 5 * bam_number > 40:
-                    depth = 40
-                else:
-                    depth = 5 * bam_number
-                out_stat.write("Read depth should be higher "
-                               "than {0}:\n".format(depth))
-            else:
-                out_stat.write("Read depth should be higher "
-                               "than {0}:\n".format(args_snp.depth))
-            out_stat.write("The fraction of Maximum read depth "
-                           "of insertion or deletion ")
-            out_stat.write("should be higher than "
-                           "{0}:\n".format(args_snp.fraction))
             for cutoff in cutoffs:
                 if args_snp.quality <= (num_cutoff - 10):
                     num_quality = num_quality + cutoff
@@ -295,7 +338,8 @@ def stat(max_quals, trans_snps, bam_number, stat_file, out_snp, args_snp):
             out_stat.write("the total numbers of QUAL which is "
                            "higher than {0} = {1}\n".format(
                                args_snp.quality, num_quality))
-            plot_bar(cutoffs, strain, out_snp)
+            plot_bar(cutoffs, strain, out_snp,
+                     type_.replace(".csv", ".png"))
             printed = False
     out_stat.close()
 
@@ -371,29 +415,24 @@ def gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq):
                    mod_seq_init, mod_seqs, out_seq)
 
 
-def snp_detect(fasta_file, snp_file, out_snp, out_seq,
-               bam_number, stat_file, args_snp):
-    max_quals, snps = import_data(snp_file, args_snp.depth,
-                                  bam_number, args_snp.fraction)
-    out_table = open(out_snp + "_depth_only.vcf", "w")
-    out_quality = open(out_snp + "_depth_quality.vcf", "w")
+def snp_detect(fasta_file, snp_file, depth_file, out_snp, out_seq,
+               bam_number, stat_prefix, args_snp):
+    max_quals, snps, dess, raw_snps = import_data(
+            snp_file, args_snp, bam_number, depth_file)
+    out_best = open(out_snp + "_best.vcf", "w")
     out_ref = open(out_snp + "_seq_reference.csv", "w")
-    out_table.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL"
+    out_best.write("\n".join(dess) + "\n")
+    out_best.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL"
                     "\tFILTER\tINFO\tFORMAT\tBAM\n")
-    out_quality.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL"
-                      "\tFILTER\tINFO\tFORMAT\tBAM\n")
-    qual_snps = []
-    trans_snps = []
+    best_snps = []
     for snp in snps:
-        trans_snps.append(snp)
-        out_table.write(snp["all_info"] + "\n")
         if snp["qual"] >= args_snp.quality:
-            out_quality.write(snp["all_info"] + "\n")
-            qual_snps.append(snp)
-    conflicts, qual_nooverlap_snps = overlap_position(qual_snps)
-    stat(max_quals, trans_snps, bam_number, stat_file, out_snp, args_snp)
+            out_best.write(snp["all_info"] + "\n")
+            best_snps.append(snp)
+    conflicts, qual_nooverlap_snps = overlap_position(best_snps)
+    stat(max_quals, raw_snps, bam_number, stat_prefix, out_snp, args_snp, "raw.csv")
+    stat(max_quals, snps, bam_number, stat_prefix, out_snp, args_snp, "best.csv")
     seqs = read_fasta(fasta_file)
     gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq)
-    out_table.close()
-    out_quality.close()
+    out_best.close()
     out_ref.close()
