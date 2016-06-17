@@ -1332,7 +1332,7 @@ def main():
         help="The fraction of maximum read depth (IMF) and read number of each sample (IDV), which supports insertion of deletion. "
         "You can assign real number (r), the read depth based on the number of samples (n) or the times of average read depth (a) for IDV. For example, n_10,0.8 means "
         "the IDV should be higher than average 10 reads of --min_sample_number (if --min_sample_number, DP value in output will be higher than 20). "
-        "And IMF should be higher than 0.8. If you assign r_10,0.8 which means IDV become 10 without considering the number of samples. Default is n_10,0.8".)
+        "And IMF should be higher than 0.8. If you assign r_10,0.8 which means IDV become 10 without considering the number of samples. Default is n_10,0.8.")
     snp_parser.add_argument(
         "--filter_tag_info", "-ft", default="RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1",
         help="You can assign the filter here. Please type the tag, bigger or samller and value. For example, \"RPB_b0.1,MQ0F_s0\" "
