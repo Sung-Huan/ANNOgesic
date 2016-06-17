@@ -15,7 +15,7 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_run_tools(self, samtools_path, bcftools_path,
+    def mock_run_tools(self, args,
                        fasta_file, out_bcf, out_raw_prefix):
         pass
 
@@ -30,7 +30,7 @@ class Mock_func(object):
     def mock_run_bam(self, samtools_path, sub_command, bam_file):
         pass
 
-    def mock_get_header(self, samtools_path):
+    def mock_get_header(self, samtools_path, test1, test2):
         pass
 
 class TestSNPCalling(unittest.TestCase):
@@ -79,17 +79,27 @@ class TestSNPCalling(unittest.TestCase):
         args.depth = 5
         args.fraction = 0.3
         args.quality = 2
+        args.depth_s = "n_10"
+        args.depth_b = "a_2"
+        args.dp4_sum = "n_10"
+        args.dp4_frac = 0.5
+        args.idv = "n_10"
+        args.imf = 0.5
+        args.filters = ["VDB_s0.1"]
+        args.min_sample = 2
         os.mkdir(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ/test"))
+        depth_file = os.path.join(self.test_folder, "tmp_depth")
+        gen_file(depth_file, self.example.depth_file)
         self.snp._transcript_snp(fasta, snp, "test", "with",
                                  "test", 10, self.table, args)
-        datas = import_data(os.path.join(self.test_folder, "compare_reference/statistics/stat_test_with_BAQ_SNP.csv"))
+        datas = import_data(os.path.join(self.test_folder, "compare_reference/statistics/stat_test_with_BAQ_SNP_best.csv"))
         self.assertEqual("\n".join(datas), self.example.out_stat)
         datas = import_data(os.path.join(self.test_folder, "compare_reference/seqs/with_BAQ/test/test_NC_007795.1_1_1.fa"))
         self.assertEqual("\n".join(datas), ">NC_007795.1\nAaTTGaaTCCCGAACGACAGTTAT")
         os.remove("test_seq_reference.csv")
-        os.remove("test_depth_only.vcf")
-        os.remove("test_depth_quality.vcf")
-        os.remove("test_NC_007795.1_SNP_QUAL.png")    
+        os.remove("test_best.vcf")
+        os.remove("test_NC_007795.1_SNP_QUAL_best.png")
+        os.remove("test_NC_007795.1_SNP_QUAL_raw.png")
 
     def test_run_sub(self):
         self.snp._run_tools = self.mock.mock_run_tools
@@ -136,7 +146,9 @@ class TestSNPCalling(unittest.TestCase):
     def test_get_genome_name(self):
         self.snp._get_header = self.mock.mock_get_header
         gen_file(os.path.join(self.test_folder, "header"), self.example.bam)
-        seq_names = self.snp._get_genome_name("test")
+        args = self.mock_args.mock()
+        args.samtools_path = "test"
+        seq_names = self.snp._get_genome_name(args)
 
     def test_run_snp_calling(self):
         self.snp._get_header = self.mock.mock_get_header
@@ -168,8 +180,6 @@ NC_007795.1	6	.	A	AA	26.9515	.	INDEL;IDV=22;IMF=0.536585;DP=41;VDB=9.36323e-14;S
     fasta = """>NC_007795.1
 ACTTGATCCCGAACGACAGTTAT"""
     out_stat = """NC_007795.1:
-Read depth should be higher than 5:
-The fraction of Maximum read depth of insertion or deletion should be higher than 0.3:
 the number of QUAL which is between 0 and 10 = 0
 the number of QUAL which is between 10 and 20 = 0
 the number of QUAL which is between 20 and 30 = 1
@@ -185,6 +195,10 @@ the total numbers of QUAL which is higher than 2 = 2"""
     bam = """@HD     VN:1.0
 @SQ     SN:NC_007795.1  LN:2821361
 @PG     ID:segemehl     VN:0.1.4-$Rev: 380 $ ($Date: 2012-12-17 12:43:51 +0100 (Mon, 17 Dec 2012) $)    CL:segemehl --query RAPL_analysis/output/read_alignments-processed_reads/pMEM_OD_0.2.fa_processed.fa --index RAPL_analysis/output/read_alignments-index/index.idx --database RAPL_analysis/input/reference_sequences/NC_007795.fa --outfile RAPL_analysis/output/read_alignments-alignments/pMEM_OD_0.2.fa_alignments.sam --hitstrategy 1 --accuracy 95 --evalue 5 --threads 24 --nomatchfilename RAPL_analysis/output/read_alignments-unaligned_reads/pMEM_OD_0.2.fa_unaligned.fa"""
+    depth_file = """aaa	1	100
+aaa	2	100
+aaa	3	50
+aaa	4	200"""
 
 if __name__ == "__main__":
     unittest.main()

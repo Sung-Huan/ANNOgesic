@@ -27,7 +27,7 @@ class Mock_func(object):
         pass
 
     def mock_nx_color_style(self, G, edges):
-        return None, None
+        return None, None, None
 
     def mock_plot_text(self, check_na, plt, ppis, pre_ppi, color_edge):
         pass
