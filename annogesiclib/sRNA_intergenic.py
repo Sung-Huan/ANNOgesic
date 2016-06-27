@@ -555,12 +555,13 @@ def read_data(args_srna):
 
 def read_tss(tss_file):
     tsss = []
-    tss_f = open(tss_file, "r")
-    gff_parser = Gff3Parser()
-    for entry in gff_parser.entries(tss_f):
-        tsss.append(entry)
+    if tss_file is not None:
+        tss_f = open(tss_file, "r")
+        gff_parser = Gff3Parser()
+        for entry in gff_parser.entries(tss_f):
+            tsss.append(entry)
+        tss_f.close()
     num_tss = None
-    tss_f.close()
     return tsss, num_tss
 
 

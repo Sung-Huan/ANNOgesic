@@ -1117,6 +1117,9 @@ def main():
         "--fragmented_bam_path", "-fb", default=None,
         help="If you already has Bam files, Please assign the fragmented Bam path.")
     circrna_parser.add_argument(
+        "--read_path", "-rp", default="ANNOgesic/input/reads",
+        help="If you want to start from aligning reads, please assign the path of reads.")
+    circrna_parser.add_argument(
         "--process", "-p", default=10, type=int,
         help="The number of parallels processes for --align. Default is 10.")
     circrna_parser.add_argument(

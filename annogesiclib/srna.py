@@ -302,7 +302,7 @@ class sRNADetection(object):
         return prefixs
 
     def _merge_srna(self, args_srna, gffs, csvs, prefix, gff_file, tss):
-        print("merging data of intergenic and UTR_derived sRNA...")
+        print("merging data of sRNA...")
         merge_srna_gff(gffs, args_srna.in_cds,
                        args_srna.cutoff_overlap, gff_file)
         merge_srna_table(gffs["merge"], csvs, os.path.join(args_srna.wig_path,

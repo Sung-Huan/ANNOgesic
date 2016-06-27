@@ -520,7 +520,7 @@ class Controller(object):
             self._args.align, self._args.process, self._args.fasta_path,
             self._args.annotation_path, self._args.tex_bam_path,
             self._args.fragmented_bam_path,
-            self._paths.read_folder, self._paths.circrna_stat_folder,
+            self._args.read_path, self._paths.circrna_stat_folder,
             self._args.support_reads,
             self._args.segemehl_folder, self._args.samtools_path,
             self._args.start_ratio, self._args.end_ratio,

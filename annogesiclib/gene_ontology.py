@@ -2,6 +2,7 @@ import os
 import csv
 from annogesiclib.gff3 import Gff3Parser
 import numpy as np
+import copy
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -34,6 +35,59 @@ def compare_cds_tran(gffs, trans):
                     break
     return new_gffs
 
+
+def get_go_id(gffs, id_, uni_lines, gos):
+    detect = False
+    for gff in gffs:
+        if ("Name" in gff.attributes.keys()):
+            if (id_ == gff.attributes["Name"]):
+                detect = True
+        if ("protein_id" in gff.attributes.keys()):
+            if (id_ == gff.attributes["protein_id"]):
+                detect = True
+        if detect:
+            detect = False
+            gos.append({"strain": gff.seq_id, "strand": gff.strand,
+                        "start": gff.start, "end": gff.end,
+                        "protein_id": id_, "go": uni_lines[6]})
+            gff.attributes["print"] = True
+
+
+def print_go(gos, out):
+    gos = sorted(gos, key=lambda x: (x["strain"], x["start"],
+                                     x["end"], x["strand"]))
+    pre_go = None
+    for go in gos:
+        if (go != pre_go) and (pre_go is not None):
+            if (go["strain"] == pre_go["strain"]) and (
+                    go["strand"] == pre_go["strand"]) and (
+                    go["start"] == pre_go["start"]) and (
+                    go["end"] == pre_go["end"]) and (
+                    go["protein_id"] == pre_go["protein_id"]):
+                go_ids = []
+                for go_id in go["go"].split("; "):
+                    if go_id not in go_ids:
+                        go_ids.append(go_id)
+                for go_id in pre_go["go"].split("; "):
+                    if go_id not in go_ids:
+                        go_ids.append(go_id)
+                pre_go["go"] = "; ".join(go_ids)
+                out.write("\t".join([pre_go["strain"], pre_go["strand"],
+                          str(pre_go["start"]), str(pre_go["end"]),
+                          pre_go["protein_id"], pre_go["go"]]) + "\n")
+                pre_go["print"] = True
+                go["print"] = True
+            else:
+                if "print" not in pre_go.keys():
+                    out.write("\t".join([pre_go["strain"], pre_go["strand"],
+                              str(pre_go["start"]), str(pre_go["end"]),
+                              pre_go["protein_id"], pre_go["go"]]) + "\n")
+                    pre_go["print"] = True
+        pre_go = copy.deepcopy(go)
+    if "print" not in pre_go.keys():
+        out.write("\t".join([pre_go["strain"], pre_go["strand"],
+                  str(pre_go["start"]), str(pre_go["end"]),
+                  pre_go["protein_id"], pre_go["go"]]) + "\n")
 
 def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     name_list = set()
@@ -70,25 +124,13 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
         for id_ in uni_ids:
             id_ = id_.strip()
             if id_ in name_list:
-                detect = False
-                for gff in gffs:
-                    if ("Name" in gff.attributes.keys()):
-                        if (id_ == gff.attributes["Name"]):
-                            detect = True
-                    if ("protein_id" in gff.attributes.keys()):
-                        if (id_ == gff.attributes["protein_id"]):
-                            detect = True
-                    if detect:
-                        detect = False
-                        gos.append({"strain": gff.seq_id, "strand": gff.strand,
-                                    "start": gff.start, "end": gff.end,
-                                    "protein_id": id_,
-                                    "go": uni_lines[6]})
-    gos = sorted(gos, key=lambda x: (x["strain"], x["start"],
-                                     x["end"], x["strand"]))
-    for go in gos:
-        out.write("\t".join([go["strain"], go["strand"], str(go["start"]),
-                  str(go["end"]), go["protein_id"], go["go"]]) + "\n")
+                get_go_id(gffs, id_, uni_lines, gos)
+    for gff in gffs:
+        if "print" not in gff.attributes.keys():
+            gos.append({"strain": gff.seq_id, "strand": gff.strand,
+                        "start": gff.start, "end": gff.end,
+                        "protein_id": id_, "go": ""})
+    print_go(gos, out)
     out.close()
     idmapping.close()
 
@@ -238,7 +280,7 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     initiate_dict(classes, total_nums, "All_strain")
     pre_strain = ""
     g_h = open(go_table, "r")
-    print("load go tabel")
+    print("load go table")
     for row in csv.reader(g_h, delimiter="\t"):
         if row[0] != "strain":
             if row[0] != pre_strain:
