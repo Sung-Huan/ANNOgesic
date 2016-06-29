@@ -388,7 +388,7 @@ It will generate gff files and tables. Because we also compared with TSSs and an
     $ ls ANNOgesic/output/transcriptome_assembly/tables
     NC_000915.1_transcript.csv
     $ ls ANNOgesic/output/transcriptome_assembly/statistics
-    stat_compare_Transcriptome_assembly_CDS_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
+    stat_compare_Transcriptome_assembly_genome_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
 
 Prediction of terminator
 ----------------------
