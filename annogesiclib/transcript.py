@@ -90,13 +90,13 @@ class TranscriptAssembly(object):
         self.multiparser.combine_gff(
             self.gff_outfolder, os.path.join(args_tran.compare_cds, "tmp"),
             "transcript", None)
-        print("Comaring of Transcript assembly and gene...")
+        print("Comaring of Transcript assembly and genome annotation...")
         cds_folder = os.path.join(args_tran.compare_cds, "tmp")
         for ta in tas:
             ta_file = os.path.join(self.gff_outfolder,
                                    "_".join([ta, self.endfix_tran]))
             stat_gff_out = os.path.join(self.stat_path, "".join([
-                "stat_compare_Transcriptome_assembly_gene_", ta, ".csv"]))
+                "stat_compare_Transcriptome_assembly_genome_", ta, ".csv"]))
             for gff in os.listdir(cds_folder):
                 if (gff[:-4] == ta) and (gff.endswith(".gff")):
                     cds_file = os.path.join(cds_folder, gff)
