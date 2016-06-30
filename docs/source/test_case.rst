@@ -1003,7 +1003,7 @@ the statistics files and figures.
     $ ls ANNOgesic/output/subcellular_localization/all_CDS/psortb_results/NC_000915.1/
     NC_000915.1_raw.txt  NC_000915.1_table.csv
     $ ls ANNOgesic/output/subcellular_localization/all_CDS/statistics/NC_000915.1/
-    NC_000915.1_NC_000915.1.png  stat_NC_000915.1_sublocal.csv
+    NC_000915.1_NC_000915.1_sublocal.png  stat_NC_000915.1_sublocal.csv
 
 Generating protein-protein interaction network
 -------------------

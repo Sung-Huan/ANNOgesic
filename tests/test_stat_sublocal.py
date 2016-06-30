@@ -58,7 +58,7 @@ class TestStatSubLocal(unittest.TestCase):
     def test_plot(self):
         subs = {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}
         ss.plot(subs, 4, 1, "test", self.test_folder + "/")
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "_test.png")))
+        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "_test_sublocal.png")))
 
 
 class Example(object):

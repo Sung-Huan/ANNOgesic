@@ -45,7 +45,7 @@ def plot(subs, total, unknown, strain, prefix_name):
                fontsize=20, ha='right')
     plt.yticks(fontsize=16)
     plt.tight_layout(2, None, None, None)
-    plt.savefig("_".join([prefix_name, strain + ".png"]))
+    plt.savefig("_".join([prefix_name, strain, "sublocal.png"]))
 
 
 def read_table(psortb_file):
