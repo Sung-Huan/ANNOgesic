@@ -123,13 +123,13 @@ Once you have the mutation table, you can improve the fasta files.
 
 We use a simple example to modify our test case. The mutation table is 
 
-===========  ============  ============  ========  =========  ====================  =============  ====  ============
- #target_id  reference_id  reference_nt  position  target_nt  impact of correction  locus tag      gene  Description
------------  ------------  ------------  --------  ---------  --------------------  -------------  ----  ------------
- NC_test.1   NC_000915.1   a             3         c                                SAOUHSC_00002  dnaA  XXXXXX
- NC_test.1   NC_000915.1   t             6         \-          deletion                                  YYYYYY
- test_case2  NC_000915.1   \-            600       g           insertion            SAOUHSC_00132
-===========  ============  ============  ========  =========  ====================  =============  ====  ============
+=============  ==========  ============  ========  =========  ====================  =============  ====  ============
+ #refernce_id  target_id   reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description
+-------------  ----------  ------------  --------  ---------  --------------------  -------------  ----  ------------
+ NC_000915.1   NC_test.1   a             3         c                                SAOUHSC_00002  dnaA  XXXXXX
+ NC_000915.1   NC_test.1   t             6         \-          deletion                                  YYYYYY
+ NC_000915.1   test_case2  \-            600       g           insertion            SAOUHSC_00132
+=============  ==========  ============  ========  =========  ====================  =============  ====  ============
 
 Every column is separated by tab. You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
 two fasta files in ``ANNOgesic/output/target/fasta``.

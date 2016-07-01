@@ -231,13 +231,13 @@ get_target_fasta
 ``get_target_fasta`` is the subcommand for generating fasta files of "target strain" from 
 "reference strain". The example of format of mutation table is following:
 
-===========  ============  ============  ========  =========  ====================  =============  ====  ============
- #target_id  reference_id  reference_nt  position  target_nt  impact of correction  locus tag      gene  Description 
------------  ------------  ------------  --------  ---------  --------------------  -------------  ----  ------------
- HG003       NC_007795.1   a             333       c                                SAOUHSC_00002  dnaA  XXXXXX      
- HG003       NC_007795.1   t             543       \-          deletion                                  YYYYYY      
- HG003       NC_007795.1   \-            600       g           insertion            SAOUHSC_00132                    
-===========  ============  ============  ========  =========  ====================  =============  ====  ============
+==============  =========  ============  ========  =========  ====================  =============  ====  ============
+ #reference_id  target_id  reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description 
+--------------  ---------  ------------  --------  ---------  --------------------  -------------  ----  ------------
+ NC_007795.1     HG003     a             333       c                                SAOUHSC_00002  dnaA  XXXXXX      
+ NC_007795.1     HG003     t             543       \-          deletion                                  YYYYYY      
+ NC_007795.1     HG003     \-            600       g           insertion            SAOUHSC_00132                    
+==============  =========  ============  ========  =========  ====================  =============  ====  ============
 
 If user wants to put the titles of columns in the top, it needs to start from ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
