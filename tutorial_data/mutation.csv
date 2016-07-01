@@ -1,0 +1,4 @@
+#reference_id	target_id	reference_nt	position	target_nt	impact_of_correction	locus_tag	gene	Description
+NC_000915.1	NC_test.1	a	3	c		SAOUHSC_00002	dnaA	XXXXXX
+NC_000915.1	NC_test.1	t	6	-	deletion			YYYYYY
+NC_000915.1	test_case2	-	600	g	insertion	SAOUHSC_00132		
