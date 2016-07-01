@@ -59,10 +59,10 @@ ATAGATAACCCAAGTACGACTCAGGTCCCTCACA"""
 ATcGAAACCCAAGTACGACTCAGGTCCCTCACA"""
     out_2 = """>test_case2
 ATAGAgTAACCCAAGTACGACTCAGGTCCCTCACA"""
-    mutation = """#target_id	reference_id	reference_nt	position	target_nt	impact of correction	locus tag	gene	Description
-NC_test.1	NC_000915.1	a	3	c		SAOUHSC_00002	dnaA	XXXXXX
-NC_test.1	NC_000915.1	a	6	-	deletion			YYYYYY
-test_case2	NC_000915.1	-	6	g	insertion	SAOUHSC_00132		"""
+    mutation = """#refernce_id	target_id	reference_nt	position	target_nt	impact of correction	locus tag	gene	Description
+NC_000915.1	NC_test.1	a	3	c		SAOUHSC_00002	dnaA	XXXXXX
+NC_000915.1	NC_test.1	a	6	-	deletion			YYYYYY
+NC_000915.1	test_case2	-	6	g	insertion	SAOUHSC_00132		"""
 
 if __name__ == "__main__":
     unittest.main()

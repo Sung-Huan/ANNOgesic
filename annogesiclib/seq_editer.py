@@ -11,7 +11,7 @@ from annogesiclib.seqmodifier import SeqModifier
 class SeqEditer(object):
 
     def _row_to_location(self, row):
-        return({"target_id": row[0], "ref_id": row[1],
+        return({"target_id": row[1], "ref_id": row[0],
                 "datas": [{"ref_nt": row[2],
                            "tar_nt": row[4], "position": row[3]}]})
 
@@ -26,12 +26,12 @@ class SeqEditer(object):
             else:
                 if first:
                     datas.append(self._row_to_location(row))
-                    pre_ref_id = row[1].strip()
-                    pre_tar_id = row[0].strip()
+                    pre_ref_id = row[0].strip()
+                    pre_tar_id = row[1].strip()
                     first = False
                 else:
-                    if (row[1] == pre_ref_id) and \
-                       (row[0] == pre_tar_id):
+                    if (row[0] == pre_ref_id) and \
+                       (row[1] == pre_tar_id):
                         datas[num_index]["datas"].append(
                               {"ref_nt": row[2].strip(),
                                "tar_nt": row[4].strip(),
@@ -39,8 +39,8 @@ class SeqEditer(object):
                     else:
                         datas.append(self._row_to_location(row))
                         num_index += 1
-                        pre_ref_id = row[1].strip()
-                        pre_tar_id = row[0].strip()
+                        pre_ref_id = row[0].strip()
+                        pre_tar_id = row[1].strip()
         fh.close()
         return datas
 
