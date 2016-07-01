@@ -121,7 +121,8 @@ subcommand ``get_target_fasta``. However, this command need the mutation table. 
 to the section of ``subcommands``. 
 Once you have the mutation table, you can improve the fasta files.
 
-We use a simple example to modify our test case. The mutation table is 
+We use a simple example to modify our test case. The 
+`mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_ is 
 
 =============  ==========  ============  ========  =========  ====================  =============  ====  ============
  #refernce_id  target_id   reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description
