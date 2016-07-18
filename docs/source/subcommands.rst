@@ -79,6 +79,8 @@ for fragmented libraries:
 
   fragmented_forward.wig:frag:1:a:+,fragmented_reverse.wig:frag:1:a:-
 
+If you have only general RNA-seq data without fragementation, you can still assign the data to fragmented libraries and run ANNOgesic.
+However, the data may not be so precise. 
 
 The format of sRNA database
 -----------------------------
