@@ -8,7 +8,7 @@ RUN apt-get install default-jre default-jdk python3 python3-scipy \
 vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
 software-properties-common python3-software-properties bioperl \
 ncbi-blast+ pkg-config python3-dev libfreetype6-dev libxft-dev \
-libpng-dev python3-pip python3-numpy imagemagick infernal git \
+libpng-dev python3-pip python-pip python3-numpy imagemagick infernal git \
 openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
 ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
 libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
@@ -18,15 +18,13 @@ netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
 libbio-perl-perl libsqlite3-dev --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
-RUN apt-get update
+RUN apt-get update --yes
 
 RUN pip3 install \
 matplotlib \
 networkx \
 ANNOgesic
 
-RUN pip3 install ANNOgesic --upgrade
-            
 RUN mkdir tools
 WORKDIR tools
 
@@ -77,6 +75,10 @@ make all && cp *.x /usr/local/bin
 RUN wget http://transterm.cbcb.umd.edu/transterm_hp_v2.09.zip && \
 unzip transterm_hp_v2.09.zip && cd transterm_hp_v2.09 && \
 make && cp transterm /usr/local/bin && cp expterm.dat /usr/local/bin
+
+# CRT
+RUN wget http://www.room220.com/crt/CRT1.2-CLI.jar.zip && \
+unzip CRT1.2-CLI.jar.zip && cp CRT1.2-CLI.jar /usr/local/bin/CRT.jar
 
 # Psortb
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
@@ -168,6 +170,9 @@ transterm_hp_v2.09.zip \
 ViennaRNA-2.2.5.tar.gz \
 htslib-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
-bcftools-1.3.1.tar.bz2
+bcftools-1.3.1.tar.bz2 \
+CRT1.2-CLI.jar.zip
+
+RUN pip3 install ANNOgesic --upgrade
 
 WORKDIR /home

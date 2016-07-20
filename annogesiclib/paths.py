@@ -29,6 +29,7 @@ class Paths(object):
         self._set_ppi_folder_names()
         self._set_sublocal_folder_names()
         self._set_ribos_folder_names()
+        self._set_crispr_folder_names()
         self.version_path = "%s/used_annogesic_version.txt" % (self.base_path)
 
     def _set_input_folder_names(self):
@@ -65,6 +66,7 @@ class Paths(object):
         self.sublocal_output_folder = "%s/subcellular_localization" % (
              self.output_folder)
         self.ribos_output_folder = "%s/riboswitch" % self.output_folder
+        self.crispr_output_folder = "%s/crispr" % self.output_folder
 
     def _set_transcript_assembly_folder_names(self):
         self.reference_base_folder = "%s/transcriptome_assembly" % (
@@ -324,6 +326,15 @@ class Paths(object):
         self.ribos_rfam_folder = "%s/scan_Rfam" % (
              self.ribos_base_folder)
 
+    def _set_crispr_folder_names(self):
+        self.crispr_base_folder = "%s/crispr" % self.output_folder
+        self.crispr_gff_folder = "%s/gffs" % (
+             self.crispr_base_folder)
+        self.crispr_stat_folder = "%s/statistics" % (
+             self.crispr_base_folder)
+        self.crispr_data_folder = "%s/CRT_output" % (
+             self.crispr_base_folder)
+
     def required_folders(self, folder_type):
         if (folder_type == "root"):
             return (self.required_base_folders() +
@@ -395,6 +406,9 @@ class Paths(object):
                        "riboswitch": (
                            [self.ribos_output_folder] +
                            self.required_ribos_folders()),
+                       "crispr": (
+                           [self.crispr_output_folder] +
+                           self.required_crispr_folders()),
                        "operon": (
                            [self.operon_output_folder] +
                            self.required_operon_folders())}
@@ -499,3 +513,7 @@ class Paths(object):
     def required_ribos_folders(self):
         return [self.ribos_gff_folder, self.ribos_table_folder,
                 self.ribos_stat_folder, self.ribos_rfam_folder]
+
+    def required_crispr_folders(self):
+        return [self.crispr_gff_folder, self.crispr_stat_folder,
+                self.crispr_data_folder]

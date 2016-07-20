@@ -23,6 +23,7 @@ from annogesiclib.snp import SNPCalling
 from annogesiclib.ppi import PPINetwork
 from annogesiclib.sublocal import SubLocal
 from annogesiclib.ribos import Ribos
+from annogesiclib.crispr import Crispr
 from annogesiclib.screen import Screen
 from annogesiclib.args_container import ArgsContainer
 from annogesiclib.helper import Helper
@@ -660,6 +661,23 @@ class Controller(object):
             self._args.fuzzy_rbs, self._args.UTR_length)
         ribos = Ribos(args_ribo)
         ribos.run_ribos(args_ribo)
+
+    def crispr(self):
+        """CRISPR prediction"""
+        print("Running CRISPR prediction...")
+        self.check_folder([self._args.fasta_path])
+        self.check_no_require_folder([self._args.gff_path])
+        project_creator.create_subfolders(
+            self._paths.required_folders("crispr"))
+        args_cris = self.args_container.container_cris(
+            self._args.fasta_path, self._args.gff_path,
+            self._args.CRT_path, self._args.window_size,
+            self._args.min_number_repeat, self._args.min_length_repeat,
+            self._args.Max_length_repeat, self._args.min_length_spacer,
+            self._args.Max_length_spacer, self._paths.crispr_output_folder,
+            self._args.ignore_hypothetical_protein)
+        cris = Crispr(args_cris)
+        cris.run_crispr(args_cris)
 
     def screen(self):
         """generate screenshot"""

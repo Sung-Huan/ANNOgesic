@@ -7,7 +7,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.3.5"
+__version__ = "0.3.7"
 
 def main():
     print("""
@@ -1475,6 +1475,43 @@ def main():
         "--min_dist_rbs", "-mr", default=5, type=int,
         help="The minmum distance between ribosomal binding site and start codon. Default is 5.")
     ribos_parser.set_defaults(func=Ribos)
+    # Parameters of CRISPR finder
+    crispr_parser = subparsers.add_parser(
+        "crispr", help="Prediction of CRISPR.")
+    crispr_parser.add_argument(
+        "project_path", default=".", nargs="?",
+        help="Path of the project folder. If none is given, the current directory is used.")
+    crispr_parser.add_argument(
+        "--CRT_path", default="/usr/local/bin/CRT.jar",
+        help="If you want to assign the path of CRT.jar (the execute file), please assign here. Default is /usr/local/bin/CRT.jar")
+    crispr_parser.add_argument(
+        "--gff_path", "-g", default=None,
+        help="If you want to compare the CRISPRs with genome annotation, please assign the gff file here. Default is None.")
+    crispr_parser.add_argument(
+        "--fasta_path", "-f", default="ANNOgesic/output/target/fasta",
+        help="The path of genome fasta folder.")
+    crispr_parser.add_argument(
+        "--window_size", "-w", default=8, type=int,
+        help="Length of window size for searching (range: 6-9). Default is 8.")
+    crispr_parser.add_argument(
+        "--min_number_repeat", "-mn", default=3, type=int,
+        help="Minimum number of repeats that a CRISPR must contain. Default is 3.")
+    crispr_parser.add_argument(
+        "--min_length_repeat", "-ml", default=23, type=int,
+        help="Minimum length of CRISPR repeats. Default is 23.")
+    crispr_parser.add_argument(
+        "--Max_length_repeat", "-Ml", default=47, type=int,
+        help="Maximum length of CRISPR repeats. Default is 47.")
+    crispr_parser.add_argument(
+        "--min_length_spacer", "-ms", default=26, type=int,
+        help="Minimum length of CRISPR spacers. Default is 26.")
+    crispr_parser.add_argument(
+        "--Max_length_spacer", "-Ms", default=50, type=int,
+        help="Maximum length of CRISPR spacers. Default is 50.")
+    crispr_parser.add_argument(
+        "--ignore_hypothetical_protein", "-in", default=False, action="store_true",
+        help="If you want to compare CRISPR with genome annotation and want to ignore hypothetical protein, please turn it on. Default is False.")
+    crispr_parser.set_defaults(func=Crispr)
     # Parameters of generate screenshots
     screen_parser = subparsers.add_parser(
         "screenshot", help="Generate screenshot for selected feature.")
@@ -1600,6 +1637,9 @@ def Sub_Local(controller):
 
 def Ribos(controller):
     controller.ribos()
+
+def Crispr(controller):
+    controller.crispr()
 
 def Screen(controller):
     controller.screen()

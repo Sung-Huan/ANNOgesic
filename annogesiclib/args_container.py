@@ -779,6 +779,23 @@ class ArgsContainer(object):
         self.utr = UTR_length
         return self
 
+    def container_cris(self, fasta_path, gff_path, CRT_path, window_size,
+                       min_number_repeat, min_length_repeat, Max_length_repeat,
+                       min_length_spacer, Max_length_spacer, cris_out_folder,
+                       ignore_hypo):
+        self.fastas = fasta_path
+        self.gffs = gff_path
+        self.crt_path = CRT_path
+        self.win_size = window_size
+        self.out_folder = cris_out_folder
+        self.min_num_r = min_number_repeat
+        self.min_len_r = min_length_repeat
+        self.max_len_r = Max_length_repeat
+        self.min_len_s = min_length_spacer
+        self.max_len_s = Max_length_spacer
+        self.ignore_hypo = ignore_hypo
+        return self
+
     def container_screen(self, main_gff, side_gffs, fasta, frag_wig_folder,
                          tex_wig_folder, height, tex_libs, frag_libs, present,
                          output_folder):

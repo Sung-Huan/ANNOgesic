@@ -1129,6 +1129,65 @@ The output is the following. ``gffs`` is for gff files of riboswitchs; ``tables`
      $ ls ANNOgesic/output/riboswitch/statistics/
      stat_NC_000915.1_riboswitch.txt
 
+Detection of CRISPR
+----------------
+CRISPR is an unique features for the research of immunology. ``crispr`` is a useful subcommand for detection 
+of CRISPR. ``crispr`` is integrated `CRT <http://www.room220.com/crt/>`_ and also can compare genome 
+annotation to filter out some false positive. Let's try it.
+
+::
+     annogesic crispr \
+        -g ANNOgesic/output/target/annotation \
+        -f ANNOgesic/output/target/fasta \
+        ANNOgesic
+
+The output is the following. ``CRT_output`` is for the output of `CRT <http://www.room220.com/crt/>`_. 
+``gffs`` is for gff files of CRISPRs. ``statistics`` is for the statistics files.
+
+::
+     $ ls ANNOgesic/output/crispr/
+     CRT_output  gffs  statistics
+     $ ls ANNOgesic/output/crispr/CRT_output
+     NC_000915.1.txt
+     $ ls ANNOgesic/output/crispr/gffs
+     all_candidates  best
+     $ ls ANNOgesic/output/crispr/gffs/all_candidates
+     NC_000915.1_CRISPR.gff
+     $ ls ANNOgesic/output/crispr/gffs/best
+     NC_000915.1_CRISPR.gff
+     $ ls ANNOgesic/output/crispr/statistics
+     NC_000915.1.csv
+
+Unfortunately, our test strain has no CRISPRs. If you really want to know the output information, 
+please follow the commands to get the other strain.
+
+First, we download the fasta and gff files of the other strain. 
+
+::
+
+     rm -rf ANNOgesic/output/target/annotation
+     rm -rf ANNOgesic/output/target/fasta
+     FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1
+     annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
+
+Then, run ``crispr`` again.
+
+::
+
+    annogesic crispr \
+        -g ANNOgesic/output/target/annotation \
+        -f ANNOgesic/output/target/fasta \
+        ANNOgesic
+
+Now, there are CRISPRs in this strain and you can refer to them.
+
+In order to run the other subcommands, we restore our original strain again.
+
+::
+    rm -rf ANNOgesic/output/target/annotation
+    rm -rf ANNOgesic/output/target/fasta
+    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1
+    annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
 
 Producing the screenshots
 -----------------

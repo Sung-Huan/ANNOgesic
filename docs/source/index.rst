@@ -21,23 +21,24 @@ ANNOgesic is a bacterial transcriptome annotation pipeline based on RNA-Seq.
 ANNOgesic covers different aspects of the genome annotation. In order to get the
 best results, ANNOgesic also can optimize the parameters of some tools. 
 ANNOgesic can automatically generate high-quality annotation information for
-query strains. Moreover, it is modular and its subcommands can be separately
-used. Currently, the pipeline already can detect or integrate a) fasta, CDS,
-tRNA, rRNA and genes of query genome, b) transcription starting sites
-(TSSs), c) rho-independent terminators, d) transcript assembly,
-e) untranslated region (UTRs), f) sRNA, g) promoters, h) processing sites,
-i) circular RNAs, j) protein-protein interaction networks, k) potential
-sRNA target, l) single-nucleotide polymorphism (SNP), m) operons,
-n) GO terms, o) subcellular localization, p) riboswitch, q) potential sORF.
+query strains. Moreover, it is modular and its subcommands can be separately used.
+ANNOgesic integrates six main classes of annotations. i) Reference
+genome improvement: SNP/mutation calling, Sequence modification and
+annotation transfer. ii) Transcript boundary: TSS, transcript,
+terminator, UTR and processing site.  iii) sRNA and sORF: sRNA, sORF
+and sRNA target prediction.  iv) Functional related features:
+protein-protein interaction networks, Gene ontology and subcellular
+localization. v) Promoter and operon: promoter motifs and operon
+with sub-operon. vi) Other features: circular RNA, CRISPR and riboswitch.
 
 ::
 
      usage: annogesic [-h] [--version]
-                      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
+                      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,crispr,screenshot}
                       ...
      
      positional arguments:
-       {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
+       {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,crispr,screenshot}
                              commands
          create              Create a project
          get_input_files     Get required files. (i.e. annotation files, fasta
@@ -70,6 +71,7 @@ n) GO terms, o) subcellular localization, p) riboswitch, q) potential sORF.
          subcellular_localization
                              Prediction of subcellular localization of genomic CDS.
          riboswitch          Prediction of riboswitch.
+         crispr              Prediction of CRISPR.
          screenshot          Generate screenshot for selected feature.
      
      optional arguments:

@@ -72,6 +72,7 @@
 <li><a class="reference internal" href="#ppi-network">ppi_network</a></li>
 <li><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
 <li><a class="reference internal" href="#riboswitch">riboswitch</a></li>
+<li><a class="reference internal" href="#crispr">crispr</a></li>
 <li><a class="reference internal" href="#optimize-tsspredator">optimize_tsspredator</a></li>
 <li><a class="reference internal" href="#screenshot">screenshot</a></li>
 <li><a class="reference internal" href="#color-png">color_png</a></li>
@@ -2650,6 +2651,107 @@ optional arguments:
 <p><code class="docutils literal"><span class="pre">scan_Rfam</span></code>: The results of <code class="docutils literal"><span class="pre">cmscan</span></code> of <a class="reference external" href="http://infernal.janelia.org/">Infernal</a>.
 User can check the results of blast.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: The statistics files and figures.</p>
+</div>
+<div class="section" id="crispr">
+<h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">crispr</span></code> integrates CRISPR Recognition Tool (<a class="reference external" href="http://www.room220.com/crt/">CRT</a>) which can detect the repeat
+units and spacer of CRISPR. It can also compare to genome annotation to exclude some false positives.</p>
+<ul class="simple">
+<li>Pre-required tools and files</li>
+</ul>
+<p><a class="reference external" href="http://www.room220.com/crt/">CRT</a>.</p>
+<p>Fasta file of genome sequence.</p>
+<p>User can also import some useful information to improve the prediction:</p>
+<p>Gff files of genome annotation.</p>
+<ul class="simple">
+<li>Arguments</li>
+</ul>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>usage: annogesic crispr [-h] [&#8211;CRT_path CRT_PATH] [&#8211;gff_path GFF_PATH]</dt>
+<dd>[&#8211;fasta_path FASTA_PATH] [&#8211;window_size WINDOW_SIZE]
+[&#8211;min_number_repeat MIN_NUMBER_REPEAT]
+[&#8211;min_length_repeat MIN_LENGTH_REPEAT]
+[&#8211;Max_length_repeat MAX_LENGTH_REPEAT]
+[&#8211;min_length_spacer MIN_LENGTH_SPACER]
+[&#8211;Max_length_spacer MAX_LENGTH_SPACER]
+[&#8211;ignore_hypothetical_protein]
+[project_path]</dd>
+<dt>positional arguments:</dt>
+<dd><dl class="first last docutils">
+<dt>project_path          Path of the project folder. If none is given, the</dt>
+<dd>current directory is used.</dd>
+</dl>
+</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--CRT_path <var>CRT_PATH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If you want to assign the path of CRT.jar (the execute
+file), please assign here. Default is CRT.jar</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--gff_path <var>GFF_PATH</var></span>, <span class="option">-g <var>GFF_PATH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If you want to compare the CRISPRs with genome
+annotation, please assign the gff file here. Default
+is None.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--fasta_path <var>FASTA_PATH</var></span>, <span class="option">-f <var>FASTA_PATH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The path of genome fasta folder.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--window_size <var>WINDOW_SIZE</var></span>, <span class="option">-w <var>WINDOW_SIZE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Length of window size for searching (range: 6-9).
+Default is 8.</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>&#8211;min_number_repeat MIN_NUMBER_REPEAT, -mn MIN_NUMBER_REPEAT</dt>
+<dd>Minimum number of repeats that a CRISPR must contain.
+Default is 3.</dd>
+<dt>&#8211;min_length_repeat MIN_LENGTH_REPEAT, -ml MIN_LENGTH_REPEAT</dt>
+<dd>Minimum length of CRISPR repeats. Default is 23.</dd>
+<dt>&#8211;Max_length_repeat MAX_LENGTH_REPEAT, -Ml MAX_LENGTH_REPEAT</dt>
+<dd>Maximum length of CRISPR repeats. Default is 47.</dd>
+<dt>&#8211;min_length_spacer MIN_LENGTH_SPACER, -ms MIN_LENGTH_SPACER</dt>
+<dd>Minimum length of CRISPR spacers. Default is 26.</dd>
+<dt>&#8211;Max_length_spacer MAX_LENGTH_SPACER, -Ms MAX_LENGTH_SPACER</dt>
+<dd>Maximum length of CRISPR spacers. Default is 50.</dd>
+</dl>
+<table class="last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--ignore_hypothetical_protein</span>, <span class="option">-i<var>n</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If you want to compare CRISPR with genome annotation
+and want to ignore hypothetical protein, please turn
+it on. Default is False.</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+</dl>
+<ul class="simple">
+<li>Output files</li>
+</ul>
+<p>It will generate three folders - <code class="docutils literal"><span class="pre">CRT_output</span></code>, <code class="docutils literal"><span class="pre">gffs</span></code> and <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">CRT_output</span></code> stores the output of <a class="reference external" href="http://www.room220.com/crt/">CRT</a>. It includes the positions, the sequence of
+repeat unit and spacer.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code> stores the gff files of CRISPR. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for the all CRISPRs which we can detect.
+<code class="docutils literal"><span class="pre">best</span></code> is for the CRISPRs which are not overlap with genome annotations.</p>
+<p><code class="docutils literal"><span class="pre">statistics</span></code> is for the statistics files.</p>
 </div>
 <div class="section" id="optimize-tsspredator">
 <h2>optimize_tsspredator<a class="headerlink" href="#optimize-tsspredator" title="Permalink to this headline">¶</a></h2>

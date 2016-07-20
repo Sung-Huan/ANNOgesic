@@ -67,6 +67,7 @@
 <li><a class="reference internal" href="#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
 <li><a class="reference internal" href="#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
 <li><a class="reference internal" href="#generating-riboswitch">Generating riboswitch</a></li>
+<li><a class="reference internal" href="#detection-of-crispr">Detection of CRISPR</a></li>
 <li><a class="reference internal" href="#producing-the-screenshots">Producing the screenshots</a></li>
 <li><a class="reference internal" href="#coloring-the-screenshots">Coloring the screenshots</a></li>
 </ul>
@@ -919,7 +920,7 @@ extend_BAQ/  with_BAQ/    without_BAQ/
   NC_000915.1_NC_000915.1_1_1.fa
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id18"><span class="problematic" id="id19">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores the output of <a href="#id19"><span class="problematic" id="id20">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores the results after filtering and the indices of potential sequence(
 you can see the difference between these potential sequences in <code class="docutils literal"><span class="pre">seqs</span></code>).
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistics and visualization files.</p>
@@ -1107,6 +1108,62 @@ $ ls ANNOgesic/output/riboswitch/statistics/
 stat_NC_000915.1_riboswitch.txt
 </pre></div>
 </div>
+</div>
+<div class="section" id="detection-of-crispr">
+<h2>Detection of CRISPR<a class="headerlink" href="#detection-of-crispr" title="Permalink to this headline">¶</a></h2>
+<p>CRISPR is an unique features for the research of immunology. <code class="docutils literal"><span class="pre">crispr</span></code> is a useful subcommand for detection
+of CRISPR. <code class="docutils literal"><span class="pre">crispr</span></code> is integrated <a class="reference external" href="http://www.room220.com/crt/">CRT</a> and also can compare genome
+annotation to filter out some false positive. Let&#8217;s try it.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>annogesic crispr </dt>
+<dd>-g ANNOgesic/output/target/annotation -f ANNOgesic/output/target/fasta ANNOgesic</dd>
+</dl>
+</dd>
+</dl>
+<p>The output is the following. <code class="docutils literal"><span class="pre">CRT_output</span></code> is for the output of <a class="reference external" href="http://www.room220.com/crt/">CRT</a>.
+<code class="docutils literal"><span class="pre">gffs</span></code> is for gff files of CRISPRs. <code class="docutils literal"><span class="pre">statistics</span></code> is for the statistics files.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>$ ls ANNOgesic/output/crispr/
+CRT_output  gffs  statistics
+$ ls ANNOgesic/output/crispr/CRT_output
+NC_000915.1.txt
+$ ls ANNOgesic/output/crispr/gffs
+all_candidates  best
+$ ls ANNOgesic/output/crispr/gffs/all_candidates
+NC_000915.1_CRISPR.gff
+$ ls ANNOgesic/output/crispr/gffs/best
+NC_000915.1_CRISPR.gff
+$ ls ANNOgesic/output/crispr/statistics
+NC_000915.1.csv</dd>
+</dl>
+<p>Unfortunately, our test strain has no CRISPRs. If you really want to know the output information,
+please follow the commands to get the other strain.</p>
+<p>First, we download the fasta and gff files of the other strain.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>rm -rf ANNOgesic/output/target/annotation
+rm -rf ANNOgesic/output/target/fasta
+FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/
+annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
+</pre></div>
+</div>
+<p>Then, run <code class="docutils literal"><span class="pre">crispr</span></code> again.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">annogesic</span> <span class="n">crispr</span> \
+    <span class="o">-</span><span class="n">g</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">annotation</span> \
+    <span class="o">-</span><span class="n">f</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">fasta</span> \
+    <span class="n">ANNOgesic</span>
+</pre></div>
+</div>
+<p>Now, there are CRISPRs in this strain and you can refer to them.</p>
+<p>In order to run the other subcommands, we restore our original strain again.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>rm -rf ANNOgesic/output/target/annotation
+rm -rf ANNOgesic/output/target/fasta
+FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
+annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic</dd>
+</dl>
 </div>
 <div class="section" id="producing-the-screenshots">
 <h2>Producing the screenshots<a class="headerlink" href="#producing-the-screenshots" title="Permalink to this headline">¶</a></h2>

@@ -2703,6 +2703,79 @@ User can check the results of blast.
 
 ``statistics``: The statistics files and figures.
 
+crispr
+---------------
+``crispr`` integrates CRISPR Recognition Tool (`CRT <http://www.room220.com/crt/>`_) which can detect the repeat 
+units and spacer of CRISPR. It can also compare to genome annotation to exclude some false positives.
+
+- Pre-required tools and files
+
+`CRT <http://www.room220.com/crt/>`_.
+
+Fasta file of genome sequence.
+
+User can also import some useful information to improve the prediction:
+
+Gff files of genome annotation.
+
+- Arguments
+
+::
+     usage: annogesic crispr [-h] [--CRT_path CRT_PATH] [--gff_path GFF_PATH]
+                        [--fasta_path FASTA_PATH] [--window_size WINDOW_SIZE]
+                        [--min_number_repeat MIN_NUMBER_REPEAT]
+                        [--min_length_repeat MIN_LENGTH_REPEAT]
+                        [--Max_length_repeat MAX_LENGTH_REPEAT]
+                        [--min_length_spacer MIN_LENGTH_SPACER]
+                        [--Max_length_spacer MAX_LENGTH_SPACER]
+                        [--ignore_hypothetical_protein]
+                        [project_path]
+
+     positional arguments:
+       project_path          Path of the project folder. If none is given, the
+                             current directory is used.
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --CRT_path CRT_PATH   If you want to assign the path of CRT.jar (the execute
+                             file), please assign here. Default is CRT.jar
+       --gff_path GFF_PATH, -g GFF_PATH
+                             If you want to compare the CRISPRs with genome
+                             annotation, please assign the gff file here. Default
+                             is None.
+       --fasta_path FASTA_PATH, -f FASTA_PATH
+                             The path of genome fasta folder.
+       --window_size WINDOW_SIZE, -w WINDOW_SIZE
+                             Length of window size for searching (range: 6-9).
+                             Default is 8.
+       --min_number_repeat MIN_NUMBER_REPEAT, -mn MIN_NUMBER_REPEAT
+                             Minimum number of repeats that a CRISPR must contain.
+                             Default is 3.
+       --min_length_repeat MIN_LENGTH_REPEAT, -ml MIN_LENGTH_REPEAT
+                             Minimum length of CRISPR repeats. Default is 23.
+       --Max_length_repeat MAX_LENGTH_REPEAT, -Ml MAX_LENGTH_REPEAT
+                             Maximum length of CRISPR repeats. Default is 47.
+       --min_length_spacer MIN_LENGTH_SPACER, -ms MIN_LENGTH_SPACER
+                             Minimum length of CRISPR spacers. Default is 26.
+       --Max_length_spacer MAX_LENGTH_SPACER, -Ms MAX_LENGTH_SPACER
+                             Maximum length of CRISPR spacers. Default is 50.
+       --ignore_hypothetical_protein, -in
+                             If you want to compare CRISPR with genome annotation
+                             and want to ignore hypothetical protein, please turn
+                             it on. Default is False.
+- Output files
+
+It will generate three folders - ``CRT_output``, ``gffs`` and ``statistics``. 
+
+``CRT_output`` stores the output of `CRT <http://www.room220.com/crt/>`_. It includes the positions, the sequence of 
+repeat unit and spacer.
+
+``gffs`` stores the gff files of CRISPR. ``all_candidates`` is for the all CRISPRs which we can detect. 
+``best`` is for the CRISPRs which are not overlap with genome annotations.
+
+``statistics`` is for the statistics files.
+
+
 optimize_tsspredator
 ---------------
 

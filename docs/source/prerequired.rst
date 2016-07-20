@@ -44,6 +44,8 @@ modify the path for execute RATT.
 
 `IGV <https://www.broadinstitute.org/software/igv/home>`_ (for screenshot and color_png)
 
+`CRT <http://www.room220.com/crt/>`_ (for CRISPR detection)
+
 Databases
 ---------
 

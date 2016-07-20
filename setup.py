@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='ANNOgesic',
-    version='0.3.5',
+    version='0.3.7',
     packages=['annogesiclib'],
     author='Sung-Huan Yu',
     author_email='sung-huan.yu@uni-wuerzburg.de',
