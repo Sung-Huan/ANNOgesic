@@ -1,8 +1,34 @@
 # ANNOgesic - a transcriptome annotation pipeline for RNA-seq data
 
-1. It include many useful modules.
-2. It is easy to run these modules seperately, in order to reach your specific goal.
-3. It also can be used to run whole modules from RNA-seq data to any annotation information.
+ANNOgesic is a bacterial transcriptome annotation pipeline based on RNA-Seq.
+ANNOgesic covers different aspects of the genome annotation. In order to get the
+best results, ANNOgesic also can optimize the parameters of some tools.
+ANNOgesic can automatically generate high-quality annotation information for
+query strains. Moreover, it is modular and its subcommands can be separately used.
+ANNOgesic integrates six main classes of annotations. i) Reference
+genome improvement: SNP/mutation calling, Sequence modification and
+annotation transfer. ii) Transcript boundary: TSS, transcript,
+terminator, UTR and processing site.  iii) sRNA and sORF: sRNA, sORF
+and sRNA target prediction.  iv) Functional related features:
+protein-protein interaction networks, Gene ontology and subcellular
+localization. v) Promoter and operon: promoter motifs and operon
+with sub-operon. vi) Other features: circular RNA, CRISPR and riboswitch.
+
+## Documentation
+
+Documentation can be found on 
+[here](http://pythonhosted.org/ANNOgesic).
+
+## Installation
+
+Short version (if you have all the requirements installed):
+
+```
+
+    $ pip3 install ANNOgesic
+
+```
+If you want to know the requirement, please refer to [Documentation](http://pythonhosted.org/ANNOgesic).
 
 
 ```
@@ -44,6 +70,7 @@ positional arguments:
     subcellular_localization
                         Prediction of subcellular localization of genomic CDS.
     riboswitch          Prediction of riboswitch.
+    crispr              Prediction of CRISPR.
     screenshot          Generate screenshot for selected feature.
 
 optional arguments:
