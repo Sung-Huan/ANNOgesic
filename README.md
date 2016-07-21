@@ -24,9 +24,7 @@ Documentation can be found on
 Short version (if you have all the requirements installed):
 
 ```
-
     $ pip3 install ANNOgesic
-
 ```
 If you want to know the requirement, please refer to [Documentation](http://pythonhosted.org/ANNOgesic).
 
