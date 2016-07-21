@@ -1,4 +1,4 @@
-About
+About ANNOgesic
 -----
 ANNOgesic is a bacterial transcriptome annotation pipeline based on RNA-Seq.
 ANNOgesic covers different aspects of the genome annotation. In order to get the
