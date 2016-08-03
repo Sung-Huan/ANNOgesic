@@ -7,7 +7,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.3.7"
+__version__ = "0.3.9"
 
 def main():
     print("""
@@ -528,7 +528,7 @@ def main():
         help="If you want to compare with TSS, please assign TSS folder.")
     Transcript_parser.add_argument(
         "--compare_genome_annotation", "-cg", default=None,
-        help="If you want to compare with genome annotation file, please assign annotation folder.")
+        help="If you want to compare with genome annotation file and find the parent transcript of gene, please assign annotation folder.")
     Transcript_parser.add_argument(
         "--compare_feature_genome", "-cf", default="gene",
         help="If you want to compare with genome annotation file, please assign the feature which you want to compare. Default is gene. "
@@ -594,6 +594,12 @@ def main():
         help="This is only for --base_3UTR which assigned by \"transcript\" or \"both\". "
         "If the distance(nucleotides) between terminator and the end of transcript lower than this value, "
         "it will assign the terminator associated with the 3'UTR. Default is 30.")
+    UTR_parser.add_argument(
+        "--fuzzy_3utr", "-f3", default=10, type=int,
+        help="If --base_3UTR includes transcript, please assign the fuzzy of 3'UTR. Default is 10 nucleotides.")
+    UTR_parser.add_argument(
+        "--fuzzy_5utr", "-f5", default=5, type=int,
+        help="If --base_5UTR includes transcript, please assign the fuzzy of 5'UTR. Default is 5 nucleotides.")
     UTR_parser.set_defaults(func=run_UTR_detection)
 
     # Parameter of sRNA detectopn
@@ -1512,6 +1518,33 @@ def main():
         "--ignore_hypothetical_protein", "-in", default=False, action="store_true",
         help="If you want to compare CRISPR with genome annotation and want to ignore hypothetical protein, please turn it on. Default is False.")
     crispr_parser.set_defaults(func=Crispr)
+    # Parameters of merge features
+    merge_parser = subparsers.add_parser(
+        "merge_features", help="Merge all features to one gff file.")
+    merge_parser.add_argument(
+        "project_path", default=".", nargs="?",
+        help="Path of the project folder. If none is given, the current directory is used.")
+    merge_parser.add_argument(
+        "--transcript_path", "-a", default=None,
+        help="If you have transcript gff file, please assign the path here. The output will be generated based on transcripts "
+        "and assign \"Parent_tran\" to each feature in attributes of gff file. If there is no transcript, "
+        "the output will just simply combine all input gff files.")
+    merge_parser.add_argument(
+        "--other_features_path", "-of", default=None,
+        help="Please assign the gff files of other features which you want to merge.")
+    merge_parser.add_argument(
+        "--fuzzy_term", "-fm", default=30, type=int,
+        help="If you want to merge terminators, please assign the fuzzy between transcript and terminator here. "
+        "ATTENTION, the third column of gff file of terminator should be exactly \"Terminator\". Default is 30.")
+    merge_parser.add_argument(
+        "--fuzzy_TSS", "-ft", default=5, type=int,
+        help="If you want to merge terminators, please assign the fuzzy between TSS and transcript. "
+        "ATTENTION, the third column of gff file of terminator should be exactly \"TSS\". Default is 5.")
+    merge_parser.add_argument(
+        "--strain_name", "-s",
+        help="Please assign the strain name of the input files. It will become the prefix name of output gff file.")
+    merge_parser.set_defaults(func=Merge)
+
     # Parameters of generate screenshots
     screen_parser = subparsers.add_parser(
         "screenshot", help="Generate screenshot for selected feature.")
@@ -1640,6 +1673,9 @@ def Ribos(controller):
 
 def Crispr(controller):
     controller.crispr()
+
+def Merge(controller):
+    controller.merge()
 
 def Screen(controller):
     controller.screen()

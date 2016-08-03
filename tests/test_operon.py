@@ -99,7 +99,7 @@ class TestOperonDetection(unittest.TestCase):
         args.term_fuzzy = 3
         args.tss_fuzzy = 3
         self.operon._combine_gff(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_all_features.gff")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_operon.gff")))
 
 if __name__ == "__main__":
     unittest.main()

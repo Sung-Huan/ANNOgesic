@@ -20,10 +20,10 @@ def compare_srna_gff(gffs, strain, strand, start, end, srna_types, file_type):
                      end >= gff.end)):
                 if file_type == "gff":
                     if "antisense" not in srna_types:
-                        srna_types = srna_types + "&" + "antisense"
+                        srna_types = srna_types + "," + "antisense"
                 else:
                     if "Antisense" not in srna_types:
-                        srna_types = srna_types + "&" + "Antisense"
+                        srna_types = srna_types + "," + "Antisense"
     return srna_types
 
 

@@ -45,9 +45,9 @@ def print_gff(num, ribo, out, stats, strain):
     attribute = ";".join(["=".join(items) for items in [
                           ("ID", "ribo_" + str(num)),
                           ("Name", ribo["rfam_name"]),
-                          ("Rfam_ID", ribo["rfam"]),
-                          ("E_value", ribo["e"]),
-                          ("Method", "infernal_to_Rfam")]])
+                          ("rfam_id", ribo["rfam"]),
+                          ("e_value", ribo["e"]),
+                          ("method", "infernal_to_Rfam")]])
     out.write("\t".join([str(field) for field in [
               ribo["strain"], "ANNOgesic", "riboswitch",
               str(ribo["start_seq"]), str(ribo["end_seq"]),
@@ -160,8 +160,8 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
                     pre_gff["end_seq"] == ribo["end_seq"]):
                 pre_gff["rfam_name"] = "/".join(
                         [pre_gff["rfam_name"], ribo["rfam_name"]])
-                pre_gff["rfam"] = "&".join([pre_gff["rfam"], ribo["rfam"]])
-                pre_gff["e"] = "&".join([pre_gff["e"], ribo["e"]])
+                pre_gff["rfam"] = ",".join([pre_gff["rfam"], ribo["rfam"]])
+                pre_gff["e"] = ",".join([pre_gff["e"], ribo["e"]])
             else:
                 print_gff(num, pre_gff, out, stats, strain)
                 num += 1

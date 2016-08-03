@@ -73,7 +73,7 @@ class Crispr(object):
         if not overlap:
             id_ = "CRISPR_" + str(indexs["best"])
             attribute = ";".join(["ID=" + id_,
-                                  "Method=CRT"])
+                                  "method=CRT"])
             bh.write("\t".join([strain, "ANNOgesic", "CRISPR", str(start),
                                 str(end), ".", ".", ".", attribute]) + "\n")
             indexs["best"] += 1
@@ -91,7 +91,7 @@ class Crispr(object):
             start = row[0].strip()
             end = str(int(start) + len(row[2].strip()) - 1)
             attribute = ";".join(["ID=Repeat_" + str(num),
-                                  "Method=CRT", "Parent=" + id_])
+                                  "method=CRT", "Parent=" + id_])
             file_h.write("\t".join([strain, "ANNOgesic", "repeat_unit",
                                     start, end, ".", ".", ".",
                                     attribute]) + "\n")
@@ -119,7 +119,7 @@ class Crispr(object):
                         start = row[0].split("-")[0].split(":")[-1].strip()
                         id_ = "CRISPR_" + str(indexs["all"])
                         attribute = ";".join(["ID=" + id_,
-                                              "Method=CRT"])
+                                              "method=CRT"])
                         oh.write("\t".join([
                             strain, "ANNOgesic", "CRISPR", start,
                             end, ".", ".", ".", attribute]) + "\n")
@@ -154,7 +154,7 @@ class Crispr(object):
                 if entry.feature == "CRISPR":
                     id_ = "CRISPR_" + str(cr_num)
                     attribute = ";".join(["ID=" + id_,
-                                          "Method=CRT"])
+                                          "method=CRT"])
                     cr_num += 1
                     if first:
                         first = False
@@ -172,7 +172,7 @@ class Crispr(object):
                     stats[prefix]["all"]["cri"] += 1
                 elif entry.feature == "repeat_unit":
                     attribute = ";".join(["ID=Repeat_" + str(re_num),
-                                          "Method=CRT", "Parent=" + id_])
+                                          "method=CRT", "Parent=" + id_])
                     re_num += 1
                     repeat += 1
                 oh.write("\t".join([entry.info_without_attributes,

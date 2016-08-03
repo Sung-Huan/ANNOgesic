@@ -88,8 +88,8 @@ class TestCoverageTerminator(unittest.TestCase):
             poss.append("_".join([str(term["start"]), str(term["end"])]))
             methods.append(term["method"])
         self.assertListEqual(poss, ['30_40', '350_367', '420_432', '1420_2429'])
-        self.assertListEqual(methods, ['TransTermHP', 'forward_reverse&TransTermHP',
-                                   'forward_reverse&TransTermHP', 'forward_reverse'])
+        self.assertListEqual(methods, ['TransTermHP', 'forward_reverse,TransTermHP',
+                                   'forward_reverse,TransTermHP', 'forward_reverse'])
 
     def test_compare_replicates(self):
         texs = {"track_tex_track_notex": 0}
@@ -240,8 +240,6 @@ class TestCoverageTerminator(unittest.TestCase):
         args.cutoff_coverage = 5
         args.table_best = True
         dct.print2file(0, term, "70", "test", out, out_t, "test_method", args)
-#        dct.print2file(0, term, "70", "test", out, out_t,
-#                       "test_method", True, 5)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]), set([self.example.gff_file]))
         self.assertEqual(set(out_t.getvalue().split("\n")[:-1]), set([self.example.table]))
         out.close()
@@ -273,7 +271,7 @@ class Example(object):
     attributes_tran = [{"ID": "tran0", "Name": "Tran_0"},
                        {"ID": "tran1", "Name": "Tran_1"},
                        {"ID": "tran2", "Name": "Tran_2"}]
-    gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associated_gene=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;Method=test_method"""
+    gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=term_0;Name=Term_00000;associated_gene=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;method=test_method"""
     table = """aaa	Term_00000	2	4	+	TransTermHP	test	True	track_1(diff=70;high=100;low=30)"""
 
 if __name__ == "__main__":

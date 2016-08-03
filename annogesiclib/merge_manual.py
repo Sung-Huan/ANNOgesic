@@ -7,9 +7,9 @@ from annogesiclib.helper import Helper
 
 def get_primary_locus_tag(tss):
     tsss = []
-    tss_types = tss.attributes["type"].split("&")
-    tss_locus_tags = tss.attributes["associated_gene"].split("&")
-    tss_utr_lengths = tss.attributes["UTR_length"].split("&")
+    tss_types = tss.attributes["type"].split(",")
+    tss_locus_tags = tss.attributes["associated_gene"].split(",")
+    tss_utr_lengths = tss.attributes["utr_length"].split(",")
     index = 0
     for tss_type in tss_types:
         if "Primary" in tss_type:
@@ -45,23 +45,23 @@ def detect_coverage(wigs, tss, ref):
 
 def fix_attributes(tss, tss_entry):
     index = 0
-    genes = tss.attributes["associated_gene"].split("&")
-    utrs = tss.attributes["UTR_length"].split("&")
-    types = tss.attributes["type"].split("&")
+    genes = tss.attributes["associated_gene"].split(",")
+    utrs = tss.attributes["utr_length"].split(",")
+    types = tss.attributes["type"].split(",")
     for gene in genes:
         if gene == tss_entry["locus"]:
             utrs[index] = utrs[index].replace("Primary", "Secondary")
             types[index] = types[index].replace("Primary", "Secondary")
         index += 1
-    tss.attributes["UTR_length"] = "&".join(utrs)
-    tss.attributes["type"] = "&".join(types)
+    tss.attributes["utr_length"] = ",".join(utrs)
+    tss.attributes["type"] = ",".join(types)
 
 
 def del_repeat(tsss):
     for tss in tsss:
-        types = tss.attributes["type"].split("&")
-        utrs = tss.attributes["UTR_length"].split("&")
-        genes = tss.attributes["associated_gene"].split("&")
+        types = tss.attributes["type"].split(",")
+        utrs = tss.attributes["utr_length"].split(",")
+        genes = tss.attributes["associated_gene"].split(",")
         detect = {"pri": False, "sec": False}
         index = 0
         finals = {"types": [], "utrs": [], "genes": []}
@@ -100,9 +100,9 @@ def del_repeat(tsss):
                 finals["types"].append(types[real_index2])
                 finals["utrs"].append(utrs[real_index2])
                 finals["genes"].append(genes[real_index2])
-        tss.attributes["type"] = "&".join(finals["types"])
-        tss.attributes["UTR_length"] = "&".join(finals["utrs"])
-        tss.attributes["associated_gene"] = "&".join(finals["genes"])
+        tss.attributes["type"] = ",".join(finals["types"])
+        tss.attributes["utr_length"] = ",".join(finals["utrs"])
+        tss.attributes["associated_gene"] = ",".join(finals["genes"])
 
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
@@ -161,9 +161,9 @@ def remove_primary(tss, tss_entry):
     final_utrs = []
     final_genes = []
     tss_dict = tss_entry[1]
-    types = tss_dict["type"].split("&")
-    utrs = tss_dict["UTR_length"].split("&")
-    genes = tss_dict["associated_gene"].split("&")
+    types = tss_dict["type"].split(",")
+    utrs = tss_dict["utr_length"].split(",")
+    genes = tss_dict["associated_gene"].split(",")
     index = 0
     for type_ in types:
         if type_ != "Primary":
@@ -172,10 +172,10 @@ def remove_primary(tss, tss_entry):
             final_genes.append(genes[index])
         index += 1
     tss_dict = {"Name": "TSS_" + str(tss.start) + tss.strand,
-                "type": "&".join(final_types),
-                "UTR_length": "&".join(final_utrs),
-                "associated_gene": "&".join(final_genes)}
-    tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
+                "type": ",".join(final_types),
+                "utr_length": ",".join(final_utrs),
+                "associated_gene": ",".join(final_genes)}
+    tss_string = ";".join(["=".join(["utr_length", tss_dict["utr_length"]]),
                            "=".join(["associated_gene",
                                      tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
@@ -190,9 +190,9 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
         utr = "_".join([tss_type, str(int(math.fabs(cds_pos - tss.start)))])
     if len(tss_entry) != 0:
         tss_dict = tss_entry[1]
-        tss_dict_types = tss_dict["type"].split("&")
-        tss_dict_utrs = tss_dict["UTR_length"].split("&")
-        tss_dict_tags = tss_dict["associated_gene"].split("&")
+        tss_dict_types = tss_dict["type"].split(",")
+        tss_dict_utrs = tss_dict["utr_length"].split(",")
+        tss_dict_tags = tss_dict["associated_gene"].split(",")
         if tss_type == "Primary" and ("Primary" in tss_dict["type"]):
             index = 0
             for tss_dict_type in tss_dict_types:
@@ -207,15 +207,15 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
             tss_dict_utrs.append(utr)
             tss_dict_tags.append(locus_tag)
         tss_dict = {"Name": "TSS_" + str(tss.start) + tss.strand,
-                    "type": "&".join(tss_dict_types),
-                    "UTR_length": "&".join(tss_dict_utrs),
-                    "associated_gene": "&".join(tss_dict_tags)}
+                    "type": ",".join(tss_dict_types),
+                    "utr_length": ",".join(tss_dict_utrs),
+                    "associated_gene": ",".join(tss_dict_tags)}
     else:
         tss_dict = {"Name": "TSS_" + str(tss.start) + tss.strand,
                     "type": tss_type,
-                    "UTR_length": utr,
+                    "utr_length": utr,
                     "associated_gene": locus_tag}
-    tss_string = ";".join(["=".join(["UTR_length", tss_dict["UTR_length"]]),
+    tss_string = ";".join(["=".join(["utr_length", tss_dict["utr_length"]]),
                            "=".join(["associated_gene",
                                      tss_dict["associated_gene"]]),
                            "=".join(["type", tss_dict["type"]]),
@@ -434,7 +434,7 @@ def read_gff(tss_predict_file, tss_manual_file, gff_file):
     for entry in gff_parser.entries(tssm_fh):
         entry.attributes["print"] = False
         entry.attributes["libs"] = "manual"
-        entry.attributes["Method"] = "manual"
+        entry.attributes["method"] = "manual"
         tsss["tsss_m"].append(entry)
     tssm_fh.close()
     tsss["tsss_m"] = sorted(tsss["tsss_m"], key=lambda k: (k.seq_id, k.start,
@@ -480,7 +480,7 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
         else:
             tss = tss_p
         tss.attribute_string = define_attributes(tss)
-        tss.attributes["Method"] = "TSSpredator_manual"
+        tss.attributes["method"] = "TSSpredator,manual"
         if (not length) or \
            (tss.start <= int(length)):
             num_strain[tss.seq_id]["overlap"] += 1
@@ -502,7 +502,7 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
             tss_entry = compare_tss_gene(tss_m, genes)
             tss_m.attributes = tss_entry[1]
             tss_m.attribute_string = tss_entry[0]
-            tss_m.attributes["Method"] = "manual"
+            tss_m.attributes["method"] = "manual"
             tsss["merge"].append(tss_m)
             if (not length) or \
                (tss_m.start <= int(length)):

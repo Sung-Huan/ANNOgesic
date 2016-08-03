@@ -293,7 +293,7 @@ class ArgsContainer(object):
     def container_utr(self, tss_folder, annotation_folder,
                       transcript_assembly_folder, terminator_folder,
                       terminator_fuzzy, utr_folder, tss_source, base_5utr,
-                      length, base_3utr):
+                      length, base_3utr, fuzzy_3utr, fuzzy_5utr):
         self.tsss = tss_folder
         self.gffs = annotation_folder
         self.trans = transcript_assembly_folder
@@ -304,6 +304,8 @@ class ArgsContainer(object):
         self.base_5utr = base_5utr
         self.base_3utr = base_3utr
         self.length = length
+        self.fuzzy_3utr = fuzzy_3utr
+        self.fuzzy_5utr = fuzzy_5utr
         return self
 
     def container_srna(

@@ -72,7 +72,7 @@ def compare_srna_term(srna_gff, srna_table, term_file, fuzzy_b, fuzzy_a):
                 srna.attributes["with_term"] = srna.attributes["end_cleavage"]
             elif (srna.attributes["end_cleavage"] != "NA") and (
                     "with_term" in srna.attributes.keys()):
-                srna.attributes["with_term"] = "&".join([
+                srna.attributes["with_term"] = ",".join([
                     srna.attributes["with_term"],
                     srna.attributes["end_cleavage"]])
         if detect:

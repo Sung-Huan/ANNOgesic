@@ -46,6 +46,7 @@ class TestDetectUTR(unittest.TestCase):
         utr_strain = {"pri": {"aaa": []}, "all": {"aaa": []}, "sec": {"aaa": []}}
         args.source = True
         args.base_5utr = "both"
+        args.fuzzy_5utr = 5
         detect = du.import_utr(self.example.tss_fit, utr_strain, utr_all, 140, 340,
                                self.example.tas, 200, args)
         self.assertTrue(detect[0])
@@ -173,6 +174,7 @@ class TestDetectUTR(unittest.TestCase):
         args = self.mock_args.mock()
         args.length = 300
         args.base_3utr = "transcript"
+        args.fuzzy_3utr = 10
         du.get_3utr(ta, cds, utr_all, utr_strain, attributes, 0, out, args)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]), set(self.example.out_3utr.split("\n")))
         out.close()
@@ -190,12 +192,12 @@ class TestDetectUTR(unittest.TestCase):
         args = self.mock_args.mock()
         args.fuzzy = 5
         args.base_3utr = "transcript"
+        args.fuzzy_3utr = 10
         args.length = 300
         du.read_file = Mock_func().mock_read_file
         du.plot = Mock_func().mock_plot
         out_file = os.path.join(self.test_folder, "3utr.gff")
         du.detect_3utr("test.ta", "test.gff", "test.term", out_file, args)
-#        du.detect_3utr("test.ta", "test.gff", "test.term", 5, out_file)
         datas = import_data(out_file)
         self.assertEqual(set(datas), set(self.example.out_3utr_gff.split("\n")))
 
@@ -253,12 +255,12 @@ class Example(object):
     attributes_cds = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001", "protein_id": "YP_000001", "Parent": "gene0"},
                       {"ID": "rna0", "Name": "rRNA_0", "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
-    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tran=Transcript:140-367_+"""
-    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;TSS_type=Primary;associated_tran=Transcript:140-367_+"""
-    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;associated_tran=Transcript:140-367_+"""
-    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;associated_tran=Transcript:138-540_+"""
+    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;parent_tran=Transcript:140-367_+"""
+    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;TSS_type=Primary;parent_tran=Transcript:140-367_+"""
+    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;parent_tran=Transcript:140-367_+"""
+    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;parent_tran=Transcript:138-540_+"""
     out_3utr_gff = """##gff-version 3
-aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;associated_tran=Transcript:140-367_+"""
+aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;parent_tran=Transcript:140-367_+"""
     tas = []
     tsss = []
     terms = []

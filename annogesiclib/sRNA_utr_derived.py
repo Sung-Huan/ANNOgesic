@@ -550,7 +550,7 @@ def print_file(num, srna, start, end, srna_datas, args_srna):
             ["start_cleavage", srna["start_cleavage"]],
             ["end_cleavage", srna["end_cleavage"]]]])
     args_srna.out.write("\t".join([str(field) for field in [
-                        srna["strain"], "ANNOgesic", "sRNA", str(start),
+                        srna["strain"], "ANNOgesic", "ncRNA", str(start),
                         str(end), ".", srna["strand"], ".",
                         attribute_string]]) + "\n")
     if not args_srna.table_best:

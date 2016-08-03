@@ -97,10 +97,10 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
               ("associated_tss", tss.attributes["Name"])]])
     if source:
         attribute_string = ";".join([
-            attribute_string, "=".join(["TSS_type", tss.attributes["type"]])])
+            attribute_string, "=".join(["tss_type", tss.attributes["type"]])])
     if ta is not None:
         attribute_string = ";".join([
-            attribute_string, "=".join(["associated_tran", "Transcript:" +
+            attribute_string, "=".join(["parent_tran", "Transcript:" +
                                         str(ta.start) + "-" + str(ta.end) +
                                         "_" + ta.strand])])
     out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
@@ -226,8 +226,8 @@ def get_5utr_from_TSSpredator(tss, genes, cdss):
     cds_name = "NA"
     if ("Primary" in tss.attributes["type"]) or \
        ("Secondary" in tss.attributes["type"]):
-        ass_gene = tss.attributes["associated_gene"].split("&")
-        tss_type = tss.attributes["type"].split("&")
+        ass_gene = tss.attributes["associated_gene"].split(",")
+        tss_type = tss.attributes["type"].split(",")
         for index in range(len(tss_type)):
             if (tss_type[index] == "Primary") or \
                (tss_type[index] == "Secondary"):
@@ -361,7 +361,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
                             gene_name = get_gene_name(genes, cds)
                             string = get_attribute_string(
                                 num_utr, length, cds, gene_name, ta, "utr5",
-                                "5'UTR", "associated_tran", "Transcript:")
+                                "5'UTR", "parent_tran", "Transcript:")
                             detect = True
                             start = ta.start
                             end = cds.start
@@ -383,7 +383,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
             gene_name = get_gene_name(genes, near_cds)
             string = get_attribute_string(
                 num_utr, length, near_cds, gene_name,
-                ta, "utr5", "5'UTR", "associated_tran", "Transcript:")
+                ta, "utr5", "5'UTR", "parent_tran", "Transcript:")
             start = near_cds.end
             end = ta.end
         if detect:
@@ -465,7 +465,7 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
         utr_strain[ta.seq_id].append(length)
     attributes.append("=".join(["length", str(length)]))
     attributes.append("=".join([
-        "associated_tran", "Transcript:" + str(ta.start) +
+        "parent_tran", "Transcript:" + str(ta.start) +
         "-" + str(ta.end) + "_" + ta.strand]))
     attribute = ";".join(attributes)
     if (length <= args_utr.length) and (length > 0):

@@ -125,7 +125,7 @@ def get_stat_num(sorfs_all, utr_detect):
 def check_class(sorf, nums, sorf_type, utr_detect, strain):
     if (sorf.attributes["with_TSS"] != "NA") and \
        (sorf.attributes["sRNA"] == "NA") and \
-       (sorf.attributes["RBS"] != "NA"):
+       (sorf.attributes["rbs"] != "NA"):
         plus_data(nums, "total", [sorf_type, "all"],
                   ["all", "TSS", "sRNA", "RBS", "TSS_RBS",
                    "TSS_sRNA_RBS", "TSS_sRNA", "RBS_sRNA"], utr_detect)
@@ -139,12 +139,12 @@ def check_class(sorf, nums, sorf_type, utr_detect, strain):
         plus_data(nums, strain, [sorf_type, "all"],
                   ["all", "TSS", "sRNA", "TSS_sRNA"], utr_detect)
     elif (sorf.attributes["with_TSS"] != "NA") and \
-         (sorf.attributes["RBS"] != "NA"):
+         (sorf.attributes["rbs"] != "NA"):
         plus_data(nums, "total", [sorf_type, "all"],
                   ["all", "TSS", "RBS", "TSS_RBS"], utr_detect)
         plus_data(nums, strain, [sorf_type, "all"],
                   ["all", "TSS", "RBS", "TSS_RBS"], utr_detect)
-    elif (sorf.attributes["RBS"] != "NA") and \
+    elif (sorf.attributes["rbs"] != "NA") and \
          (sorf.attributes["sRNA"] == "NA"):
         plus_data(nums, "total", [sorf_type, "all"],
                   ["all", "RBS", "sRNA", "RBS_sRNA"], utr_detect)
@@ -160,7 +160,7 @@ def check_class(sorf, nums, sorf_type, utr_detect, strain):
                   ["all", "sRNA"], utr_detect)
         plus_data(nums, strain, [sorf_type, "all"],
                   ["all", "sRNA"], utr_detect)
-    elif sorf.attributes["RBS"] != "NA":
+    elif sorf.attributes["rbs"] != "NA":
         plus_data(nums, "total", [sorf_type, "all"],
                   ["all", "RBS"], utr_detect)
         plus_data(nums, strain, [sorf_type, "all"],

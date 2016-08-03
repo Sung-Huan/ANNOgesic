@@ -49,7 +49,7 @@ class TestGensRNAOutput(unittest.TestCase):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
         attributes_tss = {"ID": "CDS0", "Name": "CDS_0", "type": "Primary",
-                          "associated_gene": "AAA_00001", "UTR_length": "Primary_25"}
+                          "associated_gene": "AAA_00001", "utr_length": "Primary_25"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
         tss_entry = {"locus": "AAA_00001"}
         mm.fix_attributes(tss, tss_entry)
@@ -60,16 +60,16 @@ class TestGensRNAOutput(unittest.TestCase):
                      "end": 3, "phase": ".", "strand": "+", "score": "."},
                     {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 5,
                      "end": 5, "phase": ".", "strand": "+", "score": "."}]
-        attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary&Primary",
-                           "associated_gene": "AAA_00001&AAA_00002", "UTR_length": "Primary_25&Primary_200"},
-                          {"ID": "CDS1", "Name": "CDS_1", "type": "Primary&Antisense",
-                           "associated_gene": "AAA_00003&AAA_00004", "UTR_length": "Primary_25&Antisense_NA"}]
+        attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary,Primary",
+                           "associated_gene": "AAA_00001,AAA_00002", "utr_length": "Primary_25,Primary_200"},
+                          {"ID": "CDS1", "Name": "CDS_1", "type": "Primary,Antisense",
+                           "associated_gene": "AAA_00003,AAA_00004", "utr_length": "Primary_25,Antisense_NA"}]
         tsss = []
         for index in range(0, 2):
             tsss.append(Create_generator(tss_dict[index], attributes_tss[index], "gff"))
         mm.del_repeat(tsss)
         self.assertEqual(tsss[0].attributes["type"], "Primary")
-        self.assertEqual(tsss[1].attributes["type"], "Antisense&Primary")
+        self.assertEqual(tsss[1].attributes["type"], "Antisense,Primary")
 
     def test_fix_primary_type(self):
         wigs = {"aaa": {"track_1": [{"pos": 1, "coverage": 200},
@@ -82,54 +82,54 @@ class TestGensRNAOutput(unittest.TestCase):
                      "end": 3, "phase": ".", "strand": "+", "score": "."},
                     {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 5,
                      "end": 5, "phase": ".", "strand": "+", "score": "."}]
-        attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary&Primary",
-                           "associated_gene": "AAA_00001&AAA_00002", "UTR_length": "Primary_25&Primary_200"},
-                          {"ID": "CDS1", "Name": "CDS_1", "type": "Primary&Antisense",
-                           "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_27&Antisense_NA"}]
+        attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary,Primary",
+                           "associated_gene": "AAA_00001,AAA_00002", "utr_length": "Primary_25,Primary_200"},
+                          {"ID": "CDS1", "Name": "CDS_1", "type": "Primary,Antisense",
+                           "associated_gene": "AAA_00001,AAA_00004", "utr_length": "Primary_27,Antisense_NA"}]
         tsss = []
         for index in range(0, 2):
             tsss.append(Create_generator(tss_dict[index], attributes_tss[index], "gff"))
         mm.fix_primary_type(tsss, wigs, "test")
         self.assertEqual(tsss[0].attributes["type"], "Primary")
-        self.assertEqual(tsss[1].attributes["type"], "Antisense&Secondary")
+        self.assertEqual(tsss[1].attributes["type"], "Antisense,Secondary")
 
     def test_remove_primary(self):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss = {"ID": "CDS0", "Name": "CDS_0", "type": "Primary&Internal",
-                          "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss = {"ID": "CDS0", "Name": "CDS_0", "type": "Primary,Internal",
+                          "associated_gene": "AAA_00001,AAA_00004", "utr_length": "Primary_25,Internal_NA"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
-        tss_entry = [tss.attribute_string, {"UTR_length": "Primary_25&Internal_NA", "type": "Primary&Internal",
-                                            "associated_gene": "AAA_00001&AAA_00004"}]
+        tss_entry = [tss.attribute_string, {"utr_length": "Primary_25,Internal_NA", "type": "Primary,Internal",
+                                            "associated_gene": "AAA_00001,AAA_00004"}]
         tss_output = mm.remove_primary(tss, tss_entry)
-        self.assertEqual(tss_output[0], 'UTR_length=Internal_NA;associated_gene=AAA_00004;type=Internal;Name=TSS_3+')
+        self.assertEqual(tss_output[0], 'utr_length=Internal_NA;associated_gene=AAA_00004;type=Internal;Name=TSS_3+')
         self.assertDictEqual(tss_output[1], {'associated_gene': 'AAA_00004', 'type': 'Internal',
-                                             'Name': 'TSS_3+', 'UTR_length': 'Internal_NA'})
+                                             'Name': 'TSS_3+', 'utr_length': 'Internal_NA'})
 
     def test_import_to_tss(self):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss = {"ID": "CDS0", "Name": "CDS_0", "type": "Primary&Internal",
-                          "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss = {"ID": "CDS0", "Name": "CDS_0", "type": "Primary,Internal",
+                          "associated_gene": "AAA_00001,AAA_00004", "utr_length": "Primary_25,Internal_NA"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
-        tss_entry = [tss.attribute_string, {"UTR_length": "Primary_25&Internal_NA", "type": "Primary&Internal",
-                                            "associated_gene": "AAA_00001&AAA_00004"}]
+        tss_entry = [tss.attribute_string, {"utr_length": "Primary_25,Internal_NA", "type": "Primary,Internal",
+                                            "associated_gene": "AAA_00001,AAA_00004"}]
         tss_type = "Primary"
         cds_pos = 10
         locus_tag = "AAA_00001"
         output = mm.import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry)
-        self.assertEqual(output[0], 'UTR_length=Primary_7&Internal_NA;associated_gene=AAA_00001&AAA_00004;type=Primary&Internal;Name=TSS_3+')
-        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'UTR_length': 'Primary_7&Internal_NA',
-                                         'type': 'Primary&Internal', 'associated_gene': 'AAA_00001&AAA_00004'})
+        self.assertEqual(output[0], 'utr_length=Primary_7,Internal_NA;associated_gene=AAA_00001,AAA_00004;type=Primary,Internal;Name=TSS_3+')
+        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'utr_length': 'Primary_7,Internal_NA',
+                                         'type': 'Primary,Internal', 'associated_gene': 'AAA_00001,AAA_00004'})
 
     def test_same_strand_tss_gene(self):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                          "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                          "associated_gene": "AAA_00001,AAA_00004", "utr_length": "Primary_25,Internal_NA"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
-        tss_entry = [tss.attribute_string, {"UTR_length": "Primary_25&Internal_NA", "type": "Primary&Internal",
-                                            "associated_gene": "AAA_00001&AAA_00004"}]
+        tss_entry = [tss.attribute_string, {"utr_length": "Primary_25,Internal_NA", "type": "Primary,Internal",
+                                            "associated_gene": "AAA_00001,AAA_00004"}]
         anti_ends = {"forward": 1, "reverse": -1}
         gene_ends = {"forward": -1, "reverse": -1}
         gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 6,
@@ -138,17 +138,17 @@ class TestGensRNAOutput(unittest.TestCase):
         gene = Create_generator(gff_dict, attributes_gff, "gff")
         checks = {"orphan": False, "int_anti": False}
         output = mm.same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry)
-        self.assertEqual(output[0], 'UTR_length=Primary_3&Internal_NA;associated_gene=AAA_00001&AAA_00004;type=Primary&Internal;Name=TSS_3+')
-        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'UTR_length': 'Primary_3&Internal_NA',
-                                         'type': 'Primary&Internal', 'associated_gene': 'AAA_00001&AAA_00004'})
+        self.assertEqual(output[0], 'utr_length=Primary_3,Internal_NA;associated_gene=AAA_00001,AAA_00004;type=Primary,Internal;Name=TSS_3+')
+        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'utr_length': 'Primary_3,Internal_NA',
+                                         'type': 'Primary,Internal', 'associated_gene': 'AAA_00001,AAA_00004'})
 
     def test_diff_strand_tss_gene(self):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                          "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                          "associated_gene": "AAA_00001,AAA_00004", "utr_length": "Primary_25,Internal_NA"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
-        tss_entry = [tss.attribute_string, {"UTR_length": "Primary_25", "type": "Primary",
+        tss_entry = [tss.attribute_string, {"utr_length": "Primary_25", "type": "Primary",
                                             "associated_gene": "AAA_00001"}]
         anti_ends = {"forward": 1, "reverse": -1}
         gene_ends = {"forward": -1, "reverse": -1}
@@ -158,36 +158,36 @@ class TestGensRNAOutput(unittest.TestCase):
         gene = Create_generator(gff_dict, attributes_gff, "gff")
         checks = {"orphan": False, "int_anti": False}
         output = mm.diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry)
-        self.assertEqual(output[0], 'UTR_length=Primary_25&Antisense_NA;associated_gene=AAA_00001&AAA_00005;type=Primary&Antisense;Name=TSS_3+')
-        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'UTR_length': 'Primary_25&Antisense_NA',
-                                         'type': 'Primary&Antisense', 'associated_gene': 'AAA_00001&AAA_00005'})
+        self.assertEqual(output[0], 'utr_length=Primary_25,Antisense_NA;associated_gene=AAA_00001,AAA_00005;type=Primary,Antisense;Name=TSS_3+')
+        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'utr_length': 'Primary_25,Antisense_NA',
+                                         'type': 'Primary,Antisense', 'associated_gene': 'AAA_00001,AAA_00005'})
 
     def test_compare_tss_gene(self):
         tss_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                     "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                          "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                          "associated_gene": "AAA_00001,AAA_00004", "UTR_length": "Primary_25,Internal_NA"}
         tss = Create_generator(tss_dict, attributes_tss, "gff")
         output = mm.compare_tss_gene(tss, self.example.genes)
-        self.assertEqual(output[0], 'UTR_length=Primary_3;associated_gene=AAA_00001;type=Primary;Name=TSS_3+')
-        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'UTR_length': 'Primary_3',
+        self.assertEqual(output[0], 'utr_length=Primary_3;associated_gene=AAA_00001;type=Primary;Name=TSS_3+')
+        self.assertDictEqual(output[1], {'Name': 'TSS_3+', 'utr_length': 'Primary_3',
                                          'type': 'Primary', 'associated_gene': 'AAA_00001'})
 
     def test_check_overlap(self):
         tss_m_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 7,
                       "end": 7, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss_m = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                            "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss_m = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                            "associated_gene": "AAA_00001,AAA_00004", "UTR_length": "Primary_25,Internal_NA"}
         tss_m = Create_generator(tss_m_dict, attributes_tss_m, "gff")
         tss_p_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 7,
                       "end": 7, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss_p = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                            "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss_p = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                            "associated_gene": "AAA_00001,AAA_00004", "UTR_length": "Primary_25,Internal_NA"}
         tss_p = Create_generator(tss_p_dict, attributes_tss_p, "gff")
         tss_pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                         "end": 3, "phase": ".", "strand": "+", "score": "."}
-        attributes_tss_pre = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary&Internal",
-                              "associated_gene": "AAA_00001&AAA_00004", "UTR_length": "Primary_25&Internal_NA"}
+        attributes_tss_pre = {"ID": "TSS0", "Name": "TSS_0", "type": "Primary,Internal",
+                              "associated_gene": "AAA_00001,AAA_00004", "UTR_length": "Primary_25,Internal_NA"}
         tss_pre = Create_generator(tss_pre_dict, attributes_tss_pre, "gff")
         nums = {"tss_p": 0, "tss_m": 0, "tss": 0}
         tsss = {"tsss_p":[], "tsss_m": [], "merge": []}
@@ -221,20 +221,20 @@ class Example(object):
                  "end": 16, "phase": ".", "strand": "-", "score": "."},
                 {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 54,
                  "end": 54, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary", "associated_gene": "AAA_00001", "UTR_length": "Primary_25"},
-                      {"ID": "CDS1", "Name": "CDS_1", "type": "Internal", "associated_gene": "AAA_00002", "UTR_length": "Internal_NA"},
-                      {"ID": "CDS2", "Name": "CDS_2", "type": "Primary&Antisense",
-                       "associated_gene": "AAA_00004&AAA_00006", "UTR_length": "Primary_25&Internal_NA"}]
+    attributes_tss = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary", "associated_gene": "AAA_00001", "utr_length": "Primary_25"},
+                      {"ID": "CDS1", "Name": "CDS_1", "type": "Internal", "associated_gene": "AAA_00002", "utr_length": "Internal_NA"},
+                      {"ID": "CDS2", "Name": "CDS_2", "type": "Primary,Antisense",
+                       "associated_gene": "AAA_00004,AAA_00006", "utr_length": "Primary_25,Internal_NA"}]
     tss2_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 3,
                   "end": 3, "phase": ".", "strand": "+", "score": "."},
                  {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 18,
                   "end": 18, "phase": ".", "strand": "-", "score": "."},
                  {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 23,
                   "end": 23, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tss2 = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary", "associated_gene": "AAA_00001", "UTR_length": "Primary_25"},
-                       {"ID": "CDS1", "Name": "CDS_1", "type": "Internal", "associated_gene": "AAA_00002", "UTR_length": "Internal_NA"},
-                       {"ID": "CDS2", "Name": "CDS_2", "type": "Primary&Antisense",
-                        "associated_gene": "AAA_00004&AAA_00006", "UTR_length": "Primary_25&Internal_NA"}]
+    attributes_tss2 = [{"ID": "CDS0", "Name": "CDS_0", "type": "Primary", "associated_gene": "AAA_00001", "utr_length": "Primary_25"},
+                       {"ID": "CDS1", "Name": "CDS_1", "type": "Internal", "associated_gene": "AAA_00002", "utr_length": "Internal_NA"},
+                       {"ID": "CDS2", "Name": "CDS_2", "type": "Primary,Antisense",
+                        "associated_gene": "AAA_00004,AAA_00006", "utr_length": "Primary_25,Internal_NA"}]
     gff_dict = [{"start": 6, "end": 15, "phase": ".",
                  "strand": "+", "seq_id": "aaa", "score": ".",
                  "source": "Refseq", "feature": "gene"},

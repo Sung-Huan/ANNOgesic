@@ -111,7 +111,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         tsss = copy.deepcopy(self.example.tsss)
         si.compare_ta_tss(10, 2, 15, tas[0], tsss[0], 50, "cutoff",
                           20, "", args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tsRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
         si.get_coverage = get_coverage
 
@@ -162,7 +162,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         tas = copy.deepcopy(self.example.tas)
         si.detect_include_tss(tas[0], args)
         si.get_coverage = get_coverage
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_get_differential_cover(self):
@@ -285,7 +285,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.output = output
         args.tolerance = 5
         si.detect_wig_pos(self.example.wigs, tas[0], 20, 70, "TSS_160+", 10, 20, args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tsRNA\t20\t190\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t20\t190\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t20\t190\t+\tcond1\ttest1\t40\t50\t10\t\n")
 
     def test_detect_longer(self):
@@ -319,7 +319,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.output = output
         args.out_table = out_table
         si.detect_longer(tas[0], args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_get_proper_tss(self):
@@ -361,7 +361,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.cutoff_coverage = coverage
         args.out_table = out_table
         si.check_srna_condition(tas[0], args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tsRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_intergenic_srna(self):

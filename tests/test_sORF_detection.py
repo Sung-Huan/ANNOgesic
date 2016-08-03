@@ -192,7 +192,7 @@ class TestsORFDetection(unittest.TestCase):
                 "type": "3utr", "print": False, "rbs": ["1"], "start_TSS": "1",
                 "with_TSS": "NA", "srna": "NA", "shift": 1}
         string = sd.get_attribute(1, "sORF_1", "4", sorf, "utr")
-        self.assertEqual(string, "ID=sorf1;Name=sORF_sORF_1;start_TSS=4;with_TSS=N&A;sORF_type=3utr;sRNA=N&A;RBS=1;frame_shift=1")
+        self.assertEqual(string, "ID=sorf1;Name=sORF_sORF_1;start_TSS=4;with_TSS=N,A;sORF_type=3utr;sRNA=N,A;rbs=1;frame_shift=1")
 
     def test_print_file(self):
         out_g = StringIO()
@@ -207,7 +207,7 @@ class TestsORFDetection(unittest.TestCase):
         args.table_best = True
         args.print_all = True
         sd.print_file(sorf, sorf_datas, 1, out_g, out_t, "best", args)
-        self.assertEqual(out_g.getvalue(), "aaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;sORF_type=3utr;sRNA=NA;RBS=RBS_3;frame_shift=1\n")
+        self.assertEqual(out_g.getvalue(), "aaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;sORF_type=3utr;sRNA=NA;rbs=RBS_3;frame_shift=1\n")
         self.assertEqual(out_t.getvalue(), "aaa\tsORF_00001\t10\t15\t+\t3'UTR_derived\tNA\tRBS_3\t10\t15\tNA\t1\tFragmented\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
 
     def test_print_table(self):
@@ -302,7 +302,7 @@ class TestsORFDetection(unittest.TestCase):
         sd.coverage_and_output(sorfs, "median", wigs, out_g, out_t,
                                "best", seq, "cover", args, "texs")
         sd.get_coverage = copy.deepcopy(get_coverage)
-        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=1;with_TSS=TSS_3+;sORF_type=3utr;sRNA=NA;RBS=RBS_1;frame_shift=1\n")
+        self.assertEqual(out_g.getvalue(), "##gff-version 3\naaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=sorf0;Name=sORF_00000;start_TSS=1;with_TSS=TSS_3+;sORF_type=3utr;sRNA=NA;rbs=RBS_1;frame_shift=1\n")
         self.assertEqual(out_t.getvalue().split("\n")[1], "aaa\tsORF_00000\t10\t15\t+\t3'UTR_derived\tTSS_3+\tRBS_1\t10\t15\tNA\t1\tFragmented\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tGCTATG\t10-15_TSS:3+_RBS:1")
 
     def test_detect_inter_type(self):

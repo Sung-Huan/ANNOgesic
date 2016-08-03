@@ -80,7 +80,7 @@ class OperonDetection(object):
     def _combine_gff(self, prefixs, args_op):
         for prefix in prefixs:
             out_file = os.path.join(args_op.output_folder, "gffs",
-                                    "_".join([prefix, "all_features.gff"]))
+                                    "_".join([prefix, "operon.gff"]))
             print("Combine all features of {0}".format(prefix))
             tss = self.helper.get_correct_file(
                     self.tss_path, "_TSS.gff", prefix, None, None)

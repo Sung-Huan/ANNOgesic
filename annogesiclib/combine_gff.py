@@ -12,13 +12,30 @@ def read_file(filename):
 
 
 def del_attributes(entry):
-    if "Parent_tran" in entry.attributes.keys():
-        del entry.attributes["Parent_tran"]
+    if (entry.feature == "CDS") or (
+            entry.feature == "tRNA") or (
+            entry.feature == "rRNA") or (
+            entry.feature == "exon"):
+        pass
+    else:
+        if "Parent" in entry.attributes.keys():
+            del entry.attributes["Parent"]
 
 
 def print_file(entry, tran, out):
-    out.write("".join([entry.info, ";Parent_tran=",
-                       str(tran.attributes["ID"]), "\n"]))
+    if "Parent" in entry.attributes.keys():
+        entry.attributes["Parent"] = ",".join([entry.attributes["Parent"],
+                                               str(tran.attributes["ID"])])
+    else:
+        entry.attributes["Parent"] = str(tran.attributes["ID"])
+    attributes = {}
+    for key, value in entry.attributes.items():
+        if (key != "print") and (key != "parent_tran"):
+            attributes[key] = value
+    attribute_string = ";".join(
+        ["=".join(items) for items in attributes.items()])
+    out.write("".join([entry.info_without_attributes, "\t",
+                       attribute_string, "\n"]))
     entry.attributes["print"] = True
 
 

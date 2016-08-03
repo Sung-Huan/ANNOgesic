@@ -58,7 +58,7 @@ class TestMergesRNA(unittest.TestCase):
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "pre")
-        self.assertEqual(pre.attributes["sRNA_type"], "3utr&5utr")
+        self.assertEqual(pre.attributes["sRNA_type"], "3utr,5utr")
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar2 = Create_generator(tar2_dict, attributes_tar2, "gff")
         ms.modify_attributes(pre, tar2, "UTR", "pre")
@@ -67,7 +67,7 @@ class TestMergesRNA(unittest.TestCase):
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "current")
         self.assertEqual(pre.attributes["sRNA_type"], "5utr")
-        self.assertEqual(tar1.attributes["sRNA_type"], "3utr&5utr")
+        self.assertEqual(tar1.attributes["sRNA_type"], "3utr,5utr")
 
     def test_detect_overlap(self):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
@@ -93,7 +93,7 @@ class TestMergesRNA(unittest.TestCase):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                     "end": 33, "phase": ".", "strand": "+", "score": "."}
         attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr", "with_TSS": "NA",
-                          "start_cleavage": "cleavage_1&cleavage_2", "end_cleavage": "NA"}
+                          "start_cleavage": "cleavage_1,cleavage_2", "end_cleavage": "NA"}
         tar_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 5,
                     "end": 30, "phase": ".", "strand": "+", "score": "."}
         attributes_tar = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr", "with_TSS": "TSS_1",
@@ -102,7 +102,7 @@ class TestMergesRNA(unittest.TestCase):
         tar = Create_generator(tar_dict, attributes_tar, "gff")
         pre_srna = ms.modify_overlap(pre, tar)
         self.assertEqual(pre_srna.attributes["with_TSS"], "TSS_1")
-        self.assertEqual(pre_srna.attributes["start_cleavage"], "cleavage_1&cleavage_2&cleavage3")
+        self.assertEqual(pre_srna.attributes["start_cleavage"], "cleavage_1,cleavage_2,cleavage3")
         self.assertEqual(pre_srna.attributes["end_cleavage"], "cleavage10")
         self.assertEqual(pre_srna.start, 3)
         self.assertEqual(pre_srna.end, 33)
@@ -114,7 +114,7 @@ class TestMergesRNA(unittest.TestCase):
         self.assertEqual(srnas[1].start, 54)
         self.assertEqual(srnas[0].attributes["with_TSS"], "TSS_1")
         self.assertEqual(srnas[1].attributes["with_TSS"], "TSS_3")
-        self.assertEqual(srnas[0].attributes["start_cleavage"], "cleavage_1&cleavage_2&cleavage_3")
+        self.assertEqual(srnas[0].attributes["start_cleavage"], "cleavage_1,cleavage_2,cleavage_3")
         self.assertEqual(srnas[1].attributes["start_cleavage"], "cleavage_4")
         srnas = ms.merge_srna(self.example.srnas_int, "inter")
         self.assertEqual(srnas[0].attributes["with_TSS"], "TSS_1")
@@ -127,8 +127,8 @@ class TestMergesRNA(unittest.TestCase):
         gffs = {"merge": out_file, "utr": "UTR", "normal": "inter"}
         ms.merge_srna_gff(gffs, False, 0.5, os.path.join(self.test_folder, "aaa.gff"))
         datas, attributes = extract_info(out_file, "file")
-        self.assertListEqual(datas, ['aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.',
-                                     'aaa\tANNOgesic\tsRNA\t54\t254\t.\t+\t.'])
+        self.assertListEqual(datas, ['aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.',
+                                     'aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.'])
         self.assertEqual(set(attributes[0]), set(['overlap_percent=NA', 'end_cleavage=cleavage_40',
                                                   'start_cleavage=cleavage_4', 'Name=sRNA_00000',
                                                   'with_TSS=TSS_3', 'ID=srna0', 'sRNA_type=interCDS',
@@ -196,14 +196,14 @@ class TestMergesRNA(unittest.TestCase):
 
 class Example(object):
     gff_file =  "aaa\tRefSeq\tCDS\t1\t100\t.\t+\t.\tID=CDS_1;Name=CDS_1"
-    srna_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
+    srna_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "ncRNA", "start": 3,
                   "end": 33, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 5,
+                 {"seq_id": "aaa", "source": "Refseq", "feature": "ncRNA", "start": 5,
                   "end": 30, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 54,
+                 {"seq_id": "aaa", "source": "Refseq", "feature": "ncRNA", "start": 54,
                   "end": 254, "phase": ".", "strand": "+", "score": "."}]
     attributes_utr = [{"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr",
-                        "with_TSS": "NA", "start_cleavage": "cleavage_1&cleavage_2", "end_cleavage": "NA",},
+                        "with_TSS": "NA", "start_cleavage": "cleavage_1,cleavage_2", "end_cleavage": "NA",},
                        {"ID": "sRNA1", "Name": "srna_1", "sRNA_type": "3utr",
                         "with_TSS": "TSS_1", "start_cleavage": "cleavage_3", "end_cleavage": "cleavage_30",},
                        {"ID": "sRNA2", "Name": "srna_2", "with_TSS": "TSS_3", 

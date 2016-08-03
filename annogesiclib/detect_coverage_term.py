@@ -58,7 +58,7 @@ def compare_transtermhp(hps, fr_terms):
                     hp.attributes["print"] = True
                     detect = True
         if detect:
-            term["method"] = "&".join([term["method"], "TransTermHP"])
+            term["method"] = ",".join([term["method"], "TransTermHP"])
         terms.append(term)
     for hp in hps:
         if "print" not in hp.attributes.keys():
@@ -220,7 +220,7 @@ def get_attribute_string(num, name, parent, diff, term, coverage, method):
                   ("coverage_decrease", coverage),
                   ("diff_coverage", diff),
                   ("express", term["express"]),
-                  ("Method", method)]])
+                  ("method", method)]])
     return attribute_string
 
 
@@ -265,12 +265,12 @@ def print2file(num, term, coverage, parent, out, out_t, method, args_term):
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
         out_t.write("\t".join([term["strain"], name, str(term["start"]),
-                              str(term["end"]), term["strand"], term["method"],
-                              parent]))
+                              str(term["end"]), term["strand"],
+                              term["method"].replace(",", ";"), parent]))
     else:
         out_t.write("\t".join([term["strain"], name, str(term["start"]),
-                              str(term["end"]), term["strand"], term["method"],
-                              parent]))
+                              str(term["end"]), term["strand"],
+                              term["method"].replace(",", ";"), parent]))
     if (term["express"] == "True") and (term["diff_cover"] != -1):
         if (term["diff"]["high"] >= args_term.cutoff_coverage):
             diff = ("{0}(high:{1},low:{2})".format(

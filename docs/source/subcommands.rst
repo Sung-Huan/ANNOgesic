@@ -750,15 +750,15 @@ like ``$ANNOgesic/output/processing_site``.
 
 There are some useful tags in the attributes of gff files:
 
-``Method``: The TSSs are from manual detection or `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_.
+``method``: The TSSs are from manual detection or `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_.
 
 ``type``: The type of TSSs. It could be Primary, Secondary, Internal, Antisense or Orphan.
 
-``UTR_length``: The length of UTR.
+``utr_length``: The length of UTR.
 
 ``associated_gene``: Which genes are associated with this TSS.
 
-``Parent_tran``: Which transcript are associated with this TSS, if user has compared with transcript.
+``parent_tran``: Which transcript are associated with this TSS, if user has compared with transcript.
 
 If user has compared with genome annotation files, the tag - ``start_TSS`` will appear in the gff files 
 of genome annotation. It represents the TSSs which associates with the CDS/tRNA/rRNA.
@@ -926,10 +926,10 @@ There are some useful tags in gff files.
 
 ``best_avg_coverage``: The average coverage of highest expressed library.
 
-If user has compared transcripts with genome annotations. The tag - ``Parent_tran`` will appear
+If user has compared transcripts with genome annotations. The tag - ``parent_tran`` will appear
 in the gff files of genome annotations. It will show which transcirpt that CDSs/tRNAs/rRNAs are located.
 
-If user has compared transcripts with TSSs. The tag - ``Parent_tran`` will appear
+If user has compared transcripts with TSSs. The tag - ``parent_tran`` will appear
 in the gff files of TSSs. It will show which transcripts that TSSs are located.
 
 
@@ -1127,7 +1127,7 @@ has coverage dramatic decreasing.
 
 The tags of gff files:
 
-``Method``: The method that this terminator be detected.
+``method``: The method that this terminator be detected.
 
 ``coverage_decrease``: The coverage of the terminator has dramatic decreasing or not.
 
@@ -1135,6 +1135,8 @@ The tags of gff files:
 
 ``diff_coverage``: The highest coverage and lowest coverage of the library which expresses highest.
 The numbers in parens are highest coverage and lowest coverage.
+
+``parent_tran``: If you compared transcript with terminator, this tag presents the parent transcript of terminator.
 
 utr
 -----
@@ -1155,47 +1157,54 @@ If user wants to combine the information of terminators, it also need the gff fi
 
 ::
 
-	usage: annogesic utr [-h] [--annotation_folder ANNOTATION_FOLDER]
-	                     [--TSS_folder TSS_FOLDER]
-	                     [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-	                     [--terminator_folder TERMINATOR_FOLDER] [--TSS_source]
-	                     [--base_5UTR BASE_5UTR] [--UTR_length UTR_LENGTH]
-	                     [--base_3UTR BASE_3UTR]
-	                     [--terminator_fuzzy TERMINATOR_FUZZY]
-	                     [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-	                        The path of genome annotation gff folder.
-	  --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-	                        The path of TSS folder.
-	  --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
-	                        The path of transcriptome assembly folder.
-	  --terminator_folder TERMINATOR_FOLDER, -e TERMINATOR_FOLDER
-	                        If you want to add the information of terminator, you
-	                        can assign the path of terminator folder here.
-	  --TSS_source, -s      If you generate TSS which is not from ANNOgesic,
-	                        please turn it on. Default is True(ANNOgesic).
-	  --base_5UTR BASE_5UTR, -b5 BASE_5UTR
-	                        Which information that you want to use for generating
-	                        5'UTR. TSS/transcript/both. Default is both.
-	  --UTR_length UTR_LENGTH, -l UTR_LENGTH
-	                        The maximum length of UTR. Default is 300.
-	  --base_3UTR BASE_3UTR, -b3 BASE_3UTR
-	                        Which information that you want to use for generating
-	                        3'UTR. transcript/terminantor/both. Default is
-	                        transcript.
-	  --terminator_fuzzy TERMINATOR_FUZZY, -f TERMINATOR_FUZZY
-	                        This is only for --base_3UTR which assigned by
-	                        "transcript" or "both". If the distance(nucleotides)
-	                        between terminator and the end of transcript lower
-	                        than this value, it will assign the terminator
-	                        associated with the 3'UTR. Default is 30.
+    usage: annogesic utr [-h] [--annotation_folder ANNOTATION_FOLDER]
+                         [--TSS_folder TSS_FOLDER]
+                         [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
+                         [--terminator_folder TERMINATOR_FOLDER] [--TSS_source]
+                         [--base_5UTR BASE_5UTR] [--UTR_length UTR_LENGTH]
+                         [--base_3UTR BASE_3UTR]
+                         [--terminator_fuzzy TERMINATOR_FUZZY]
+                         [--fuzzy_3utr FUZZY_3UTR] [--fuzzy_5utr FUZZY_5UTR]
+                         [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            The path of genome annotation gff folder.
+      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
+                            The path of TSS folder.
+      --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
+                            The path of transcriptome assembly folder.
+      --terminator_folder TERMINATOR_FOLDER, -e TERMINATOR_FOLDER
+                            If you want to add the information of terminator, you
+                            can assign the path of terminator folder here.
+      --TSS_source, -s      If you generate TSS which is not from ANNOgesic,
+                            please turn it on. Default is True(ANNOgesic).
+      --base_5UTR BASE_5UTR, -b5 BASE_5UTR
+                            Which information that you want to use for generating
+                            5'UTR. TSS/transcript/both. Default is both.
+      --UTR_length UTR_LENGTH, -l UTR_LENGTH
+                            The maximum length of UTR. Default is 300.
+      --base_3UTR BASE_3UTR, -b3 BASE_3UTR
+                            Which information that you want to use for generating
+                            3'UTR. transcript/terminantor/both. Default is
+                            transcript.
+      --terminator_fuzzy TERMINATOR_FUZZY, -f TERMINATOR_FUZZY
+                            This is only for --base_3UTR which assigned by
+                            "transcript" or "both". If the distance(nucleotides)
+                            between terminator and the end of transcript lower
+                            than this value, it will assign the terminator
+                            associated with the 3'UTR. Default is 30.
+      --fuzzy_3utr FUZZY_3UTR, -f3 FUZZY_3UTR
+                            If --base_3UTR includes transcript, please assign the
+                            fuzzy of 3'UTR. Default is 10 nucleotides.
+      --fuzzy_5utr FUZZY_5UTR, -f5 FUZZY_5UTR
+                            If --base_5UTR includes transcript, please assign the
+                            fuzzy of 5'UTR. Default is 5 nucleotides.
 
 - Output files
 
@@ -1213,11 +1222,11 @@ The tags of gff files:
 
 ``associated_gene``: Which genes are associated with this UTR.
 
-``associated_tran``: Which transcript is associated with this UTR.
+``parent_tran``: Which transcript is associated with this UTR.
 
 ``associated_tss``: Which TSSs are associated with this 5'UTR.
 
-``TSS_type``: What types of TSSs are associated with this 5'UTR.
+``tss_type``: What types of TSSs are associated with this 5'UTR.
 
 ``associated_term``: Which terminators are associated with this 3'UTR.
 
@@ -1949,7 +1958,7 @@ The tags of gff files:
 
 ``sRNA``: Which sRNAs overlap with the the region of sORFs.
 
-``RBS``: The ribosomal binding sites of the region of sORFs.
+``rbs``: The ribosomal binding sites of the region of sORFs.
 
 ``frame_shift``: How many frame shifts in the regions of sORFs.
 
@@ -2121,7 +2130,8 @@ If user wants to import the information of terminators, ``operon`` can integrate
 All output files will be stored in ``$ANNOgesic/output/operon``.
 
 ``gffs``: The gff files which integrate the information of TSSs, annotations, 
-transcripts, 5'UTRs, and 3'UTRs.
+transcripts, 5'UTRs, and 3'UTRs and assign parent transcript to all features (presented by 
+``Parent`` in gff file and remove ``parent_tran``).
 
 ``tables``: The tables of operons which store all information of operons and suboperons.
 
@@ -3079,3 +3089,56 @@ exist in the folder of ``screenshots``.
 - Output files
 
 The new screenshots will replace the previous ones automatically.
+
+merge_features
+--------------
+If you want to put all features to become one gff file, ``merge_features`` can achieve this purpose. 
+It will merge all features that user assigned and search the parent transcript to each feature.
+
+
+- Arguments
+
+::
+
+     usage: annogesic merge_features [-h] [--transcript_path TRANSCRIPT_PATH]
+                                     [--other_features_path OTHER_FEATURES_PATH]
+                                     [--fuzzy_term FUZZY_TERM]
+                                     [--fuzzy_TSS FUZZY_TSS]
+                                     [--strain_name STRAIN_NAME]
+                                     [project_path]
+     
+     positional arguments:
+       project_path          Path of the project folder. If none is given, the
+                             current directory is used.
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
+                             If you have transcript gff file, please assign the
+                             path here. The output will be generated based on
+                             transcripts and assign "Parent_tran" to each feature
+                             in attributes of gff file. If there is no transcript,
+                             the output will just simply combine all input gff
+                             files.
+       --other_features_path OTHER_FEATURES_PATH, -of OTHER_FEATURES_PATH
+                             Please assign the gff files of other features which
+                             you want to merge.
+       --fuzzy_term FUZZY_TERM, -fm FUZZY_TERM
+                             If you want to merge terminators, please assign the
+                             fuzzy between transcript and terminator here.
+                             ATTENTION, the third column of gff file of terminator
+                             should be exactly "Terminator". Default is 30.
+       --fuzzy_TSS FUZZY_TSS, -ft FUZZY_TSS
+                             If you want to merge terminators, please assign the
+                             fuzzy between TSS and transcript. ATTENTION, the third
+                             column of gff file of terminator should be exactly
+                             "TSS". Default is 5.
+       --strain_name STRAIN_NAME, -s STRAIN_NAME
+                             Please assign the strain name of the input files. It
+                             will become the prefix name of output gff file.
+
+-Output files
+
+The gff file will be stored in ``merge_all_features``. The tag - ``Parent`` in attributes of 
+gff file shows the parent transcript. If there are ``parent_tran`` in attributes of input gff files, 
+it will be removed.

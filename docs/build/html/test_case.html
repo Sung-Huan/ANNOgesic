@@ -68,6 +68,7 @@
 <li><a class="reference internal" href="#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
 <li><a class="reference internal" href="#generating-riboswitch">Generating riboswitch</a></li>
 <li><a class="reference internal" href="#detection-of-crispr">Detection of CRISPR</a></li>
+<li><a class="reference internal" href="#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
 <li><a class="reference internal" href="#producing-the-screenshots">Producing the screenshots</a></li>
 <li><a class="reference internal" href="#coloring-the-screenshots">Coloring the screenshots</a></li>
 </ul>
@@ -588,7 +589,7 @@ detect operons and suboperons. You can use the subcommand <code class="docutils 
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/operons/
 gffs  statistics  tables
 $ ls ANNOgesic/output/operons/gffs/
-NC_000915.1_all_features.gff
+NC_000915.1_operon.gff
 $ ls ANNOgesic/output/operons/tables/
 operon_NC_000915.1.csv
 $ ls ANNOgesic/output/operons/statistics/
@@ -1144,7 +1145,7 @@ please follow the commands to get the other strain.</p>
 <p>First, we download the fasta and gff files of the other strain.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>rm -rf ANNOgesic/output/target/annotation
 rm -rf ANNOgesic/output/target/fasta
-FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/
+FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1
 annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
 </pre></div>
 </div>
@@ -1161,8 +1162,37 @@ annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
 <dt>::</dt>
 <dd>rm -rf ANNOgesic/output/target/annotation
 rm -rf ANNOgesic/output/target/fasta
-FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
+FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1
 annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic</dd>
+</dl>
+</div>
+<div class="section" id="merge-all-features-to-be-one-gff-file">
+<h2>Merge all features to be one gff file<a class="headerlink" href="#merge-all-features-to-be-one-gff-file" title="Permalink to this headline">¶</a></h2>
+<p>Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features to be
+one gff file is convient to use for genome browser. <code class="docutils literal"><span class="pre">merge_features</span></code> is the subcommand to achieve
+this purpose. Moreover, <code class="docutils literal"><span class="pre">merge_features</span></code> can find the parent transcript to each feature that
+you assigned. It can reveal the relationship between all features.</p>
+<p>Now let&#8217;s do it. We merge all features that we have.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff,ANNOgesic/output/target/annotation/NC_000915.1.gff,ANNOgesic/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,ANNOgesic/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,ANNOgesic/output/terminator/gffs/best/NC_000915.1_term.gff,ANNOgesic/output/processing_site/gffs/NC_000915.1_processing.gff,ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff</dd>
+</dl>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>annogesic merge_features </dt>
+<dd><p class="first">-a ANNOgesic/output/transcriptome_assembly/gffs/NC_000915.1_transcript.gff -of $ALL_FEATURES-s NC_000915.1 </p>
+<blockquote class="last">
+<div>ANNOgesic</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>The output gff file will be store in <code class="docutils literal"><span class="pre">merge_all_features</span></code></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>$ ls ANNOgesic/output/merge_all_features/
+NC_000915.1_merge_features.gff</dd>
 </dl>
 </div>
 <div class="section" id="producing-the-screenshots">

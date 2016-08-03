@@ -427,9 +427,9 @@ def get_attribute(num, name, start_tss, sorf, type_):
                 ["ID", "sorf" + str(num)],
                 ["Name", "sORF_" + name],
                 ["start_TSS", start_tss],
-                ["with_TSS", "&".join(sorf["with_TSS"])],
-                ["sRNA", "&".join(sorf["srna"])],
-                ["RBS", "&".join(sorf["rbs"])],
+                ["with_TSS", ",".join(sorf["with_TSS"])],
+                ["sRNA", ",".join(sorf["srna"])],
+                ["rbs", ",".join(sorf["rbs"])],
                 ["frame_shift", str(sorf["shift"])],
                 ["sORF_type", type_])])
     else:
@@ -438,10 +438,10 @@ def get_attribute(num, name, start_tss, sorf, type_):
                 ["ID", "sorf" + str(num)],
                 ["Name", "sORF_" + name],
                 ["start_TSS", start_tss],
-                ["with_TSS", "&".join(sorf["with_TSS"])],
+                ["with_TSS", ",".join(sorf["with_TSS"])],
                 ["sORF_type", sorf["type"]],
-                ["sRNA", "&".join(sorf["srna"])],
-                ["RBS", "&".join(sorf["rbs"])],
+                ["sRNA", ",".join(sorf["srna"])],
+                ["rbs", ",".join(sorf["rbs"])],
                 ["frame_shift", str(sorf["shift"])])])
     return attribute_string
 

@@ -435,7 +435,7 @@ class TestsRNAUTR(unittest.TestCase):
                   'type': 'frag', 'low': 10, 'high': 50, "conds": ["frag"]}]}, 'end_cleavage': 'NA',
                   'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+'}]
         sud.detect_srna(median, args)
-        self.assertEqual(args.out.getvalue(), "aaa\tANNOgesic\tsRNA\t18\t20\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
+        self.assertEqual(args.out.getvalue(), "aaa\tANNOgesic\tncRNA\t18\t20\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
         self.assertEqual(args.out_t.getvalue(), "aaa\t00000\t18\t20\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=500;high=700;low=400)\n")
 
     def test_print_file(self):
@@ -460,7 +460,7 @@ class TestsRNAUTR(unittest.TestCase):
         srna_datas = {"best": 500, "track": "frag", "high": 700, "low": 400,
                       "start": 100, "end": 202, "conds": {"frag_1": "track_1"}}
         sud.print_file(0, srna, 2, 50, srna_datas, args)
-        self.assertEqual(args.out.getvalue(), "aaa\tANNOgesic\tsRNA\t2\t50\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
+        self.assertEqual(args.out.getvalue(), "aaa\tANNOgesic\tncRNA\t2\t50\t.\t+\t.\tID=srna_utr0;Name=UTR_sRNA_00000;sRNA_type=3utr;best_avg_coverage=500;best_high_coverage=700;best_low_coverage=400;with_TSS=NA;start_cleavage=Cleavage:18_+;end_cleavage=NA\n")
         self.assertEqual(args.out_t.getvalue(), "aaa\t00000\t2\t50\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=500;high=700;low=400)\n")
 
 

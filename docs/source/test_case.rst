@@ -517,7 +517,7 @@ detect operons and suboperons. You can use the subcommand ``operon`` to get it.
     $ ls ANNOgesic/output/operons/
     gffs  statistics  tables
     $ ls ANNOgesic/output/operons/gffs/
-    NC_000915.1_all_features.gff
+    NC_000915.1_operon.gff
     $ ls ANNOgesic/output/operons/tables/
     operon_NC_000915.1.csv
     $ ls ANNOgesic/output/operons/statistics/
@@ -1188,6 +1188,41 @@ In order to run the other subcommands, we restore our original strain again.
     rm -rf ANNOgesic/output/target/fasta
     FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1
     annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
+
+Merge all features to be one gff file
+-------------------------------------
+
+Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features to be 
+one gff file is convient to use for genome browser. ``merge_features`` is the subcommand to achieve 
+this purpose. Moreover, ``merge_features`` can find the parent transcript to each feature that 
+you assigned. It can reveal the relationship between all features.
+
+Now let's do it. We merge all features that we have.
+
+::
+     ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff,\
+     ANNOgesic/output/target/annotation/NC_000915.1.gff,\
+     ANNOgesic/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,\
+     ANNOgesic/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,\
+     ANNOgesic/output/terminator/gffs/best/NC_000915.1_term.gff,\
+     ANNOgesic/output/processing_site/gffs/NC_000915.1_processing.gff,\
+     ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,\
+     ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,\
+     ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,\
+     ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff
+
+::
+     annogesic merge_features \
+       -a ANNOgesic/output/transcriptome_assembly/gffs/NC_000915.1_transcript.gff \
+       -of $ALL_FEATURES\
+       -s NC_000915.1 \
+        ANNOgesic
+
+The output gff file will be store in ``merge_all_features``
+
+::
+    $ ls ANNOgesic/output/merge_all_features/
+    NC_000915.1_merge_features.gff
 
 Producing the screenshots
 -----------------

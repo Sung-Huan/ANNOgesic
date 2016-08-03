@@ -12,14 +12,14 @@ def modify_attributes(pre_srna, srna, srna_type, input_type):
     if srna_type == "UTR":
         if pre_srna.attributes["sRNA_type"] != srna.attributes["sRNA_type"]:
             if input_type == "pre":
-                if "&" not in pre_srna.attributes["sRNA_type"]:
+                if "," not in pre_srna.attributes["sRNA_type"]:
                     pre_srna.attributes["sRNA_type"] = (
-                        "&".join([srna.attributes["sRNA_type"],
+                        ",".join([srna.attributes["sRNA_type"],
                                   pre_srna.attributes["sRNA_type"]]))
             else:
-                if "&" not in pre_srna.attributes["sRNA_type"]:
+                if "," not in pre_srna.attributes["sRNA_type"]:
                     srna.attributes["sRNA_type"] = (
-                        "&".join([srna.attributes["sRNA_type"],
+                        ",".join([srna.attributes["sRNA_type"],
                                   pre_srna.attributes["sRNA_type"]]))
                 else:
                     srna.attributes["sRNA_type"] = (
@@ -71,7 +71,7 @@ def merge_tss_pro(pre_srna, srna, feature):
         elif (srna.attributes[feature] not in
               pre_srna.attributes[feature]) and (
                 srna.attributes[feature] != "NA"):
-            pre_srna.attributes[feature] = "&".join(
+            pre_srna.attributes[feature] = ",".join(
                                               [pre_srna.attributes[feature],
                                                srna.attributes[feature]])
 
@@ -96,7 +96,7 @@ def merge_srna(srnas, srna_type):
     pre_srna = ""
     for srna in srnas:
         if srna_type == "UTR":
-            srna.feature = "sRNA"
+            srna.feature = "ncRNA"
         else:
             if "with_TSS" in srna.attributes.keys():
                 if srna.attributes["with_TSS"] == "False":
@@ -213,10 +213,10 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
                         srna.attributes["overlap_percent"] = str(per_c)
                     else:
                         srna.attributes["overlap_cds"] = (
-                            "&".join([srna.attributes["overlap_cds"],
+                            ",".join([srna.attributes["overlap_cds"],
                                       cds_name]))
                         srna.attributes["overlap_percent"] = (
-                            "&".join([srna.attributes["overlap_percent"],
+                            ",".join([srna.attributes["overlap_percent"],
                                       str(per_c)]))
                     detect = True
     if not overlap:
@@ -437,8 +437,8 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                           srna_datas["track"], srna_datas["best"],
                           srna_datas["high"], srna_datas["low"]))
             out.write("\t{0}\t{1}\n".format(
-                      srna.attributes["overlap_cds"].replace("&", ";"),
-                      srna.attributes["overlap_percent"].replace("&", ";")))
+                      srna.attributes["overlap_cds"].replace(",", ";"),
+                      srna.attributes["overlap_percent"].replace(",", ";")))
 
 
 def get_coverage(wigs, srna):
@@ -504,17 +504,17 @@ def get_tss_pro(type_, srna):
             end_pro = srna.attributes["end_cleavage"]
         else:
             end_pro = "NA"
-        tss_pro = tss_pro.replace("&", ";")
-        end_pro = end_pro.replace("&", ";")
+        tss_pro = tss_pro.replace(",", ";")
+        end_pro = end_pro.replace(",", ";")
     elif type_ == "inter":
         tss_pro = ""
         end_pro = ""
         if (srna.attributes["with_TSS"] != "NA"):
-            tss_pro = srna.attributes["with_TSS"].replace("&", ";")
+            tss_pro = srna.attributes["with_TSS"].replace(",", ";")
         else:
             tss_pro = "NA"
         if (srna.attributes["end_cleavage"] != "NA"):
-            end_pro = srna.attributes["end_cleavage"].replace("&", ";")
+            end_pro = srna.attributes["end_cleavage"].replace(",", ";")
         else:
             end_pro = "NA"
     return tss_pro, end_pro

@@ -130,7 +130,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
             out_e.write(term.info + "\n")
         if term.attributes["express"] != "True":
             out_n.write(term.info + "\n")
-        if term.attributes["Method"] == "intersect_plus_minus":
+        if term.attributes["method"] == "intersect_plus_minus":
             plus_num(nums, strain, "total")
             plus_num(nums, strain, "fr")
             if term.attributes["coverage_decrease"] == "True":
@@ -141,7 +141,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "ex_fr")
                 plus_num(nums, strain, "only_ex_fr")
                 plus_num(nums, strain, "total_ex")
-        elif term.attributes["Method"] == "TransTermHP":
+        elif term.attributes["method"] == "TransTermHP":
             plus_num(nums, strain,  "total")
             plus_num(nums, strain,  "hp")
             if term.attributes["coverage_decrease"] == "True":
@@ -152,7 +152,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "ex_hp")
                 plus_num(nums, strain, "only_ex_hp")
                 plus_num(nums, strain, "total_ex")
-        elif term.attributes["Method"] == "intersect_plus_minus&TransTermHP":
+        elif term.attributes["method"] == "intersect_plus_minus,TransTermHP":
             plus_num(nums, strain, "total")
             plus_num(nums, strain, "frhp")
             if term.attributes["coverage_decrease"] == "True":

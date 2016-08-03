@@ -157,7 +157,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, args_srna):
         elif srna.attributes["sRNA_type"] == "antisense":
             final["utr"] = "Antisense"
         else:
-            if "&" in srna.attributes["sRNA_type"]:
+            if "," in srna.attributes["sRNA_type"]:
                 final["utr"] = "5'UTR_derived;3'UTR_derived"
             elif srna.attributes["sRNA_type"] == "5utr":
                 final["utr"] = "5'UTR_derived"

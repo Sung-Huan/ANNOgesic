@@ -7,7 +7,7 @@ def print_file(datas, out, feature):
         if feature not in data.attributes.keys():
             data.attributes[feature] = "NA"
         else:
-            data.attributes[feature] = "&".join(data.attributes[feature])
+            data.attributes[feature] = ",".join(data.attributes[feature])
         data.attribute_string = ";".join(
             ["=".join(items) for items in data.attributes.items()])
         out.write("\t".join([data.info_without_attributes,

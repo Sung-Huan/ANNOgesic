@@ -11,11 +11,11 @@ def assign_tss(tss, tran):
         strand = Helper().get_strand_name(tran.strand)
         tran_id = "".join([tran.feature, ":", str(tran.start), "-",
                            str(tran.end), "_", strand])
-    if "Parent_tran" not in tss.attributes.keys():
-        tss.attributes["Parent_tran"] = tran_id
+    if "parent_tran" not in tss.attributes.keys():
+        tss.attributes["parent_tran"] = tran_id
     else:
-        tss.attributes["Parent_tran"] = \
-            "&".join([tss.attributes["Parent_tran"], tran_id])
+        tss.attributes["parent_tran"] = \
+            ",".join([tss.attributes["parent_tran"], tran_id])
     if "Name" in tss.attributes.keys():
         tss_name = tss.attributes["Name"]
     else:
@@ -25,7 +25,7 @@ def assign_tss(tss, tran):
         tran.attributes["associated_tss"] = tss_name
     else:
         tran.attributes["associated_tss"] = \
-            "&".join([tran.attributes["associated_tss"], tss_name])
+            ",".join([tran.attributes["associated_tss"], tss_name])
 
 
 def del_attributes(entry, features):
@@ -84,8 +84,8 @@ def detect_tas_region(tsss, trans, out, out_tss, fuzzy):
     stat = {"with_TSS": 0, "no_TSS": 0, "TSS_no_tran": 0, "TSS_with_tran": 0}
     compare_tran_tss(trans, tsss, fuzzy, stat, out)
     for tss in tsss:
-        if "Parent_tran" not in tss.attributes.keys():
-            tss.attributes["Parent_tran"] = "NA"
+        if "parent_tran" not in tss.attributes.keys():
+            tss.attributes["parent_tran"] = "NA"
         if ("detect" in tss.attributes.keys()):
             tss.attributes = del_attributes(tss, ["detect"])
             tss.attribute_string = ";".join(
@@ -130,7 +130,7 @@ def read_tas_file(tss_file, ta_file):
     ta_f = open(ta_file, "r")
     pre_seq_id = ""
     for entry in Gff3Parser().entries(tss_f):
-        entry.attributes = del_attributes(entry, ["Parent_tran", "tran_note"])
+        entry.attributes = del_attributes(entry, ["parent_tran", "tran_note"])
         if pre_seq_id != entry.seq_id:
             pre_seq_id = entry.seq_id
             tsss_uni[entry.seq_id] = []
@@ -177,11 +177,11 @@ def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file,
 
 
 def assign_parent(gff, tran, feature):
-    if "Parent_tran" not in gff.attributes.keys():
-        gff.attributes["Parent_tran"] = tran.attributes["ID"]
+    if "parent_tran" not in gff.attributes.keys():
+        gff.attributes["parent_tran"] = tran.attributes["ID"]
     else:
-        gff.attributes["Parent_tran"] = (
-            "&".join([gff.attributes["Parent_tran"], tran.attributes["ID"]]))
+        gff.attributes["parent_tran"] = (
+            ",".join([gff.attributes["parent_tran"], tran.attributes["ID"]]))
     if "_".join(["associated", feature]) not in tran.attributes.keys():
         if "locus_tag" in gff.attributes.keys():
             tran.attributes["_".join(["associated", feature])] = (
@@ -200,20 +200,20 @@ def assign_parent(gff, tran, feature):
     else:
         if "locus_tag" in gff.attributes.keys():
             tran.attributes["_".join(["associated", feature])] = (
-                "&".join([tran.attributes["_".join(["associated", feature])],
+                ",".join([tran.attributes["_".join(["associated", feature])],
                           gff.attributes["locus_tag"]]))
         elif "protein_id" in gff.attributes.keys():
             tran.attributes["_".join(["associated", feature])] = (
-                "&".join([tran.attributes["_".join(["associated", feature])],
+                ",".join([tran.attributes["_".join(["associated", feature])],
                           gff.attributes["protein_id"]]))
         elif "Name" in gff.attributes.keys():
             tran.attributes["_".join(["associated", feature])] = (
-                "&".join([tran.attributes["_".join(["associated", feature])],
+                ",".join([tran.attributes["_".join(["associated", feature])],
                           gff.attributes["Name"]]))
         else:
             strand = Helper().get_strand_name(gff.strand)
             tran.attributes["_".join(["associated", feature])] = (
-                "&".join([tran.attributes["_".join(
+                ",".join([tran.attributes["_".join(
                     ["associated", feature])], "".join(
                         [gff.feature, ":", str(gff.start),
                          "-", str(gff.end), "_", strand])]))
@@ -280,7 +280,7 @@ def detect_tag_region(gffs, trans, stats, out_t, out_g, c_feature):
             tran_type.append("not_related")
         else:
             detect = False
-        tran_type_string = "&".join(tran_type)
+        tran_type_string = ",".join(tran_type)
         attribute_string = ";".join(
             ["=".join(items) for items in tran.attributes.items()])
         out_t.write("\t".join(
@@ -299,7 +299,7 @@ def detect_express_gene(gffs, c_feature, strain):
         if (gff.feature == c_feature) and (
                 (strain == "all") or (
                  gff.seq_id == strain)) and (
-                "Parent_tran" in gff.attributes.keys()):
+                "parent_tran" in gff.attributes.keys()):
             express_gene += 1
     return express_gene
 
@@ -352,7 +352,14 @@ def read_tag_file(gff_file, ta_file, c_feature):
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
         if (entry.feature == c_feature):
-            entry.attributes = del_attributes(entry, ["Parent_tran"])
+            entry.attributes = del_attributes(entry, ["parent_tran"])
+            ori_parents = []
+            if "Parent" in entry.attributes.keys():
+                parents = entry.attributes["Parent"].split(",")
+                for parent in parents:
+                    if "gene" in parent:
+                        ori_parents.append(parent)
+                entry.attributes["Parent"] = ",".join(ori_parents)
             if entry.seq_id in stats.keys():
                 stats[entry.seq_id]["gene"] += 1
                 stats["All"]["gene"] += 1

@@ -18,7 +18,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
-                ter.attributes["associated_tran"] = (
+                ter.attributes["parent_tran"] = (
                     "transcript:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
         else:
@@ -32,7 +32,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
-                ter.attributes["associated_tran"] = (
+                ter.attributes["parent_tran"] = (
                     "transcript:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
 
@@ -66,7 +66,7 @@ def output_term(ters, term_file, type_):
                             row[4] == ter.strand):
                         out_t.write("\t".join([row[0], row[1], row[2], row[3],
                                     row[4], row[5], row[6],
-                                    ter.attributes["associated_tran"],
+                                    ter.attributes["parent_tran"],
                                     row[7]]) + "\n")
                         break
         fh.close()
@@ -99,7 +99,7 @@ def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
             out_g.write("##gff-version 3\n")
             tas = read_gff(os.path.join(trans, tran), "associated_term")
             ters = read_gff(os.path.join(terms, prefix + "_term.gff"),
-                            "associated_tran")
+                            "parent_tran")
             for ta in tas:
                 if ta.seq_id != pre_seq:
                     stats[ta.seq_id] = {"all_tran": 0, "all_term": 0,

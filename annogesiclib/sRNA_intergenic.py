@@ -238,7 +238,7 @@ def get_coverage(start, end, strain, wigs, strand, ta, tss, cutoff_coverage,
                                       None, None, None, notex, cutoff_coverage,
                                       args_srna.texs)
     string = ("\t".join([str(field) for field in [
-                             ta.seq_id, "ANNOgesic", "sRNA", str(start),
+                             ta.seq_id, "ANNOgesic", "ncRNA", str(start),
                              str(end), ".", ta.strand, "."]]))
     if srna_datas["best"] != 0:
         print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
@@ -335,7 +335,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
     if ta.strand == "+":
         if detect:
             string = ("\t".join([str(field) for field in [
-                      ta.seq_id, "ANNOgesic", "sRNA", str(start),
+                      ta.seq_id, "ANNOgesic", "ncRNA", str(start),
                       str(srna_datas["pos"]), ".", ta.strand, "."]]))
             if pro != "NA":
                 tss = ";".join([tss, pro])
@@ -344,7 +344,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
     else:
         if detect:
             string = ("\t".join([str(field) for field in [
-                      ta.seq_id, "ANNOgesic", "sRNA", str(srna_datas["pos"]),
+                      ta.seq_id, "ANNOgesic", "ncRNA", str(srna_datas["pos"]),
                       str(end), ".", ta.strand, "."]]))
             if pro != "NA":
                 tss = ";".join([tss, pro])
@@ -438,7 +438,7 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, ta, tss, diff, cutoff_coverage,
                          cutoff_coverage, notex, args_srna)
         else:
             string = "\t".join([str(field) for field in [
-                     ta.seq_id, "ANNOgesic", "sRNA", str(start),
+                     ta.seq_id, "ANNOgesic", "ncRNA", str(start),
                      str(end), ta.score, ta.strand, ta.phase]])
             print_file(string, "".join(["TSS:", str(tss.start),
                        "_", tss.strand]), None,
@@ -479,7 +479,7 @@ def detect_include_tss(ta, args_srna):
                          notex, args_srna)
         elif (len(args_srna.wigs_f) == 0) and (len(args_srna.wigs_r) == 0):
             print_file(
-                ta.info_without_attributes.replace("Transcript", "sRNA"),
+                ta.info_without_attributes.replace("Transcript", "ncRNA"),
                 "False", None, ta.attributes["sRNA_type"], args_srna)
 
 
@@ -613,7 +613,7 @@ def check_srna_condition(ta, args_srna):
                              args_srna.notex, args_srna)
             if (len(args_srna.wigs_f) == 0) and (len(args_srna.wigs_r) == 0):
                 print_file(ta.info_without_attributes.replace("Transcript",
-                           "sRNA"), "NA", None, ta.attributes["sRNA_type"],
+                           "ncRNA"), "NA", None, ta.attributes["sRNA_type"],
                            args_srna)
     if ((ta.end - ta.start) > args_srna.max_len):
         detect_longer(ta, args_srna)

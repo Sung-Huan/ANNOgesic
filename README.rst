@@ -76,6 +76,7 @@ Arguments
                             Prediction of subcellular localization of genomic CDS.
         riboswitch          Prediction of riboswitch.
         crispr              Prediction of CRISPR.
+        merge_features      Merge all features to one gff file.
         screenshot          Generate screenshot for selected feature.
     
     optional arguments:

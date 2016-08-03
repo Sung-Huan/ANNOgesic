@@ -91,8 +91,8 @@ class Example(object):
 
     table = """Staphylococcus_aureus_HG003	Term_00000	9676	9705	+	True	ID-001873-Staph_aureus_sample_mix_forward(diff=19.0;high=33.0;low=14.0)
 Staphylococcus_aureus_HG003	Term_00006	23768	23793	+	True	pMEM_OD_1_forward(diff=8.637108857702653;high=10.796386072128318;low=2.159277214425664)"""
-    gff = """Staphylococcus_aureus_HG003	ANNOgesic	terminator	9676	9705	.	+	.	Name=Terminator_00000;express=True;diff_coverage=ID-001873-Staph_aureus_sample_mix_forward(high:33.0,low:14.0);ID=term0;associate=SAOUHSC_00006;coverage_decrease=True;Method=TransTermHP
-Staphylococcus_aureus_HG003	ANNOgesic	terminator	23768	23793	.	+	.	Name=Terminator_00006;express=True;diff_coverage=pMEM_OD_1_forward(high:10.796386072128318,low:2.159277214425664);ID=term6;associate=SAOUHSC_00019;coverage_decrease=True;Method=TransTermHP"""
+    gff = """Staphylococcus_aureus_HG003	ANNOgesic	terminator	9676	9705	.	+	.	Name=Terminator_00000;express=True;diff_coverage=ID-001873-Staph_aureus_sample_mix_forward(high:33.0,low:14.0);ID=term0;associate=SAOUHSC_00006;coverage_decrease=True;method=TransTermHP
+Staphylococcus_aureus_HG003	ANNOgesic	terminator	23768	23793	.	+	.	Name=Terminator_00006;express=True;diff_coverage=pMEM_OD_1_forward(high:10.796386072128318,low:2.159277214425664);ID=term6;associate=SAOUHSC_00019;coverage_decrease=True;method=TransTermHP"""
     print_method = """method_1
 	Total method_1 terminators = 3
 		(percentage of total terminators = 0.15)

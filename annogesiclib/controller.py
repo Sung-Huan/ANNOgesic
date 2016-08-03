@@ -24,6 +24,7 @@ from annogesiclib.ppi import PPINetwork
 from annogesiclib.sublocal import SubLocal
 from annogesiclib.ribos import Ribos
 from annogesiclib.crispr import Crispr
+from annogesiclib.merge_feature import run_merge
 from annogesiclib.screen import Screen
 from annogesiclib.args_container import ArgsContainer
 from annogesiclib.helper import Helper
@@ -365,7 +366,8 @@ class Controller(object):
                 self._args.terminator_folder,
                 self._args.terminator_fuzzy, self._paths.utr_folder,
                 self._args.TSS_source, self._args.base_5UTR,
-                self._args.UTR_length, self._args.base_3UTR)
+                self._args.UTR_length, self._args.base_3UTR,
+                self._args.fuzzy_3utr, self._args.fuzzy_5utr)
         utr = UTRDetection(args_utr)
         utr.run_utr_detection(args_utr)
 
@@ -678,6 +680,22 @@ class Controller(object):
             self._args.ignore_hypothetical_protein)
         cris = Crispr(args_cris)
         cris.run_crispr(args_cris)
+
+    def merge(self):
+        """Merge all features"""
+        print("Merging all features to one gff file...")
+        merge_folder = os.path.join(self._paths.output_folder,
+                                    "merge_all_features")
+        self.helper.check_make_folder(merge_folder)
+        other_features = self._args.other_features_path.split(",")
+        self.check_file([self._args.transcript_path] + other_features,
+                        ["--transcript_path", "--other_features_path"],
+                        False)
+        self.check_parameter([self._args.strain_name], ["--strain_name"])
+        run_merge(merge_folder, self._args.transcript_path,
+                  self._args.other_features_path, self._args.fuzzy_term,
+                  self._args.fuzzy_TSS,
+                  os.path.join(merge_folder, self._args.strain_name))
 
     def screen(self):
         """generate screenshot"""

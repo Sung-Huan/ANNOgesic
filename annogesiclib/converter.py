@@ -254,10 +254,10 @@ class Converter(object):
     def _print_tssfile(self, nums, tss_features, tss, tss_pro,
                        strain, method, out, tss_libs):
         tss_pro = tss_pro[0].upper() + tss_pro[1:]
-        tss_merge_type = "&".join(tss_features["tss_types"])
-        utr_length = "&".join(tss_features["utr_lengths"])
-        merge_locus_tag = "&".join(tss_features["locus_tags"])
-        libs = "&".join(tss_libs)
+        tss_merge_type = ",".join(tss_features["tss_types"])
+        utr_length = ",".join(tss_features["utr_lengths"])
+        merge_locus_tag = ",".join(tss_features["locus_tags"])
+        libs = ",".join(tss_libs)
         strand = Helper().get_strand_name(tss.super_strand)
         attribute_string = ";".join(
                           ["=".join(items) for items in (
@@ -265,9 +265,9 @@ class Converter(object):
                                str(tss.super_pos), "_", strand])],
                               ["ID", tss_pro.lower() + str(nums["tss_uni"])],
                               ["type", tss_merge_type],
-                              ["UTR_length", str(utr_length)],
+                              ["utr_length", str(utr_length)],
                               ["associated_gene", merge_locus_tag],
-                              ["libs", libs], ["Method", "TSSpredator"])])
+                              ["libs", libs], ["method", "TSSpredator"])])
         out.write("\t".join([strain, method, tss_pro, str(tss.super_pos),
                              str(tss.super_pos), ".", tss.super_strand, ".",
                              attribute_string]) + "\n")
@@ -459,7 +459,7 @@ class Converter(object):
                                            ("read_at_end",
                                             str(circ["per_end"])),
                                            ("confliction", circ["conflict"]),
-                                           ("Method", "segemehl")]])
+                                           ("method", "segemehl")]])
             out_a.write("\t".join([str(field) for field in [
                             circ["strain"], "ANNOgesic", "circRNA",
                             str(circ["start"]), str(circ["end"]),

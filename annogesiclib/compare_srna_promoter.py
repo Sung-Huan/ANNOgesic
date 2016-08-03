@@ -44,7 +44,7 @@ def compare_srna_promoter(srna_gff, srna_table, args_srna):
         detect = False
         if "with_TSS" in srna.attributes.keys():
             if srna.attributes["with_TSS"] != "NA":
-                datas = srna.attributes["with_TSS"].split("&")
+                datas = srna.attributes["with_TSS"].split(",")
                 for data in datas:
                     info = data.split(":")[-1]
                     tss = info.split("_")
@@ -59,7 +59,7 @@ def compare_srna_promoter(srna_gff, srna_table, args_srna):
                         if "promoter" not in srna.attributes.keys():
                             srna.attributes["promoter"] = pro["name"]
                         else:
-                            srna.attributes["promoter"] = "&".join([
+                            srna.attributes["promoter"] = ",".join([
                                 srna.attributes["promoter"],
                                 pro["name"]])
         if detect:

@@ -55,12 +55,12 @@ class TestCombineGff(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_del_attributes(self):
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 140,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 140,
                    "end": 367, "phase": ".", "strand": "+", "score": "."}
-        attributes = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001", "Parent_tran": "tran0"}
+        attributes = {"ID": "gene0", "Name": "gene_0", "locus_tag": "AAA_00001", "Parent": "tran0"}
         gff = Create_generator(gff_dict, attributes, "gff")
         c_gff.del_attributes(gff)
-        self.assertDictEqual(gff.attributes, {'ID': 'CDS0', 'Name': 'CDS_0', 'locus_tag': 'AAA_00001'})
+        self.assertDictEqual(gff.attributes, {'ID': 'gene0', 'Name': 'gene_0', 'locus_tag': 'AAA_00001'})
         
     def test_compare_tran(self):
         tran_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 100,
@@ -74,10 +74,10 @@ class TestCombineGff(unittest.TestCase):
         parents = []
         for attribute in attributes:
             for element in attribute:
-                if "Parent_tran" in element:
+                if "Parent" in element:
                     parents.append(element)
         self.assertEqual(set(datas), set(["aaa\tRefseq\tCDS\t160\t300\t.\t+\t."]))
-        self.assertEqual(set(parents), set(["Parent_tran=tran0"]))
+        self.assertEqual(set(parents), set(["Parent=tran0"]))
         out.close()
 
     def test_compare_tran_term(self):
@@ -91,11 +91,11 @@ class TestCombineGff(unittest.TestCase):
         parents = []
         for attribute in attributes:
             for element in attribute:
-                if "Parent_tran" in element:
+                if "Parent" in element:
                     parents.append(element)
         self.assertEqual(set(datas), set(["aaa\tRefseq\tTerminator\t350\t367\t.\t+\t.",
                                           "bbb\tRefseq\tTerminator\t420\t429\t.\t-\t."]))
-        self.assertEqual(set(parents), set(["Parent_tran=tran0", "Parent_tran=tran2"]))
+        self.assertEqual(set(parents), set(["Parent=tran0", "Parent=tran2"]))
         out.close()
 
     def test_combine_gff(self):
@@ -172,18 +172,18 @@ class Example(object):
     attributes_utr3 = [{"ID": "utr3_0", "Name": "UTR3_0"},
                        {"ID": "utr3_1", "Name": "UTR3_1"}]
     out_file = """aaa	Refseq	Transcript	30	40	.	+	.	ID=tran1;Name=Tran_1
-aaa	Refseq	3UTR	38	40	.	+	.	ID=utr3_1;Name=UTR3_1;Parent_tran=tran1
+aaa	Refseq	3UTR	38	40	.	+	.	ID=utr3_1;Name=UTR3_1;parent_tran=tran1
 aaa	Refseq	Transcript	140	367	.	+	.	ID=tran0;Name=Tran_0
-aaa	Refseq	TSS	138	138	.	+	.	ID=tss0;Name=TSS_0;Parent_tran=tran0
-aaa	Refseq	TSS	330	330	.	+	.	ID=tss1;Name=TSS_1;Parent_tran=tran0
-aaa	Refseq	5UTR	140	160	.	+	.	ID=utr5_0;Name=UTR5_0;Parent_tran=tran0
-aaa	Refseq	CDS	160	300	.	+	.	Name=CDS_0;locus_tag=AAA_00001;ID=CDS0;Parent_tran=tran0
-aaa	Refseq	3UTR	300	367	.	+	.	ID=utr3_0;Name=UTR3_0;Parent_tran=tran0
-aaa	Refseq	Terminator	350	367	.	+	.	ID=term0;Name=Term_0;Parent_tran=tran0
+aaa	Refseq	TSS	138	138	.	+	.	ID=tss0;Name=TSS_0;parent_tran=tran0
+aaa	Refseq	TSS	330	330	.	+	.	ID=tss1;Name=TSS_1;parent_tran=tran0
+aaa	Refseq	5UTR	140	160	.	+	.	ID=utr5_0;Name=UTR5_0;parent_tran=tran0
+aaa	Refseq	CDS	160	300	.	+	.	Name=CDS_0;locus_tag=AAA_00001;ID=CDS0;parent_tran=tran0
+aaa	Refseq	3UTR	300	367	.	+	.	ID=utr3_0;Name=UTR3_0;parent_tran=tran0
+aaa	Refseq	Terminator	350	367	.	+	.	ID=term0;Name=Term_0;parent_tran=tran0
 bbb	Refseq	Transcript	430	567	.	-	.	ID=tran2;Name=Tran_2
-bbb	Refseq	TSS	568	568	.	-	.	ID=tss2;Name=TSS_2;Parent_tran=tran2
-bbb	Refseq	5UTR	500	567	.	-	.	ID=utr5_1;Name=UTR5_1;Parent_tran=tran2
-bbb	Refseq	Terminator	420	429	.	-	.	ID=term1;Name=Term_1;Parent_tran=tran2
+bbb	Refseq	TSS	568	568	.	-	.	ID=tss2;Name=TSS_2;parent_tran=tran2
+bbb	Refseq	5UTR	500	567	.	-	.	ID=utr5_1;Name=UTR5_1;parent_tran=tran2
+bbb	Refseq	Terminator	420	429	.	-	.	ID=term1;Name=Term_1;parent_tran=tran2
 aaa	Refseq	CDS	3	38	.	+	.	Name=CDS_1;locus_tag=AAA_00002;ID=CDS1
 bbb	Refseq	CDS	420	577	.	-	.	Name=CDS_2;locus_tag=BBB_00001;ID=CDS2
 bbb	Refseq	Terminator	1420	2429	.	-	.	ID=term2;Name=Term_2"""

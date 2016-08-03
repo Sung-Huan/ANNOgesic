@@ -42,22 +42,20 @@ class TestStatTaComparison(unittest.TestCase):
         self.assertDictEqual(stat, {'TSS_with_tran': 1, 'TSS_no_tran': 0, 'no_TSS': 0, 'with_TSS': 1})
 
     def test_del_attributes(self):
-        string = stc.del_attributes(self.example.tsss[0], ["UTR_length", "libs"])
+        string = stc.del_attributes(self.example.tsss[0], ["utr_length", "libs"])
         self.assertDictEqual(string, {'type': 'Primary', 'associated_gene': 'SAOUHSC_00002', 'Name': 'TSS:2131_f', 'ID': 'tss3'})
 
     def test_assign_tss(self):
         tsss = copy.deepcopy(self.example.tsss)
         trans = copy.deepcopy(self.example.tas)
         stc.assign_tss(tsss[0], trans[0])
-        self.assertDictEqual(tsss[0].attributes, {'associated_gene': 'SAOUHSC_00002',
-                                                  'Name': 'TSS:2131_f',
-                                                  'libs': 'TSB_OD_0.2&TSB_OD_0.5&TSB_t0&pMEM_OD_0.2&pMEM_OD_0.5&pMEM_t2',
-                                                  'type': 'Primary', 'Parent_tran': 'tran0',
-                                                  'UTR_length': 'Primary_25', 'ID': 'tss3'})
-        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS&cover_CDS',
+        self.assertDictEqual(tsss[0].attributes, {'utr_length': 'Primary_25', 'ID': 'tss3', 'Name': 'TSS:2131_f',
+                                                  'libs': 'TSB_OD_0.2,TSB_OD_0.5,TSB_t0,pMEM_OD_0.2,pMEM_OD_0.5,pMEM_t2',
+                                                  'associated_gene': 'SAOUHSC_00002', 'parent_tran': 'tran0', 'type': 'Primary'})
+        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS,cover_CDS',
                                                    'Name': 'Transcript_00000',
-                                                   'associated_cds': 'YP_498609.1&YP_498610.1',
-                                                   'associated_tss': 'TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+&TSS:2131_f',
+                                                   'associated_cds': 'YP_498609.1,YP_498610.1',
+                                                   'associated_tss': 'TSS:313_+,TSS:1641_+,TSS:2128_+,TSS:2131_+,TSS:2131_f',
                                                    'ID': 'tran0'})
 
     def test_print_tas_stat(self):
@@ -134,13 +132,13 @@ class TestStatTaComparison(unittest.TestCase):
         gffs = copy.deepcopy(self.example.gffs)
         trans = copy.deepcopy(self.example.tas)
         stc.assign_parent(gffs[0], trans[0], "CDS")
-        self.assertDictEqual(gffs[0].attributes, {'Parent_tran': 'tran0',
+        self.assertDictEqual(gffs[0].attributes, {'parent_tran': 'tran0',
                                                   'locus_tag': 'SAOUHSC_00001', 'protein_id': 'YP_498609.1',
                                                   'gene': 'dnaA', 'Name': 'YP_498609.1', 'ID': 'gene0'})
-        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS&cover_CDS',
-                                                   'associated_tss': 'TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+',
+        self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS,cover_CDS',
+                                                   'associated_tss': 'TSS:313_+,TSS:1641_+,TSS:2128_+,TSS:2131_+',
                                                    'Name': 'Transcript_00000', 'associated_CDS': 'SAOUHSC_00001',
-                                                   'ID': 'tran0', 'associated_cds': 'YP_498609.1&YP_498610.1'})
+                                                   'ID': 'tran0', 'associated_cds': 'YP_498609.1,YP_498610.1'})
 
 
     def test_print_tag_stat(self):
@@ -178,21 +176,21 @@ class TestStatTaComparison(unittest.TestCase):
 
 class Example(object):
 
-    tss = """aaa	TSSpredator	TSS	2131	2131	.	+	.	UTR_length=Primary_25;type=Primary;ID=tss3;libs=TSB_OD_0.2&TSB_OD_0.5&TSB_t0&pMEM_OD_0.2&pMEM_OD_0.5&pMEM_t2;associated_gene=SAOUHSC_00002;Name=TSS:2131_f"""
-    ta = """aaa	fragmented_and_normal	Transcript	313	3344	.	+	.	associated_tss=TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+;type=cover_CDS&cover_CDS;Name=Transcript_00000;ID=tran0;associated_cds=YP_498609.1&YP_498610.1"""
+    tss = """aaa	TSSpredator	TSS	2131	2131	.	+	.	utr_length=Primary_25;type=Primary;ID=tss3;libs=TSB_OD_0.2,TSB_OD_0.5,TSB_t0,pMEM_OD_0.2,pMEM_OD_0.5,pMEM_t2;associated_gene=SAOUHSC_00002;Name=TSS:2131_f"""
+    ta = """aaa	fragmented_and_normal	Transcript	313	3344	.	+	.	associated_tss=TSS:313_+,TSS:1641_+,TSS:2128_+,TSS:2131_+;type=cover_CDS,cover_CDS;Name=Transcript_00000;ID=tran0;associated_cds=YP_498609.1,YP_498610.1"""
     gff = """aaa	Refseq	gene	517	1878	.	+	.	protein_id=YP_498609.1;gene=dnaA;ID=cds0;Parent=gene0;locus_tag=SAOUHSC_00001;Name=YP_498609.1
 aaa	Refseq	CDS	517	1878	.	+	.	protein_id=YP_498609.1;gene=dnaA;ID=cds0;Parent=gene0;locus_tag=SAOUHSC_00001;Name=YP_498609.1"""
     tss_dict = [{"seq_id": "aaa", "source": "TSSpredator", "feature": "TSS", "start": 2131,
                  "end": 2131, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tss = [{"ID": "tss3", "Name": "TSS:2131_f", "UTR_length": "Primary_25",
+    attributes_tss = [{"ID": "tss3", "Name": "TSS:2131_f", "utr_length": "Primary_25",
                        "type": "Primary", "associated_gene": "SAOUHSC_00002",
-                       "libs": "TSB_OD_0.2&TSB_OD_0.5&TSB_t0&pMEM_OD_0.2&pMEM_OD_0.5&pMEM_t2"}]
+                       "libs": "TSB_OD_0.2,TSB_OD_0.5,TSB_t0,pMEM_OD_0.2,pMEM_OD_0.5,pMEM_t2"}]
     tsss = []
     tsss.append(Create_generator(tss_dict[0], attributes_tss[0], "gff"))
     ta_dict = [{"seq_id": "aaa", "source": "fragmented_and_normal", "feature": "transcript",
                 "start": 313, "end": 3344, "phase": ".", "strand": "+", "score": "."}]
-    attributes_ta = [{"ID": "tran0", "Name": "Transcript_00000", "associated_tss": "TSS:313_+&TSS:1641_+&TSS:2128_+&TSS:2131_+",
-                      "type": "cover_CDS&cover_CDS", "associated_cds": "YP_498609.1&YP_498610.1"}]
+    attributes_ta = [{"ID": "tran0", "Name": "Transcript_00000", "associated_tss": "TSS:313_+,TSS:1641_+,TSS:2128_+,TSS:2131_+",
+                      "type": "cover_CDS,cover_CDS", "associated_cds": "YP_498609.1,YP_498610.1"}]
     tas = []
     tas.append(Create_generator(ta_dict[0], attributes_ta[0], "gff"))
     gff_dict = [{"seq_id": "aaa", "source": "RefSeq", "feature": "gene",
