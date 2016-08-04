@@ -46,6 +46,7 @@ ML-Lib_div_by_14583533.0_multi_by_14583533.0_reverse.wig:frag:1:a:-"
 #    Optimize_TSSpredator
 #    gen_screenshot
 #    color_png
+    merge_features
 }
 
 
@@ -356,6 +357,26 @@ color_png(){
         color_png \
 	-t 2 \
 	-f $ANNOGESIC_FOLDER/output/TSS \
+	$ANNOGESIC_FOLDER
+}
+
+merge_features(){
+    ALL_FEATURES=$ANNOGESIC_FOLDER/output/TSS/gffs/NC_000915.1_TSS.gff,\
+$ANNOGESIC_FOLDER/output/target/annotation/NC_000915.1.gff,\
+$ANNOGESIC_FOLDER/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,\
+$ANNOGESIC_FOLDER/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,\
+$ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_000915.1_term.gff,\
+$ANNOGESIC_FOLDER/output/processing_site/gffs/NC_000915.1_processing.gff,\
+$ANNOGESIC_FOLDER/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,\
+$ANNOGESIC_FOLDER/output/sORF/gffs/best/NC_000915.1_sORF.gff,\
+$ANNOGESIC_FOLDER/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,\
+$ANNOGESIC_FOLDER/output/crispr/gffs/best/NC_000915.1_CRISPR.gff
+
+    $ANNOGESIC_PATH \
+	merge_features \
+        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_000915.1_transcript.gff \
+        -of $ALL_FEATURES \
+	-s NC_000915.1 \
 	$ANNOGESIC_FOLDER
 }
 
