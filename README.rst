@@ -92,4 +92,4 @@ Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhoste
 Contact
 -------
 
-If you have any questions, please contact <mailto:sung-huan.yu@uni-wuerzburg.de>`_
+If you have any questions, please contact `Sung-Huan Yu <mailto:sung-huan.yu@uni-wuerzburg.de>`_
