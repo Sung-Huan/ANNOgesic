@@ -36,7 +36,8 @@ def read_gffs(gff_files, feature):
                         entry.feature == "exon") or (
                         entry.feature == "repeat_unit") or (
                         entry.feature == "tRNA") or (
-                        entry.feature == "rRNA"):
+                        entry.feature == "rRNA") or (
+                        entry.feature == "ncRNA"):
                     if "Parent" in entry.attributes.keys():
                         parent = entry.attributes["Parent"]
                 del_attributes(entry, ["associated_tran", "parent_tran",
