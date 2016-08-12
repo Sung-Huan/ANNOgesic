@@ -3,8 +3,8 @@ import matplotlib as mpl
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 import numpy as np
-import matplotlib.pyplot as plt
 mpl.use('Agg')
+import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 

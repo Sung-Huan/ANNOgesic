@@ -13,6 +13,7 @@ setup(
     url='',
     install_requires=[
         "biopython >= 1.65",
+        "bcbio-gff >= 0.6.2",
         "matplotlib >= 1.5.0",
         "numpy >= 1.9.2",
         "networkx >= 1.9.1"

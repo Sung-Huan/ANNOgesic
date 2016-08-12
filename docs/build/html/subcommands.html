@@ -443,7 +443,7 @@ If you use Docker to execute ANNOgesic, you can skip the path modification.</p>
                                      [--compare_pair COMPARE_PAIR]
                                      [--element ELEMENT]
                                      [--transfer_type TRANSFER_TYPE]
-                                     [--ref_embl_gbk REF_EMBL_GBK]
+                                     [--ref_embl REF_EMBL] [--ref_gbk REF_GBK]
                                      [--ref_fasta REF_FASTA]
                                      [--target_fasta TARGET_FASTA]
                                      [--convert_to_gff_rnt_ptt]
@@ -470,10 +470,12 @@ optional arguments:
   --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
                         The transfer type for running RATT.(details can refer
                         to the manual of RATT.) Default is Strain.
-  --ref_embl_gbk REF_EMBL_GBK, -re REF_EMBL_GBK
-                        The folder which stores every reference embl
-                        folders.If you have no embl folder, you can assign the
-                        folder of genbank.
+  --ref_embl REF_EMBL, -re REF_EMBL
+                        The folder which stores embl file.
+  --ref_gbk REF_GBK, -rg REF_GBK
+                        If you have no embl file, you can assign the folder
+                        which stores genbank file. The genbank can be ended by
+                        .gbk, .gbff or .gb
   --ref_fasta REF_FASTA, -rf REF_FASTA
                         The folder of reference fasta files.
   --target_fasta TARGET_FASTA, -tf TARGET_FASTA
@@ -688,152 +690,160 @@ For the transcripts, please refer to the section of <code class="docutils litera
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">tsspredator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">TSSpredator_path</span> <span class="n">TSSPREDATOR_PATH</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">fasta_folder</span> <span class="n">FASTA_FOLDER</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">annotation_folder</span> <span class="n">ANNOTATION_FOLDER</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">wig_folder</span> <span class="n">WIG_FOLDER</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">height</span> <span class="n">HEIGHT</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">height_reduction</span> <span class="n">HEIGHT_REDUCTION</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">factor</span> <span class="n">FACTOR</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">factor_reduction</span> <span class="n">FACTOR_REDUCTION</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">enrichment_factor</span> <span class="n">ENRICHMENT_FACTOR</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">processing_factor</span> <span class="n">PROCESSING_FACTOR</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">base_height</span> <span class="n">BASE_HEIGHT</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">replicate_match</span> <span class="n">REPLICATE_MATCH</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">utr_length</span> <span class="n">UTR_LENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lib</span> <span class="n">LIB</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">output_prefix</span> <span class="n">OUTPUT_PREFIX</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">merge_manual</span> <span class="n">MERGE_MANUAL</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">statistics</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">validate_gene</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">compute_program</span> <span class="n">COMPUTE_PROGRAM</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">compare_transcript_assembly</span> <span class="n">COMPARE_TRANSCRIPT_ASSEMBLY</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">fuzzy</span> <span class="n">FUZZY</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cluster</span> <span class="n">CLUSTER</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">length</span> <span class="n">LENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">re_check_orphan</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">overlap_feature</span> <span class="n">OVERLAP_FEATURE</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">reference_gff_folder</span> <span class="n">REFERENCE_GFF_FOLDER</span><span class="p">]</span>
-                             <span class="p">[</span><span class="o">--</span><span class="n">remove_low_expression</span> <span class="n">REMOVE_LOW_EXPRESSION</span><span class="p">]</span>
-                             <span class="p">[</span><span class="n">project_path</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic tsspredator [-h] [--TSSpredator_path TSSPREDATOR_PATH]
+                             [--fasta_folder FASTA_FOLDER]
+                             [--annotation_folder ANNOTATION_FOLDER]
+                             [--wig_folder WIG_FOLDER] [--height HEIGHT]
+                             [--height_reduction HEIGHT_REDUCTION]
+                             [--factor FACTOR]
+                             [--factor_reduction FACTOR_REDUCTION]
+                             [--enrichment_factor ENRICHMENT_FACTOR]
+                             [--processing_factor PROCESSING_FACTOR]
+                             [--base_height BASE_HEIGHT]
+                             [--replicate_match REPLICATE_MATCH]
+                             [--utr_length UTR_LENGTH] [--lib LIB]
+                             [--output_prefix OUTPUT_PREFIX]
+                             [--merge_manual MERGE_MANUAL] [--statistics]
+                             [--validate_gene]
+                             [--compute_program COMPUTE_PROGRAM]
+                             [--compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY]
+                             [--fuzzy FUZZY] [--cluster CLUSTER]
+                             [--length LENGTH] [--re_check_orphan]
+                             [--overlap_feature OVERLAP_FEATURE]
+                             [--reference_gff_folder REFERENCE_GFF_FOLDER]
+                             [--remove_low_expression REMOVE_LOW_EXPRESSION]
+                             [project_path]
 
-<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="n">project_path</span>          <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+positional arguments:
+  project_path          Path of the project folder. If none is given, the
+                        current directory is used.
 
-<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">TSSpredator_path</span> <span class="n">TSSPREDATOR_PATH</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">TSSpredator</span><span class="p">,</span> <span class="n">please</span>
-                        <span class="n">assign</span> <span class="n">here</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">TSSpredator</span><span class="o">.</span><span class="n">jar</span>
-  <span class="o">--</span><span class="n">fasta_folder</span> <span class="n">FASTA_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span> <span class="n">FASTA_FOLDER</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">target</span> <span class="n">genome</span> <span class="n">fasta</span> <span class="n">folder</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">annotation_folder</span> <span class="n">ANNOTATION_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FOLDER</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">target</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">folder</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">wig_folder</span> <span class="n">WIG_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">w</span> <span class="n">WIG_FOLDER</span>
-                        <span class="n">The</span> <span class="n">folder</span> <span class="n">of</span> <span class="n">the</span> <span class="n">wig</span> <span class="n">folder</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">height</span> <span class="n">HEIGHT</span><span class="p">,</span> <span class="o">-</span><span class="n">he</span> <span class="n">HEIGHT</span>
-                        <span class="n">This</span> <span class="n">value</span> <span class="n">relates</span> <span class="n">to</span> <span class="n">the</span> <span class="n">minimal</span> <span class="n">number</span> <span class="n">of</span> <span class="n">read</span>
-                        <span class="n">starts</span> <span class="n">at</span> <span class="n">a</span> <span class="n">certain</span> <span class="n">genomic</span> <span class="n">position</span> <span class="n">to</span> <span class="n">be</span> <span class="n">considered</span>
-                        <span class="k">as</span> <span class="n">a</span> <span class="n">TSS</span> <span class="n">candidate</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.3</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">height_reduction</span> <span class="n">HEIGHT_REDUCTION</span><span class="p">,</span> <span class="o">-</span><span class="n">rh</span> <span class="n">HEIGHT_REDUCTION</span>
-                        <span class="n">When</span> <span class="n">comparing</span> <span class="n">different</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="ow">and</span> <span class="n">the</span>
-                        <span class="n">step</span> <span class="n">height</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reached</span> <span class="ow">in</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span>
-                        <span class="n">strain</span><span class="o">/</span><span class="n">condition</span><span class="p">,</span> <span class="n">the</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reduced</span> <span class="k">for</span> <span class="n">the</span>
-                        <span class="n">other</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="n">by</span> <span class="n">the</span> <span class="n">value</span> <span class="nb">set</span> <span class="n">here</span><span class="o">.</span> <span class="n">This</span>
-                        <span class="n">value</span> <span class="n">must</span> <span class="n">be</span> <span class="n">smaller</span> <span class="n">than</span> <span class="n">the</span> <span class="n">step</span> <span class="n">height</span> <span class="n">threshold</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.2</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">factor</span> <span class="n">FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">fa</span> <span class="n">FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimal</span> <span class="n">factor</span> <span class="n">by</span> <span class="n">which</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">height</span> <span class="n">has</span>
-                        <span class="n">to</span> <span class="n">exceed</span> <span class="n">the</span> <span class="n">local</span> <span class="n">expression</span> <span class="n">background</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
-                        <span class="mf">2.0</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">factor_reduction</span> <span class="n">FACTOR_REDUCTION</span><span class="p">,</span> <span class="o">-</span><span class="n">rf</span> <span class="n">FACTOR_REDUCTION</span>
-                        <span class="n">When</span> <span class="n">comparing</span> <span class="n">different</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="ow">and</span> <span class="n">the</span>
-                        <span class="n">step</span> <span class="n">factor</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reached</span> <span class="ow">in</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span>
-                        <span class="n">strain</span><span class="o">/</span><span class="n">condition</span><span class="p">,</span> <span class="n">the</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reduced</span> <span class="k">for</span> <span class="n">the</span>
-                        <span class="n">other</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="n">by</span> <span class="n">the</span> <span class="n">value</span> <span class="nb">set</span> <span class="n">here</span><span class="o">.</span> <span class="n">This</span>
-                        <span class="n">value</span> <span class="n">must</span> <span class="n">be</span> <span class="n">smaller</span> <span class="n">than</span> <span class="n">the</span> <span class="n">step</span> <span class="n">factor</span> <span class="n">threshold</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.5</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">enrichment_factor</span> <span class="n">ENRICHMENT_FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">ef</span> <span class="n">ENRICHMENT_FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimal</span> <span class="n">enrichment</span> <span class="n">factor</span><span class="o">.</span> <span class="n">During</span>
-                        <span class="n">optimization</span> <span class="n">will</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.0</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">processing_factor</span> <span class="n">PROCESSING_FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">pf</span> <span class="n">PROCESSING_FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimal</span> <span class="n">processing</span> <span class="n">factor</span><span class="o">.</span> <span class="n">If</span> <span class="n">untreated</span>
-                        <span class="n">library</span> <span class="ow">is</span> <span class="n">higher</span> <span class="n">than</span> <span class="n">the</span> <span class="n">treated</span> <span class="n">library</span> <span class="ow">and</span> <span class="n">above</span>
-                        <span class="n">which</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="n">considered</span> <span class="k">as</span> <span class="n">a</span> <span class="n">processing</span>
-                        <span class="n">site</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">annotated</span> <span class="k">as</span> <span class="n">detected</span><span class="o">.</span> <span class="n">During</span>
-                        <span class="n">optimization</span> <span class="n">will</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">1.5</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">base_height</span> <span class="n">BASE_HEIGHT</span><span class="p">,</span> <span class="o">-</span><span class="n">bh</span> <span class="n">BASE_HEIGHT</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimal</span> <span class="n">number</span> <span class="n">of</span> <span class="n">reads</span> <span class="n">should</span> <span class="n">be</span> <span class="n">mapped</span>
-                        <span class="n">on</span> <span class="n">TSS</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.0</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">replicate_match</span> <span class="n">REPLICATE_MATCH</span><span class="p">,</span> <span class="o">-</span><span class="n">rm</span> <span class="n">REPLICATE_MATCH</span>
-                        <span class="n">The</span> <span class="n">TSS</span> <span class="n">candidates</span> <span class="n">should</span> <span class="n">match</span> <span class="n">to</span> <span class="n">how</span> <span class="n">many</span> <span class="n">number</span> <span class="n">of</span>
-                        <span class="n">the</span> <span class="n">replicates</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">1.</span>
-  <span class="o">--</span><span class="n">utr_length</span> <span class="n">UTR_LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">u</span> <span class="n">UTR_LENGTH</span>
-                        <span class="n">The</span> <span class="n">length</span> <span class="n">of</span> <span class="n">UTR</span><span class="o">.</span> <span class="n">It</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">Primary</span> <span class="ow">and</span> <span class="n">Secondary</span>
-                        <span class="n">definition</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">300.</span>
-  <span class="o">--</span><span class="n">lib</span> <span class="n">LIB</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span> <span class="n">LIB</span>     <span class="n">The</span> <span class="n">libraries</span> <span class="n">of</span> <span class="n">wig</span> <span class="n">files</span> <span class="k">for</span> <span class="n">TSSpredator</span><span class="o">.</span> <span class="n">The</span> <span class="nb">format</span>
-                        <span class="ow">is</span><span class="p">:</span> <span class="n">wig_file_name</span><span class="p">:</span><span class="n">tex_treat_or_not</span><span class="p">(</span><span class="n">tex</span> <span class="ow">or</span> <span class="n">notex</span><span class="p">):</span><span class="n">condi</span>
-                        <span class="n">tion_id</span><span class="p">(</span><span class="n">integer</span><span class="p">):</span><span class="n">replicate_id</span><span class="p">(</span><span class="n">alphabet</span><span class="p">):</span><span class="n">strand</span><span class="p">(</span><span class="o">+</span> <span class="ow">or</span>
-                        <span class="o">-</span><span class="p">)</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">have</span> <span class="n">multiple</span> <span class="n">wig</span> <span class="n">files</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">comma</span>
-                        <span class="n">to</span> <span class="n">separate</span> <span class="n">the</span> <span class="n">wig</span> <span class="n">files</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
-                        <span class="n">wig1</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span><span class="p">,</span><span class="n">wig2</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-.</span>
-  <span class="o">--</span><span class="n">output_prefix</span> <span class="n">OUTPUT_PREFIX</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span> <span class="n">OUTPUT_PREFIX</span>
-                        <span class="n">The</span> <span class="n">output</span> <span class="n">prefix</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">conditions</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">have</span>
-                        <span class="n">multiple</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">comma</span> <span class="n">to</span> <span class="n">separate</span>
-                        <span class="n">them</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
-                        <span class="n">prefix_condition1</span><span class="p">,</span><span class="n">prefix_condition2</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">merge_manual</span> <span class="n">MERGE_MANUAL</span><span class="p">,</span> <span class="o">-</span><span class="n">m</span> <span class="n">MERGE_MANUAL</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">have</span> <span class="n">gff</span> <span class="n">file</span> <span class="n">of</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">TSS</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span>
-                        <span class="n">use</span> <span class="n">this</span> <span class="n">function</span> <span class="n">to</span> <span class="n">merge</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">ones</span> <span class="ow">and</span>
-                        <span class="n">predicted</span> <span class="n">ones</span><span class="o">.</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">gff</span> <span class="n">file</span>
-                        <span class="n">of</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">TSS</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">statistics</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span>      <span class="n">Doing</span> <span class="n">statistics</span> <span class="k">for</span> <span class="n">TSS</span> <span class="n">candidates</span><span class="o">.</span> <span class="n">it</span> <span class="n">will</span> <span class="n">store</span> <span class="ow">in</span>
-                        <span class="n">statistics</span> <span class="n">folder</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">validate_gene</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span>   <span class="n">Using</span> <span class="n">TSS</span> <span class="n">candidates</span> <span class="n">to</span> <span class="n">validate</span> <span class="n">genes</span> <span class="ow">in</span> <span class="n">annotation</span>
-                        <span class="n">file</span><span class="o">.</span> <span class="n">it</span> <span class="n">will</span> <span class="n">store</span> <span class="ow">in</span> <span class="n">statistics</span> <span class="n">folder</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
-                        <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">compute_program</span> <span class="n">COMPUTE_PROGRAM</span><span class="p">,</span> <span class="o">-</span><span class="n">t</span> <span class="n">COMPUTE_PROGRAM</span>
-                        <span class="n">Which</span> <span class="n">program</span> <span class="n">do</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">predict</span><span class="o">.</span> <span class="p">(</span><span class="n">TSS</span> <span class="ow">or</span>
-                        <span class="n">processing_site</span><span class="p">)</span> <span class="n">Default</span> <span class="ow">is</span> <span class="n">TSS</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">compare_transcript_assembly</span> <span class="n">COMPARE_TRANSCRIPT_ASSEMBLY</span><span class="p">,</span> <span class="o">-</span><span class="n">ta</span> <span class="n">COMPARE_TRANSCRIPT_ASSEMBLY</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="k">with</span> <span class="n">transcriptome</span> <span class="n">assembly</span><span class="p">,</span>
-                        <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">folder</span> <span class="n">of</span> <span class="n">gff</span> <span class="n">file</span> <span class="n">of</span> <span class="n">transcript</span>
-                        <span class="n">assembly</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">fuzzy</span> <span class="n">FUZZY</span><span class="p">,</span> <span class="o">-</span><span class="n">fu</span> <span class="n">FUZZY</span>
-                        <span class="n">The</span> <span class="n">fuzzy</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">TSS</span> <span class="ow">and</span> <span class="n">transcript</span> <span class="n">assembly</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">5.</span>
-  <span class="o">--</span><span class="n">cluster</span> <span class="n">CLUSTER</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span> <span class="n">CLUSTER</span>
-                        <span class="n">This</span> <span class="n">number</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">compare</span> <span class="n">manual</span> <span class="n">detected</span> <span class="n">TSS</span> <span class="ow">and</span>
-                        <span class="n">prediced</span> <span class="n">one</span><span class="o">.</span> <span class="n">If</span> <span class="n">the</span> <span class="n">position</span> <span class="n">between</span> <span class="n">manual</span> <span class="n">checked</span>
-                        <span class="n">one</span> <span class="ow">and</span> <span class="n">predicted</span> <span class="n">one</span> <span class="ow">is</span> <span class="n">smaller</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">than</span> <span class="n">this</span>
-                        <span class="n">value</span><span class="p">,</span> <span class="n">It</span> <span class="n">will</span> <span class="n">only</span> <span class="nb">print</span> <span class="n">one</span> <span class="n">of</span> <span class="n">them</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.</span>
-  <span class="o">--</span><span class="n">length</span> <span class="n">LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">le</span> <span class="n">LENGTH</span>
-                        <span class="n">The</span> <span class="n">length</span> <span class="n">of</span> <span class="n">genome</span> <span class="n">that</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">between</span>
-                        <span class="n">predicted</span> <span class="n">one</span> <span class="ow">and</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">one</span> <span class="k">for</span> <span class="n">statistics</span><span class="o">.</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">whole</span> <span class="n">genome</span><span class="p">,</span> <span class="n">please</span> <span class="n">don</span><span class="s1">&#39;t turn</span>
-                        <span class="n">it</span> <span class="n">on</span><span class="o">.</span> <span class="n">The</span> <span class="n">default</span> <span class="ow">is</span> <span class="n">comparing</span> <span class="n">whole</span> <span class="n">genome</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">re_check_orphan</span><span class="p">,</span> <span class="o">-</span><span class="n">ro</span>
-                        <span class="n">If</span> <span class="n">your</span> <span class="n">annotation</span> <span class="n">file</span> <span class="n">lack</span> <span class="n">information</span> <span class="n">of</span> <span class="n">gene</span> <span class="ow">or</span>
-                        <span class="n">locus_tag</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">turn</span> <span class="n">it</span> <span class="n">on</span><span class="o">.</span> <span class="n">It</span> <span class="n">will</span> <span class="k">try</span> <span class="n">to</span> <span class="n">compare</span>
-                        <span class="k">with</span> <span class="n">CDS</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">overlap_feature</span> <span class="n">OVERLAP_FEATURE</span><span class="p">,</span> <span class="o">-</span><span class="n">of</span> <span class="n">OVERLAP_FEATURE</span>
-                        <span class="n">If</span> <span class="n">processing</span> <span class="n">site</span> <span class="ow">and</span> <span class="n">TSS</span> <span class="n">are</span> <span class="n">overlap</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">keep</span>
-                        <span class="s2">&quot;TSS&quot;</span> <span class="ow">or</span> <span class="s2">&quot;processing_site&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="n">both</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">reference_gff_folder</span> <span class="n">REFERENCE_GFF_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">rg</span> <span class="n">REFERENCE_GFF_FOLDER</span>
-                        <span class="n">For</span> <span class="o">--</span><span class="n">overlap_feature</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">only</span> <span class="n">keep</span> <span class="s2">&quot;TSS&quot;</span>
-                        <span class="ow">or</span> <span class="s2">&quot;processing_site&quot;</span><span class="p">,</span> <span class="n">you</span> <span class="n">need</span> <span class="n">to</span> <span class="n">assign</span> <span class="n">the</span>
-                        <span class="o">--</span><span class="n">reference_gff_folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">are</span> <span class="n">running</span> <span class="n">TSS</span><span class="p">,</span> <span class="n">please</span>
-                        <span class="n">assign</span> <span class="n">the</span> <span class="n">folder</span> <span class="n">of</span> <span class="n">processing</span> <span class="n">site</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">are</span>
-                        <span class="n">running</span> <span class="n">processing_site</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">folder</span> <span class="n">of</span>
-                        <span class="n">TSS</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">keep</span> <span class="s2">&quot;both&quot;</span> <span class="n">at</span> <span class="n">overlap</span> <span class="n">position</span><span class="p">,</span>
-                        <span class="n">please</span> <span class="n">don</span><span class="s1">&#39;t turn it on. Default is None(for keep</span>
-                        <span class="n">both</span><span class="p">)</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">remove_low_expression</span> <span class="n">REMOVE_LOW_EXPRESSION</span><span class="p">,</span> <span class="o">-</span><span class="n">rl</span> <span class="n">REMOVE_LOW_EXPRESSION</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">remove</span> <span class="n">low</span> <span class="n">expressed</span> <span class="n">TSS</span><span class="o">/</span><span class="n">processing</span>
-                        <span class="n">site</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">file</span> <span class="n">of</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">gff</span>
-                        <span class="n">file</span> <span class="n">here</span><span class="o">.</span> <span class="n">It</span> <span class="n">will</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">low</span> <span class="n">expressed</span> <span class="n">ones</span>
-                        <span class="n">based</span> <span class="n">on</span> <span class="n">comparisone</span> <span class="n">of</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">ones</span><span class="o">.</span>
-                        <span class="n">Please</span> <span class="n">Be</span> <span class="n">ATTENTION</span><span class="p">:</span> <span class="n">this</span> <span class="n">parameter</span> <span class="n">may</span>
-                        <span class="n">remove</span> <span class="n">some</span> <span class="kc">True</span> <span class="n">positive</span><span class="p">,</span> <span class="n">too</span><span class="o">.</span> <span class="n">So</span><span class="p">,</span> <span class="n">please</span> <span class="n">make</span> <span class="n">sure</span>
-                        <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">do</span> <span class="n">it</span><span class="o">.</span>
+optional arguments:
+  -h, --help            show this help message and exit
+  --TSSpredator_path TSSPREDATOR_PATH
+                        If you want to assign the path of TSSpredator, please
+                        assign here. Default is /usr/local/bin/TSSpredator.jar
+  --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+                        Path of the target genome fasta folder.
+  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                        Path of the target genome gff folder.
+  --wig_folder WIG_FOLDER, -w WIG_FOLDER
+                        The folder of the wig folder.
+  --height HEIGHT, -he HEIGHT
+                        This value relates to the minimal number of read
+                        starts at a certain genomic position to be considered
+                        as a TSS candidate. Default is 0.3.
+  --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
+                        When comparing different strains/conditions and the
+                        step height threshold is reached in at least one
+                        strain/condition, the threshold is reduced for the
+                        other strains/conditions by the value set here. This
+                        value must be smaller than the step height threshold.
+                        Default is 0.2.
+  --factor FACTOR, -fa FACTOR
+                        This is the minimal factor by which the TSS height has
+                        to exceed the local expression background. Default is
+                        2.0.
+  --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
+                        When comparing different strains/conditions and the
+                        step factor threshold is reached in at least one
+                        strain/condition, the threshold is reduced for the
+                        other strains/conditions by the value set here. This
+                        value must be smaller than the step factor threshold.
+                        Default is 0.5.
+  --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
+                        This is the minimal enrichment factor. During
+                        optimization will never larger than this value.
+                        Default is 2.0.
+  --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
+                        This is the minimal processing factor. If untreated
+                        library is higher than the treated library and above
+                        which the TSS candidate is considered as a processing
+                        site and not annotated as detected. During
+                        optimization will never larger than this value.
+                        Default is 1.5.
+  --base_height BASE_HEIGHT, -bh BASE_HEIGHT
+                        This is the minimal number of reads should be mapped
+                        on TSS. Default is 0.0.
+  --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
+                        The TSS candidates should match to how many number of
+                        the replicates. The format is
+                        $NUMBERofCONDITION_$NUMBERofREPLICATED. If you want to
+                        assign different replicate match to different
+                        conditions, you can use comma to separate it. For
+                        example, 1_2,2_2,3_3 means number 1 and 2 condition
+                        assign 2 to --replicate_match, and number 3 condition
+                        assign 3 to --replcate_match. If you want to assign
+                        the same replicate match to all conditions, just
+                        assign like all_1 (all condition use 1
+                        --replicate_match). Default is all_1.
+  --utr_length UTR_LENGTH, -u UTR_LENGTH
+                        The length of UTR. It is for Primary and Secondary
+                        definition. Default is 300.
+  --lib LIB, -l LIB     The libraries of wig files for TSSpredator. The format
+                        is: wig_file_name:tex_treat_or_not(tex or notex):condi
+                        tion_id(integer):replicate_id(alphabet):strand(+ or
+                        -). If you have multiple wig files, please use comma
+                        to separate the wig files. For example,
+                        wig1:tex:1:a:+,wig2:tex:1:a:-.
+  --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
+                        The output prefix of all conditions. If you have
+                        multiple conditions, please use comma to separate
+                        them. For example,
+                        prefix_condition1,prefix_condition2.
+  --merge_manual MERGE_MANUAL, -m MERGE_MANUAL
+                        If you have gff file of manual checked TSS, you can
+                        use this function to merge manual checked ones and
+                        predicted ones. please assign the path of gff file of
+                        manual checked TSS.
+  --statistics, -s      Doing statistics for TSS candidates. it will store in
+                        statistics folder. Default is False.
+  --validate_gene, -v   Using TSS candidates to validate genes in annotation
+                        file. it will store in statistics folder. Default is
+                        False.
+  --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
+                        Which program do you want to predict. (TSS or
+                        processing_site) Default is TSS.
+  --compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY, -ta COMPARE_TRANSCRIPT_ASSEMBLY
+                        If you want to compare with transcriptome assembly,
+                        please assign the folder of gff file of transcript
+                        assembly. Default is False.
+  --fuzzy FUZZY, -fu FUZZY
+                        The fuzzy for comparing TSS and transcript assembly.
+                        Default is 5.
+  --cluster CLUSTER, -c CLUSTER
+                        This number is for compare manual detected TSS and
+                        prediced one. If the position between manual checked
+                        one and predicted one is smaller or equal than this
+                        value, It will only print one of them. Default is 2.
+  --length LENGTH, -le LENGTH
+                        The length of genome that you want to compare between
+                        predicted one and manual checked one for statistics.
+                        If you want to compare whole genome, please don&#39;t turn
+                        it on. The default is comparing whole genome.
+  --re_check_orphan, -ro
+                        If your annotation file lack information of gene or
+                        locus_tag, you can turn it on. It will try to compare
+                        with CDS. Default is False.
+  --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
+                        If processing site and TSS are overlap, you can keep
+                        &quot;TSS&quot; or &quot;processing_site&quot; or &quot;both&quot;. Default is both.
+  --reference_gff_folder REFERENCE_GFF_FOLDER, -rg REFERENCE_GFF_FOLDER
+                        For --overlap_feature, if you want to only keep &quot;TSS&quot;
+                        or &quot;processing_site&quot;, you need to assign the
+                        --reference_gff_folder. If you are running TSS, please
+                        assign the folder of processing site. If you are
+                        running processing_site, please assign the folder of
+                        TSS. If you want to keep &quot;both&quot; at overlap position,
+                        please don&#39;t turn it on. Default is None(for keep
+                        both).
+  --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
+                        If you want to remove low expressed TSS/processing
+                        site, please assign the file of manual checked gff
+                        file here. It will remove the low expressed ones based
+                        on comparison of manual checked ones. Please Be
+                        ATTENTION: this parameter may remove some True
+                        positive, too. So, please make sure you want to do it.
 </pre></div>
 </div>
 <ul class="simple">
@@ -2780,127 +2790,206 @@ Please refer to the <code class="docutils literal"><span class="pre">The</span> 
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">optimize_tsspredator</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">TSSpredator_path</span> <span class="n">TSSPREDATOR_PATH</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">fasta_file</span> <span class="n">FASTA_FILE</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">annotation_file</span> <span class="n">ANNOTATION_FILE</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">wig_folder</span> <span class="n">WIG_FOLDER</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">manual</span> <span class="n">MANUAL</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">strain_name</span> <span class="n">STRAIN_NAME</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_height</span> <span class="n">MAX_HEIGHT</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_height_reduction</span> <span class="n">MAX_HEIGHT_REDUCTION</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_factor</span> <span class="n">MAX_FACTOR</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_factor_reduction</span> <span class="n">MAX_FACTOR_REDUCTION</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_base_height</span> <span class="n">MAX_BASE_HEIGHT</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_enrichment_factor</span> <span class="n">MAX_ENRICHMENT_FACTOR</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">max_processing_factor</span> <span class="n">MAX_PROCESSING_FACTOR</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">utr_length</span> <span class="n">UTR_LENGTH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">lib</span> <span class="n">LIB</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">output_prefix</span> <span class="n">OUTPUT_PREFIX</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">cluster</span> <span class="n">CLUSTER</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">length</span> <span class="n">LENGTH</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">core</span> <span class="n">CORE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">program</span> <span class="n">PROGRAM</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">replicate_match</span> <span class="n">REPLICATE_MATCH</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="o">--</span><span class="n">steps</span> <span class="n">STEPS</span><span class="p">]</span>
-                                      <span class="p">[</span><span class="n">project_path</span><span class="p">]</span>
-
-<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="n">project_path</span>          <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
-
-<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
-  <span class="o">--</span><span class="n">TSSpredator_path</span> <span class="n">TSSPREDATOR_PATH</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">TSSpredator</span><span class="p">,</span> <span class="n">please</span>
-                        <span class="n">assign</span> <span class="n">here</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">TSSpredator</span><span class="o">.</span><span class="n">jar</span>
-  <span class="o">--</span><span class="n">fasta_file</span> <span class="n">FASTA_FILE</span><span class="p">,</span> <span class="o">-</span><span class="n">fs</span> <span class="n">FASTA_FILE</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">one</span> <span class="n">target</span> <span class="n">genome</span> <span class="n">fasta</span> <span class="n">file</span> <span class="n">which</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span>
-                        <span class="n">opimize</span> <span class="n">it</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">annotation_file</span> <span class="n">ANNOTATION_FILE</span><span class="p">,</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILE</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">one</span> <span class="n">target</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span> <span class="n">which</span>
-                        <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">opimize</span> <span class="n">it</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">wig_folder</span> <span class="n">WIG_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">w</span> <span class="n">WIG_FOLDER</span>
-                        <span class="n">The</span> <span class="n">folder</span> <span class="n">of</span> <span class="n">the</span> <span class="n">TEX</span><span class="o">+/-</span> <span class="n">wig</span> <span class="n">folder</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">manual</span> <span class="n">MANUAL</span><span class="p">,</span> <span class="o">-</span><span class="n">m</span> <span class="n">MANUAL</span>
-                        <span class="n">The</span> <span class="n">file</span> <span class="n">of</span> <span class="n">manual</span> <span class="n">checked</span> <span class="n">gff</span> <span class="n">file</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">strain_name</span> <span class="n">STRAIN_NAME</span><span class="p">,</span> <span class="o">-</span><span class="n">n</span> <span class="n">STRAIN_NAME</span>
-                        <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">strain</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">optimize</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_height</span> <span class="n">MAX_HEIGHT</span><span class="p">,</span> <span class="o">-</span><span class="n">he</span> <span class="n">MAX_HEIGHT</span>
-                        <span class="n">This</span> <span class="n">value</span> <span class="n">relates</span> <span class="n">to</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">read</span>
-                        <span class="n">starts</span> <span class="n">at</span> <span class="n">a</span> <span class="n">certain</span> <span class="n">genomic</span> <span class="n">position</span> <span class="n">to</span> <span class="n">be</span> <span class="n">considered</span>
-                        <span class="k">as</span> <span class="n">a</span> <span class="n">TSS</span> <span class="n">candidate</span><span class="o">.</span> <span class="n">During</span> <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span>
-                        <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.5</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_height_reduction</span> <span class="n">MAX_HEIGHT_REDUCTION</span><span class="p">,</span> <span class="o">-</span><span class="n">rh</span> <span class="n">MAX_HEIGHT_REDUCTION</span>
-                        <span class="n">When</span> <span class="n">comparing</span> <span class="n">different</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="ow">and</span> <span class="n">the</span>
-                        <span class="n">step</span> <span class="n">height</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reached</span> <span class="ow">in</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span>
-                        <span class="n">strain</span><span class="o">/</span><span class="n">condition</span><span class="p">,</span> <span class="n">the</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reduced</span> <span class="k">for</span> <span class="n">the</span>
-                        <span class="n">other</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="n">by</span> <span class="n">the</span> <span class="n">value</span> <span class="nb">set</span> <span class="n">here</span><span class="o">.</span> <span class="n">This</span>
-                        <span class="n">value</span> <span class="n">must</span> <span class="n">be</span> <span class="n">smaller</span> <span class="n">than</span> <span class="n">the</span> <span class="n">step</span> <span class="n">height</span> <span class="n">threshold</span><span class="o">.</span>
-                        <span class="n">During</span> <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span>
-                        <span class="n">value</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.4</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_factor</span> <span class="n">MAX_FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">fa</span> <span class="n">MAX_FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">factor</span> <span class="n">by</span> <span class="n">which</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">height</span> <span class="n">has</span>
-                        <span class="n">to</span> <span class="n">exceed</span> <span class="n">the</span> <span class="n">local</span> <span class="n">expression</span> <span class="n">background</span><span class="o">.</span> <span class="n">During</span>
-                        <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">10.</span>
-  <span class="o">--</span><span class="n">max_factor_reduction</span> <span class="n">MAX_FACTOR_REDUCTION</span><span class="p">,</span> <span class="o">-</span><span class="n">rf</span> <span class="n">MAX_FACTOR_REDUCTION</span>
-                        <span class="n">When</span> <span class="n">comparing</span> <span class="n">different</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="ow">and</span> <span class="n">the</span>
-                        <span class="n">step</span> <span class="n">factor</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reached</span> <span class="ow">in</span> <span class="n">at</span> <span class="n">least</span> <span class="n">one</span>
-                        <span class="n">strain</span><span class="o">/</span><span class="n">condition</span><span class="p">,</span> <span class="n">the</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="n">reduced</span> <span class="k">for</span> <span class="n">the</span>
-                        <span class="n">other</span> <span class="n">strains</span><span class="o">/</span><span class="n">conditions</span> <span class="n">by</span> <span class="n">the</span> <span class="n">value</span> <span class="nb">set</span> <span class="n">here</span><span class="o">.</span> <span class="n">This</span>
-                        <span class="n">value</span> <span class="n">must</span> <span class="n">be</span> <span class="n">smaller</span> <span class="n">than</span> <span class="n">the</span> <span class="n">step</span> <span class="n">factor</span> <span class="n">threshold</span><span class="o">.</span>
-                        <span class="n">During</span> <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span>
-                        <span class="n">value</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">9.9</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_base_height</span> <span class="n">MAX_BASE_HEIGHT</span><span class="p">,</span> <span class="o">-</span><span class="n">bh</span> <span class="n">MAX_BASE_HEIGHT</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">reads</span> <span class="n">should</span> <span class="n">be</span> <span class="n">mapped</span>
-                        <span class="n">on</span> <span class="n">TSS</span><span class="o">.</span> <span class="n">During</span> <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span>
-                        <span class="n">this</span> <span class="n">value</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.06</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_enrichment_factor</span> <span class="n">MAX_ENRICHMENT_FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">ef</span> <span class="n">MAX_ENRICHMENT_FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">enrichment</span> <span class="n">factor</span><span class="o">.</span> <span class="n">During</span>
-                        <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">6.0</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">max_processing_factor</span> <span class="n">MAX_PROCESSING_FACTOR</span><span class="p">,</span> <span class="o">-</span><span class="n">pf</span> <span class="n">MAX_PROCESSING_FACTOR</span>
-                        <span class="n">This</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">minimum</span> <span class="n">processing</span> <span class="n">factor</span><span class="o">.</span> <span class="n">If</span> <span class="n">untreated</span>
-                        <span class="n">library</span> <span class="ow">is</span> <span class="n">higher</span> <span class="n">than</span> <span class="n">the</span> <span class="n">treated</span> <span class="n">library</span> <span class="ow">and</span> <span class="n">above</span>
-                        <span class="n">which</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">candidate</span> <span class="ow">is</span> <span class="n">considered</span> <span class="k">as</span> <span class="n">a</span> <span class="n">processing</span>
-                        <span class="n">site</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">annotated</span> <span class="k">as</span> <span class="n">detected</span><span class="o">.</span> <span class="n">During</span>
-                        <span class="n">optimization</span> <span class="n">will</span> <span class="n">be</span> <span class="n">never</span> <span class="n">larger</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="mf">6.0</span>
-  <span class="o">--</span><span class="n">utr_length</span> <span class="n">UTR_LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">u</span> <span class="n">UTR_LENGTH</span>
-                        <span class="n">The</span> <span class="n">length</span> <span class="n">of</span> <span class="n">UTR</span><span class="o">.</span> <span class="n">It</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">Primary</span> <span class="ow">and</span> <span class="n">Secondary</span>
-                        <span class="n">TSSs</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">300.</span>
-  <span class="o">--</span><span class="n">lib</span> <span class="n">LIB</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span> <span class="n">LIB</span>     <span class="n">The</span> <span class="n">libraries</span> <span class="n">of</span> <span class="n">wig</span> <span class="n">files</span> <span class="k">for</span> <span class="n">TSSpredator</span><span class="o">.</span> <span class="n">The</span> <span class="nb">format</span>
-                        <span class="ow">is</span><span class="p">:</span> <span class="n">wig_file_name</span><span class="p">:</span><span class="n">tex_treat_or_not</span><span class="p">(</span><span class="n">tex</span> <span class="ow">or</span> <span class="n">notex</span><span class="p">):</span><span class="n">condi</span>
-                        <span class="n">tion_id</span><span class="p">(</span><span class="n">integer</span><span class="p">):</span><span class="n">replicate_id</span><span class="p">(</span><span class="n">alphabet</span><span class="p">):</span><span class="n">strand</span><span class="p">(</span><span class="o">+</span> <span class="ow">or</span>
-                        <span class="o">-</span><span class="p">)</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">have</span> <span class="n">multiple</span> <span class="n">wig</span> <span class="n">files</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">comma</span>
-                        <span class="n">to</span> <span class="n">separate</span> <span class="n">the</span> <span class="n">wig</span> <span class="n">files</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
-                        <span class="n">wig1</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span><span class="p">,</span><span class="n">wig2</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-.</span>
-  <span class="o">--</span><span class="n">output_prefix</span> <span class="n">OUTPUT_PREFIX</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span> <span class="n">OUTPUT_PREFIX</span>
-                        <span class="n">The</span> <span class="n">output</span> <span class="n">prefix</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">conditions</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">have</span>
-                        <span class="n">multiple</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">comma</span> <span class="n">to</span> <span class="n">separate</span>
-                        <span class="n">them</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
-                        <span class="n">prefix_condition1</span><span class="p">,</span><span class="n">prefix_condition2</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">cluster</span> <span class="n">CLUSTER</span><span class="p">,</span> <span class="o">-</span><span class="n">cu</span> <span class="n">CLUSTER</span>
-                        <span class="n">If</span> <span class="n">the</span> <span class="n">position</span> <span class="n">between</span> <span class="n">manual</span> <span class="n">one</span> <span class="ow">and</span> <span class="n">predicted</span> <span class="n">one</span>
-                        <span class="ow">is</span> <span class="n">smaller</span> <span class="ow">or</span> <span class="n">equal</span> <span class="n">than</span> <span class="n">this</span> <span class="n">value</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span> <span class="n">only</span>
-                        <span class="nb">print</span> <span class="n">one</span> <span class="n">of</span> <span class="n">them</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.</span>
-  <span class="o">--</span><span class="n">length</span> <span class="n">LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">le</span> <span class="n">LENGTH</span>
-                        <span class="n">The</span> <span class="n">length</span> <span class="n">of</span> <span class="n">genome</span> <span class="k">for</span> <span class="n">running</span> <span class="n">optimization</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span>
-                        <span class="n">don</span><span class="s1">&#39;t want to run for whole genome, you can assign the</span>
-                        <span class="n">length</span> <span class="n">of</span> <span class="n">partial</span> <span class="n">genome</span><span class="o">.</span><span class="n">Default</span> <span class="ow">is</span> <span class="n">compare</span> <span class="n">whole</span>
-                        <span class="n">genome</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">core</span> <span class="n">CORE</span><span class="p">,</span> <span class="o">-</span><span class="n">c</span> <span class="n">CORE</span>  <span class="n">How</span> <span class="n">many</span> <span class="n">paralle</span> <span class="n">runs</span> <span class="n">do</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">use</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
-                        <span class="mf">4.</span>
-  <span class="o">--</span><span class="n">program</span> <span class="n">PROGRAM</span><span class="p">,</span> <span class="o">-</span><span class="n">t</span> <span class="n">PROGRAM</span>
-                        <span class="n">You</span> <span class="n">want</span> <span class="n">to</span> <span class="n">run</span> <span class="n">optimize</span> <span class="n">TSS</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">site</span><span class="o">.</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="s2">&quot;TSS&quot;</span> <span class="ow">or</span> <span class="s2">&quot;Processint_site&quot;</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
-                        <span class="n">TSS</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">replicate_match</span> <span class="n">REPLICATE_MATCH</span><span class="p">,</span> <span class="o">-</span><span class="n">rm</span> <span class="n">REPLICATE_MATCH</span>
-                        <span class="n">The</span> <span class="n">TSS</span> <span class="n">candidates</span> <span class="n">should</span> <span class="n">match</span> <span class="n">to</span> <span class="n">how</span> <span class="n">many</span> <span class="n">number</span> <span class="n">of</span>
-                        <span class="n">the</span> <span class="n">replicates</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">1.</span>
-  <span class="o">--</span><span class="n">steps</span> <span class="n">STEPS</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span> <span class="n">STEPS</span>
-                        <span class="n">How</span> <span class="n">many</span> <span class="n">steps</span> <span class="n">do</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">run</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mi">4000</span>
-                        <span class="n">runs</span><span class="o">.</span>
-</pre></div>
-</div>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>usage: annogesic optimize_tsspredator [-h]</dt>
+<dd>[&#8211;TSSpredator_path TSSPREDATOR_PATH]
+[&#8211;fasta_file FASTA_FILE]
+[&#8211;annotation_file ANNOTATION_FILE]
+[&#8211;wig_folder WIG_FOLDER]
+[&#8211;manual MANUAL]
+[&#8211;strain_name STRAIN_NAME]
+[&#8211;max_height MAX_HEIGHT]
+[&#8211;max_height_reduction MAX_HEIGHT_REDUCTION]
+[&#8211;max_factor MAX_FACTOR]
+[&#8211;max_factor_reduction MAX_FACTOR_REDUCTION]
+[&#8211;max_base_height MAX_BASE_HEIGHT]
+[&#8211;max_enrichment_factor MAX_ENRICHMENT_FACTOR]
+[&#8211;max_processing_factor MAX_PROCESSING_FACTOR]
+[&#8211;utr_length UTR_LENGTH] [&#8211;lib LIB]
+[&#8211;output_prefix OUTPUT_PREFIX]
+[&#8211;cluster CLUSTER] [&#8211;length LENGTH]
+[&#8211;core CORE] [&#8211;program PROGRAM]
+[&#8211;replicate_match REPLICATE_MATCH]
+[&#8211;steps STEPS]
+[project_path]</dd>
+<dt>positional arguments:</dt>
+<dd><dl class="first last docutils">
+<dt>project_path          Path of the project folder. If none is given, the</dt>
+<dd>current directory is used.</dd>
+</dl>
+</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--TSSpredator_path <var>TSSPREDATOR_PATH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>If you want to assign the path of TSSpredator, please
+assign here. Default is /usr/local/bin/TSSpredator.jar</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>&#8211;fasta_file FASTA_FILE, -fs FASTA_FILE</dt>
+<dd>Path of one target genome fasta file which you want to
+opimize it.</dd>
+</dl>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--annotation_file <var>ANNOTATION_FILE</var></span>, <span class="option">-g <var>ANNOTATION_FILE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Path of one target genome annotation gff file which
+you want to opimize it.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--wig_folder <var>WIG_FOLDER</var></span>, <span class="option">-w <var>WIG_FOLDER</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The folder of the TEX+/- wig folder.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--manual <var>MANUAL</var></span>, <span class="option">-m <var>MANUAL</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The file of manual checked gff file.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--strain_name <var>STRAIN_NAME</var></span>, <span class="option">-n <var>STRAIN_NAME</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The name of the strain you want to optimize.</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>&#8211;max_height MAX_HEIGHT, -he MAX_HEIGHT</dt>
+<dd>This value relates to the minimum number of read
+starts at a certain genomic position to be considered
+as a TSS candidate. During optimization will be never
+larger than this value. Default is 2.5.</dd>
+<dt>&#8211;max_height_reduction MAX_HEIGHT_REDUCTION, -rh MAX_HEIGHT_REDUCTION</dt>
+<dd>When comparing different strains/conditions and the
+step height threshold is reached in at least one
+strain/condition, the threshold is reduced for the
+other strains/conditions by the value set here. This
+value must be smaller than the step height threshold.
+During optimization will be never larger than this
+value. Default is 2.4.</dd>
+<dt>&#8211;max_factor MAX_FACTOR, -fa MAX_FACTOR</dt>
+<dd>This is the minimum factor by which the TSS height has
+to exceed the local expression background. During
+optimization will be never larger than this value.
+Default is 10.</dd>
+<dt>&#8211;max_factor_reduction MAX_FACTOR_REDUCTION, -rf MAX_FACTOR_REDUCTION</dt>
+<dd>When comparing different strains/conditions and the
+step factor threshold is reached in at least one
+strain/condition, the threshold is reduced for the
+other strains/conditions by the value set here. This
+value must be smaller than the step factor threshold.
+During optimization will be never larger than this
+value. Default is 9.9.</dd>
+<dt>&#8211;max_base_height MAX_BASE_HEIGHT, -bh MAX_BASE_HEIGHT</dt>
+<dd>This is the minimum number of reads should be mapped
+on TSS. During optimization will be never larger than
+this value. Default is 0.06.</dd>
+<dt>&#8211;max_enrichment_factor MAX_ENRICHMENT_FACTOR, -ef MAX_ENRICHMENT_FACTOR</dt>
+<dd>This is the minimum enrichment factor. During
+optimization will be never larger than this value.
+Default is 6.0.</dd>
+<dt>&#8211;max_processing_factor MAX_PROCESSING_FACTOR, -pf MAX_PROCESSING_FACTOR</dt>
+<dd>This is the minimum processing factor. If untreated
+library is higher than the treated library and above
+which the TSS candidate is considered as a processing
+site and not annotated as detected. During
+optimization will be never larger than this value.
+Default is 6.0</dd>
+</dl>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--utr_length <var>UTR_LENGTH</var></span>, <span class="option">-u <var>UTR_LENGTH</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The length of UTR. It is for Primary and Secondary
+TSSs. Default is 300.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--lib <var>LIB</var></span>, <span class="option">-l <var>LIB</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The libraries of wig files for TSSpredator. The format
+is: wig_file_name:tex_treat_or_not(tex or notex):condi
+tion_id(integer):replicate_id(alphabet):strand(+ or
+-). If you have multiple wig files, please use comma
+to separate the wig files. For example,
+wig1:tex:1:a:+,wig2:tex:1:a:-.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--output_prefix <var>OUTPUT_PREFIX</var></span>, <span class="option">-p <var>OUTPUT_PREFIX</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>The output prefix of all conditions. If you have
+multiple conditions, please use comma to separate
+them. For example,
+prefix_condition1,prefix_condition2.</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>&#8211;cluster CLUSTER, -cu CLUSTER</dt>
+<dd>If the position between manual one and predicted one
+is smaller or equal than this value, it will only
+print one of them. Default is 2.</dd>
+<dt>&#8211;length LENGTH, -le LENGTH</dt>
+<dd>The length of genome for running optimization. If you
+don&#8217;t want to run for whole genome, you can assign the
+length of partial genome.Default is compare whole
+genome.</dd>
+</dl>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--core <var>CORE</var></span>, <span class="option">-c <var>CORE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>How many paralle runs do you want to use. Default is
+4.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--program <var>PROGRAM</var></span>, <span class="option">-t <var>PROGRAM</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>You want to run optimize TSS or processing site.
+Please assign &#8220;TSS&#8221; or &#8220;Processint_site&#8221;. Default is
+TSS.</td></tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>&#8211;replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH</dt>
+<dd>The TSS candidates should match to how many number of
+the replicates. The format is
+$NUMBERofCONDITION_$NUMBERofREPLICATED. If you want to
+assign different replicate match to different
+conditions, you can use comma to separate it. For
+example, 1_2,2_2,3_3 means number 1 and 2 condition
+assign 2 to &#8211;replicate_match, and number 3 condition
+assign 3 to &#8211;replcate_match. If you want to assign
+the same replicate match to all conditions, just
+assign like all_1 (all condition use 1
+&#8211;replicate_match). Default is all_1.</dd>
+</dl>
+<table class="last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--steps <var>STEPS</var></span>, <span class="option">-s <var>STEPS</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>How many steps do you want to run. Default is 4000
+runs.</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+</dl>
 <ul class="simple">
 <li>Output files</li>
 </ul>

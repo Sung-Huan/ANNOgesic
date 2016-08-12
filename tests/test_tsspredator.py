@@ -116,7 +116,7 @@ class TestsTSSpredator(unittest.TestCase):
         out = StringIO()
         lib_list = [{"condition": 1, "replicate": "a", "wig": "test_1.wig"},
                     {"condition": 2, "replicate": "a", "wig": "test_2.wig"}]
-        self.tss._print_lib(2, lib_list, out, self.wigs, "test")
+        self.tss._print_lib(2, lib_list, out, self.wigs, "test", ["a"])
         self.assertEqual(out.getvalue(), "test_1a = test_folder/wigs/test_1.wig\ntest_2a = test_folder/wigs/test_2.wig\n")
 
     def test_import_lib(self):
@@ -155,7 +155,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.processing_factor = 1.5
         args.utr_length = 300
         args.cluster = 3
-        args.repmatch = 2
+        args.repmatch = "all_2"
         args.libs = libs
         args.output_prefixs = ["test1"]
         self.tss._gen_config("test", args, self.gffs + "/tmp/test.gff",
@@ -191,7 +191,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.libs = libs
         args.out_folder = self.out
         args.cluster = 3
-        args.repmatch = 2
+        args.repmatch = "all_2"
         args.output_prefixs = ["test1"]
         self.tss._set_gen_config(args, self.test_folder)
         datas = import_data(os.path.join(self.test_folder, "config_test.ini"))
@@ -369,7 +369,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.libs = libs
         args.out_folder = self.out
         args.cluster = 3
-        args.repmatch = 2
+        args.repmatch = "all_2"
         args.output_prefixs = "test"
         args.check_orphan = True
         args.remove_low_expression = True

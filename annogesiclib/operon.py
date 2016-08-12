@@ -81,7 +81,7 @@ class OperonDetection(object):
         for prefix in prefixs:
             out_file = os.path.join(args_op.output_folder, "gffs",
                                     "_".join([prefix, "operon.gff"]))
-            print("Combine all features of {0}".format(prefix))
+            print("Generating the gff file of {0}".format(prefix))
             tss = self.helper.get_correct_file(
                     self.tss_path, "_TSS.gff", prefix, None, None)
             tran = self.helper.get_correct_file(

@@ -15,9 +15,12 @@ class RATT(object):
         self.converter = Converter()
         self.format_fixer = FormatFixer()
         self.helper = Helper()
-        self.gbk = os.path.join(args_ratt.ref_embls, "gbk_tmp")
-        self.gbk_tmp = os.path.join(self.gbk, "tmp")
-        self.embl = os.path.join(args_ratt.ref_embls, "embls")
+        if args_ratt.ref_gbk:
+            self.gbk = os.path.join(args_ratt.ref_gbk, "gbk_tmp")
+            self.gbk_tmp = os.path.join(self.gbk, "tmp")
+            self.embl = os.path.join(args_ratt.ref_gbk, "embls")
+        if args_ratt.ref_embls:
+            self.embl = args_ratt.ref_embls
         self.ratt_log = os.path.join(args_ratt.output_path, "ratt_log.txt")
         self.tmp_files = {"tar": os.path.join(args_ratt.tar_fastas, "tmp"),
                           "ref": os.path.join(args_ratt.ref_fastas, "tmp"),
@@ -53,7 +56,6 @@ class RATT(object):
         shutil.rmtree(self.tmp_files["out_gff"])
         shutil.rmtree(self.tmp_files["tar"])
         shutil.rmtree(self.tmp_files["ref"])
-        shutil.rmtree(self.embl)
         self.helper.remove_all_content(args_ratt.tar_fastas, "_folder", "dir")
         self.helper.remove_all_content(args_ratt.ref_fastas, "_folder", "dir")
         if out_gbk:
@@ -109,7 +111,9 @@ class RATT(object):
         gbks = []
         out_gbk = None
         for embl in os.listdir(ref_embls):
-            if embl.endswith(".gbk"):
+            if (embl.endswith(".gbk")) or (
+                    embl.endswith(".gbff")) or (
+                    embl.endswith(".gb")):
                 detect_gbk = True
                 gbks.append(os.path.join(ref_embls, embl))
         if not detect_gbk:
@@ -155,7 +159,9 @@ class RATT(object):
     def annotation_transfer(self, args_ratt):
         self.multiparser.parser_fasta(args_ratt.tar_fastas)
         self.multiparser.parser_fasta(args_ratt.ref_fastas)
-        out_gbk = self._convert_embl(args_ratt.ref_embls)
+        out_gbk = None
+        if args_ratt.ref_embls is None:
+            out_gbk = self._convert_embl(args_ratt.ref_gbk)
         self._format_and_run(args_ratt)
         if args_ratt.convert:
             files = []

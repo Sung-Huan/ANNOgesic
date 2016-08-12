@@ -31,9 +31,11 @@ class TestRATT(unittest.TestCase):
         self.tar_fastas = "test_folder/tar_fasta"
         self.ref_fastas = "test_folder/ref_fasta"
         self.gff_outfolder = "test_folder/gffs"
+        self.ref_gbk = "test_folder/gbk"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.ref_embls)
+            os.mkdir(self.ref_gbk)
             os.mkdir(self.output_path)
             os.mkdir(self.tar_fastas)
             os.mkdir(self.ref_fastas)
@@ -41,6 +43,7 @@ class TestRATT(unittest.TestCase):
         args = self.mock_args.mock()
         args.output_path = self.output_path
         args.ref_embls = self.ref_embls
+        args.ref_gbk = self.ref_gbk
         args.tar_fastas = self.tar_fastas
         args.ref_fastas = self.ref_fastas
         args.gff_outfolder = self.gff_outfolder
@@ -80,16 +83,16 @@ class TestRATT(unittest.TestCase):
         files = [os.path.join(self.test_folder, "aaa.gbk")]
         gen_file(os.path.join(self.test_folder, "aaa.gbk"), self.example.gbk_file)
         self.ratt._parser_embl_gbk(files)
-        data = import_data(os.path.join(self.ref_embls, "gbk_tmp/NC_007795.1.gbk"))
+        data = import_data(os.path.join(self.ref_gbk, "gbk_tmp/NC_007795.1.gbk"))
         self.assertEqual("\n".join(data), self.example.gbk_file.split("//")[0] + "//")
-        data = import_data(os.path.join(self.ref_embls, "gbk_tmp/NC_007799.1.gbk"))
+        data = import_data(os.path.join(self.ref_gbk, "gbk_tmp/NC_007799.1.gbk"))
         self.assertEqual("\n".join(data), self.example.gbk_file.split("//")[1].strip() + "\n//")
 
     def test_convert_embl(self):
         gen_file(os.path.join(self.test_folder, "aaa.gbk"), self.example.gbk_file.split("//")[0])
         out = self.ratt._convert_embl(self.test_folder)
-        self.assertEqual(out, "test_folder/embls/gbk_tmp")
-        self.assertTrue(os.path.exists("test_folder/embls/gbk_tmp"))
+        self.assertEqual(out, "test_folder/gbk/gbk_tmp")
+        self.assertTrue(os.path.exists("test_folder/gbk/gbk_tmp"))
 
     def test_format_and_run(self):
         self.ratt._run_ratt = Mock_func().mock_run_ratt

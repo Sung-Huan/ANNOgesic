@@ -313,48 +313,50 @@ The fasta files of target genome.
 
 ::
 
-	usage: annogesic annotation_transfer [-h] [--RATT_path RATT_PATH]
-	                                     [--compare_pair COMPARE_PAIR]
-	                                     [--element ELEMENT]
-	                                     [--transfer_type TRANSFER_TYPE]
-	                                     [--ref_embl_gbk REF_EMBL_GBK]
-	                                     [--ref_fasta REF_FASTA]
-	                                     [--target_fasta TARGET_FASTA]
-	                                     [--convert_to_gff_rnt_ptt]
-	                                     [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --RATT_path RATT_PATH
-	                        Path of the start.ratt.sh file of RATT folder. Default
-	                        is start.ratt.sh.
-	  --compare_pair COMPARE_PAIR, -p COMPARE_PAIR
-	                        Please assign the name of strain pairs. ex.
-	                        NC_007795:NEW_NC_007795. The reference strain is
-	                        NC_007795 and the target strain is NEW_NC_007795.
-	                        Please assign the names of strain, not filenames of
-	                        fasta files. If you want to assign multiple strains,
-	                        please use comma to separate the strains.
-	  --element ELEMENT, -e ELEMENT
-	                        It will become the prefix of all output file.
-	  --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
-	                        The transfer type for running RATT.(details can refer
-	                        to the manual of RATT.) Default is Strain.
-	  --ref_embl_gbk REF_EMBL_GBK, -re REF_EMBL_GBK
-	                        The folder which stores every reference embl
-	                        folders.If you have no embl folder, you can assign the
-	                        folder of genbank.
-	  --ref_fasta REF_FASTA, -rf REF_FASTA
-	                        The folder of reference fasta files.
-	  --target_fasta TARGET_FASTA, -tf TARGET_FASTA
-	                        The folder which stores target fasta files.
-	  --convert_to_gff_rnt_ptt, -g
-	                        Do you want to convert to gff, rnt and ptt? Default is
-	                        False.
+     usage: annogesic annotation_transfer [-h] [--RATT_path RATT_PATH]
+                                          [--compare_pair COMPARE_PAIR]
+                                          [--element ELEMENT]
+                                          [--transfer_type TRANSFER_TYPE]
+                                          [--ref_embl REF_EMBL] [--ref_gbk REF_GBK]
+                                          [--ref_fasta REF_FASTA]
+                                          [--target_fasta TARGET_FASTA]
+                                          [--convert_to_gff_rnt_ptt]
+                                          [project_path]
+     
+     positional arguments:
+       project_path          Path of the project folder. If none is given, the
+                             current directory is used.
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --RATT_path RATT_PATH
+                             Path of the start.ratt.sh file of RATT folder. Default
+                             is start.ratt.sh.
+       --compare_pair COMPARE_PAIR, -p COMPARE_PAIR
+                             Please assign the name of strain pairs. ex.
+                             NC_007795:NEW_NC_007795. The reference strain is
+                             NC_007795 and the target strain is NEW_NC_007795.
+                             Please assign the names of strain, not filenames of
+                             fasta files. If you want to assign multiple strains,
+                             please use comma to separate the strains.
+       --element ELEMENT, -e ELEMENT
+                             It will become the prefix of all output file.
+       --transfer_type TRANSFER_TYPE, -t TRANSFER_TYPE
+                             The transfer type for running RATT.(details can refer
+                             to the manual of RATT.) Default is Strain.
+       --ref_embl REF_EMBL, -re REF_EMBL
+                             The folder which stores embl file.
+       --ref_gbk REF_GBK, -rg REF_GBK
+                             If you have no embl file, you can assign the folder
+                             which stores genbank file. The genbank can be ended by
+                             .gbk, .gbff or .gb
+       --ref_fasta REF_FASTA, -rf REF_FASTA
+                             The folder of reference fasta files.
+       --target_fasta TARGET_FASTA, -tf TARGET_FASTA
+                             The folder which stores target fasta files.
+       --convert_to_gff_rnt_ptt, -g
+                             Do you want to convert to gff, rnt and ptt? Default is
+                             False.
 
 - Output files
 
@@ -586,152 +588,160 @@ For the transcripts, please refer to the section of ``transcript_assembly``.
 
 ::
 
-	usage: annogesic tsspredator [-h] [--TSSpredator_path TSSPREDATOR_PATH]
-	                             [--fasta_folder FASTA_FOLDER]
-	                             [--annotation_folder ANNOTATION_FOLDER]
-	                             [--wig_folder WIG_FOLDER] [--height HEIGHT]
-	                             [--height_reduction HEIGHT_REDUCTION]
-	                             [--factor FACTOR]
-	                             [--factor_reduction FACTOR_REDUCTION]
-	                             [--enrichment_factor ENRICHMENT_FACTOR]
-	                             [--processing_factor PROCESSING_FACTOR]
-	                             [--base_height BASE_HEIGHT]
-	                             [--replicate_match REPLICATE_MATCH]
-	                             [--utr_length UTR_LENGTH] [--lib LIB]
-	                             [--output_prefix OUTPUT_PREFIX]
-	                             [--merge_manual MERGE_MANUAL] [--statistics]
-	                             [--validate_gene]
-	                             [--compute_program COMPUTE_PROGRAM]
-	                             [--compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY]
-	                             [--fuzzy FUZZY] [--cluster CLUSTER]
-	                             [--length LENGTH] [--re_check_orphan]
-	                             [--overlap_feature OVERLAP_FEATURE]
-	                             [--reference_gff_folder REFERENCE_GFF_FOLDER]
-	                             [--remove_low_expression REMOVE_LOW_EXPRESSION]
-	                             [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --TSSpredator_path TSSPREDATOR_PATH
-	                        If you want to assign the path of TSSpredator, please
-	                        assign here. Default is /usr/local/bin/TSSpredator.jar
-	  --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-	                        Path of the target genome fasta folder.
-	  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-	                        Path of the target genome annotation gff folder.
-	  --wig_folder WIG_FOLDER, -w WIG_FOLDER
-	                        The folder of the wig folder.
-	  --height HEIGHT, -he HEIGHT
-	                        This value relates to the minimal number of read
-	                        starts at a certain genomic position to be considered
-	                        as a TSS candidate. Default is 0.3.
-	  --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
-	                        When comparing different strains/conditions and the
-	                        step height threshold is reached in at least one
-	                        strain/condition, the threshold is reduced for the
-	                        other strains/conditions by the value set here. This
-	                        value must be smaller than the step height threshold.
-	                        Default is 0.2.
-	  --factor FACTOR, -fa FACTOR
-	                        This is the minimal factor by which the TSS height has
-	                        to exceed the local expression background. Default is
-	                        2.0.
-	  --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
-	                        When comparing different strains/conditions and the
-	                        step factor threshold is reached in at least one
-	                        strain/condition, the threshold is reduced for the
-	                        other strains/conditions by the value set here. This
-	                        value must be smaller than the step factor threshold.
-	                        Default is 0.5.
-	  --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
-	                        This is the minimal enrichment factor. During
-	                        optimization will never larger than this value.
-	                        Default is 2.0.
-	  --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
-	                        This is the minimal processing factor. If untreated
-	                        library is higher than the treated library and above
-	                        which the TSS candidate is considered as a processing
-	                        site and not annotated as detected. During
-	                        optimization will never larger than this value.
-	                        Default is 1.5.
-	  --base_height BASE_HEIGHT, -bh BASE_HEIGHT
-	                        This is the minimal number of reads should be mapped
-	                        on TSS. Default is 0.0.
-	  --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
-	                        The TSS candidates should match to how many number of
-	                        the replicates. Default is 1.
-	  --utr_length UTR_LENGTH, -u UTR_LENGTH
-	                        The length of UTR. It is for Primary and Secondary
-	                        definition. Default is 300.
-	  --lib LIB, -l LIB     The libraries of wig files for TSSpredator. The format
-	                        is: wig_file_name:tex_treat_or_not(tex or notex):condi
-	                        tion_id(integer):replicate_id(alphabet):strand(+ or
-	                        -). If you have multiple wig files, please use comma
-	                        to separate the wig files. For example,
-	                        wig1:tex:1:a:+,wig2:tex:1:a:-.
-	  --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
-	                        The output prefix of all conditions. If you have
-	                        multiple conditions, please use comma to separate
-	                        them. For example,
-	                        prefix_condition1,prefix_condition2.
-	  --merge_manual MERGE_MANUAL, -m MERGE_MANUAL
-	                        If you have gff file of manual checked TSS, you can
-	                        use this function to merge manual checked ones and
-	                        predicted ones. please assign the path of gff file 
-	                        of manual checked TSS.
-	  --statistics, -s      Doing statistics for TSS candidates. it will store in
-	                        statistics folder. Default is False.
-	  --validate_gene, -v   Using TSS candidates to validate genes in annotation
-	                        file. it will store in statistics folder. Default is
-	                        False.
-	  --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
-	                        Which program do you want to predict. (TSS or
-	                        processing_site) Default is TSS.
-	  --compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY, -ta COMPARE_TRANSCRIPT_ASSEMBLY
-	                        If you want to compare with transcriptome assembly,
-	                        please assign the folder of gff file of transcript
-	                        assembly. Default is False.
-	  --fuzzy FUZZY, -fu FUZZY
-	                        The fuzzy for comparing TSS and transcript assembly.
-	                        Default is 5.
-	  --cluster CLUSTER, -c CLUSTER
-	                        This number is for compare manual detected TSS and
-	                        prediced one. If the position between manual checked
-	                        one and predicted one is smaller or equal than this
-	                        value, It will only print one of them. Default is 2.
-	  --length LENGTH, -le LENGTH
-	                        The length of genome that you want to compare between
-	                        predicted one and manual checked one for statistics.
-	                        If you want to compare whole genome, please don't turn
-	                        it on. The default is comparing whole genome.
-	  --re_check_orphan, -ro
-	                        If your annotation file lack information of gene or
-	                        locus_tag, you can turn it on. It will try to compare
-	                        with CDS. Default is False.
-	  --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
-	                        If processing site and TSS are overlap, you can keep
-	                        "TSS" or "processing_site" or "both". Default is both.
-	  --reference_gff_folder REFERENCE_GFF_FOLDER, -rg REFERENCE_GFF_FOLDER
-	                        For --overlap_feature, if you want to only keep "TSS" 
-	                        or "processing_site", you need to assign the
-	                        --reference_gff_folder. If you are running TSS, please
-	                        assign the folder of processing site. If you are
-	                        running processing_site, please assign the folder of
-	                        TSS. If you want to keep "both" at overlap position,
-	                        please don't turn it on. Default is None(for keep
-	                        both).
-	  --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
-	                        If you want to remove low expressed TSS/processing
-	                        site, please assign the file of manual checked gff
-	                        file here. It will remove the low expressed ones 
-	                        based on comparisone of manual checked ones.
-	                        Please Be ATTENTION: this parameter may
-	                        remove some True positive, too. So, please make sure
-	                        you want to do it.
+    usage: annogesic tsspredator [-h] [--TSSpredator_path TSSPREDATOR_PATH]
+                                 [--fasta_folder FASTA_FOLDER]
+                                 [--annotation_folder ANNOTATION_FOLDER]
+                                 [--wig_folder WIG_FOLDER] [--height HEIGHT]
+                                 [--height_reduction HEIGHT_REDUCTION]
+                                 [--factor FACTOR]
+                                 [--factor_reduction FACTOR_REDUCTION]
+                                 [--enrichment_factor ENRICHMENT_FACTOR]
+                                 [--processing_factor PROCESSING_FACTOR]
+                                 [--base_height BASE_HEIGHT]
+                                 [--replicate_match REPLICATE_MATCH]
+                                 [--utr_length UTR_LENGTH] [--lib LIB]
+                                 [--output_prefix OUTPUT_PREFIX]
+                                 [--merge_manual MERGE_MANUAL] [--statistics]
+                                 [--validate_gene]
+                                 [--compute_program COMPUTE_PROGRAM]
+                                 [--compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY]
+                                 [--fuzzy FUZZY] [--cluster CLUSTER]
+                                 [--length LENGTH] [--re_check_orphan]
+                                 [--overlap_feature OVERLAP_FEATURE]
+                                 [--reference_gff_folder REFERENCE_GFF_FOLDER]
+                                 [--remove_low_expression REMOVE_LOW_EXPRESSION]
+                                 [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --TSSpredator_path TSSPREDATOR_PATH
+                            If you want to assign the path of TSSpredator, please
+                            assign here. Default is /usr/local/bin/TSSpredator.jar
+      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+                            Path of the target genome fasta folder.
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            Path of the target genome gff folder.
+      --wig_folder WIG_FOLDER, -w WIG_FOLDER
+                            The folder of the wig folder.
+      --height HEIGHT, -he HEIGHT
+                            This value relates to the minimal number of read
+                            starts at a certain genomic position to be considered
+                            as a TSS candidate. Default is 0.3.
+      --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
+                            When comparing different strains/conditions and the
+                            step height threshold is reached in at least one
+                            strain/condition, the threshold is reduced for the
+                            other strains/conditions by the value set here. This
+                            value must be smaller than the step height threshold.
+                            Default is 0.2.
+      --factor FACTOR, -fa FACTOR
+                            This is the minimal factor by which the TSS height has
+                            to exceed the local expression background. Default is
+                            2.0.
+      --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
+                            When comparing different strains/conditions and the
+                            step factor threshold is reached in at least one
+                            strain/condition, the threshold is reduced for the
+                            other strains/conditions by the value set here. This
+                            value must be smaller than the step factor threshold.
+                            Default is 0.5.
+      --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
+                            This is the minimal enrichment factor. During
+                            optimization will never larger than this value.
+                            Default is 2.0.
+      --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
+                            This is the minimal processing factor. If untreated
+                            library is higher than the treated library and above
+                            which the TSS candidate is considered as a processing
+                            site and not annotated as detected. During
+                            optimization will never larger than this value.
+                            Default is 1.5.
+      --base_height BASE_HEIGHT, -bh BASE_HEIGHT
+                            This is the minimal number of reads should be mapped
+                            on TSS. Default is 0.0.
+      --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
+                            The TSS candidates should match to how many number of
+                            the replicates. The format is
+                            $NUMBERofCONDITION_$NUMBERofREPLICATED. If you want to
+                            assign different replicate match to different
+                            conditions, you can use comma to separate it. For
+                            example, 1_2,2_2,3_3 means number 1 and 2 condition
+                            assign 2 to --replicate_match, and number 3 condition
+                            assign 3 to --replcate_match. If you want to assign
+                            the same replicate match to all conditions, just
+                            assign like all_1 (all condition use 1
+                            --replicate_match). Default is all_1.
+      --utr_length UTR_LENGTH, -u UTR_LENGTH
+                            The length of UTR. It is for Primary and Secondary
+                            definition. Default is 300.
+      --lib LIB, -l LIB     The libraries of wig files for TSSpredator. The format
+                            is: wig_file_name:tex_treat_or_not(tex or notex):condi
+                            tion_id(integer):replicate_id(alphabet):strand(+ or
+                            -). If you have multiple wig files, please use comma
+                            to separate the wig files. For example,
+                            wig1:tex:1:a:+,wig2:tex:1:a:-.
+      --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
+                            The output prefix of all conditions. If you have
+                            multiple conditions, please use comma to separate
+                            them. For example,
+                            prefix_condition1,prefix_condition2.
+      --merge_manual MERGE_MANUAL, -m MERGE_MANUAL
+                            If you have gff file of manual checked TSS, you can
+                            use this function to merge manual checked ones and
+                            predicted ones. please assign the path of gff file of
+                            manual checked TSS.
+      --statistics, -s      Doing statistics for TSS candidates. it will store in
+                            statistics folder. Default is False.
+      --validate_gene, -v   Using TSS candidates to validate genes in annotation
+                            file. it will store in statistics folder. Default is
+                            False.
+      --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
+                            Which program do you want to predict. (TSS or
+                            processing_site) Default is TSS.
+      --compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY, -ta COMPARE_TRANSCRIPT_ASSEMBLY
+                            If you want to compare with transcriptome assembly,
+                            please assign the folder of gff file of transcript
+                            assembly. Default is False.
+      --fuzzy FUZZY, -fu FUZZY
+                            The fuzzy for comparing TSS and transcript assembly.
+                            Default is 5.
+      --cluster CLUSTER, -c CLUSTER
+                            This number is for compare manual detected TSS and
+                            prediced one. If the position between manual checked
+                            one and predicted one is smaller or equal than this
+                            value, It will only print one of them. Default is 2.
+      --length LENGTH, -le LENGTH
+                            The length of genome that you want to compare between
+                            predicted one and manual checked one for statistics.
+                            If you want to compare whole genome, please don't turn
+                            it on. The default is comparing whole genome.
+      --re_check_orphan, -ro
+                            If your annotation file lack information of gene or
+                            locus_tag, you can turn it on. It will try to compare
+                            with CDS. Default is False.
+      --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
+                            If processing site and TSS are overlap, you can keep
+                            "TSS" or "processing_site" or "both". Default is both.
+      --reference_gff_folder REFERENCE_GFF_FOLDER, -rg REFERENCE_GFF_FOLDER
+                            For --overlap_feature, if you want to only keep "TSS"
+                            or "processing_site", you need to assign the
+                            --reference_gff_folder. If you are running TSS, please
+                            assign the folder of processing site. If you are
+                            running processing_site, please assign the folder of
+                            TSS. If you want to keep "both" at overlap position,
+                            please don't turn it on. Default is None(for keep
+                            both).
+      --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
+                            If you want to remove low expressed TSS/processing
+                            site, please assign the file of manual checked gff
+                            file here. It will remove the low expressed ones based
+                            on comparison of manual checked ones. Please Be
+                            ATTENTION: this parameter may remove some True
+                            positive, too. So, please make sure you want to do it.
 
 - Output files
 
@@ -2809,126 +2819,134 @@ Gff file of manual detection.
 - Arguments
 
 ::
-
-	usage: annogesic optimize_tsspredator [-h]
-	                                      [--TSSpredator_path TSSPREDATOR_PATH]
-	                                      [--fasta_file FASTA_FILE]
-	                                      [--annotation_file ANNOTATION_FILE]
-	                                      [--wig_folder WIG_FOLDER]
-	                                      [--manual MANUAL]
-	                                      [--strain_name STRAIN_NAME]
-	                                      [--max_height MAX_HEIGHT]
-	                                      [--max_height_reduction MAX_HEIGHT_REDUCTION]
-	                                      [--max_factor MAX_FACTOR]
-	                                      [--max_factor_reduction MAX_FACTOR_REDUCTION]
-	                                      [--max_base_height MAX_BASE_HEIGHT]
-	                                      [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
-	                                      [--max_processing_factor MAX_PROCESSING_FACTOR]
-	                                      [--utr_length UTR_LENGTH] [--lib LIB]
-	                                      [--output_prefix OUTPUT_PREFIX]
-	                                      [--cluster CLUSTER] [--length LENGTH]
-	                                      [--core CORE] [--program PROGRAM]
-	                                      [--replicate_match REPLICATE_MATCH]
-	                                      [--steps STEPS]
-	                                      [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --TSSpredator_path TSSPREDATOR_PATH
-	                        If you want to assign the path of TSSpredator, please
-	                        assign here. Default is /usr/local/bin/TSSpredator.jar
-	  --fasta_file FASTA_FILE, -fs FASTA_FILE
-	                        Path of one target genome fasta file which you want to
-	                        opimize it.
-	  --annotation_file ANNOTATION_FILE, -g ANNOTATION_FILE
-	                        Path of one target genome annotation gff file which
-	                        you want to opimize it.
-	  --wig_folder WIG_FOLDER, -w WIG_FOLDER
-	                        The folder of the TEX+/- wig folder.
-	  --manual MANUAL, -m MANUAL
-	                        The file of manual checked gff file.
-	  --strain_name STRAIN_NAME, -n STRAIN_NAME
-	                        The name of the strain you want to optimize.
-	  --max_height MAX_HEIGHT, -he MAX_HEIGHT
-	                        This value relates to the minimum number of read
-	                        starts at a certain genomic position to be considered
-	                        as a TSS candidate. During optimization will be never
-	                        larger than this value. Default is 2.5.
-	  --max_height_reduction MAX_HEIGHT_REDUCTION, -rh MAX_HEIGHT_REDUCTION
-	                        When comparing different strains/conditions and the
-	                        step height threshold is reached in at least one
-	                        strain/condition, the threshold is reduced for the
-	                        other strains/conditions by the value set here. This
-	                        value must be smaller than the step height threshold.
-	                        During optimization will be never larger than this
-	                        value. Default is 2.4.
-	  --max_factor MAX_FACTOR, -fa MAX_FACTOR
-	                        This is the minimum factor by which the TSS height has
-	                        to exceed the local expression background. During
-	                        optimization will be never larger than this value.
-	                        Default is 10.
-	  --max_factor_reduction MAX_FACTOR_REDUCTION, -rf MAX_FACTOR_REDUCTION
-	                        When comparing different strains/conditions and the
-	                        step factor threshold is reached in at least one
-	                        strain/condition, the threshold is reduced for the
-	                        other strains/conditions by the value set here. This
-	                        value must be smaller than the step factor threshold.
-	                        During optimization will be never larger than this
-	                        value. Default is 9.9.
-	  --max_base_height MAX_BASE_HEIGHT, -bh MAX_BASE_HEIGHT
-	                        This is the minimum number of reads should be mapped
-	                        on TSS. During optimization will be never larger than
-	                        this value. Default is 0.06.
-	  --max_enrichment_factor MAX_ENRICHMENT_FACTOR, -ef MAX_ENRICHMENT_FACTOR
-	                        This is the minimum enrichment factor. During
-	                        optimization will be never larger than this value.
-	                        Default is 6.0.
-	  --max_processing_factor MAX_PROCESSING_FACTOR, -pf MAX_PROCESSING_FACTOR
-	                        This is the minimum processing factor. If untreated
-	                        library is higher than the treated library and above
-	                        which the TSS candidate is considered as a processing
-	                        site and not annotated as detected. During
-	                        optimization will be never larger than this value.
-	                        Default is 6.0
-	  --utr_length UTR_LENGTH, -u UTR_LENGTH
-	                        The length of UTR. It is for Primary and Secondary
-	                        TSSs. Default is 300.
-	  --lib LIB, -l LIB     The libraries of wig files for TSSpredator. The format
-	                        is: wig_file_name:tex_treat_or_not(tex or notex):condi
-	                        tion_id(integer):replicate_id(alphabet):strand(+ or
-	                        -). If you have multiple wig files, please use comma
-	                        to separate the wig files. For example,
-	                        wig1:tex:1:a:+,wig2:tex:1:a:-.
-	  --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
-	                        The output prefix of all conditions. If you have
-	                        multiple conditions, please use comma to separate
-	                        them. For example,
-	                        prefix_condition1,prefix_condition2.
-	  --cluster CLUSTER, -cu CLUSTER
-	                        If the position between manual one and predicted one
-	                        is smaller or equal than this value, it will only
-	                        print one of them. Default is 2.
-	  --length LENGTH, -le LENGTH
-	                        The length of genome for running optimization. If you
-	                        don't want to run for whole genome, you can assign the
-	                        length of partial genome.Default is compare whole
-	                        genome.
-	  --core CORE, -c CORE  How many paralle runs do you want to use. Default is
-	                        4.
-	  --program PROGRAM, -t PROGRAM
-	                        You want to run optimize TSS or processing site.
-	                        Please assign "TSS" or "Processint_site". Default is
-	                        TSS.
-	  --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
-	                        The TSS candidates should match to how many number of
-	                        the replicates. Default is 1.
-	  --steps STEPS, -s STEPS
-	                        How many steps do you want to run. Default is 4000
-	                        runs.
+     usage: annogesic optimize_tsspredator [-h]
+                                           [--TSSpredator_path TSSPREDATOR_PATH]
+                                           [--fasta_file FASTA_FILE]
+                                           [--annotation_file ANNOTATION_FILE]
+                                           [--wig_folder WIG_FOLDER]
+                                           [--manual MANUAL]
+                                           [--strain_name STRAIN_NAME]
+                                           [--max_height MAX_HEIGHT]
+                                           [--max_height_reduction MAX_HEIGHT_REDUCTION]
+                                           [--max_factor MAX_FACTOR]
+                                           [--max_factor_reduction MAX_FACTOR_REDUCTION]
+                                           [--max_base_height MAX_BASE_HEIGHT]
+                                           [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
+                                           [--max_processing_factor MAX_PROCESSING_FACTOR]
+                                           [--utr_length UTR_LENGTH] [--lib LIB]
+                                           [--output_prefix OUTPUT_PREFIX]
+                                           [--cluster CLUSTER] [--length LENGTH]
+                                           [--core CORE] [--program PROGRAM]
+                                           [--replicate_match REPLICATE_MATCH]
+                                           [--steps STEPS]
+                                           [project_path]
+     
+     positional arguments:
+       project_path          Path of the project folder. If none is given, the
+                             current directory is used.
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --TSSpredator_path TSSPREDATOR_PATH
+                             If you want to assign the path of TSSpredator, please
+                             assign here. Default is /usr/local/bin/TSSpredator.jar
+       --fasta_file FASTA_FILE, -fs FASTA_FILE
+                             Path of one target genome fasta file which you want to
+                             opimize it.
+       --annotation_file ANNOTATION_FILE, -g ANNOTATION_FILE
+                             Path of one target genome annotation gff file which
+                             you want to opimize it.
+       --wig_folder WIG_FOLDER, -w WIG_FOLDER
+                             The folder of the TEX+/- wig folder.
+       --manual MANUAL, -m MANUAL
+                             The file of manual checked gff file.
+       --strain_name STRAIN_NAME, -n STRAIN_NAME
+                             The name of the strain you want to optimize.
+       --max_height MAX_HEIGHT, -he MAX_HEIGHT
+                             This value relates to the minimum number of read
+                             starts at a certain genomic position to be considered
+                             as a TSS candidate. During optimization will be never
+                             larger than this value. Default is 2.5.
+       --max_height_reduction MAX_HEIGHT_REDUCTION, -rh MAX_HEIGHT_REDUCTION
+                             When comparing different strains/conditions and the
+                             step height threshold is reached in at least one
+                             strain/condition, the threshold is reduced for the
+                             other strains/conditions by the value set here. This
+                             value must be smaller than the step height threshold.
+                             During optimization will be never larger than this
+                             value. Default is 2.4.
+       --max_factor MAX_FACTOR, -fa MAX_FACTOR
+                             This is the minimum factor by which the TSS height has
+                             to exceed the local expression background. During
+                             optimization will be never larger than this value.
+                             Default is 10.
+       --max_factor_reduction MAX_FACTOR_REDUCTION, -rf MAX_FACTOR_REDUCTION
+                             When comparing different strains/conditions and the
+                             step factor threshold is reached in at least one
+                             strain/condition, the threshold is reduced for the
+                             other strains/conditions by the value set here. This
+                             value must be smaller than the step factor threshold.
+                             During optimization will be never larger than this
+                             value. Default is 9.9.
+       --max_base_height MAX_BASE_HEIGHT, -bh MAX_BASE_HEIGHT
+                             This is the minimum number of reads should be mapped
+                             on TSS. During optimization will be never larger than
+                             this value. Default is 0.06.
+       --max_enrichment_factor MAX_ENRICHMENT_FACTOR, -ef MAX_ENRICHMENT_FACTOR
+                             This is the minimum enrichment factor. During
+                             optimization will be never larger than this value.
+                             Default is 6.0.
+       --max_processing_factor MAX_PROCESSING_FACTOR, -pf MAX_PROCESSING_FACTOR
+                             This is the minimum processing factor. If untreated
+                             library is higher than the treated library and above
+                             which the TSS candidate is considered as a processing
+                             site and not annotated as detected. During
+                             optimization will be never larger than this value.
+                             Default is 6.0
+       --utr_length UTR_LENGTH, -u UTR_LENGTH
+                             The length of UTR. It is for Primary and Secondary
+                             TSSs. Default is 300.
+       --lib LIB, -l LIB     The libraries of wig files for TSSpredator. The format
+                             is: wig_file_name:tex_treat_or_not(tex or notex):condi
+                             tion_id(integer):replicate_id(alphabet):strand(+ or
+                             -). If you have multiple wig files, please use comma
+                             to separate the wig files. For example,
+                             wig1:tex:1:a:+,wig2:tex:1:a:-.
+       --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
+                             The output prefix of all conditions. If you have
+                             multiple conditions, please use comma to separate
+                             them. For example,
+                             prefix_condition1,prefix_condition2.
+       --cluster CLUSTER, -cu CLUSTER
+                             If the position between manual one and predicted one
+                             is smaller or equal than this value, it will only
+                             print one of them. Default is 2.
+       --length LENGTH, -le LENGTH
+                             The length of genome for running optimization. If you
+                             don't want to run for whole genome, you can assign the
+                             length of partial genome.Default is compare whole
+                             genome.
+       --core CORE, -c CORE  How many paralle runs do you want to use. Default is
+                             4.
+       --program PROGRAM, -t PROGRAM
+                             You want to run optimize TSS or processing site.
+                             Please assign "TSS" or "Processint_site". Default is
+                             TSS.
+       --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
+                             The TSS candidates should match to how many number of
+                             the replicates. The format is
+                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If you want to
+                             assign different replicate match to different
+                             conditions, you can use comma to separate it. For
+                             example, 1_2,2_2,3_3 means number 1 and 2 condition
+                             assign 2 to --replicate_match, and number 3 condition
+                             assign 3 to --replcate_match. If you want to assign
+                             the same replicate match to all conditions, just
+                             assign like all_1 (all condition use 1
+                             --replicate_match). Default is all_1.
+       --steps STEPS, -s STEPS
+                             How many steps do you want to run. Default is 4000
+                             runs.
 
 - Output files
 

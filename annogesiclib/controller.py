@@ -152,7 +152,7 @@ class Controller(object):
         if self._args.convert_embl is True:
             annotation_files = os.listdir(annotation_folder)
             if len(annotation_files) == 0:
-                sys.stdout.write("No gbk files!!\n")
+                sys.stdout.write("No gff files!!\n")
             else:
                 Converter().convert_gbk2embl(annotation_folder)
 
@@ -186,7 +186,14 @@ class Controller(object):
                 self._args.transfer_type != "Free"):
             print("Error: please assign correct --transfer_type!!")
             sys.exit()
-        self.check_folder([self._args.ref_embl_gbk, self._args.target_fasta,
+        if (self._args.ref_embl is None) and (self._args.ref_gbk is None):
+            print("Error: please assign proper embl or genbank folder")
+            sys.exit()
+        elif (self._args.ref_embl is not None) and (
+                self._args.ref_gbk is not None):
+            print("Error: please choose embl as input or genbank as input")
+            sys.exit()
+        self.check_folder([self._args.target_fasta,
                            self._args.ref_fasta])
         self.check_parameter([self._args.element, self._args.compare_pair],
                              ["--element", "--compare_pair"])
@@ -194,7 +201,7 @@ class Controller(object):
             self._paths.required_folders("annotation_transfer"))
         args_ratt = self.args_container.container_ratt(
             self._args.RATT_path, self._args.element, self._args.transfer_type,
-            self._args.ref_embl_gbk, self._args.target_fasta,
+            self._args.ref_embl, self._args.ref_gbk, self._args.target_fasta,
             self._args.ref_fasta, self._paths.ratt_folder,
             self._args.convert_to_gff_rnt_ptt,
             self._paths.tar_annotation_folder, self._args.compare_pair)

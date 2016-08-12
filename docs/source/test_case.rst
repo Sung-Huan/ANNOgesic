@@ -197,7 +197,7 @@ Now, we can try it.
 ::
 
     anngesic annotation_transfer \
-        -re ANNOgesic/input/reference/annotation \
+        -rg ANNOgesic/input/reference/annotation \
         -rf ANNOgesic/input/reference/fasta \
         -tf ANNOgesic/output/target/fasta \
         -e chromosome \
@@ -209,8 +209,8 @@ Now, we can try it.
 ``-e`` is the prefix of output embl files. ``-t`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
 We use ``Strain`` because the similarity is higher than 90%. For other programs, you can refer to 
 `RATT <http://ratt.sourceforge.net/>`_. We assign the pairs of transfer at ``-p``. 
-The names for ``-p`` are the names of strain not filenames of fasta files. ``-g`` means we want to transfer the embl files 
-to GFF3 files and store in ``ANNOgesic/output/target/annotation``.
+The names for ``-p`` are the names of strain not filenames of fasta files. ``-g`` means we want to transfer the 
+output embl files to GFF3 files and store in ``ANNOgesic/output/target/annotation``.
 
 When the computation is done, you can see
 
@@ -276,6 +276,7 @@ we set the ``--le`` as 200000).
         -n NC_000915.1 \
         -l $tex_notex_libs \
         -p TSS -s 25 \
+        -rm all_1 \
         -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
         -le 200000 \
         ANNOgesic
@@ -311,6 +312,7 @@ base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. Now we c
         -ef 1.7 \
         -pf 1.5 \
         -s \
+        -rm all_1 \
         -v \
         -le 200000 \
         -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
@@ -354,6 +356,7 @@ base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7).
         -ef 1.9 \
         -pf 5.7 \
         -s \
+        -rm all_1 \
         -v \
         -t processing_site \
         ANNOgesic

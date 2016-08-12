@@ -58,7 +58,7 @@ def get_file(ftp, input_folder, files_type, target):
                 if not row[0].startswith("#"):
                     gff_name = row[0]
                     break
-            os.rename(input_file, os.path.join(input_folder,
+            shutil.move(input_file, os.path.join(input_folder,
                                                gff_name + ".gff"))
             fh.close()
         elif (file_[-3:] == "gbk") or (file_[-7:] == "gbff.gz") or (
@@ -71,7 +71,7 @@ def get_file(ftp, input_folder, files_type, target):
                     if line[0:7] == "VERSION":
                         data = line[12:].split(" ")
                         break
-            os.rename(input_file, os.path.join(input_folder, data[0] + ".gbk"))
+            shutil.move(input_file, os.path.join(input_folder, data[0] + ".gbk"))
         if checks["detect"]:
             checks["detect"] = False
             checks["change"], seq_name = deal_detect(

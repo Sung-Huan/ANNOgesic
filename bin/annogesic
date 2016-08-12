@@ -108,9 +108,12 @@ def main():
         "--transfer_type", "-t", default="Strain",
         help="The transfer type for running RATT.(details can refer to the manual of RATT.) Default is Strain.")
     RATT_parser.add_argument(
-        "--ref_embl_gbk", "-re", default="ANNOgesic/input/reference/annotation",
-        help="The folder which stores every reference embl folders."
-        "If you have no embl folder, you can assign the folder of genbank.")
+        "--ref_embl", "-re", default=None,
+        help="The folder which stores embl file.")
+    RATT_parser.add_argument(
+        "--ref_gbk", "-rg", default=None,
+        help="If you have no embl file, you can assign the folder which stores genbank file. "
+        "The genbank can be ended by .gbk, .gbff or .gb")
     RATT_parser.add_argument(
         "--ref_fasta", "-rf",
         help="The folder of reference fasta files.")
@@ -176,8 +179,11 @@ def main():
         "--base_height", "-bh", default=0,
         help="This is the minimal number of reads should be mapped on TSS. Default is 0.0.")
     TSSpredator_parser.add_argument(
-        "--replicate_match", "-rm", default=1,
-        help="The TSS candidates should match to how many number of the replicates. Default is 1.")
+        "--replicate_match", "-rm", default="all_1",
+        help="The TSS candidates should match to how many number of the replicates. The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "If you want to assign different replicate match to different conditions, you can use comma to separate it. For example, 1_2,2_2,3_3 means "
+        "number 1 and 2 condition assign 2 to --replicate_match, and number 3 condition assign 3 to --replcate_match. "
+        "If you want to assign the same replicate match to all conditions, just assign like all_1 (all condition use 1 --replicate_match). Default is all_1.")
     TSSpredator_parser.add_argument(
         "--utr_length", "-u", default=300, type=int,
         help="The length of UTR. It is for Primary and Secondary definition. Default is 300.")
@@ -336,8 +342,11 @@ def main():
         "--program", "-t", default="TSS",
         help="You want to run optimize TSS or processing site. Please assign \"TSS\" or \"Processint_site\". Default is TSS.")
     op_TSSpredator_parser.add_argument(
-        "--replicate_match", "-rm", default=1,
-        help="The TSS candidates should match to how many number of the replicates. Default is 1.")
+        "--replicate_match", "-rm", default="all_1",
+        help="The TSS candidates should match to how many number of the replicates. The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "If you want to assign different replicate match to different conditions, you can use comma to separate it. For example, 1_2,2_2,3_3 means "
+        "number 1 and 2 condition assign 2 to --replicate_match, and number 3 condition assign 3 to --replcate_match. "
+        "If you want to assign the same replicate match to all conditions, just assign like all_1 (all condition use 1 --replicate_match). Default is all_1.")
     op_TSSpredator_parser.add_argument(
         "--steps", "-s", default=4000, type=int,
         help="How many steps do you want to run. Default is 4000 runs.")

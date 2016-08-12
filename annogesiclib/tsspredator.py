@@ -41,17 +41,23 @@ class TSSpredator(object):
                 "replicate": lib_datas[3],
                 "strand": lib_datas[4]}
 
-    def _print_lib(self, lib_num, lib_list, out, wig_folder, prefix):
+    def _print_lib(self, lib_num, lib_list, out, wig_folder, prefix, rep_set):
         for num_id in range(1, lib_num+1):
             cond_list = []
             for lib in lib_list:
                 if num_id == lib["condition"]:
                     cond_list.append(lib)
             cond_sort_list = sorted(cond_list, key=lambda k: k['replicate'])
+            reps = []
             for cond in cond_sort_list:
                 out.write("{0}_{1}{2} = {3}\n".format(
                           prefix, cond["condition"], cond["replicate"],
                           os.path.join(wig_folder, cond["wig"])))
+                reps.append(cond["replicate"])
+            for rep in sorted(rep_set):
+                if rep not in reps:
+                    out.write("{0}_{1}{2} = \n".format(
+                              prefix, cond["condition"], rep))
 
     def _start_to_run(self, tsspredator_path, config_file, out_path, prefix):
         print("Running TSSpredator for " + prefix)
@@ -95,14 +101,14 @@ class TSSpredator(object):
             out.write("annotation_{0} = {1}\n".format(num_id, gff))
         if program.lower() == "tss":
             self._print_lib(lib_num, lib_dict["fm"], out,
-                            wig_folder, "fivePrimeMinus")
+                            wig_folder, "fivePrimeMinus", rep_set)
             self._print_lib(lib_num, lib_dict["fp"], out,
-                            wig_folder, "fivePrimePlus")
+                            wig_folder, "fivePrimePlus", rep_set)
         elif program.lower() == "processing_site":
             self._print_lib(lib_num, lib_dict["nm"], out,
-                            wig_folder, "fivePrimeMinus")
+                            wig_folder, "fivePrimeMinus", rep_set)
             self._print_lib(lib_num, lib_dict["np"], out,
-                            wig_folder, "fivePrimePlus")
+                            wig_folder, "fivePrimePlus", rep_set)
         else:
             print("Error: Wrong program name!!!")
             sys.exit()
@@ -111,6 +117,31 @@ class TSSpredator(object):
         for num_id in range(1, lib_num+1):
             list_num_id.append(str(num_id))
         return lib_num, num_id, rep_set, lib_dict, list_num_id
+
+    def _print_repmatch(self, args_tss, out):
+        if "all" in args_tss.repmatch:
+            match = args_tss.repmatch.split("_")[-1]
+            out.write("minNumRepMatches = {0}\n".format(match))
+        else:
+            nums = {}
+            matchs = {}
+            for match in args_tss.repmatch.split(","):
+                lib = match.split("_")[0]
+                rep = match.split("_")[-1]
+                matchs[lib] = rep
+                if rep not in nums.keys():
+                    nums[rep] = 1
+                else:
+                    nums[rep] += 1
+            for rep, num in nums.items():
+                if num == max(nums.values()):
+                    out.write("minNumRepMatches = {0}\n".format(rep))
+                    max_rep = rep
+                    break
+            for lib, rep in matchs.items():
+                if rep != max_rep:
+                    out.write("minNumRepMatches_{0} = {1}\n".format(
+                        lib, rep))
 
     def _gen_config(self, project_strain_name, args_tss, gff,
                     wig_folder, fasta, config_file):
@@ -142,20 +173,20 @@ class TSSpredator(object):
         out.write("minCliffHeightDiscount = {0}\n".format(
                   args_tss.height_reduction))
         out.write("minNormalHeight = {0}\n".format(args_tss.base_height))
-        out.write("minNumRepMatches = {0}\n".format(args_tss.repmatch))
+        self._print_repmatch(args_tss, out)
         out.write("minPlateauLength = 0\n")
         out.write("mode = cond\n")
         out.write("normPercentile = 0.9\n")
         if args_tss.program.lower() == "tss":
             self._print_lib(lib_num, lib_dict["nm"], out,
-                            wig_folder, "normalMinus")
+                            wig_folder, "normalMinus", rep_set)
             self._print_lib(lib_num, lib_dict["np"], out,
-                            wig_folder, "normalPlus")
+                            wig_folder, "normalPlus", rep_set)
         else:
             self._print_lib(lib_num, lib_dict["fm"], out,
-                            wig_folder, "normalMinus")
+                            wig_folder, "normalMinus", rep_set)
             self._print_lib(lib_num, lib_dict["fp"], out,
-                            wig_folder, "normalPlus")
+                            wig_folder, "normalPlus", rep_set)
         out.write("numReplicates = {0}\n".format(len(rep_set)))
         out.write("numberOfDatasets = {0}\n".format(lib_num))
         out.write("outputDirectory = {0}\n".format(out_path))

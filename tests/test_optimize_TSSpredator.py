@@ -227,7 +227,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.program = "TSS"
         args.cluster = 3
         args.utr = 200
-        args.replicate = 2
+        args.replicate = "all_2"
         args.replicate_name = "rep"
         args.project_strain = "aaa"
         args.manual = os.path.join(self.test_folder, "manual.gff")
@@ -252,7 +252,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.cluster = 3
         args.program = "TSS"
         args.project_strain = "aaa"
-        args.replicate = 1
+        args.replicate = "all_1"
         args.utr = 200
         args.replicate_name = "test"
         filename = ot.gen_config(self.example.best_para, self.test_folder, 1, wig, fasta, gff, args)
@@ -281,7 +281,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         libs = [{"condition": 1, "replicate": "a", "wig": "test_1.wig"},
                 {"condition": 2, "replicate": "a", "wig": "test_2.wig"}]
         out = StringIO()
-        ot.print_lib(2, libs, out, self.test_folder, "aaa")
+        ot.print_lib(2, libs, out, self.test_folder, "aaa", ["a"])
         self.assertEqual(out.getvalue(), "aaa_1a = test_folder/test_1.wig\naaa_2a = test_folder/test_2.wig\n")
 
     def test_import_lib(self):
@@ -331,7 +331,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.cluster = 3
         args.program = "TSS"
         args.project_strain = "aaa"
-        args.replicate = 1
+        args.replicate = "all_1"
         args.utr = 200
         args.replicate_name = "test"
         args.steps = 2
@@ -367,7 +367,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.cluster = 3
         args.program = "TSS"
         args.project_strain = "aaa"
-        args.replicate = 1
+        args.replicate = "all_1"
         args.utr = 200
         args.steps = 2
         args.gene_length = 2000

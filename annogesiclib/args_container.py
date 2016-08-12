@@ -116,13 +116,14 @@ class ArgsContainer(object):
             return inputs
 
     def container_ratt(self, ratt_path, element, transfer_type,
-                       ref_embl_gbk, target_fasta, ref_fasta, ratt_folder,
+                       ref_embl, ref_gbk, target_fasta, ref_fasta, ratt_folder,
                        convert_to_gff_rnt_ptt, tar_annotation_folder,
                        compare_pair):
         self.ratt_path = ratt_path
         self.element = element
         self.transfer_type = transfer_type
-        self.ref_embls = ref_embl_gbk
+        self.ref_embls = ref_embl
+        self.ref_gbk = ref_gbk
         self.tar_fastas = target_fasta
         self.ref_fastas = ref_fasta
         self.output_path = ratt_folder

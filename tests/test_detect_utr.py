@@ -256,7 +256,7 @@ class Example(object):
                       {"ID": "rna0", "Name": "rRNA_0", "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
     out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;parent_tran=Transcript:140-367_+"""
-    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;TSS_type=Primary;parent_tran=Transcript:140-367_+"""
+    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;tss_type=Primary;parent_tran=Transcript:140-367_+"""
     out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;parent_tran=Transcript:140-367_+"""
     out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;parent_tran=Transcript:138-540_+"""
     out_3utr_gff = """##gff-version 3
