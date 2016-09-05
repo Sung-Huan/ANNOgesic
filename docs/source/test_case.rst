@@ -393,6 +393,7 @@ It will generate gff files and tables. Because we also compared with TSSs and an
     NC_000915.1_transcript.csv
     $ ls ANNOgesic/output/transcriptome_assembly/statistics
     stat_compare_Transcriptome_assembly_genome_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
+    NC_000915.1_length_all.png                                  NC_000915.1_length_less_2000.png
 
 Prediction of terminator
 ----------------------
@@ -1084,16 +1085,17 @@ in these folders. These two folders store all information of interactions and li
     $ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/without_strain/NC_000915.1/
     P0001_nusB.png  HP0005_pyrF.png
 
-Generating riboswitch
+Generating riboswitch and RNA thermometer
 -----------------
 
-If you want to know the riboswitchs, you can use the subcommand ``riboswitch``.
-Before running ``riboswitch``, you need to get the information of known riboswitches in Rfam. 
-You can download it from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
+If you want to know the riboswitches and RNA thermometer, you can use the subcommand ``riboswitch_thermometer``.
+Before running it, you need to get the information of known riboswitches and RNA thermometer in Rfam. 
+You can download them from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
     $ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
+    $ wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
 
 You also need to download Rfam.
 
@@ -1109,14 +1111,18 @@ Now we can try the subcommand.
 
 ::
 
-    annogesic riboswitch \
+    annogesic riboswitch_thermometer \
         -g ANNOgesic/output/target/annotation \
         -f ANNOgesic/output/target/fasta \
-        -i ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
-        -R ANNOgesic/input/database/CMs/Rfam.cm \
+        -ri ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
+        -ti ANNOgesic/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
+        -R ANNOgesic/input/database/Rfam/CMs/Rfam.cm \
+        -a ANNOgesic/output/transcriptome_assembly/gffs \
+        -t ANNOgesic/output/TSS/gffs \
         ANNOgesic
 
-The output is the following. ``gffs`` is for gff files of riboswitchs; ``tables`` is for tables of riboswitchs; 
+The output is the following. ``gffs`` is for gff files of riboswitchs / RNA_thermometer; 
+``tables`` is for tables of riboswitchs / RNA_thermometer; 
 ``scan_Rfam`` is for the output files of scanning Rfam; ``statistics`` is for the statistics files.
 
 ::
@@ -1131,6 +1137,16 @@ The output is the following. ``gffs`` is for gff files of riboswitchs; ``tables`
      NC_000915.1_riboswitch.csv
      $ ls ANNOgesic/output/riboswitch/statistics/
      stat_NC_000915.1_riboswitch.txt
+     $ ls ANNOgesic/output/RNA_thermometer/
+     gffs  scan_Rfam  statistics  tables
+     $ ls ANNOgesic/output/RNA_thermometer/gffs/
+     NC_000915.1_RNA_thermometer.gff
+     $ ls ANNOgesic/output/RNA_thermometer/scan_Rfam/NC_000915.1/
+     NC_000915.1_RNA_thermometer_prescan.txt  NC_000915.1_RNA_thermometer_scan.txt
+     $ ls ANNOgesic/output/RNA_thermometer/tables/
+     NC_000915.1_RNA_thermometer.csv
+     $ ls ANNOgesic/output/RNA_thermometer/statistics/
+     stat_NC_000915.1_RNA_thermometer.txt
 
 Detection of CRISPR
 ----------------
@@ -1212,6 +1228,7 @@ Now let's do it. We merge all features that we have.
      ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,\
      ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,\
      ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,\
+     ANNOgesic/output/RNA_thermometer/gffs/NC_000915.1_RNA_thermometer.gff,\
      ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff
 
 ::

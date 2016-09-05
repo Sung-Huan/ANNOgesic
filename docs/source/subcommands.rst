@@ -18,20 +18,22 @@ All the ``.gff`` files which are import into ``ANNOgesic``, please follow the fo
 
 The names of features are:
 
-============  ===========================
-Feature name  meaning
-------------  --------------------------- 
-TSS           transcription starting site
-processing    processing site
-transcript    transcript assembly
-sRNA          small RNA
-sORF          small open reading frame
-term          terminator
-5UTR          5'UTR
-3UTR          3'UTR
-circRNA       circular RNA
-riboswitch    riboswitch
-============  ===========================
+===============  ===========================
+Feature name     meaning
+---------------  --------------------------- 
+TSS              transcription starting site
+processing       processing site
+transcript       transcript assembly
+sRNA             small RNA
+sORF             small open reading frame
+term             terminator
+5UTR             5'UTR
+3UTR             3'UTR
+circRNA          circular RNA
+riboswitch       riboswitch
+RNA_thermometer  RNA_thermometer
+CRISPR           CRISPR
+===============  ===========================
 
 Please also notice the name of strain or genome in files. It should be avoid to use ``|`` in the name. 
 Because ``|`` is one character which already used in Unix system. However, 
@@ -105,9 +107,10 @@ If user have no fasta file or genome annotation files of "target strain",
 ANNOgesic can generate them. It requires a strain which is close to "target strain".
 We call this required strain - "reference strain".
 
-Riboswitch dataset of Rfam
+Riboswitch and RNA thermometer dataset of Rfam
 ----------------------------
-For riboswitch detection, it need the information of riboswitch of Rfam. The input format is like the following.
+For riboswitch and RNA thermometer detection, it need the information of riboswitch and RNA thermometer of Rfam. 
+The input format is like the following.
 
 ======== ==== ==========================
 #Rfam_ID Name Description
@@ -157,7 +160,11 @@ the files through running ``get_input_files``.
 
 riboswitch_ID: For storing the file which contains all the Rfam ID of riboswitch.
 For the details of format, please refer to the section of 
-``riboswicth``.
+``Riboswitch and RNA thermometer dataset of Rfam``.
+
+RNA_thermometer_ID: For storing the file which contains all the Rfam ID of RNA thermometer.
+For the details of format, please refer to the section of
+``Riboswitch and RNA thermometer dataset of Rfam``.
 
 wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them to 
 ``fragment`` (fragmented libraries) or ``tex_notex`` (TEX +/- treated libraries).
@@ -797,119 +804,125 @@ If user wants to compare transcripts with genome anntation, it requires ``.gff``
 
 ::
 
-	usage: annogesic transcript_assembly [-h]
-	                                     [--annotation_folder ANNOTATION_FOLDER]
-	                                     [--length LENGTH]
-	                                     [--tex_wig_path TEX_WIG_PATH]
-	                                     [--frag_wig_path FRAG_WIG_PATH]
-	                                     [--height HEIGHT] [--width WIDTH]
-	                                     [--tolerance TOLERANCE]
-	                                     [--tolerance_coverage TOLERANCE_COVERAGE]
-	                                     [--replicates_tex REPLICATES_TEX]
-	                                     [--replicates_frag REPLICATES_FRAG]
-	                                     [--tex_notex TEX_NOTEX]
-	                                     [--compare_TSS COMPARE_TSS]
-	                                     [--compare_genome_annotation COMPARE_GENOME_ANNOTATION]
-	                                     [--compare_feature_genome COMPARE_FEATURE_GENOME]
-	                                     [--TSS_fuzzy TSS_FUZZY]
-	                                     [--Tex_treated_libs TEX_TREATED_LIBS]
-	                                     [--fragmented_libs FRAGMENTED_LIBS]
-	                                     [--table_best]
-	                                     [--terminator_folder TERMINATOR_FOLDER]
-	                                     [--fuzzy_term FUZZY_TERM]
-	                                     [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-	                        It is for comparing transcript assembly and genome 
-	                        annotation gff file. It can use annotation gff file 
-	                        as reference and modify transcript assembly file. 
-	                        If you want to do it, please assign the annotation 
-	                        gff folder. Otherwise, don't turn it on.
-	  --length LENGTH, -l LENGTH
-	                        The minimum width of transcript. It is for comparing
-	                        to annotation file(--annotation_folder). If you want
-	                        to compare with annotation files, it will be the final
-	                        output. If you don't want to compare with annotation
-	                        files, --width would be minimum length for the final
-	                        output. The default is 20.
-	  --tex_wig_path TEX_WIG_PATH, -tw TEX_WIG_PATH
-	                        The path of TEX+/- wig folder.
-	  --frag_wig_path FRAG_WIG_PATH, -fw FRAG_WIG_PATH
-	                        The path of fragment wig folder.
-	  --height HEIGHT, -he HEIGHT
-	                        The minimum height of coverage to be a transcript. The
-	                        default is 10.
-	  --width WIDTH, -w WIDTH
-	                        The minimum width of transcript. It is for not
-	                        comparing to annotation file(--annotation_folder). If
-	                        you don't want to compare with annotation files, it
-	                        will be the final output. Otherwise, --length would be
-	                        the minimum length of transcript for the final output.
-	                        The default is 20.
-	  --tolerance TOLERANCE, -t TOLERANCE
-	                        This number indicates how many nucleotides which
-	                        coverages drop below --height can be ignore. The
-	                        default is 5.
-	  --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
-	                        If the coverage is lower than tolerance_coverage, even
-	                        the range is within --tolerance, it will terminate the
-	                        current transcript. The default is 0.
-	  --replicates_tex REPLICATES_TEX, -rt REPLICATES_TEX
-	                        The position is included in the current transcript if
-	                        the supported replicates are more than --replicates_tex.
-	                        (for tex +/- library)
-	  --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
-	                        The position is included in the current transcript if
-	                        the supported replicates are more than --replicates_frag.
-	                        (for fragmented library)
-	  --tex_notex TEX_NOTEX, -te TEX_NOTEX
-	                        If you use tex +/- libraries to run transcript
-	                        assembly, the transcripts should be detected by both
-	                        or just one. (1 or 2). Default is 1.
-	  --compare_TSS COMPARE_TSS, -ct COMPARE_TSS
-	                        If you want to compare with TSS, please assign TSS
-	                        folder.
-	  --compare_genome_annotation COMPARE_GENOME_ANNOTATION, -cg COMPARE_GENOME_ANNOTATION
-	                        If you want to compare with genome annotation file, 
-	                        please assign genome annotation folder.
-	  --compare_feature_genome COMPARE_FEATURE_GENOME, -cf COMPARE_FEATURE_GENOME
-	                        If you want to compare with genome annotation file, 
-	                        please assign the feature which you want to compare. 
-	                        Default is gene. If you want to compare more than one 
-	                        feature, just insert comma between each feature, 
-	                        such as gene,CDS.
-	  --TSS_fuzzy TSS_FUZZY, -fu TSS_FUZZY
-	                        The fuzzy for comparing TSS and transcript assembly.
-	                        Default is 5.
-	  --Tex_treated_libs TEX_TREATED_LIBS, -tl TEX_TREATED_LIBS
-	                        Tex +/- library. The format is:
-	                        wig_file_name:tex_treat_or_not(tex or notex):condition
-	                        _id(integer):replicate_id(alphabet):strand(+ or -). If
-	                        you have multiple wig files, please use comma to
-	                        separate the wig files. For example,
-	                        wig1:tex:1:a:+,wig2:tex:1:a:-.
-	  --fragmented_libs FRAGMENTED_LIBS, -fl FRAGMENTED_LIBS
-	                        Fragmented library. The format is: wig_file_name:fragm
-	                        ented(frag):condition_id(integer):replicate_id(alphabe
-	                        t):strand(+ or -). If you have multiple wig files,
-	                        please use comma to separate the wig files. For
-	                        example, wig1:frag:1:a:+,wig2:frag:1:a:-.
-	  --table_best, -tb     The output table only includes the best library.
-	                        Default is False.
-	  --terminator_folder TERMINATOR_FOLDER, -tr TERMINATOR_FOLDER
-	                        If you want to compare between transcripts and
-	                        terminators, you can assign the folder of gff files of
-	                        terminator here. Default is None.
-	  --fuzzy_term FUZZY_TERM, -fz FUZZY_TERM
-	                        If you want to compare between transcripts and
-	                        terminators, please assign the fuzzy here. Default is
-	                        30.
+    usage: annogesic transcript_assembly [-h]
+                                         [--annotation_folder ANNOTATION_FOLDER]
+                                         [--length LENGTH]
+                                         [--tex_wig_path TEX_WIG_PATH]
+                                         [--frag_wig_path FRAG_WIG_PATH]
+                                         [--height HEIGHT] [--width WIDTH]
+                                         [--tolerance TOLERANCE]
+                                         [--tolerance_coverage TOLERANCE_COVERAGE]
+                                         [--replicates_tex REPLICATES_TEX]
+                                         [--replicates_frag REPLICATES_FRAG]
+                                         [--tex_notex TEX_NOTEX]
+                                         [--compare_TSS COMPARE_TSS]
+                                         [--compare_genome_annotation COMPARE_GENOME_ANNOTATION]
+                                         [--compare_feature_genome COMPARE_FEATURE_GENOME]
+                                         [--TSS_fuzzy TSS_FUZZY]
+                                         [--Tex_treated_libs TEX_TREATED_LIBS]
+                                         [--fragmented_libs FRAGMENTED_LIBS]
+                                         [--table_best]
+                                         [--terminator_folder TERMINATOR_FOLDER]
+                                         [--fuzzy_term FUZZY_TERM]
+                                         [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
+                                         [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            It is for comparing transcript assembly and genome
+                            annotation gff file. It can use annotation gff file as
+                            reference and modify transcript assembly file. If you
+                            want to do it, please assign the annotation gff
+                            folder. Otherwise, don't turn it on.
+      --length LENGTH, -l LENGTH
+                            The minimum width of transcript. It is for comparing
+                            to annotation file(--annotation_folder). If you want
+                            to compare with annotation files, it will be the final
+                            output. If you don't want to compare with annotation
+                            files, --width would be minimum length for the final
+                            output. The default is 20.
+      --tex_wig_path TEX_WIG_PATH, -tw TEX_WIG_PATH
+                            The path of TEX+/- wig folder.
+      --frag_wig_path FRAG_WIG_PATH, -fw FRAG_WIG_PATH
+                            The path of fragment wig folder.
+      --height HEIGHT, -he HEIGHT
+                            The minimum height of coverage to be a transcript. The
+                            default is 10.
+      --width WIDTH, -w WIDTH
+                            The minimum width of transcript. It is for not
+                            comparing to annotation file(--annotation_folder). If
+                            you don't want to compare with annotation files, it
+                            will be the final output. Otherwise, --length would be
+                            the minimum length of transcript for the final output.
+                            The default is 20.
+      --tolerance TOLERANCE, -t TOLERANCE
+                            This number indicates how many nucleotides which
+                            coverages drop below --height can be ignore. The
+                            default is 5.
+      --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
+                            If the coverage is lower than tolerance_coverage, even
+                            the range is within --tolerance, it will terminate the
+                            current transcript. The default is 0.
+      --replicates_tex REPLICATES_TEX, -rt REPLICATES_TEX
+                            The position is included in the current transcript if
+                            the supported replicates more are than
+                            --replicates_tex. (for tex +/- library)
+      --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+                            The position is included in the current transcript if
+                            the supported replicates more are than
+                            --replicates_frag. (for fragmented library)
+      --tex_notex TEX_NOTEX, -te TEX_NOTEX
+                            If you use tex +/- libraries to run transcript
+                            assembly, the transcripts should be detected by both
+                            or just one. (1 or 2). Default is 1.
+      --compare_TSS COMPARE_TSS, -ct COMPARE_TSS
+                            If you want to compare with TSS, please assign TSS
+                            folder.
+      --compare_genome_annotation COMPARE_GENOME_ANNOTATION, -cg COMPARE_GENOME_ANNOTATION
+                            If you want to compare with genome annotation file and
+                            find the parent transcript of gene, please assign
+                            annotation folder.
+      --compare_feature_genome COMPARE_FEATURE_GENOME, -cf COMPARE_FEATURE_GENOME
+                            If you want to compare with genome annotation file,
+                            please assign the feature which you want to compare.
+                            Default is gene,CDS. If you want to compare more than
+                            one feature, just insert comma between each feature,
+                            such as gene,CDS.
+      --TSS_fuzzy TSS_FUZZY, -fu TSS_FUZZY
+                            The fuzzy for comparing TSS and transcript assembly.
+                            Default is 5.
+      --Tex_treated_libs TEX_TREATED_LIBS, -tl TEX_TREATED_LIBS
+                            Tex +/- library. The format is:
+                            wig_file_name:tex_treat_or_not(tex or notex):condition
+                            _id(integer):replicate_id(alphabet):strand(+ or -). If
+                            you have multiple wig files, please use comma to
+                            separate the wig files. For example,
+                            wig1:tex:1:a:+,wig2:tex:1:a:-.
+      --fragmented_libs FRAGMENTED_LIBS, -fl FRAGMENTED_LIBS
+                            Fragmented library. The format is: wig_file_name:fragm
+                            ented(frag):condition_id(integer):replicate_id(alphabe
+                            t):strand(+ or -). If you have multiple wig files,
+                            please use comma to separate the wig files. For
+                            example, wig1:frag:1:a:+,wig2:frag:1:a:-.
+      --table_best, -tb     The output table only includes the best library.
+                            Default is False.
+      --terminator_folder TERMINATOR_FOLDER, -tr TERMINATOR_FOLDER
+                            If you want to compare between transcripts and
+                            terminators, you can assign the folder of gff files of
+                            terminator here. Default is None.
+      --fuzzy_term FUZZY_TERM, -fz FUZZY_TERM
+                            If you want to compare between transcripts and
+                            terminators, please assign the fuzzy here. Default is
+                            30.
+      --max_length_distribution MAX_LENGTH_DISTRIBUTION, -mb MAX_LENGTH_DISTRIBUTION
+                            For generating the figure of distribution of
+                            transcript length, please assign the maximum length
+                            that you want to include. Default is 2000.
 
 - Output files
 
@@ -971,147 +984,153 @@ Gff files of transcript.
 
 ::
 
-	usage: annogesic terminator [-h] [--TransTermHP_path TRANSTERMHP_PATH]
-	                            [--expterm_path EXPTERM_PATH]
-	                            [--RNAfold_path RNAFOLD_PATH]
-	                            [--fasta_folder FASTA_FOLDER]
-	                            [--annotation_folder ANNOTATION_FOLDER]
-	                            [--transcript_folder TRANSCRIPT_FOLDER]
-	                            [--sRNA SRNA] [--statistics]
-	                            [--tex_wig_folder TEX_WIG_FOLDER]
-	                            [--frag_wig_folder FRAG_WIG_FOLDER]
-	                            [--decrease DECREASE]
-	                            [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
-	                            [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
-	                            [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
-	                            [--fuzzy_within_gene FUZZY_WITHIN_GENE]
-	                            [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
-	                            [--highest_coverage HIGHEST_COVERAGE]
-	                            [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
-	                            [-te TEX_NOTEX] [-rt REPLICATES_TEX]
-	                            [-rf REPLICATES_FRAG] [-tb] [-ml MIN_LOOP_LENGTH]
-	                            [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
-	                            [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
-	                            [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL]
-	                            [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --TransTermHP_path TRANSTERMHP_PATH
-	                        Please assign the path of "transterm" in TransTermHP.
-	  --expterm_path EXPTERM_PATH
-	                        Please assign the path of your expterm.dat for
-	                        TransTermHP. Default is /usr/local/bin/expterm.dat
-	  --RNAfold_path RNAFOLD_PATH
-	                        If you want to assign the path of "RNAfold" of Vienna
-	                        package, please assign here.
-	  --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-	                        The path of genome fasta folder.
-	  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-	                        The path of genome annotation gff folder.
-	  --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
-	                        The folder which stores gff files of transcript
-	                        assembly.
-	  --sRNA SRNA, -sr SRNA
-	                        If you want to include sRNA information, please assign
-	                        the folder of sRNA gff files.
-	  --statistics, -s      Doing statistics for TransTermHP. The name of
-	                        statistics file is - stat_terminator_$STRAIN_NAME.csv.
-	                        Default is False.
-	  --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-	                        If you want to use tex +/- libraries, please assign
-	                        tex +/- wig folder.
-	  --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-	                        If you want to use fragmented libraries, please assign
-	                        fragmented wig folder.
-	  --decrease DECREASE, -d DECREASE
-	                        If the (lowest coverage / highest coverage) in the
-	                        terminator is smaller than this number, it will
-	                        consider this terminator have coverage dramatic
-	                        decreasing in it. Default is 0.5.
-	  --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
-	                        It will elongate the number of nucleotides(you assign
-	                        here) from both terminal site. If it can found the
-	                        coverage dramatic decreasing within this range, it
-	                        will still consider the terminator have coverage
-	                        dramatic decrease in it. Default is 30.
-	  --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
-	                        If the candidates are within transcript and the
-	                        distance between the end of gene/transcript and
-	                        terminator candidate is within this number, it will be
-	                        consider as terminator. Default is 30.
-	  --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
-	                        If the candidates are downstream of transcript and the
-	                        distance between the end of gene/transcript and
-	                        terminator candidate is within this number, it will be
-	                        consider as terminator. Default is 30.
-	  --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
-	                        If the candidates are upstream of gene and the
-	                        distance between the end of gene and terminator
-	                        candidate is within this number, it will be consider
-	                        as terminator. Default is 10.
-	  --fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE, -fdg FUZZY_DOWNSTREAM_GENE
-	                        If the candidates are downstream of gene and the
-	                        distance between the end of gene and terminator
-	                        candidate is within this number, it will be consider
-	                        as terminator. Default is 310.
-	  --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
-	                        If the highest coverage of terminator is below to this
-	                        number, the terminator will be classify to non-detect,
-	                        but still included in "all_candidates". Default is 10.
-	  -tl TEX_NOTEX_LIBS, --tex_notex_libs TEX_NOTEX_LIBS
-	                        Library name of tex and notex library. The format is:
-	                        wig_file_name:tex_treat_or_not(tex or notex):condition
-	                        _id(integer):replicate_id(alphabet):strand(+ or -). If
-	                        you have multiple wig files, please use comma to
-	                        separate the wig files. For example,
-	                        wig1:tex:1:a:+,wig2:tex:1:a:-.
-	  -fl FRAG_LIBS, --frag_libs FRAG_LIBS
-	                        Library name of fragmented library. The format is: wig
-	                        _file_name:fragmented(frag):condition_id(integer):repl
-	                        icate_id(alphabet):strand(+ or -). If you have
-	                        multiple wig files, please use comma to separate the
-	                        wig files. For example,
-	                        wig1:frag:1:a:+,wig2:frag:1:a:-.
-	  -te TEX_NOTEX, --tex_notex TEX_NOTEX
-	                        For tex +/- library, terminators should be detected by
-	                        both or just one.(1/2) Default is 1.
-	  -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
-	                        The terminator of tex +/- library should be detected by 
-	                        more than this number of replicates.
-	  -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
-	                        The terminator of fragmented library should be
-	                        detected more by than this number of replicates.
-	  -tb, --table_best     Output table only contains most decreasing track.
-	                        Default is False.
-	  -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
-	                        The minimum length of loop for terminator. Default is
-	                        3 nts.
-	  -Ml MAX_LOOP_LENGTH, --max_loop_length MAX_LOOP_LENGTH
-	                        The maximum length of loop for terminator. Default is
-	                        10 nts.
-	  -ms MIN_STEM_LENGTH, --min_stem_length MIN_STEM_LENGTH
-	                        The minimum length of stem for terminator. Default is
-	                        4 nts.
-	  -Ms MAX_STEM_LENGTH, --max_stem_length MAX_STEM_LENGTH
-	                        The maximum length of stem for terminator. Default is
-	                        20 nts.
-	  -mr MISS_RATE, --miss_rate MISS_RATE
-	                        How many percentage of nucleotides which has no base
-	                        pair in the stem. Default is 0.25.
-	  -mu MIN_U_TAIL_LENGTH, --min_U_tail_length MIN_U_TAIL_LENGTH
-	                        The minimum length of U tail for terminator. Default
-	                        is 3 nts.
-	  -ru RANGE_U_TAIL, --range_U_tail RANGE_U_TAIL
-	                        How long of nucleotides that you want to detect for U
-	                        tail. For example, if --range_U_tail is 6 and
-	                        --min_U_tail_length is 3, and there are 3 U within 6
-	                        nts, it will be assigned to detecting U tail
-	                        successfully. Default is 6.
+    usage: annogesic terminator [-h] [--TransTermHP_path TRANSTERMHP_PATH]
+                                [--expterm_path EXPTERM_PATH]
+                                [--RNAfold_path RNAFOLD_PATH]
+                                [--fasta_folder FASTA_FOLDER]
+                                [--annotation_folder ANNOTATION_FOLDER]
+                                [--transcript_folder TRANSCRIPT_FOLDER]
+                                [--sRNA SRNA] [--statistics]
+                                [--tex_wig_folder TEX_WIG_FOLDER]
+                                [--frag_wig_folder FRAG_WIG_FOLDER]
+                                [--decrease DECREASE]
+                                [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
+                                [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
+                                [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
+                                [--fuzzy_within_gene FUZZY_WITHIN_GENE]
+                                [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
+                                [--highest_coverage HIGHEST_COVERAGE]
+                                [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
+                                [-te TEX_NOTEX] [-rt REPLICATES_TEX]
+                                [-rf REPLICATES_FRAG] [-tb] [-ml MIN_LOOP_LENGTH]
+                                [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
+                                [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
+                                [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
+                                [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --TransTermHP_path TRANSTERMHP_PATH
+                            Please assign the path of "transterm" in TransTermHP.
+      --expterm_path EXPTERM_PATH
+                            Please assign the path of your expterm.dat for
+                            TransTermHP. Default is /usr/local/bin/expterm.dat
+      --RNAfold_path RNAFOLD_PATH
+                            If you want to assign the path of "RNAfold" of Vienna
+                            package, please assign here.
+      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+                            The path of genome fasta folder.
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            The path of genome annotation gff folder.
+      --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
+                            The folder which stores gff files of transcript
+                            assembly.
+      --sRNA SRNA, -sr SRNA
+                            If you want to include sRNA information, please assign
+                            the folder of sRNA gff files.
+      --statistics, -s      Doing statistics for TransTermHP. The name of
+                            statistics file is - stat_terminator_$STRAIN_NAME.csv.
+                            Default is False.
+      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
+                            If you want to use tex +/- libraries, please assign
+                            tex +/- wig folder.
+      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
+                            If you want to use fragmented libraries, please assign
+                            fragmented wig folder.
+      --decrease DECREASE, -d DECREASE
+                            If the (lowest coverage / highest coverage) in the
+                            terminator is smaller than this number, it will
+                            consider this terminator have coverage dramatic
+                            decreasing in it. Default is 0.5.
+      --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
+                            It will elongate the number of nucleotides(you assign
+                            here) from both terminal site. If it can found the
+                            coverage dramatic decreasing within this range, it
+                            will still consider the terminator have coverage
+                            dramatic decrease in it. Default is 30.
+      --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
+                            If the candidates are within transcript and the
+                            distance between the end of gene/transcript and
+                            terminator candidate is within this number, it will be
+                            consider as terminator. Default is 30.
+      --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
+                            If the candidates are downstream of transcript and the
+                            distance between the end of gene/transcript and
+                            terminator candidate is within this number, it will be
+                            consider as terminator. Default is 30.
+      --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
+                            If the candidates are upstream of gene and the
+                            distance between the end of gene and terminator
+                            candidate is within this number, it will be consider
+                            as terminator. Default is 10.
+      --fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE, -fdg FUZZY_DOWNSTREAM_GENE
+                            If the candidates are downstream of gene and the
+                            distance between the end of gene and terminator
+                            candidate is within this number, it will be consider
+                            as terminator. Default is 310.
+      --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
+                            If the highest coverage of terminator is below to this
+                            number, the terminator will be classify to non-detect,
+                            but still included in "all_candidates". Default is 10.
+      -tl TEX_NOTEX_LIBS, --tex_notex_libs TEX_NOTEX_LIBS
+                            Library name of tex and notex library. The format is:
+                            wig_file_name:tex_treat_or_not(tex or notex):condition
+                            _id(integer):replicate_id(alphabet):strand(+ or -). If
+                            you have multiple wig files, please use comma to
+                            separate the wig files. For example,
+                            wig1:tex:1:a:+,wig2:tex:1:a:-.
+      -fl FRAG_LIBS, --frag_libs FRAG_LIBS
+                            Library name of fragmented library. The format is: wig
+                            _file_name:fragmented(frag):condition_id(integer):repl
+                            icate_id(alphabet):strand(+ or -). If you have
+                            multiple wig files, please use comma to separate the
+                            wig files. For example,
+                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+      -te TEX_NOTEX, --tex_notex TEX_NOTEX
+                            For tex +/- library, terminators should be detected by
+                            both or just one.(1/2) Default is 1.
+      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+                            The terminator of tex +/- library should be detected
+                            by more than this number of replicates.
+      -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
+                            The terminator of fragmented library should be
+                            detected by more than this number of replicates.
+      -tb, --table_best     Output table only contains most decreasing track.
+                            Default is False.
+      -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
+                            The minimum length of loop for terminator. Default is
+                            3 nts.
+      -Ml MAX_LOOP_LENGTH, --max_loop_length MAX_LOOP_LENGTH
+                            The maximum length of loop for terminator. Default is
+                            10 nts.
+      -ms MIN_STEM_LENGTH, --min_stem_length MIN_STEM_LENGTH
+                            The minimum length of stem for terminator. Default is
+                            4 nts.
+      -Ms MAX_STEM_LENGTH, --max_stem_length MAX_STEM_LENGTH
+                            The maximum length of stem for terminator. Default is
+                            20 nts.
+      -mr MISS_RATE, --miss_rate MISS_RATE
+                            How many percentage of nucleotides which has no base
+                            pair in the stem. Default is 0.25.
+      -mu MIN_U_TAIL_LENGTH, --min_U_tail_length MIN_U_TAIL_LENGTH
+                            The minimum length of U tail for terminator. Default
+                            is 3 nts.
+      -ru RANGE_U_TAIL, --range_U_tail RANGE_U_TAIL
+                            How long of nucleotides that you want to detect for U
+                            tail. For example, if --range_U_tail is 6 and
+                            --min_U_tail_length is 3, and there are 3 U within 6
+                            nts, it will be assigned to detecting U tail
+                            successfully. Default is 6.
+      -kp, --keep_multi_term
+                            Sometimes, one gene is associated with more terminator
+                            candidates. In default, it will only keep the high
+                            confident one. If you want to keep all terminators
+                            which associated with the same gene, please turn it
+                            on. Default is False.
 
 - Output files
 
@@ -1792,160 +1811,159 @@ gff files of sRNAs for checking the conflict of sRNAs and sORFs.
 
 ::
 
-	usage: annogesic sorf [-h] [--UTR_derived_sORF]
-	                      [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-	                      [--annotation_folder ANNOTATION_FOLDER]
-	                      [--TSS_folder TSS_FOLDER] [--utr_length UTR_LENGTH]
-	                      [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-	                      [--tex_wig_folder TEX_WIG_FOLDER]
-	                      [--frag_wig_folder FRAG_WIG_FOLDER]
-	                      [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
-	                      [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
-	                      [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
-	                      [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-	                      [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
-	                      [--cutoff_background CUTOFF_BACKGROUND]
-	                      [--fasta_folder FASTA_FOLDER]
-	                      [--tex_notex_libs TEX_NOTEX_LIBS]
-	                      [--frag_libs FRAG_LIBS] [--tex_notex TEX_NOTEX]
-	                      [--replicates_tex REPLICATES_TEX]
-	                      [--replicates_frag REPLICATES_FRAG] [--table_best]
-	                      [--sRNA_folder SRNA_FOLDER] [--start_codon START_CODON]
-	                      [--stop_codon STOP_CODON]
-	                      [--min_rbs_distance MIN_RBS_DISTANCE]
-	                      [--max_rbs_distance MAX_RBS_DISTANCE]
-	                      [--rbs_not_after_TSS] [--fuzzy_rbs FUZZY_RBS]
-	                      [--print_all_combination] [--best_no_sRNA]
-	                      [--best_no_TSS]
-	                      [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-	                      [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --UTR_derived_sORF, -u
-	                        If you want to detect UTR-derived sORF, please turn it
-	                        on. Default is False.
-	  --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
-	                        The path of transcriptome assembly folder.
-	  --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-	                        The path of genome annotation gff folder.
-	  --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-	                        If you want to import TSS information, please assign
-	                        the path of gff folder of TSS.
-	  --utr_length UTR_LENGTH, -ul UTR_LENGTH
-	                        If you want to import TSS information, please assign
-	                        the utr length for comparing TSS and sORF. The default
-	                        number is 300.
-	  --min_length MIN_LENGTH, -lm MIN_LENGTH
-	                        Please assign the minimum length of sORF. It will
-	                        predict sORF candidates based on the value. Default is
-	                        30.
-	  --max_length MAX_LENGTH, -lM MAX_LENGTH
-	                        Please assign the maximum length of sORF. It will
-	                        predict sORF candidates based on the value. Default is
-	                        150.
-	  --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-	                        The path of tex+/- wig folder.
-	  --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-	                        The path of fragment wig folder.
-	  --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
-	                        The cutoff of minimum coverage of intergenic sORF
-	                        candidates.
-	  --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
-	                        The cutoff of minimum coverage of antisense sORF
-	                        candidates.
-	  --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
-	                        The cutoff of minimum coverage of 5'UTR derived sORF
-	                        candidates. You can use percentage or the amount of
-	                        reads. p_0.05 means the coverage of sORF candidates
-	                        should higher than 5 percentile of all 5'UTR
-	                        transcripts. n_10 means the coverage of sORF
-	                        candidates should be 10. Default is p_0.5.
-	  --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
-	                        The cutoff of minimum coverage of 3'UTR derived sORF
-	                        candidates. You can use percentage or the amount of
-	                        reads. p_0.05 means the coverage of sORF candidates
-	                        should higher than 5 percentile of all 3'UTR
-	                        transcripts. n_10 means the coverage of sORF
-	                        candidates should be 10. Default is p_0.5.
-	  --cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
-	                        The cutoff of minimum coverage of interCDS derived
-	                        sORF candidates. You can use percentage or the amount
-	                        of reads. p_0.05 means the coverage of sORF candidates
-	                        should higher than 5 percentile of all interCDS
-	                        transcripts. n_10 means the coverage of sORF
-	                        candidates should be 10. Default is p_0.5.
-	  --cutoff_background CUTOFF_BACKGROUND, -cub CUTOFF_BACKGROUND
-	                        The cutoff of minimum coverage of all sORF candidates.
-	                        Default is 10.
-	  --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-	                        The folder of genome fasta file.
-	  --tex_notex_libs TEX_NOTEX_LIBS, -tl TEX_NOTEX_LIBS
-	                        Library name of tex+/- library. The format is:
-	                        wig_file_name:tex_treat_or_not(tex or notex):condition
-	                        _id(integer):replicate_id(alphabet):strand(+ or -). If
-	                        you have multiple wig files, please use comma to
-	                        separate the wig files. For example,
-	                        wig1:tex:1:a:+,wig2:tex:1:a:-.
-	  --frag_libs FRAG_LIBS, -fl FRAG_LIBS
-	                        Library name of fragmented library The format is: wig_
-	                        file_name:fragmented(frag):condition_id(integer):repli
-	                        cate_id(alphabet):strand(+ or -). If you have multiple
-	                        wig files, please use comma to separate the wig files.
-	                        For example, wig1:frag:1:a:+,wig2:frag:1:a:-.
-	  --tex_notex TEX_NOTEX, -te TEX_NOTEX
-	                        For tex +/- library, sORF candidates should be
-	                        detected by both or just one.(1/2) Default is 2.
-	  --replicates_tex REPLICATES_TEX, -rt REPLICATES_TEX
-	                        The sORF of tex +/- library should be detected by more
-	                        than this number of replicates.
-	  --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
-	                        The sORF of fragmented library should be detected by
-	                        more than this number of replicates.
-	  --table_best, -tb     The output table of sORF candidates only print the
-	                        best track. Default is False.
-	  --sRNA_folder SRNA_FOLDER, -s SRNA_FOLDER
-	                        If you want to compare sORF and sRNA, please assign
-	                        the path of sORF gff folder.
-	  --start_codon START_CODON, -ac START_CODON
-	                        What kinds of start coden you want to use. If you want
-	                        to assign more than one type of start codon, please
-	                        use comma to separate them. Default is ATG.
-	  --stop_codon STOP_CODON, -oc STOP_CODON
-	                        What kinds of stop coden you want to use. If you want
-	                        to assign more than one type of stop codon, please use
-	                        comma to separate them. Default is TTA,TAG,TGA.
-	  --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
-	                        The minimum distance between the ribosomal binding
-	                        site and start codon. Default is 3.
-	  --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
-	                        The maximum distance between the ribosomal binding
-	                        site and start codon. Default is 15.
-	  --rbs_not_after_TSS, -at
-	                        If you want to generate best gff file which include
-	                        ribosomal binding site not after TSS, please turn it
-	                        on. Default is False.
-	  --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-	                        How many nucleotides of ribosomal binding site is
-	                        different with AGGAGG? Default is 2.
-	  --print_all_combination, -pa
-	                        Every expressed transcript of sORF has many start
-	                        codons and stop codons. If you want to print all
-	                        combinations of start codons and stop codons, please
-	                        turn it on. Default is False.
-	  --best_no_sRNA, -bs   If you want to generate best gff file without
-	                        overlaping with sRNA, please turn it on. Default is
-	                        False.
-	  --best_no_TSS, -bt    If you want to generate best gff file which not refere
-	                        to TSS, please turn it on. Default is False.
-	  --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
-	                        If you want to ignore hypothetical protein in genome
-	                        annotation file, you can turn it on. Default is False.
-
+    usage: annogesic sorf [-h] [--UTR_derived_sORF]
+                          [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
+                          [--annotation_folder ANNOTATION_FOLDER]
+                          [--TSS_folder TSS_FOLDER] [--utr_length UTR_LENGTH]
+                          [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
+                          [--tex_wig_folder TEX_WIG_FOLDER]
+                          [--frag_wig_folder FRAG_WIG_FOLDER]
+                          [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
+                          [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
+                          [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
+                          [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
+                          [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
+                          [--cutoff_background CUTOFF_BACKGROUND]
+                          [--fasta_folder FASTA_FOLDER]
+                          [--tex_notex_libs TEX_NOTEX_LIBS]
+                          [--frag_libs FRAG_LIBS] [--tex_notex TEX_NOTEX]
+                          [--replicates_tex REPLICATES_TEX]
+                          [--replicates_frag REPLICATES_FRAG] [--table_best]
+                          [--sRNA_folder SRNA_FOLDER] [--start_codon START_CODON]
+                          [--stop_codon STOP_CODON]
+                          [--min_rbs_distance MIN_RBS_DISTANCE]
+                          [--max_rbs_distance MAX_RBS_DISTANCE]
+                          [--rbs_not_after_TSS] [--fuzzy_rbs FUZZY_RBS]
+                          [--print_all_combination] [--best_no_sRNA]
+                          [--best_no_TSS]
+                          [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
+                          [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --UTR_derived_sORF, -u
+                            If you want to detect UTR-derived sORF, please turn it
+                            on. Default is False.
+      --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
+                            The path of transcriptome assembly folder.
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            The path of genome annotation gff folder.
+      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
+                            If you want to import TSS information, please assign
+                            the path of gff folder of TSS.
+      --utr_length UTR_LENGTH, -ul UTR_LENGTH
+                            If you want to import TSS information, please assign
+                            the utr length for comparing TSS and sORF. The default
+                            number is 300.
+      --min_length MIN_LENGTH, -lm MIN_LENGTH
+                            Please assign the minimum length of sORF. It will
+                            predict sORF candidates based on the value. Default is
+                            30.
+      --max_length MAX_LENGTH, -lM MAX_LENGTH
+                            Please assign the maximum length of sORF. It will
+                            predict sORF candidates based on the value. Default is
+                            150.
+      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
+                            The path of tex+/- wig folder.
+      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
+                            The path of fragment wig folder.
+      --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
+                            The cutoff of minimum coverage of intergenic sORF
+                            candidates.
+      --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
+                            The cutoff of minimum coverage of antisense sORF
+                            candidates.
+      --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
+                            The cutoff of minimum coverage of 5'UTR derived sORF
+                            candidates. You can use percentage or the amount of
+                            reads. p_0.05 means the coverage of sORF candidates
+                            should higher than 5 percentile of all 5'UTR
+                            transcripts. n_10 means the coverage of sORF
+                            candidates should be 10. Default is p_0.5.
+      --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
+                            The cutoff of minimum coverage of 3'UTR derived sORF
+                            candidates. You can use percentage or the amount of
+                            reads. p_0.05 means the coverage of sORF candidates
+                            should higher than 5 percentile of all 3'UTR
+                            transcripts. n_10 means the coverage of sORF
+                            candidates should be 10. Default is p_0.5.
+      --cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
+                            The cutoff of minimum coverage of interCDS derived
+                            sORF candidates. You can use percentage or the amount
+                            of reads. p_0.05 means the coverage of sORF candidates
+                            should higher than 5 percentile of all interCDS
+                            transcripts. n_10 means the coverage of sORF
+                            candidates should be 10. Default is p_0.5.
+      --cutoff_background CUTOFF_BACKGROUND, -cub CUTOFF_BACKGROUND
+                            The cutoff of minimum coverage of all sORF candidates.
+                            Default is 10.
+      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+                            The folder of genome fasta file.
+      --tex_notex_libs TEX_NOTEX_LIBS, -tl TEX_NOTEX_LIBS
+                            Library name of tex+/- library. The format is:
+                            wig_file_name:tex_treat_or_not(tex or notex):condition
+                            _id(integer):replicate_id(alphabet):strand(+ or -). If
+                            you have multiple wig files, please use comma to
+                            separate the wig files. For example,
+                            wig1:tex:1:a:+,wig2:tex:1:a:-.
+      --frag_libs FRAG_LIBS, -fl FRAG_LIBS
+                            Library name of fragmented library The format is: wig_
+                            file_name:fragmented(frag):condition_id(integer):repli
+                            cate_id(alphabet):strand(+ or -). If you have multiple
+                            wig files, please use comma to separate the wig files.
+                            For example, wig1:frag:1:a:+,wig2:frag:1:a:-.
+      --tex_notex TEX_NOTEX, -te TEX_NOTEX
+                            For tex +/- library, sORF candidates should be
+                            detected by both or just one.(1/2) Default is 2.
+      --replicates_tex REPLICATES_TEX, -rt REPLICATES_TEX
+                            The sORF of tex +/- library should be detected by more
+                            than this number of replicates.
+      --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+                            The sORF of fragmented library should be detected by
+                            more than this number of replicates.
+      --table_best, -tb     The output table of sORF candidates only print the
+                            best track. Default is False.
+      --sRNA_folder SRNA_FOLDER, -s SRNA_FOLDER
+                            If you want to compare sORF and sRNA, please assign
+                            the path of sORF gff folder.
+      --start_codon START_CODON, -ac START_CODON
+                            What kinds of start coden you want to use. If you want
+                            to assign more than one type of start codon, please
+                            use comma to separate them. Default is ATG.
+      --stop_codon STOP_CODON, -oc STOP_CODON
+                            What kinds of stop coden you want to use. If you want
+                            to assign more than one type of stop codon, please use
+                            comma to separate them. Default is TTA,TAG,TGA.
+      --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
+                            The minimum distance between the ribosome binding site
+                            and start codon. Default is 3.
+      --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
+                            The maximum distance between the ribosome binding site
+                            and start codon. Default is 15.
+      --rbs_not_after_TSS, -at
+                            If you want to generate best gff file which include
+                            ribosome binding site not after TSS, please turn it
+                            on. Default is False.
+      --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
+                            How many nucleotides of ribosome binding site is
+                            different with AGGAGG? Default is 2.
+      --print_all_combination, -pa
+                            Every expressed transcript of sORF has many start
+                            codons and stop codons. If you want to print all
+                            combinations of start codons and stop codons, please
+                            turn it on. Default is False.
+      --best_no_sRNA, -bs   If you want to generate best gff file without
+                            overlaping with sRNA, please turn it on. Default is
+                            False.
+      --best_no_TSS, -bt    If you want to generate best gff file which not refere
+                            to TSS, please turn it on. Default is False.
+      --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
+                            If you want to ignore hypothetical protein in genome
+                            annotation file, you can turn it on. Default is False.
 
 - Output files
 
@@ -2626,12 +2644,13 @@ All output files will be stored in ``$ANNOgesic/output/subcellular_localization`
 
 ``statistics``: Statistics files and figures.
 
-riboswitch
+riboswitch_thermometer
 --------------
 
-``riboswitch`` will search the pre-CDS region which have ribosome binding sites. 
-Basically, ``riboswitch`` use `Infernal <http://infernal.janelia.org/>`_ to scan 
-`Rfam <http://rfam.xfam.org/>`_ to find the homologs of known riboswitchs.
+``riboswitch_thermometer`` will search ribosome binding sites in the region between 
+a TSS（the starting point of transcript was assigned if no TSS was detected) 
+and a downstream CDSs. Then using `Infernal <http://infernal.janelia.org/>`_ to scan 
+riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
 
 - Pre-required tools and files
 
@@ -2643,80 +2662,98 @@ Gff files of genome annotation.
 
 Fasta files of genome sequence.
 
-File of ``riboswitch_ID``. The file should contain Rfam ID, Name and Description of riboswitchs.
-You can refer to the section of ``Riboswitch dataset of Rfam``. You can download the file from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv). You also can create your own one.
+File of ``riboswitch_ID`` or ``RNA_thermometer_ID``. The file should contain Rfam ID, 
+Name and Description of riboswitchs or RNA thermometer.
+You can refer to the section of ``Riboswitch and RNA thermometer dataset of Rfam``. You can download the file from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv). 
+You also can create your own one.
 
 - Arguments
 
 ::
 
-	usage: annogesic riboswitch [-h] [--infernal_path INFERNAL_PATH]
-	                            [--riboswitch_ID RIBOSWITCH_ID]
-	                            [--gff_path GFF_PATH] [--tss_path TSS_PATH]
-	                            [--UTR_length UTR_LENGTH]
-	                            [--transcript_path TRANSCRIPT_PATH]
-	                            [--fasta_path FASTA_PATH] [--Rfam RFAM]
-	                            [--e_value E_VALUE] [--output_all] [--fuzzy FUZZY]
-	                            [--fuzzy_rbs FUZZY_RBS]
-	                            [--start_codon START_CODON]
-	                            [--max_dist_rbs MAX_DIST_RBS]
-	                            [--min_dist_rbs MIN_DIST_RBS]
-	                            [project_path]
-	
-	positional arguments:
-	  project_path          Path of the project folder. If none is given, the
-	                        current directory is used.
-	
-	optional arguments:
-	  -h, --help            show this help message and exit
-	  --infernal_path INFERNAL_PATH, -if INFERNAL_PATH
-	                        Please assign the folder of Infernal(where is cmscan
-	                        and cmsearch located).
-	  --riboswitch_ID RIBOSWITCH_ID, -i RIBOSWITCH_ID
-	                        The path of the riboswitch ID of Rfam. The file is
-	                        include the Accession, ID and Description of
-	                        riboswitch in Rfam.
-	  --gff_path GFF_PATH, -g GFF_PATH
-	                        The path of annotation gff folder.
-	  --tss_path TSS_PATH, -t TSS_PATH
-	                        The path of TSS gff folder.
-	  --UTR_length UTR_LENGTH, -u UTR_LENGTH
-	                        The length of UTR. Default is 300.
-	  --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
-	                        The path of transcript gff folder.
-	  --fasta_path FASTA_PATH, -f FASTA_PATH
-	                        The path of genome fasta folder.
-	  --Rfam RFAM, -R RFAM  The path of Rfam CM database.
-	  --e_value E_VALUE, -e E_VALUE
-	                        The cutoff of e value. Default is 0.001.
-	  --output_all, -o      One sequence may fit multiple riboswitches. If you
-	                        want to output all of them, please turn it on. Or it
-	                        will only print the best one. Default is False.
-	  --fuzzy FUZZY, -z FUZZY
-	                        It will extend some nucleotides of 3' or 5' end.
-	                        Default is 10.
-	  --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-	                        How many nucleotides of ribosomal binding site allow
-	                        to be different with AGGAGG? Default is 2.
-	  --start_codon START_CODON, -ac START_CODON
-	                        What kinds of start coden you want to use. If you want
-	                        to import more than one type of start codon, please
-	                        use comma to separate them. Default is ATG.
-	  --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
-	                        The maximum distance between ribosomal binding site
-	                        and start codon. Default is 14.
-	  --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
-	                        The minmum distance between ribosomal binding site and
-	                        start codon. Default is 5.
+    usage: annogesic riboswitch_thermometer [-h] [--program PROGRAM]
+                                            [--infernal_path INFERNAL_PATH]
+                                            [--riboswitch_ID RIBOSWITCH_ID]
+                                            [--RNA_thermometer_ID RNA_THERMOMETER_ID]
+                                            [--gff_path GFF_PATH]
+                                            [--tss_path TSS_PATH]
+                                            [--UTR_length UTR_LENGTH]
+                                            [--transcript_path TRANSCRIPT_PATH]
+                                            [--fasta_path FASTA_PATH]
+                                            [--Rfam RFAM] [--e_value E_VALUE]
+                                            [--output_all] [--fuzzy FUZZY]
+                                            [--fuzzy_rbs FUZZY_RBS]
+                                            [--start_codon START_CODON]
+                                            [--max_dist_rbs MAX_DIST_RBS]
+                                            [--min_dist_rbs MIN_DIST_RBS]
+                                            [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --program PROGRAM, -p PROGRAM
+                            This module can predict riboswitch and RNA
+                            thermometer. Please assign which features that you
+                            want to detect. The options are "riboswitch",
+                            "thermometer", "both". Default is both.
+      --infernal_path INFERNAL_PATH, -if INFERNAL_PATH
+                            Please assign the folder of Infernal(where is cmscan
+                            and cmsearch located).
+      --riboswitch_ID RIBOSWITCH_ID, -ri RIBOSWITCH_ID
+                            If --program is "riboswitch" or "both", please assigh
+                            the path of the riboswitch ID of Rfam. The file should
+                            include the Accession, ID and Description of
+                            riboswitch in Rfam.
+      --RNA_thermometer_ID RNA_THERMOMETER_ID, -ti RNA_THERMOMETER_ID
+                            If --program is "thermometer" or "both", please assigh
+                            the path of the RNA thermometer ID of Rfam. The file
+                            should include the Accession, ID and Description of
+                            RNA thermometer in Rfam.
+      --gff_path GFF_PATH, -g GFF_PATH
+                            The path of annotation gff folder.
+      --tss_path TSS_PATH, -t TSS_PATH
+                            The path of TSS gff folder.
+      --UTR_length UTR_LENGTH, -u UTR_LENGTH
+                            The length of UTR. Default is 300.
+      --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
+                            The path of transcript gff folder.
+      --fasta_path FASTA_PATH, -f FASTA_PATH
+                            The path of genome fasta folder.
+      --Rfam RFAM, -R RFAM  The path of Rfam CM database.
+      --e_value E_VALUE, -e E_VALUE
+                            The cutoff of e value. Default is 0.001.
+      --output_all, -o      One sequence may fit multiple references. If you want
+                            to output all of them, please turn it on. Or it will
+                            only print the best one. Default is False.
+      --fuzzy FUZZY, -z FUZZY
+                            It will extend some nucleotides of 3' or 5' end.
+                            Default is 10.
+      --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
+                            How many nucleotides of ribosome binding site allow to
+                            be different with AGGAGG? Default is 2.
+      --start_codon START_CODON, -ac START_CODON
+                            What kinds of start coden you want to use. If you want
+                            to import more than one type of start codon, please
+                            use comma to separate them. Default is ATG.
+      --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
+                            The maximum distance between ribosome binding site and
+                            start codon. Default is 14.
+      --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
+                            The minmum distance between ribosome binding site and
+                            start codon. Default is 5.
 
 - Output files
 
-All output files will be stored in ``$ANNOgesic/output/riboswitch``.
+All output files of riboswitch will be stored in ``$ANNOgesic/output/riboswitch`` and 
+all output files of RNA thermometer will be stored in ``$ANNOgesic/output/RNA_thermometer``.
 
-``gffs``: The gff files of riboswitchs.
+``gffs``: The gff files of riboswitchs / RNA_thermometer.
 
-``tables``: The tables of riboswichs with more details.
+``tables``: The tables of riboswichs / RNA_thermometer with more details.
 
 ``scan_Rfam``: The results of ``cmscan`` of `Infernal <http://infernal.janelia.org/>`_. 
 User can check the results of blast.

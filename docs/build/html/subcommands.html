@@ -52,7 +52,7 @@
 <li><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
 <li><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
 <li><a class="reference internal" href="#definition-of-reference-strain-and-target-strain">Definition of reference strain and target strain</a></li>
-<li><a class="reference internal" href="#riboswitch-dataset-of-rfam">Riboswitch dataset of Rfam</a></li>
+<li><a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam">Riboswitch and RNA thermometer dataset of Rfam</a></li>
 <li><a class="reference internal" href="#create">create</a></li>
 <li><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
@@ -71,7 +71,7 @@
 <li><a class="reference internal" href="#srna-target">srna_target</a></li>
 <li><a class="reference internal" href="#ppi-network">ppi_network</a></li>
 <li><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
-<li><a class="reference internal" href="#riboswitch">riboswitch</a></li>
+<li><a class="reference internal" href="#riboswitch-thermometer">riboswitch_thermometer</a></li>
 <li><a class="reference internal" href="#crispr">crispr</a></li>
 <li><a class="reference internal" href="#optimize-tsspredator">optimize_tsspredator</a></li>
 <li><a class="reference internal" href="#screenshot">screenshot</a></li>
@@ -121,8 +121,8 @@ please follow the principle of the format of filename.</p>
 <p>The names of features are:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="31%" />
-<col width="69%" />
+<col width="36%" />
+<col width="64%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>Feature name</td>
@@ -157,6 +157,12 @@ please follow the principle of the format of filename.</p>
 </tr>
 <tr class="row-odd"><td>riboswitch</td>
 <td>riboswitch</td>
+</tr>
+<tr class="row-even"><td>RNA_thermometer</td>
+<td>RNA_thermometer</td>
+</tr>
+<tr class="row-odd"><td>CRISPR</td>
+<td>CRISPR</td>
 </tr>
 </tbody>
 </table>
@@ -218,9 +224,10 @@ If user have no fasta file or genome annotation files of &#8220;target strain&#8
 ANNOgesic can generate them. It requires a strain which is close to &#8220;target strain&#8221;.
 We call this required strain - &#8220;reference strain&#8221;.</p>
 </div>
-<div class="section" id="riboswitch-dataset-of-rfam">
-<h2>Riboswitch dataset of Rfam<a class="headerlink" href="#riboswitch-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
-<p>For riboswitch detection, it need the information of riboswitch of Rfam. The input format is like the following.</p>
+<div class="section" id="riboswitch-and-rna-thermometer-dataset-of-rfam">
+<h2>Riboswitch and RNA thermometer dataset of Rfam<a class="headerlink" href="#riboswitch-and-rna-thermometer-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
+<p>For riboswitch and RNA thermometer detection, it need the information of riboswitch and RNA thermometer of Rfam.
+The input format is like the following.</p>
 <p>All columns are splited by <code class="docutils literal"><span class="pre">tab</span></code>. You can also download the data from our
 <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
 </div>
@@ -253,7 +260,10 @@ the reference strain can be download from NCBI, you can also get
 the files through running <code class="docutils literal"><span class="pre">get_input_files</span></code>.</p>
 <p>riboswitch_ID: For storing the file which contains all the Rfam ID of riboswitch.
 For the details of format, please refer to the section of
-<code class="docutils literal"><span class="pre">riboswicth</span></code>.</p>
+<code class="docutils literal"><span class="pre">Riboswitch</span> <span class="pre">and</span> <span class="pre">RNA</span> <span class="pre">thermometer</span> <span class="pre">dataset</span> <span class="pre">of</span> <span class="pre">Rfam</span></code>.</p>
+<p>RNA_thermometer_ID: For storing the file which contains all the Rfam ID of RNA thermometer.
+For the details of format, please refer to the section of
+<code class="docutils literal"><span class="pre">Riboswitch</span> <span class="pre">and</span> <span class="pre">RNA</span> <span class="pre">thermometer</span> <span class="pre">dataset</span> <span class="pre">of</span> <span class="pre">Rfam</span></code>.</p>
 <p>wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them to
 <code class="docutils literal"><span class="pre">fragment</span></code> (fragmented libraries) or <code class="docutils literal"><span class="pre">tex_notex</span></code> (TEX +/- treated libraries).</p>
 <ul class="simple">
@@ -903,6 +913,7 @@ If user wants to compare transcripts with genome anntation, it requires <code cl
                                      <span class="p">[</span><span class="o">--</span><span class="n">table_best</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">terminator_folder</span> <span class="n">TERMINATOR_FOLDER</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">fuzzy_term</span> <span class="n">FUZZY_TERM</span><span class="p">]</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">max_length_distribution</span> <span class="n">MAX_LENGTH_DISTRIBUTION</span><span class="p">]</span>
                                      <span class="p">[</span><span class="n">project_path</span><span class="p">]</span>
 
 <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
@@ -913,10 +924,10 @@ If user wants to compare transcripts with genome anntation, it requires <code cl
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
   <span class="o">--</span><span class="n">annotation_folder</span> <span class="n">ANNOTATION_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FOLDER</span>
                         <span class="n">It</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">transcript</span> <span class="n">assembly</span> <span class="ow">and</span> <span class="n">genome</span>
-                        <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span><span class="o">.</span> <span class="n">It</span> <span class="n">can</span> <span class="n">use</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span>
-                        <span class="k">as</span> <span class="n">reference</span> <span class="ow">and</span> <span class="n">modify</span> <span class="n">transcript</span> <span class="n">assembly</span> <span class="n">file</span><span class="o">.</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">do</span> <span class="n">it</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">annotation</span>
-                        <span class="n">gff</span> <span class="n">folder</span><span class="o">.</span> <span class="n">Otherwise</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t turn it on.</span>
+                        <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span><span class="o">.</span> <span class="n">It</span> <span class="n">can</span> <span class="n">use</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span> <span class="k">as</span>
+                        <span class="n">reference</span> <span class="ow">and</span> <span class="n">modify</span> <span class="n">transcript</span> <span class="n">assembly</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span>
+                        <span class="n">want</span> <span class="n">to</span> <span class="n">do</span> <span class="n">it</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">annotation</span> <span class="n">gff</span>
+                        <span class="n">folder</span><span class="o">.</span> <span class="n">Otherwise</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t turn it on.</span>
   <span class="o">--</span><span class="n">length</span> <span class="n">LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span> <span class="n">LENGTH</span>
                         <span class="n">The</span> <span class="n">minimum</span> <span class="n">width</span> <span class="n">of</span> <span class="n">transcript</span><span class="o">.</span> <span class="n">It</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">comparing</span>
                         <span class="n">to</span> <span class="n">annotation</span> <span class="n">file</span><span class="p">(</span><span class="o">--</span><span class="n">annotation_folder</span><span class="p">)</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">want</span>
@@ -948,12 +959,12 @@ If user wants to compare transcripts with genome anntation, it requires <code cl
                         <span class="n">current</span> <span class="n">transcript</span><span class="o">.</span> <span class="n">The</span> <span class="n">default</span> <span class="ow">is</span> <span class="mf">0.</span>
   <span class="o">--</span><span class="n">replicates_tex</span> <span class="n">REPLICATES_TEX</span><span class="p">,</span> <span class="o">-</span><span class="n">rt</span> <span class="n">REPLICATES_TEX</span>
                         <span class="n">The</span> <span class="n">position</span> <span class="ow">is</span> <span class="n">included</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">current</span> <span class="n">transcript</span> <span class="k">if</span>
-                        <span class="n">the</span> <span class="n">supported</span> <span class="n">replicates</span> <span class="n">are</span> <span class="n">more</span> <span class="n">than</span> <span class="o">--</span><span class="n">replicates_tex</span><span class="o">.</span>
-                        <span class="p">(</span><span class="k">for</span> <span class="n">tex</span> <span class="o">+/-</span> <span class="n">library</span><span class="p">)</span>
+                        <span class="n">the</span> <span class="n">supported</span> <span class="n">replicates</span> <span class="n">more</span> <span class="n">are</span> <span class="n">than</span>
+                        <span class="o">--</span><span class="n">replicates_tex</span><span class="o">.</span> <span class="p">(</span><span class="k">for</span> <span class="n">tex</span> <span class="o">+/-</span> <span class="n">library</span><span class="p">)</span>
   <span class="o">--</span><span class="n">replicates_frag</span> <span class="n">REPLICATES_FRAG</span><span class="p">,</span> <span class="o">-</span><span class="n">rf</span> <span class="n">REPLICATES_FRAG</span>
                         <span class="n">The</span> <span class="n">position</span> <span class="ow">is</span> <span class="n">included</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">current</span> <span class="n">transcript</span> <span class="k">if</span>
-                        <span class="n">the</span> <span class="n">supported</span> <span class="n">replicates</span> <span class="n">are</span> <span class="n">more</span> <span class="n">than</span> <span class="o">--</span><span class="n">replicates_frag</span><span class="o">.</span>
-                        <span class="p">(</span><span class="k">for</span> <span class="n">fragmented</span> <span class="n">library</span><span class="p">)</span>
+                        <span class="n">the</span> <span class="n">supported</span> <span class="n">replicates</span> <span class="n">more</span> <span class="n">are</span> <span class="n">than</span>
+                        <span class="o">--</span><span class="n">replicates_frag</span><span class="o">.</span> <span class="p">(</span><span class="k">for</span> <span class="n">fragmented</span> <span class="n">library</span><span class="p">)</span>
   <span class="o">--</span><span class="n">tex_notex</span> <span class="n">TEX_NOTEX</span><span class="p">,</span> <span class="o">-</span><span class="n">te</span> <span class="n">TEX_NOTEX</span>
                         <span class="n">If</span> <span class="n">you</span> <span class="n">use</span> <span class="n">tex</span> <span class="o">+/-</span> <span class="n">libraries</span> <span class="n">to</span> <span class="n">run</span> <span class="n">transcript</span>
                         <span class="n">assembly</span><span class="p">,</span> <span class="n">the</span> <span class="n">transcripts</span> <span class="n">should</span> <span class="n">be</span> <span class="n">detected</span> <span class="n">by</span> <span class="n">both</span>
@@ -962,13 +973,14 @@ If user wants to compare transcripts with genome anntation, it requires <code cl
                         <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="k">with</span> <span class="n">TSS</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">TSS</span>
                         <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">compare_genome_annotation</span> <span class="n">COMPARE_GENOME_ANNOTATION</span><span class="p">,</span> <span class="o">-</span><span class="n">cg</span> <span class="n">COMPARE_GENOME_ANNOTATION</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="k">with</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">file</span><span class="p">,</span>
-                        <span class="n">please</span> <span class="n">assign</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">folder</span><span class="o">.</span>
+                        <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="k">with</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">file</span> <span class="ow">and</span>
+                        <span class="n">find</span> <span class="n">the</span> <span class="n">parent</span> <span class="n">transcript</span> <span class="n">of</span> <span class="n">gene</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span>
+                        <span class="n">annotation</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">compare_feature_genome</span> <span class="n">COMPARE_FEATURE_GENOME</span><span class="p">,</span> <span class="o">-</span><span class="n">cf</span> <span class="n">COMPARE_FEATURE_GENOME</span>
                         <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="k">with</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">file</span><span class="p">,</span>
                         <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">feature</span> <span class="n">which</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="n">gene</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">more</span> <span class="n">than</span> <span class="n">one</span>
-                        <span class="n">feature</span><span class="p">,</span> <span class="n">just</span> <span class="n">insert</span> <span class="n">comma</span> <span class="n">between</span> <span class="n">each</span> <span class="n">feature</span><span class="p">,</span>
+                        <span class="n">Default</span> <span class="ow">is</span> <span class="n">gene</span><span class="p">,</span><span class="n">CDS</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">more</span> <span class="n">than</span>
+                        <span class="n">one</span> <span class="n">feature</span><span class="p">,</span> <span class="n">just</span> <span class="n">insert</span> <span class="n">comma</span> <span class="n">between</span> <span class="n">each</span> <span class="n">feature</span><span class="p">,</span>
                         <span class="n">such</span> <span class="k">as</span> <span class="n">gene</span><span class="p">,</span><span class="n">CDS</span><span class="o">.</span>
   <span class="o">--</span><span class="n">TSS_fuzzy</span> <span class="n">TSS_FUZZY</span><span class="p">,</span> <span class="o">-</span><span class="n">fu</span> <span class="n">TSS_FUZZY</span>
                         <span class="n">The</span> <span class="n">fuzzy</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">TSS</span> <span class="ow">and</span> <span class="n">transcript</span> <span class="n">assembly</span><span class="o">.</span>
@@ -996,6 +1008,10 @@ If user wants to compare transcripts with genome anntation, it requires <code cl
                         <span class="n">If</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">compare</span> <span class="n">between</span> <span class="n">transcripts</span> <span class="ow">and</span>
                         <span class="n">terminators</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">fuzzy</span> <span class="n">here</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
                         <span class="mf">30.</span>
+  <span class="o">--</span><span class="n">max_length_distribution</span> <span class="n">MAX_LENGTH_DISTRIBUTION</span><span class="p">,</span> <span class="o">-</span><span class="n">mb</span> <span class="n">MAX_LENGTH_DISTRIBUTION</span>
+                        <span class="n">For</span> <span class="n">generating</span> <span class="n">the</span> <span class="n">figure</span> <span class="n">of</span> <span class="n">distribution</span> <span class="n">of</span>
+                        <span class="n">transcript</span> <span class="n">length</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">maximum</span> <span class="n">length</span>
+                        <span class="n">that</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">include</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2000.</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -1060,7 +1076,7 @@ recommand only use TEX +/- treated libraries. Because it will lose some informat
                             [-rf REPLICATES_FRAG] [-tb] [-ml MIN_LOOP_LENGTH]
                             [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
                             [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
-                            [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL]
+                            [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
                             [project_path]
 
 positional arguments:
@@ -1149,11 +1165,11 @@ optional arguments:
                         For tex +/- library, terminators should be detected by
                         both or just one.(1/2) Default is 1.
   -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
-                        The terminator of tex +/- library should be detected by
-                        more than this number of replicates.
+                        The terminator of tex +/- library should be detected
+                        by more than this number of replicates.
   -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
                         The terminator of fragmented library should be
-                        detected more by than this number of replicates.
+                        detected by more than this number of replicates.
   -tb, --table_best     Output table only contains most decreasing track.
                         Default is False.
   -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
@@ -1180,6 +1196,12 @@ optional arguments:
                         --min_U_tail_length is 3, and there are 3 U within 6
                         nts, it will be assigned to detecting U tail
                         successfully. Default is 6.
+  -kp, --keep_multi_term
+                        Sometimes, one gene is associated with more terminator
+                        candidates. In default, it will only keep the high
+                        confident one. If you want to keep all terminators
+                        which associated with the same gene, please turn it
+                        on. Default is False.
 </pre></div>
 </div>
 <ul class="simple">
@@ -1937,17 +1959,17 @@ optional arguments:
                         to assign more than one type of stop codon, please use
                         comma to separate them. Default is TTA,TAG,TGA.
   --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
-                        The minimum distance between the ribosomal binding
-                        site and start codon. Default is 3.
+                        The minimum distance between the ribosome binding site
+                        and start codon. Default is 3.
   --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
-                        The maximum distance between the ribosomal binding
-                        site and start codon. Default is 15.
+                        The maximum distance between the ribosome binding site
+                        and start codon. Default is 15.
   --rbs_not_after_TSS, -at
                         If you want to generate best gff file which include
-                        ribosomal binding site not after TSS, please turn it
+                        ribosome binding site not after TSS, please turn it
                         on. Default is False.
   --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                        How many nucleotides of ribosomal binding site is
+                        How many nucleotides of ribosome binding site is
                         different with AGGAGG? Default is 2.
   --print_all_combination, -pa
                         Every expressed transcript of sORF has many start
@@ -2584,11 +2606,12 @@ statistics and visualization files.</p>
 <p><code class="docutils literal"><span class="pre">psortb_results</span></code>: The results of Psortb.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: Statistics files and figures.</p>
 </div>
-<div class="section" id="riboswitch">
-<h2>riboswitch<a class="headerlink" href="#riboswitch" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">riboswitch</span></code> will search the pre-CDS region which have ribosome binding sites.
-Basically, <code class="docutils literal"><span class="pre">riboswitch</span></code> use <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
-<a class="reference external" href="http://rfam.xfam.org/">Rfam</a> to find the homologs of known riboswitchs.</p>
+<div class="section" id="riboswitch-thermometer">
+<h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> will search ribosome binding sites in the region between
+a TSS（the starting point of transcript was assigned if no TSS was detected)
+and a downstream CDSs. Then using <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
+riboswitch or RNA thermometer in <a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
 <ul class="simple">
 <li>Pre-required tools and files</li>
 </ul>
@@ -2596,24 +2619,30 @@ Basically, <code class="docutils literal"><span class="pre">riboswitch</span></c
 <p><a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
 <p>Gff files of genome annotation.</p>
 <p>Fasta files of genome sequence.</p>
-<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code>. The file should contain Rfam ID, Name and Description of riboswitchs.
-You can refer to the section of <code class="docutils literal"><span class="pre">Riboswitch</span> <span class="pre">dataset</span> <span class="pre">of</span> <span class="pre">Rfam</span></code>. You can download the file from our
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv). You also can create your own one.</p>
+<p>File of <code class="docutils literal"><span class="pre">riboswitch_ID</span></code> or <code class="docutils literal"><span class="pre">RNA_thermometer_ID</span></code>. The file should contain Rfam ID,
+Name and Description of riboswitchs or RNA thermometer.
+You can refer to the section of <code class="docutils literal"><span class="pre">Riboswitch</span> <span class="pre">and</span> <span class="pre">RNA</span> <span class="pre">thermometer</span> <span class="pre">dataset</span> <span class="pre">of</span> <span class="pre">Rfam</span></code>. You can download the file from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">Github</a> (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
+You also can create your own one.</p>
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic riboswitch [-h] [--infernal_path INFERNAL_PATH]
-                            [--riboswitch_ID RIBOSWITCH_ID]
-                            [--gff_path GFF_PATH] [--tss_path TSS_PATH]
-                            [--UTR_length UTR_LENGTH]
-                            [--transcript_path TRANSCRIPT_PATH]
-                            [--fasta_path FASTA_PATH] [--Rfam RFAM]
-                            [--e_value E_VALUE] [--output_all] [--fuzzy FUZZY]
-                            [--fuzzy_rbs FUZZY_RBS]
-                            [--start_codon START_CODON]
-                            [--max_dist_rbs MAX_DIST_RBS]
-                            [--min_dist_rbs MIN_DIST_RBS]
-                            [project_path]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic riboswitch_thermometer [-h] [--program PROGRAM]
+                                        [--infernal_path INFERNAL_PATH]
+                                        [--riboswitch_ID RIBOSWITCH_ID]
+                                        [--RNA_thermometer_ID RNA_THERMOMETER_ID]
+                                        [--gff_path GFF_PATH]
+                                        [--tss_path TSS_PATH]
+                                        [--UTR_length UTR_LENGTH]
+                                        [--transcript_path TRANSCRIPT_PATH]
+                                        [--fasta_path FASTA_PATH]
+                                        [--Rfam RFAM] [--e_value E_VALUE]
+                                        [--output_all] [--fuzzy FUZZY]
+                                        [--fuzzy_rbs FUZZY_RBS]
+                                        [--start_codon START_CODON]
+                                        [--max_dist_rbs MAX_DIST_RBS]
+                                        [--min_dist_rbs MIN_DIST_RBS]
+                                        [project_path]
 
 positional arguments:
   project_path          Path of the project folder. If none is given, the
@@ -2621,13 +2650,24 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  --program PROGRAM, -p PROGRAM
+                        This module can predict riboswitch and RNA
+                        thermometer. Please assign which features that you
+                        want to detect. The options are &quot;riboswitch&quot;,
+                        &quot;thermometer&quot;, &quot;both&quot;. Default is both.
   --infernal_path INFERNAL_PATH, -if INFERNAL_PATH
                         Please assign the folder of Infernal(where is cmscan
                         and cmsearch located).
-  --riboswitch_ID RIBOSWITCH_ID, -i RIBOSWITCH_ID
-                        The path of the riboswitch ID of Rfam. The file is
+  --riboswitch_ID RIBOSWITCH_ID, -ri RIBOSWITCH_ID
+                        If --program is &quot;riboswitch&quot; or &quot;both&quot;, please assigh
+                        the path of the riboswitch ID of Rfam. The file should
                         include the Accession, ID and Description of
                         riboswitch in Rfam.
+  --RNA_thermometer_ID RNA_THERMOMETER_ID, -ti RNA_THERMOMETER_ID
+                        If --program is &quot;thermometer&quot; or &quot;both&quot;, please assigh
+                        the path of the RNA thermometer ID of Rfam. The file
+                        should include the Accession, ID and Description of
+                        RNA thermometer in Rfam.
   --gff_path GFF_PATH, -g GFF_PATH
                         The path of annotation gff folder.
   --tss_path TSS_PATH, -t TSS_PATH
@@ -2641,33 +2681,34 @@ optional arguments:
   --Rfam RFAM, -R RFAM  The path of Rfam CM database.
   --e_value E_VALUE, -e E_VALUE
                         The cutoff of e value. Default is 0.001.
-  --output_all, -o      One sequence may fit multiple riboswitches. If you
-                        want to output all of them, please turn it on. Or it
-                        will only print the best one. Default is False.
+  --output_all, -o      One sequence may fit multiple references. If you want
+                        to output all of them, please turn it on. Or it will
+                        only print the best one. Default is False.
   --fuzzy FUZZY, -z FUZZY
                         It will extend some nucleotides of 3&#39; or 5&#39; end.
                         Default is 10.
   --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                        How many nucleotides of ribosomal binding site allow
-                        to be different with AGGAGG? Default is 2.
+                        How many nucleotides of ribosome binding site allow to
+                        be different with AGGAGG? Default is 2.
   --start_codon START_CODON, -ac START_CODON
                         What kinds of start coden you want to use. If you want
                         to import more than one type of start codon, please
                         use comma to separate them. Default is ATG.
   --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
-                        The maximum distance between ribosomal binding site
-                        and start codon. Default is 14.
+                        The maximum distance between ribosome binding site and
+                        start codon. Default is 14.
   --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
-                        The minmum distance between ribosomal binding site and
+                        The minmum distance between ribosome binding site and
                         start codon. Default is 5.
 </pre></div>
 </div>
 <ul class="simple">
 <li>Output files</li>
 </ul>
-<p>All output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/riboswitch</span></code>.</p>
-<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff files of riboswitchs.</p>
-<p><code class="docutils literal"><span class="pre">tables</span></code>: The tables of riboswichs with more details.</p>
+<p>All output files of riboswitch will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/riboswitch</span></code> and
+all output files of RNA thermometer will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/RNA_thermometer</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">gffs</span></code>: The gff files of riboswitchs / RNA_thermometer.</p>
+<p><code class="docutils literal"><span class="pre">tables</span></code>: The tables of riboswichs / RNA_thermometer with more details.</p>
 <p><code class="docutils literal"><span class="pre">scan_Rfam</span></code>: The results of <code class="docutils literal"><span class="pre">cmscan</span></code> of <a class="reference external" href="http://infernal.janelia.org/">Infernal</a>.
 User can check the results of blast.</p>
 <p><code class="docutils literal"><span class="pre">statistics</span></code>: The statistics files and figures.</p>

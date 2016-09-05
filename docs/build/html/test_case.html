@@ -66,7 +66,7 @@
 <li><a class="reference internal" href="#mapping-gene-ontology">Mapping Gene ontology</a></li>
 <li><a class="reference internal" href="#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
 <li><a class="reference internal" href="#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
-<li><a class="reference internal" href="#generating-riboswitch">Generating riboswitch</a></li>
+<li><a class="reference internal" href="#generating-riboswitch-and-rna-thermometer">Generating riboswitch and RNA thermometer</a></li>
 <li><a class="reference internal" href="#detection-of-crispr">Detection of CRISPR</a></li>
 <li><a class="reference internal" href="#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
 <li><a class="reference internal" href="#producing-the-screenshots">Producing the screenshots</a></li>
@@ -484,6 +484,7 @@ $ ls ANNOgesic/output/transcriptome_assembly/tables
 NC_000915.1_transcript.csv
 $ ls ANNOgesic/output/transcriptome_assembly/statistics
 stat_compare_Transcriptome_assembly_genome_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
+NC_000915.1_length_all.png                                  NC_000915.1_length_less_2000.png
 </pre></div>
 </div>
 </div>
@@ -1073,12 +1074,13 @@ P0001_nusB.png  HP0005_pyrF.png
 </pre></div>
 </div>
 </div>
-<div class="section" id="generating-riboswitch">
-<h2>Generating riboswitch<a class="headerlink" href="#generating-riboswitch" title="Permalink to this headline">¶</a></h2>
-<p>If you want to know the riboswitchs, you can use the subcommand <code class="docutils literal"><span class="pre">riboswitch</span></code>.
-Before running <code class="docutils literal"><span class="pre">riboswitch</span></code>, you need to get the information of known riboswitches in Rfam.
-You can download it from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
+<div class="section" id="generating-riboswitch-and-rna-thermometer">
+<h2>Generating riboswitch and RNA thermometer<a class="headerlink" href="#generating-riboswitch-and-rna-thermometer" title="Permalink to this headline">¶</a></h2>
+<p>If you want to know the riboswitches and RNA thermometer, you can use the subcommand <code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code>.
+Before running it, you need to get the information of known riboswitches and RNA thermometer in Rfam.
+You can download them from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
+$ wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
 </pre></div>
 </div>
 <p>You also need to download Rfam.</p>
@@ -1090,15 +1092,19 @@ $ cd ../../../
 </pre></div>
 </div>
 <p>Now we can try the subcommand.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">annogesic</span> <span class="n">riboswitch</span> \
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">annogesic</span> <span class="n">riboswitch_thermometer</span> \
     <span class="o">-</span><span class="n">g</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">annotation</span> \
     <span class="o">-</span><span class="n">f</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">fasta</span> \
-    <span class="o">-</span><span class="n">i</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">riboswitch_ID</span><span class="o">/</span><span class="n">Rfam_riboswitch_ID</span><span class="o">.</span><span class="n">csv</span> \
-    <span class="o">-</span><span class="n">R</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">CMs</span><span class="o">/</span><span class="n">Rfam</span><span class="o">.</span><span class="n">cm</span> \
+    <span class="o">-</span><span class="n">ri</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">riboswitch_ID</span><span class="o">/</span><span class="n">Rfam_riboswitch_ID</span><span class="o">.</span><span class="n">csv</span> \
+    <span class="o">-</span><span class="n">ti</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">RNA_thermometer_ID</span><span class="o">/</span><span class="n">Rfam_RNA_thermometer_ID</span><span class="o">.</span><span class="n">csv</span> \
+    <span class="o">-</span><span class="n">R</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">Rfam</span><span class="o">/</span><span class="n">CMs</span><span class="o">/</span><span class="n">Rfam</span><span class="o">.</span><span class="n">cm</span> \
+    <span class="o">-</span><span class="n">a</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">transcriptome_assembly</span><span class="o">/</span><span class="n">gffs</span> \
+    <span class="o">-</span><span class="n">t</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSS</span><span class="o">/</span><span class="n">gffs</span> \
     <span class="n">ANNOgesic</span>
 </pre></div>
 </div>
-<p>The output is the following. <code class="docutils literal"><span class="pre">gffs</span></code> is for gff files of riboswitchs; <code class="docutils literal"><span class="pre">tables</span></code> is for tables of riboswitchs;
+<p>The output is the following. <code class="docutils literal"><span class="pre">gffs</span></code> is for gff files of riboswitchs / RNA_thermometer;
+<code class="docutils literal"><span class="pre">tables</span></code> is for tables of riboswitchs / RNA_thermometer;
 <code class="docutils literal"><span class="pre">scan_Rfam</span></code> is for the output files of scanning Rfam; <code class="docutils literal"><span class="pre">statistics</span></code> is for the statistics files.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/riboswitch/
 gffs  scan_Rfam  statistics  tables
@@ -1110,6 +1116,16 @@ $ ls ANNOgesic/output/riboswitch/tables/
 NC_000915.1_riboswitch.csv
 $ ls ANNOgesic/output/riboswitch/statistics/
 stat_NC_000915.1_riboswitch.txt
+$ ls ANNOgesic/output/RNA_thermometer/
+gffs  scan_Rfam  statistics  tables
+$ ls ANNOgesic/output/RNA_thermometer/gffs/
+NC_000915.1_RNA_thermometer.gff
+$ ls ANNOgesic/output/RNA_thermometer/scan_Rfam/NC_000915.1/
+NC_000915.1_RNA_thermometer_prescan.txt  NC_000915.1_RNA_thermometer_scan.txt
+$ ls ANNOgesic/output/RNA_thermometer/tables/
+NC_000915.1_RNA_thermometer.csv
+$ ls ANNOgesic/output/RNA_thermometer/statistics/
+stat_NC_000915.1_RNA_thermometer.txt
 </pre></div>
 </div>
 </div>
@@ -1178,7 +1194,7 @@ you assigned. It can reveal the relationship between all features.</p>
 <p>Now let&#8217;s do it. We merge all features that we have.</p>
 <dl class="docutils">
 <dt>::</dt>
-<dd>ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff,ANNOgesic/output/target/annotation/NC_000915.1.gff,ANNOgesic/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,ANNOgesic/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,ANNOgesic/output/terminator/gffs/best/NC_000915.1_term.gff,ANNOgesic/output/processing_site/gffs/NC_000915.1_processing.gff,ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff</dd>
+<dd>ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff,ANNOgesic/output/target/annotation/NC_000915.1.gff,ANNOgesic/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,ANNOgesic/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,ANNOgesic/output/terminator/gffs/best/NC_000915.1_term.gff,ANNOgesic/output/processing_site/gffs/NC_000915.1_processing.gff,ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,ANNOgesic/output/RNA_thermometer/gffs/NC_000915.1_RNA_thermometer.gff,ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff</dd>
 </dl>
 <dl class="docutils">
 <dt>::</dt>
