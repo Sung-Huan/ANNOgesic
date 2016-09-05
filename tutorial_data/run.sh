@@ -41,12 +41,12 @@ ML-Lib_div_by_14583533.0_multi_by_14583533.0_reverse.wig:frag:1:a:-"
 #    operon_detection
 #    SNP_calling_target
 #    PPI_network
-    Subcellular_localization
-#    riboswitch
+#    Subcellular_localization
+#    riboswitch_and_RNA_thermometer
 #    Optimize_TSSpredator
 #    gen_screenshot
 #    color_png
-    merge_features
+#    merge_features
 }
 
 
@@ -316,13 +316,15 @@ Subcellular_localization(){
 	$ANNOGESIC_FOLDER
 }
 
-riboswitch(){
+riboswitch_and_RNA_thermometer(){
     $ANNOGESIC_PATH \
-        riboswitch \
+        riboswitch_thermometer \
 	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-f $ANNOGESIC_FOLDER/output/target/fasta \
-	-i $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
+	-ri $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
+	-ri $ANNOGESIC_FOLDER/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
 	-R $ANNOGESIC_FOLDER/input/database/CMs/Rfam.cm \
+	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
 	$ANNOGESIC_FOLDER
 }
 
