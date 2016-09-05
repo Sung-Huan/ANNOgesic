@@ -212,9 +212,13 @@ class TSSpredator(object):
                       out_path))
                 print("Please check configuration file.")
             else:
+                if args_tss.program.lower() == "processing":
+                    feature = "processing_site"
+                elif args_tss.program.lower() == "tss":
+                    feature = "TSS"
                 self.converter.convert_mastertable2gff(
                     os.path.join(out_path, "MasterTable.tsv"),
-                    "ANNOgesic", args_tss.program, prefix, out_file)
+                    "ANNOgesic", feature, prefix, out_file)
             gff_f.close()
 
     def _merge_manual(self, tsss, args_tss):

@@ -130,7 +130,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
             out_e.write(term.info + "\n")
         if term.attributes["express"] != "True":
             out_n.write(term.info + "\n")
-        if term.attributes["method"] == "intersect_plus_minus":
+        if term.attributes["method"] == "gene_converged":
             plus_num(nums, strain, "total")
             plus_num(nums, strain, "fr")
             if term.attributes["coverage_decrease"] == "True":
@@ -152,7 +152,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "ex_hp")
                 plus_num(nums, strain, "only_ex_hp")
                 plus_num(nums, strain, "total_ex")
-        elif term.attributes["method"] == "intersect_plus_minus,TransTermHP":
+        elif term.attributes["method"] == "gene_converged,TransTermHP":
             plus_num(nums, strain, "total")
             plus_num(nums, strain, "frhp")
             if term.attributes["coverage_decrease"] == "True":
@@ -182,7 +182,8 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out_tn = open(output_non + ".csv", "w")
     fh = open(term_table, "r")
     out_tn.write("\t".join(["strain", "name", "start", "end", "strand",
-                            "detect", "associated_gene", "coverage_detail"]))
+                            "detect", "associated_gene", "associated_transcript",
+                            "coverage_decrease", "coverage_detail"]) + "\n")
     for row in csv.reader(fh, delimiter="\t"):
         if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
             out_td.write("\t".join(row) + "\n")
@@ -202,8 +203,7 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out_d.write("##gff-version 3\n")
     out_n.write("##gff-version 3\n")
     classify_terms(terms, nums, out_d, out_e, out_n, pre_strain)
-    out.write("method_1 is searching the intergenic region "
-              "between forward strand and reverse strand.\n")
+    out.write("method_1 is searching the gene converged region.\n")
     out.write("method_2 is TransTermHP.\n")
     if len(nums) > 2:
         print_file(nums["total"], out, "All strain")

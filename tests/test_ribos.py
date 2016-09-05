@@ -17,7 +17,11 @@ class Mock_func(object):
         self.example = Example()
 
     def mock_run_infernal(self, e_value,
-                          seq, type_, prefix):
+                          seq, type_, prefix, test1, test2, test3):
+        suffixs = {"csv": "test.csv",
+                   "txt": "test_prescan.txt",
+                   "re_txt": "test_scan.txt",
+                   "re_csv": "test_scan.csv"}
         if type_ == "txt":
             gen_file("test_folder/output/test_RBS.txt", self.example.scan_file)
             return "test_folder/output/test_RBS.txt"
@@ -27,6 +31,20 @@ class Mock_func(object):
 
     def mock_modify_table(self, first_table, output_all):
         pass
+
+    def mock_regenerate_seq(first_scan_file, first_seq,
+                            first_table, sec_seq, test):
+        if not os.path.exists('test_folder/output/tmp_table/test_test.csv'):
+            gen_file('test_folder/output/tmp_table/test_test.csv', "test")
+
+    def mock_reextract_rbs(sec_scan_file, first_table, sec_table, test):
+        gen_file('test_folder/output/tmp_table/test_test_scan.csv', "test")
+        gen_file(os.path.join("test_folder/output", "tmp_fasta", "test_regenerate.fa"), "test")
+        pass
+
+    def mock_stat_and_covert2gff(csv, gff, fuzzy, out_stat, feature, test2, test3):
+        pass
+
 
 class TestRibos(unittest.TestCase):
 
@@ -70,10 +88,11 @@ class TestRibos(unittest.TestCase):
         args = self.mock_args.mock()
         args.gffs = self.gffs
         args.fastas = self.fastas
-        args.out_folder = self.out_folder
+        args.ribos_out_folder = self.out_folder
         args.database = self.database
         args.tsss = self.tsss
         args.trans = self.trans
+        args.program = 'riboswtich'
         self.ribo = Ribos(args)
 
     def tearDown(self):
@@ -83,6 +102,8 @@ class TestRibos(unittest.TestCase):
     def test_scan_extract_rfam(self):
         self.ribo._run_infernal = self.mock.mock_run_infernal
         rb.modify_table = self.mock.mock_modify_table
+        rb.regenerate_seq = self.mock.mock_regenerate_seq
+        rb.reextract_rbs = self.mock.mock_reextract_rbs
         prefixs = []
         gen_file(os.path.join(self.gffs, "tmp/test.gff"), self.example.gff_file)
         gen_file(os.path.join(self.fastas, "tmp/test.fa"), self.example.fasta_file)
@@ -99,17 +120,32 @@ class TestRibos(unittest.TestCase):
         args.fuzzy_rbs = 2
         args.utr = True
         args.output_all = "test"
-        self.ribo._scan_extract_rfam(prefixs, args)
+        tmp_files = {"fasta": os.path.join(self.out_folder, "tmp_fasta"),
+                     "scan": "tmp_scan",
+                     "table": os.path.join(self.out_folder, "tmp_table")}
+        rfam = "Rfam_.cm"
+        suffixs = {"csv": "test.csv",
+                   "txt": "test_prescan.txt",
+                   "re_txt": "test_scan.txt",
+                   "re_csv": "test_scan.csv"}
+        self.ribo._scan_extract_rfam(prefixs, args, tmp_files, suffixs, "test", rfam)
         self.assertListEqual(prefixs, ["test"])
         self.assertTrue(os.path.exists(os.path.join(self.out_folder, "tmp_fasta", "test_regenerate.fa")))
 
     def test_merge_results(self):
+        rb.stat_and_covert2gff = self.mock.mock_stat_and_covert2gff
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file) 
         gen_file(os.path.join(self.out_folder, "tmp_table/test_riboswitch.csv"), self.example.table)
         gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch_prescan.txt"), self.example.rescan_file)
         gen_file(os.path.join(self.out_folder, "tmp_scan/test_riboswitch_scan.txt"), self.example.rescan_file)
         gen_file(os.path.join(self.test_folder, "ids"), self.example.ids)
         gen_file(os.path.join(self.tables, "test_riboswitch.csv"), self.example.table)
+        gen_file('test_folder/output/tmp_table/test_test_scan.csv', "test")
+        gen_file(os.path.join("test_folder/output", "tmp_fasta", "test_regenerate.fa"), "test")
+        gen_file('test_folder/output/tmp_scan/test_test_prescan.txt', "test")
+        gen_file('test_folder/output/tmp_scan/test_test_scan.txt', "test")
+        if not os.path.exists('test_folder/output/tmp_table/test_test.csv'):
+            gen_file('test_folder/output/tmp_table/test_test.csv', "test")
         args = self.mock_args.mock()
         args.start_codons = ["ATG"]
         args.fastas = self.fastas
@@ -117,7 +153,17 @@ class TestRibos(unittest.TestCase):
         args.gffs = self.gffs
         args.ribos_id = os.path.join(self.test_folder, "ids")
         args.fuzzy = 3
-        self.ribo._merge_results(args)
+        suffixs = {"csv": "test.csv",
+                   "txt": "test_prescan.txt",
+                   "re_txt": "test_scan.txt",
+                   "re_csv": "test_scan.csv"}
+        tmp_files = {"fasta": os.path.join(self.out_folder, "tmp_fasta"),
+                     "scan": os.path.join(self.out_folder, "tmp_scan"),
+                     "table": os.path.join(self.out_folder, "tmp_table")}
+        rfam = "Rfam_.cm"
+        self.ribo._merge_results(args, os.path.join(self.out_folder, "tmp_scan"), suffixs, tmp_files,
+                                 os.path.join(self.out_folder, "tmp_scan"), os.path.join(self.out_folder, "scan_Rfam"),
+                                 os.path.join(self.out_folder, "scan_Rfam"), os.path.join(self.out_folder, "gffs"), "riboswitch")
 
 
 class Example(object):

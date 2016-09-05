@@ -208,7 +208,7 @@ def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
 
 
 def extract_potential_rbs(seq_file, gff_file, tss_file, tran_file,
-                          out_file, args_ribo):
+                          out_file, args_ribo, feature):
     out = open(out_file, "w")
     cdss, seq, tsss, trans = read_file(seq_file, gff_file, tss_file, tran_file)
     inters = extract_seq(cdss, seq, tsss, trans,
@@ -216,7 +216,7 @@ def extract_potential_rbs(seq_file, gff_file, tss_file, tran_file,
     rbss = detect_site(inters, args_ribo)
     num = 0
     for rbs in rbss:
-        out.write(">riboswitch_{0}\n".format(
+        out.write(">" + feature + "_{0}\n".format(
                   "|".join([str(num), rbs["strain"], rbs["strand"],
                             rbs["protein"], str(rbs["start"]),
                             str(rbs["end"])])))

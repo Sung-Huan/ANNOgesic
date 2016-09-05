@@ -29,6 +29,7 @@ class Paths(object):
         self._set_ppi_folder_names()
         self._set_sublocal_folder_names()
         self._set_ribos_folder_names()
+        self._set_thermo_folder_names()
         self._set_crispr_folder_names()
         self.version_path = "%s/used_annogesic_version.txt" % (self.base_path)
 
@@ -43,6 +44,7 @@ class Paths(object):
         self.read_folder = "%s/reads" % self.input_folder
         self.bam_folder = "%s/BAMs" % self.input_folder
         self.riborfam_folder = "%s/riboswitch_ID" % self.input_folder
+        self.thermorfam_folder = "%s/RNA_thermometer_ID" % self.input_folder
 
     def _set_output_folder_names(self):
         self.target_folder = "%s/target" % self.output_folder
@@ -66,6 +68,7 @@ class Paths(object):
         self.sublocal_output_folder = "%s/subcellular_localization" % (
              self.output_folder)
         self.ribos_output_folder = "%s/riboswitch" % self.output_folder
+        self.thermo_output_folder = "%s/RNA_thermometer" % self.output_folder
         self.crispr_output_folder = "%s/crispr" % self.output_folder
 
     def _set_transcript_assembly_folder_names(self):
@@ -326,6 +329,17 @@ class Paths(object):
         self.ribos_rfam_folder = "%s/scan_Rfam" % (
              self.ribos_base_folder)
 
+    def _set_thermo_folder_names(self):
+        self.thermo_base_folder = "%s/RNA_thermometer" % self.output_folder
+        self.thermo_gff_folder = "%s/gffs" % (
+             self.thermo_base_folder)
+        self.thermo_stat_folder = "%s/statistics" % (
+             self.thermo_base_folder)
+        self.thermo_table_folder = "%s/tables" % (
+             self.thermo_base_folder)
+        self.thermo_rfam_folder = "%s/scan_Rfam" % (
+             self.thermo_base_folder)
+
     def _set_crispr_folder_names(self):
         self.crispr_base_folder = "%s/crispr" % self.output_folder
         self.crispr_gff_folder = "%s/gffs" % (
@@ -358,7 +372,8 @@ class Paths(object):
                 self.mutation_table_folder, self.read_folder,
                 self.bam_folder,
                 self.database_folder, self.manual_TSS_folder,
-                self.manual_pro_folder, self.riborfam_folder]
+                self.manual_pro_folder, self.riborfam_folder,
+                self.thermorfam_folder]
 
     def required_output_folders(self, folder_type):
         folder_dict = {"get_target_fasta": (
@@ -406,6 +421,9 @@ class Paths(object):
                        "riboswitch": (
                            [self.ribos_output_folder] +
                            self.required_ribos_folders()),
+                       "thermometer": (
+                           [self.thermo_output_folder] +
+                           self.required_thermo_folders()),
                        "crispr": (
                            [self.crispr_output_folder] +
                            self.required_crispr_folders()),
@@ -513,6 +531,10 @@ class Paths(object):
     def required_ribos_folders(self):
         return [self.ribos_gff_folder, self.ribos_table_folder,
                 self.ribos_stat_folder, self.ribos_rfam_folder]
+
+    def required_thermo_folders(self):
+        return [self.thermo_gff_folder, self.thermo_table_folder,
+                self.thermo_stat_folder, self.thermo_rfam_folder]
 
     def required_crispr_folders(self):
         return [self.crispr_gff_folder, self.crispr_stat_folder,

@@ -253,7 +253,7 @@ class Converter(object):
 
     def _print_tssfile(self, nums, tss_features, tss, tss_pro,
                        strain, method, out, tss_libs):
-        tss_pro = tss_pro[0].upper() + tss_pro[1:]
+#        tss_pro = tss_pro[0].upper() + tss_pro[1:]
         tss_merge_type = ",".join(tss_features["tss_types"])
         utr_length = ",".join(tss_features["utr_lengths"])
         merge_locus_tag = ",".join(tss_features["locus_tags"])

@@ -124,7 +124,7 @@ class Multiparser(object):
                                         os.path.join(tar_folder, tar),
                                         os.path.join(tar_folder,
                                                      self.tmp_wig_reverse))
-                                change_r = True
+                                    change_r = True
                 if change_f and change_r:
                     change_f = False
                     change_r = False

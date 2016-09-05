@@ -19,8 +19,8 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
                 ter.attributes["parent_tran"] = (
-                    "transcript:" + str(ter.start) + "-" +
-                    str(ter.end) + "_" + ter.strand)
+                    "transcript:" + str(ta.start) + "-" +
+                    str(ta.end) + "_" + ta.strand)
         else:
             if ((ta.start >= ter.start) and (
                      ta.start <= ter.end)) or (
@@ -33,8 +33,8 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
                 ter.attributes["parent_tran"] = (
-                    "transcript:" + str(ter.start) + "-" +
-                    str(ter.end) + "_" + ter.strand)
+                    "transcript:" + str(ta.start) + "-" +
+                    str(ta.end) + "_" + ta.strand)
 
 
 def output_term(ters, term_file, type_):
@@ -55,7 +55,7 @@ def output_term(ters, term_file, type_):
         out_t.write("\t".join(["strain", "name", "start", "end", "strand",
                                "detect", "associated_gene",
                                "associated_transcript",
-                               "coverage_detail"]) + "\n")
+                               "coverage_decrease", "coverage_detail"]) + "\n")
         fh = open(table_file, "r")
         for row in csv.reader(fh, delimiter='\t'):
             if row[0] != "strain":
@@ -67,7 +67,7 @@ def output_term(ters, term_file, type_):
                         out_t.write("\t".join([row[0], row[1], row[2], row[3],
                                     row[4], row[5], row[6],
                                     ter.attributes["parent_tran"],
-                                    row[7]]) + "\n")
+                                    row[7], row[8]]) + "\n")
                         break
         fh.close()
         out_t.close()

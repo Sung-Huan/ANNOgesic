@@ -218,6 +218,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.compare_tss = None
         args.compare_cds = None
         args.fuzzy_term = 1
+        args.max_dist = 2000
         self.tran.run_transcript_assembly(args)
 
 

@@ -112,7 +112,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         out = StringIO()
         ta.print_transctipt(100, 200, 20, 1, 40, "TEX",
                             20, out, "aaa", "+")
-        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\tTranscript\t100\t200\t.\t+\t.\tID=tran_1;Name=Transcript_00001;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
+        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\ttranscript\t100\t200\t.\t+\t.\tID=tran_1;Name=transcript_00001;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
 
 
     def test_assembly(self):
@@ -189,8 +189,8 @@ variableStep chrom=aaa span=1
                       {'cond': '1', 'track': 'test1', 'pos': 6, 'strand': '+', 'coverage': 47.0},
                       {'cond': '1', 'track': 'test1', 'pos': 7, 'strand': '+', 'coverage': 7.0},
                       {'cond': '1', 'track': 'test1', 'pos': 8, 'strand': '+', 'coverage': 47.0}]}
-    out_tran = """aaa	ANNOgesic	Transcript	3	4	.	+	.	ID=tran_0;Name=Transcript_00000;high_coverage=47.0;low_coverage=41.0;detect_lib=TEX
-aaa	ANNOgesic	Transcript	6	8	.	+	.	ID=tran_1;Name=Transcript_00001;high_coverage=47.0;low_coverage=47.0;detect_lib=TEX"""
+    out_tran = """aaa	ANNOgesic	transcript	3	4	.	+	.	ID=tran_0;Name=transcript_00000;high_coverage=47.0;low_coverage=41.0;detect_lib=TEX
+aaa	ANNOgesic	transcript	6	8	.	+	.	ID=tran_1;Name=transcript_00001;high_coverage=47.0;low_coverage=47.0;detect_lib=TEX"""
 
 
 if __name__ == "__main__":

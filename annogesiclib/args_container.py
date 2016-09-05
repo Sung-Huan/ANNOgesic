@@ -215,7 +215,7 @@ class ArgsContainer(object):
             fuzzy_downstream_gene, transtermhp_folder, tex_notex_libs,
             frag_libs, tex_notex, replicates_tex, replicates_frag, table_best,
             min_loop_length, max_loop_length, min_stem_length, max_stem_length,
-            min_AT_tail_length, miss_rate, range_u):
+            min_AT_tail_length, miss_rate, range_u, keep_multi):
         self.TransTermHP_path = TransTermHP_path
         self.expterm_path = expterm_path
         self.RNAfold_path = RNAfold_path
@@ -251,6 +251,7 @@ class ArgsContainer(object):
         self.at_tail = min_AT_tail_length
         self.miss_rate = miss_rate
         self.range_u = range_u
+        self.keep_multi = keep_multi
         self = self._parser_combine_wigs("terminator")
         return self
 
@@ -260,7 +261,7 @@ class ArgsContainer(object):
             replicates_tex, replicates_frag, transcript_assembly_output_folder,
             compare_TSS, compare_genome_annotation, TSS_fuzzy,
             tex_treated_libs, fragmented_libs, compare_feature_genome,
-            table_best, terminator_folder, fuzzy_term):
+            table_best, terminator_folder, fuzzy_term, max_dist):
         self.frag_wigs = frag_wig_path
         self.tex_wigs = tex_wig_path
         self.tex = tex_notex
@@ -288,6 +289,7 @@ class ArgsContainer(object):
         self.table_best = table_best
         self.terms = terminator_folder
         self.fuzzy_term = fuzzy_term
+        self.max_dist = max_dist
         self = self._parser_combine_wigs("transcript")
         return self
 
@@ -757,11 +759,13 @@ class ArgsContainer(object):
         self.output_folder = out_folder
         return self
 
-    def container_ribos(self, infernal_path, riboswitch_ID, gff_path,
-                        fasta_path, tss_path, transcript_path, Rfam,
-                        ribos_output_folder, e_value, output_all,
-                        database_folder, fuzzy, start_codon, min_dist_rbs,
-                        max_dist_rbs, fuzzy_rbs, UTR_length):
+    def container_ribos(self, program, thermo_ID, infernal_path, riboswitch_ID,
+                        gff_path, fasta_path, tss_path, transcript_path, Rfam,
+                        ribos_output_folder, thermo_output_folder, e_value,
+                        output_all, database_folder, fuzzy, start_codon,
+                        min_dist_rbs, max_dist_rbs, fuzzy_rbs, UTR_length):
+        self.program = program
+        self.thermo_id = thermo_ID
         self.infernal_path = infernal_path
         self.ribos_id = riboswitch_ID
         self.gffs = gff_path
@@ -769,7 +773,8 @@ class ArgsContainer(object):
         self.tsss = tss_path
         self.trans = transcript_path
         self.rfam = Rfam
-        self.out_folder = ribos_output_folder
+        self.ribos_out_folder = ribos_output_folder
+        self.thermo_out_folder = thermo_output_folder
         self.e_value = e_value
         self.output_all = output_all
         self.database = database_folder

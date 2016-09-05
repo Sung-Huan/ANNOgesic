@@ -58,23 +58,23 @@ class TestGetPolyT(unittest.TestCase):
         args.at_tail = 3
         args.range_u = 6
         cands = gpt.detect_candidates(seq, sec, "test", "aaa", 30, 58,
-                                      "gene_0", "gene_1", "+", args)
+                                      "gene_0", "gene_1", "+", args, "10-24", "70-100")
         refs = [{'strain': 'aaa', 'print': False, 'l_stem': 4, 'parent_m': 'gene_1',
                  'parent_p': 'gene_0', 'detect_m': False, 'ut': 4, 'start': 27,
                  'length': 12, 'loop': 4, 'end': 58, 'miss': 0, 'r_stem': 4,
-                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                 'name': 'test', 'detect_p': False, 'strand': '+', "p_pos": "10-24", "m_pos": "70-100"},
                 {'strain': 'aaa', 'print': False, 'l_stem': 5, 'parent_m': 'gene_1',
                  'parent_p': 'gene_0', 'detect_m': False, 'ut': 5, 'start': 26,
                  'length': 14, 'loop': 4, 'end': 59, 'miss': 0, 'r_stem': 5,
-                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                 'name': 'test', 'detect_p': False, 'strand': '+', "p_pos": "10-24", "m_pos": "70-100"},
                 {'strain': 'aaa', 'print': False, 'l_stem': 6, 'parent_m': 'gene_1',
                  'parent_p': 'gene_0', 'detect_m': False, 'ut': 6, 'start': 25,
                  'length': 16, 'loop': 4, 'end': 60, 'miss': 0, 'r_stem': 6,
-                 'name': 'test', 'detect_p': False, 'strand': '+'},
+                 'name': 'test', 'detect_p': False, 'strand': '+', "p_pos": "10-24", "m_pos": "70-100"},
                 {'strain': 'aaa', 'print': False, 'l_stem': 7, 'parent_m': 'gene_1',
                  'parent_p': 'gene_0', 'detect_m': False, 'ut': 6, 'start': 24,
                  'length': 20, 'loop': 4, 'end': 63, 'miss': 2, 'r_stem': 9,
-                 'name': 'test', 'detect_p': False, 'strand': '+'}]
+                 'name': 'test', 'detect_p': False, 'strand': '+', "p_pos": "10-24", "m_pos": "70-100"}]
         for index in range(len(cands)):
             self.assertDictEqual(cands[index], refs[index])
 
@@ -87,19 +87,21 @@ class TestGetPolyT(unittest.TestCase):
         self.assertEqual(parent, "gene_1")
 
     def test_parents(self):
-        terms = [{"strain": "aaa", "start": 11, "end": 14, "parent_p": "gene_0", "parent_m": "gene_1"},
-                 {"strain": "aaa", "start": 12, "end": 15, "parent_p": "tran0:1-11_+", "parent_m": "tran1:16-30_-"}]
+        terms = [{"strain": "aaa", "start": 11, "end": 14, "parent_p": "gene_0", "parent_m": "gene_1", "p_pos": "3-5", "m_pos": "20-50"},
+                {"strain": "aaa", "start": 12, "end": 15, "parent_p": "tran0:1-11_+", "parent_m": "tran1:16-30_-", "p_pos": "1-11", "m_pos": "16-30"}]
         args = self.mock_args.mock()
         args.fuzzy_up_gene = 10
         args.fuzzy_up_ta = 10
         args.fuzzy_down_gene = 10
         args.fuzzy_down_ta = 10
-        gpt. parents(terms, self.example.cdss, args)
+        gpt.parents(terms, self.example.cdss, args)
         self.assertDictEqual(terms[0], {'parent_p': 'gene_0', 'parent_m': 'gene_1',
-                                        'start': 11, 'strain': 'aaa', 'end': 14})
+                                        'start': 11, 'strain': 'aaa', 'end': 14,
+                                        "p_pos": "3-5", "m_pos": "20-50"})
         self.assertDictEqual(terms[1], {'parent_p': 'tran0:1-11_+,gene_0',
                                         'parent_m': 'tran1:16-30_-,gene_1', 'start': 12,
-                                        'strain': 'aaa', 'end': 15})
+                                        'strain': 'aaa', 'end': 15,
+                                        "p_pos": "1-11", "m_pos": "16-30"})
 
     def test_compare_anno(self):
         terms = [{"strain": "aaa", "start": 11, "end": 14, "strand": "+"},

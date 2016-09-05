@@ -5,7 +5,7 @@ from annogesiclib.lib_reader import read_libs, read_wig
 
 
 def import_data(row):
-    return {"method": "intersect_plus_minus", "strain": row[0],
+    return {"method": "gene_converged", "strain": row[0],
             "start": int(row[1]), "end": int(row[2]), "name": row[3],
             "miss": int(row[4]), "loop": int(row[5]), "diff": [],
             "length": int(row[6]), "r_stem": int(row[7]), "strand": row[8],
@@ -261,7 +261,7 @@ def print_table(term, out_t, args_term):
 
 
 def print2file(num, term, coverage, parent, out, out_t, method, args_term):
-    name = 'Term_%0*d' % (5, num)
+    name = 'terminator_%0*d' % (5, num)
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
         out_t.write("\t".join([term["strain"], name, str(term["start"]),
@@ -311,7 +311,7 @@ def print_detect_undetect(terms, num, out, out_t, detect, args_term):
 
 def term_validation(pre_term, term, detect, detect_terms, out,
                     out_t, num, args_term):
-    if pre_term["name"] != term["name"]:
+    if (pre_term["name"] != term["name"]) or (args_term.keep_multi):
         if detect:
             num = print_detect_undetect(detect_terms["detect"], num, out,
                                         out_t, "True", args_term)

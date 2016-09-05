@@ -4,13 +4,14 @@ from annogesiclib.helper import Helper
 
 
 def import_candidate(cands, term_features, strain, start, end, ut, name,
-                     total_length, strand, parent_p, parent_m):
+                     total_length, strand, parent_p, parent_m, p_pos, m_pos):
     cands.append({"strain": strain, "start": start, "end": end, "print": False,
                   "ut": ut, "name": name, "miss": term_features["real_miss"],
                   "loop": term_features["loop"], "length": total_length,
                   "r_stem": term_features["r_stem"], "strand": strand,
                   "l_stem": term_features["l_stem"], "parent_p": parent_p,
-                  "parent_m": parent_m, "detect_p": False, "detect_m": False})
+                  "parent_m": parent_m, "detect_p": False, "detect_m": False,
+                  "p_pos": p_pos, "m_pos": m_pos})
 
 
 def get_feature(gene):
@@ -103,8 +104,8 @@ def check_sec(sec, nts):
     return term_features, detects
 
 
-def detect_candidates(seq, sec, name, strain, start, end,
-                      parent_p, parent_m, strand, args_term):
+def detect_candidates(seq, sec, name, strain, start, end, parent_p, parent_m,
+                      strand, args_term, p_pos, m_pos):
     term_len = 2 * args_term.max_stem + 2 * (
                args_term.max_stem * args_term.miss_rate) + args_term.max_loop
     cands = []
@@ -143,14 +144,14 @@ def detect_candidates(seq, sec, name, strain, start, end,
                                 cands, term_features, strain,
                                 start + (nts - term_features["st_pos"]) - 10,
                                 start + nts - 1 + 10, ut, name, total_length,
-                                strand, parent_p, parent_m)
+                                strand, parent_p, parent_m, p_pos, m_pos)
                         else:
                             import_candidate(
                                 cands, term_features, strain,
                                 end - (nts - 1) - 10,
                                 end - (nts - term_features["st_pos"]) + 10,
                                 ut, name, total_length, strand,
-                                parent_p, parent_m)
+                                parent_p, parent_m, p_pos, m_pos)
     return cands
 
 
@@ -192,7 +193,8 @@ def parents(terms, genes, args_term):
             tmp_p = check_parent(genes, term, detects, "+",
                                  args_term.fuzzy_up_gene,
                                  args_term.fuzzy_down_gene, "parent_p")
-            pos = term["parent_p"].split(":")[-1].split("_")[0].split("-")[-1]
+#            pos = term["parent_p"].split(":")[-1].split("_")[0].split("-")[-1]
+            pos = term["p_pos"].split("-")[-1]
             if ((term["start"] - int(pos) <= args_term.fuzzy_down_ta) and (
                  term["start"] - int(pos) >= 0)) or (
                 (int(pos) - term["end"] <= args_term.fuzzy_up_ta) and (
@@ -204,7 +206,8 @@ def parents(terms, genes, args_term):
             tmp_m = check_parent(genes, term, detects, "-",
                                  args_term.fuzzy_up_gene,
                                  args_term.fuzzy_down_gene, "parent_m")
-            pos = term["parent_m"].split(":")[-1].split("_")[0].split("-")[0]
+            pos = term["m_pos"].split("-")[0]
+#            pos = term["parent_m"].split(":")[-1].split("_")[0].split("-")[0]
             if ((int(pos) - term["end"] <= args_term.fuzzy_down_ta) and (
                  int(pos) - term["end"] >= 0)) or (
                 (term["start"] - int(pos) <= args_term.fuzzy_up_ta) and (
@@ -324,7 +327,9 @@ def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
                 strain = line.split("|")[3]
                 parent_p = line.split("|")[4]
                 parent_m = line.split("|")[5]
-                strand = line.split("|")[6]
+                p_pos = line.split("|")[6]
+                m_pos = line.split("|")[7]
+                strand = line.split("|")[-1]
                 sec_seq = {"sec": "", "seq": ""}
                 get_seq_sec(s_h, sec_seq)
                 if len(sec_seq["seq"]) <= 6:
@@ -332,7 +337,8 @@ def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
                 else:
                     cands = detect_candidates(
                         sec_seq["seq"], sec_seq["sec"], name, strain, start,
-                        end, parent_p, parent_m, strand, args_term)
+                        end, parent_p, parent_m, strand, args_term,
+                        p_pos, m_pos)
                 cands = sorted(cands, key=lambda x: (x["miss"], x["start"]))
                 new_cands_gene = compare_anno(genes, cands,
                                               args_term.fuzzy_up_gene,

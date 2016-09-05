@@ -13,22 +13,26 @@ def get_feature(gene, file_type):
         strand = Helper().get_strand_name(gene.strand)
         feature = "".join([file_type, ":", str(gene.start),
                            "-", str(gene.end), "_", strand])
-    return feature
+    pos = str(gene.start) + "-" + str(gene.end)
+    return feature, pos
 
 
 def import_data(f_1, f_2, start, end, file_type):
     if f_1 != "terminal":
-        feature_1 = get_feature(f_1, file_type)
+        feature_1, pos_1 = get_feature(f_1, file_type)
         strain = f_1.seq_id
     else:
         feature_1 = "NA"
+        pos_1 = "NA"
     if f_2 != "terminal":
-        feature_2 = get_feature(f_2, file_type)
+        feature_2, pos_2 = get_feature(f_2, file_type)
         strain = f_2.seq_id
     else:
         feature_2 = "NA"
+        pos_2 = "NA"
     return {"strain": strain, "start": start, "end": end,
-            "parent_p": feature_1, "parent_m": feature_2, "print": False}
+            "parent_p": feature_1, "parent_m": feature_2, "print": False,
+            "p_pos": pos_1, "m_pos": pos_2}
 
 
 def get_terminal(genes, inters, gene_len, type_, file_type):
@@ -85,10 +89,11 @@ def get_inter(features, seq, file_type):
     return inters
 
 
-def import_merge(id_, strain, start, end, parent_p, parent_m):
+def import_merge(id_, strain, start, end, parent_p, parent_m, p_pos, m_pos):
     return {"ID": "_".join(["inter_" + str(id_)]), "strain": strain,
             "start": start, "end": end, "parent_p": parent_p,
-            "parent_m": parent_m, "print": False}
+            "parent_m": parent_m, "print": False, "p_pos": p_pos,
+            "m_pos": m_pos}
 
 
 def get_overlap_inters(inter1, inter2, merges, id_):
@@ -96,7 +101,8 @@ def get_overlap_inters(inter1, inter2, merges, id_):
             inter1["end"] > inter2["start"]) and (
             inter1["start"] <= inter2["start"]):
         merges.append(import_merge(id_, inter1["strain"], inter2["start"],
-                      inter1["end"], inter2["parent_p"], inter1["parent_m"]))
+                      inter1["end"], inter2["parent_p"], inter1["parent_m"],
+                      inter2["p_pos"], inter1["m_pos"]))
         inter1["print"] = True
         inter2["print"] = True
         id_ += 1
@@ -104,21 +110,24 @@ def get_overlap_inters(inter1, inter2, merges, id_):
             inter1["start"] < inter2["end"]) and (
             inter1["end"] >= inter2["end"]):
         merges.append(import_merge(id_, inter1["strain"], inter1["start"],
-                      inter2["end"], inter1["parent_p"], inter2["parent_m"]))
+                      inter2["end"], inter1["parent_p"], inter2["parent_m"],
+                      inter1["p_pos"], inter2["m_pos"]))
         inter1["print"] = True
         inter2["print"] = True
         id_ += 1
     elif (inter1["end"] >= inter2["end"]) and (
             inter1["start"] <= inter2["start"]):
         merges.append(import_merge(id_, inter2["strain"], inter2["start"],
-                      inter2["end"], inter2["parent_p"], inter2["parent_m"]))
+                      inter2["end"], inter2["parent_p"], inter2["parent_m"],
+                      inter2["p_pos"], inter2["m_pos"]))
         inter1["print"] = True
         inter2["print"] = True
         id_ += 1
     elif (inter1["end"] <= inter2["end"]) and (
             inter1["start"] >= inter2["start"]):
         merges.append(import_merge(id_, inter1["strain"], inter1["start"],
-                      inter1["end"], inter1["parent_p"], inter1["parent_m"]))
+                      inter1["end"], inter1["parent_p"], inter1["parent_m"],
+                      inter1["p_pos"], inter1["m_pos"]))
         inter1["print"] = True
         inter2["print"] = True
         id_ += 1
@@ -135,14 +144,16 @@ def merge_inter(inters1, inters2):
         if not inter1["print"]:
             merges.append(import_merge(id_, inter1["strain"], inter1["start"],
                                        inter1["end"], inter1["parent_p"],
-                                       inter1["parent_m"]))
+                                       inter1["parent_m"], inter1["p_pos"],
+                                       inter1["m_pos"]))
             inter1["print"] = True
             id_ += 1
     for inter2 in inters2:
         if not inter2["print"]:
             merges.append(import_merge(id_, inter2["strain"], inter2["start"],
                                        inter2["end"], inter2["parent_p"],
-                                       inter2["parent_m"]))
+                                       inter2["parent_m"], inter2["p_pos"],
+                                       inter2["m_pos"]))
             inter2["print"] = True
             id_ += 1
     sort_merges = sorted(merges, key=lambda x: (x["strain"],
@@ -173,7 +184,8 @@ def detect_confliction(gc, genes, seq):
         else:
             tmp_start = 1
     corr_merges.append(import_merge(gc["ID"], gc["strain"], tmp_start,
-                       gc["end"], gc["parent_p"], gc["parent_m"]))
+                       gc["end"], gc["parent_p"], gc["parent_m"],
+                       gc["p_pos"], gc["m_pos"]))
     corr_merges[-1]["strand"] = "+"
     if "tran" in gc["parent_m"]:
         if gc["end"] < (len(seq[gc["strain"]]) - 80):
@@ -193,7 +205,8 @@ def detect_confliction(gc, genes, seq):
         else:
             tmp_end = len(seq[gc["strain"]])
     corr_merges.append(import_merge(gc["ID"], gc["strain"], gc["start"],
-                       tmp_end, gc["parent_p"], gc["parent_m"]))
+                       tmp_end, gc["parent_p"], gc["parent_m"],
+                       gc["p_pos"], gc["m_pos"]))
     corr_merges[-1]["strand"] = "-"
     return corr_merges
 
@@ -242,7 +255,8 @@ def intergenic_seq(seq_file, tran_file, gff_file, out_file):
                     out.write(">" + "|".join([
                         "inter_" + str(num), str(merge["start"]),
                         str(merge["end"]), merge["strain"], merge["parent_p"],
-                        merge["parent_m"], "+"]) + "\n")
+                        merge["parent_m"], merge["p_pos"], merge["m_pos"],
+                        "+"]) + "\n")
                     out.write(inter_seq + "\n")
                     num += 1
                 else:
@@ -252,6 +266,7 @@ def intergenic_seq(seq_file, tran_file, gff_file, out_file):
                     out.write(">" + "|".join([
                         "inter_" + str(num), str(merge["start"]),
                         str(merge["end"]), merge["strain"], merge["parent_p"],
-                        merge["parent_m"], "-"]) + "\n")
+                        merge["parent_m"], merge["p_pos"], merge["m_pos"],
+                        "-"]) + "\n")
                     out.write(inter_seq + "\n")
                     num += 1

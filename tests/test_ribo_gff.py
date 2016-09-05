@@ -48,9 +48,9 @@ class TestRiboGff(unittest.TestCase):
               'strain': 'test_1', 'end_align': 99, 'ID': 'riboswitch_5',
               'info': 'riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|15948|16046',
               'strand': '+', 'e': '1.6e-18', 'rfam': 'RF00162', 'end_seq': 16046, "rfam_name": "SAM"}
-        rg.print_gff(1, ribo, out, stats, "test_1")
+        rg.print_gff(1, ribo, out, stats, "test_1", "riboswitch")
         self.assertDictEqual(stats, {'total': {'total': 1}, 'test_1': {'total': 1}, 'test_2': {'total': 0}})
-        self.assertEqual(out.getvalue(), "test_1\tANNOgesic\triboswitch\t15948\t16046\t.\t+\t.\tID=ribo_1;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam\n")
+        self.assertEqual(out.getvalue(), "test_1\tANNOgesic\triboswitch\t15948\t16046\t.\t+\t.\tID=riboswitch_1;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam\n")
 
     def test_import_stat(self):
         ribo = {'associate': 'SAOUHSC_00013', 'start_seq': 15948, 'start_align': 1,
@@ -72,7 +72,7 @@ class TestRiboGff(unittest.TestCase):
         stats["test"] = {"total": 20}
         stats["total"] = {"total": 120}
         out = StringIO()
-        rg.print_number(stats, 2, out, "Staphylococcus_aureus_HG003")
+        rg.print_number(stats, 2, out, "Staphylococcus_aureus_HG003", "riboswitch")
         ref = """Total number of potential riboswitch are 100
 The number of potential riboswitch which have overlap region with others are 2
 riboswitch_name\tnumbers
@@ -85,7 +85,7 @@ riboswitch_name\tnumbers
         stats["Staphylococcus_aureus_HG003"] = {"total": 100}
         stats["total"] = {"total": 120}
         overlaps = {'Staphylococcus_aureus_HG003': ['test_1;test_2']}
-        rg.print_stat(stats, out_stat, overlaps)
+        rg.print_stat(stats, out_stat, overlaps, "riboswitch")
         data = import_data(out_stat)
         ref = """Staphylococcus_aureus_HG003:
 Total number of potential riboswitch are 100
@@ -104,7 +104,7 @@ overlap candidates set 1:
         gen_file(rfam_table, self.example.rfam)
         gff_file = os.path.join(self.test_folder, "gff")
         out_stat = os.path.join(self.test_folder, "stat")
-        rg.stat_and_covert2gff(ribo_table, rfam_table, gff_file, 3, out_stat)
+        rg.stat_and_covert2gff(ribo_table, rfam_table, gff_file, 3, out_stat, "riboswitch")
         data = import_data(gff_file)
         self.assertEqual("\n".join(data), self.example.out_gff)
 
@@ -139,9 +139,9 @@ RF00520	ybhL	ybhL leader"""
              {'class': 'ybhL', 'ID': 'RF00520'}]
 
     out_gff = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	15948	16046	.	+	.	ID=ribo_0;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	27955	28053	.	-	.	ID=ribo_1;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam
-Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	377996	378098	.	+	.	ID=ribo_2;Name=Purine;rfam_id=RF00167;e_value=2.2e-18;method=infernal_to_Rfam"""
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	15948	16046	.	+	.	ID=riboswitch_0;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	27955	28053	.	-	.	ID=riboswitch_1;Name=SAM;rfam_id=RF00162;e_value=1.6e-18;method=infernal_to_Rfam
+Staphylococcus_aureus_HG003	ANNOgesic	riboswitch	377996	378098	.	+	.	ID=riboswitch_2;Name=Purine;rfam_id=RF00167;e_value=2.2e-18;method=infernal_to_Rfam"""
     out_stat = """Staphylococcus_aureus_HG003:
 Total number of potential riboswitch are 3
 The number of potential riboswitch which have overlap region with others are 0

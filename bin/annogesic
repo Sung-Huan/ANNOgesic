@@ -480,6 +480,10 @@ def main():
         "-ru","--range_U_tail", default=6, type=int,
         help="How long of nucleotides that you want to detect for U tail. For example, if --range_U_tail is 6 and --min_U_tail_length is 3, "
         "and there are 3 U within 6 nts, it will be assigned to detecting U tail successfully. Default is 6.")
+    Terminator_parser.add_argument(
+        "-kp","--keep_multi_term", default=False, action="store_true",
+        help="Sometimes, one gene is associated with more terminator candidates. In default, it will only keep the high confident one. "
+        "If you want to keep all terminators which associated with the same gene, please turn it on. Default is False.")
     Terminator_parser.set_defaults(func=run_Terminator)
 
     # Parameter of Transcript assembly
@@ -540,7 +544,7 @@ def main():
         help="If you want to compare with genome annotation file and find the parent transcript of gene, please assign annotation folder.")
     Transcript_parser.add_argument(
         "--compare_feature_genome", "-cf", default="gene",
-        help="If you want to compare with genome annotation file, please assign the feature which you want to compare. Default is gene. "
+        help="If you want to compare with genome annotation file, please assign the feature which you want to compare. Default is gene,CDS. "
         "If you want to compare more than one feature, just insert comma between each feature, such as gene,CDS.")
     Transcript_parser.add_argument(
         "--TSS_fuzzy", "-fu", default=5, type=int,
@@ -566,6 +570,9 @@ def main():
     Transcript_parser.add_argument(
         "--fuzzy_term", "-fz", default=30, type=int,
         help="If you want to compare between transcripts and terminators, please assign the fuzzy here. Default is 30.")
+    Transcript_parser.add_argument(
+        "--max_length_distribution", "-mb", default=2000, type=int,
+        help="For generating the figure of distribution of transcript length, please assign the maximum length that you want to include. Default is 2000.")
     Transcript_parser.set_defaults(func=run_Transcript_Assembly)
 
     # Parameter of UTR detection
@@ -987,16 +994,16 @@ def main():
         "please use comma to separate them. Default is TTA,TAG,TGA.")
     sORF_parser.add_argument(
         "--min_rbs_distance", "-mr", default=3, type=int,
-        help="The minimum distance between the ribosomal binding site and start codon. Default is 3.")
+        help="The minimum distance between the ribosome binding site and start codon. Default is 3.")
     sORF_parser.add_argument(
         "--max_rbs_distance", "-Mr", default=15, type=int,
-        help="The maximum distance between the ribosomal binding site and start codon. Default is 15.")
+        help="The maximum distance between the ribosome binding site and start codon. Default is 15.")
     sORF_parser.add_argument(
         "--rbs_not_after_TSS", "-at", default=False, action="store_true",
-        help="If you want to generate best gff file which include ribosomal binding site not after TSS, please turn it on. Default is False.")
+        help="If you want to generate best gff file which include ribosome binding site not after TSS, please turn it on. Default is False.")
     sORF_parser.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
-        help="How many nucleotides of ribosomal binding site is different with AGGAGG? Default is 2.")
+        help="How many nucleotides of ribosome binding site is different with AGGAGG? Default is 2.")
     sORF_parser.add_argument(
         "--print_all_combination", "-pa", default=False, action="store_true",
         help="Every expressed transcript of sORF has many start codons and stop codons. "
@@ -1436,18 +1443,27 @@ def main():
         "--merge_to_gff", "-m",  default=False, action="store_true",
         help="If you want to merge the information to genome annotation gff file, please turn it on. Default is False.")
     sub_local_parser.set_defaults(func=Sub_Local)
-    # Parameters of riboswitch
+    # Parameters of riboswitch and RNA thermometer
     ribos_parser = subparsers.add_parser(
-        "riboswitch", help="Prediction of riboswitch.")
+        "riboswitch_thermometer", help="Prediction of riboswitch and RNA thermometer.")
     ribos_parser.add_argument(
         "project_path", default=".", nargs="?",
         help="Path of the project folder. If none is given, the current directory is used.")
     ribos_parser.add_argument(
+        "--program", "-p", default="both",
+        help="This module can predict riboswitch and RNA thermometer. Please assign which features that you want to detect. "
+        "The options are \"riboswitch\", \"thermometer\", \"both\". Default is both.")
+    ribos_parser.add_argument(
         "--infernal_path", "-if", default="",
         help="Please assign the folder of Infernal(where is cmscan and cmsearch located).")
     ribos_parser.add_argument(
-        "--riboswitch_ID", "-i",
-        help="The path of the riboswitch ID of Rfam. The file is include the Accession, ID and Description of riboswitch in Rfam.")
+        "--riboswitch_ID", "-ri",
+        help="If --program is \"riboswitch\" or \"both\", please assigh the path of the riboswitch ID of Rfam. "
+        "The file should include the Accession, ID and Description of riboswitch in Rfam.")
+    ribos_parser.add_argument(
+        "--RNA_thermometer_ID", "-ti",
+        help="If --program is \"thermometer\" or \"both\", please assigh the path of the RNA thermometer ID of Rfam. "
+        "The file should include the Accession, ID and Description of RNA thermometer in Rfam.")
     ribos_parser.add_argument(
         "--gff_path", "-g", default="ANNOgesic/output/target/annotation",
         help="The path of annotation gff folder.")
@@ -1471,24 +1487,24 @@ def main():
         help="The cutoff of e value. Default is 0.001.")
     ribos_parser.add_argument(
         "--output_all", "-o", default=False, action="store_true",
-        help="One sequence may fit multiple riboswitches. If you want to output all of them, please turn it on. "
+        help="One sequence may fit multiple references. If you want to output all of them, please turn it on. "
         "Or it will only print the best one. Default is False.")
     ribos_parser.add_argument(
         "--fuzzy", "-z", default=10, type=int,
         help="It will extend some nucleotides of 3' or 5' end. Default is 10.")
     ribos_parser.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
-        help="How many nucleotides of ribosomal binding site allow to be different with AGGAGG? Default is 2.")
+        help="How many nucleotides of ribosome binding site allow to be different with AGGAGG? Default is 2.")
     ribos_parser.add_argument(
         "--start_codon", "-ac", default="ATG",
         help="What kinds of start coden you want to use. If you want to import more than one type of start codon, "
         "please use comma to separate them. Default is ATG.")
     ribos_parser.add_argument(
         "--max_dist_rbs", "-Mr", default=14, type=int,
-        help="The maximum distance between ribosomal binding site and start codon. Default is 14.")
+        help="The maximum distance between ribosome binding site and start codon. Default is 14.")
     ribos_parser.add_argument(
         "--min_dist_rbs", "-mr", default=5, type=int,
-        help="The minmum distance between ribosomal binding site and start codon. Default is 5.")
+        help="The minmum distance between ribosome binding site and start codon. Default is 5.")
     ribos_parser.set_defaults(func=Ribos)
     # Parameters of CRISPR finder
     crispr_parser = subparsers.add_parser(

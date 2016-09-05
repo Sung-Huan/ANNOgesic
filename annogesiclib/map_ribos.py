@@ -3,7 +3,7 @@ import csv
 import shutil
 
 
-def mapping_ribos(table_folder, id_file):
+def mapping_ribos(table_folder, id_file, feature):
     ids = []
     ih = open(id_file, "r")
     for row in csv.reader(ih, delimiter='\t'):
@@ -12,7 +12,7 @@ def mapping_ribos(table_folder, id_file):
                         "name": row[1].strip(),
                         "info": row[2].strip()})
     for table_file in os.listdir(table_folder):
-        if table_file.endswith("_riboswitch.csv"):
+        if table_file.endswith("_" + feature + ".csv"):
             tmp_table = os.path.join(table_folder, "tmp" + table_file)
             table_file = os.path.join(table_folder, table_file)
             out = open(tmp_table, "w")

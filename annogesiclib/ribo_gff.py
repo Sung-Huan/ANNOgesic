@@ -41,15 +41,15 @@ def get_overlap(pre_ribo, ribo, overlap, overlaps):
                      pre_ribo["info"] + ";" + ribo["info"])
 
 
-def print_gff(num, ribo, out, stats, strain):
+def print_gff(num, ribo, out, stats, strain, feature):
     attribute = ";".join(["=".join(items) for items in [
-                          ("ID", "ribo_" + str(num)),
+                          ("ID", "_".join([feature.lower(), str(num)])),
                           ("Name", ribo["rfam_name"]),
                           ("rfam_id", ribo["rfam"]),
                           ("e_value", ribo["e"]),
                           ("method", "infernal_to_Rfam")]])
     out.write("\t".join([str(field) for field in [
-              ribo["strain"], "ANNOgesic", "riboswitch",
+              ribo["strain"], "ANNOgesic", feature,
               str(ribo["start_seq"]), str(ribo["end_seq"]),
               ".", ribo["strand"], ".", attribute]]) + "\n")
     stats["total"]["total"] += 1
@@ -70,19 +70,19 @@ def import_stat(rfams, ribo, stats, strain):
                 stats[strain][rfam["class"]] += 1
 
 
-def print_number(stats, repeat, out, strain):
-    out.write("Total number of potential riboswitch are {0}\n".format(
-               stats[strain]["total"]))
-    out.write("The number of potential riboswitch which "
-              "have overlap region with others are {0}\n".format(
-                  repeat))
-    out.write("riboswitch_name\tnumbers\n")
+def print_number(stats, repeat, out, strain, feature):
+    out.write("Total number of potential {0} are {1}\n".format(
+               feature.replace("_", " "), stats[strain]["total"]))
+    out.write("The number of potential {0} which "
+              "have overlap region with others are {1}\n".format(
+               feature.replace("_", " "), repeat,))
+    out.write(feature + "_name\tnumbers\n")
     for type_, num in stats[strain].items():
         if type_ != "total":
             out.write("{0}\t{1}\n".format(type_, num))
 
 
-def print_stat(stats, out_stat, overlaps):
+def print_stat(stats, out_stat, overlaps, feature):
     out = open(out_stat, "w")
     print_file = False
     repeat = 0
@@ -93,7 +93,7 @@ def print_stat(stats, out_stat, overlaps):
             for over in overs:
                 datas = over.split(";")
                 repeat = repeat + len(datas)
-        print_number(stats, repeat, out, "total")
+        print_number(stats, repeat, out, "total", feature)
     for strain, datas in stats.items():
         repeat = 0
         if strain != "total":
@@ -102,7 +102,7 @@ def print_stat(stats, out_stat, overlaps):
             for over in overlaps[strain]:
                 datas = over.split(";")
                 repeat = repeat + len(datas)
-            print_number(stats, repeat, out, strain)
+            print_number(stats, repeat, out, strain, feature)
             print_strain = strain
     if print_file:
         count = 1
@@ -124,7 +124,8 @@ def print_stat(stats, out_stat, overlaps):
     out.close()
 
 
-def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
+def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat,
+                        feature):
     stats = {}
     overlaps = {}
     pre_strain = ""
@@ -163,11 +164,11 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat):
                 pre_gff["rfam"] = ",".join([pre_gff["rfam"], ribo["rfam"]])
                 pre_gff["e"] = ",".join([pre_gff["e"], ribo["e"]])
             else:
-                print_gff(num, pre_gff, out, stats, strain)
+                print_gff(num, pre_gff, out, stats, strain, feature)
                 num += 1
                 pre_gff = ribo
         else:
             pre_gff = ribo
-    print_gff(num, pre_gff, out, stats, strain)
-    print_stat(stats, out_stat, overlaps)
+    print_gff(num, pre_gff, out, stats, strain, feature)
+    print_stat(stats, out_stat, overlaps, feature)
     out.close()

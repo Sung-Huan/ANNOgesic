@@ -327,9 +327,9 @@ class Controller(object):
             self._args.tex_notex, self._args.replicates_tex,
             self._args.replicates_frag, self._args.table_best,
             self._args.min_loop_length, self._args.max_loop_length,
-            self._args.min_stem_length,
-            self._args.max_stem_length, self._args.min_U_tail_length,
-            self._args.miss_rate, self._args.range_U_tail)
+            self._args.min_stem_length, self._args.max_stem_length,
+            self._args.min_U_tail_length, self._args.miss_rate,
+            self._args.range_U_tail, self._args.keep_multi_term)
         terminator = Terminator(args_term)
         terminator.run_terminator(args_term)
 
@@ -355,7 +355,7 @@ class Controller(object):
             self._args.TSS_fuzzy, self._args.Tex_treated_libs,
             self._args.fragmented_libs, self._args.compare_feature_genome,
             self._args.table_best, self._args.terminator_folder,
-            self._args.fuzzy_term)
+            self._args.fuzzy_term, self._args.max_length_distribution)
         transcript = TranscriptAssembly(args_tran)
         transcript.run_transcript_assembly(args_tran)
 
@@ -650,20 +650,46 @@ class Controller(object):
         sublocal.run_sub_local(args_sub)
 
     def ribos(self):
-        """riboswitch prediction"""
-        print("Running riboswitch prediction...")
+        """riboswitch and RNA thermometer prediction"""
+        print("Running riboswitch and RNA thermometer prediction...")
         self.check_folder([self._args.gff_path, self._args.fasta_path,
                            self._args.tss_path, self._args.transcript_path])
-        self.check_file([self._args.riboswitch_ID, self._args.Rfam],
-                        ["--riboswitch_ID", "--Rfam"], True)
-        project_creator.create_subfolders(
-            self._paths.required_folders("riboswitch"))
+        if (self._args.program == "both"):
+            self.check_file([self._args.riboswitch_ID, self._args.Rfam],
+                            ["--riboswitch_ID", "--Rfam"], True)
+            self.check_file([self._args.RNA_thermometer_ID, self._args.Rfam],
+                            ["--RNA_thermometer_ID", "--Rfam"], True)
+            project_creator.create_subfolders(
+                    self._paths.required_folders("riboswitch"))
+            project_creator.create_subfolders(
+                    self._paths.required_folders("thermometer"))
+            ribos_path = self._paths.ribos_output_folder
+            thermo_path = self._paths.thermo_output_folder
+        elif (self._args.program == "thermometer"):
+            self.check_file([self._args.RNA_thermometer_ID, self._args.Rfam],
+                            ["--thermometer_ID", "--Rfam"], True)
+            project_creator.create_subfolders(
+                    self._paths.required_folders("thermometer"))
+            ribos_path = None
+            thermo_path = self._paths.thermo_output_folder
+        elif (self._args.program == "riboswitch"):
+            self.check_file([self._args.riboswitch_ID, self._args.Rfam],
+                            ["--riboswitch_ID", "--Rfam"], True)
+            project_creator.create_subfolders(
+                    self._paths.required_folders("riboswitch"))
+            ribos_path = self._paths.ribos_output_folder
+            thermo_path = None
+        else:
+            print("Error: Please assign \"thermometer\", \"riboswitch\" "
+                  "or \"both\" in --program!!")
+            sys.exit()
         args_ribo = self.args_container.container_ribos(
+            self._args.program, self._args.RNA_thermometer_ID,
             self._args.infernal_path, self._args.riboswitch_ID,
             self._args.gff_path, self._args.fasta_path,
             self._args.tss_path, self._args.transcript_path,
-            self._args.Rfam, self._paths.ribos_output_folder,
-            self._args.e_value,
+            self._args.Rfam, ribos_path,
+            thermo_path, self._args.e_value,
             self._args.output_all, self._paths.database_folder,
             self._args.fuzzy, self._args.start_codon,
             self._args.min_dist_rbs, self._args.max_dist_rbs,

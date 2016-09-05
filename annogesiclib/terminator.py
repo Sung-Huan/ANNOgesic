@@ -247,7 +247,8 @@ class Terminator(object):
                     os.remove(csv_file)
                 out_csv = open(csv_file, "w")
                 out_csv.write("\t".join(["strain", "name", "start", "end",
-                              "strand", "detect", "coverage_detail"]) + "\n")
+                              "strand", "detect", "coverage_decrease",
+                              "coverage_detail"]) + "\n")
                 out_csv.close()
                 fh = open(new_gff)
                 for entry in self.gff_parser.entries(fh):
@@ -340,7 +341,7 @@ class Terminator(object):
                 for entry in self.gff_parser.entries(fh):
                     name = '%0*d' % (5, num)
                     entry.attributes["ID"] = "term" + str(num)
-                    entry.attributes["Name"] = "_".join(["Terminator_" + name])
+                    entry.attributes["Name"] = "_".join(["terminator_" + name])
                     entry.attribute_string = ";".join([
                         "=".join(items) for items in entry.attributes.items()])
                     out_tmp.write("\t".join([entry.info_without_attributes,

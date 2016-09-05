@@ -106,7 +106,7 @@ def fill_gap(gff_file, ta_file, type_, output):
 
 def print_file(ta, num, out):
     ta.attributes["ID"] = "tran" + str(num)
-    ta.attributes["Name"] = "Transcript_" + ('%0*d' % (5, num))
+    ta.attributes["Name"] = "transcript_" + ('%0*d' % (5, num))
     attribute_string = ";".join(
         ["=".join(items) for items in ta.attributes.items()])
     out.write("\t".join([str(field) for field in [

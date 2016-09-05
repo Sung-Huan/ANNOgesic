@@ -10,6 +10,7 @@ from annogesiclib.transcript_assembly import assembly
 from annogesiclib.fill_gap import fill_gap, longer_ta
 from annogesiclib.gen_table_tran import gen_table_transcript
 from annogesiclib.compare_tran_term import compare_term_tran
+from annogesiclib.plot_tran import plot_tran
 
 
 class TranscriptAssembly(object):
@@ -282,4 +283,5 @@ class TranscriptAssembly(object):
         self._compare_tss_cds(tas, args_tran)
         self._compare_term_tran(args_tran)
         gen_table_transcript(self.gff_outfolder, args_tran)
+        plot_tran(self.gff_outfolder, self.stat_path, args_tran.max_dist)
         self._remove_file(args_tran)
