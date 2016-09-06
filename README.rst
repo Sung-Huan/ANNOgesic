@@ -12,7 +12,7 @@ terminator, UTR and processing site.  iii) sRNA and sORF: sRNA, sORF
 and sRNA target prediction.  iv) Functional related features:
 protein-protein interaction networks, Gene ontology and subcellular
 localization. v) Promoter and operon: promoter motifs and operon
-with sub-operon. vi) Other features: circular RNA, CRISPR and riboswitch.
+with sub-operon. vi) Other features: circular RNA, CRISPR, RNA thermometer and riboswitch.
 
 Documentation
 -------------
@@ -38,11 +38,11 @@ Arguments
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,expression_analysis,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch,screenshot}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. annotation files, fasta
@@ -74,7 +74,8 @@ Arguments
                             supported.
         subcellular_localization
                             Prediction of subcellular localization of genomic CDS.
-        riboswitch          Prediction of riboswitch.
+        riboswitch_thermometer
+                            Prediction of riboswitch and RNA thermometer.
         crispr              Prediction of CRISPR.
         merge_features      Merge all features to one gff file.
         screenshot          Generate screenshot for selected feature.
