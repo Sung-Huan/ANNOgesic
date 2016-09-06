@@ -41,7 +41,7 @@ def read_gffs(gff_files, feature):
                     if "Parent" in entry.attributes.keys():
                         parent = entry.attributes["Parent"]
                 del_attributes(entry, ["associated_tran", "parent_tran",
-                                       "Parent"])
+                                       "Parent", "Parent"])
                 if parent is not None:
                     entry.attributes["Parent"] = parent
                 entry.attributes["print"] = False

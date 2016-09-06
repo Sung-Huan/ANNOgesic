@@ -4,6 +4,14 @@ import shutil
 from annogesiclib.gff3 import Gff3Parser
 
 
+def del_attributes(entry, features):
+    attributes = {}
+    for key, value in entry.attributes.items():
+        if (key not in features):
+            attributes[key] = value
+    return attributes
+
+
 def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
     if (ta.seq_id == ter.seq_id) and (
             ta.strand == ter.strand):
@@ -18,7 +26,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
-                ter.attributes["parent_tran"] = (
+                ter.attributes["Parent"] = (
                     "transcript:" + str(ta.start) + "-" +
                     str(ta.end) + "_" + ta.strand)
         else:
@@ -32,7 +40,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
-                ter.attributes["parent_tran"] = (
+                ter.attributes["Parent"] = (
                     "transcript:" + str(ta.start) + "-" +
                     str(ta.end) + "_" + ta.strand)
 
@@ -66,7 +74,7 @@ def output_term(ters, term_file, type_):
                             row[4] == ter.strand):
                         out_t.write("\t".join([row[0], row[1], row[2], row[3],
                                     row[4], row[5], row[6],
-                                    ter.attributes["parent_tran"],
+                                    ter.attributes["Parent"],
                                     row[7], row[8]]) + "\n")
                         break
         fh.close()
@@ -99,7 +107,7 @@ def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
             out_g.write("##gff-version 3\n")
             tas = read_gff(os.path.join(trans, tran), "associated_term")
             ters = read_gff(os.path.join(terms, prefix + "_term.gff"),
-                            "parent_tran")
+                            "Parent")
             for ta in tas:
                 if ta.seq_id != pre_seq:
                     stats[ta.seq_id] = {"all_tran": 0, "all_term": 0,

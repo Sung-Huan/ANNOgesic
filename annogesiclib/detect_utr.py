@@ -100,7 +100,7 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
             attribute_string, "=".join(["tss_type", tss.attributes["type"]])])
     if ta is not None:
         attribute_string = ";".join([
-            attribute_string, "=".join(["parent_tran", "Transcript:" +
+            attribute_string, "=".join(["Parent", "Transcript:" +
                                         str(ta.start) + "-" + str(ta.end) +
                                         "_" + ta.strand])])
     out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
@@ -134,7 +134,7 @@ def detect_cds(cdss, gene):
     detect = False
     for cds in cdss:
         if "Parent" in cds.attributes.keys():
-            if gene.attributes["ID"] == cds.attributes["Parent"]:
+            if gene.attributes["ID"] in cds.attributes["Parent"].split(","):
                 detect = True
                 near_cds = cds
                 check_utr = True
@@ -199,8 +199,8 @@ def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
                 if gene.attributes["locus_tag"] == locus:
                     for cds in cdss:
                         if "Parent" in cds.attributes.keys():
-                            if (gene.attributes["ID"] ==
-                                    cds.attributes["Parent"]):
+                            if (gene.attributes["ID"] in
+                                    cds.attributes["Parent"].split(",")):
                                 near_cds = cds
                                 check_utr = True
                                 cds_name = get_feature(cds)
@@ -314,7 +314,7 @@ def get_gene_name(genes, cds):
                 cds.strand == gene.strand):
             if ("Parent" in cds.attributes.keys()) and (
                     "ID" in gene.attributes.keys()):
-                if cds.attributes["Parent"] == gene.attributes["ID"]:
+                if gene.attributes["ID"] in cds.attributes["Parent"].split(","):
                     if "locus_tag" in gene.attributes.keys():
                         gene_name = gene.attributes["locus_tag"]
                     else:
@@ -361,7 +361,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
                             gene_name = get_gene_name(genes, cds)
                             string = get_attribute_string(
                                 num_utr, length, cds, gene_name, ta, "utr5",
-                                "5'UTR", "parent_tran", "Transcript:")
+                                "5'UTR", "Parent", "Transcript:")
                             detect = True
                             start = ta.start
                             end = cds.start
@@ -383,7 +383,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
             gene_name = get_gene_name(genes, near_cds)
             string = get_attribute_string(
                 num_utr, length, near_cds, gene_name,
-                ta, "utr5", "5'UTR", "parent_tran", "Transcript:")
+                ta, "utr5", "5'UTR", "Parent", "Transcript:")
             start = near_cds.end
             end = ta.end
         if detect:
@@ -465,7 +465,7 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
         utr_strain[ta.seq_id].append(length)
     attributes.append("=".join(["length", str(length)]))
     attributes.append("=".join([
-        "parent_tran", "Transcript:" + str(ta.start) +
+        "Parent", "Transcript:" + str(ta.start) +
         "-" + str(ta.end) + "_" + ta.strand]))
     attribute = ";".join(attributes)
     if (length <= args_utr.length) and (length > 0):
@@ -512,7 +512,7 @@ def get_near_cds(cdss, genes, ta, attributes):
     if detect:
         for gene in genes:
             if ("Parent" in near_cds.attributes.keys()):
-                if near_cds.attributes["Parent"] == gene.attributes["ID"]:
+                if gene.attributes["ID"] in near_cds.attributes["Parent"].split(","):
                     attributes.append("=".join(["associated_gene",
                                       gene.attributes["locus_tag"]]))
         if "protein_id" in near_cds.attributes.keys():

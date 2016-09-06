@@ -51,7 +51,7 @@ class TestStatTaComparison(unittest.TestCase):
         stc.assign_tss(tsss[0], trans[0])
         self.assertDictEqual(tsss[0].attributes, {'utr_length': 'Primary_25', 'ID': 'tss3', 'Name': 'TSS:2131_f',
                                                   'libs': 'TSB_OD_0.2,TSB_OD_0.5,TSB_t0,pMEM_OD_0.2,pMEM_OD_0.5,pMEM_t2',
-                                                  'associated_gene': 'SAOUHSC_00002', 'parent_tran': 'tran0', 'type': 'Primary'})
+                                                  'associated_gene': 'SAOUHSC_00002', 'Parent': 'tran0', 'type': 'Primary'})
         self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS,cover_CDS',
                                                    'Name': 'Transcript_00000',
                                                    'associated_cds': 'YP_498609.1,YP_498610.1',
@@ -99,7 +99,7 @@ class TestStatTaComparison(unittest.TestCase):
         ta_file = os.path.join(self.test_folder, "aaa_transcript.gff")
         gen_file(gff_file, self.example.gff)
         gen_file(ta_file, self.example.ta)
-        gffs, tas, stats = stc.read_tag_file(gff_file, ta_file, "gene")
+        gffs, tas, stats, region = stc.read_tag_file(gff_file, ta_file, "gene")
         self.assertEqual(gffs[0].start, 517)
         self.assertEqual(tas[0].start, 313)
         self.assertEqual(stats, {'All': {'gene': 1, 'other': 0, 'bsbe': 0, 'asbe': 0, 'asae': 0, 'bsae': 0},
@@ -112,7 +112,7 @@ class TestStatTaComparison(unittest.TestCase):
         out_g = StringIO()
         trans = copy.deepcopy(self.example.tas)
         gffs = copy.deepcopy(self.example.gffs)
-        stc.detect_tag_region(gffs, trans, stats, out_t, out_g, "gene")
+        stc.detect_tag_region(gffs, trans, stats, out_t, out_g, "gene", None)
         self.assertDictEqual(stats, {'All': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0},
                                      'aaa': {'asbe': 1, 'asae': 0, 'other': 0, 'bsbe': 0, 'gene': 1, 'bsae': 0}})
 
@@ -132,7 +132,7 @@ class TestStatTaComparison(unittest.TestCase):
         gffs = copy.deepcopy(self.example.gffs)
         trans = copy.deepcopy(self.example.tas)
         stc.assign_parent(gffs[0], trans[0], "CDS")
-        self.assertDictEqual(gffs[0].attributes, {'parent_tran': 'tran0',
+        self.assertDictEqual(gffs[0].attributes, {'Parent': 'tran0',
                                                   'locus_tag': 'SAOUHSC_00001', 'protein_id': 'YP_498609.1',
                                                   'gene': 'dnaA', 'Name': 'YP_498609.1', 'ID': 'gene0'})
         self.assertDictEqual(trans[0].attributes, {'type': 'cover_CDS,cover_CDS',

@@ -28,7 +28,8 @@ class Converter(object):
                     locus_tag = entry.attributes["locus_tag"]
                 if "Parent" in entry.attributes.keys():
                     for gene in genes:
-                        if gene.attributes["ID"] == entry.attributes["Parent"]:
+                        if (gene.attributes["ID"] in 
+                                entry.attributes["Parent"].split(",")):
                             if "gene" in gene.attributes.keys():
                                 gene_tag = gene.attributes["gene"]
                             locus_tag = gene.attributes["locus_tag"]
@@ -39,7 +40,8 @@ class Converter(object):
                     locus_tag = entry.attributes["locus_tag"]
                 elif "Parent" in entry.attributes.keys():
                     for gene in genes:
-                        if gene.attributes["ID"] == entry.attributes["Parent"]:
+                        if (gene.attributes["ID"] in 
+                                entry.attributes["Parent"].split(",")):
                             if "gene" in gene.attributes.keys():
                                 gene_tag = gene.attributes["gene"]
                             locus_tag = gene.attributes["locus_tag"]

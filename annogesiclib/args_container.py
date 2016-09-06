@@ -27,7 +27,7 @@ class ArgsContainer(object):
     def _check_libs(self, tex_notex_libs, frag_libs):
         if (tex_notex_libs is None) and (frag_libs is None):
             print("Error: please input proper libraries!!")
-        if (tex_notex_libs is not None) and (frag_libs is not None):
+        elif (tex_notex_libs is not None) and (frag_libs is not None):
             libs = tex_notex_libs + frag_libs
         elif (tex_notex_libs is not None):
             libs = tex_notex_libs

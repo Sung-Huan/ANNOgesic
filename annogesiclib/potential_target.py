@@ -75,7 +75,8 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
         target = cds
         for gene in genes:
             if "Parent" in cds.attributes.keys():
-                if cds.attributes["Parent"] == gene.attributes["ID"]:
+                if (gene.attributes["ID"] in 
+                        cds.attributes["Parent"].split(",")):
                     target = gene
                     break
         print_fasta(target, seq, out)
@@ -105,7 +106,8 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
         target = cds
         for gene in genes:
             if "Parent" in cds.attributes.keys():
-                if cds.attributes["Parent"] == gene.attributes["ID"]:
+                if (gene.attributes["ID"] in 
+                        cds.attributes["Parent"].split(",")):
                     target = gene
                     break
         print_fasta(target, seq, out)
