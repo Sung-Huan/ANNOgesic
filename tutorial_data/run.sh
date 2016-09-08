@@ -322,9 +322,10 @@ riboswitch_and_RNA_thermometer(){
 	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-f $ANNOGESIC_FOLDER/output/target/fasta \
 	-ri $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
-	-ri $ANNOGESIC_FOLDER/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
+	-ti $ANNOGESIC_FOLDER/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
 	-R $ANNOGESIC_FOLDER/input/database/CMs/Rfam.cm \
 	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
+	-t $ANNOGESIC_FOLDER/output/TSS/gffs \
 	$ANNOGESIC_FOLDER
 }
 
