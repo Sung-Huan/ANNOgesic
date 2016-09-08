@@ -29,7 +29,7 @@ def plot(subs, total, unknown, strain, prefix_name):
     plt.subplot(211)
     ind = np.arange(len(nums))
     plt.bar(ind, nums, width, color='#FF9999')
-    plt.title('Subcellular localization with Unknown\n', fontsize=24)
+    plt.title('Subcellular localization including Unknown\n', fontsize=24)
     plt.ylabel('Amount', fontsize=20)
     plt.yticks(fontsize=16)
     plt.xlim([0, len(nums) + 1])
@@ -38,7 +38,7 @@ def plot(subs, total, unknown, strain, prefix_name):
     plt.subplot(212)
     ind = np.arange(len(nums_no_unknown))
     plt.bar(ind, nums_no_unknown, width, color='#FF9999')
-    plt.title('Subcellular localization without Unknown\n', fontsize=24)
+    plt.title('Subcellular localization excluding Unknown\n', fontsize=24)
     plt.ylabel('Amount', fontsize=20)
     plt.xlim([0, len(nums_no_unknown) + 1])
     plt.xticks(ind+width, classes_no_unknown, rotation=40,
@@ -92,20 +92,20 @@ def print_file_and_plot(sub, total_nums, unknown_nums,
                         strain, out_stat, prefix_name):
     plot(sub, total_nums[strain], unknown_nums[strain], strain, prefix_name)
     out_stat.write(strain + ":\n")
-    out_stat.write("Total with Unknown is {0}; "
-                   "Total_without_Unknown is {1}\n".format(
+    out_stat.write("Total including Unknown is {0}; "
+                   "Total excluding Unknown is {1}\n".format(
                        total_nums[strain],
                        total_nums[strain] - unknown_nums[strain]))
     for local, num in sub.items():
         if local != "Unknown":
             out_stat.write(
-                "\t{0}\t{1}(include Unknown {2}; "
-                "exclude Unknonwn {3})\n".format(
+                "\t{0}\t{1}(including Unknown {2}; "
+                "excluding Unknonwn {3})\n".format(
                     local, num, float(num) / float(total_nums[strain]),
                     float(num) / (float(total_nums[strain]) - float(
                         unknown_nums[strain]))))
         else:
-            out_stat.write("\t{0}\t{1}(include Unknown {2})\n".format(
+            out_stat.write("\t{0}\t{1}(including Unknown {2})\n".format(
                 local, num, float(num) / float(total_nums[strain])))
 
 

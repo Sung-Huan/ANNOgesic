@@ -148,11 +148,18 @@ def plot(total_nums, strain, filename, total, out_folder):
         if class_ != "total":
             percent = (float(num) / float(total)) * 100
 #            if percent >= 3:
-            classes.append(class_)
+            classes.append(class_.replace("_", " "))
             nums.append(num)
     ind = np.arange(len(nums))
     plt.bar(ind, nums, width, color='#FF9999')
-    plt.title('Distribution of GO ' + filename.replace("_", " "), fontsize=22)
+    if filename == "three_roots":
+        title = "Distribution of GO term hits in the three root classes"
+    elif (filename == "molecular_function") or (
+            filename == "cellular_component") or (
+            filename == "biological_process"):
+        tag = filename.replace("_", " ")
+        title = " -- ".join(["Distribution of GO term of the class", tag])
+    plt.title(title, fontsize=22)
     plt.ylabel('Amount', fontsize=16)
     plt.xlim([0, len(nums) + 1])
     plt.yticks(fontsize=16)

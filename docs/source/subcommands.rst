@@ -2,7 +2,7 @@ ANNOgesic's subcommands
 ===============
 
 In general, the subcommands need at least one argument - the analysis
-folder. If this is not given ANNOgesic assumes that the current
+folder. If this is not given, ANNOgesic assumes that the current
 folder is the analysis folder.
 
 The format of filename
@@ -13,7 +13,7 @@ please follow the principle of the format of filename.
 Keep the filename of genome fasta file the same as annotation file. For example,
 ``NC_007795.fa, NC_007795.gff, NC_007795.ptt, NC_007795.rnt, NC_007705.gbk``.
 
-All the ``.gff`` files which are import into ``ANNOgesic``, please follow the format.
+All the ``.gff`` files which are input of ``ANNOgesic``, please follow the format.
 ``$STRAINNAME_$FEATURE.gff``. For example, ``NC_007795_TSS.gff, NC_007795_transcript.gff``.
 
 The names of features are:
@@ -35,21 +35,20 @@ RNA_thermometer  RNA_thermometer
 CRISPR           CRISPR
 ===============  ===========================
 
-Please also notice the name of strain or genome in files. It should be avoid to use ``|`` in the name. 
-Because ``|`` is one character which already used in Unix system. However, 
+Please avoid ``|`` in the filename, strain name of Gff3 files or fasta file, However, 
 if your fasta files or gff files are download from NCBI through ANNOgesic, ANNOgesic will automatically modify the names.
 
 The input format of libraries for running ANNOgesic
 -----------------------------
 
-Some modules of ``ANNOgesic`` need to import the information of libraries.
-For import the information of libraries, please follow this format:
+Some modules of ``ANNOgesic`` need the information of libraries.
+please follow this format:
 
 ``$LIBRARY_FILENAME:$LIBRARY_TYPE:$CONDITION:$REPLICATE:$STRAND``
 
 ``$LIBRARY_FILENAME`` means the ``.wig`` file.
 
-``$LIBRARY_TYPE`` can be ``tex`` (TEX+) or ``notex`` (TEX-) or ``frag`` (fragmented, not for ``tsspredator``).
+``$LIBRARY_TYPE`` can be ``tex`` (TEX+) or ``notex`` (TEX-) or ``frag`` (fragmented).
 
 ``$CONDITION`` is the index of conditions. Please use 1, 2, 3, ... to represent different conditions.
 
@@ -73,7 +72,7 @@ for TEX +/- treated libraries:
   TSB_OD_0.5_forward.wig:notex:2:a:+,
 
 All the libraries should be separated by comma like the above.
-The libraries should be combined to one line.
+The libraries should be listed in one line.
 
 for fragmented libraries:
 
@@ -81,8 +80,9 @@ for fragmented libraries:
 
   fragmented_forward.wig:frag:1:a:+,fragmented_reverse.wig:frag:1:a:-
 
-If you have only general RNA-seq data without fragementation, you can still assign the data to fragmented libraries and run ANNOgesic.
-However, the data may not be so precise. 
+If you have only conventional RNA-seq data without fragementation or TEX treated, 
+you can still assign the data to fragmented libraries and run ANNOgesic.
+However, the results may not be precise. 
 
 The format of sRNA database
 -----------------------------
@@ -97,20 +97,19 @@ for example
 ::
   srn_4840|S._aureus_NCTC8325|RsaOV
 
-You can download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
+You can also download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
 `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
 
 Definition of reference strain and target strain
 ------------------------------
-We call the strain that user want to compute - "target strain".
+"target strain" represent the strain which user want to annotate.
 If user have no fasta file or genome annotation files of "target strain", 
-ANNOgesic can generate them. It requires a strain which is close to "target strain".
-We call this required strain - "reference strain".
+ANNOgesic can generate them. It requires "reference strain" which is close to "target strain".
 
 Riboswitch and RNA thermometer dataset of Rfam
 ----------------------------
-For riboswitch and RNA thermometer detection, it need the information of riboswitch and RNA thermometer of Rfam. 
-The input format is like the following.
+For riboswitch and RNA thermometer detection, it needs the information of riboswitch and RNA thermometer in Rfam. 
+The input format is the following.
 
 ======== ==== ==========================
 #Rfam_ID Name Description
@@ -125,37 +124,32 @@ All columns are splited by ``tab``. You can also download the data from our
 create
 -----
 
-``create`` generates the required folders for input and
-output files. Once these folders are created, the input files have to
-be placed into the correct locations. Therefore, after creating the folders,
-please put the required files in the proper folders.
+``create`` generates the folders for analysis. Once these folders are created, 
+please put the required files into the proper folders.
 
-BAMs: For ``.bam`` files. It has two sub-folders. ``BAMs_map_reference`` 
+BAMs: For ``.bam`` files. ``BAMs_map_reference`` 
 is for the ``.bam`` files which mapped on "reference strain".
 ``BAMs_map_target`` is for the ``.bam`` files which mapped on "target strain".
 
 database: For all databases
 
 manual_TSS: If you detected transcription starting sites(TSSs) manually,
-you can put the results here. When you compute TSSs, ANNOgesic 
-can merge manual and predicted TSSs together.
-If you want to run ``TSS_optimization``  for TSSs, it is also necessary.
-Please use gff3 format.
+you can put the results here for running ``TSS_optimization`` or merging 
+the automatic predicted ones and manual detected ones. Please use gff3 format.
 
 manual_processing_site: It is similar with ``manual_TSS``, it is for 
 processing sites.
 
 mutation_table: If you detected the mutations between reference genome and 
-target genome manually, please put the file here. When
-you run ``get_target_fasta``, it is required. Please refer
+target genome manually, please put the file here. Please refer
 to the section of ``get_target_fasta`` for the format of 
 mutation table.
 
-reads: If you want to run ``circrna`` and you also want to align read data by ANNOgesic,
-please put the read data here. It can also deal with ``.bzip2`` and ``.gzip``.
+reads: If you want to run ``circrna`` with mapping reads by ANNOgesic,
+please put the reads here. It can also deal with ``.bzip2`` and ``.gzip``.
        
-reference: For annotation files and fasta files. If the information of 
-the reference strain can be download from NCBI, you can also get
+reference: For annotation files and fasta files of "reference strain". 
+If they can be downloaded from NCBI, you can also get
 the files through running ``get_input_files``.
 
 riboswitch_ID: For storing the file which contains all the Rfam ID of riboswitch.
@@ -166,7 +160,7 @@ RNA_thermometer_ID: For storing the file which contains all the Rfam ID of RNA t
 For the details of format, please refer to the section of
 ``Riboswitch and RNA thermometer dataset of Rfam``.
 
-wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them to 
+wigs: For wiggle files. Based on the methods of RNA-Seq, you can put them into 
 ``fragment`` (fragmented libraries) or ``tex_notex`` (TEX +/- treated libraries).
 
 
@@ -188,7 +182,7 @@ get_input_files
 ``get_input_files`` is the subcommand for downloading required files (fasta, annotation files) from NCBI. 
 Therefore, user needs to assign the IP of the reference genome in NCBI. For example,
 ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1
-Then, user can choose which kinds of files he/she wants to download.
+Then, user can assign the file type for download.
 
 
 - Pre-reqired information
@@ -227,8 +221,8 @@ Then, user can choose which kinds of files he/she wants to download.
 
 - Output files
 
-The output files will store in ``$ANNOgesic_folder/input/reference`` if ``--for_target`` is False.
-The output files will store in ``$ANNOgesic_folder/output/target`` if ``--for_target`` is True.
+The output files will be stored in ``$ANNOgesic_folder/input/reference`` if ``--for_target`` is False.
+The output files will be stored in ``$ANNOgesic_folder/output/target`` if ``--for_target`` is True.
 
 ``fasta``: Fasta files.
 
@@ -238,7 +232,7 @@ get_target_fasta
 --------------
 
 ``get_target_fasta`` is the subcommand for generating fasta files of "target strain" from 
-"reference strain". The example of format of mutation table is following:
+"reference strain". The format of mutation table is following:
 
 ==============  =========  ============  ========  =========  ====================  =============  ====  ============
  #reference_id  target_id  reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description 
@@ -248,7 +242,7 @@ get_target_fasta
  NC_007795.1     HG003     \-            600       g           insertion            SAOUHSC_00132                    
 ==============  =========  ============  ========  =========  ====================  =============  ====  ============
 
-If user wants to put the titles of columns in the top, it needs to start from ``#``. 
+If user wants to put the titles of columns on the top, it needs to start from ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
 user can put ``-`` to represent them. The information of ``target_id``, ``reference_id``,
 ``reference_nt``, ``position``, ``target_nt`` is required. The others can be blank. 
@@ -261,7 +255,7 @@ If user has no mutation information, user can also use ``SNP_calling``
 
 Fasta files of reference genome.
 
-Mutation table which indicates the information of mutations between reference and target strain.
+Mutation table: it indicates the information of mutations between reference and target strain.
 
 - Arguments
 
@@ -293,18 +287,18 @@ Mutation table which indicates the information of mutations between reference an
 
 - Output files
 
-Fasta files of target genome will store in ``$ANNOgesic_folder/output/target/fasta``.
+Fasta files of target genome will be stored in ``$ANNOgesic_folder/output/target/fasta``.
 
 annotation_transfer
 -----------
 
 ``annotation transfer`` is the subcommand for transfering the annotation from "reference strain" 
-to target "strain". In this subcommand, we use `PAGIT and RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
-to achieve it. The similarity of "reference strain" and "target strain" should be closed.
-Or it will influence the final results.
-Please be attation, before you start to run RATT(annotation transfer), 
+to target "strain". In this subcommand, we use `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
+to achieve it. The similarity of "reference strain" and "target strain" should be closed enough or 
+it will influence the final results.
+Please be attation, before you start to run RATT (annotation transfer), 
 run ``source $PAGIT_HOME/sourceme.pagit`` first. it will modify the path for execute RATT. 
-If you use Docker to execute ANNOgesic, you can skip the path modification.
+If you use Dockerfile to execute ANNOgesic, you can skip the path modification.
 
 - Pre-required tools and files
 
@@ -367,20 +361,20 @@ The fasta files of target genome.
 
 - Output files
 
-All the output files from `PAGIT and RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_
-will store in ``$ANNOgesic_folder/output/annotation_transfer``.
+All the output files from `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_
+will be stored in ``$ANNOgesic_folder/output/annotation_transfer``.
 
-All annotation files(``.gff``, ``.ptt``, ``.rnt``) will store in ``$ANNOgesic_folder/output/target/annotation``.
+All annotation files (``.gff``, ``.ptt``, ``.rnt``) will be stored in ``$ANNOgesic_folder/output/target/annotation``.
 
 snp
 -------
 
-``snp`` can detect the potential mutations by comparing the results of alignment and fasta files.
-`Samtools <https://github.com/samtools>`_, `Bcftools <https://github.com/samtools>`_ are the main tools
-for detection of mutations. User can choose programs (with BAQ, without BAQ and extend BAQ) to run ``snp``.
-User can also set the QUAL, DP, DP4, etc. For Indel, IMF and IDV can be setted as well.
-If you have no fasta file of "target strain" and want to generate it, ``snp`` can get it from 
-the alignment results of "reference strain".
+``snp`` can compare the alignment files and fasta files to detect the mutations by 
+`Samtools <https://github.com/samtools>`_, `Bcftools <https://github.com/samtools>`_. 
+User can choose programs (with BAQ, without BAQ and extend BAQ) and set the filters 
+(QUAL, DP, DP4, etc.) to run ``snp``.
+If you have no fasta file of "target strain" and want to generate it, 
+``snp`` can also get it by applying the mutations to "reference strain".
 
 - Pre-required files and tools:
 
@@ -513,15 +507,15 @@ Reference or target genome fasta files.
 - Output files
 
 If ``bam_type`` is ``reference``, 
-the results will store in ``$ANNOgesic/output/SNP_calling/compare_reference``. 
-If it is ``target``, the results will store in ``$ANNOgesic/output/SNP_calling/validate_target``.
+the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_reference``. 
+If it is ``target``, the results will be stored in ``$ANNOgesic/output/SNP_calling/validate_target``.
 
 The raw data from `Samtools <https://github.com/samtools>`_ and `Bcftools <https://github.com/samtools>`_
-will store in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_raw_outputs``.
+will be stored in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_raw_outputs``.
 
-The results will store in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table``.
+The results will be stored in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table``.
 
-The meaning of file names are:
+The meaning of filenames are:
 
 ``$STRAIN_$PROGRAM_best.vcf`` which is in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/SNP_table/$STRAIN``. 
 It means the results after filtering by cutoff.
@@ -539,8 +533,9 @@ For example,
   Staphylococcus_aureus_HG003     1632630 .       aA      a       57      .
   Staphylococcus_aureus_HG003     1499572 .       T       TT,TTTTT        43.8525 .
 
-These mutations will cause conflict. Then the conflict will effect the positions of other mutations.
-Therefore, it will generate four different fasta files.
+These mutations will cause conflict. Then, the conflict will effect the positions of other mutations.
+Therefore, it will generate four different fasta files. The fisrt two lines are "position conflict", and 
+the last line is "mutation conflict".
 ``$STRAIN_$PROGRAM_seq_reference.csv`` is the index for these four fasta files.
 
 ::
@@ -550,25 +545,24 @@ Therefore, it will generate four different fasta files.
    2       1632630 1       1499572:TT      Staphylococcus_aureus_HG003
    2       1632630 2       1499572:TTTTT   Staphylococcus_aureus_HG003
 
-The first column is the index of conflict. The second column is the positions which be selected.
-The third one is the index of two potential mutations in the same position. The fourth one is
-the position and nucleotides of mutations. The last column is the name of strain.
+The first column is the index of position conflict. The second column is the position which be selected.
+The third one is the index of mutations conflict. The fourth one is
+the position and nucleotides of selected mutation. The last column is the name of strain.
 If you refer to ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/seqs``, the filename of fasta is like 
-``$FILENAME_$STRIANNAME_$INDEXofCONFLICT_$INDEXofTWOMUTATION.fa``. Therefore, the first line of 
+``$FILENAME_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa``. Therefore, the first line of 
 ``$STRAIN_$PROGRAM_seq_reference.csv`` will generate 
 ``Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_1.fa`` 
 (if the file name of genome is Staphylococcus_aureus_HG003). The second line will generate
 ``Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_2.fa`` and so forth.
 
-The statistics files will store in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/statistics``.
+The statistics files will be stored in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/statistics``.
 
 tsspredator(TSS and processing site prediction)
 --------------
 
-``tsspredator`` can generate the candidates of TSSs and processing sites. The main tool is
-`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. We can easily switch the
-TEX+ libraries and TEX- libraries to detect processing sites. User can assign the parameters 
-of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. If User want to get the 
+``tsspredator`` can generate the candidates of TSSs and processing sites via 
+`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. The parameters 
+of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_ can be assigned. If User wants to get the 
 optimized parameters of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_,
 there is ``optimize_tsspredator`` for this purpose. Please refer to the section of ``optimize_tsspredator``.
 
@@ -588,7 +582,7 @@ Gff file of genome annotation.
 If user has gff file of manual detected TSSs, ``tsspredator`` can merge the manual one
 and predicted one.
 
-If user wants to compare TSSs with transcripts, it also need the gff files of transcripts.
+If user wants to compare TSSs with transcripts, the gff files of transcripts were required.
 For the transcripts, please refer to the section of ``transcript_assembly``.
 
 - Arguments
@@ -775,7 +769,7 @@ There are some useful tags in the attributes of gff files:
 
 ``associated_gene``: Which genes are associated with this TSS.
 
-``parent_tran``: Which transcript are associated with this TSS, if user has compared with transcript.
+``Parent``: Which transcript are associated with this TSS, if user has compared with transcript.
 
 If user has compared with genome annotation files, the tag - ``start_TSS`` will appear in the gff files 
 of genome annotation. It represents the TSSs which associates with the CDS/tRNA/rRNA.
@@ -793,9 +787,7 @@ For importing the information of libraries, please refer to the section of
 
 - Pre-required tools and files
 
-Wiggle files of fragmented libraries or TEX +/- treated libraries. We don't recommend that only
-use TEX +/- treated libraries to generate transcripts. It will lose some information
-in 3'end.
+Wiggle files of fragmented libraries or TEX +/- treated libraries.
 
 If user wants to compare transcripts with TSSs, it requires ``.gff`` files of TSSs.
 If user wants to compare transcripts with genome anntation, it requires ``.gff`` files of genomes.
@@ -930,7 +922,7 @@ The output files will be stored in ``$ANNOgesic/output/transcriptome_assembly``.
 
 ``gffs``: The gff files of transcript.
 
-``tables``: For more details of transcripts.
+``tables``: The table of transcript with more details.
 
 ``statistics``: Statistics files.
 
@@ -949,10 +941,10 @@ There are some useful tags in gff files.
 
 ``best_avg_coverage``: The average coverage of highest expressed library.
 
-If user has compared transcripts with genome annotations. The tag - ``parent_tran`` will appear
-in the gff files of genome annotations. It will show which transcirpt that CDSs/tRNAs/rRNAs are located.
+If user has compared transcripts with genome annotations. The associated transcript will be assigned in ``Parent``
+of the gff files of genome annotations.
 
-If user has compared transcripts with TSSs. The tag - ``parent_tran`` will appear
+If user has compared transcripts with TSSs. The tag - ``Parent`` will appear
 in the gff files of TSSs. It will show which transcripts that TSSs are located.
 
 
@@ -963,7 +955,7 @@ terminator
 two methods in order to get more reliable candidates. First one is using `TranstermHP <http://transterm.cbcb.umd.edu/>`_.
 The other one is detect the specific secondary structure between converging pairs  
 of transcripts and CDSs. ``ANNOgesic`` can also compare with coverages in order to generate the terminators 
-which has coverage significant decreasing.
+which has coverage significant decrease.
 
 - Pre-required tools and files
 
@@ -975,8 +967,7 @@ Gff files target genome annotation.
 
 Fasta files of target genome sequence.
 
-Wiggle files of TEX +/- treated libraries or fragmented libraries. we don't 
-recommand only use TEX +/- treated libraries. Because it will lose some information in 3'end.
+Wiggle files of TEX +/- treated libraries or fragmented libraries.
 
 Gff files of transcript.
 
@@ -1134,7 +1125,7 @@ Gff files of transcript.
 
 - Output files
 
-The output files will stored in ``$ANNOgesic/output/terminator``.
+The output files will be stored in ``$ANNOgesic/output/terminator``.
 
 ``statistics``: Statistics files.
 
@@ -1148,11 +1139,11 @@ There are four different sub-folders to store terminators.
 ``express`` will store the terminators which has gene expression.
 
 ``best`` will store the terminators which not only has gene expression but also
-has coverage dramatic decreasing.
+has coverage dramatic decrease.
 
 ``non_express`` will store the terminators which has no gene expression.
 
-``tables``: The tables of terminators which store more details.
+``tables``: The tables of terminators with more details.
 
 The tags of gff files:
 
@@ -1165,14 +1156,14 @@ The tags of gff files:
 ``diff_coverage``: The highest coverage and lowest coverage of the library which expresses highest.
 The numbers in parens are highest coverage and lowest coverage.
 
-``parent_tran``: If you compared transcript with terminator, this tag presents the parent transcript of terminator.
+``Parent``: If you compared transcript with terminator, this tag presents the parent transcript of terminator.
 
 utr
 -----
 
-``utr`` can compare with the information of TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
-to generate proper UTRs. 5'UTRs are based on detecting the regions between TSSs (which 
-are located in transcripts) and CDSs/tRNAs/sRNAs. 3'UTRs are based on detecting the 
+``utr`` can compare with TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
+to generate proper UTRs. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
+3'UTRs are based on detecting the 
 regions between the end of transcripts and CDSs/tRNAs/sRNAs. If the gff files of TSSs are not computed by 
 ANNOgesic, please use --TSS_source. ``utr`` would classify TSSs for the analysis.
 
@@ -1180,7 +1171,7 @@ ANNOgesic, please use --TSS_source. ``utr`` would classify TSSs for the analysis
 
 Gff files of genome annotations, TSSs and transcripts.
 
-If user wants to combine the information of terminators, it also need the gff files of terminator.
+If user wants to combine the information of terminators, the gff files of terminators are required.
 
 - Arguments
 
@@ -1237,9 +1228,9 @@ If user wants to combine the information of terminators, it also need the gff fi
 
 - Output files
 
-All output of 5'UTRs will store in ``$ANNOgesic/output/UTR/5UTR``.
+All output of 5'UTRs will be stored in ``$ANNOgesic/output/UTR/5UTR``.
 
-All output of 3'UTRs will store in ``$ANNOgesic/output/UTR/3UTR``.
+All output of 3'UTRs will be stored in ``$ANNOgesic/output/UTR/3UTR``.
 
 ``gffs``: Gff files of 5'UTR/3'UTR
 
@@ -1251,7 +1242,7 @@ The tags of gff files:
 
 ``associated_gene``: Which genes are associated with this UTR.
 
-``parent_tran``: Which transcript is associated with this UTR.
+``Parent``: Which transcript is associated with this UTR.
 
 ``associated_tss``: Which TSSs are associated with this 5'UTR.
 
@@ -1261,61 +1252,68 @@ The tags of gff files:
 
 srna
 -----
-``srna`` can predict sRNAs through comparing the transcripts and annotation profile. 
-The transcripts in intergenic region might be sRNA candidates. Moreover, based on 
-the information of TSSs and processing sites, we can also predict UTR-derived sRNA candidates.
+``srna`` can predict different types of sRNAs. For intergenic and antisense sRNA, it 
+is detected via comparison of the transcripts and annotation profile. 
+For UTR-derived sRNA, the detection is based on the TSSs and processing sites, 
+transcript and genome annotation.
 
 - Pre-required tools and files
 
-`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_.
-
-`Ps2pdf14 <http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm>`_.
-
-`Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_.
-
-sRNA database, such as `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_.
-
-`nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_.
-
 Gff files of genome annotation and Transcript data.
-
-It can also import more information to improve the accuracy of prediction.
 
 wiggle files: The libraries and wiggle files, Please refer to the ``The format of libraries for import to ANNOgesic``.
 
-If user want to detect the UTR-derived sRNAs, it will be necessary to import
+If user wants to detect the UTR-derived sRNAs, it will be necessary to input
 more information.
 
-TSSs: UTR-derived sRNAs must to generated from TSSs. If you don't want to detect UTR-derived sRNAs, 
-you can also import this information for statistics.
+TSS: If is for the detection of 5'UTR-derived sRNA and interCDS-derived sRNA. 
+If you don't want to detect UTR-derived sRNAs,
+you can also import this information as a filter.
 
-processing sites: It is for check the sRNAs which end with processing sites. Moreover,
+processing site: It is for checking the sRNAs which end with processing sites. Moreover,
 Some 3'UTR-derived and interCDS-derived sRNA candidates start
 from processing sites not TSSs. If you don't want to detect UTR-derived sRNAs,
-you can also import this information for statistics.
+you can also import this information to increase the accuracy, especially for some 
+long non-coding RNAs.
 
 Optional input file:
 
-Fasta files of genome sequence.
+If user want to apply some filters to improve the prediction, some files are required.
 
-sRNA database: It could be used for searching the known sRNA. The format of header should be 
-``$ID|$STRAIN|$SRNANAME``. 
-For example, ``>saci2813.1|Acinetobacter sp. ADP1|Aar``.
-The ID is saci403.1; the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar. 
-If the user doesn't follow the format, it will occur error when the user runs with ``--sRNA_blast_stat, -sb``. 
-Or the results will be meaningless.
-Of course, it can run ``srna`` without ``--sRNA_blast_stat, -sb``.
+Secondary structure: `ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_, 
+`Ps2pdf14 <http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm>`_ and 
+Fasta files of genome sequence is required.
 
-nr database: It could be used for searching the known proteins in order to exclude false positive.
+TSS: gff file of TSS is necessary. Based on different types of TSS, the cutoff of coverage can be 
+assigned separately.
 
-Gff files of sORFs: It could compare sORFs and sRNAs. User can refer these information to find the best sRNA candidates.
+Searching sRNA database: `Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_ and 
+sRNA database, such as `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ are necessary.
+The format of header should be ``$ID|$STRAIN|$SRNANAME``.
+For example, ``>saci2813.1|Acinetobacter sp. ADP1|Aar``. 
+The ID is saci403.1; the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar.
+If the user doesn't follow the format, it will occur error when the user runs with ``--sRNA_blast_stat, -sb``.
+Or the results will be meaningless. User can also assign ``--best_with_all_sRNAhit, -ba`` for including
+all candidates which can find hits in sRNA database (even without matching other filters).
 
-Gff files of terminator: It could compare terminators and sRNAs. User can refer these information 
-to find the best sRNA candidates.
+Searching nr database: `Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_ and
+`nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ are required.
 
-Table of promoters: It could compare promoters and sRNAs. User can refer these information
-to find the best sRNA candidates.
-The format should be 
+Terminator: gff file of terminator is needed. If user wants that sRNA have to associated with terminator, 
+please add ``-bt``. Without ``-bt``, it will only provide to the relationship between terminator and sRNA 
+but does not remove the the candidates which not associated with terminator.
+
+sORF: gff file of sORF needs to be assigned. If user wants that sRNA must not overlap with sORF,  
+please add ``-bs``. Without ``-bs``, it will only provide to the relationship between sORF and sRNA
+but does not remove the the candidates which are overlap with sORF.
+
+Promoter: Table of promoters have to be input. It can compare between promoters and sRNA for ranking 
+the sRNA candidate as well. Moreover, If user wants that sRNA have to associated with promoter,
+please add ``-bp``. Without ``-bp``, it will only provide to the relationship between promoter and sRNA
+but does not remove the the candidates which not associated with promoter.
+
+
+The format should be
 
 ===========  ============  ==========  =======
 strain       TSS_position  TSS_strand  Motif
@@ -1324,9 +1322,10 @@ NC_000915.1  237118        \-          MOTIF_1
 NC_000915.1  729009        \-          MOTIF_1
 ===========  ============  ==========  =======
 
-First row is the header of table, the last column is the name of motif/promoter. 
-If you want apply ANNOgesci to compute the promoters, the table will be generated automatically. 
+First row is the header of table, the last column is the name of motif/promoter.
+If you use ANNOgesic to detect the promoters, the table will be generated automatically.
 Please refer to the section of ``promoter``.
+
 
 - Arguments
 
@@ -1748,7 +1747,7 @@ All output files will be stored in ``$ANNOgesic/output/sRNA``.
 ``statistics``: Statistics files. ``stat_$STRAIN_NAME_sRNA_blast.csv`` is the results of analysis of blast sRNA databases.
 ``stat_sRNA_class_Staphylococcus_aureus_HG003.csv`` is the results of classification of sRNA candidates.
 
-``tables``: sRNA tables for more details. It also includes the ranking of sRNA candidates. 
+``tables``: sRNA tables with more details. It also includes the ranking of sRNA candidates. 
 ``for class`` is for different classes of sRNAs.
 ``best`` is the best results of sRNAs after filtering. ``all_candidates`` is for all candidates without filtering.
 
@@ -1756,56 +1755,52 @@ All output files will be stored in ``$ANNOgesic/output/sRNA``.
 
 The useful tags of gff files:
 
-``sRNA_type``: The sRNA is from 5'UTR or 3'UTR or interCDS or intergenic or antisense or in_CDS.
+``sRNA_type``: The sRNA is from 5'UTR, 3'UTR, interCDS, intergenic, antisense or within CDS.
 
-``with_TSS``: Which TSSs are related to this sRNA. NA means the sRNA is not related to any TSSs.
+``with_TSS``: Which TSSs are related to this sRNA. "NA" means the sRNA is not related to any TSSs.
 
-``sORF``: Which sORFs overlap with this sRNA.
+``sORF``: Which sORFs are overlap with this sRNA.
 
 ``sRNA_hit``: The blast hit of sRNA database.
 
 ``nr_hit``: The blast hit of nr database.
 
-``2d_energy``: The normalized(by the length of sRNA) free energy change of secondary structure of sRNA candidate.
+``2d_energy``: The normalized (by the length of sRNA) free energy change of secondary structure of sRNA candidate.
 
-``with_term``: The terminators which associated with the sRNA candidate.
+``with_term``: The terminators which are associated with the sRNA candidate.
 
 If you assigned ``--TSS_source`` for sRNA prediction, ``TSS_class`` will be generated and store the gff files of TSSs.
 
-``promoter``: The promoters which associated with this sRNA candidates.
+``promoter``: The promoters which are associated with this sRNA candidate.
 
-``overlap_cds``: The CDSs which overlap with sRNA.
+``overlap_cds``: The CDSs which are overlap with sRNA.
 
 ``overlap_percent``: If there are CDSs overlap with sRNA, it will shows the percentage of overlap.
 
 sorf
 ----------
-``sorf`` can detect sORF based on ribosomal binding sites, start codons and stop codons within the intergenic transcripts.
-Because non-coding region may be sRNAs or sORFs, it also provide the function to compare sORFs and sRNAs. 
+``sorf`` can detect sORF based on searching ribosome binding sites, start codons and stop codons within the non-annotated transcripts.
+Since non-annotated region may be sRNAs or sORFs, it also provides the function to compare sORFs and sRNAs. 
 If there are some sORFs overlaped, it will merge them together. Therefore, one region may contain more than one sORF. 
-BE CAREFUL, The position of start codon is the first nucleotide. The position of stop codon is the last nucleotide. 
-As we know that three nucleotides form one amino acid. Therefore, one small transcript may contain 
-three open reading frames for one strand. Since ``sorf`` provides the region which covers all possible sORFs, 
-the start point and end point may not be the multiple of 3. The region may contain different frame shift. 
+BE CAREFUL, The position of start codon is assigned to the first nucleotide. The position of stop codon is the last nucleotide. 
+``sorf`` provides the region which covers all possible sORFs. Thus, the region may contain different frame shift. 
 Ex: (200, 202, 203) are the positions of three start codons and (241, 243) are two stop codons in 
-a small transcript. We can see that there are three possible ORFs(200-241, 203-241 and 202-243). 
-for 200-241 and 203-241, the frame has no shift, because the difference of positions for these two 
-ORFs are the multiple of 3. However, for 202-243, there is a frame shift. Please be aware this point for 
-using the results.
+a small transcript. Therefore, there are three possible ORFs(200-241, 203-241 and 202-243).
+Please be aware this point for using the results.
 
 - Pre-required tools and files
 
-The gff files of CDSs/tRNAs/rRNAs and transcripts.
+The gff files of genome annotation and transcripts.
 
 The libraries and wiggle files, Please refer to the ``The format of libraries for import to ANNOgesic``.
 
-The fasta files of genome sequence for detection of ribosomal binding sites, start codons and stop codons.
+The fasta files of genome sequence for detection of ribosome binding sites, start codons and stop codons.
 
 User can also import some useful information to improve the prediction:
 
 gff files of TSSs for checking the sORFs start from TSS or not. 
 
-gff files of sRNAs for checking the conflict of sRNAs and sORFs.
+gff files of sRNAs for checking the overlap of sRNAs and sORFs.
 
 - Arguments
 
@@ -1971,7 +1966,7 @@ All output files will be stored in ``$ANNOgesic/output/sORF``.
 
 ``statistics``: Statistics files.
 
-``tables``: The tables of sORFs for more details. ``all_candidates`` is for all sORF candidates without filtering.
+``tables``: The tables of sORFs with more details. ``all_candidates`` is for all sORF candidates without filtering.
 ``best`` is for the best sORF candidates with filtering.
 
 ``gffs``: Gff files of sORFs. The meanings of ``all_candidates`` and ``best`` are the same as ``tables``.
@@ -1982,20 +1977,21 @@ The tags of gff files:
 
 ``with_TSS``: Which TSSs are associated with this sORFs.
 
-``sORF_type``: The type of the sORF (5'UTR, 3'UTR, interCDS, intergenic, antisense or in_CDS).
+``sORF_type``: The type of the sORF (5'UTR, 3'UTR, interCDS, intergenic, antisense or within CDS).
 
-``sRNA``: Which sRNAs overlap with the the region of sORFs.
+``sRNA``: Which sRNAs are overlap with this sORFs.
 
-``rbs``: The ribosomal binding sites of the region of sORFs.
+``rbs``: The ribosome binding sites of this sORFs.
 
-``frame_shift``: How many frame shifts in the regions of sORFs.
+``frame_shift``: How many frame shifts in the regions.
 
 promoter
 -----------
 
 ``promoter`` can scan the upstream of TSSs to discover the promoter motifs.
-User can assign the regions of upstream TSSs. We integrate MEME to compute the promoters.
-User can view the results very easily. If the gff files of TSSs is not computed by 
+the regions of upstream TSSs for extraction can be assigned. We integrate 
+`MEME <http://meme-suite.org/tools/meme>`_ to compute the promoters.
+Visulization HTML files will be generated. If the gff files of TSSs is not computed by 
 ANNOgesic, please use --TSS_source. ``promoter`` will classify the TSSs for computing 
 promoter motifs.
 
@@ -2080,30 +2076,30 @@ Please refer to the ``The format of libraries for import to ANNOgesic`` in order
 
 All output files will be stored in ``$ANNOgesic/output/promoter_analysis``.
 
-``allfasta``: If you turn ``--combine_all`` on, it will combine all TSSs in ``--TSS_folder`` 
-to generate promoter motifs. The results will store in this folder.
+``allfasta``: If you turn ``--combine_all`` on, it will combine all TSS files in ``--TSS_folder`` 
+to generate promoter motifs. The results will be stored in this folder.
 
-``fasta_class``: The fasta files of the classes of TSSs.
+``fasta_class``: The fasta files of different types of TSSs.
 
-Every strain will generate one folder for storing the information of promoter motifs.
-The sub-folder is ``promoter_motifs_$FILENAME_$STRAINNAME_$TSSTYPE_$PROMOTERLEGNTH``. 
-Each sub-folder stores PNG files and HTML files of promoters. It also contains a table(CSV file) of 
+Each strain will generate one folder for storing the output of promoter motifs.
+The format of sub-folder is ``promoter_motifs_$FILENAME_$STRAINNAME_$TSSTYPE_$PROMOTERLEGNTH``. 
+Each sub-folder stores PNG files and HTML files of promoters. It also contains a table (``meme.csv``) of 
 prometer which can be used to sRNA detection (please refer to ``srna``).
 
 If the TSSs are not computed by ANNOgesic, ``TSS_class`` will be generated. It will classify the 
-TSSs and store as gff files in it.
+TSSs and store as gff files.
 
 operon
 ----------
 
 ``operon`` will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and 
-suboperons.
+sub-operons.
 
 - Pre-required tools or files
 
 Gff files of TSSs, annotations, transcripts, 5'UTRs, and 3'UTRs.
 
-If user wants to import the information of terminators, ``operon`` can integrate terminators, too.
+``operon`` can integrate terminators as well, but it is not necessary.
 
 - Arguments
 
@@ -2159,27 +2155,27 @@ All output files will be stored in ``$ANNOgesic/output/operon``.
 
 ``gffs``: The gff files which integrate the information of TSSs, annotations, 
 transcripts, 5'UTRs, and 3'UTRs and assign parent transcript to all features (presented by 
-``Parent`` in gff file and remove ``parent_tran``).
+``Parent``).
 
-``tables``: The tables of operons which store all information of operons and suboperons.
+``tables``: The tables of operons which store all information of operons and sub-operons.
 
 ``statistics``: Statistics files.
 
 circrna
 --------------
 
-``circrna`` can detect the potential circular RNAs. It applies `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
-to detect circular RNAs. Then it will checks genome annotation files and quality of splicing site detection to 
-exclude false positive. User can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
-But BE CAREFUL, If user uses alignment files, they should be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
-and with ``-S``. Or ``circrna`` can't find the proper candidates.
+``circrna`` can detect the potential circular RNAs via `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. 
+Moreover, it remove the false positive by checking genome annotation files and quality of splicing site detection. 
+User can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
+But BE CAREFUL, the alignment files must be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
+with ``-S`` or ``circrna`` can't find the proper candidates.
 
 - Pre-required tools and files
 
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_.
 
-Fasta files of reads or alignment files. If you want to use alignment files directly, they should be 
-mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ and with ``-S``.
+Fasta files of reads or alignment files (BAM or SAM file). If you want to use alignment files directly, they should be 
+mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``.
 
 Fasta files and gff files of genome.
 
@@ -2263,7 +2259,7 @@ refer to `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_.
 go_term
 ----------
 
-``go_term`` can compare the genome annotation files and Uniprot to retreive the information of Gene Ontology.
+``go_term`` can retreive the information of Gene Ontology from Uniprot.
 It also provides some analyses of Go terms.
 
 - Pre-required tools and files
@@ -2276,7 +2272,7 @@ It also provides some analyses of Go terms.
 
 Gff files of genome annotation.
 
-If you want to compute the expressed CDSs only, you need to assign the transcript gff files.
+If you want to analyze the expressed CDSs, the transcript gff file was required.
 
 - Arguments
 
@@ -2322,7 +2318,7 @@ srna_target
 ---------------
 
 ``srna_target`` will search the potential targets of sRNAs. User can assign the 
-programs for running (RNAup or RNAplex or both). We recommand user to run with both 
+programs for running (RNAup or RNAplex or both). We recommand running with both 
 programs. ``srna_target`` can compare the both results and provide the best ones.
 
 - Pre-required tools and files
@@ -2463,7 +2459,7 @@ It includes the information of binding situations. ``$STRAIN_RNAup_rank.csv`` is
 that sorted by binding energy.
 
 ``merge``: The results which merge ``RNAplex`` and ``RNAup``. ``$STRAIN_merge.csv`` merges all candidates of both programs. 
-``$STRAIN_overlap.csv`` lists the results which be top 20(default) in both methods.
+``$STRAIN_overlap.csv`` lists the results which be top 20 (default) in both methods.
 
 ``sRNA_seqs``: The fasta sequences of sRNAs.
 
@@ -2473,7 +2469,7 @@ ppi_network
 -------------
 
 ``ppi_network`` will retrieve the data from `STRING <http://string-db.org/>`_. 
-Then use `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ to search 
+Then using `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ to search 
 the literatures to support the protein-protein interaction networks. Therefore, 
 ``ppi_network`` can generate the protein-protein interaction networks with supported literatures.
 
@@ -2561,8 +2557,8 @@ Ptt files of genome annotation.
 
 All the output files will be stored in ``$ANNOgesic/output/PPI``.
 
-``best_results``: The results which the score of supported literatures(the text-mining
-(`PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_) is high enough). 
+``best_results``: The results which the score of `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_
+is high enough. 
 ``$STRAIN_without_strain.csv`` is the results of searching literatures without specific strain. 
 ``$STRAIN_with_strain.csv`` is the results of searching literatures with specific strain. 
 For example, Staphylococcus_aureus_8325_without_strain.csv is search with Staphylococcus aureus; 
@@ -2581,7 +2577,7 @@ interactions. The color is the best score of the literatures of the interactions
 subcellular_localization
 ------------------
 
-``subcellular localization`` can predict the subcellular localization of CDSs. It also provide some 
+``subcellular localization`` can predict the subcellular localization of CDSs. It also provides some 
 statistics and visualization files.
 
 - Pre-required tools and files
@@ -2592,7 +2588,7 @@ Gff files of genome annotation.
 
 Fasta files of genome sequence.
 
-If you want to compute the expressed CDSs only, you need to assign the transcript gff files.
+If you want to compute the expressed CDSs, the transcript gff file is required.
 
 - Arguments
 
@@ -2663,10 +2659,9 @@ Gff files of genome annotation.
 Fasta files of genome sequence.
 
 File of ``riboswitch_ID`` or ``RNA_thermometer_ID``. The file should contain Rfam ID, 
-Name and Description of riboswitchs or RNA thermometer.
-You can refer to the section of ``Riboswitch and RNA thermometer dataset of Rfam``. You can download the file from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv). 
-You also can create your own one.
+Name and Description of riboswitchs or RNA thermometer (refer to 
+``Riboswitch and RNA thermometer dataset of Rfam``). You can download the file from our 
+`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
 
 - Arguments
 
@@ -2755,7 +2750,7 @@ all output files of RNA thermometer will be stored in ``$ANNOgesic/output/RNA_th
 
 ``tables``: The tables of riboswichs / RNA_thermometer with more details.
 
-``scan_Rfam``: The results of ``cmscan`` of `Infernal <http://infernal.janelia.org/>`_. 
+``scan_Rfam``: The results of searching to Rfam with ``cmscan`` (`Infernal <http://infernal.janelia.org/>`_). 
 User can check the results of blast.
 
 ``statistics``: The statistics files and figures.
@@ -2824,10 +2819,9 @@ Gff files of genome annotation.
 
 It will generate three folders - ``CRT_output``, ``gffs`` and ``statistics``. 
 
-``CRT_output`` stores the output of `CRT <http://www.room220.com/crt/>`_. It includes the positions, the sequence of 
-repeat unit and spacer.
+``CRT_output`` stores the output of `CRT <http://www.room220.com/crt/>`_.
 
-``gffs`` stores the gff files of CRISPR. ``all_candidates`` is for the all CRISPRs which we can detect. 
+``gffs`` stores the gff files of CRISPR. ``all_candidates`` is for the all CRISPRs which ANNOgesic can detect. 
 ``best`` is for the CRISPRs which are not overlap with genome annotations.
 
 ``statistics`` is for the statistics files.
@@ -2837,8 +2831,10 @@ optimize_tsspredator
 ---------------
 
 ``optimize_tsspredator`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
-User just need to manual check around 200kb as a reference (we suggest the manual detected TSSs should more than 50). 
-Then ``optimize_tsspredator`` can scan whole genome based on the principle of manual detection to get the best results.
+User just need to manual check around 200kb for generation of benchmarking set 
+We suggest the manual detected TSSs should more than 50. If there are less than 50 TSSs within 200kb, 
+please continue checking until getting at least 50 TSSs.
+Then ``optimize_tsspredator`` can scan whole genome based on the principle of manual detection to get the optimized parameters.
 
 - Pre-required tools and files
 
@@ -3009,9 +3005,9 @@ screenshot
 -----------
 
 ``screenshot`` will generate batch files for producing screenshot of `IGV <https://www.broadinstitute.org/igv>`_.
-When the batch files produced, user just needs to open `IGV <https://www.broadinstitute.org/igv>`_, then presses ``tools`` 
+It can help user to check their results easily.
+When the batch files is produced, user just needs to open `IGV <https://www.broadinstitute.org/igv>`_, then presses ``tools`` 
 on the top tags and choose ``run batch script``. The program will automatically produce screenshots. 
-Then user can refer to them easily.
 
 - Pre-required tools and files
 
@@ -3087,7 +3083,7 @@ The libraries and wiggle files. Please refer to the ``The format of libraries fo
 - Output files
 
 Based on the paths of ``main_gff``, ``screenshot`` will generate a folder - ``screenshots`` under the 
-folder of ``main_gff``. All output files will be stored in this folder.
+folder of ``main_gff``. All output files will be generated in this folder.
 
 ``forward.txt`` is the batch file of forward strand for running on IGV.
 
@@ -3097,7 +3093,7 @@ folder of ``main_gff``. All output files will be stored in this folder.
 
 ``reverse`` is the folder for storing screenshots of reverse strand.
 
-When user runs batch files on IGV. The screenshots will automatically store in ``forward`` and ``reverse``. 
+When user runs batch files on IGV, the screenshots will automatically store in ``forward`` and ``reverse``. 
 The format of filenames will be ``$STRAIN:$START-$END.png``. For example, ``NC_007795:1051529-1051696.png`` 
 means the strain is NC_007795. The feature's start point is 1051529 and the end point is 
 1051696.
@@ -3105,10 +3101,10 @@ means the strain is NC_007795. The feature's start point is 1051529 and the end 
 color_png
 ----------
 
-``color_png`` is a following procedure of ``screenshot``. If there are many wiggle files, it will be difficult 
-to distinguish the tracks. Especially, when user want to compare TEX +/- libraries to check TSSs or processing sites, 
-it is not convenient. ``color_png`` can color the tracks based on TEX +/- libraries. Therefore, the user can 
-refer to the screenshots much easier.
+``color_png`` is a following procedure of ``screenshot``. If numerous samples are included in one figure, 
+it will be difficult to distinguish the tracks. Especially, when user want to compare TEX +/- libraries to 
+check TSSs or processing sites, it is not convenient. ``color_png`` can color the tracks based on TEX +/- libraries. 
+Therefore, the user can refer to the screenshots much easier.
 
 - Pre-required tools and files
 
@@ -3147,7 +3143,7 @@ The new screenshots will replace the previous ones automatically.
 
 merge_features
 --------------
-If you want to put all features to become one gff file, ``merge_features`` can achieve this purpose. 
+If you want to put all features to be one gff file, ``merge_features`` can achieve this purpose. 
 It will merge all features that user assigned and search the parent transcript to each feature.
 
 
@@ -3195,5 +3191,4 @@ It will merge all features that user assigned and search the parent transcript t
 -Output files
 
 The gff file will be stored in ``merge_all_features``. The tag - ``Parent`` in attributes of 
-gff file shows the parent transcript. If there are ``parent_tran`` in attributes of input gff files, 
-it will be removed.
+gff file shows the parent transcript.
