@@ -58,6 +58,11 @@ RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --enable-build-libxslt && \
 make && make test && make install && cp /tools/meme/bin/meme /usr/local/bin
 
+RUN wget https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz && \
+tar -zxvf openmpi-2.0.1.tar.gz
+RUN cd openmpi-2.0.1 && ./configure && make && make install
+
+
 # RATT
 RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git
 RUN mv rapid_annotation_transfer_tool /opt/RATT
@@ -157,12 +162,14 @@ RUN cp /usr/local/psortb/bin/psort /usr/local/bin
 WORKDIR /tools
 
 # htslib, samtools, bcftools
-RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
-RUN tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && make all && make install && cd ..
-RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
-RUN tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make install && cd ..
-RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
-RUN tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
+RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2 && \
+tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && make all && make install && cd ..
+
+RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2 && \
+tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make install && cd ..
+
+RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2 && \
+tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
 
 RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
