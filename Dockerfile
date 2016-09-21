@@ -39,6 +39,10 @@ RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/r
 cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
 
 # MEME
+RUN wget https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz && \
+tar -zxvf openmpi-2.0.1.tar.gz
+RUN cd openmpi-2.0.1 && ./configure && make && make install
+
 RUN wget http://meme-suite.org/meme-software/4.11.1/meme_4.11.1.tar.gz && \
 tar -zxvf meme_4.11.1.tar.gz
 
@@ -57,11 +61,6 @@ RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --enable-build-libxml2 \
 --enable-build-libxslt && \
 make && make test && make install && cp /tools/meme/bin/meme /usr/local/bin
-
-RUN wget https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz && \
-tar -zxvf openmpi-2.0.1.tar.gz
-RUN cd openmpi-2.0.1 && ./configure && make && make install
-
 
 # RATT
 RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git
