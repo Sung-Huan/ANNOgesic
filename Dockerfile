@@ -40,8 +40,8 @@ cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
 
 # MEME
 RUN wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz && \
-tar -zxvf mpich-3.2.tar.gz
-RUN cd mpich-3.2 && ./configure && make all install
+tar -zxvf mpich-3.2.tar.gz && \
+cd mpich-3.2 && ./configure && make all install
 
 RUN wget http://meme-suite.org/meme-software/4.11.1/meme_4.11.1.tar.gz && \
 tar -zxvf meme_4.11.1.tar.gz
