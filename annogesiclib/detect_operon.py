@@ -19,6 +19,7 @@ def get_gene_info(cds):
 
 def get_term_feature(ta, data, term_fuzzy, features, datas,
                      ta_check_point, data_check_start, data_check_end):
+    '''verify and get proper terminator to operon'''
     jump = False
     if (ta.strand == data.strand) and (
             ta.seq_id == data.seq_id) and (
@@ -45,6 +46,7 @@ def get_term_feature(ta, data, term_fuzzy, features, datas,
 
 def get_tss_feature(ta, data, features, tss_fuzzy, datas, ta_check_point,
                     data_check_start, data_check_end):
+    '''verify and get the proper TSS for operon'''
     jump = False
     if (ta.strand == data.strand) and (
             ta.seq_id == data.seq_id) and (
@@ -63,6 +65,7 @@ def get_tss_feature(ta, data, features, tss_fuzzy, datas, ta_check_point,
 
 
 def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
+    '''Detect the feature which should group as a operon'''
     features = {"num": 0, "detect": False}
     datas = []
     for data in inputs:
@@ -111,6 +114,7 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
 
 
 def check_conflict(genes, pos, strand):
+    '''check TSS which is not primary or secondary TSS'''
     conflict = False
     for gene in genes["data_list"]:
         if (gene.strand == strand):
@@ -123,6 +127,8 @@ def check_conflict(genes, pos, strand):
 
 def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
                operons, operon_pos):
+    '''Check TSS and annotated feature. It can group the feature and TSS to 
+    be operon or sub-operon'''
     no_count_tsss = []
     for tss in tsss:
         if tss not in no_count_tsss:
@@ -165,6 +171,8 @@ def check_gene(tsss, genes, strand, ta_pos, first, min_length, end,
 
 def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
                              end, operons, operon_pos):
+    '''remove the TSS which is not primary or secondary TSS of gene
+    This TSS can not form sub-operon'''
     new_tsss = []
     for tss in tsss["data_list"]:
         conflict = check_conflict(genes, tss.start, strand)
@@ -175,6 +183,7 @@ def sub_operon_gene_conflict(tsss, strand, genes, ta_pos, first, min_length,
 
 
 def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
+    '''verify the sub-operon'''
     first = True
     operons = []
     operon_pos = ta_pos
@@ -194,6 +203,7 @@ def sub_operon(strand, tsss, ta_pos, end, genes, min_length):
 
 def compute_sub_operon(strand, point, ta_pos, first,
                        min_length, end, operons, operon_pos):
+    '''For computting and import the sub-operon'''
     if first:
         operon_pos = ta_pos
         first = False
@@ -273,6 +283,7 @@ def print_file(ta, operons, out, operon_id, whole_operon, tsss,
 
 def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
            term_fuzzy, min_length, out_file):
+    '''main part for detection of operon'''
     out = open(out_file, "w")
     out.write("Operon_ID\tstrain\tOperon_position\tstrand\t")
     out.write("Number_of_suboperon\tPosition_of_suboperon\tStart_with_TSS\t")

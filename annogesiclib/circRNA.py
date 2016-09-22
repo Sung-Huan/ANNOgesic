@@ -4,6 +4,7 @@ from annogesiclib.helper import Helper
 
 
 def get_feature(cds):
+    '''get proper feature name'''
     if "locus_tag" in cds.attributes.keys():
         feature = cds.attributes["locus_tag"]
     elif "protein_id" in cds.attributes.keys():
@@ -22,6 +23,7 @@ def get_feature(cds):
 
 
 def detect_conflict(gffs, circ, num, out, out_best, args_circ):
+    '''remove the false positive which overlap with known annotation'''
     detect = False
     gff = None
     for gff in gffs:
@@ -105,6 +107,7 @@ def read_file(input_file, gff_file, hypo):
 
 
 def get_circrna(circs, gffs, high, out, out_best, args_circ):
+    '''searching the splice data to find the potential circRNA'''
     num_circular = {}
     num_circular["all"] = 0
     num_support = {}

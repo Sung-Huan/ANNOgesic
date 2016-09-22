@@ -28,6 +28,8 @@ def print_table(srna_table, out_t, srnas):
 
 
 def compare_srna_term(srna_gff, srna_table, term_file, fuzzy_b, fuzzy_a):
+    '''Comparison of sRNA and terminator. 
+    It can search the sRNA which is associated with terminator'''
     srnas = read_gff(srna_gff)
     terms = read_gff(term_file)
     out_g = open("tmp_srna.gff", "w")

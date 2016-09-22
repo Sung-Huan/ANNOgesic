@@ -12,6 +12,8 @@ def read_file(filename):
 
 
 def del_attributes(entry):
+    '''delete the feature (besides genome annotation) 
+    which already has Parent'''
     if (entry.feature == "CDS") or (
             entry.feature == "tRNA") or (
             entry.feature == "rRNA") or (
@@ -40,6 +42,7 @@ def print_file(entry, tran, out):
 
 
 def compare_tran(datas, tran, out):
+    '''comare transcript and 5UTR, 3UTR, gene/CDS for merging'''
     for data in datas:
         del_attributes(data)
         if (data.seq_id == tran.seq_id) and (
@@ -50,12 +53,14 @@ def compare_tran(datas, tran, out):
 
 
 def print_rest(datas, out):
+    '''print the rest data which is not related to operon'''
     for data in datas:
         if "print" not in data.attributes.keys():
             out.write(data.info + "\n")
 
 
 def compare_tran_term(term, tran, out, fuzzy_term):
+    '''compare transcript and terminator for merging'''
     if (term.seq_id == tran.seq_id) and (
             term.strand == tran.strand):
         if (term.start >= tran.start) and (
@@ -80,6 +85,8 @@ def compare_tran_term(term, tran, out, fuzzy_term):
 
 def combine_gff(gff_file, ta_file, tss_file, utr5_file, utr3_file,
                 term_file, fuzzy_tss, fuzzy_term, out_file):
+    '''combine the features which related to operon to 
+    form a operon gff file'''
     gffs = read_file(gff_file)
     trans = read_file(ta_file)
     tsss = read_file(tss_file)

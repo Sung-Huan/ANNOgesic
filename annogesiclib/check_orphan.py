@@ -18,6 +18,7 @@ def read_gff(gff_file, features):
 
 
 def is_primary(cds_start, cds_end, tss_pos, strand):
+    '''check primary TSS'''
     if strand == "+":
         if is_utr(cds_start, tss_pos, 300) and (cds_start >= tss_pos):
             return True
@@ -27,6 +28,7 @@ def is_primary(cds_start, cds_end, tss_pos, strand):
 
 
 def is_internal(cds_start, cds_end, tss_pos, strand):
+    '''check internal TSS'''
     if ((cds_start < tss_pos) and (cds_end > tss_pos)) or (
             (strand == "+") and (tss_pos == cds_end)) or (
             (strand == "-") and (tss_pos == cds_start)):
@@ -34,6 +36,7 @@ def is_internal(cds_start, cds_end, tss_pos, strand):
 
 
 def is_antisense(cds_start, cds_end, tss_pos, strand):
+    '''check antisense TSS'''
     if ((is_utr(cds_start, tss_pos, 100)) and (cds_start >= tss_pos)) or (
             (is_utr(tss_pos, cds_end, 100)) and (cds_end <= tss_pos)) or (
             is_internal(cds_start, cds_end, tss_pos, strand)):
@@ -41,6 +44,7 @@ def is_antisense(cds_start, cds_end, tss_pos, strand):
 
 
 def is_utr(pos1, pos2, length):
+    '''check the utr'''
     if pos1 - pos2 <= length:
         return True
 
@@ -67,6 +71,8 @@ def get_attributes(tss, cds):
 
 
 def detect_coverage(wigs, tss, ref):
+    '''comparison of the coverage of TSS in order to get
+    proper primary TSS'''
     tss_cover = -1
     ref_cover = -1
     for strain, tracks in wigs.items():
@@ -92,6 +98,7 @@ def detect_coverage(wigs, tss, ref):
 
 
 def del_repeat(tsss):
+    '''delete redundant assigned types of TSS'''
     for tss in tsss:
         types = tss.attributes["type"].split("&")
         utrs = tss.attributes["UTR_length"].split("&")
@@ -142,6 +149,7 @@ def del_repeat(tsss):
 
 
 def fix_attributes(tss, tss_entry):
+    '''change primary TSS to secondary TSS'''
     index = 0
     genes = tss.attributes["associated_gene"].split("&")
     utrs = tss.attributes["UTR_length"].split("&")
@@ -171,6 +179,8 @@ def get_primary_locus_tag(tss):
 
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
+    '''Deal with the multiple primary TSS of one gene.
+    change the low expressed one to be secondary TSS'''
     for tss in tsss:
         if "Primary" in tss.attributes["type"]:
             tss_entrys = get_primary_locus_tag(tss)
@@ -228,6 +238,7 @@ def read_wig(filename, strand):
 
 
 def get_attributes_int_anti(tss, cds, type_):
+    '''import useful information to attributes'''
     if tss.attributes["type"] != "Orphan":
         tss.attributes["type"] = "&".join(
                 [tss.attributes["type"], type_])
@@ -241,6 +252,7 @@ def get_attributes_int_anti(tss, cds, type_):
 
 
 def compare_cds_check_orphan(tsss, cdss):
+    '''main part for checking all orphan TSS'''
     for tss in tsss:
         if tss.attributes["type"] == "Orphan":
             for cds in cdss:
@@ -292,6 +304,9 @@ def compare_cds_check_orphan(tsss, cdss):
 
 
 def check_orphan(tss_file, gff_file, wig_f_file, wig_r_file, out_gff):
+    '''If the genome annotation gff file has no locus tag, TSSpredator
+    will classify all TSS into orphan. It is for fixing this mistake.
+    It will compare the TSS and gene to classify the TSS.'''
     cdss = read_gff(gff_file, ["CDS", "tRNA", "rRNA"])
     tsss = read_gff(tss_file, ["TSS"])
     wigs_f = read_wig(wig_f_file, "+")

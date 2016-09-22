@@ -13,6 +13,7 @@ def del_attributes(entry, features):
 
 
 def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
+    '''main part for comparing terminator and transcript'''
     if (ta.seq_id == ter.seq_id) and (
             ta.strand == ter.strand):
         if ta.strand == "+":
@@ -98,6 +99,8 @@ def read_gff(filename, index):
 
 def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
                       out_folder, type_):
+    '''Comparison of terminator and transcript. It can realise the 
+    relationship of terminator and transcript'''
     stats = {}
     pre_seq = ""
     for tran in os.listdir(trans):

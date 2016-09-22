@@ -15,6 +15,7 @@ def read_gff(input_file):
 
 
 def get_coverage(tar, wigs):
+    '''get coverage'''
     coverage = 0
     for strain, conds in wigs.items():
         if tar.seq_id == strain:
@@ -26,6 +27,7 @@ def get_coverage(tar, wigs):
 
 
 def compare_wig(tars, wig_fs, wig_rs):
+    '''get the coverage of TSS for comparison'''
     for tar in tars:
         if tar.strand == "+":
             tar.attributes["coverage"] = get_coverage(tar, wig_fs)
@@ -34,6 +36,7 @@ def compare_wig(tars, wig_fs, wig_rs):
 
 
 def stat(tars, refs, cutoff, gene_length, cluster):
+    '''do statistics and print it out'''
     stats = {"tp": 0, "fp": 0, "miss": 0, "fp_rate": 0,
              "tp_rate": 0, "miss_rate": 0}
     num_ref = 0
@@ -70,6 +73,7 @@ def print_file(tars, cutoff, out_file):
 
 
 def change_best(num_ref, best, stat_value):
+    '''scoring function for evaluate the change of TSS candidates'''
     change = False
     if num_ref > 100:
         if best["tp_rate"] - stat_value["tp_rate"] >= 0.1:
@@ -110,6 +114,7 @@ def change_best(num_ref, best, stat_value):
 
 def filter_low_expression(gff_file, args_tss, wig_f_file,
                           wig_r_file, out_file):
+    '''filter the low expressed TSS'''
     tars = read_gff(gff_file)
     refs = read_gff(args_tss.manual_file)
     libs, texs = read_libs(args_tss.input_lib, args_tss.wig_folder)

@@ -17,6 +17,7 @@ class ColorPNG(object):
               os.path.join(out_path, png_file)])
 
     def generate_color_png(self, track_num, out_folder, imagemagick_path):
+        '''generation of color png based on tracks'''
         out_folder = os.path.join(out_folder, "screenshots")
         for strain in os.listdir(out_folder):
             if os.path.isdir(os.path.join(out_folder, strain)):

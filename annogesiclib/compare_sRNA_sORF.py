@@ -15,6 +15,7 @@ def print_file(datas, out, feature):
 
 
 def del_attributes(feature, entry):
+    '''Remove to the useless attributes'''
     attributes = {}
     for key, value in entry.attributes.items():
         if feature not in key:
@@ -23,6 +24,7 @@ def del_attributes(feature, entry):
 
 
 def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
+    '''Comparison of sRNA and sORF. It can be a filter of sRNA detection'''
     sorfs = []
     srnas = []
     out_r = open(sRNA_out, "w")

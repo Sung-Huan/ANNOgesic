@@ -6,6 +6,7 @@ def line_to_dict(hit, strain, e_value):
 
 
 def get_proteins(datas, checks, blast_f):
+    '''filter and import the protein hit of blast'''
     proteins = []
     nums = {"index": 0, "hypo": 0}
     for data in datas:
@@ -46,6 +47,7 @@ def get_proteins(datas, checks, blast_f):
 
 
 def detect_hypo(proteins, blasts, type_):
+    '''remove the hit which is hypothetical protein or unknown'''
     protein_names = {}
     for protein in proteins:
         name = protein["name"].replace("\n", "")
@@ -66,6 +68,7 @@ def detect_hypo(proteins, blasts, type_):
 
 
 def detect_nr(line, blast_f, out_t, blasts, prefix):
+    '''detect the hit in nr database'''
     checks = {"print": False, "detect": False}
     if line.startswith(">"):
         info = line.replace(">", "")
@@ -88,6 +91,7 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
 
 
 def detect_srna(line, blast_f, out_t, blasts, prefix):
+    '''detect hit in sRNA database'''
     print_ = False
     blasts["name"] = ""
     if line[0] == ">":
@@ -146,6 +150,7 @@ def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
 
 def extract_blast(blast_result, srna_file, output_file,
                   output_table, database):
+    '''extract the result of blast'''
     out_f = open(output_file, "w")
     out_t = open(output_table, "w")
     out_f.write("##gff-version 3\n")
@@ -197,6 +202,7 @@ def extract_blast(blast_result, srna_file, output_file,
 
 
 def extract_energy(srna_file, sec_file, out_file):
+    '''extract the folding energy of sRNA'''
     s_f = open(srna_file, "r")
     check = False
     get_length = False

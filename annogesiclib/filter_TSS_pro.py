@@ -15,6 +15,7 @@ def read_gff(input_file):
 
 
 def compare_tss_pro(tars, refs, out, cluster):
+    '''compare with TSS and processing site'''
     for tar in tars:
         for ref in refs:
             if (tar.seq_id == ref.seq_id) and (
@@ -27,6 +28,7 @@ def compare_tss_pro(tars, refs, out, cluster):
 
 
 def filter_tss_pro(tss_file, pro_file, feature, cluster):
+    '''deal with the overlap of TSS and processing site'''
     tsss = read_gff(tss_file)
     pros = read_gff(pro_file)
     out = open("tmp_filter", "w")

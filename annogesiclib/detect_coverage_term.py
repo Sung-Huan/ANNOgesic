@@ -15,6 +15,8 @@ def import_data(row):
 
 
 def compare_ta(terms, tas, fuzzy):
+    '''Comparison of transcript and terminator to 
+    find the expressed terminator'''
     for term in terms:
         for ta in tas:
             start = ta.start - fuzzy
@@ -35,6 +37,7 @@ def compare_ta(terms, tas, fuzzy):
 
 
 def compare_transtermhp(hps, fr_terms):
+    '''compare two methods - gene converged and TransTermHP'''
     terms = []
     for term in fr_terms:
         detect = False
@@ -83,6 +86,7 @@ def compare_transtermhp(hps, fr_terms):
     return terms
 
 def compare_replicates(term_covers, template_texs, cond, args_term):
+    '''check the cutoff of replicate match'''
     detect_num = 0
     term_datas = []
     diff_cover = -1
@@ -111,6 +115,7 @@ def compare_replicates(term_covers, template_texs, cond, args_term):
 
 def coverage2term(covers, term, hl_covers, hl_poss, strand,
                   term_covers, track, args_term):
+    '''It is for get the highest and lowest coverage'''
     first = True
     for cover in covers:
         if (term["start"] <= cover["pos"] + args_term.fuzzy) and (
@@ -137,6 +142,7 @@ def coverage2term(covers, term, hl_covers, hl_poss, strand,
 
 
 def get_coverage(term, wigs, strand, template_texs, args_term):
+    '''get proper coverage to check the coverage decrease'''
     hl_poss = {"high": 0, "low": 0}
     hl_covers = {"high": 0, "low": 0}
     term_datas = {}
@@ -185,6 +191,8 @@ def get_coverage(term, wigs, strand, template_texs, args_term):
 
 
 def compare_term(term, terms):
+    '''For the terminators which are associated with the gene, it 
+    will try to find the best one based on secondary structure'''
     if len(terms) != 0:
         for tmp in terms:
             if term["miss"] < tmp["miss"]:
@@ -212,6 +220,9 @@ def compare_term(term, terms):
 
 
 def first_term(strand, term, detect_terms, detect):
+    '''for the first and latest terminators, 
+    we only need to check parent gene for one side of terminator
+    and also need to take care of the terminal end'''
     if (strand == "+"):
         if (term["detect_p"]):
             detect_terms["detect"].append(term)
@@ -239,6 +250,7 @@ def get_attribute_string(num, name, parent, diff, term, coverage, method):
 
 
 def print_table(term, out_t, args_term):
+    '''Print to table'''
     first = True
     if (term["express"] == "True") and \
        (term["diff_cover"] != -1):
@@ -275,6 +287,7 @@ def print_table(term, out_t, args_term):
 
 
 def print2file(num, term, coverage, parent, out, out_t, method, args_term):
+    '''Print to gff file and table'''
     name = 'terminator_%0*d' % (5, num)
     if ("detect_num" in term.keys()) and \
        (term["diff_cover"] != -1):
@@ -311,6 +324,7 @@ def print2file(num, term, coverage, parent, out, out_t, method, args_term):
 
 
 def print_detect_undetect(terms, num, out, out_t, detect, args_term):
+    '''For controlling the output of different strand of terminator'''
     for term in terms:
         if term["strand"] == "+":
             print2file(num, term, detect, term["parent_p"], out,
@@ -325,6 +339,7 @@ def print_detect_undetect(terms, num, out, out_t, detect, args_term):
 
 def term_validation(pre_term, term, detect, detect_terms, out,
                     out_t, num, args_term):
+    '''Classification of terminators'''
     if (pre_term["name"] != term["name"]) or (args_term.keep_multi):
         if detect:
             num = print_detect_undetect(detect_terms["detect"], num, out,
@@ -381,6 +396,7 @@ def print_term(terms, out, out_t, args_term):
 
 
 def del_repeat_term(terms):
+    '''delete the repeat terminators'''
     first = True
     new_terms = []
     for term in terms:
@@ -457,6 +473,7 @@ def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
 
 
 def compute_wig(wig_file, libs, terms, strand, texs, args_term):
+    '''Get the coverage information to specific terminator'''
     wigs = {}
     wigs = read_wig(wig_file, strand, libs)
     for term in terms:
@@ -472,6 +489,7 @@ def compute_wig(wig_file, libs, terms, strand, texs, args_term):
 def detect_coverage(term_table, gff_file, tran_file, seq_file,
                     wig_f_file, wig_r_file, tranterm_file, wig_folder,
                     output_file, output_table, args_term):
+    '''For detecting the coverage of terminator'''
     gffs, tas, hps, fr_terms, seq = read_data(gff_file, tran_file,
                                               tranterm_file, seq_file,
                                               term_table)

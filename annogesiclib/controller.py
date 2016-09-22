@@ -47,6 +47,7 @@ class Controller(object):
         self.helper = Helper()
 
     def check_folder(self, folders):
+        '''Check the emtpy or wrong assigned folder'''
         for folder in folders:
             if folder is None:
                 print("Error: There is wrong path of folder assigned, "
@@ -63,6 +64,7 @@ class Controller(object):
                     sys.exit()
 
     def check_parameter(self, paras, names):
+        '''Check the parameter is assigned correct or not'''
         for i in range(len(paras)):
             if paras[i] is None:
                 print("Error: {0} is wrong, "
@@ -70,6 +72,8 @@ class Controller(object):
                 sys.exit()
 
     def check_no_require_folder(self, folders):
+        '''Check the folders which are not necessary.
+        It should not be assigned a empty or wrong folder'''
         for folder in folders:
             if folder is not None:
                 if os.path.exists(folder):
@@ -83,6 +87,7 @@ class Controller(object):
                     sys.exit()
 
     def check_file(self, files, names, require):
+        '''Check the path of file'''
         for i in range(len(files)):
             if require:
                 if files[i] is None:

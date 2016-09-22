@@ -35,6 +35,8 @@ def print_table(srna_table, out_t, srnas):
 
 
 def compare_srna_promoter(srna_gff, srna_table, args_srna):
+    '''comparing sRNA and promoter to find the associated promoter.
+    it is for the ranking of sRNA'''
     srnas, pros = read_file(srna_gff, args_srna)
     out_g = open("tmp_srna.gff", "w")
     out_t = open("tmp_srna.csv", "w")

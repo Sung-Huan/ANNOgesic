@@ -10,6 +10,7 @@ from annogesiclib.circRNA import detect_circrna
 
 
 class CircRNADetection(object):
+    '''Detection of circRNA'''
 
     def __init__(self, args_circ):
         self.multiparser = Multiparser()

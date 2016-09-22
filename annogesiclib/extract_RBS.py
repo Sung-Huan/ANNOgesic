@@ -19,6 +19,7 @@ def import_data(seq, cds, start, end):
 
 
 def detect_site(inters, args_ribo):
+    '''Detection of ribosome binding site'''
     rbss = []
     for inter in inters:
         for nts in range(0, len(inter["seq"]) - 6):
@@ -88,6 +89,7 @@ def read_file(seq_file, gff_file, tss_file, tran_file):
 
 
 def extract_inter_seq(inter, cds, seq, fuzzy, inters):
+    '''extract the sequence of pre-CDS region'''
     helper = Helper()
     start = inter["start"] - fuzzy
     end = inter["end"] + fuzzy
@@ -105,6 +107,7 @@ def extract_inter_seq(inter, cds, seq, fuzzy, inters):
 
 
 def compare_tss(tsss, cds, inters, fuzzy, seq, utr):
+    '''Compare with TSS to get the pre-CDS region'''
     for tss in tsss:
         if (cds.seq_id == tss.seq_id) and (
                 cds.strand == tss.strand):
@@ -123,6 +126,8 @@ def compare_tss(tsss, cds, inters, fuzzy, seq, utr):
 
 
 def compare_pre_cds(first, cdss, cds, seq):
+    '''Search the front position CDS of the query one 
+    to get the pre-CDS region'''
     detect_cds = False
     for pre_cds in cdss:
         if (pre_cds.seq_id == cds.seq_id) and (
@@ -153,6 +158,7 @@ def compare_pre_cds(first, cdss, cds, seq):
 
 
 def compare_tran(cds, trans, seq, inters, fuzzy, start, end):
+    '''For detect the expressed region of candidates'''
     detect = False
     for tran in trans:
         if (tran.seq_id == cds.seq_id) and (
@@ -198,6 +204,8 @@ def compare_tran(cds, trans, seq, inters, fuzzy, start, end):
 
 
 def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
+    '''extract the sequence for searching the riboswitch or RNA thermometer
+    by comparing with TSS, transcript and CDS'''
     first = True
     inters = []
     for cds in cdss:
@@ -209,6 +217,7 @@ def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
 
 def extract_potential_rbs(seq_file, gff_file, tss_file, tran_file,
                           out_file, args_ribo, feature):
+    '''Get the potential riboswitch or RNA-thermometer'''
     out = open(out_file, "w")
     cdss, seq, tsss, trans = read_file(seq_file, gff_file, tss_file, tran_file)
     inters = extract_seq(cdss, seq, tsss, trans,

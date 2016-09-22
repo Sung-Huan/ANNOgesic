@@ -2,6 +2,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 def uni(tas, genes, out):
+    '''This is for the transcript which is not overlap with annotation'''
     start_tmp = 0
     stop_tmp = 0
     detect = False
@@ -26,6 +27,7 @@ def uni(tas, genes, out):
 
 
 def overlap(tas, genes, print_list, out):
+    '''Check the overlap of annotation and transcript'''
     start_tmp = 0
     stop_tmp = 0
     printed = False
@@ -79,6 +81,7 @@ def overlap(tas, genes, print_list, out):
 
 
 def fill_gap(gff_file, ta_file, type_, output):
+    '''compare with genome annotation to modify the transcript'''
     tas = []
     genes = []
     print_list = []
@@ -116,6 +119,7 @@ def print_file(ta, num, out):
 
 
 def longer_ta(ta_file, length, out_file):
+    '''merge overlaped transcript to for a complete transcript'''
     tas = []
     for entry in Gff3Parser().entries(open(ta_file)):
         tas.append(entry)

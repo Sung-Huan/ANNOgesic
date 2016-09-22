@@ -2,6 +2,7 @@ import copy
 
 
 def coverage_comparison(cover, cover_sets, poss, first, strand):
+    '''Seaching the lowest and highest coverage'''
     if first:
         first = False
         cover_sets["high"] = cover["coverage"]
@@ -27,6 +28,7 @@ def coverage_comparison(cover, cover_sets, poss, first, strand):
 
 
 def get_repmatch(replicates, cond):
+    '''deal with the replicate match'''
     if "all" in replicates:
         rep = int(replicates.split("_")[-1])
     else:
@@ -37,6 +39,7 @@ def get_repmatch(replicates, cond):
 
 
 def define_cutoff(coverages, median, utr_type):
+    '''get the cutoff'''
     cutoffs = {}
     if coverages[utr_type] == "mean":
         for track, values in median.items():
@@ -48,6 +51,7 @@ def define_cutoff(coverages, median, utr_type):
 
 
 def check_notex(cover, texs, cutoff, notex):
+    '''Check the cutoff of average coverage for TEX+ and TEX- libs'''
     if notex is not None:
         for keys in texs.keys():
             tracks = keys.split("@AND@")
@@ -64,6 +68,7 @@ def check_notex(cover, texs, cutoff, notex):
 
 def run_tex(cover, texs, check_texs, tex_notex, type_,
             detect_num, poss, target_datas):
+    '''Check the position of different libs'''
     if (cover["type"] == "tex") or (cover["type"] == "notex"):
         for key in texs.keys():
             if cover["track"] in key:
@@ -98,6 +103,8 @@ def run_tex(cover, texs, check_texs, tex_notex, type_,
 
 def check_tex(template_texs, covers, target_datas, notex, type_, poss, median,
               coverages, utr_type, cutoff_coverage, tex_notex):
+    '''Check the candidates for TEX+/- libs 
+    (should be detected in one or both of libs)'''
     detect_num = 0
     check_texs = {}
     texs = copy.deepcopy(template_texs)
@@ -130,6 +137,7 @@ def check_tex(template_texs, covers, target_datas, notex, type_, poss, median,
 
 
 def exchange_start_end(poss, cover):
+    '''modify the start and end point. get the long one'''
     if poss["start"] > cover["final_start"]:
         poss["start"] = cover["final_start"]
     if poss["end"] < cover["final_end"]:
@@ -138,6 +146,8 @@ def exchange_start_end(poss, cover):
 
 def replicate_comparison(args_srna, srna_covers, strand, type_, median,
                          coverages, utr_type, notex, cutoff_coverage, texs):
+    '''Check the number of replicates which fit the cutoff in order to remove 
+    the candidates which only can be detected in few replicates.'''
     srna_datas = {"best": 0, "high": 0, "low": 0, "start": -1,
                   "end": -1, "track": "", "detail": [], "conds": {}}
     tmp_poss = {"start": -1, "end": -1, "pos": -1,

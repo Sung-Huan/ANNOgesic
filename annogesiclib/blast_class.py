@@ -19,6 +19,7 @@ def read_file(srna_file, nums):
 
 
 def blast_class(srna_file, out_file):
+    '''statistics of the results of blast sRNA database'''
     nums = {}
     nums["total"] = {}
     read_file(srna_file, nums)

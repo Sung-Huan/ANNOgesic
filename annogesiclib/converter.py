@@ -8,12 +8,14 @@ from annogesiclib.helper import Helper
 
 
 class Converter(object):
+    '''Converting from one format to another format'''
 
     def __init__(self):
         self.gff3parser = Gff3Parser()
         self.tssparser = TSSPredatorReader()
 
     def _print_rntptt_file(self, out, entrys, genes):
+        '''output to rnt and ptt file'''
         for entry in entrys:
             gene_tag = "-"
             locus_tag = "-"
@@ -54,6 +56,7 @@ class Converter(object):
                                  product]) + "\n")
 
     def _print_rntptt_title(self, out, num, seq_id, length):
+        '''print the title of rnt and ptt file'''
         out.write(seq_id + " - 1.." + length + "\n")
         out.write(num + " proteins\n")
         out.write("\t".join(["Location", "Strand", "Length", "PID",
@@ -85,6 +88,7 @@ class Converter(object):
         return (num_cds, num_rna, seq)
 
     def _srna2rntptt(self, srna_input_file, srna_output_file, srnas, length):
+        '''convert the sRNA gff file to rnt file'''
         num_srna = 0
         r_s = open(srna_input_file, "r")
         for entry in Gff3Parser().entries(r_s):
@@ -112,6 +116,7 @@ class Converter(object):
         out_s.close()
 
     def _deal_embl_join(self, info):
+        '''deal with the embl file which contain join'''
         info = info.replace("(", "")
         info = info.replace(")", "")
         info = info.replace("join", "")
@@ -119,6 +124,7 @@ class Converter(object):
         return joins
 
     def _multi_embl_pos(self, row):
+        '''deal with the feature which has multiple positions'''
         poss = []
         if row[21:31] == "complement":
             comple = row[32:-1]
@@ -153,6 +159,7 @@ class Converter(object):
         return {"pos": poss, "strand": strand, "source": source}
 
     def _parser_embl_data(self, embl_file, out):
+        '''Parser of embl file for converting to other format'''
         first = True
         line = ""
         note_name = ""
@@ -211,6 +218,7 @@ class Converter(object):
         return (id_name, info, line)
 
     def _assign_tss_type(self, tss, utr_pri, utr_sec):
+        '''Assigning the TSS types'''
         if tss.is_primary:
             tss_type = "Primary"
             utr_pri.append(int(tss.utr_length))
@@ -226,6 +234,7 @@ class Converter(object):
         return tss_type
 
     def _multi_tss_class(self, tss, tss_index, tss_features, nums, utrs):
+        '''deal with the TSS which has multiple TSS types'''
         tss_type = self._assign_tss_type(tss, utrs["pri"], utrs["sec"])
         if (tss_type not in tss_features["tss_types"]) or (
                 tss.locus_tag not in tss_features["locus_tags"]):
@@ -246,6 +255,7 @@ class Converter(object):
             nums["class"] += 1
 
     def _uni_tss_class(self, tss, utrs, tss_index, tss_features, nums):
+        '''It is for TSS which has only one type'''
         tss_type = self._assign_tss_type(tss, utrs["pri"], utrs["sec"])
         tss_index[tss_type] += 1
         tss_features["tss_types"].append(tss_type)
@@ -255,7 +265,7 @@ class Converter(object):
 
     def _print_tssfile(self, nums, tss_features, tss, tss_pro,
                        strain, method, out, tss_libs):
-#        tss_pro = tss_pro[0].upper() + tss_pro[1:]
+        '''print gff file of TSS'''
         tss_merge_type = ",".join(tss_features["tss_types"])
         utr_length = ",".join(tss_features["utr_lengths"])
         merge_locus_tag = ",".join(tss_features["locus_tags"])
@@ -276,6 +286,7 @@ class Converter(object):
 
     def convert_gff2rntptt(self, gff_file, fasta_file, ptt_file, rnt_file,
                            srna_input_file, srna_output_file):
+        '''Convert gff format to rnt and ptt format'''
         genes = []
         rnas = []
         cdss = []
@@ -311,6 +322,7 @@ class Converter(object):
                   "the name sRNA output rnt file\n")
 
     def convert_embl2gff(self, embl_file, gff_file):
+        '''Convert embl format to gff format'''
         info = "Wrong"
         out = open(gff_file, "w")
         out.write("##gff-version 3\n")
@@ -327,6 +339,7 @@ class Converter(object):
         out.close()
 
     def _get_libs(self, tss_file):
+        '''Get the library which can detect this specific TSS'''
         tss_libs = {}
         tss_fh = open(tss_file, "r")
         for tss in self.tssparser.entries(tss_fh):
@@ -340,6 +353,7 @@ class Converter(object):
 
     def convert_mastertable2gff(self, tss_file, method, tss_pro,
                                 strain, out_gff):
+        '''Convert MasterTable to gff format'''
         temps = {"tss": 0, "strand": "#"}
         nums = {"tss": 0, "tss_uni": 0, "class": 1}
         check_print = False
@@ -388,6 +402,7 @@ class Converter(object):
         out.close()
 
     def convert_transtermhp2gff(self, transterm_file, gff_file):
+        '''Convert the output of TransTermHP to gff format'''
         out = open(gff_file, "w")
         out.write("##gff-version 3\n")
         terms = []
@@ -434,6 +449,7 @@ class Converter(object):
         out.close()
 
     def convert_circ2gff(self, circ_file, args_circ, out_all, out_filter):
+        '''Convert the circRNA output of segemehl to gff format'''
         circs = []
         out_a = open(out_all, "w")
         out_f = open(out_filter, "w")

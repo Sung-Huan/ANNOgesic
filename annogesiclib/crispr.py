@@ -9,6 +9,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 class Crispr(object):
+    '''Detection of CRISPR'''
 
     def __init__(self, args_cris):
         self.multiparser = Multiparser()
@@ -29,6 +30,7 @@ class Crispr(object):
         self.helper.check_make_folder(self.stat_folder)
 
     def _run_crt(self, args_cris):
+        '''Running CRT'''
         for seq in os.listdir(self.fasta_path):
             prefix = ".".join(seq.split(".")[:-1])
             call(["java", "-cp", args_cris.crt_path, "crt", "-minNR",
@@ -54,6 +56,8 @@ class Crispr(object):
         return gffs
 
     def _compare_gff(self, strain, start, end, gffs, bh, indexs, ignore_hypo):
+        '''Comarison of CRISPR and genome annotation to 
+        remove the false positives'''
         overlap = False
         id_ = None
         for gff in gffs:
@@ -80,6 +84,7 @@ class Crispr(object):
         return overlap, id_
 
     def _print_repeat(self, row, strain, file_h, indexs, id_, best):
+        '''Print the repeat units'''
         if best:
             num = indexs["re_best"]
         else:
@@ -101,6 +106,7 @@ class Crispr(object):
         return num
 
     def _convert_gff(self, ignore_hypo):
+        '''Convert the final CRT output to gff format'''
         for txt in os.listdir(self.data_folder):
             gffs = self._read_gff(txt)
             fh = open(os.path.join(self.data_folder, txt), "r")
@@ -139,6 +145,7 @@ class Crispr(object):
             bh.close()
 
     def _stat_and_correct(self, stats, folder):
+        '''do statistics and print the final gff file'''
         for gff in os.listdir(folder):
             prefix = gff.replace("_CRISPR.gff", "")
             stats[prefix] = {"all": {"cri": 0, "re": {}}}
@@ -205,6 +212,7 @@ class Crispr(object):
                         index, num))
 
     def _print_stat(self, stats):
+        '''print the statistics file'''
         for prefix, strains in stats["all"].items():
             sh = open(os.path.join(self.stat_folder, prefix + ".csv"), "w")
             if len(strains) == 1:
@@ -230,6 +238,7 @@ class Crispr(object):
             sh.close()
 
     def run_crispr(self, args_cris):
+        '''detection of CRISPR'''
         self.multiparser.parser_fasta(args_cris.fastas)
         self.multiparser.parser_gff(args_cris.gffs, None)
         self._run_crt(args_cris)

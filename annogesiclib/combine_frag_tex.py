@@ -2,6 +2,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 def modify_position(frag, norm):
+    '''get proper position, we choose the long one'''
     if frag.end < norm.end:
         frag.end = norm.end
     if frag.start > norm.start:
@@ -30,6 +31,8 @@ def store(data, source, finals):
 
 
 def compare(data1, data2, overlap, tolerance):
+    '''comparison of frag and tex treated libs to find the overlap one.
+    Then, try to merge them to be a longer one'''
     if (data1.seq_id == data2.seq_id) and (data1.strand == data2.strand):
         if (data1.start <= (data2.end + tolerance)) and (
                 data1.start >= data2.start):
@@ -47,6 +50,7 @@ def compare(data1, data2, overlap, tolerance):
 
 
 def combine(frag_file, tex_file, tolerance, output_file):
+    '''merge the results of sRNA which detected by fragmented and dRNA'''
     frags = []
     norms = []
     finals = []

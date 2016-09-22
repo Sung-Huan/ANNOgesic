@@ -1,4 +1,5 @@
 def change_format(input_file, output_file):
+    '''change the format of sRNA database'''
     num = 1
     out = open(output_file, "w")
     with open(input_file) as f_h:

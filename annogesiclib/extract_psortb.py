@@ -27,6 +27,7 @@ def import_psortb(seq_name, psortbs, local_name, local_score, type_, results):
 
 
 def get_results(line, scores, psortbs, out_p, seq_name, fuzzy):
+    '''print the results of psorb'''
     local_name = []
     local_score = []
     if len(line) == 0:
@@ -67,6 +68,7 @@ def get_results(line, scores, psortbs, out_p, seq_name, fuzzy):
 
 
 def get_information(psortb_table, out_p, fuzzy):
+    '''get the information of psorb'''
     scores = []
     psortbs = []
     seq_name = None
@@ -127,6 +129,7 @@ def print_gff(gffs, psortbs, out_m):
 
 
 def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge, fuzzy):
+    '''extract and re-generate the output information of psorb'''
     gffs = []
     if merge_gff:
         if out_merge is None:

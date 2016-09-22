@@ -9,6 +9,7 @@ plt.style.use('ggplot')
 
 
 def plot(utr, utr_pri, utr_sec, filename, source, utr_type, base_5utr):
+    '''plot the distribution of length of UTRs'''
     bin_num = np.arange(0, 300, 5)
     if utr_type == "5utr":
         if source and (base_5utr != "transcript"):
@@ -43,6 +44,7 @@ def get_feature(cds):
 
 
 def check_ta(tas, utr_start, utr_end, seq_id, strand):
+    '''chekc transcript to verify the UTR'''
     detect = False
     for ta in tas:
         if (ta.seq_id == seq_id) and \
@@ -110,6 +112,7 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
 
 def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
              cds_name, locus_tag, out, args_utr):
+    '''print and import the 5UTR information'''
     if tss.strand == "+":
         start = tss.start
         end = near_cds.start
@@ -131,6 +134,7 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
 
 
 def detect_cds(cdss, gene):
+    '''get the information of CDS'''
     detect = False
     for cds in cdss:
         if "Parent" in cds.attributes.keys():
@@ -191,6 +195,7 @@ def read_file(tss_file, gff_file, ta_file, term_file):
 
 
 def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
+    '''get the associated TSS which is generated from TSSpredator'''
     near_cds = None
     for gene in genes:
         if (tss.seq_id == gene.seq_id) and (
@@ -222,6 +227,7 @@ def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
 
 
 def get_5utr_from_TSSpredator(tss, genes, cdss):
+    '''It is for TSS file which is generated from ANNOgesic'''
     check_utr = False
     cds_name = "NA"
     if ("Primary" in tss.attributes["type"]) or \
@@ -260,6 +266,7 @@ def get_5utr_from_TSSpredator(tss, genes, cdss):
 
 
 def get_5utr_from_other(tss, genes, cdss, length):
+    '''It is for TSS file which is not generated from ANNOgesic'''
     check_utr = False
     cds_name = "NA"
     for gene in genes:
@@ -338,6 +345,7 @@ def set_utr_strain(ta, type_, utr_strain):
 
 
 def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
+    '''Comparing CDS and trancript to find the 5UTR'''
     num_utr = 0
     for ta in tas:
         detect = False
@@ -395,6 +403,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
 
 
 def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
+    '''detection of 5UTR'''
     num_utr = 0
     utr_all = {"all": [], "pri": [], "sec": []}
     utr_strain = {"all": {}, "pri": {}, "sec": {}}
@@ -437,6 +446,8 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
 
 
 def compare_term(ta, terms, fuzzy):
+    '''Comparing of transcript and terminator to get the 
+    terminator which is associated with transcript'''
     for term in terms:
         if ta.strand == term.strand:
             if term.strand == "+":
@@ -451,6 +462,7 @@ def compare_term(ta, terms, fuzzy):
 
 def get_3utr(ta, near_cds, utr_all, utr_strain,
              attributes, num_utr, out, args_utr):
+    '''print the 3UTR'''
     if ta.strand == "+":
         start = near_cds.end
         end = ta.end
@@ -489,6 +501,7 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
 
 
 def get_near_cds(cdss, genes, ta, attributes):
+    '''Get the associated CDS of terminator'''
     first = True
     detect = False
     for cds in cdss:
@@ -530,6 +543,7 @@ def get_near_cds(cdss, genes, ta, attributes):
 
 
 def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
+    '''Comparing of terminator and 3UTR to get the relationship'''
     num_utr = 0
     for term in terms:
         detect = False
@@ -581,6 +595,7 @@ def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
 
 
 def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
+    '''For detection of 3UTR'''
     num_utr = 0
     utr_all = []
     utr_strain = {}
