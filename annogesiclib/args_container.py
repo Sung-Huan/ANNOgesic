@@ -13,12 +13,12 @@ class ArgsContainer(object):
 
     def _check_replicates(self, replicates_tex, replicates_frag):
         if (replicates_tex is not None) and (replicates_frag is not None):
-            replicates = {"tex": int(replicates_tex),
-                          "frag": int(replicates_frag)}
+            replicates = {"tex": replicates_tex,
+                          "frag": replicates_frag}
         elif replicates_tex is not None:
-            replicates = {"tex": int(replicates_tex), "frag": -1}
+            replicates = {"tex": replicates_tex, "frag": -1}
         elif replicates_frag is not None:
-            replicates = {"tex": -1, "frag": int(replicates_frag)}
+            replicates = {"tex": -1, "frag": replicates_frag}
         else:
             print("Error:No replicates number assign!!!")
             sys.exit()
@@ -671,7 +671,7 @@ class ArgsContainer(object):
     def container_promoter(self, MEME_path, promoter_output_folder, tex_libs,
                            TSS_folder, fasta_folder, num_motif, nt_before_TSS,
                            motif_width, TSS_source, tex_wig_path,
-                           annotation_folder, combine_all, e_value):
+                           annotation_folder, combine_all, e_value, para):
         self.meme_path = MEME_path
         self.output_folder = promoter_output_folder
         self.input_libs = self._deal_multi_inputs(tex_libs, "str", None, None)
@@ -685,6 +685,7 @@ class ArgsContainer(object):
         self.gffs = annotation_folder
         self.combine = combine_all
         self.e_value = e_value
+        self.para = para
         return self
 
     def container_operon(self, TSS_folder, annotation_folder,

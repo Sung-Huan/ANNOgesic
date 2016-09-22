@@ -1,6 +1,6 @@
 import csv
 from annogesiclib.gff3 import Gff3Parser
-from annogesiclib.coverage_detection import coverage_comparison, check_tex
+from annogesiclib.coverage_detection import coverage_comparison, check_tex, get_repmatch
 from annogesiclib.lib_reader import read_libs, read_wig
 
 
@@ -82,19 +82,26 @@ def compare_transtermhp(hps, fr_terms):
                                          x["end"], x["strand"]))
     return terms
 
-
 def compare_replicates(term_covers, template_texs, cond, args_term):
     detect_num = 0
     term_datas = []
     diff_cover = -1
     diff = []
+    detect = False
     detect_num = check_tex(template_texs, term_covers, term_datas, None,
                            "terminator", None, None, None, None, 0,
                            args_term.tex_notex)
-    if ((detect_num >= args_term.replicates["tex"]) and (
-            "texnotex" in cond)) or (
-            (detect_num >= args_term.replicates["frag"]) and (
-            "frag" in cond)):
+
+    if ("texnotex" in cond):
+        tex_rep = get_repmatch(args_term.replicates["tex"], cond)
+        if detect_num >= tex_rep:
+            detect = True
+    elif ("frag" in cond):
+        frag_rep = get_repmatch(args_term.replicates["frag"], cond)
+        if detect_num >= frag_rep:
+            detect = True
+    if detect:
+        detect = False
         for term in term_datas:
             if (len(diff) == 0) or (diff_cover < term["diff"]):
                 diff_cover = term["diff"]
@@ -158,11 +165,18 @@ def get_coverage(term, wigs, strand, template_texs, args_term):
                     if (diff_cover == -1) or (diff_cover < tmp_cov):
                         diff_cover = tmp_cov
                         diff = tmp_diff
+    detect = False
     for cond, num in detect_nums.items():
-        if (("texnotex" in cond) and (
-             num >= args_term.replicates["tex"])) or (
-            ("frag" in cond) and (
-             num >= args_term.replicates["frag"])):
+        if ("texnotex" in cond):
+            tex_rep = get_repmatch(args_term.replicates["tex"], cond)
+            if num >= tex_rep:
+                detect = True
+        elif ("frag" in cond):
+            frag_rep = get_repmatch(args_term.replicates["frag"], cond)
+            if num >= frag_rep:
+                detect = True
+        if detect:
+            detect = False
             if strand == "+":
                 term["detect_p"] = True
             else:

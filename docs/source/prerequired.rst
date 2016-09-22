@@ -14,7 +14,7 @@ Tools
 
 `ImageMagick <http://www.imagemagick.org/script/index.php>`_ : version higher or equal than 6.9.0-0 (for generate screenshot)
 
-`Infernal <http://infernal.janelia.org/>`_ : version higher or equal than 1.1.1 (for riboswitch detection)
+`Infernal <http://infernal.janelia.org/>`_ : version higher or equal than 1.1.1 (for riboswitch and RNA thermometer detection)
 
 `Matplotlib <http://matplotlib.org/>`_ : version higher or equal than 1.5.0 (for generate all statistics figure)
 
@@ -22,7 +22,9 @@ Tools
 
 `MEME <http://meme-suite.org/tools/meme>`_ : version higher or equal than 4.11.1 (for promoter detection)
 
-`PAGIT and RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal than 1.64 (for annotation transfer)
+`MPICH <http://www.mpich.org/>`_ : version higher or equal than 3.2 (for parallel version of promoter detection)
+
+`RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal than 1.64 (for annotation transfer)
 Please be attation, before you start to run RATT(annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. it will
 modify the path for execute RATT.
 
@@ -53,7 +55,7 @@ Databases
 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (for sRNA detection)
 
-`Rfam <http://rfam.xfam.org/>`_ (for riboswitch)
+`Rfam <http://rfam.xfam.org/>`_ (for riboswitch and RNA thermometer detection)
 
 `idmapping_selected.tab from Uniprot <http://www.uniprot.org/downloads>`_ (for Go term detection)
 

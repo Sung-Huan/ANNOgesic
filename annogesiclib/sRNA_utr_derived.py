@@ -2,7 +2,7 @@ import os
 import math
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.lib_reader import read_wig, read_libs
-from annogesiclib.coverage_detection import coverage_comparison
+from annogesiclib.coverage_detection import coverage_comparison, get_repmatch
 from annogesiclib.coverage_detection import replicate_comparison
 from annogesiclib.args_container import ArgsContainer
 

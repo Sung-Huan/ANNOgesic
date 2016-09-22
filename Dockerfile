@@ -18,7 +18,7 @@ netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
 libbio-perl-perl libsqlite3-dev --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
-RUN apt-get update --yes
+RUN apt-get upgrade --yes && apt-get update --yes
 
 RUN pip3 install \
 matplotlib \
@@ -39,9 +39,9 @@ RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/r
 cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
 
 # MEME
-RUN wget https://www.open-mpi.org/software/ompi/v2.0/downloads/openmpi-2.0.1.tar.gz && \
-tar -zxvf openmpi-2.0.1.tar.gz
-RUN cd openmpi-2.0.1 && ./configure && make && make install
+RUN wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz && \
+tar -zxvf mpich-3.2.tar.gz
+RUN cd mpich-3.2 && ./configure && make all install
 
 RUN wget http://meme-suite.org/meme-software/4.11.1/meme_4.11.1.tar.gz && \
 tar -zxvf meme_4.11.1.tar.gz

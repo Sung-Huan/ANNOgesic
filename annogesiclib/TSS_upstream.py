@@ -7,11 +7,19 @@ from annogesiclib.gen_TSS_type import compare_tss_cds, fix_primary_type
 
 def get_upstream(seq, tss, out, name, nt_before):
     if tss.strand == "+":
-        fasta = Helper().extract_gene(seq, tss.start - nt_before + 1,
+        if (tss.start - nt_before + 1) <= 0:
+            start = 1
+        else:
+            start = tss.start - nt_before + 1
+        fasta = Helper().extract_gene(seq, start,
                                       tss.start, tss.strand)
     else:
+        if (tss.start + nt_before - 1) > len(seq):
+            end = len(seq)
+        else:
+            end = tss.start + nt_before - 1
         fasta = Helper().extract_gene(seq, tss.start,
-                                      tss.start + nt_before - 1, tss.strand)
+                                      end, tss.strand)
     out.write("{0}\n{1}\n".format(name, fasta))
 
 

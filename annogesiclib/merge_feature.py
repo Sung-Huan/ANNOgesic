@@ -74,7 +74,7 @@ def compare_tran(tran_gffs, other_gffs, fuzzy_tss, fuzzy_term):
                         if (other.start >= tran.start - fuzzy_tss) and (
                                 other.end <= tran.end + fuzzy_tss):
                             assign_parent(other, tran)
-                    elif other.feature == "Terminator":
+                    elif other.feature.lower() == "terminator":
                         start = tran.start - fuzzy_term
                         end = tran.end + fuzzy_term
                         if ((start <= other.start) and (

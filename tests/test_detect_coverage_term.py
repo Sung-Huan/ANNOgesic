@@ -94,7 +94,7 @@ class TestCoverageTerminator(unittest.TestCase):
     def test_compare_replicates(self):
         texs = {"track_tex_track_notex": 0}
         args = self.mock_args.mock()
-        args.replicates = {"tex": 1, "frag": 1}
+        args.replicates = {"tex": "all_1", "frag": "all_1"}
         args.tex_notex = 2
         cond = "texnotex"
         term_covers = [{"track": "track_tex", "high": 300,
@@ -113,7 +113,7 @@ class TestCoverageTerminator(unittest.TestCase):
         for index in range(0, 2):
             self.assertDictEqual(ref_datas[index], term_datas[index])
         self.assertEqual(detect_num, 1)
-        args.replicates = {"tex": 1, "frag": 1}
+        args.replicates = {"tex": "all_1", "frag": "all_1"}
         cond = "frag"
         term_covers = [{"track": "frag", "high": 10,
                         "low": 0, "detect": "False",
@@ -154,7 +154,7 @@ class TestCoverageTerminator(unittest.TestCase):
         args = self.mock_args.mock()
         args.fuzzy = 1
         args.decrease = 0.5
-        args.replicates = {"tex": 1, "frag": 1}
+        args.replicates = {"tex": "all_1", "frag": "all_1"}
         args.tex_notex = 2
         diff_cover, diff, term_datas, detect_nums = dct.get_coverage(
                                                     term, wigs, "+", texs, args)

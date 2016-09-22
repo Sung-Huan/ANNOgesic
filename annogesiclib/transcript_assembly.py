@@ -1,6 +1,7 @@
 import os
 import sys
 from annogesiclib.parser_wig import WigParser
+from annogesiclib.coverage_detection import get_repmatch
 
 
 def check_tex_conds(tracks, libs, texs, check_tex, conds, tex_notex):
@@ -39,6 +40,15 @@ def detect_hight_toler(cover, height, tmp_covers, tracks):
             tmp_covers["toler"] = cover["coverage"]
 
 
+def get_repmatch(replicates, cond):
+    if "all" in replicates:
+        rep = int(replicates.split("_")[-1])
+    else:
+        for match in replicates.split(","):
+            if cond.split("_")[0] == match.split("_")[0]:
+                rep = int(match.split("_")[-1])
+    return rep
+
 def elongation(covers, template_texs, libs, strand, trans,
                args_tran, strain, tolers):
     first = True
@@ -47,6 +57,7 @@ def elongation(covers, template_texs, libs, strand, trans,
     tracks = []
     conds = {}
     pre_wig = None
+    detect = False
     texs = template_texs.copy()
     tmp_covers = {"best": 0, "toler": -1}
     for cover in covers:
@@ -62,10 +73,16 @@ def elongation(covers, template_texs, libs, strand, trans,
             check_tex_conds(tracks, libs, texs, check_tex,
                             conds, args_tran.tex)
             for cond, num in conds.items():
-                if ((num >= args_tran.replicates["tex"]) and (
-                     "tex" in cond)) or (
-                    (num >= args_tran.replicates["frag"]) and (
-                     "frag" in cond)):
+                if ("tex" in cond):
+                    tex_rep = get_repmatch(args_tran.replicates["tex"], cond)
+                    if num >= tex_rep:
+                        detect = True
+                elif ("frag" in cond):                                                                                
+                    frag_rep = get_repmatch(args_tran.replicates["frag"], cond)
+                    if num >= frag_rep:
+                        detect = True
+                if detect:
+                    detect = False
                     trans[strain].append({
                         "strand": strand, "pos": pre_wig["pos"],
                         "coverage": tmp_covers["best"], "cond": num})
@@ -87,6 +104,7 @@ def elongation(covers, template_texs, libs, strand, trans,
 def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
     tolers = {}
     trans = {}
+    detect = False
     for strain, covers in wigs.items():
         if strain not in trans:
             trans[strain] = []
@@ -118,8 +136,16 @@ def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
                     else:
                         conds[index] += 1
     for cond, num in conds.items():
-        if ((num >= args_tran.replicates["tex"]) and ("tex" in cond)) or (
-                (num >= args_tran.replicates["frag"]) and ("frag" in cond)):
+        if ("tex" in cond):
+            tex_rep = get_repmatch(args_tran.replicates["tex"], cond)
+            if num >= tex_rep:
+                detect = True
+        elif ("frag" in cond):
+            frag_rep = get_repmatch(args_tran.replicates["frag"], cond)
+            if num >= frag_rep:
+                detect = True
+        if detect:
+            detect = False
             trans[strain].append({"strand": strand, "pos": pos,
                                   "coverage": best_cover, "cond": num})
     return tolers, trans

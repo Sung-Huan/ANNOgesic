@@ -2,7 +2,7 @@ import sys
 import os
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.coverage_detection import coverage_comparison
-from annogesiclib.coverage_detection import replicate_comparison
+from annogesiclib.coverage_detection import replicate_comparison, get_repmatch
 from annogesiclib.lib_reader import read_wig, read_libs
 from annogesiclib.gen_TSS_type import compare_tss_cds, fix_primary_type
 from annogesiclib.args_container import ArgsContainer

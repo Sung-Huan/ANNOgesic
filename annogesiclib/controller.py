@@ -386,15 +386,13 @@ class Controller(object):
         self.check_no_require_folder([
             self._args.fasta_folder, self._args.sORF,
             self._args.terminator_folder, self._args.tex_wig_folder,
-            self._args.frag_wig_folder])
+            self._args.frag_wig_folder, self._args.processing_site_folder])
         self.check_file([self._args.promoter_table],
                         ["--promoter_table"], False)
         if self._args.UTR_derived_sRNA:
-            self.check_folder([self._args.TSS_folder,
-                               self._args.processing_site_folder])
+            self.check_folder([self._args.TSS_folder])
         else:
-            self.check_no_require_folder([self._args.TSS_folder,
-                                          self._args.processing_site_folder])
+            self.check_no_require_folder([self._args.TSS_folder])
         project_creator.create_subfolders(self._paths.required_folders("srna"))
         args_srna = self.args_container.container_srna(
                 self._args.Vienna_folder, self._args.Vienna_utils,
@@ -494,7 +492,8 @@ class Controller(object):
             self._args.num_motif, self._args.nt_before_TSS,
             self._args.motif_width, self._args.TSS_source,
             self._args.tex_wig_path, self._args.annotation_folder,
-            self._args.combine_all, self._args.e_value)
+            self._args.combine_all, self._args.e_value,
+            self._args.parallel)
         meme = MEME(args_pro)
         meme.run_meme(args_pro)
 

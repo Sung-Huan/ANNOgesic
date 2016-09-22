@@ -17,20 +17,24 @@ Table of content
 
 Introduction
 =========================
-ANNOgesic is a bacterial transcriptome annotation pipeline based on RNA-Seq. 
-ANNOgesic covers different aspects of the genome annotation. In order to get the
-best results, ANNOgesic also can optimize the parameters of some tools. 
-ANNOgesic can automatically generate high-quality annotation information for
-query strains. Moreover, it is modular and its subcommands can be separately used.
-ANNOgesic integrates six main classes of annotations. i) Reference
-genome improvement: SNP/mutation calling, Sequence modification and
-annotation transfer. ii) Transcript boundary: TSS, transcript,
-terminator, UTR and processing site.  iii) sRNA and sORF: sRNA, sORF
-and sRNA target prediction.  iv) Functional related features:
-protein-protein interaction networks, Gene ontology and subcellular
-localization. v) Promoter and operon: promoter motifs and operon
-with sub-operon. vi) Other features: circular RNA, CRISPR, RNA thermometer 
-and riboswitch.
+ANNOgesic is a modular, command-line tool that can
+integrated different types of RNA-Seq data like dRNA-Seq or RNA-Seq
+generated after transcript fragmentation and generates high quality
+genome annotations. It can detect gene, CDS/tRNA/rRNA, TSS and
+processing sites, transcripts, terminator, Untranslated region (UTR)
+as well as small RNA (sRNA), small open reading frame (sORF), circular
+RNA, CRISPR related RNAs, riboswitch and RNA-thermometer. 
+It can also perform RNA-RNA
+and protein-protein interaction predictions. Furthermore, it groups
+genes into operon and sub-operons and reveal promotor motifs. It can
+also allocate GO term and subcellular localization to genes. Several
+of ANNOgesic features are new implementation while others are
+performed and improved by third-party tools and for some of them
+adaptive parameter-optimizations were included. Additionally, numerous
+visualization and statistitcs help the user quickly evaluated feature
+predictions resulting from an ANNOgesic analysis. The pipeline is
+modular and was heavily tested with several RNA-Seq data set from
+bacterial as well as archaeal samples.
 
 ::
 

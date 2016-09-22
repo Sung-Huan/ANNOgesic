@@ -143,7 +143,7 @@ Transcriptome_assembly(){
 	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
 	-tl $tex_notex_libs \
-	-rt 1 \
+	-rt all_1 \
 	-ct $ANNOGESIC_FOLDER/output/TSS/gffs \
 	-cg $ANNOGESIC_FOLDER/output/target/annotation \
 	$ANNOGESIC_FOLDER
@@ -158,7 +158,7 @@ Terminator_prediction(){
 	-tw $ANNOGESIC_FOLDER/input/wigs/tex_notex \
 	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
 	-tl $tex_notex_libs \
-	-rt 1 -tb \
+	-rt all_1 -tb \
 	$ANNOGESIC_FOLDER
 }
 
@@ -215,7 +215,7 @@ sRNA_detection(){
 	-sd $ANNOGESIC_FOLDER/input/database/sRNA_database_BSRD \
 	-nd $ANNOGESIC_FOLDER/input/database/nr \
 	-tl $tex_notex_libs \
-	-rt 1 \
+	-rt all_1 \
 	-ba \
 	$ANNOGESIC_FOLDER
 }
@@ -230,7 +230,7 @@ sORF_detection(){
 	-f $ANNOGESIC_FOLDER/output/target/fasta \
 	-s $ANNOGESIC_FOLDER/output/sRNA/gffs/best \
 	-tl $tex_notex_libs \
-	-rt 1 -u \
+	-rt all_1 -u \
 	$ANNOGESIC_FOLDER
 }
 

@@ -34,16 +34,17 @@ class MEME(object):
 
     def _run_normal_motif(self, input_path, out_path, filename,
                           fasta, width, args_pro):
-        print(os.path.join(input_path, fasta))
         folder = "_".join(["promoter_motifs", filename,
                            str(width), "nt"])
         if folder not in os.listdir(out_path):
-            call([args_pro.meme_path, "-maxsize", "1000000",
-                  "-dna", "-nmotifs", str(args_pro.num_motif),
-                  "-w", str(width), "-maxiter", "100",
-                  "-evt", str(args_pro.e_value),
-                  "-oc", os.path.join(out_path, folder),
-                  os.path.join(input_path, fasta)])
+            command = [args_pro.meme_path, "-maxsize", "1000000",
+                       "-dna", "-nmotifs", str(args_pro.num_motif),
+                       "-w", str(width), "-maxiter", "100",
+                       "-evt", str(args_pro.e_value)]
+            if args_pro.para is not None:
+                command = command + ["-p", args_pro.para]
+            call(command + ["-oc", os.path.join(out_path, folder),
+                            os.path.join(input_path, fasta)])
 
     def _run_small_motif(self, input_path, out_path, filename,
                          fasta, width, args_pro):
@@ -53,14 +54,16 @@ class MEME(object):
         folder = "_".join(["promoter_motifs", filename,
                            "-".join([str(min_width), str(max_width)]), "nt"])
         if folder not in os.listdir(out_path):
-            call([args_pro.meme_path, "-maxsize", "1000000",
-                  "-dna", "-nmotifs", str(args_pro.num_motif),
-                  "-minsites", "0", "-maxsites", "2",
-                  "-minw", str(min_width), "-maxw", str(max_width),
-                  "-maxiter", "100",
-                  "-evt", str(args_pro.e_value),
-                  "-oc", os.path.join(out_path, folder),
-                  os.path.join(input_path, fasta)])
+            command = [args_pro.meme_path, "-maxsize", "1000000",
+                       "-dna", "-nmotifs", str(args_pro.num_motif),
+                       "-minsites", "0", "-maxsites", "2",
+                       "-minw", str(min_width), "-maxw", str(max_width),
+                       "-maxiter", "100",
+                       "-evt", str(args_pro.e_value)]
+            if args_pro.para is not None:
+                command = command + ["-p", args_pro.para]
+            call(command + ["-oc", os.path.join(out_path, folder),
+                            os.path.join(input_path, fasta)])
 
     def _get_fasta_file(self, fasta_path, prefix):
         for fasta in os.listdir(fasta_path):

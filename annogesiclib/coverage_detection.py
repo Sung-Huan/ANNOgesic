@@ -26,6 +26,16 @@ def coverage_comparison(cover, cover_sets, poss, first, strand):
     return first
 
 
+def get_repmatch(replicates, cond):
+    if "all" in replicates:
+        rep = int(replicates.split("_")[-1])
+    else:
+        for match in replicates.split(","):
+            if cond.split("_")[0] == match.split("_")[0]:
+                rep = int(match.split("_")[-1])
+    return rep
+
+
 def define_cutoff(coverages, median, utr_type):
     cutoffs = {}
     if coverages[utr_type] == "mean":
@@ -132,14 +142,21 @@ def replicate_comparison(args_srna, srna_covers, strand, type_, median,
                   "end": -1, "track": "", "detail": [], "conds": {}}
     tmp_poss = {"start": -1, "end": -1, "pos": -1,
                 "all_start": [], "all_end": []}
+    detect = False
     for cond, covers in srna_covers.items():
         detect_num = check_tex(texs, covers, srna_datas["detail"], notex,
                                type_, tmp_poss, median, coverages, utr_type,
                                cutoff_coverage, args_srna.tex_notex)
-        if ((detect_num >= args_srna.replicates["tex"]) and (
-                "texnotex" in cond)) or (
-                (detect_num >= args_srna.replicates["frag"]) and (
-                "frag" in cond)):
+        if ("texnotex" in cond):
+            tex_rep = get_repmatch(args_srna.replicates["tex"], cond)
+            if detect_num >= tex_rep:
+                detect = True
+        elif ("frag" in cond):
+            frag_rep = get_repmatch(args_srna.replicates["frag"], cond)
+            if detect_num >= frag_rep:
+                detect = True
+        if detect:
+            detect = False
             if type_ == "sRNA_utr_derived":
                 tmp_poss["all_start"].append(tmp_poss["start"])
                 tmp_poss["all_end"].append(tmp_poss["end"])

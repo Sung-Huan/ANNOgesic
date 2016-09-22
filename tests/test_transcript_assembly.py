@@ -62,7 +62,7 @@ class TestTranscriptAssembly(unittest.TestCase):
                  "cond": "1", "strand": "+", "rep": "a"},
                 {"name": "test2", "type": "notex",
                  "cond": "1", "strand": "+", "rep": "a"}]
-        reps = {"tex": 1, "frag": 1}
+        reps = {"tex": "all_1", "frag": "all_1"}
         tmp_texs = {"test1_test2": 2}
         tolers = []
         trans = {"aaa": []}
@@ -79,7 +79,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         self.assertDictEqual(trans, {'aaa': [{'coverage': 10, 'cond': 1, 'strand': '+', 'pos': 10}]})
 
     def test_transfer_to_tran(self):
-        reps = {"tex": 1, "frag": 1}
+        reps = {"tex": "all_1", "frag": "all_1"}
         tmp_texs = {"test1": 2}
         libs = [{"name": "test1", "type": "frag",
                  "cond": "1", "strand": "+", "rep": "a"}]
@@ -124,7 +124,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         gen_file(wig_r_file, self.example.wig_r)
         gen_file(wig_f2_file, self.example.wig_f)
         gen_file(wig_r2_file, self.example.wig_r)
-        reps = {"tex": 1, "frag": 1}
+        reps = {"tex": "all_1", "frag": "all_1"}
         out_file = os.path.join(self.test_folder, "out")
         input_lib = ["aaa_forward.wig:frag:1:a:+",
                      "aaa_reverse.wig:frag:1:a:-",

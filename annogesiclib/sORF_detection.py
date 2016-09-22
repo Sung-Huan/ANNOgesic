@@ -2,7 +2,7 @@ import copy
 from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.lib_reader import read_libs, read_wig
-from annogesiclib.coverage_detection import replicate_comparison
+from annogesiclib.coverage_detection import replicate_comparison, get_repmatch
 
 
 def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):

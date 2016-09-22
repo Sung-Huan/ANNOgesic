@@ -472,7 +472,7 @@ Therefore, we only use TEX +/- to do it.</p>
     -g ANNOgesic/output/target/annotation \
     -tw ANNOgesic/input/wigs/tex_notex \
     -tl $tex_notex_libs \
-    -rt 1 \
+    -rt all_1 \
     -ct ANNOgesic/output/TSS/gffs \
     -cg ANNOgesic/output/target/annotation \
     ANNOgesic
@@ -499,7 +499,7 @@ NC_000915.1_length_all.png                                  NC_000915.1_length_l
     -tw ANNOgesic/input/wigs/tex_notex \
     -a ANNOgesic/output/transcriptome_assembly/gffs \
     -tl $tex_notex_libs \
-    -rt 1 -tb \
+    -rt all_1 -tb \
     ANNOgesic
 </pre></div>
 </div>
@@ -686,7 +686,7 @@ Now we can run <code class="docutils literal"><span class="pre">srna</span></cod
     -sd ANNOgesic/input/database/sRNA_database_BSRD \
     -nd ANNOgesic/input/database/nr \
     -tl $tex_notex_libs \
-    -rt 1 \
+    -rt all_1 \
     -ba \
     ANNOgesic
 </pre></div>
@@ -758,7 +758,7 @@ may be sORFs not sRNAs. In order to get information of sORFs, you can use subcom
     -f ANNOgesic/output/target/fasta \
     -s ANNOgesic/output/sRNA/gffs/best \
     -tl $tex_notex_libs \
-    -rt 1 -u \
+    -rt all_1 -u \
     ANNOgesic
 </pre></div>
 </div>

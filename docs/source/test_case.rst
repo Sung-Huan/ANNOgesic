@@ -379,7 +379,7 @@ The command would be like the following.
         -g ANNOgesic/output/target/annotation \
         -tw ANNOgesic/input/wigs/tex_notex \
         -tl $tex_notex_libs \
-        -rt 1 \
+        -rt all_1 \
         -ct ANNOgesic/output/TSS/gffs \
         -cg ANNOgesic/output/target/annotation \
         ANNOgesic
@@ -410,7 +410,7 @@ For predicting terminators, we can use subcommand ``terminator``. The command is
         -tw ANNOgesic/input/wigs/tex_notex \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
         -tl $tex_notex_libs \
-        -rt 1 -tb \
+        -rt all_1 -tb \
         ANNOgesic
 
 It will generate four different kinds of gff files and tables.
@@ -627,7 +627,7 @@ Now we can run ``srna`` with default parameters.
         -sd ANNOgesic/input/database/sRNA_database_BSRD \
         -nd ANNOgesic/input/database/nr \
         -tl $tex_notex_libs \
-        -rt 1 \
+        -rt all_1 \
         -ba \
         ANNOgesic
 
@@ -710,7 +710,7 @@ may be sORFs not sRNAs. In order to get information of sORFs, you can use subcom
         -f ANNOgesic/output/target/fasta \
         -s ANNOgesic/output/sRNA/gffs/best \
         -tl $tex_notex_libs \
-        -rt 1 -u \
+        -rt all_1 -u \
         ANNOgesic
 
 For generating best candidates, The criteria can be assigned by you 
