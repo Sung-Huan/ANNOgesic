@@ -24,6 +24,7 @@ from annogesiclib.args_container import ArgsContainer
 
 
 class sRNADetection(object):
+    '''detection of sRNA'''
 
     def __init__(self, args_srna):
         self.args_container = ArgsContainer()
@@ -113,6 +114,7 @@ class sRNADetection(object):
         err.close()
 
     def _merge_frag_tex_file(self, files, args_srna):
+        '''merge the results of fragmented and tex treated libs'''
         if (args_srna.frag_wigs is not None) and (
                 args_srna.tex_wigs is not None):
             self.helper.merge_file(files["frag_gff"], files["tex_gff"])
@@ -131,6 +133,7 @@ class sRNADetection(object):
             self.helper.sort_gff(files["tex_gff"], files["merge_gff"])
 
     def _run_normal(self, prefix, gff, tran, fuzzy_tss, args_srna):
+        '''detection of intergenic and antisense sRNA'''
         if "tmp_cutoff_inter" in os.listdir(args_srna.out_folder):
             os.remove(os.path.join(args_srna.out_folder, "tmp_cutoff_inter"))
         files = {"frag_gff": None, "frag_csv": None,
@@ -177,6 +180,7 @@ class sRNADetection(object):
         return tss
 
     def _run_utrsrna(self, gff, tran, prefix, tss, pro, args_srna):
+        '''detection of UTR-derived sRNA'''
         if "tmp_median" in os.listdir(args_srna.out_folder):
             os.remove(os.path.join(args_srna.out_folder, "tmp_median"))
         files = {"frag_gff": None, "frag_csv": None,
@@ -318,6 +322,7 @@ class sRNADetection(object):
 
     def _get_seq_sec(self, fasta_path, out_folder, prefix, sec_path,
                      dot_path, vienna_path):
+        '''extract the sec str energy'''
         detect = False
         for fasta in os.listdir(fasta_path):
             if fasta.endswith(".fa") and (
@@ -510,6 +515,7 @@ class sRNADetection(object):
                 shutil.move(out_file, srna_file)
 
     def _class_srna(self, prefixs, args_srna):
+        '''classify the sRNA based on the filters'''
         if (len(args_srna.import_info) != 1) or (
                 len(args_srna.import_info) != 0):
             for prefix in prefixs:
@@ -540,6 +546,7 @@ class sRNADetection(object):
                         args_srna, out_table)
 
     def _get_best_result(self, prefixs, args_srna):
+        '''get the best results based on the filters'''
         for prefix in prefixs:
             best_gff = os.path.join(self.all_best["best_gff"],
                                     "_".join([prefix, "sRNA.gff"]))
@@ -580,6 +587,7 @@ class sRNADetection(object):
             self.helper.remove_tmp(args_srna.terms)
 
     def _filter_srna(self, args_srna, prefixs):
+        '''set the filter of sRNA'''
         if "sec_str" in args_srna.import_info:
             self._compute_2d_and_energy(args_srna, prefixs)
         if "blast_nr" in args_srna.import_info:
@@ -632,6 +640,7 @@ class sRNADetection(object):
             print_rank_all(all_table, best_table)
 
     def _filter_min_utr(self, prefixs, min_utr):
+        '''filter out the low expressed UTR-derived sRNA'''
         for prefix in prefixs:
             filter_utr(os.path.join(self.all_best["all_gff"],
                                     "_".join([prefix, "sRNA.gff"])),
@@ -639,6 +648,7 @@ class sRNADetection(object):
                                     "_".join([prefix, "sRNA.csv"])), min_utr)
 
     def _antisense(self, gffs, prefixs):
+        '''detection of antisense'''
         for prefix in prefixs:
             all_table = os.path.join(self.all_best["all_table"],
                                      "_".join([prefix, "sRNA.csv"]))
@@ -654,6 +664,7 @@ class sRNADetection(object):
                            os.path.join(gffs, prefix + ".gff"))
 
     def _blast_stat(self, stat_path, srna_tables):
+        '''do statistics for blast result'''
         for srna_table in os.listdir(os.path.join(srna_tables, "best")):
             out_srna_blast = os.path.join(
                     stat_path, "stat_" +
@@ -662,6 +673,7 @@ class sRNADetection(object):
                     out_srna_blast)
 
     def _compare_term_promoter(self, out_table, prefix, args_srna):
+        '''compare sRNA with terminator and promoter'''
         if ("term" in args_srna.import_info) and (
                 self.term_path is not None):
             compare_srna_term(os.path.join(self.all_best["all_gff"],

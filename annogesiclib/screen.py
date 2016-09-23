@@ -6,6 +6,7 @@ from annogesiclib.helper import Helper
 
 
 class Screen(object):
+    '''generation of screenshot'''
 
     def __init__(self, args_sc):
         self.multiparser = Multiparser()

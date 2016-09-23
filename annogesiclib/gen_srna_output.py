@@ -71,6 +71,7 @@ def merge_info(blasts):
 
 
 def compare_srna_table(srna_tables, srna, final, args_srna):
+    '''Get the information from sRNA table which has more details'''
     for table in srna_tables:
         tsss = []
         pros = []
@@ -122,6 +123,7 @@ def compare_blast(blasts, srna, final, hit):
 
 
 def compare_promoter(final, args_srna):
+    '''modify the score of sRNA by comparing with promoter'''
     if "promoter" in final.keys():
         if final["promoter"] != "NA":
             final["score"] = final["avg"]*args_srna.rank_promoter
@@ -140,6 +142,7 @@ def check_keys(ref_key, final_key, srna, final):
 
 
 def compare(srnas, srna_tables, nr_blasts, srna_blasts, args_srna):
+    '''Check sRNA candidate pass the filters or not'''
     finals = []
     for srna in srnas:
         final = {}
@@ -174,6 +177,7 @@ def compare(srnas, srna_tables, nr_blasts, srna_blasts, args_srna):
 
 
 def change_srna_name(final):
+    '''get the proper name of sRNA'''
     names = []
     num = 0
     for hit in final["sRNA_hit"].split(";"):
@@ -263,6 +267,7 @@ def read_gff(srna_gff):
 
 def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
                    args_srna, out_file):
+    '''generate the sRNA table for more details'''
     srnas = read_gff(srna_gff)
     srna_tables, nr_blasts, srna_blasts = read_table(
         srna_table_file, nr_blast, srna_blast_file, args_srna.import_info)
@@ -300,6 +305,7 @@ def print_best(detect, out, srna):
 
 
 def check_energy(srna, energy, detect):
+    '''check the folding energy of sRNA'''
     if "2d_energy" in srna.attributes.keys():
         if float(srna.attributes["2d_energy"]) < energy:
             detect["energy"] = True
@@ -308,6 +314,7 @@ def check_energy(srna, energy, detect):
 
 
 def check_tss(import_info, srna, detect):
+    '''check the sRNA is associated with TSS or not'''
     if "tss" in import_info:
         if "with_TSS" in srna.attributes.keys():
             if srna.attributes["with_TSS"] != "NA":
@@ -324,6 +331,7 @@ def check_tss(import_info, srna, detect):
 
 
 def check_nr_hit(srna, nr_hits_num, detect):
+    '''check the sRNA has hit in nr database or not'''
     if "nr_hit" in srna.attributes.keys():
         if (srna.attributes["nr_hit"] == "NA") or (
                 int(srna.attributes["nr_hit"]) <= nr_hits_num):
@@ -333,6 +341,7 @@ def check_nr_hit(srna, nr_hits_num, detect):
 
 
 def check_sorf(best_sorf, srna, detect):
+    '''check the sRNA is overlap with sORF or not'''
     if (best_sorf):
         if ("sORF" in srna.attributes.keys()):
             if srna.attributes["sORF"] == "NA":
@@ -342,6 +351,7 @@ def check_sorf(best_sorf, srna, detect):
 
 
 def check_srna_hit(srna, all_hit, detect):
+    '''check the sRNA has hit in sRNA database or not'''
     if ("sRNA_hit" in srna.attributes.keys()) and (all_hit):
         if (srna.attributes["sRNA_hit"] != "NA"):
             for key in detect.keys():
@@ -358,6 +368,7 @@ def check_srna_hit(srna, all_hit, detect):
 
 
 def check_term(best_term, srna, detect):
+    '''check the sRNA is associated with terminator or not'''
     if best_term:
         if ("with_term" in srna.attributes.keys()):
             if srna.attributes["with_term"] != "NA":
@@ -370,6 +381,7 @@ def check_term(best_term, srna, detect):
 
 
 def check_promoter(best_promoter, srna, detect):
+    '''check the sRNA is associated with promoter or not'''
     if best_promoter:
         if ("promoter" in srna.attributes.keys()):
             if srna.attributes["promoter"] != "NA":
@@ -379,6 +391,7 @@ def check_promoter(best_promoter, srna, detect):
 
 
 def gen_best_srna(srna_file, out_file, args_srna):
+    '''generate the best sRNA candidates'''
     srnas = read_gff(srna_file)
     out = open(out_file, "w")
     out.write("##gff-version 3\n")

@@ -6,6 +6,7 @@ from annogesiclib.multiparser import Multiparser
 
 
 class UTRDetection(object):
+    '''detection of UTR'''
 
     def __init__(self, args_utr):
         self.helper = Helper()

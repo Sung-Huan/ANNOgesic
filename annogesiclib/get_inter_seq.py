@@ -36,6 +36,7 @@ def import_data(f_1, f_2, start, end, file_type):
 
 
 def get_terminal(genes, inters, gene_len, type_, file_type):
+    '''deal with the intergenic region which located at two ends'''
     if type_ == "start":
         for gene in genes:
             if (gene.strand == "-"):
@@ -51,6 +52,7 @@ def get_terminal(genes, inters, gene_len, type_, file_type):
 
 
 def get_inter(features, seq, file_type):
+    '''compare features and get the intergenic region'''
     inters = []
     first = True
     pre_strain = ""
@@ -135,6 +137,7 @@ def get_overlap_inters(inter1, inter2, merges, id_):
 
 
 def merge_inter(inters1, inters2):
+    '''check and merge the overlap intergenic seq'''
     merges = []
     id_ = 0
     for inter1 in inters1:
@@ -162,6 +165,9 @@ def merge_inter(inters1, inters2):
 
 
 def detect_confliction(gc, genes, seq):
+    '''check the intergenic region 
+    (add the region for folding proper sec str.) 
+    will overlap with gene or not'''
     corr_merges = []
     overlap = False
     tmp_start = gc["start"]
@@ -238,6 +244,7 @@ def read_file(seq_file, tran_file, gff_file):
 
 
 def intergenic_seq(seq_file, tran_file, gff_file, out_file):
+    '''get intergenic seq'''
     out = open(out_file, "w")
     seq, tas, merges, genes = read_file(seq_file, tran_file, gff_file)
     inter_tas = get_inter(tas, seq, "tran")

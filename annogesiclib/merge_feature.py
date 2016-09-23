@@ -55,6 +55,7 @@ def read_gffs(gff_files, feature):
 
 
 def assign_parent(other, tran):
+    '''assign the parent transcript to all features'''
     if "Parent" not in other.attributes.keys():
         other.attributes["Parent"] = tran.attributes["ID"]
     else:
@@ -177,6 +178,7 @@ def print_gff(gffs, o_gffs, s_gffs, output):
 
 
 def run_merge(out_folder, tran, others, fuzzy_term, fuzzy_tss, strain):
+    '''merge all features to be one gff file'''
     output = "_".join([strain, "merge_features.gff"])
     if tran is None and others is None:
         print("Error: There is no input file...")

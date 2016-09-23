@@ -6,6 +6,7 @@ from annogesiclib.helper import Helper
 
 
 class TargetFasta(object):
+    '''detection of sRNA target interaction'''
 
     def __init__(self, tar_folder, ref_folder):
         self.multiparser = Multiparser()

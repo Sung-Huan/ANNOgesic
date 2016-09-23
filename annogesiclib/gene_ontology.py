@@ -10,12 +10,14 @@ plt.style.use('ggplot')
 
 
 def import_uniprot_data(entry, name_list, feature):
+    '''import uniprot to dict'''
     ref_name = entry.attributes[feature]
     if ref_name not in name_list:
         name_list.add(ref_name)
 
 
 def compare_cds_tran(gffs, trans):
+    '''compare CDS with transcript to get the expressed CDS'''
     new_gffs = []
     for gff in gffs:
         for ta in trans:
@@ -37,6 +39,7 @@ def compare_cds_tran(gffs, trans):
 
 
 def get_go_id(gffs, id_, uni_lines, gos):
+    '''get the GO id of CDS'''
     detect = False
     for gff in gffs:
         if ("Name" in gff.attributes.keys()):
@@ -90,6 +93,7 @@ def print_go(gos, out):
                   pre_go["protein_id"], pre_go["go"]]) + "\n")
 
 def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
+    '''Retrieve the GO term from Uniprot'''
     name_list = set()
     gffs = []
     out = open(out_file, "w")
@@ -136,6 +140,7 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
 
 
 def plot(total_nums, strain, filename, total, out_folder):
+    '''plot the distribution of GO term by GOslim'''
     sort_total_nums = sorted(total_nums.items(),
                              key=lambda x: (x[1]), reverse=True)
     classes = []
@@ -170,6 +175,7 @@ def plot(total_nums, strain, filename, total, out_folder):
 
 
 def import_obo(filename):
+    '''import the information of obo file to dict'''
     obos = []
     start = False
     with open(filename, "r") as o_h:
@@ -242,6 +248,7 @@ def initiate_dict(classes, total_nums, index):
 
 
 def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
+    '''Compare GO term and GOslim database'''
     detect = False
     for strain, pros in gos.items():
         for pro, go_ids in pros.items():
@@ -281,6 +288,7 @@ def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
 
 
 def map2goslim(slim_file, term_file, go_table, stat, out_folder):
+    '''For mapping the GO to GOslim'''
     gos = {}
     classes = {}
     total_nums = {}

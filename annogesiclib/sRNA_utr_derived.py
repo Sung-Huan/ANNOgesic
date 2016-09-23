@@ -244,6 +244,7 @@ def check_import_srna_covers(datas, cover_results, inter, cond, track,
 
 
 def detect_3utr_pro(inter, pos, wigs, utr_type, args_srna):
+    '''3UTR start with processing site'''
     for pro in args_srna.pros:
         if (pro.seq_id == inter["strain"]) and (
                 pro.strand == inter["strand"]):
@@ -291,6 +292,7 @@ def detect_3utr_pro(inter, pos, wigs, utr_type, args_srna):
 
 
 def detect_twopro(inter, pos, wigs, utr_type, import_type, args_srna):
+    '''the sRNA is associated with two processing sites'''
     pros = []
     for pro in args_srna.pros:
         if (pro.seq_id == inter["strain"]) and (
@@ -340,6 +342,7 @@ def decrease_pos(covers, pos, strand):
 
 
 def get_decrease(inter, wigs, tss, pos, utr_type, args_srna):
+    '''check the coverage decrease'''
     if inter["strand"] == "+":
         n_pos = import_position(tss.start, pos["end"], pos["ori_start"],
                                 pos["ori_end"])
@@ -408,6 +411,7 @@ def import_append_normal(inter, tss, pro, pos, wigs, utr_type, args_srna):
 
 
 def detect_normal(diff, wigs, inter, pos, utr_type, tss, args_srna):
+    '''normal case, UTR-derived sRNA with TSS'''
     if (diff >= args_srna.min_len) and (
             diff <= args_srna.max_len):
         srna_covers, utr_covers = get_coverage(
@@ -491,6 +495,7 @@ def run_utr_detection(wigs, inter, start, end, utr_type, args_srna):
 
 
 def class_utr(inter, ta, args_srna):
+    '''classify the UTR-dervied sRNA'''
     if inter["strand"] == "+":
         if (inter["start"] <= ta.end) and (
                 inter["end"] >= ta.end) and (
@@ -522,6 +527,8 @@ def class_utr(inter, ta, args_srna):
 
 
 def median_score(lst, per):
+    '''if the cutoff is assigned by precentage, 
+    it can get the corresponding number'''
     sortedLst = sorted(lst)
     lstLen = len(lst)
     index = int((lstLen - 1) * per)
@@ -573,6 +580,7 @@ def print_file(num, srna, start, end, srna_datas, args_srna):
 
 
 def detect_srna(median, args_srna):
+    '''check the sRNA candidates and print it out'''
     num = 0
     if len(args_srna.srnas) != 0:
         for srna in args_srna.srnas:
@@ -663,6 +671,7 @@ def get_utr_coverage(utrs):
 
 
 def get_inter(cdss, inters):
+    '''get the intergenic region'''
     for cds1 in cdss:
         for cds2 in cdss:
             if (cds1.seq_id == cds2.seq_id) and \
@@ -700,6 +709,7 @@ def get_utr_cutoff(coverage, mediandict, avgs, strain, utr, track):
 
 
 def set_cutoff(covers, args_srna):
+    '''set the cutoff based on the types of sRNA'''
     mediandict = {}
     for strain, utrs in covers.items():
         mediandict[strain] = {"3utr": {}, "5utr": {}, "interCDS": {}}
@@ -728,6 +738,7 @@ def set_cutoff(covers, args_srna):
 
 
 def print_median(out_folder, mediandict):
+    '''print the cutoff based on the types of sRNA'''
     out = open(os.path.join(out_folder, "tmp_median"), "a")
     for strain, utrs in mediandict.items():
         for utr, tracks in utrs.items():

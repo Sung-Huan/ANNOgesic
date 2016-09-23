@@ -126,6 +126,7 @@ def print_stat(stats, out_stat, overlaps, feature):
 
 def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat,
                         feature):
+    '''do statistics and print gff file of riboswitch'''
     stats = {}
     overlaps = {}
     pre_strain = ""

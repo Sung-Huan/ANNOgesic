@@ -152,6 +152,7 @@ def read_tas_file(tss_file, ta_file):
 
 def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file,
                 out_tss_file, fuzzy):
+    '''statistics for comparison of transcript and TSS'''
     tsss_uni, tsss, tas_uni, tas = read_tas_file(tss_file, ta_file)
     out_stat = open(stat_file, "w")
     out_stat.write("All strains:\n")
@@ -380,6 +381,7 @@ def read_tag_file(gff_file, ta_file, c_feature):
 
 def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
                 c_feature):
+    '''statistics for comparison of transcript and genome annotation'''
     tmp_gff_file = gff_file + "tmp"
     tmp_ta_file = ta_file + "tmp"
     shutil.copy(gff_file, tmp_gff_file)

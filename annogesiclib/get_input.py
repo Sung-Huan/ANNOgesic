@@ -10,6 +10,8 @@ def wget(input_folder, ftp, files_type):
 
 
 def deal_detect(input_file, file_path, change, input_folder):
+    '''deal with the header of fasta file and 
+    put the files to corresponding folders'''
     if change:
         shutil.move(input_file, file_path)
         change = False

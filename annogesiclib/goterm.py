@@ -6,6 +6,7 @@ from annogesiclib.gene_ontology import retrieve_uniprot, map2goslim
 
 
 class GoTermFinding(object):
+    '''Retrieving the GO term'''
 
     def __init__(self, args_go):
         self.multiparser = Multiparser()
@@ -43,6 +44,7 @@ class GoTermFinding(object):
                              out_file, tran_file, type_)
 
     def _merge_files(self, gffs, out_path, out_folder):
+        '''merge the files according to the input genome folder'''
         folders = []
         for folder in os.listdir(gffs):
             if folder.endswith("gff_folder"):

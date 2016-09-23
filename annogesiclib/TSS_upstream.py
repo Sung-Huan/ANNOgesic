@@ -108,6 +108,7 @@ def read_libs(input_libs, wig_folder):
 
 
 def upstream(tss_file, fasta_file, gff_file, out_class, args_pro):
+    '''get the upstream sequence of TSS'''
     files = {"pri": open("tmp/primary.fa", "w"),
              "sec": open("tmp/secondary.fa", "w"),
              "inter": open("tmp/internal.fa", "w"),

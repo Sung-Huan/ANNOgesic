@@ -77,6 +77,7 @@ def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best):
 
 
 def gen_table_transcript(gff_folder, args_tran):
+    '''generate the detail table of transcript'''
     libs, texs = read_libs(args_tran.libs, args_tran.merge_wigs)
     for gff in os.listdir(gff_folder):
         if os.path.isfile(os.path.join(gff_folder, gff)):

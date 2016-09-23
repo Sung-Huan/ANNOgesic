@@ -81,7 +81,7 @@ def overlap(tas, genes, print_list, out):
 
 
 def fill_gap(gff_file, ta_file, type_, output):
-    '''compare with genome annotation to modify the transcript'''
+    '''compare transcript with genome annotation to modify the transcript'''
     tas = []
     genes = []
     print_list = []

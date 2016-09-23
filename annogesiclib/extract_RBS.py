@@ -107,7 +107,7 @@ def extract_inter_seq(inter, cds, seq, fuzzy, inters):
 
 
 def compare_tss(tsss, cds, inters, fuzzy, seq, utr):
-    '''Compare with TSS to get the pre-CDS region'''
+    '''Compare CDS with TSS to get the pre-CDS region'''
     for tss in tsss:
         if (cds.seq_id == tss.seq_id) and (
                 cds.strand == tss.strand):

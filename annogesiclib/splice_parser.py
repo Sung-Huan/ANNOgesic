@@ -2,6 +2,7 @@ import csv
 
 
 class SpliceParser(object):
+    '''parser the splice data of segemehl'''
 
     def parser(self, splice_fh):
         for row in csv.reader(splice_fh, delimiter="\t"):

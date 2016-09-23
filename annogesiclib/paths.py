@@ -1,4 +1,5 @@
 class Paths(object):
+    '''Setup the folders of ANNOgesic'''
 
     def __init__(self, base_path="."):
         self.base_path = base_path

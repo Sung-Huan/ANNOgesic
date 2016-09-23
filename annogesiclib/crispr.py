@@ -56,7 +56,7 @@ class Crispr(object):
         return gffs
 
     def _compare_gff(self, strain, start, end, gffs, bh, indexs, ignore_hypo):
-        '''Comarison of CRISPR and genome annotation to 
+        '''Compare CRISPR and genome annotation to 
         remove the false positives'''
         overlap = False
         id_ = None

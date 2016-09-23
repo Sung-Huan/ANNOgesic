@@ -11,6 +11,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 class sRNATargetPrediction(object):
+    '''detection of sRNA-target interaction'''
 
     def __init__(self, args_tar):
         self.multiparser = Multiparser()
@@ -265,6 +266,7 @@ class sRNATargetPrediction(object):
                 out_log)
 
     def _get_continue(self, out_rnaup):
+        '''For RNAup, it can continue running RNAup based on previous run'''
         srnas = []
         matchs = {}
         out = open("tmp.txt", "w")
@@ -339,6 +341,7 @@ class sRNATargetPrediction(object):
             self._run_rnaup(num_up, processes, out_rnaup, out_log, args_tar)
 
     def _merge_rnaplex_rnaup(self, prefixs, args_tar):
+        '''merge the result of RNAup and RNAplex'''
         for prefix in prefixs:
             rnaplex_file = None
             rnaup_file = None

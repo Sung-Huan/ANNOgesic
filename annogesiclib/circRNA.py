@@ -107,7 +107,7 @@ def read_file(input_file, gff_file, hypo):
 
 
 def get_circrna(circs, gffs, high, out, out_best, args_circ):
-    '''searching the splice data to find the potential circRNA'''
+    '''search the splice data to find the potential circRNA'''
     num_circular = {}
     num_circular["all"] = 0
     num_support = {}

@@ -247,6 +247,7 @@ def get_coverage(start, end, strain, wigs, strand, ta, tss, cutoff_coverage,
 
 def check_pro(ta, start, end, srna_datas, type_, cutoff,
               wigs, notex, args_srna):
+    '''check the processing site for long non-coding RNA'''
     pro_pos = -1
     detect_pro = "NA"
     for pro in args_srna.pros:
@@ -325,6 +326,7 @@ def exchange_to_pro(args_srna, srna_datas, ta, start,
 
 
 def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
+    '''searching the coverage decrease'''
     srna_covers = get_best(wigs, ta.seq_id, ta.strand, start, end,
                            "differential", args_srna, cutoff)
     srna_datas = replicate_comparison(
@@ -353,6 +355,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
 
 
 def detect_longer(ta, args_srna):
+    '''deal with the long non-coding RNA'''
     notex = None
     if len(args_srna.tsss) != 0:
         for tss in args_srna.tsss:
@@ -448,6 +451,7 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, ta, tss, diff, cutoff_coverage,
 
 
 def detect_include_tss(ta, args_srna):
+    '''compare sRNA with TSS'''
     args_srna.detects["uni_with_tss"] = False
     notex = None
     for tss in args_srna.tsss:
@@ -484,6 +488,7 @@ def detect_include_tss(ta, args_srna):
 
 
 def get_proper_tss(tss_file, cutoff_coverage):
+    '''get the associated TSS'''
     types = []
     gff_parser = Gff3Parser()
     for type_, cover in cutoff_coverage.items():
@@ -596,6 +601,7 @@ def compare_ta_cds(cdss, ta, detects):
 
 
 def check_srna_condition(ta, args_srna):
+    '''check the long sRNA and get the coverage of sRNA and check TSS'''
     if ((ta.end - ta.start) >= args_srna.min_len) and (
             (ta.end - ta.start) <= args_srna.max_len):
         if len(args_srna.tsss) != 0:
@@ -620,6 +626,7 @@ def check_srna_condition(ta, args_srna):
 
 
 def get_cutoff(cutoffs, out_folder, file_type):
+    '''set the cutoff of intergenic and antisense sRNA'''
     out = open(os.path.join(out_folder, "tmp_cutoff_inter"), "a")
     coverages = {}
     num_cutoff = 0
@@ -700,6 +707,7 @@ def compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r):
 
 
 def get_intergenic_antisense_cutoff(args_srna):
+    '''set the cutoff of intergenic and antisense sRNA'''
     cutoff_coverage = get_cutoff(args_srna.cutoffs, args_srna.out_folder,
                                  args_srna.file_type)
     notex = None
@@ -714,6 +722,7 @@ def free_memory(paras):
 
 
 def intergenic_srna(args_srna):
+    '''get intergenic and antisense sRNA'''
     inter_cutoff_coverage, inter_notex = get_intergenic_antisense_cutoff(
                                          args_srna)
     anti_cutoff_coverage, anti_notex = get_intergenic_antisense_cutoff(

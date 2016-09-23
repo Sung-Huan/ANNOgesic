@@ -66,6 +66,7 @@ def import_sorf(inter, sorfs, start, end, type_, fasta, rbs):
 
 
 def detect_rbs_site(fasta, start, inter, args_sorf):
+    '''detect the ribosome binding site'''
     detect = []
     pre_miss = 5
     for nts in range(0, start):
@@ -103,6 +104,7 @@ def detect_rbs_site(fasta, start, inter, args_sorf):
 
 
 def check_terminal_seq(seq, start, end, args_sorf, source, inter, sorfs, rbs):
+    '''check the sequence which are located at the two ends'''
     detect = None
     for i in [0, 1, -1, 2, -2]:
         fasta = Helper().extract_gene(seq, start + i, end + i, inter.strand)
@@ -116,6 +118,7 @@ def check_terminal_seq(seq, start, end, args_sorf, source, inter, sorfs, rbs):
 
 
 def detect_start_stop(inters, seq, args_sorf):
+    '''check the length is 3 -times or not'''
     sorfs = []
     for inter in inters:
         fasta = Helper().extract_gene(
@@ -345,6 +348,7 @@ def import_overlap(sorf2, final, sorf1, first):
 
 
 def merge(sorfs, seq):
+    '''merge the overlapped sORF'''
     finals = []
     for sorf1 in sorfs:
         final = copy.deepcopy(sorf1)
@@ -447,6 +451,7 @@ def get_attribute(num, name, start_tss, sorf, type_):
 
 
 def check_start_and_tss_point(sorf):
+    '''searching the associated TSS'''
     tsss = []
     for tss in sorf["with_TSS"]:
         if tss != "NA":
@@ -459,6 +464,7 @@ def check_start_and_tss_point(sorf):
 
 
 def compare_rbs_start(sorf, min_rbs, max_rbs):
+    '''searching the associated ribosome binding site'''
     detect = False
     if (len(sorf["rbs"]) == 1) and (sorf["rbs"][0] == "NA"):
         pass
@@ -516,6 +522,7 @@ def gen_new_candidates(sorf, min_rbs, max_rbs):
 
 
 def check_candidates_srnas(sorf, min_rbs, max_rbs):
+    '''assign the sRNA which overlap with sORF to corresponding candidates'''
     new_candidates = []
     for cand in sorf["candidate"]:
         infos = cand.split("_")
@@ -570,6 +577,8 @@ def assign_sorf(sorf, starts, ends, fasta):
 
 
 def check_start_end(sorf, args_sorf, fasta):
+    '''check the start and end point which can form proper protein 
+    or not (3 times)'''
     if (len(sorf["rbs"]) == 1) and (sorf["rbs"][0] == "NA"):
         pass
     else:
@@ -626,6 +635,7 @@ def check_start_end(sorf, args_sorf, fasta):
 
 
 def detect_frame_shift(sorf):
+    '''check the frame shift'''
     stand = sorf["starts"][0]
     shift = {"0": False, "1": False, "2": False}
     sorf["shift"] = 0
@@ -728,6 +738,7 @@ def get_inter_coverage(inters, inter_covers):
 
 
 def detect_utr_type(inter, utr_type, med_inters, wigs, strand, background):
+    '''detect the type of UTR-derived sORF'''
     if inter.attributes["UTR_type"] == utr_type:
         inter_datas = {}
         inter_datas["strain"] = inter.seq_id
@@ -740,6 +751,8 @@ def detect_utr_type(inter, utr_type, med_inters, wigs, strand, background):
 
 
 def median_score(lst, cutoff):
+    '''If the cutoff is assigned by percentage, 
+    it will get the corresponding number'''
     if "p_" in cutoff:
         per = float(cutoff.split("_")[-1])
         sortedLst = sorted(lst)
@@ -764,6 +777,7 @@ def mean_score(lst):
 
 
 def validate_tss(starts, ends, sorf, utr_fuzzy):
+    '''compare sORF with TSS'''
     tsss = []
     start_pos = "NA"
     if sorf["with_TSS"][0] != "NA":
@@ -790,6 +804,7 @@ def validate_tss(starts, ends, sorf, utr_fuzzy):
 
 
 def validate_srna(starts, ends, sorf):
+    '''compare sORF with sRNA'''
     srnas = []
     for srna in sorf["srna"]:
         if srna == "NA":
@@ -817,6 +832,7 @@ def validate_srna(starts, ends, sorf):
 
 
 def get_best(sorfs, tss_file, srna_file, args_sorf):
+    '''based on the filers to get the best results'''
     final_sorfs = []
     for sorf in sorfs:
         if (tss_file is not None):
@@ -862,6 +878,7 @@ def get_best(sorfs, tss_file, srna_file, args_sorf):
 
 def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
                         file_type, fasta, coverages, args_sorf, texs):
+    '''get the coverage of sORF and print it out'''
     out_g.write("##gff-version 3\n")
     if args_sorf.print_all:
         out_t.write("\t".join([
@@ -904,6 +921,7 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
 
 
 def detect_inter_type(inters, wigs, background):
+    '''detect the types of intergenic sORF'''
     med_inters = {}
     strain = ""
     for inter in inters:
@@ -952,6 +970,7 @@ def compute_candidate_best(sorfs_best):
 
 
 def set_coverage(args_sorf):
+    '''set the cutoff based on different types'''
     if "n_" in args_sorf.cutoff_3utr:
         args_sorf.cutoff_3utr = float(
             args_sorf.cutoff_3utr.split("_")[-1])

@@ -16,6 +16,7 @@ class Multiparser(object):
         self.tmp_wig_reverse = "tmp_reverse.wig"
 
     def combine_fasta(self, ref_folder, tar_folder, ref_feature):
+        '''combine multiple fasta files'''
         tar_merge = os.path.join(tar_folder, "merge_tmp")
         change = False
         if ref_feature is None:
@@ -86,6 +87,7 @@ class Multiparser(object):
         return prefix
 
     def combine_wig(self, ref_folder, tar_folder, ref_feature, libs):
+        '''combine multiple wig files'''
         tar_merge = os.path.join(tar_folder, "merge_tmp")
         change_f = False
         change_r = False
@@ -139,6 +141,7 @@ class Multiparser(object):
         shutil.rmtree(tar_merge)
 
     def combine_gff(self, ref_folder, tar_folder, ref_feature, tar_feature):
+        '''combine multiple gff files'''
         tar_merge = os.path.join(tar_folder, "merge_tmp")
         change = False
         if tar_feature is None:
@@ -194,6 +197,7 @@ class Multiparser(object):
         shutil.rmtree(tar_merge)
 
     def parser_fasta(self, fastas):
+        '''parser the fasta file based on strain'''
         par_tmp = os.path.join(fastas, "tmp")
         first = True
         out = None
@@ -240,6 +244,7 @@ class Multiparser(object):
         out_t.close()
 
     def parser_gff(self, gff_folder, feature):
+        '''parser gff file based on strain'''
         par_tmp = os.path.join(gff_folder, "tmp")
         out = None
         out_t = None
@@ -286,6 +291,7 @@ class Multiparser(object):
         out_t.close()
 
     def parser_wig(self, wig_folder):
+        '''parser the wig file based on strain'''
         par_tmp = os.path.join(wig_folder, "tmp")
         first = True
         out = None

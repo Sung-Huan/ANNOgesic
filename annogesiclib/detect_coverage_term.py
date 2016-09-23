@@ -15,7 +15,7 @@ def import_data(row):
 
 
 def compare_ta(terms, tas, fuzzy):
-    '''Comparison of transcript and terminator to 
+    '''Compare transcript and terminator to 
     find the expressed terminator'''
     for term in terms:
         for ta in tas:

@@ -9,6 +9,7 @@ from annogesiclib.helper import Helper
 
 
 class RATT(object):
+    '''annotation transfer'''
 
     def __init__(self, args_ratt):
         self.multiparser = Multiparser()
@@ -107,6 +108,7 @@ class RATT(object):
         return self.gbk
 
     def _convert_embl(self, ref_embls):
+        '''convert gbk to embl'''
         detect_gbk = False
         gbks = []
         out_gbk = None

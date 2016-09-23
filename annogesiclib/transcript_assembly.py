@@ -51,6 +51,7 @@ def get_repmatch(replicates, cond):
 
 def elongation(covers, template_texs, libs, strand, trans,
                args_tran, strain, tolers):
+    '''check coverage and replicate match to form transcript'''
     first = True
     pre_pos = -1
     check_tex = []
@@ -102,6 +103,7 @@ def elongation(covers, template_texs, libs, strand, trans,
 
 
 def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
+    '''check coverage and replicate match to form transcript'''
     tolers = {}
     trans = {}
     detect = False
@@ -175,6 +177,8 @@ def gen_attribute_string(num, name, high_cover, low_cover, wig_type):
 
 
 def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
+    '''compare transcript with CDS to modify transcript(merge mutliple 
+    transcript based on overlap with the same CDS)'''
     for strain, datas in tolers.items():
         num = 0
         for data in datas:

@@ -1,4 +1,6 @@
 class WigParser(object):
+    '''parser the wiggle file based on 
+    strain, track, position and coverage'''
 
     def parser(self, wig_fh, strand):
         track = ""

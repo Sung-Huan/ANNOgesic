@@ -15,7 +15,7 @@ def read_gff(input_file):
 
 
 def compare_tss_pro(tars, refs, out, cluster):
-    '''compare with TSS and processing site'''
+    '''compare between TSS and processing site'''
     for tar in tars:
         for ref in refs:
             if (tar.seq_id == ref.seq_id) and (

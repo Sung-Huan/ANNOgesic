@@ -2,6 +2,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 def get_type(inter, gffs):
+    '''get the types of sORF'''
     utr5 = False
     utr3 = False
     anti = False
@@ -68,6 +69,7 @@ def read_gff(gff_file, tran_file, hypo):
 
 
 def compare_tran_cds(trans, gffs):
+    '''compare transcript and CDS to find the intergenic region'''
     inters = []
     for tran in trans:
         poss = [{"start": tran.start, "end": tran.end}]

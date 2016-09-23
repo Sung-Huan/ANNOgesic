@@ -9,6 +9,7 @@ from annogesiclib.seqmodifier import SeqModifier
 
 
 class SeqEditer(object):
+    '''Edit the sequence if it is needed'''
 
     def _row_to_location(self, row):
         return({"target_id": row[1], "ref_id": row[0],

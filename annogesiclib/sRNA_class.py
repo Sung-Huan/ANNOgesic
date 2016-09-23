@@ -271,6 +271,7 @@ def check_and_set_num(checks):
 
 
 def classify_srna(srna_file, out_folder, out_stat_file, args_srna):
+    '''classify the sRNA based on the filters'''
     srna_datas, strains, checks = read_file(srna_file)
     out_stat = open(out_stat_file, "w")
     for strain in strains:

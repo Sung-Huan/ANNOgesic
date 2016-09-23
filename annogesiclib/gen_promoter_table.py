@@ -2,6 +2,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 def gen_promoter_table(input_file, output_file, tss_file):
+    '''generate the table of promoter based on MEME'''
     tsss = []
     gff_f = open(tss_file, "r")
     for entry in Gff3Parser().entries(gff_f):

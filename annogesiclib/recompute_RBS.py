@@ -156,6 +156,7 @@ def read_gff(gff_file):
 
 
 def reextract_rbs(align_file, first_file, output_file):
+    '''based on the first detection, extract the RBS and run again'''
     hit = False
     extras = []
     out = open(output_file, "w")

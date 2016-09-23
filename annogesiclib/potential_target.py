@@ -53,6 +53,7 @@ def read_file(seq_file, gff_file, target_folder, features):
 
 
 def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
+    '''for forward strand'''
     pre_id = ""
     out = None
     for cds in cdss_f:
@@ -85,6 +86,7 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
 
 
 def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
+    '''for the reverse strand'''
     pre_id = ""
     out = None
     for cds in cdss_r:
@@ -116,6 +118,7 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
 
 
 def potential_target(gff_file, seq_file, target_folder, args_tar):
+    '''get the sequence of the potential target of sRNA'''
     fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file,
                                              target_folder, args_tar.features)
     sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start,

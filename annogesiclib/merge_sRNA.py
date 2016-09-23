@@ -35,6 +35,7 @@ def del_attributes(feature, entry):
 
 
 def detect_overlap(srna, pre_srna, srna_type, overlap):
+    '''check the sRNA is overlap with other sRNA or not'''
     if (srna.seq_id == pre_srna.seq_id) and (
             srna.strand == pre_srna.strand):
         if (pre_srna.start >= srna.start) and (
@@ -77,6 +78,8 @@ def merge_tss_pro(pre_srna, srna, feature):
 
 
 def modify_overlap(pre_srna, srna):
+    '''If the sRNA is overlap with other sRNA, 
+    it will modify the position and attributes of gff file'''
     merge_tss_pro(pre_srna, srna, "with_TSS")
     merge_tss_pro(pre_srna, srna, "end_cleavage")
     if (srna.attributes["sRNA_type"] == "5utr") or (
@@ -91,6 +94,7 @@ def modify_overlap(pre_srna, srna):
 
 
 def merge_srna(srnas, srna_type):
+    '''Merge the overlaped sRNA'''
     final_srnas = []
     first = True
     pre_srna = ""
@@ -154,6 +158,7 @@ def read_table(table_file, file_type):
 
 
 def merge_incds_utr(utrs, inters):
+    '''merge the sRNA within CDS and UTR-derived sRNA'''
     new_inters = []
     for inter in inters:
         remove = False
@@ -180,6 +185,8 @@ def merge_incds_utr(utrs, inters):
 
 
 def compare_srna_cds(srna, cdss, cutoff_overlap):
+    '''compare sRNA and CDS to get the information of 
+    overlap between sRNA and CDS'''
     detect = False
     overlap = False
     for cds in cdss:
@@ -230,6 +237,7 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
 
 
 def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
+    '''merge all types of sRNA and print to one gff files'''
     out = open(gffs["merge"], "w")
     out.write("##gff-version 3\n")
     utrs = read_gff(gffs["utr"], "sRNA")
@@ -489,6 +497,7 @@ def get_coverage(wigs, srna):
 
 
 def get_tss_pro(type_, srna):
+    '''check the sRNA is associated with TSS or processing site'''
     if type_ == "utr":
         if (srna.attributes["with_TSS"] != "NA") and (
                 srna.attributes["start_cleavage"] != "NA"):

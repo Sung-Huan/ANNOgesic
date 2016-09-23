@@ -31,7 +31,7 @@ def store(data, source, finals):
 
 
 def compare(data1, data2, overlap, tolerance):
-    '''comparison of frag and tex treated libs to find the overlap one.
+    '''search the sRNA which can be detected in frag and tex libs.
     Then, try to merge them to be a longer one'''
     if (data1.seq_id == data2.seq_id) and (data1.strand == data2.strand):
         if (data1.start <= (data2.end + tolerance)) and (

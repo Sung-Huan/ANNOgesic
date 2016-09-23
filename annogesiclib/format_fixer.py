@@ -2,6 +2,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 class FormatFixer(object):
+    '''Fix the format which is not fit with ANNOgesic'''
 
     def _read_gff(self, gff_file, genes, datas, strain):
         gene_num = 0

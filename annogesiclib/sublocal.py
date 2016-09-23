@@ -11,6 +11,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 class SubLocal(object):
+    '''detection of subcellular localization'''
 
     def __init__(self, args_sub):
         self.multiparser = Multiparser()
@@ -45,6 +46,7 @@ class SubLocal(object):
         self.helper.check_make_folder(self.express_result)
 
     def _compare_cds_tran(self, gff_file, tran_file):
+        '''compare CDS and transcript to find the expressed CDS'''
         out = open(os.path.join(self.out_all, "tmp_cds.gff"), "w")
         cdss = []
         fh = open(gff_file)
@@ -125,6 +127,7 @@ class SubLocal(object):
         out_raw.close()
 
     def _extract_result(self, args_sub, tmp_psortb_path, prefix, gff_file):
+        '''extract the result of psortb'''
         if args_sub.merge:
             print("Merge to gff...")
             extract_psortb(os.path.join(

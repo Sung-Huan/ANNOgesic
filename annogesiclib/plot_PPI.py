@@ -111,12 +111,14 @@ def plot_text(check_na, plt, ppis, ppi, color_edge):
 
 
 def nx_node(G, pos, node_size, colors, color_list):
+    '''draw the node'''
     nx.draw_networkx_nodes(G, pos, node_size=node_size, node_shape='o',
                            nodelist=colors.keys(), node_color=color_list,
                            linewidths=1)
 
 
 def nx_edge(G, pos, edges, colors, styles, weights):
+    '''draw the edge'''
     color_edge = (nx.draw_networkx_edges(G, pos, edges=edges,
                   edge_color=colors, style=styles, width=weights,
                   edge_vmin=-1, edge_vmax=1, vmin=-1, vmax=1))
@@ -124,10 +126,12 @@ def nx_edge(G, pos, edges, colors, styles, weights):
 
 
 def nx_label(G, pos, labels, size):
+    '''setup the label of network'''
     nx.draw_networkx_labels(G, pos, labels, font_size=size, font_weight='bold')
 
 
 def nx_color_style(G, edges):
+    '''setup the color of network'''
     colors = []
     styles = []
     check_na = True
@@ -199,6 +203,7 @@ def plot(ppis, center, strain, cutoff_score, node_size, out_folder):
     return check_na
 
 def score_compare(score, scores, cutoff_score, ppi):
+    '''check the number of literatures which are pass the cutoff'''
     if score == "NA":
         ppi["score"] = 0
         ppi["below"] = 0
@@ -217,6 +222,7 @@ def assign_score_below(pre_ppi, scores, ppis):
 
 
 def get_best(pre_ppi, ppi, row):
+    '''get the best score of PPI'''
     if "best" not in pre_ppi.keys():
         ppi["best"] = row[8]
     else:
@@ -231,6 +237,7 @@ def get_best(pre_ppi, ppi, row):
 
 def interaction(first, pre_ppi, scores, ppis, match, center, cutoff_score,
                 node_size, out_folder):
+    '''check the interaction of two proteins'''
     if first:
         pass
     else:
@@ -249,6 +256,7 @@ def interaction(first, pre_ppi, scores, ppis, match, center, cutoff_score,
 
 
 def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
+    '''plot the network of PPI'''
     ppis = []
     first = True
     pre_ppi = None

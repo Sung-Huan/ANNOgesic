@@ -10,6 +10,7 @@ from annogesiclib.helper import Helper
 
 
 class SNPCalling(object):
+    '''detection of SNP'''
 
     def __init__(self, args_snp):
         self.multiparser = Multiparser()

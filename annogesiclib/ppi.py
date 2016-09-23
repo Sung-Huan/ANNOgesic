@@ -11,6 +11,7 @@ from annogesiclib.gff3 import Gff3Parser
 
 
 class PPINetwork(object):
+    '''detection of PPI'''
 
     def __init__(self, out_folder):
         self.multiparser = Multiparser()
@@ -305,6 +306,7 @@ class PPINetwork(object):
         return detect
 
     def _retrieve_actions(self, files, strain_id, paths, args_ppi):
+        '''get the interaction of proteins'''
         for id_file in os.listdir(files["id_list"]):
             if id_file != self.tmp_files["log"]:
                 detect_id = self._wget_actions(files, id_file, strain_id,
@@ -385,6 +387,7 @@ class PPINetwork(object):
                 os.remove(os.path.join(args_ppi.ptts, file_))
 
     def retrieve_ppi_network(self, args_ppi):
+        '''retrieve PPI from STRING with PIE and draw network'''
         strain_ids = []
         paths = {}
         files = {}

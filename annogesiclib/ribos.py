@@ -15,6 +15,7 @@ from annogesiclib.rbs_overlap import rbs_overlap
 
 
 class Ribos(object):
+    '''detection of riboswitch and RNA thermometer'''
 
     def __init__(self, args_ribo):
         self.multiparser = Multiparser()
@@ -72,6 +73,7 @@ class Ribos(object):
 
     def _scan_extract_rfam(self, prefixs, args_ribo, tmp_files, suffixs,
                            feature, rfam):
+        '''extract the seq of candidates and scanning the candidates'''
         for gff in os.listdir(self.gff_path):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
@@ -112,6 +114,7 @@ class Ribos(object):
     def _merge_results(self, args_ribo, scan_folder, suffixs, tmp_files,
                        table_folder, stat_folder, feature_id, gff_outfolder,
                        feature):
+        '''merge the results from the results of two searching'''
         for gff in os.listdir(args_ribo.gffs):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
@@ -175,6 +178,7 @@ class Ribos(object):
     def _core_prediction(self, args_ribo, feature_id, rfam, tmp_files,
                          table_folder, feature, scan_folder, suffixs,
                          stat_folder, gff_outfolder, out_folder):
+        '''main part of detection'''
         rbs_from_rfam(feature_id, args_ribo.rfam, rfam)
         print("compressing Rfam of " + feature)
         call([os.path.join(args_ribo.infernal_path, "cmpress"),

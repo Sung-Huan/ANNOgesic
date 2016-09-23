@@ -102,6 +102,7 @@ def is_utr(pos1, pos2, length):
 
 
 def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
+    '''deal with the the gene and TSS which located at the same strands'''
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
         ori_entry = copy.deepcopy(tss_entry)
         if "locus_tag" in gene.attributes.keys():
@@ -146,6 +147,7 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
 
 
 def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
+    '''deal with the the gene and TSS which located at different strands'''
     if is_antisense(gene.start, gene.end, tss.start, tss.strand):
         checks["int_anti"] = False
         if tss.strand == "-":
@@ -170,6 +172,7 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
 
 
 def compare_tss_cds(tss, cdss, genes):
+    '''compare TSS and CDS to classify the TSSs'''
     tss_entry = []
     gene_ends = {"forward": -1, "reverse": -1}
     anti_ends = {"forward": -1, "reverse": -1}
@@ -193,6 +196,7 @@ def compare_tss_cds(tss, cdss, genes):
 
 
 def fix_attributes(tss, tss_entry):
+    '''change the primary TSS to secondary TSS'''
     index = 0
     genes = tss.attributes["associated_gene"].split("&")
     utrs = tss.attributes["UTR_length"].split("&")
@@ -232,6 +236,7 @@ def detect_coverage(wigs, tss, ref):
 
 
 def del_repeat(tsss):
+    '''delete the repeat TSSs'''
     for tss in tsss:
         types = tss.attributes["type"].split("&")
         utrs = tss.attributes["UTR_length"].split("&")
@@ -298,6 +303,8 @@ def get_primary_locus_tag(tss):
 
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
+    '''If one gene is associated with multiple primary TSSs, 
+    it will assing the low expressed one to be secondary TSS'''
     for tss in tsss:
         if ("Primary" in tss.attributes["type"]):
             tss_entrys = get_primary_locus_tag(tss)

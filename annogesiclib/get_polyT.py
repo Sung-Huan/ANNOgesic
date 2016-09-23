@@ -35,6 +35,7 @@ def check_miss(cand1, cand2, cutoff_miss):
 
 
 def filter_term(cands, terms, miss_rate):
+    '''remove the low possibilty terminator'''
     cutoff_miss = miss_rate
     for cand1 in cands:
         stem_len = (cand1["r_stem"] + cand1["l_stem"] - cand1["miss"])
@@ -70,6 +71,7 @@ def filter_term(cands, terms, miss_rate):
 
 
 def check_sec(sec, nts):
+    '''check the criteria of sec str of terminator'''
     term_features = {"st_pos": 0, "rights": 0, "lefts": 0,
                      "tmp_miss": 0, "real_miss": 0, "loop": 0,
                      "r_stem": 0, "l_stem": 0}
@@ -106,6 +108,7 @@ def check_sec(sec, nts):
 
 def detect_candidates(seq, sec, name, strain, start, end, parent_p, parent_m,
                       strand, args_term, p_pos, m_pos):
+    '''check the criteria of sec str of terminator'''
     term_len = 2 * args_term.max_stem + 2 * (
                args_term.max_stem * args_term.miss_rate) + args_term.max_loop
     cands = []
@@ -187,6 +190,7 @@ def check_parent(genes, term, detects, strand, fuzzy_up, fuzzy_down, type_):
 
 
 def parents(terms, genes, args_term):
+    '''assign the associated gene to terminator'''
     for term in terms:
         detects = {"parent_p": False, "parent_m": False}
         if "tran" in term["parent_p"]:
@@ -250,6 +254,7 @@ def read_gff(seq_file, gff_file, tran_file):
 
 
 def compare_anno(gffs, cands, fuzzy_up, fuzzy_down):
+    '''compare the terminator with CDS'''
     detect = False
     new_cands = []
     for cand in cands:
@@ -303,6 +308,7 @@ def merge_cands(new_cands_gene, new_cands_ta):
 
 
 def get_seq_sec(s_h, sec_seq):
+    '''extract the secondary structure information'''
     for line in s_h:
         if ("(" in line) or ("." in line) or (")" in line):
             line = line.split(" ")
@@ -313,6 +319,7 @@ def get_seq_sec(s_h, sec_seq):
 
 
 def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
+    '''detect the sec str of terminator'''
     terms = []
     genes, genome, trans = read_gff(seq_file, gff_file, tran_file)
     out = open(out_file, "w")

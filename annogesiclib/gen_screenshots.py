@@ -23,6 +23,7 @@ def load_wigs(out, lib_t, lib_n, lib_f):
 
 
 def set_data_range(out, gff, wigs, strand):
+    '''set and print the DataRange'''
     max_range = 0
     for strains in wigs.values():
         for strain, wig_datas in strains.items():
@@ -39,6 +40,7 @@ def set_data_range(out, gff, wigs, strand):
 
 
 def print_batch(args_sc, out, strand, lib_t, lib_n, lib_f, strain):
+    '''print the batch file'''
     out.write("new\n")
     out.write("genome {0}\n".format(os.path.join(os.getcwd(), args_sc.fasta)))
     out.write("load {0}\n".format(os.path.join(os.getcwd(), args_sc.main_gff)))
@@ -75,6 +77,7 @@ def import_wig(lib, wigs, strand):
 
 
 def gen_batch(lib_t, lib_n, lib_f, strand, gffs, out, seq):
+    '''generate the batch file'''
     wigs = {}
     if lib_t and lib_n:
         import_wig(lib_t, wigs, strand)
@@ -110,6 +113,7 @@ def gen_batch(lib_t, lib_n, lib_f, strand, gffs, out, seq):
 
 
 def get_length(fasta_file):
+    '''get sequence information and we can know the length of seq'''
     seq = {}
     with open(fasta_file) as fh:
         for line in fh:
@@ -123,6 +127,7 @@ def get_length(fasta_file):
 
 
 def gen_screenshot(args_sc, libs, forward_file, reverse_file, strain):
+    '''Generation of screenshot of IGV for reveiwing of user'''
     gffs_f = []
     gffs_r = []
     fh = open(args_sc.main_gff)

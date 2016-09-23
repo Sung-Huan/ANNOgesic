@@ -213,6 +213,7 @@ def print_title(out):
 
 
 def merge_base_rnaplex(srnas, srna_gffs, args_tar, gffs, merges):
+    '''merge the results based on the ranking of RNAplex'''
     overlaps = []
     for srna, srna_plexs in srnas["RNAplex"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
@@ -254,6 +255,7 @@ def merge_base_rnaplex(srnas, srna_gffs, args_tar, gffs, merges):
 
 
 def merge_base_rnaup(srnas, srna_gffs, args_tar, gffs, merges):
+    '''merge the results based on the ranking of RNAup'''
     for srna, srna_ups in srnas["RNAup"].items():
         srna_datas = get_srna_name(srna_gffs, srna)
         name = srna_datas[0]
@@ -278,6 +280,7 @@ def merge_base_rnaup(srnas, srna_gffs, args_tar, gffs, merges):
 
 def merge_srna_target(rnaplex, rnaup, args_tar, out_rnaplex, out_rnaup, output,
                       out_overlap, srna_gff_file, annotation_gff):
+    '''merge the results of RNAup and RNAplex'''
     merges = []
     srna_gffs = read_gff(srna_gff_file)
     gffs = read_gff(annotation_gff)

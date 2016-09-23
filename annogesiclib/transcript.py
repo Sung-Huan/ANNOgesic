@@ -14,6 +14,7 @@ from annogesiclib.plot_tran import plot_tran
 
 
 class TranscriptAssembly(object):
+    '''doing for transcript assembly'''
 
     def __init__(self, args_tran):
         self.multiparser = Multiparser()
@@ -113,6 +114,7 @@ class TranscriptAssembly(object):
                     os.remove(self.tmps["gff_ta"])
 
     def _compare_tss_cds(self, tas, args_tran):
+        '''compare transcript with CDS and TSS'''
         if (args_tran.compare_tss is not None) and (
                 args_tran.compare_cds is not None):
             self.multiparser.parser_gff(self.gff_outfolder, "transcript")
@@ -128,6 +130,7 @@ class TranscriptAssembly(object):
             self._compare_tss(tas, args_tran)
 
     def _for_one_wig(self, type_, args_tran):
+        '''running transcript assembly to one type of wig files'''
         if type_ == "tex_notex":
             libs = args_tran.tlibs
             wigs = args_tran.tex_wigs
@@ -146,6 +149,7 @@ class TranscriptAssembly(object):
         return strains
 
     def _for_two_wigs(self, strains, args_tran):
+        '''merge the results of fragemented and tex treated libs'''
         if (args_tran.frag_wigs is not None) and (
                 args_tran.tex_wigs is not None):
             print("merge fragment and tex treat one ....")
@@ -191,6 +195,7 @@ class TranscriptAssembly(object):
                     shutil.move(tex_gff, final_gff)
 
     def _post_modify(self, tas, args_tran):
+        '''modify the transcript by comparing with genome annotation'''
         for ta in tas:
             for gff in os.listdir(args_tran.gffs):
                 if (".gff" in gff) and (gff[:-4] == ta):
@@ -241,6 +246,7 @@ class TranscriptAssembly(object):
         self.helper.remove_tmp(self.gff_outfolder)
 
     def _compare_term_tran(self, args_tran):
+        '''searching the associated terminator to transcript'''
         if args_tran.terms is not None:
             print("comparing between terminators and transcripts...")
             self.multiparser.parser_gff(args_tran.terms, "term")

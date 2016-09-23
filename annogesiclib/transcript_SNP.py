@@ -93,6 +93,7 @@ def change(snp, seq):
 
 
 def get_n_a_value(para, depth_file, min_sample):
+    '''get the corresponding number of cutoff'''
     tag = para.split("_")[0]
     value = float(para.split("_")[-1])
     if tag == "a":
@@ -112,6 +113,7 @@ def get_n_a_value(para, depth_file, min_sample):
     return value
 
 def apply_filter(filters, snp, snps):
+    '''apply the filter to remove the false positives'''
     exclude = False
     for filt in filters:
         tag = filt.split("_")[0]
@@ -210,6 +212,7 @@ def check_overlap(new_snps, overlaps):
 
 
 def overlap_position(qual_snps):
+    '''deal with the conflict position of SNPs'''
     first = True
     qual_nooverlap_snps = {}
     num_overlap = 1

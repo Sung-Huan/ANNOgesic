@@ -12,6 +12,7 @@ class ArgsContainer(object):
         self.helper = Helper()
 
     def _check_replicates(self, replicates_tex, replicates_frag):
+        '''Check the replicate of frag and tex libs'''
         if (replicates_tex is not None) and (replicates_frag is not None):
             replicates = {"tex": replicates_tex,
                           "frag": replicates_frag}
@@ -25,6 +26,7 @@ class ArgsContainer(object):
         return replicates
 
     def _check_libs(self, tex_notex_libs, frag_libs):
+        '''Check the libs of frag and tex'''
         if (tex_notex_libs is None) and (frag_libs is None):
             print("Error: please input proper libraries!!")
         elif (tex_notex_libs is not None) and (frag_libs is not None):
@@ -36,6 +38,7 @@ class ArgsContainer(object):
         return libs
 
     def _parser_combine_wigs(self, subcommand):
+        '''Check the wig folders of frag and tex, then merge them'''
         self.tex_path = None
         self.frag_path = None
         self.multiparser.parser_gff(self.gffs, None)
@@ -68,6 +71,7 @@ class ArgsContainer(object):
         return self
 
     def _merge_wig(self):
+        '''Copy the wig files to one folder'''
         self.merge_wigs = os.path.join(self.out_folder, "merge_wigs")
         if (self.tex_wigs is not None) and (
                 self.frag_wigs is not None):
@@ -97,6 +101,7 @@ class ArgsContainer(object):
         return self
 
     def _deal_multi_inputs(self, inputs, file_type, num, command):
+        '''It is for split the input if it is assigned to multiple factors'''
         if inputs is not None:
             datas = inputs.split(",")
             if num is not None:
@@ -432,6 +437,7 @@ class ArgsContainer(object):
 
     def container_intersrna(self, file_type, files, args_srna, prefix,
                             gff_file, tran_file, tss_file, pro_file, fuzzy):
+        '''Especially for intergenic and antisense sRNA'''
         args_srna.file_type = file_type
         args_srna.gff_file = gff_file
         args_srna.tran_file = tran_file
@@ -469,6 +475,7 @@ class ArgsContainer(object):
 
     def container_utrsrna(self, gff, tran, tss, files, pro, fasta, file_type,
                           prefix, args_srna):
+        '''Especially for UTR-derived sRNA'''
         args_srna.file_type = file_type
         args_srna.gff_file = gff
         args_srna.ta_file = tran
@@ -512,6 +519,7 @@ class ArgsContainer(object):
     def extend_inter_container(self, args_srna, tsss, pros, wigs_f, wigs_r,
                                nums, output, out_table, texs, detects,
                                cutoff_coverage, notex):
+        '''Especially for intergenic and antisense sRNA'''
         args_srna.tsss = tsss
         args_srna.pros = pros
         args_srna.wigs_f = wigs_f
@@ -527,6 +535,7 @@ class ArgsContainer(object):
 
     def extend_utr_container(self, args_srna, cdss, tsss, pros, wig_fs, wig_rs,
                              out, out_t, texs):
+        '''Especially for UTR-derived sRNA'''
         args_srna.cdss = cdss
         args_srna.tsss = tsss
         args_srna.pros = pros

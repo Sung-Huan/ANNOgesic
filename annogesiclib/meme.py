@@ -9,6 +9,7 @@ from annogesiclib.gen_promoter_table import gen_promoter_table
 
 
 class MEME(object):
+    '''detection of promoter'''
 
     def __init__(self, args_pro):
         self.multiparser = Multiparser()
@@ -34,6 +35,7 @@ class MEME(object):
 
     def _run_normal_motif(self, input_path, out_path, filename,
                           fasta, width, args_pro):
+        '''run MEME with specific width'''
         folder = "_".join(["promoter_motifs", filename,
                            str(width), "nt"])
         if folder not in os.listdir(out_path):
@@ -48,6 +50,7 @@ class MEME(object):
 
     def _run_small_motif(self, input_path, out_path, filename,
                          fasta, width, args_pro):
+        '''run MEME with range of width'''
         data = width.split("-")
         min_width = data[0]
         max_width = data[1]
@@ -167,6 +170,8 @@ class MEME(object):
                                                fasta, width, args_pro)
 
     def _combine_file(self, prefixs, args_pro):
+        '''combine all TSS file in the input folder to generate the 
+        global TSS for detecting the global promoter'''
         if args_pro.source:
             for tss in os.listdir(self.tss_path):
                 if tss.endswith("_TSS.gff"):
@@ -214,6 +219,7 @@ class MEME(object):
         shutil.rmtree("tmp")
 
     def _gen_table(self, output_folder, prefixs, combine):
+        '''generate the promoter table'''
         if combine:
             strains = prefixs + ["allfasta"]
         else:
@@ -227,6 +233,7 @@ class MEME(object):
                                    folder, "meme.csv"), tss_file)
 
     def _get_upstream(self, args_pro, prefix, tss, fasta):
+        '''get upstream sequence of TSS'''
         if args_pro.source:
             print("generating fasta file of {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),

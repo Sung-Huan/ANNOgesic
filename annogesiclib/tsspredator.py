@@ -119,6 +119,7 @@ class TSSpredator(object):
         return lib_num, num_id, rep_set, lib_dict, list_num_id
 
     def _print_repmatch(self, args_tss, out):
+        '''check replicate match'''
         if "all" in args_tss.repmatch:
             match = args_tss.repmatch.split("_")[-1]
             out.write("minNumRepMatches = {0}\n".format(match))
@@ -145,6 +146,7 @@ class TSSpredator(object):
 
     def _gen_config(self, project_strain_name, args_tss, gff,
                     wig_folder, fasta, config_file):
+        '''generation of config files'''
         master_folder = "MasterTable_" + project_strain_name
         out_path = os.path.join(self.master, master_folder)
         self.helper.check_make_folder(out_path)
@@ -222,6 +224,8 @@ class TSSpredator(object):
             gff_f.close()
 
     def _merge_manual(self, tsss, args_tss):
+        '''if manual detected TSS is provided, it can merge manual detected TSS 
+        and TSSpredator predicted TSS'''
         self.helper.check_make_folder(os.path.join(os.getcwd(),
                                       self.tmps["tss"]))
         for tss in tsss:
@@ -243,6 +247,7 @@ class TSSpredator(object):
         shutil.rmtree(self.tmps["tss"])
 
     def _validate(self, tsss, args_tss):
+        '''validate TSS with genome annotation'''
         print("Running validation of annotation....")
         for tss in tsss:
             for gff in os.listdir(args_tss.gffs):
@@ -264,6 +269,7 @@ class TSSpredator(object):
             shutil.move(out_cds_file, os.path.join(args_tss.gffs, gff))
 
     def _compare_ta(self, tsss, args_tss):
+        '''compare TSS with transcript'''
         detect = False
         print("Running compare transcript assembly and TSS ...")
         self.multiparser.parser_gff(args_tss.ta_files, "transcript")
@@ -359,6 +365,7 @@ class TSSpredator(object):
                             os.path.join("tmp", "merge_reverse.wig"))
 
     def _check_orphan(self, prefixs, wig_folder, args_tss):
+        '''if genome has no locus tag, it can use for classify the TSS'''
         for prefix in prefixs:
             self._merge_wigs(wig_folder, prefix, args_tss.libs)
             tmp_tss = os.path.join(self.tmps["tmp"], "_".join([
@@ -383,6 +390,8 @@ class TSSpredator(object):
             os.remove("merge_reverse.wig")
 
     def _deal_with_overlap(self, out_folder, args_tss):
+        '''deal with the situation that TSS and 
+        processing site at the same position'''
         if args_tss.overlap_feature.lower() == "both":
             pass
         else:
@@ -407,6 +416,7 @@ class TSSpredator(object):
                                        args_tss.cluster)
 
     def _low_expression(self, args_tss, gff_folder):
+        '''deal with the low expressed TSS'''
         prefix = None
         self._merge_wigs(args_tss.wig_folder, "wig", args_tss.libs)
         for gff in os.listdir(gff_folder):

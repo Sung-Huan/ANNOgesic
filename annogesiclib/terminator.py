@@ -14,6 +14,7 @@ from annogesiclib.compare_tran_term import compare_term_tran
 
 
 class Terminator(object):
+    '''detection of terminator'''
 
     def __init__(self, args_term):
         self.multiparser = Multiparser()
@@ -200,6 +201,7 @@ class Terminator(object):
         return merge_wigs
 
     def _merge_sRNA(self, sRNAs, prefixs, gff_path):
+        '''searching the terminator with sRNA information'''
         if sRNAs is not None:
             self.multiparser.parser_gff(sRNAs, "sRNA")
             self.helper.check_make_folder(self.tmps["merge"])
@@ -273,6 +275,7 @@ class Terminator(object):
 
     def _compute_intersection_forward_reverse(
             self, prefixs, merge_path, wig_path, merge_wigs, args_term):
+        '''the approach for searching gene converged region terminator'''
         for prefix in prefixs:
             tmp_seq = os.path.join(args_term.out_folder,
                                    "_".join(["inter_seq", prefix]))
@@ -387,6 +390,7 @@ class Terminator(object):
                 self.helper.check_uni_attributes(os.path.join(folder, file_))
 
     def _compare_term_tran(self, args_term):
+        '''searching the associated terminator to transcript'''
         self.multiparser.combine_gff(args_term.gffs, self.tran_path,
                                      None, "transcript")
         for type_ in ("best", "express", "all_candidates"):

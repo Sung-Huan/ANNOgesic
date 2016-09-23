@@ -41,6 +41,7 @@ class CircRNADetection(object):
             self.fasta_path = os.path.join(args_circ.fastas, "tmp")
 
     def _wait_process(self, processes):
+        '''wait for the parallels to finish the process'''
         for p in processes:
             p.wait()
             if p.stdout:
@@ -104,6 +105,7 @@ class CircRNADetection(object):
         return p
 
     def _align(self, args_circ):
+        '''align the read. if the bam files are provided, it can be skipped.'''
         prefixs = []
         align_files = []
         for fasta in os.listdir(self.fasta_path):
@@ -217,6 +219,7 @@ class CircRNADetection(object):
                                        self.bams["sort"], "file")
 
     def _merge_bed(self, fastas, splice_path):
+        '''Merge the bed files for analysis'''
         tmp_prefixs = []
         for fasta in os.listdir(fastas):
             headers = []
@@ -272,6 +275,7 @@ class CircRNADetection(object):
         return tmp_prefixs
 
     def _stat_and_gen_gff(self, tmp_prefixs, args_circ):
+        '''do statistics and print the result to gff file'''
         for prefix in tmp_prefixs:
             self.helper.check_make_folder(os.path.join(self.gff_folder,
                                                        prefix))
@@ -299,6 +303,7 @@ class CircRNADetection(object):
                                   "_".join([prefix, "circRNA_best.gff"])))
 
     def _assign_merge_bam(self, args_circ):
+        '''Check and merge bam files'''
         remove_frags = []
         bam_files = []
         if (args_circ.normal_bams is not None) and (
@@ -322,6 +327,7 @@ class CircRNADetection(object):
         return merge_folder, remove_frags, bam_files
 
     def run_circrna(self, args_circ):
+        '''detection of circRNA'''
         for gff in os.listdir(args_circ.gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(

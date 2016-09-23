@@ -44,6 +44,7 @@ def detect_coverage(wigs, tss, ref):
 
 
 def fix_attributes(tss, tss_entry):
+    '''change the primary TSS to secondary TSS'''
     index = 0
     genes = tss.attributes["associated_gene"].split(",")
     utrs = tss.attributes["utr_length"].split(",")
@@ -58,6 +59,7 @@ def fix_attributes(tss, tss_entry):
 
 
 def del_repeat(tsss):
+    '''delete the repeat TSS'''
     for tss in tsss:
         types = tss.attributes["type"].split(",")
         utrs = tss.attributes["utr_length"].split(",")
@@ -106,6 +108,9 @@ def del_repeat(tsss):
 
 
 def fix_primary_type(tsss, wigs_f, wigs_r):
+    '''if one gene is associated with multiple TSSs, it will 
+    check the coverage and assign the low expressed TSS to be 
+    secondary TSS'''
     for tss in tsss:
         if ("Primary" in tss.attributes["type"]):
             tss_entrys = get_primary_locus_tag(tss)
@@ -224,6 +229,7 @@ def import_to_tss(tss_type, cds_pos, tss, locus_tag, tss_entry):
 
 
 def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
+    '''check the TSS and gene which are at the same strand'''
     if is_primary(gene.start, gene.end, tss.start, tss.strand):
         locus_tag = gene.attributes["locus_tag"]
         if tss.strand == "+":
@@ -258,6 +264,7 @@ def same_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
 
 
 def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
+    '''check the TSS and gene which are at the same strand'''
     if is_antisense(gene.start, gene.end, tss.start, tss.strand):
         checks["int_anti"] = False
         if tss.strand == "-":
@@ -284,6 +291,7 @@ def diff_strand_tss_gene(gene, tss, anti_ends, gene_ends, checks, tss_entry):
 
 
 def compare_tss_gene(tss, genes):
+    '''compare TSS and gene to find the relation'''
     tss_entry = []
     gene_ends = {"forward": -1, "reverse": -1}
     anti_ends = {"forward": -1, "reverse": -1}
@@ -473,6 +481,7 @@ def merge_libs(input_libs, wig_folder, program):
 
 def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
                   tss_m, tss_p, tsss, pre_pos, cdss, genes):
+    '''find the TSS which be detected in manual detection and TSSpredator'''
     if overlap:
         if pre_tss:
             pre_tss.attributes["print"] = True
@@ -513,6 +522,7 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
 
 
 def intersection(tsss, cluster, nums, length, cdss, genes):
+    '''compare the predicted TSS and manual TSS'''
     num_strain = {}
     overlap = False
     overlap_num = 0
@@ -582,6 +592,7 @@ def print_file(final_tsss, program, out_gff):
 
 def merge_manual_predict_tss(tss_predict_file, stat_file, out_gff,
                              gff_file, args_tss):
+    '''merge the manual detected TSS and TSSpredator predicted TSS'''
     nums = {"tss_p": 0, "tss_m": 0, "tss": 0}
     merge_libs(args_tss.libs, args_tss.wig_folder, args_tss.program)
     wigs_f = read_wig("merge_forward.wig", "+")

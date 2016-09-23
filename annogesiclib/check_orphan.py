@@ -71,7 +71,7 @@ def get_attributes(tss, cds):
 
 
 def detect_coverage(wigs, tss, ref):
-    '''comparison of the coverage of TSS in order to get
+    '''compare the coverage of TSS in order to get
     proper primary TSS'''
     tss_cover = -1
     ref_cover = -1
@@ -252,7 +252,7 @@ def get_attributes_int_anti(tss, cds, type_):
 
 
 def compare_cds_check_orphan(tsss, cdss):
-    '''main part for checking all orphan TSS'''
+    '''main part of checking all orphan TSS'''
     for tss in tsss:
         if tss.attributes["type"] == "Orphan":
             for cds in cdss:

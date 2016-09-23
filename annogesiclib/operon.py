@@ -7,6 +7,7 @@ from annogesiclib.combine_gff import combine_gff
 
 
 class OperonDetection(object):
+    '''detection of operon'''
 
     def __init__(self, args_op):
         self.multiparser = Multiparser()
@@ -78,6 +79,7 @@ class OperonDetection(object):
                 stat(os.path.join(table_path, table), out_stat)
 
     def _combine_gff(self, prefixs, args_op):
+        '''combine all gff files of features which are associated with operon'''
         for prefix in prefixs:
             out_file = os.path.join(args_op.output_folder, "gffs",
                                     "_".join([prefix, "operon.gff"]))

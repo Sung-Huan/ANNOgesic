@@ -9,6 +9,7 @@ from annogesiclib.stat_sorf import stat
 
 
 class sORFDetection(object):
+    '''detection of sORF'''
 
     def __init__(self, args_sorf):
         self.multiparser = Multiparser()
@@ -59,6 +60,8 @@ class sORFDetection(object):
                                          None, "sRNA")
 
     def _start_stop_codon(self, prefixs, args_sorf):
+        '''detect the sORF based on start and stop codon 
+        and ribosome binding site'''
         for prefix in prefixs:
             if self.srna_path is not None:
                 srna_file = os.path.join(self.srna_path,
@@ -109,6 +112,7 @@ class sORFDetection(object):
         self.helper.remove_wigs(args_sorf.frag_wigs)
 
     def _compare_tran_cds(self, args_sorf):
+        '''compare transcript and CDS to find the intergenic region'''
         prefixs = []
         for gff in os.listdir(args_sorf.gffs):
             if gff.endswith(".gff"):

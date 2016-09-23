@@ -67,6 +67,7 @@ def compute_stat(stat_value, best, best_para, cores,
 
 
 def scoring_function(best, stat_value, indexs, num_manual):
+    '''main scoring function'''
     indexs["change"] = False
     if (stat_value["tp_rate"] == best["tp_rate"]) and (
             stat_value["fp_rate"] == best["fp_rate"]):
@@ -165,6 +166,7 @@ def read_predict_manual_gff(gff_file, args_ops):
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path,
                            out, args_ops):
+    '''compare manual detected set and prediced set and print to stat.csv'''
     manual_fh = open(args_ops.manual, "r")
     stats = []
     count = 0
@@ -231,6 +233,7 @@ def run_TSSpredator(tsspredator_path, config_file):
 
 
 def run_TSSpredator_paralle(config_files, tsspredator_path, processes):
+    '''it is for running TSSpredator parallel'''
     for config_file in config_files:
         process = run_TSSpredator(tsspredator_path, config_file)
         processes.append(process)
@@ -330,6 +333,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
     return lib_num
 
 def print_repmatch(args_ops, out):
+    '''deal with the replicate match'''
     if "all" in args_ops.replicate:
         match = args_ops.replicate.split("_")[-1]
         out.write("minNumRepMatches = {0}\n".format(match))
@@ -356,6 +360,7 @@ def print_repmatch(args_ops, out):
 
 
 def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
+    '''generate config file for TSSpredator'''
     files = os.listdir(out_path)
     if "MasterTable_" + str(core) not in files:
         os.mkdir(os.path.join(out_path, "MasterTable_" + str(core)))
@@ -413,6 +418,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
 def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
                      out_path, stat_out, best_para, current_para,
                      wig, fasta, gff, best, num_manual, args_ops):
+    '''run TSS and do statistics'''
     if indexs["step"] >= args_ops.steps + int(args_ops.cores):
         return (True, best_para)
     elif len(list_num) == indexs["length"]:
@@ -462,6 +468,7 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
 
 def minus_process(num_type, new_para, max_num, best_num,
                   actions, list_num, compare):
+    '''it is for minus one unit in small change part'''
     if num_type == "base_height":
         new_para[num_type] = new_para[num_type] - 0.001
         new_para[num_type] = float('%.3f' % new_para[num_type])
@@ -511,6 +518,7 @@ def minus_process(num_type, new_para, max_num, best_num,
 
 def plus_process(num_type, new_para, max_num,
                  best_num, actions, list_num, compare):
+    '''it is for plus one unit in small change part'''
     if num_type == "base_height":
         new_para[num_type] = new_para[num_type] + 0.001
         new_para[num_type] = float('%.3f' % new_para[num_type])
@@ -554,6 +562,7 @@ def plus_process(num_type, new_para, max_num,
 
 
 def small_change(max_num, num_type, compare, list_num, best_num, best_para):
+    '''add or minus one unit for one parameter in small change part'''
     new_para = copy.deepcopy(best_para)
     actions = {"plus": False, "minus": False}
     step = 0
@@ -582,6 +591,7 @@ def small_change(max_num, num_type, compare, list_num, best_num, best_para):
 
 def run_small_change_part(seeds, features, indexs, current_para,
                           best_para, list_num, max_num):
+    '''it is for the small change'''
     while True:
         seeds["seed"] = random.randint(0, 6)
         if seeds["seed"] in seeds["pre_seed"]:
@@ -627,6 +637,7 @@ def run_small_change_part(seeds, features, indexs, current_para,
 
 def gen_large_random(max_num, num_type, compare, list_num, origin_num,
                      best_para, index_large, indexs):
+    '''random change two parameters for large change'''
     new_para = copy.deepcopy(best_para)
     step = 0
     while True:
@@ -669,6 +680,7 @@ def gen_large_random(max_num, num_type, compare, list_num, origin_num,
 
 def run_large_change_part(seeds, features, indexs, current_para, max_num,
                           best_para, list_num):
+    '''it is for the large change'''
     index_large = {0: "height", 1: "re_height", 2: "factor", 3: "re_factor",
                    4: "base_height", 5: "enrichment", 6: "processing"}
     while True:
@@ -714,6 +726,7 @@ def run_large_change_part(seeds, features, indexs, current_para, max_num,
 
 
 def run_random_part(current_para, list_num, max_num, steps, indexs):
+    '''it is for the random selection'''
     tmp_random_step = 0
     while True:
         current_para["height"] = round(random.uniform(
@@ -745,6 +758,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
                          num_manual, new, args_ops):
+    '''main part of opimize TSSpredator'''
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed": 0}
     tmp_step = 0
@@ -805,6 +819,7 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
 
 
 def start_data(current_para, list_num):
+    '''setup the start parameter as default one'''
     current_para["height"] = 0.3
     current_para["re_height"] = 0.2
     current_para["factor"] = 2.0
@@ -817,6 +832,7 @@ def start_data(current_para, list_num):
 
 
 def extend_data(out_path, best, best_para, step):
+    '''extend the data from previous run'''
     print("extend step from {0}".format(step))
     print("\t".join(["Best Parameter:height={0}", "height_reduction={1}",
                      "factor={2}", "factor_reduction={3}", "base_height={4}",
@@ -837,6 +853,7 @@ def extend_data(out_path, best, best_para, step):
 
 
 def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
+    '''load the statistics from stat.csv'''
     f_h = open(os.path.join(out_path, "stat.csv"), "r")
     first_line = True
     line_num = 0
@@ -878,6 +895,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
 
 
 def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
+    '''if is based on previous run, it is for reload the previous results'''
     indexs["switch"] = 1
     indexs["exist"] = True
     datas = load_stat_csv(out_path, list_num, best, best_para, indexs,
@@ -923,6 +941,7 @@ def get_gene_length(fasta, strain):
 
 
 def initiate(args_ops):
+    '''setup the dict'''
     max_num = {"height": args_ops.height,
                "re_height": args_ops.height_reduction,
                "factor": args_ops.factor,
@@ -945,6 +964,7 @@ def initiate(args_ops):
 
 
 def optimization(wig, fasta, gff, args_ops):
+    '''opimize TSSpredator'''
     best = {}
     new = True
     max_num, best_para, current_para, indexs = initiate(args_ops)
