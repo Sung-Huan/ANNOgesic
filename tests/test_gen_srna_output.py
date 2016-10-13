@@ -72,18 +72,14 @@ class TestGensRNAOutput(unittest.TestCase):
         args.max_len = 500
         args.nr_hits_num = 0
         args.energy = 0
-        args.import_info = ["tss", "sec_str"]
-        args.all_hit = True
-        args.best_sorf = True
-        args.best_promoter = True
-        args.best_term = True
+        args.import_info = ["term", "sec_str", "sorf"]
         out_file = os.path.join(self.test_folder, "test.out")
         gso.gen_best_srna("test.srna", out_file, args)
         with open(out_file) as fh:
             for line in fh:
                 if not (line.startswith("#")):
                     data = "\t".join(line.split("\t")[:-1])
-        self.assertEqual(data, "aaa\tUTR_derived\tsRNA\t300\t367\t.\t+\t.")
+        self.assertEqual(data, "bbb\tintergenic\tsRNA\t18\t50\t.\t-\t.")
 
 class Example(object):
     srna_dict = [{"seq_id": "aaa", "source": "UTR_derived", "feature": "sRNA", "start": 300,

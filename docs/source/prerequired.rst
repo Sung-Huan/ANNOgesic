@@ -1,4 +1,4 @@
-Pre-required tools or databases
+Required tools or databases
 ==============
 
 Tools

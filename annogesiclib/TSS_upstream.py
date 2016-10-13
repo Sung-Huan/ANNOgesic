@@ -3,6 +3,7 @@ from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 from annogesiclib.parser_wig import WigParser
 from annogesiclib.gen_TSS_type import compare_tss_cds, fix_primary_type
+from annogesiclib.lib_reader import read_libs, read_wig
 
 
 def get_upstream(seq, tss, out, name, nt_before):
@@ -36,24 +37,6 @@ def print_fasta(seq, tss, files, name, nt_before):
                 get_upstream(seq[key], tss, files["anti"], name, nt_before)
             if "Orphan" in tss.attributes["type"]:
                 get_upstream(seq[key], tss, files["orph"], name, nt_before)
-
-
-def read_wig(filename, strand):
-    wigs = {}
-    wig_parser = WigParser()
-    wig_fh = open(filename)
-    if filename:
-        for entry in wig_parser.parser(wig_fh, strand):
-            if entry.strain not in wigs.keys():
-                strain = entry.strain
-                wigs[strain] = {}
-            if entry.track not in wigs[strain].keys():
-                wigs[strain][entry.track] = []
-            wigs[strain][entry.track].append({
-                 "pos": entry.pos, "coverage": entry.coverage,
-                 "strand": entry.strand})
-    wig_fh.close()
-    return wigs
 
 
 def read_data(tss_file, fasta_file):
@@ -90,24 +73,7 @@ def read_gff(gff_file):
     return cdss, genes
 
 
-def read_libs(input_libs, wig_folder):
-    libs = {}
-    if "merge_forward.wig" in os.listdir(os.path.join(os.getcwd(), "tmp")):
-        os.remove("tmp/merge_forward.wig")
-    if "merge_reverse.wig" in os.listdir(os.path.join(os.getcwd(), "tmp")):
-        os.remove("tmp/merge_reverse.wig")
-    for lib in input_libs:
-        datas = lib.split(":")
-        if (datas[1] == "tex") and (datas[4] == "+"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]),
-                                os.path.join("tmp", "merge_forward.wig"))
-        elif (datas[1] == "tex") and (datas[4] == "-"):
-            Helper().merge_file(os.path.join(wig_folder, datas[0]),
-                                os.path.join("tmp", "merge_reverse.wig"))
-    return libs
-
-
-def upstream(tss_file, fasta_file, gff_file, out_class, args_pro):
+def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
     '''get the upstream sequence of TSS'''
     files = {"pri": open("tmp/primary.fa", "w"),
              "sec": open("tmp/secondary.fa", "w"),
@@ -132,8 +98,11 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro):
                                             ";ID=tss", str(num_tss)])
             num_tss += 1
     if not args_pro.source:
-        wigs_f = read_wig("tmp/merge_forward.wig", "+")
-        wigs_r = read_wig("tmp/merge_reverse.wig", "-")
+        libs, texs = read_libs(args_pro.input_libs, args_pro.tex_wigs)
+        wigs_f = read_wig(os.path.join(
+            args_pro.wig_path, prefix + "_forward.wig"), "+", libs)
+        wigs_r = read_wig(os.path.join(
+            args_pro.wig_path, prefix + "_reverse.wig"), "+", libs)
         sort_tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start,
                                                 k.end, k.strand))
         final_tsss = fix_primary_type(sort_tsss, wigs_f, wigs_r)

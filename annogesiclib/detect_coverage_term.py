@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.coverage_detection import coverage_comparison, check_tex, get_repmatch
 from annogesiclib.lib_reader import read_libs, read_wig
@@ -113,21 +114,26 @@ def compare_replicates(term_covers, template_texs, cond, args_term):
     return diff_cover, diff, term_datas, detect_num
 
 
-def coverage2term(covers, term, hl_covers, hl_poss, strand,
-                  term_covers, track, args_term):
+def coverage2term(covers, term, hl_covers, hl_poss, strand, term_covers,
+                  track, args_term, start_plus, end_minus, lib_type):
     '''It is for get the highest and lowest coverage'''
     first = True
+    pos = 0
     for cover in covers:
-        if (term["start"] <= cover["pos"] + args_term.fuzzy) and (
-                term["end"] >= cover["pos"] - args_term.fuzzy):
+        if strand == "+":
+            cover_pos = start_plus + pos
+        else:
+            cover_pos = end_minus - pos
+        if (term["start"] <= cover_pos + args_term.fuzzy) and (
+                term["end"] >= cover_pos - args_term.fuzzy):
             first = coverage_comparison(cover, hl_covers, hl_poss,
-                                        first, strand)
+                                        first, strand, cover_pos)
         else:
             if (strand == "+") and (
-                    cover["pos"] > term["end"] + args_term.fuzzy):
+                    cover_pos > term["end"] + args_term.fuzzy):
                 break
             elif (strand == "-") and (
-                    cover["pos"] < term["start"] - args_term.fuzzy):
+                    cover_pos < term["start"] - args_term.fuzzy):
                 break
         if (first is not True) and (hl_covers["high"] > 0):
             if ((hl_covers["low"] / hl_covers["high"]) <
@@ -137,9 +143,21 @@ def coverage2term(covers, term, hl_covers, hl_poss, strand,
                     "track": track, "high": hl_covers["high"],
                     "low": hl_covers["low"], "detect": "True",
                     "diff": (hl_covers["high"] - hl_covers["low"]),
-                    "type": cover["type"]})
+                    "type": lib_type})
                 break
+        pos += 1
 
+
+def check_start_and_end(term, args_term, covers):
+    if (term["start"] - args_term.fuzzy - 2) < 0:
+        start = 0
+    else:
+        start = term["start"] - args_term.fuzzy - 2
+    if (term["end"] + args_term.fuzzy + 1) > len(covers):
+        end = len(covers)
+    else:
+        end = term["end"] + args_term.fuzzy + 1
+    return start, end
 
 def get_coverage(term, wigs, strand, template_texs, args_term):
     '''get proper coverage to check the coverage decrease'''
@@ -155,15 +173,17 @@ def get_coverage(term, wigs, strand, template_texs, args_term):
                 term_covers = []
                 term_datas[cond] = []
                 detect_nums[cond] = 0
-                for track, covers in tracks.items():
+                for lib_name, covers in tracks.items():
+                    track = lib_name.split("|")[-3]
+                    lib_strand = lib_name.split("|")[-2]
+                    lib_type = lib_name.split("|")[-1]
+                    c_start, c_end = check_start_and_end(term, args_term, covers)
+                    covers = covers[c_start: c_end]
                     if strand == "-":
-                        covers = reversed(covers[term["start"] -
-                                          args_term.fuzzy - 2:
-                                          term["end"] + args_term.fuzzy + 1])
-                    elif strand == "+":
-                        covers = covers[term["start"] - 2: term["end"] + 1]
+                        covers = covers[::-1]
                     coverage2term(covers, term, hl_covers, hl_poss,
-                                  strand, term_covers, track, args_term)
+                                  strand, term_covers, track, args_term,
+                                  c_start, c_end, lib_type)
                 if len(term_covers) != 0:
                     tmp_cov, tmp_diff, term_datas[cond], detect_nums[cond] = (
                             compare_replicates(term_covers, template_texs,

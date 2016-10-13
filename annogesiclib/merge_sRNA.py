@@ -2,6 +2,7 @@ import os
 import csv
 import math
 import copy
+import numpy as np
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.coverage_detection import coverage_comparison
 from annogesiclib.coverage_detection import replicate_comparison
@@ -449,6 +450,18 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                       srna.attributes["overlap_percent"].replace(",", ";")))
 
 
+def check_start_and_end(start, end, covers):
+    if (start - 2) < 0:
+        c_start = 0
+    else:
+        c_start = start - 2
+    if (end + 2) > len(covers):
+        c_end = len(covers)
+    else:
+        c_end = end + 2
+    return c_start, c_end
+
+
 def get_coverage(wigs, srna):
     cover_sets = {"high": -1, "low": -1, "total": 0, "diff": 0}
     poss = {"high": 0, "low": 0, "pos": 0}
@@ -457,32 +470,42 @@ def get_coverage(wigs, srna):
         if wig_strain == srna.seq_id:
             for cond, tracks in conds.items():
                 srna_covers[cond] = []
-                for track, covers in tracks.items():
+                for lib_name, covers in tracks.items():
+                    track = lib_name.split("|")[-3]
+                    lib_strand = lib_name.split("|")[-2]
+                    lib_type = lib_name.split("|")[-1]
                     cover_sets["total"] = 0
                     cover_sets["diff"] = 0
                     first = True
-                    if srna.strand == "+":
-                        covers = covers[srna.start-2:srna.end+1]
-                    elif srna.strand == "-":
-                        covers = reversed(covers[srna.start-2:srna.end+1])
+                    c_start, c_end = check_start_and_end(
+                            srna.start, srna.end, covers)
+                    covers = covers[c_start: c_end]
+                    if srna.strand == "-":
+                        covers = covers[::-1]
+                    pos = 0
                     for cover in covers:
-                        if (cover["strand"] == srna.strand):
-                            if (srna.start <= cover["pos"]) and (
-                                    srna.end >= cover["pos"]):
+                        if (lib_strand == srna.strand):
+                            if srna.strand == "+":
+                                cover_pos = c_start + pos
+                            else:
+                                cover_pos = c_end - pos
+                            if (srna.start <= cover_pos) and (
+                                    srna.end >= cover_pos):
                                 cover_sets["total"] = (cover_sets["total"] +
-                                                       cover["coverage"])
+                                                       cover)
                                 first = coverage_comparison(
                                         cover, cover_sets, poss,
-                                        first, srna.strand)
+                                        first, srna.strand, cover_pos)
                             else:
                                 if (srna.strand == "+") and (
-                                        cover["pos"] > srna.end):
-                                    cover_sets["pos"] = cover["pos"]
+                                        cover_pos > srna.end):
+                                    cover_sets_pos = cover_pos
                                     break
                                 elif (srna.strand == "-") and (
-                                        cover["pos"] < srna.start):
-                                    cover_sets["pos"] = cover["pos"]
+                                        cover_pos < srna.start):
+                                    cover_sets["pos"] = cover_pos
                                     break
+                        pos += 1
                     avg = cover_sets["total"] / float(
                             srna.end - srna.start + 1)
                     srna_covers[cond].append({"track": track,
@@ -490,7 +513,7 @@ def get_coverage(wigs, srna):
                                               "low": cover_sets["low"],
                                               "avg": avg,
                                               "pos": poss["pos"],
-                                              "type": cover["type"],
+                                              "type": lib_type,
                                               "final_start": srna.start,
                                               "final_end": srna.end})
     return srna_covers
@@ -534,11 +557,11 @@ def free_memory(paras):
         del(data)
 
 
-def merge_srna_table(srna_file, csvs, wig_f_file, wig_r_file,
+def merge_srna_table(srna_file, csvs, wigs_f, wigs_r,
                      tss_file, args_srna):
     libs, texs = read_libs(args_srna.libs, args_srna.merge_wigs)
-    wigs_f = read_wig(wig_f_file, "+", libs)
-    wigs_r = read_wig(wig_r_file, "-", libs)
+#    wigs_f = read_wig(wig_f_file, "+", libs)
+#    wigs_r = read_wig(wig_r_file, "-", libs)
     srnas = read_gff(srna_file, "sRNA")
     if tss_file is not None:
         tsss = read_gff(tss_file, "tss")

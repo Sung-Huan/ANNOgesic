@@ -230,13 +230,13 @@ def get_5utr_from_TSSpredator(tss, genes, cdss):
     '''It is for TSS file which is generated from ANNOgesic'''
     check_utr = False
     cds_name = "NA"
-    if ("Primary" in tss.attributes["type"]) or \
-       ("Secondary" in tss.attributes["type"]):
+    if ("Primary" in tss.attributes["type"]) or (
+            "Secondary" in tss.attributes["type"]):
         ass_gene = tss.attributes["associated_gene"].split(",")
         tss_type = tss.attributes["type"].split(",")
         for index in range(len(tss_type)):
-            if (tss_type[index] == "Primary") or \
-               (tss_type[index] == "Secondary"):
+            if (tss_type[index] == "Primary") or (
+                    tss_type[index] == "Secondary"):
                 locus_tag = ass_gene[index]
                 check_utr, cds_name, near_cds = check_associated_TSSpredator(
                                                 genes, tss, cdss, check_utr,

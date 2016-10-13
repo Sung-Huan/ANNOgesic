@@ -76,19 +76,26 @@ def compare_tran(tran_gffs, other_gffs, fuzzy_tss, fuzzy_term):
                                 other.end <= tran.end + fuzzy_tss):
                             assign_parent(other, tran)
                     elif other.feature.lower() == "terminator":
-                        start = tran.start - fuzzy_term
-                        end = tran.end + fuzzy_term
-                        if ((start <= other.start) and (
-                                end >= other.end)) or (
-                                (start >= other.start) and (
-                                end <= other.end)) or (
-                                (start <= other.start) and (
-                                end >= other.start) and (
-                                end <= other.end)) or (
-                                (start >= other.start) and (
-                                start <= other.end) and (
-                                end >= other.end)):
-                            assign_parent(other, tran)
+                        if ta.strand == "+":
+                            if ((ta.end >= other.start) and (
+                                     ta.end <= other.end)) or (
+                                    (ta.end <= other.start) and (
+                                     (other.start - ta.end) <= fuzzy_term)) or (
+                                    (ta.end >= other.end) and (
+                                     (ta.end - other.end) <= fuzzy_term)) or (
+                                    (ta.start <= other.start) and (
+                                     ta.end >= other.end)):
+                                assign_parent(other, tran)
+                        else:
+                            if ((ta.start >= other.start) and (
+                                     ta.start <= other.end)) or (
+                                    (ta.start <= other.start) and (
+                                     (other.start - ta.start) <= fuzzy_term)) or (
+                                    (ta.start >= other.end) and (
+                                     (ta.start - other.end) <= fuzzy_term)) or (
+                                    (ta.start <= other.start) and (
+                                     ta.end >= other.end)):
+                                assign_parent(other, tran)
                     else:
                         if ((tran.start <= other.start) and (
                                 tran.end >= other.end)) or (

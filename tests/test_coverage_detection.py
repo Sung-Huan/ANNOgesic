@@ -29,8 +29,8 @@ class TestCoverageDetection(unittest.TestCase):
         first = True
         cover_sets = {"high": -1, "low": -1}
         poss = {"high": -1, "low": -1}
-        cover = {"coverage": 100, "pos": 50}
-        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+")
+        cover = 100
+        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+", 50)
         self.assertDictEqual(cover_sets, {"high": 100, "low": 100})
         self.assertDictEqual(poss, {"high": 50, "low": 50})
         
@@ -38,12 +38,12 @@ class TestCoverageDetection(unittest.TestCase):
         first = False
         cover_sets = {"high": 50, "low": 20}
         poss = {"high": 10, "low": 30}
-        cover = {"coverage": 100, "pos": 50}
-        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+")
+        cover = 100
+        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+", 50)
         self.assertDictEqual(cover_sets, {"high": 100, "low": 100})
         self.assertDictEqual(poss, {"high": 50, "low": 50})
-        cover = {"coverage": 30, "pos": 51}
-        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+")
+        cover = 30
+        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "+", 51)
         self.assertDictEqual(cover_sets, {"high": 100, "low": 30})
         self.assertDictEqual(poss, {"high": 50, "low": 51})
 
@@ -51,12 +51,12 @@ class TestCoverageDetection(unittest.TestCase):
         first = False
         cover_sets = {"high": 50, "low": 20}
         poss = {"high": 30, "low": 10}
-        cover = {"coverage": 100, "pos": 50}
-        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "-")
+        cover = 100
+        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "-", 50)
         self.assertDictEqual(cover_sets, {"high": 100, "low": 100})
         self.assertDictEqual(poss, {"high": 50, "low": 50})
-        cover = {"coverage": 30, "pos": 49}
-        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "-")
+        cover = 30
+        cover_detect.coverage_comparison(cover, cover_sets, poss, first, "-", 49)
         self.assertDictEqual(cover_sets, {"high": 100, "low": 30})
         self.assertDictEqual(poss, {"high": 50, "low": 49})
 

@@ -485,13 +485,13 @@ circRNA_3	Staphylococcus_aureus_HG003	+	23442	49504	NA	52	0.2106796116504854	0.8
 """
 
     circrna_all = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492	4956	.	+	.	ID=circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;confliction=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	23442	49504	.	+	.	ID=circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;confliction=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	497897	498038	.	+	.	ID=circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;confliction=SAOUHSC_R0007;method=segemehl"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492	4956	.	+	.	ID=circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	23442	49504	.	+	.	ID=circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	497897	498038	.	+	.	ID=circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;conflict=SAOUHSC_R0007;method=segemehl"""
 
     circrna_best = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;confliction=NA;method=segemehl"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl"""
 if __name__ == "__main__":
     unittest.main()
 

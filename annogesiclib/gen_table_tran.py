@@ -4,22 +4,41 @@ from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.lib_reader import read_wig, read_libs
 
 
+def check_start_and_end(start, end, covers):
+    if (start - 2) < 0:
+        c_start = 0
+    else:
+        c_start = start - 2
+    if (end + 2) > len(covers):
+        c_end = len(covers)
+    else:
+        c_end = end + 2
+    return c_start, c_end
+
+
 def detect_coverage(wigs, tran, infos):
     for strain, conds in wigs.items():
         if strain == tran.seq_id:
             for cond, tracks in conds.items():
-                for track, covers in tracks.items():
+                for lib_name, covers in tracks.items():
+                    track = lib_name.split("|")[-3]
+                    lib_strand = lib_name.split("|")[-2]
+                    lib_type = lib_name.split("|")[-1]
                     infos[track] = {"avg": -1, "high": -1, "low": -1}
                     total = 0
-                    for cover in covers[tran.start-2:tran.end+1]:
-                        if (cover["pos"] >= tran.start) and (
-                                cover["pos"] <= tran.end):
-                            total = cover["coverage"] + total
-                            if cover["coverage"] > infos[track]["high"]:
-                                infos[track]["high"] = cover["coverage"]
-                            if (cover["coverage"] < infos[track]["low"]) or (
+                    pos = 0
+                    c_start, c_end = check_start_and_end(tran.start, tran.end, covers)
+                    for cover in covers[c_start: c_end]:
+                        cover_pos = pos + c_start
+                        if (cover_pos >= tran.start) and (
+                                cover_pos <= tran.end):
+                            total = cover + total
+                            if cover > infos[track]["high"]:
+                                infos[track]["high"] = cover
+                            if (cover < infos[track]["low"]) or (
                                     infos[track]["low"] == -1):
-                                infos[track]["low"] = cover["coverage"]
+                                infos[track]["low"] = cover
+                        pos += 1
                     infos[track]["avg"] = (float(total) /
                                            float(tran.end - tran.start + 1))
 

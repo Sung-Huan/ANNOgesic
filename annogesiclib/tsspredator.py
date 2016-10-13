@@ -278,7 +278,7 @@ class TSSpredator(object):
         for tss in tsss:
             stat_out = os.path.join(
                     self.stat_outfolder, tss, "".join([
-                        "stat_compare_TSS_Transcriptome_assembly_",
+                        "stat_compare_TSS_transcript_",
                         tss, ".csv"]))
             for ta in os.listdir(self.tmps["ta"]):
                 filename = ta.split("_transcript")

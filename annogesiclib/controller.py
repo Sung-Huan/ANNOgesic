@@ -249,7 +249,7 @@ class Controller(object):
             self._args.validate_gene, self._args.merge_manual,
             self._args.compare_transcript_assembly, self._args.fuzzy,
             self._args.utr_length, self._args.cluster,
-            self._args.length, self._args.re_check_orphan,
+            self._args.partial_length, self._args.re_check_orphan,
             self._args.overlap_feature, self._args.reference_gff_folder,
             self._args.remove_low_expression)
         tsspredator = TSSpredator(args_tss)
@@ -287,7 +287,7 @@ class Controller(object):
             self._args.max_enrichment_factor, self._args.max_processing_factor,
             self._args.utr_length, self._args.lib,
             self._args.output_prefix, self._args.cluster,
-            self._args.length, self._args.core,
+            self._args.partial_length, self._args.core,
             self._args.program, self._args.replicate_match,
             self._args.steps)
         optimize_tss(args_ops)
@@ -348,6 +348,7 @@ class Controller(object):
             self._args.tex_wig_path])
         project_creator.create_subfolders(
             self._paths.required_folders("transcript_assembly"))
+        print(self._args.tex_wig_path)
         args_tran = self.args_container.container_transcript(
             self._args.frag_wig_path, self._args.tex_wig_path,
             self._args.tex_notex,
@@ -407,7 +408,7 @@ class Controller(object):
                 self._args.TSS_folder, self._args.transcript_assembly_folder,
                 self._args.TSS_intergenic_fuzzy, self._args.TSS_5UTR_fuzzy,
                 self._args.TSS_3UTR_fuzzy, self._args.TSS_interCDS_fuzzy,
-                self._args.import_info, self._args.tex_wig_folder,
+                self._args.filter_info, self._args.tex_wig_folder,
                 self._args.frag_wig_folder, self._args.processing_site_folder,
                 self._args.fasta_folder, self._args.mountain_plot,
                 self._args.nr_format, self._args.srna_format,
@@ -416,10 +417,10 @@ class Controller(object):
                 self._args.run_intergenic_TEX_coverage,
                 self._args.run_intergenic_noTEX_coverage,
                 self._args.run_intergenic_fragmented_coverage,
+                self._args.run_break_transcript,
                 self._args.run_antisense_TEX_coverage,
                 self._args.run_antisense_noTEX_coverage,
                 self._args.run_antisense_fragmented_coverage,
-                self._args.intergenic_tolerance,
                 self._args.run_utr_TEX_coverage,
                 self._args.run_utr_noTEX_coverage,
                 self._args.run_utr_fragmented_coverage,
@@ -428,19 +429,16 @@ class Controller(object):
                 self._args.replicates_tex, self._args.replicates_frag,
                 self._args.tex_notex, self._args.blast_e_nr,
                 self._args.blast_e_srna, self._args.detect_sRNA_in_CDS,
-                self._args.table_best, self._args.decrease_intergenic,
-                self._args.decrease_utr, self._args.fuzzy_intergenic,
+                self._args.table_best, self._args.decrease_intergenic_antisense,
+                self._args.decrease_utr, self._args.fuzzy_intergenic_antisense,
                 self._args.fuzzy_utr, self._args.cutoff_nr_hit,
-                self._args.sORF, self._args.best_with_all_sRNAhit,
-                self._args.best_without_sORF_candidate,
+                self._args.sORF,
                 self._args.overlap_percent_CDS,
                 self._args.terminator_folder,
-                self._args.terminator_fuzzy_in_CDS,
-                self._args.terminator_fuzzy_out_CDS,
-                self._args.best_with_terminator,
+                self._args.terminator_fuzzy_in_sRNA,
+                self._args.terminator_fuzzy_out_sRNA,
                 self._args.ignore_hypothetical_protein, self._args.TSS_source,
                 self._args.min_utr_coverage, self._args.promoter_table,
-                self._args.best_with_promoter,
                 self._args.ranking_time_promoter, self._args.promoter_name)
         srna = sRNADetection(args_srna)
         srna.run_srna_detection(args_srna)
@@ -606,7 +604,7 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         args_snp = self.args_container.container_snp(
             self._args.samtools_path, self._args.bcftools_path,
-            self._args.bam_type, self._args.min_sample_number,
+            self._args.bam_type, self._args.sample_number,
             self._args.program, self._args.fasta_path,
             self._args.tex_bam_path, self._args.frag_bam_path,
             self._args.quality, self._args.read_depth_range,

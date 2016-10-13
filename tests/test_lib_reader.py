@@ -43,7 +43,6 @@ class TestLibReader(unittest.TestCase):
     def setUp(self):
         self.lib_reader = annogesiclib.lib_reader
         self.example = Example()
-        self.lib_reader.WigParser = Mock_parser_wig 
         self.libs = self.example.libs
         self.wigs = self.example.wigs
         self.lib_dict = self.example.lib_dict
@@ -76,7 +75,7 @@ class TestLibReader(unittest.TestCase):
         wigs = self.lib_reader.read_wig(merge_wig, "+", self.lib_dict)
         for strain in wigs.keys():
             self.assertEqual(strain, "aaa")
-        self.assertEqual(set(wigs["aaa"].keys()), set(['1_frag', '1_texnotex'])) 
+        self.assertEqual(set(wigs["aaa"].keys()), set(['1_frag', '1_texnotex']))
 
 class Example(object):
     
@@ -93,37 +92,43 @@ variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174""",
+315 56.867067474648174
+""",
 "TSB_OD_0.2_TEX_reverse.wig": """track type=wiggle_0 name="TSB_OD_0.2_TEX_reverse"
 variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174""",
+315 56.867067474648174
+""",
 "frag_forward.wig": """track type=wiggle_0 name="frag_forward"
 variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174""",
+315 56.867067474648174
+""",
 "frag_reverse.wig": """track type=wiggle_0 name="frag_reverse"
 variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174""",
+315 56.867067474648174
+""",
 "TSB_OD_0.2_forward.wig": """track type=wiggle_0 name="TSB_OD_0.2_forward"
 variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174""",
+315 56.867067474648174
+""",
 "TSB_OD_0.2_reverse.wig": """track type=wiggle_0 name="TSB_OD_0.2_reverse"
 variableStep chrom=aaa span=1
 312 1.4041251228308191
 313 56.867067474648174
 314 56.867067474648174
-315 56.867067474648174"""}
+315 56.867067474648174
+"""}
 
     lib_dict = [{'cond': '1_texnotex', 'strand': '-', 'type': 'tex', 'name': 'TSB_OD_0.2_TEX_reverse', 'rep': 'a'},
                 {'cond': '1_texnotex', 'strand': '+', 'type': 'tex', 'name': 'TSB_OD_0.2_TEX_forward', 'rep': 'a'},

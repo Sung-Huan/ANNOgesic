@@ -5,7 +5,7 @@ from copy import deepcopy
 from annogesiclib.gff3 import Gff3Parser
 
 
-def import_data(row, type_, import_info):
+def import_data(row, type_, args_srna, term_path):
     if type_ == "gff":
         data = {"strain": row[0], "name": row[1], "start": int(row[2]),
                 "end": int(row[3]), "strand": row[4], "conds": row[5],
@@ -13,17 +13,20 @@ def import_data(row, type_, import_info):
                 "avg": float(row[9]), "high": float(row[10]),
                 "low": float(row[11]), "overlap_CDS": row[13],
                 "overlap_percent": row[14]}
-        if ("term" in import_info) and ("promoter" not in import_info):
+        if (term_path is not None) and (args_srna.promoter_table is None):
             data["track"] = row[12]
             data["with_term"] = row[15]
-        elif ("term" not in import_info) and ("promoter" in import_info):
+        elif (term_path is None) and (args_srna.promoter_table is not None):
             data["track"] = row[12]
             data["promoter"] = row[15]
-        elif ("term" in import_info) and ("promoter" in import_info):
+        elif (term_path is not None) and (
+                args_srna.promoter_table is not None):
             data["track"] = row[12]
             data["with_term"] = row[15]
             data["promoter"] = row[16]
         else:
+            data["track"] = row[12]
+        if args_srna.import_info is None:
             data["track"] = row[12]
         return data
     elif type_ == "nr":
@@ -209,6 +212,7 @@ def print_file(finals, out, srnas, out_gff):
             final["promoter"] = "NA"
         if final["sRNA_hit"] != "NA":
             names = change_srna_name(final)
+        length = final["end"] - final["start"]
         out.write("\t".join([str(rank),
                   final["strain"], "/".join(names), str(final["start"]),
                   str(final["end"]), final["strand"], final["tss_pro"],
@@ -218,7 +222,7 @@ def print_file(finals, out, srnas, out_gff):
                   final["nr_hit_num"], final["sRNA_hit_num"],
                   final["nr_hit"], final["sRNA_hit"], final["overlap_CDS"],
                   str(final["overlap_percent"]), final["with_term"],
-                  final["promoter"]]) + "\n")
+                  final["promoter"], str(length)]) + "\n")
         rank += 1
     for srna in srnas:
         for final in finals:
@@ -236,23 +240,24 @@ def print_file(finals, out, srnas, out_gff):
                                  attribute_string]) + "\n")
 
 
-def read_table(srna_table_file, nr_blast, srna_blast_file, import_info):
+def read_table(srna_table_file, nr_blast, srna_blast_file, args_srna,
+               term_path):
     srna_tables = []
     nr_blasts = []
     srna_blasts = []
     f_h = open(srna_table_file, "r")
     for row in csv.reader(f_h, delimiter='\t'):
-        srna_tables.append(import_data(row, "gff", import_info))
+        srna_tables.append(import_data(row, "gff", args_srna, term_path))
     f_h.close()
     if os.path.exists(nr_blast):
         f_h = open(nr_blast, "r")
         for row in csv.reader(f_h, delimiter='\t'):
-            nr_blasts.append(import_data(row, "nr", import_info))
+            nr_blasts.append(import_data(row, "nr", args_srna, term_path))
         f_h.close()
     if os.path.exists(srna_blast_file):
         f_h = open(srna_blast_file, "r")
         for row in csv.reader(f_h, delimiter='\t'):
-            srna_blasts.append(import_data(row, "sRNA", import_info))
+            srna_blasts.append(import_data(row, "sRNA", args_srna, term_path))
         f_h.close()
     return srna_tables, nr_blasts, srna_blasts
 
@@ -266,11 +271,11 @@ def read_gff(srna_gff):
 
 
 def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
-                   args_srna, out_file):
+                   args_srna, out_file, term_path):
     '''generate the sRNA table for more details'''
     srnas = read_gff(srna_gff)
     srna_tables, nr_blasts, srna_blasts = read_table(
-        srna_table_file, nr_blast, srna_blast_file, args_srna.import_info)
+        srna_table_file, nr_blast, srna_blast_file, args_srna, term_path)
     out = open(out_file, "w")
     tmp_gff = out_file.replace(".csv", ".gff")
     out_gff = open(tmp_gff, "w")
@@ -279,12 +284,12 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
         "rank", "strain", "name", "start", "end", "strand",
         "start_with_TSS/Cleavage_site", "end_with_cleavage", "candidates",
         "lib_type", "best_avg_coverage", "best_highest_coverage",
-        "best_lower_coverage", "track/coverage",
+        "best_lowest_coverage", "track/coverage",
         "normalized_secondary_energy_change(by_length)", "sRNA_types",
-        "confliction_of_sORF", "nr_hit_number", "sRNA_hit_number",
+        "conflict_sORF", "nr_hit_number", "sRNA_hit_number",
         "nr_hit_top3|ID|e-value", "sRNA_hit|e-value", "overlap_CDS",
         "overlap_percent", "end_with_terminator",
-        "associated_promoter"]) + "\n")
+        "associated_promoter", "sRNA_length"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
     finals = compare(srnas, srna_tables, nr_blasts,
@@ -315,77 +320,97 @@ def check_energy(srna, energy, detect):
 
 def check_tss(import_info, srna, detect):
     '''check the sRNA is associated with TSS or not'''
-    if "tss" in import_info:
-        if "with_TSS" in srna.attributes.keys():
-            if srna.attributes["with_TSS"] != "NA":
-                detect["TSS"] = True
-            elif (srna.attributes["sRNA_type"] != "intergenic") and (
-                  srna.attributes["sRNA_type"] != "in_CDS") and (
-                  srna.attributes["sRNA_type"] != "antisense"):
-                if (("3utr" in srna.attributes["sRNA_type"]) or (
-                     "interCDS" in srna.attributes["sRNA_type"])) and (
-                     srna.attributes["start_cleavage"] != "NA"):
+    if import_info is not None:
+        if "tss" in import_info:
+            if "with_TSS" in srna.attributes.keys():
+                if srna.attributes["with_TSS"] != "NA":
                     detect["TSS"] = True
+                elif (srna.attributes["sRNA_type"] != "intergenic") and (
+                      srna.attributes["sRNA_type"] != "in_CDS") and (
+                      srna.attributes["sRNA_type"] != "antisense"):
+                    if (("3utr" in srna.attributes["sRNA_type"]) or (
+                         "interCDS" in srna.attributes["sRNA_type"])) and (
+                         srna.attributes["start_cleavage"] != "NA"):
+                        detect["TSS"] = True
+        else:
+            detect["TSS"] = True
     else:
         detect["TSS"] = True
 
 
-def check_nr_hit(srna, nr_hits_num, detect):
+def check_nr_hit(srna, nr_hits_num, detect, import_info):
     '''check the sRNA has hit in nr database or not'''
-    if "nr_hit" in srna.attributes.keys():
-        if (srna.attributes["nr_hit"] == "NA") or (
-                int(srna.attributes["nr_hit"]) <= nr_hits_num):
+    if import_info is not None:
+        if ("nr_hit" in srna.attributes.keys()) and (
+                "blast_nr" in import_info):
+            if (srna.attributes["nr_hit"] == "NA") or (
+                    int(srna.attributes["nr_hit"]) <= nr_hits_num):
+                detect["nr_hit"] = True
+        else:
             detect["nr_hit"] = True
     else:
         detect["nr_hit"] = True
 
 
-def check_sorf(best_sorf, srna, detect):
+def check_sorf(import_info, srna, detect):
     '''check the sRNA is overlap with sORF or not'''
-    if (best_sorf):
-        if ("sORF" in srna.attributes.keys()):
-            if srna.attributes["sORF"] == "NA":
-                detect["sORF"] = True
+    if import_info is not None:
+        if ("sorf" in import_info):
+            if ("sORF" in srna.attributes.keys()):
+                if srna.attributes["sORF"] == "NA":
+                    detect["sORF"] = True
+        else:
+            detect["sORF"] = True
     else:
         detect["sORF"] = True
 
 
-def check_srna_hit(srna, all_hit, detect):
+def check_srna_hit(srna, import_info, detect):
     '''check the sRNA has hit in sRNA database or not'''
-    if ("sRNA_hit" in srna.attributes.keys()) and (all_hit):
-        if (srna.attributes["sRNA_hit"] != "NA"):
-            for key in detect.keys():
-                detect[key] = True
+    if import_info is not None:
+        if ("sRNA_hit" in srna.attributes.keys()) and (
+                "blast_srna" in import_info):
+            if (srna.attributes["sRNA_hit"] != "NA"):
+                for key in detect.keys():
+                    detect[key] = True
+            else:
+                count = 0
+                for value in detect.values():
+                    if value:
+                        count += 1
+                if count == 4:
+                    detect["sRNA_hit"] = True
         else:
-            count = 0
-            for value in detect.values():
-                if value:
-                    count += 1
-            if count == 4:
-                detect["sRNA_hit"] = True
+            detect["sRNA_hit"] = True
     else:
         detect["sRNA_hit"] = True
 
 
-def check_term(best_term, srna, detect):
+def check_term(import_info, srna, detect):
     '''check the sRNA is associated with terminator or not'''
-    if best_term:
-        if ("with_term" in srna.attributes.keys()):
-            if srna.attributes["with_term"] != "NA":
-                detect["term"] = True
-            elif ("end_cleavage" in srna.attributes.keys()):
-                if srna.attributes["end_cleavage"] != "NA":
+    if import_info is not None:
+        if "term" in import_info:
+            if ("with_term" in srna.attributes.keys()):
+                if srna.attributes["with_term"] != "NA":
                     detect["term"] = True
+                elif ("end_cleavage" in srna.attributes.keys()):
+                    if srna.attributes["end_cleavage"] != "NA":
+                        detect["term"] = True
+        else:
+            detect["term"] = True
     else:
         detect["term"] = True
 
 
-def check_promoter(best_promoter, srna, detect):
+def check_promoter(import_info, srna, detect):
     '''check the sRNA is associated with promoter or not'''
-    if best_promoter:
-        if ("promoter" in srna.attributes.keys()):
-            if srna.attributes["promoter"] != "NA":
-                detect["promoter"] = True
+    if import_info is not None:
+        if "promoter" in import_info:
+            if ("promoter" in srna.attributes.keys()):
+                if srna.attributes["promoter"] != "NA":
+                    detect["promoter"] = True
+        else:
+            detect["promoter"] = True
     else:
         detect["promoter"] = True
 
@@ -401,10 +426,11 @@ def gen_best_srna(srna_file, out_file, args_srna):
                   "promoter": False}
         check_energy(srna, args_srna.energy, detect)
         check_tss(args_srna.import_info, srna, detect)
-        check_nr_hit(srna, args_srna.nr_hits_num, detect)
-        check_sorf(args_srna.best_sorf, srna, detect)
-        check_srna_hit(srna, args_srna.all_hit, detect)
-        check_term(args_srna.best_term, srna, detect)
-        check_promoter(args_srna.best_promoter, srna, detect)
+        check_nr_hit(srna, args_srna.nr_hits_num, detect,
+                     args_srna.import_info)
+        check_sorf(args_srna.import_info, srna, detect)
+        check_srna_hit(srna, args_srna.import_info, detect)
+        check_term(args_srna.import_info, srna, detect)
+        check_promoter(args_srna.import_info, srna, detect)
         print_best(detect, out, srna)
     out.close()

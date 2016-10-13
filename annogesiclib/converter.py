@@ -476,7 +476,7 @@ class Converter(object):
                                             str(circ["per_start"])),
                                            ("read_at_end",
                                             str(circ["per_end"])),
-                                           ("confliction", circ["conflict"]),
+                                           ("conflict", circ["conflict"]),
                                            ("method", "segemehl")]])
             out_a.write("\t".join([str(field) for field in [
                             circ["strain"], "ANNOgesic", "circRNA",

@@ -15,7 +15,7 @@ class Mock_coverage(object):
     def __init__(self):
         self.example = Example()
 
-    def coverage_comparison(self, cover, cover_sets, poss, first, strand):
+    def coverage_comparison(self, cover, cover_sets, poss, first, strand, cover_pos):
         cover_sets["low"] = 30
         cover_sets["high"] = 100
         poss["low"] = 21 
@@ -130,27 +130,19 @@ class TestCoverageTerminator(unittest.TestCase):
         hl_covers = {"low": 20, "high": 30}
         hl_poss = {"low": 1, "high": 2}
         term = {"start": 2, "end": 4}
-        covers = [{"coverage": 100, "pos": 1, "type": "frag"},
-                  {"coverage": 30, "pos": 2, "type": "frag"},
-                  {"coverage": 23, "pos": 3, "type": "frag"},
-                  {"coverage": 21, "pos": 4, "type": "frag"},
-                  {"coverage": 21, "pos": 5, "type": "frag"},]
+        covers = [100, 30, 23, 21, 21]
         term_covers = []
         args = self.mock_args.mock()
         args.fuzzy = 1
         args.decrease = 0.5
         dct.coverage2term(covers, term, hl_covers, hl_poss, "+",
-                          term_covers, "track_1", args)
+                          term_covers, "track_1", args, 0, 4, "frag")
         self.assertDictEqual(term_covers[0], {'diff': 70, 'track': 'track_1', 'type': 'frag', 'high': 100, 'low': 30, 'detect': 'True'})
 
     def test_get_coverage(self):
         term = {"start": 2, "end": 4, "strain": "aaa", "strand": "+"}
         texs = {"track_tex_track_notex": 0}
-        wigs = {"aaa": {"frag_1": {"track_1": [{"pos": 1, "coverage": 100, "type": "frag"},
-                                               {"pos": 2, "coverage": 30, "type": "frag"},
-                                               {"pos": 3, "coverage": 23, "type": "frag"},
-                                               {"pos": 4, "coverage": 21, "type": "frag"},
-                                               {"pos": 5, "coverage": 21, "type": "frag"}]}}}
+        wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21]}}}
         args = self.mock_args.mock()
         args.fuzzy = 1
         args.decrease = 0.5

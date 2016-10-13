@@ -70,7 +70,7 @@ class TranscriptAssembly(object):
                                    "_".join([ta, self.endfix_tran]))
             stat_tss_out = os.path.join(
                     self.stat_path, "".join([
-                        "stat_compare_Transcriptome_assembly_TSS_",
+                        "stat_compare_transcript_TSS_",
                         ta, ".csv"]))
             for tss in os.listdir(tss_folder):
                 filename = tss.split("_TSS")
@@ -98,7 +98,7 @@ class TranscriptAssembly(object):
             ta_file = os.path.join(self.gff_outfolder,
                                    "_".join([ta, self.endfix_tran]))
             stat_gff_out = os.path.join(self.stat_path, "".join([
-                "stat_compare_Transcriptome_assembly_genome_", ta, ".csv"]))
+                "stat_compare_transcript_genome_", ta, ".csv"]))
             for gff in os.listdir(cds_folder):
                 if (gff[:-4] == ta) and (gff.endswith(".gff")):
                     cds_file = os.path.join(cds_folder, gff)
@@ -256,7 +256,8 @@ class TranscriptAssembly(object):
             compare_term_tran(self.gff_outfolder,
                               os.path.join(args_tran.terms, "tmp"),
                               args_tran.fuzzy_term, args_tran.fuzzy_term,
-                              args_tran.out_folder, "transcript")
+                              args_tran.out_folder, "transcript",
+                              args_tran.terms, self.gff_outfolder)
 
     def run_transcript_assembly(self, args_tran):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
@@ -288,6 +289,7 @@ class TranscriptAssembly(object):
             self._post_modify(tas, args_tran)
         self._compare_tss_cds(tas, args_tran)
         self._compare_term_tran(args_tran)
+        print("Generating table for the details...")
         gen_table_transcript(self.gff_outfolder, args_tran)
         plot_tran(self.gff_outfolder, self.stat_path, args_tran.max_dist)
         self._remove_file(args_tran)

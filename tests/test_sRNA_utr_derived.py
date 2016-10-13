@@ -24,7 +24,7 @@ class Mock_func(object):
         return None
 
     def mock_coverage_comparison(self, cover, cover_sets, poss,
-                                 first, strand):
+                                 first, strand, cover_pos):
         cover_sets['best'] = 20
         cover_sets['high'] = 50
         cover_sets['low'] = 10
@@ -45,6 +45,15 @@ class Mock_func(object):
                                    'ori_avg': 27.52}]}
         utr_covers = srna_covers
         return srna_covers, utr_covers
+
+    def mock_detect_cover_utr_srna(self, cover_results, pos, inter, cond, track,
+                                   args_srna, lib_type, start, end, strand):
+        cover = {'frag_1': [{'track': 'track_1', 'high': 50,
+                            'final_start': 2, 'type': 'frag',
+                            'avg': 8.052631578947368, 'low': 10,
+                            'final_end': 3, 'ori_avg': 2.12}]}
+        cover_results["srna_covers"] = cover
+        cover_results["utr_covers"] = cover
 
 
 class TestsRNAUTR(unittest.TestCase):
@@ -117,7 +126,7 @@ class TestsRNAUTR(unittest.TestCase):
         args.max_len = 500
         pos = {"start": 1, "end": 25, "ori_start": 1, "ori_end": 25}
         sud.check_import_srna_covers(datas, cover_results, self.example.inters[0], "cond_1", "track",
-                                     cover, pos, args)
+                                     cover, pos, args, "5utr")
         self.assertDictEqual(datas["final_poss"], {'end': 23, 'start': 3})
         self.assertDictEqual(cover_results["srna_covers"], {'cond_1': [{'final_start': 3, 'high': 50, 'ori_avg': 8.0,
                                                             'final_end': 23, 'low': 10, 'type': '5utr',
@@ -128,14 +137,14 @@ class TestsRNAUTR(unittest.TestCase):
         cover_results["srna_covers"] = {"cond_1": []}
         cover_results["utr_covers"] = {"cond_1": []}
         sud.check_import_srna_covers(datas, cover_results, self.example.inters[0], "cond_1", "track",
-                                     cover, pos, args)
+                                     cover, pos, args, "5utr")
         self.assertDictEqual(cover_results["srna_covers"], {'cond_1': []})
 
     def test_check_pos(self):
         cover = {"pos": 4}
         check_point = {"utr_start": 1, "utr_end": 29, "srna_start": 3, "srna_end": 11}
         checks = {"srna": False, "utr": False}
-        sud.check_pos(cover, check_point, checks)
+        sud.check_pos(cover, check_point, checks, 4)
         self.assertDictEqual(checks, {'srna': True, 'utr': True})
 
     def test_get_cover_5utr(self):
@@ -143,23 +152,23 @@ class TestsRNAUTR(unittest.TestCase):
         datas = {"num": 0, "cover_tmp": {"5utr": 0},
                  "checks": {"detect_decrease": True},
                  "final_poss": {"start": 1, "end": 26}}
-        cover = {"coverage": 20, "pos": 10}
+        cover = 20
         cover_sets = {"high": 50, "low": 10}
         args.decrease_utr = 50
         args.fuzzy_utr = 2
-        go_out = sud.get_cover_5utr(datas, cover_sets, cover, self.example.inters[0], args)
+        go_out = sud.get_cover_5utr(datas, cover_sets, cover, self.example.inters[0], args, 10)
         self.assertDictEqual(datas["final_poss"], {'start': 1, 'end': 10})
         self.assertEqual(datas["num"], 0)
         self.assertTrue(go_out)
         self.assertDictEqual(datas["cover_tmp"], {'5utr': 0})
         self.assertDictEqual(cover_sets, {'high': 50, 'low': 10})
-        cover = {"coverage": 20, "pos": 10}
+        cover = 20
         datas = {"num": 0, "cover_tmp": {"5utr": 30},
                  "checks": {"detect_decrease": True},
                  "final_poss": {"start": 1, "end": 26}}
         cover_sets = {"low": 10, "high": 50}
         args.decrease_utr = 0.5
-        go_out = sud.get_cover_5utr(datas, cover_sets, cover, self.example.inters[0], args)
+        go_out = sud.get_cover_5utr(datas, cover_sets, cover, self.example.inters[0], args, 10)
         self.assertEqual(datas["num"], 1)
         self.assertFalse(go_out)
         self.assertDictEqual(datas["final_poss"], {'start': 1, 'end': 26})
@@ -169,7 +178,7 @@ class TestsRNAUTR(unittest.TestCase):
     def test_detect_cover_utr_srna(self):
         sud.coverage_comparison = self.mock.mock_coverage_comparison
         cover_results = {"cover_sets": {"low": 10, "high": 50}, "pos": {"low": 10, "high": 50},
-                         "covers": [{"coverage": 20, "pos": 10, "type": "frag"}], "type": "5utr",
+                         "covers": [20], "type": "5utr",
                          "srna_covers": {"frag_1": []}, "utr_covers": {"frag_1": []}, "intercds": "TSS",
                          "check_point": {"utr_start": 1, "utr_end": 29, "srna_start": 2, "srna_end": 25}}
         datas = {"num": 0, "cover_tmp": {"total": 100, "ori_total": 200},
@@ -181,7 +190,7 @@ class TestsRNAUTR(unittest.TestCase):
         args.max_len = 500
         args.decrease_utr = 0.5
         args.fuzzy_utr = 2
-        sud.detect_cover_utr_srna(cover_results, pos, self.example.inters[0], "frag_1", "track_1", args)
+        sud.detect_cover_utr_srna(cover_results, pos, self.example.inters[0], "frag_1", "track_1", args, "frag", 2, 20, "+")
         self.assertDictEqual(cover_results["srna_covers"], {'frag_1': [{'low': 20, 'high': 50, 'track': 'track_1',
                                            'final_start': 2, 'ori_avg': 0.8695652173913043,
                                            'type': 'frag', 'final_end': 20,
@@ -191,6 +200,7 @@ class TestsRNAUTR(unittest.TestCase):
 
     def test_get_coverage(self):
         sud.coverage_comparison = self.mock.mock_coverage_comparison
+        sud.detect_cover_utr_srna = self.mock.mock_detect_cover_utr_srna
         pos = {"start": 2, "end": 20, "ori_start": 1, "ori_end": 25}
         args = self.mock_args.mock()
         args.min_len = 30
@@ -354,7 +364,7 @@ class TestsRNAUTR(unittest.TestCase):
         args.pros = self.example.pros
         args.wig_fs = self.example.wigs
         sud.get_coverage = self.mock.mock_get_coverage
-        sud.class_utr(self.example.inters[0], self.example.tas[0], args)
+        sud.class_utr(self.example.inters[0], self.example.tas[0], args, args.wig_fs, args.wig_fs)
         sud.get_coverage = get_coverage
         self.assertListEqual(args.srnas, [{'end_cleavage': 'NA', 'start_tss': 'TSS:1_+',
                                       'utr': '3utr', 'start_cleavage': 'NA', 'end': 20,
@@ -480,30 +490,8 @@ ATATGACGATACGTAAACCGACCGAATATATCTTTTCACAACCAGATTACGATCGTCAT"""
         gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
     inters = [{'strand': '+', 'start': 14, 'end': 20, 'cleavage': 'NA',
                'strain': 'aaa', 'utr': '', 'datas': None, 'tss': 'NA', "len_CDS": 1000}]
-    wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 6, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 7, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 8, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 9, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 10, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 11, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 12, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 13, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 14, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 15, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 16, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 17, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 18, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 19, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 20, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 21, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 22, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 23, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 24, "coverage": 2, "type": "frag"}]}}}
+    wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21, 2, 100, 30, 23, 21, 21,
+                                                  2, 100, 30, 23, 21, 21, 2, 100, 30, 23, 21, 21, 2]}}}
     tss_dict = [{"seq_id": "aaa", "source": "tsspredator", "feature": "TSS", "start": 1,
                 "end": 1, "phase": ".", "strand": "+", "score": "."}]
     attributes_tss = [{"ID": "tss0", "Name": "TSS_0"}]

@@ -28,7 +28,7 @@ class Mock_func(object):
                  template_texs):
         pass
 
-    def mock_coverage_comparison(self, cover, cover_sets, poss, check, strand):
+    def mock_coverage_comparison(self, cover, cover_sets, poss, check, strand, cover_pos):
         pass
 
     def mock_replicate_comparison(self, srna_covers, template_texs,
@@ -36,6 +36,14 @@ class Mock_func(object):
                                   replicates, type_, test3, tex, notex):
         return {"best": 40, "high": 50, "low": 10, "pos": 5,
                 "conds": {"cond1": "test1"}, "detail": None}
+
+    def mock_check_break_tran(self, tss, ta, cdss, cover, file_type,
+                              break_tran, type_):
+        return 10, False
+
+    def mock_get_tss_type(self, tss, cutoff_coverage, ta, cdss, file_type, break_tran):
+        return 10
+
 
 class TestsRNAIntergenic(unittest.TestCase):
 
@@ -64,7 +72,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.gff_file = gff_file
         args.tran_file = tran_file
         args.pro_file = pro_file
-        nums, cdss, tas, pros, genes = si.read_data(args)
+        nums, cdss, tas, pros, genes, ncs = si.read_data(args)
         self.assertDictEqual(nums, {'ta': 3, 'cds': 3, 'pro': 3, 'uni': 0} )
         self.assertEqual(cdss[0].start, 140)
         self.assertEqual(tas[0].start, 140)
@@ -157,10 +165,12 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.wigs_f = ""
         args.wigs_r = ""
         args.notex = coverage
+        args.file_type = "frag"
+        args.break_tran = False
         args.output = output
         args.out_table = out_table
         tas = copy.deepcopy(self.example.tas)
-        si.detect_include_tss(tas[0], args)
+        si.detect_include_tss(tas[0], args, None, args.wigs_f, args.wigs_r)
         si.get_coverage = get_coverage
         self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
@@ -168,18 +178,18 @@ class TestsRNAIntergenic(unittest.TestCase):
     def test_get_differential_cover(self):
         checks = {"detect_diff": True, "first": True}
         cover_sets = {"diff": 30, "low": 5, "high": 35}
-        cover = {"coverage": 20, "pos": 80}
+        cover = 20
         poss = {"stop_point": 100}
         args = self.mock_args.mock()
         args.fuzzy_inter = 10
         args.decrease_inter = 200
-        si.get_differential_cover(0, checks, cover_sets, poss, cover, args)
+        si.get_differential_cover(0, checks, cover_sets, poss, cover, args, 80)
         self.assertDictEqual(cover_sets, {'diff': 20, 'low': 20, 'high': 35})
-        cover = {"coverage": 50, "pos": 80}
+        cover = 50
         poss = {"stop_point": 100}
         num = 20
         args.fuzzy_inter = 20
-        si.get_differential_cover(num, checks, cover_sets, poss, cover, args)
+        si.get_differential_cover(num, checks, cover_sets, poss, cover, args, 80)
         self.assertDictEqual(poss, {"stop_point": 80})
 
     def test_check_coverage_pos(self):
@@ -189,21 +199,18 @@ class TestsRNAIntergenic(unittest.TestCase):
         tmps = {"total": 0, "toler": 10, "pos": 0}
         checks = {"detect_diff": True, "first": True}
         cover = {"coverage": 50, "pos": 80}
-        detect = si.check_coverage_pos(30, 100, cover, 80, tmps, cover_sets,
+        detect = si.check_coverage_pos(30, 100, cover, 80, cover_sets,
                                        checks, poss, "+", 5)
-        self.assertEqual(detect, (False, {'total': 0, 'pos': 0, 'toler': 0}))
+        self.assertFalse(detect)
         self.assertDictEqual(poss, {'high': 20, 'stop_point': 70, 'low': 70})
-        detect = si.check_coverage_pos(30, 50, cover, 80, tmps, cover_sets,
-                                       checks, poss, "+", 5)
-        self.assertTrue(detect)
 
     def test_get_best(self):
         args = self.mock_args.mock()
         args.tolerance = 5
         args.fuzzy_inter = 5
         args.decrease_inter = 50
-        datas = si.get_best(self.example.wigs, "aaa", "+", 2, 23, "normal", args, 10)
-        self.assertDictEqual(datas, {'frag_1': [{'avg': 93.0, 'type': 'frag', 'track': 'track_1', 'low': -1, 'pos': 24, 'high': -1}]})
+        datas = si.get_best(self.example.wigs, "aaa", "+", 2, 20, "normal", args, 10)
+        self.assertDictEqual(datas, {'frag_1': [{'low': -1, 'high': -1, 'avg': 30.7, 'pos': 21, 'type': 'frag', 'track': 'track_1'}]})
 
     def test_get_attribute_string(self):
         srna_datas = {'best': 23, 'low': 20, 'high': 35}
@@ -261,7 +268,8 @@ class TestsRNAIntergenic(unittest.TestCase):
 
     def test_get_tss_type(self):
         coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
-        cover = si.get_tss_type(self.example.tsss[0], coverage)
+        si.check_break_tran = self.mock.mock_check_break_tran
+        cover = si.get_tss_type(self.example.tsss[0], coverage, None, None, None, False)
         self.assertEqual(cover, 10)
 
     def test_detect_wig_pos(self):
@@ -308,6 +316,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         tas = copy.deepcopy(self.example.tas)
         args.nums = nums
         args.fuzzy = 20
+        args.file_type = "frag"
+        args.break_tran = False
         args.detects = detects
         args.cutoff_coverage = coverage
         args.texs = "texs"
@@ -318,7 +328,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.notex = 20
         args.output = output
         args.out_table = out_table
-        si.detect_longer(tas[0], args)
+        si.get_tss_type = self.mock.mock_get_tss_type
+        si.detect_longer(tas[0], args, None, args.wigs_f, args.wigs_r)
         self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
@@ -356,11 +367,13 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.table_best = True
         args.wigs_f = ""
         args.wigs_r = ""
+        args.file_type = "frag"
+        args.break_tran = False
         args.notex = notex
         args.output = output
         args.cutoff_coverage = coverage
         args.out_table = out_table
-        si.check_srna_condition(tas[0], args)
+        si.check_srna_condition(tas[0], args, None, args.wigs_f, args.wigs_r)
         self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
@@ -402,7 +415,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.in_cds = False
         args.wigs_f = None
         args.wigs_r = None
-        si.intergenic_srna(args)
+        si.intergenic_srna(args, args.input_libs, None, args.wigs_f, args.wigs_r)
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists(output_table))
        
@@ -410,30 +423,9 @@ class TestsRNAIntergenic(unittest.TestCase):
 
 class Example(object):
 
-    wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 6, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 7, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 8, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 9, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 10, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 11, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 12, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 13, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 14, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 15, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 16, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 17, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 18, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 19, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 20, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 21, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 22, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 23, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 24, "coverage": 2, "type": "frag"}]}}}
+    wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21, 2, 100, 30, 23, 
+                                                  21, 21, 2, 100, 30, 23, 21, 21, 2, 100,
+                                                  30, 23, 21, 21, 2]}}}
     ta_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "Transcript", "start": 180,
                 "end": 230, "phase": ".", "strand": "+", "score": "."}]
     attributes_tas = [{"ID": "tran0", "Name": "Transcript_0", "sRNA_type": "intergenic"}]

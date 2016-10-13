@@ -1,5 +1,6 @@
 import sys
-import os
+import os, gc
+import numpy as np
 from annogesiclib.parser_wig import WigParser
 
 
@@ -60,10 +61,15 @@ def read_wig(filename, strand, libs):
             for lib in libs:
                 if (lib["name"] == entry.track) and (
                         lib["strand"] == entry.strand):
-                    if entry.track not in wigs[strain][lib["cond"]].keys():
-                        wigs[strain][lib["cond"]][entry.track] = []
-                    wigs[strain][lib["cond"]][entry.track].append({
-                         "pos": entry.pos, "coverage": entry.coverage,
-                         "strand": entry.strand, "type": lib["type"]})
+                    lib_name = "|".join([
+                        entry.track, entry.strand, lib["type"]])
+                    if lib_name not in wigs[strain][lib["cond"]].keys():
+                        wigs[strain][lib["cond"]][lib_name] = []
+                    wigs[strain][lib["cond"]][lib_name].append(entry.coverage)
         wig_fh.close()
+        for strain, conds in wigs.items():
+            for cond, lib_names in conds.items():
+                for lib_name, cover_list in lib_names.items():
+                    wigs[strain][cond][lib_name] = np.array(
+                            wigs[strain][cond][lib_name])
     return wigs

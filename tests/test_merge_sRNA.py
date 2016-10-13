@@ -139,11 +139,7 @@ class TestMergesRNA(unittest.TestCase):
 
     def test_compare_table(self):
         ms.replicate_comparison = Mock_func().mock_replicate_comparison
-        wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
-                                               {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
-                                               {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
-                                               {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
-                                               {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"}]}}}
+        wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21]}}}
         tables = [{"strain": "aaa", "name": "sRNA_1",
                    "start": 3, "end": 4, "strand": "+",
                    "libs": "track_1", "detect": "True", "avg": 30,
@@ -176,13 +172,9 @@ class TestMergesRNA(unittest.TestCase):
         os.remove("tmp_median")
 
     def test_get_coverage(self):
-        wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
-                                               {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
-                                               {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
-                                               {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
-                                               {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"}]}}}
+        wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21]}}}
         srna_cover = ms.get_coverage(wigs, self.example.srnas_int[0])
-        self.assertEqual(srna_cover["frag_1"], [{'high': 23, 'final_start': 3, 'track': 'track_1', 'avg': 2.096774193548387, 'type': 'frag', 'low': 21, 'final_end': 33, 'pos': 0}])
+        self.assertEqual(srna_cover["frag_1"], [{'low': 21, 'track': 'track_1', 'avg': 1.3548387096774193, 'final_end': 33, 'high': 21, 'pos': 0, 'final_start': 3, 'type': 'frag'}])
 
     def test_get_tss_pro(self):
         srna_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,

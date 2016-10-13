@@ -130,7 +130,7 @@ def read_tas_file(tss_file, ta_file):
     ta_f = open(ta_file, "r")
     pre_seq_id = ""
     for entry in Gff3Parser().entries(tss_f):
-        entry.attributes = del_attributes(entry, ["parent_tran", "tran_note"])
+        entry.attributes = del_attributes(entry, ["Parent", "tran_note"])
         if pre_seq_id != entry.seq_id:
             pre_seq_id = entry.seq_id
             tsss_uni[entry.seq_id] = []
@@ -357,8 +357,6 @@ def read_tag_file(gff_file, ta_file, c_feature):
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
         if (entry.feature == c_feature):
-            entry.attributes = del_attributes(entry, ["parent_tran"])
-            entry.attributes = del_attributes(entry, ["Parent_tran"])
             ori_parents = []
             if "Parent" in entry.attributes.keys():
                 parents = entry.attributes["Parent"].split(",")

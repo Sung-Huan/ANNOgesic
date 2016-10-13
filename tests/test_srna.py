@@ -37,7 +37,7 @@ class Mock_func(object):
         pass
 
     def mock_run_normal(self, import_info, tss_path, pro_path, prefix, gff_path):
-        pass
+        return None, [None, None, 1, 2], [None, None, 1, 2]
 
     def mock_run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
                      prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
@@ -45,6 +45,9 @@ class Mock_func(object):
                      decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
                      out_folder, hypo, tex_path, frag_path, notex, min_utr):
         pass
+
+    def mock_merge_tex_frag_datas(self, tex_datas, frag_datas):
+        return [None, None, 1, 2]
 
     def mock_merge_srna_gff(self, utr_gff, normal_gff, in_cds, merge_gff):
         shutil.copy("test_folder/gffs/test.gff", "test_folder/output/tmp_merge_test")
@@ -195,6 +198,7 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._check_gff = self.mock.mock_check_gff
         self.srna._run_normal = self.mock.mock_run_normal
         self.srna._run_utrsrna = self.mock.mock_run_utrsrna
+        self.srna._merge_tex_frag_datas = self.mock.mock_merge_tex_frag_datas
         sr.filter_frag = self.mock.mock_run_filter_frag
         sr.merge_srna_gff = self.mock.mock_merge_srna_gff
         sr.merge_srna_table = self.mock.mock_merge_srna_table

@@ -1,29 +1,29 @@
 import copy
 
 
-def coverage_comparison(cover, cover_sets, poss, first, strand):
+def coverage_comparison(cover, cover_sets, poss, first, strand, cover_pos):
     '''Seaching the lowest and highest coverage'''
     if first:
         first = False
-        cover_sets["high"] = cover["coverage"]
-        cover_sets["low"] = cover["coverage"]
-        poss["high"] = cover["pos"]
-        poss["low"] = cover["pos"]
+        cover_sets["high"] = cover
+        cover_sets["low"] = cover
+        poss["high"] = cover_pos
+        poss["low"] = cover_pos
     else:
-        if cover_sets["high"] < cover["coverage"]:
-            cover_sets["high"] = cover["coverage"]
-            poss["high"] = cover["pos"]
-            poss["low"] = cover["pos"]
-            cover_sets["low"] = cover["coverage"]
+        if cover_sets["high"] < cover:
+            cover_sets["high"] = cover
+            poss["high"] = cover_pos
+            poss["low"] = cover_pos
+            cover_sets["low"] = cover
         if ((strand == "+") and (poss["low"] >= poss["high"])) or \
            ((strand == "-") and (poss["low"] <= poss["high"])):
-            if cover_sets["low"] > cover["coverage"]:
-                cover_sets["low"] = cover["coverage"]
-                poss["low"] = cover["pos"]
+            if cover_sets["low"] > cover:
+                cover_sets["low"] = cover
+                poss["low"] = cover_pos
         elif ((strand == "+") and (poss["low"] < poss["high"])) or \
              ((strand == "-") and (poss["low"] > poss["high"])):
-            poss["low"] = cover["pos"]
-            cover_sets["low"] = cover["coverage"]
+            poss["low"] = cover_pos
+            cover_sets["low"] = cover
     return first
 
 
@@ -154,9 +154,10 @@ def replicate_comparison(args_srna, srna_covers, strand, type_, median,
                 "all_start": [], "all_end": []}
     detect = False
     for cond, covers in srna_covers.items():
-        detect_num = check_tex(texs, covers, srna_datas["detail"], notex,
-                               type_, tmp_poss, median, coverages, utr_type,
-                               cutoff_coverage, args_srna.tex_notex)
+        detect_num = check_tex(
+                texs, covers, srna_datas["detail"], notex, type_, tmp_poss,
+                median, coverages, utr_type, cutoff_coverage,
+                args_srna.tex_notex)
         if ("texnotex" in cond):
             tex_rep = get_repmatch(args_srna.replicates["tex"], cond)
             if detect_num >= tex_rep:

@@ -39,14 +39,14 @@ def overlap(tas, genes, print_list, out):
         for ta in tas:
             if (ta.strand == gene.strand) and (
                     ta.seq_id == gene.seq_id):
-                if ((ta.start < gene.start) and (
-                         ta.end > gene.start) and (
-                         ta.end < gene.end)) or (
-                        (ta.start > gene.start) and (
-                         ta.end < gene.end)) or (
-                        (ta.start > gene.start) and (
-                         ta.start < gene.end) and (
-                         ta.end > gene.end)):
+                if ((ta.start <= gene.start) and (
+                         ta.end >= gene.start) and (
+                         ta.end <= gene.end)) or (
+                        (ta.start >= gene.start) and (
+                         ta.end <= gene.end)) or (
+                        (ta.start >= gene.start) and (
+                         ta.start <= gene.end) and (
+                         ta.end >= gene.end)):
                     check = True
                     if ta in print_list:
                         printed = True

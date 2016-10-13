@@ -177,7 +177,7 @@ def compare_tss_cds(tss, cdss, genes):
     gene_ends = {"forward": -1, "reverse": -1}
     anti_ends = {"forward": -1, "reverse": -1}
     checks = {"orphan": True, "int_anti": None}
-    if len(genes) == 0:
+    if (len(genes) == 0):
         datas = copy.deepcopy(cdss)
     else:
         datas = copy.deepcopy(genes)
@@ -213,25 +213,26 @@ def fix_attributes(tss, tss_entry):
 def detect_coverage(wigs, tss, ref):
     tss_cover = -1
     ref_cover = -1
-    for strain, tracks in wigs.items():
+    for strain, conds in wigs.items():
         if strain == tss.seq_id:
             tss_cover = 0
             ref_cover = 0
-            for track, wig in tracks.items():
-                if ((tss.start + 1) <= len(wig)) and (
-                        (ref.start + 1) <= len(wig)):
-                    if tss.strand == "+":
-                        diff_t = (wig[tss.start - 1]["coverage"] -
-                                  wig[tss.start - 2]["coverage"])
-                        diff_r = (wig[ref.start - 1]["coverage"] -
-                                  wig[ref.start - 2]["coverage"])
-                    else:
-                        diff_t = (wig[tss.start - 1]["coverage"] -
-                                  wig[tss.start]["coverage"])
-                        diff_r = (wig[ref.start - 1]["coverage"] -
-                                  wig[ref.start]["coverage"])
-                    tss_cover = tss_cover + diff_t
-                    ref_cover = ref_cover + diff_r
+            for cond, tracks in conds.items():
+                for lib_name, covers in tracks.items():
+                    if ((tss.start + 1) <= len(covers)) and (
+                            (ref.start + 1) <= len(covers)):
+                        if tss.strand == "+":
+                            diff_t = (covers[tss.start - 1] -
+                                      covers[tss.start - 2])
+                            diff_r = (covers[ref.start - 1] -
+                                      covers[ref.start - 2])
+                        else:
+                            diff_t = (covers[tss.start - 1] -
+                                      covers[tss.start])
+                            diff_r = (covers[ref.start - 1] -
+                                      covers[ref.start])
+                        tss_cover = tss_cover + diff_t
+                        ref_cover = ref_cover + diff_r
     return (tss_cover, ref_cover)
 
 

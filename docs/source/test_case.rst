@@ -1,8 +1,8 @@
-Performing a test cast
-===================
+Tutorial of ANNOgesic
+=====================
 
-Here we will guide you through a small test case using ANNOgesic. 
-You will see who to run the subcommands of ANNOgesic. The test case is a public 
+Here we will guide you how to use ANNOgesic through a small test case. 
+You will see how to run each subcommand of ANNOgesic. The test case is a public 
 RNA-Seq data from NCBI GEO that was part of a work by
 `Bischler et al. <http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564>`_.
 The differential RNA-seq data is of Helicobacter pylori 26695. 
@@ -11,11 +11,11 @@ The CSV (tabular separated plain text files) files (opened by LibreOffice or Exc
 For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bioviz.org/igb/index.html>`_, 
 `IGV <https://www.broadinstitute.org/igv/>`_ or `Jbrowse <http://jbrowse.org/>`_.
 
-Before we start, please refer to the section of ``The format of filename`` and 
+Before we start, please check ``The format of filename`` and 
 ``The format of libraries for import to ANNOgesic`` in 
-the section of ``subcommands``. All the details are also in ``subcommands``. 
-Moreover, all the requirements are listed in the section of ``prerequired``.
-For the command lines which we will present in the following, please refer to the ``run.sh``
+the section ``ANNOgesic's subcommands``. All the details are also in ``ANNOgesic's subcommands``. 
+Moreover, all the requirements are listed in the section ``Required tools or databases``.
+For command lines which we will present later, please check the ``run.sh``
 in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
 
 Generating a project
@@ -27,7 +27,7 @@ First of all, we need to create a working folder by running ``create``.
 
     annogesic create ANNOgesic
 
-Then you will see 
+Then we will see 
 
 ::
 
@@ -38,21 +38,22 @@ Then you will see
 Retrieving the input data
 -------------------
 
-For our test case, we can download from `NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1>`_.
+For our test case, the input data can be downloaded from 
+`NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1>`_.
 Let's setting the ``$FTP_SOURCE`` first
 
 ::
 
     FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
 
-Then download fasta files(``-f``), gff files(``-g``), gbk files(``-k``), ptt files(``-p``), 
+Then, we can download fasta files(``-f``), gff files(``-g``), gbk files(``-k``), ptt files(``-p``), 
 rnt files(``-r``), and converts to embl(``-e``).
 
 ::
 
     $ annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r ANNOgesic
 
-Then you will get the following results
+Then we will get following results
 
 ::
 
@@ -61,17 +62,17 @@ Then you will get the following results
     $ ls ANNOgesic/input/reference/annotation/
     NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff
 
-If the fasta files and annotation files which are retrieved from NCBI is exactly the strain what you want,
+If the fasta files and annotation files from NCBI is exactly what you want,
 you can add ``-t`` for putting the files to ``ANNOgesic/output/target``. Then you can skip running ``get_target_fasta`` 
 and ``annotation_transfer``.
 
 In fact, these fasta and gff files are exactly what we want to use for the test case.
-But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we used them as reference first.
-After that, we will reorganize the data again.
+But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we used them as references first.
+After testing these subcommands, we will reorganize the data again.
 
 Putting wig, bam files and reads to proper location
 ------------------
-For the test case, you can download files from 
+For the test case, we can download reads from 
 `here <http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564>`_.
 
 ::
@@ -79,7 +80,7 @@ For the test case, you can download files from
     $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951997/SRR1951997.sra
     $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951998/SRR1951998.sra
 
-Then you need to convert the SRA files to Fasta or Fastq format for mapping. You can 
+Then we need to convert SRA files to Fasta or Fastq format for mapping. We can 
 use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
 
 ::
@@ -93,7 +94,7 @@ use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
    $ rm SRR1951997.sra
    $ rm SRR1951998.sra
 
-Now you get the reads. Then we have to download the wiggle files.
+Now we get the reads. Then we have to download the wiggle files.
 
 ::
 
@@ -108,19 +109,19 @@ Now you get the reads. Then we have to download the wiggle files.
            GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz
     cd ../../../../
 
-Because it is a test case, we only download one replicate to reduce the running time.
+We only download one replicate to reduce the running time.
 
 Improving the reference genome
 ------------------
 
-If the data which we retrieved from NCBI is exactly the strain what you want, you can skip this step. 
+Again, if the data retrieved from NCBI is exactly what you want, you can skip this step. 
 Please remember to put or download the fasta file to ``ANNOgesic/output/target/fasta``.
 
-If you want to generate the fasta file of your target strain, you need to find a closed train of your target strain 
-and a mutation table between the target strain and the closed strain.
-Then you can run subcommand ``get_target_fasta`` for getting the fasta file. For the mutation table, please refer 
-to the section of ``subcommands``. 
-Once you have the mutation table, you can improve the fasta files.
+Now, we assume that we need to generate fasta file of our target strain. 
+First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain. 
+Then, we need to generate a mutation table between these two strains. When these files are produced, 
+we can run subcommand ``get_target_fasta`` for getting fasta file of the target strain. 
+For mutation table format, please check the section ``ANNOgesic's subcommands``.
 
 We use a simple example to modify our test case. The 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_ is 
@@ -133,8 +134,8 @@ We use a simple example to modify our test case. The
  NC_000915.1   test_case2  \-            600       g           insertion            SAOUHSC_00132
 =============  ==========  ============  ========  =========  ====================  =============  ====  ============
 
-Every column is separated by tab. You can see the new strain will be NC_test.1 and test_case2. Therefore, there will be 
-two fasta files in ``ANNOgesic/output/target/fasta``.
+Every column is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files 
+will be generated in ``ANNOgesic/output/target/fasta``.
 
 Now, let's try it
 
@@ -146,9 +147,10 @@ Now, let's try it
         -m ANNOgesic/input/mutation_table/mutation.csv \
         ANNOgesic
 
-``-r`` is the folder of original fasta files. In ``-o`` you can assign the filenames of output fasta files and 
-the strains that you want to put in it. In our case, we call the first fasta file test_case1 and the 
-second one test_case2. test_case1 stores the fasta of NC_test.1 and test_case2 stores test_case2. 
+``-r`` is folder of the close strain fasta file. In ``-o``, we assign a pairs of output filenames and 
+the strains that we want to put into the file. In our case, "test_case1" is the first output fasta file, and "test_case2" 
+is the second output fasta file. "test_case1" stores the sequence of the new strain "NC_test.1", 
+and "test_case2" stores the sequence of the other new strain - "test_case2". 
 Now we can check the results.
 
 ::
@@ -176,21 +178,23 @@ Now we can check the results.
     CAGTCTTTTAAATGCGGCTCGATGAGGGCGTCAATTTCATTGATTTTTTCTAACACGCCA
     TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG
 
-In ``test_case1.fa``, the third nucleotide replace from A to c. Moreover, The sixth nucleotide is deleted.
-In ``test_case2.fa``, it is also modified by mutation table.
+We can see that the sequence of "NC_tetst.1" is stored in ``test_case1.fa``. 
+Moreover, the third nucleotide is replaced from A to c. Moreover, The sixth nucleotide is deleted.
+If we check ``test_case2.fa``, the modification is also according to the mutation table and our setting.
 
-If you have no mutation table, you can also use the subcommand ``snp`` to detect the mutations and apply to 
-reference genomoes automatically. For this subcommand, we will go through it later.
+If we have no mutation table, we can also use subcommand ``snp`` to detect mutations and generate 
+fasta files automatically. For ``snp``, we will go through it later.
 
 Generating annotation files
 -------------------
 
-We have the fasta files now. We can use it to generate our annotation files. If the annotaion files which 
-you retrieved by ``get_input_files`` is exactly the strain what you want, you can skip this step. Please 
+We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotaion files 
+retrieved from NCBI is exactly what you want, you can skip this step. Please 
 remember to copy or download the annotation files to ``ANNOgesic/output/target/annotation``.
 
-Before you running it, you have to notice the environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
-If you are using docker container, the path is alread setup. If you setup by yourself, please refer to 
+Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
+If you execute ANNOgesic by using docker container, the path is alread setted. 
+If you setup ANNOgesic by yourself, please check 
 `RATT <http://ratt.sourceforge.net/>`_ to set your environment paths properly.
 
 After setting the environment, we can try it.
@@ -207,13 +211,14 @@ After setting the environment, we can try it.
         -g \
         ANNOgesic
 
-``-e`` is the prefix of output embl files. ``-t`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
-We use ``Strain`` because the similarity is higher than 90%. For other programs, you can refer to 
-`RATT <http://ratt.sourceforge.net/>`_. We assign the pairs of annotation transfer at ``-p``. 
-The names for ``-p`` are the names of strain not filenames of fasta files. ``-g`` means we want to transfer the 
+``-e`` is prefix name of the output embl files. ``-t`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
+We use ``Strain`` because the similarity is higher than 90%. For other situations, please check 
+`RATT <http://ratt.sourceforge.net/>`_. In ``-p``, we assign pairs of the target strains (NC_test.1 and test_case2) 
+and their close strains (NC_000915.1). Please be careful, the information that we assign to ``-p`` 
+is strain names not fasta filenames. ``-g`` means that we want to transfer the 
 output embl files to GFF3 files and store in ``ANNOgesic/output/target/annotation``.
 
-When the computation is done, you can see
+Once the transfer is done, we can see
 
 ::
 
@@ -222,29 +227,27 @@ When the computation is done, you can see
     $ ls ANNOgesic/output/annotation_transfer/
     chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff  ratt_log.txt  test_case2.gff
 
-In ``ANNOgesic/output/target/annotation``, you can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
-you can find the results of `RATT <http://ratt.sourceforge.net/>`_. ``chromosome.NC_test.1.final.embl`` and 
-``chromosome.test_case2.final.embl`` are generated by `RATT <http://ratt.sourceforge.net/>`_. Gff files are 
-transferred from these embl files.
+In ``ANNOgesic/output/target/annotation``, we can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
+we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
 
 TSS and processing site prediction and optimization
 -----------------
 
-Now we already knew how to update the genome fasta and annotation files. In order to 
-go through the following subcommands, we need to reorganize our data.
-First, we remove the fake files that we tested from previous subcommands.
+Now we already saw how to update genome fasta and annotation files. In order to 
+go through following subcommands, we need to reorganize our data.
+First, we remove the fake files for testing the previous subcommands.
 
 ::
     $ rm ANNOgesic/output/target/annotation/*
       rm ANNOgesic/output/target/fasta/*
 
-Then put the correct files that we used as reference before into ``ANNOgesic/output/target``.
+Then put the correct files that we used as references before into ``ANNOgesic/output/target``.
 
 ::
     $ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
       mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 
-Before running the subcommands, we need to setup our libraries as a correct format.
+Before running following subcommands, we need to setup our libraries as a correct format.
 
 ::
 
@@ -253,20 +256,20 @@ Before running the subcommands, we need to setup our libraries as a correct form
     GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig:tex:1:a:+,\
     GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig:tex:1:a:-"
 
-Before running ``tsspredator``, if you want to use the optimized parameters, 
-you need to run ``optimize_TSSpredator`` first. It needs to manual check some TSSs. 
-In our experience, we recommand you detect more than 50 TSSs and longer than 200kb of genome. 
+Now, we can start to test other subcommands. 
+Before running ``tsspredator``, if we want to use the optimized parameters, 
+we need to run ``optimize_TSSpredator`` first. The optimization requires a gff file of the manual-detected TSSs. 
+In our experience, we recommand you to detect at least 50 TSSs and check more than 200kb of genome. 
 
-For test case, we prepared the manual TSS file in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_, 
+For the test case, we prepared the manual TSS file in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_, 
 you can download it. 
 
 ::
 
     wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_000915_manual_TSS.gff
 
-Now, we have a manual TSS files which store in ``ANNOgesic/input/manual_TSS``. 
-we can try optimization of TSSs right now (because the manual TSS file only provide the first 200kb, 
-we set the ``--le`` as 200000).
+Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSS``. 
+we can try ``optimize_TSSpredator`` right now (since we only check first 200kb, we set ``--le`` as 200000).
 
 ::
 
@@ -282,19 +285,19 @@ we set the ``--le`` as 200000).
         -le 200000 \
         ANNOgesic
 
-``optimize_TSSpredator`` will compare gff files of manual checked TSSs and predicted TSSs to find the best parameters. 
-You can check the results and parameters of each step in screen. we set the steps only 25 for testing. 
-When the program finished, you can find several files.
+``optimize_TSSpredator`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
+Results of the different parameters will be printed in the screen. we only set 25 runs for testing. 
+Once the optimization is done, you can find several files.
 
 ::
 
     $ ls ANNOgesic/output/TSS/optimized_TSSpredator/
     best.csv  log.txt  stat.csv
 
-``best.csv`` is for the best parameters; ``stat.csv`` is for the parameters of each step.
+``best.csv`` is for the best parameters; ``stat.csv`` is for parameters of each step.
 
-Let assume the best parameters are that height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5, 
-base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. Now we can set the parameter set for running  
+Now, we assume the best parameters are following: height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5, 
+base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. We can set these parameters for running  
 ``tss``.
 
 ::
@@ -319,8 +322,9 @@ base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. Now we c
         -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
         ANNOgesic
 
-If you put the manual-checked TSSs to ``-m``, the subcommand will merge the manual checked TSSs and predicted TSSs. 
-If you didn't assign it, the subcommand will only produce predicted TSSs. You will get gff file, MasterTable and statistic file.
+We assign the manual-checked TSS gff file to ``-m``. Therefore, the output gff file contains the manual-detected TSSs and predicted TSSs. 
+If we didn't assign it, Only the predicted TSSs will be included in output gff file. 
+The output files are gff file, MasterTable and statistic files.
 
 ::
 
@@ -336,10 +340,10 @@ If you didn't assign it, the subcommand will only produce predicted TSSs. You wi
     stat_compare_TSSpredator_manual_NC_000915.1.csv  stat_gene_vali_NC_000915.1.csv  stat_TSS_class_NC_000915.1.csv  stat_TSS_libs_NC_000915.1.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
     
 
-If you want to predict processing sites, the procedures are the same. You just need to change the program from TSS to 
-processing_site (``-t``) and the parameter sets (we assume the best parameter sets are that 
+If we want to predict processing sites, the procedures are the same. we just need to change the program from TSS to 
+processing_site (``-t``) and assign the proper parameter sets. We assume the best parameter sets are following: 
 height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5,
-base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7).
+base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7.
 
 ::
 
@@ -358,20 +362,36 @@ base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7).
         -pf 5.7 \
         -s \
         -rm all_1 \
-        -v \
         -t processing_site \
         ANNOgesic
+
+The output files are following:
+
+::
+
+    $ ls ANNOgesic/output/processing_site/
+    configs  gffs  MasterTables  statistics
+    $ ls ANNOgesic/output/processing_site/configs/
+    config_NC_000915.1.ini
+    $ ls ANNOgesic/output/processing_site/gffs/
+    NC_000915.1_processing.gff
+    $ ls ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_000915.1/
+    AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff  TSSstatistics.tsv
+    $ ls ANNOgesic/output/processing_site/statistics/NC_000915.1/
+    stat_TSS_class_NC_000915.1.csv  stat_TSS_libs_NC_000915.1.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
+
+Since we use TSSpredator to detect processing site, the files in 
+``ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_000915.1/`` are for processing site not for TSS.
 
 Performing transcript assembly
 ----------------
 
-transcript assembly is the basic precedure for detecting the boundary of transcript. 
-we can use the subcommand ``transcript_assembly`` to do it. Normally, we strongly 
-recommand that user should provide fragmentation RNA-Seq. Because dRNA-Seq usually loses some information 
-of 3'end. However, there is no fragmented libraries in the test case. 
-Therefore, we only use TEX +/- to do it.
+transcript assembly is a basic precedure for detecting transcript boundary. 
+we can use subcommand ``transcript_assembly`` to do it. Normally, we strongly 
+recommand that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information 
+of 3'end. However, we only use TEX +/- for testing.
 
-The command would be like the following.
+The command is like following: 
 
 ::
 
@@ -384,7 +404,7 @@ The command would be like the following.
         -cg ANNOgesic/output/target/annotation \
         ANNOgesic
 
-It will generate gff files and tables. Because we also compared with TSSs and annotation files, it will generate statistics files.
+The output files are gff files, tables and statistic files.
 
 ::
 
@@ -399,7 +419,7 @@ It will generate gff files and tables. Because we also compared with TSSs and an
 Prediction of terminator
 ----------------------
 
-For predicting terminators, we can use subcommand ``terminator``. The command is like the following.
+We can use subcommand ``terminator`` to detect terminators. The command is like following: 
 
 ::
 
@@ -413,7 +433,7 @@ For predicting terminators, we can use subcommand ``terminator``. The command is
         -rt all_1 -tb \
         ANNOgesic
 
-It will generate four different kinds of gff files and tables.
+Four different kinds of gff files and tables will be generated.
 
 ::
 
@@ -422,9 +442,9 @@ It will generate four different kinds of gff files and tables.
     $ ls ANNOgesic/output/terminator/tables
     all_candidates  best  express non_express
 
-``all_candidates`` is for all candidates; ``express`` is for the candidates which have expression; 
-``best`` is for the candidates which coverage significant decreasing. ``non_express`` is for 
-the candidates which have no expression. There are a gff file or table for each folder.
+``all_candidates`` is for all candidates; ``express`` is for the candidates which reveal gene expression; 
+``best`` is for the candidates which reveal gene expression and their coverage shows significant decreasing; 
+``non_express`` is for the candidates which have no expression.
 
 ::
 
@@ -445,14 +465,14 @@ the candidates which have no expression. There are a gff file or table for each 
     $ ls ANNOgesic/output/terminator/tables/non_express
     NC_000915.1_term.csv
 
-In transtermhp folder, there are the output files from `TranstermHP <http://transterm.cbcb.umd.edu/>`_.
+In transtermhp folder, output files of `TranstermHP <http://transterm.cbcb.umd.edu/>`_ can be found.
 
 ::
 
     $ ls ANNOgesic/output/terminator/transtermhp/NC_000915.1
     NC_000915.1_best_terminator_after_gene.bag  NC_000915.1_terminators.txt  NC_000915.1_terminators_within_robust_tail-to-tail_regions.t2t
 
-Moreover, the statistics files are stored in ``statistics``.
+Moreover, statistic files are stored in ``statistics``.
 
 ::
 
@@ -466,7 +486,7 @@ Generating UTR
 --------------
 
 Now, we have the information of TSSs, transcripts and terminators. We can detect the 5'UTRs and 3'UTRs easily by using 
-the subcommand ``utr``.
+subcommand ``utr``.
 
 ::
 
@@ -477,8 +497,8 @@ the subcommand ``utr``.
         -e ANNOgesic/output/terminator/gffs/best \
         ANNOgesic
 
-If your TSSs is not generated by ANNOgesic, please assign ``-s``, it will classify the TSSs for generating UTRs.
-The gff files and statistics files will be stored in ``5UTR`` and ``3UTR``.
+If the TSS gff file is not generated by ANNOgesic, please assign ``-s``,  the TSSs can be classified for generating UTRs.
+Output gff files and statistic files will be stored in ``5UTR`` and ``3UTR``.
 
 ::
 
@@ -495,13 +515,13 @@ The gff files and statistics files will be stored in ``5UTR`` and ``3UTR``.
     $ ls ANNOgesic/output/UTR/3UTR/statistics
     NC_000915.1_all_3utr_length.png
 
-Now, you have all information for defining the transcript boundary.
+Now, we have all information for defining the transcript boundary.
 
-Integrating to operon and suboperon
+Detecting operon and suboperon
 -----------------
 
-We already had TSSs, transcripts, terminators, CDSs, UTRs. We can integrate all these information to 
-detect operons and suboperons. You can use the subcommand ``operon`` to get it.
+We already had TSSs, transcripts, terminators, CDSs, UTRs. We can integrate all these feature to 
+detect operons and suboperons by executing subcommand ``operon``.
 
 ::
 
@@ -515,7 +535,7 @@ detect operons and suboperons. You can use the subcommand ``operon`` to get it.
         -s -c \
         ANNOgesic
 
-``operon`` will generate three folders to store gff files, tables and statistics files.
+Three folders will be generated to store gff files, tables and statistics files.
 
 ::
 
@@ -531,10 +551,9 @@ detect operons and suboperons. You can use the subcommand ``operon`` to get it.
 Promoter motif detection
 ----------------
 
-As long as you have TSSs, you can use the subcommand ``promoter`` to get promoters. It will generate the promoters
-based on the different classes of TSS. Therefore, if your TSSs are not computed by ``ANNOgesic``,
-you need to add ``-s`` and assign proper annotation file to ``-g``. Then ``promoter`` will help you
-to classify your TSSs.
+As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. The promoters will be detected 
+based on different types of the TSSs. Therefore, if the TSSs gff files are not generated  by ``ANNOgesic``,
+you need to add ``-s`` and assign corresponding genome annotation file to ``-g``.
 
 ::
 
@@ -544,10 +563,9 @@ to classify your TSSs.
         -w 45,2-10 \
         ANNOgesic
 
-You can define the length of motifs. In our test case, we use ``50`` and ``2-10``. ``2-10`` means the
-width is from 2 to 10.
+We define the length of the motifs as ``50`` and ``2-10``. ``2-10`` means the width can be from 2 to 10.
 
-Based on the classes of TSSs, it will generate different output files.
+Based on different types of the TSSs and the length of the motif, numerous output files will be generated.
 
 ::
 
@@ -565,52 +583,44 @@ Based on the classes of TSSs, it will generate different output files.
 Prediction of sRNA and sORF
 -----------------
 
-Based on the information of coverage, trascripts and genome annotation, sRNAs can be detected. Moreover, we 
-have the information of TSSs and processing sites for detecting UTR-derived sRNAs as well. You can 
-get sRNAs by running subcommand ``srna``. Normally, we would recommand that the fragmented libraries can be added as well.
-However, we don't have it. Therefore, we only use TEX +/- for this test case.
+Based on trascripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we 
+have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can 
+get sRNAs by running subcommand ``srna``. Normally, we recommand that the user inputs fragmented libraries as well.
+Here, we only use TEX +/- for testing.
 
-For running ``srna``, you can import some information to detect and analyze sRNA. There are ``tss``, ``sec_str``,
-``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Moreover, You can also assign the filters for 
-getting the best results. In this test case, we can try to use ``tss``, ``sec_str``,
-``blast_nr``, ``blast_srna``, ``promoter``, ``term``. If you don't want to import ``blast_nr`` which take much time 
-for running, you can also remove it.
+For running ``srna``, we can apply several filters to improve the detection. These filters are ``tss``, ``sec_str``,
+``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Normally, ``tss``, ``sec_str``,
+``blast_nr``, ``blast_srna`` are recommaned to used.
 
 Before running ``srna``, we have to get sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 
-You can download the fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 
+We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 
 `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
     wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 
-Then we need to download `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_. If you already had it, 
+Then we download `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_. If you already had it, 
 you can skip this step.
 
 ::
 
     wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
     gunzip ANNOgesic/input/database/nr.gz
-
-When ``ANNOgesic`` format the database, it will give the name of nr database - nr. 
-In order to avoid the conflict, we suggest the rename the nr to nr.fa.
-
-::
     mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
 
-If you already had these databases in other folders, please assign your path of databases to ``-sd`` and ``-od``.
+If you already had these databases in other folders, please assign your path of databases to ``-sd`` and ``-nd``.
 If your databses are formated before, you can remove ``-sf`` and ``-nf``.
-Furthermore, you can assign 
-``--best_with_terminator``, ``--best_with_promoter``, ``--best_with_all_sRNAhit``, ``--best_without_sORF_candidate`` 
-which can help you to get more strict candidates.
-Please check the details in the section of ``subcommands``.
 Now we can run ``srna`` with default parameters.
+
+For setting filters (``-d``), if you don't want to use ``blast_nr`` (it takes much time) for testing, 
+you need to remove ``blast_nr`` in ``-d``, ``-nf`` and ``-nd ANNOgesic/input/database/nr``.
 
 ::
 
     annogesic srna \
-        -d tss,blast_srna,promoter,term,blast_nr,sec_str \
+        -d tss,blast_srna,blast_nr,sec_str \
         -g ANNOgesic/output/target/annotation \
         -t ANNOgesic/output/TSS/gffs \
         -p ANNOgesic/output/processing_site/gffs \
@@ -628,25 +638,23 @@ Now we can run ``srna`` with default parameters.
         -nd ANNOgesic/input/database/nr \
         -tl $tex_notex_libs \
         -rt all_1 \
-        -ba \
         ANNOgesic
 
 
-If you already have the information of sORFs, you can also assign 
-``-d tss,blast_srna,promoter,term,blast_nr,sec_str,sorf`` and ``-O`` for the path of sORF. 
-It will compare sORFs and sRNAs.
+If you have sORF information, you can also assign path of the sORF gff folder to ``-O``. 
+Then, comparison of sRNAs and sORFs can be done. 
 
-The output of ``srna`` will be like the following.
+Output files are following.
 
 ::
 
     $ ls ANNOgesic/output/sRNA/
     blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915.1  sRNA_seq_NC_000915.1  statistics  tables
 
-``blast_result_and_misc`` stores the results of blast; ``mountain_plot`` stores the mountain plots; 
-``sec_structure`` stores the plots of secondary structure of sRNA; ``statistics`` stores statistics files.
+``blast_result_and_misc`` stores the results of blast; ``mountain_plot`` stores mountain plots of sRNAs; 
+``sec_structure`` stores the plots of the sRNA secondary structures; ``statistics`` stores statistic files.
 
-``sRNA_2d_NC_000915.1`` and ``sRNA_seq_NC_000915.1`` are text files of sequence of sRNAs and secondary structure of sRNAs.
+``sRNA_2d_NC_000915.1`` and ``sRNA_seq_NC_000915.1`` are text files of sRNA sequences and secondary structures.
 
 ::
 
@@ -667,11 +675,9 @@ The output of ``srna`` will be like the following.
     $ ls ANNOgesic/output/sRNA/statistics/
     stat_sRNA_blast_class_NC_000915.1.csv  stat_sRNA_class_NC_000915.1.csv
 
-For ``gffs`` and ``tables``, three different files are generated. ``all_candidates`` is for all candidates 
-without filtering; ``best`` is for the best candidates of sRNAs after filtering; ``for_class`` is for classes which classified 
-by the information that you assigned. For our test case, folding energy < -0.05 (class 1), associated with TSSs (class 2),
-blast to nr without homologs (class 3), associated with terminators (class 4),
-blast to sRNA database (class 5 for without homologs, class 6 for with homologs), associated with promoters (class 7).
+In ``gffs`` and ``tables``, three different folders are generated. ``all_candidates`` is for all candidates 
+without filtering; ``best`` is for the candidates after filtering; 
+``for_class`` is for different sRNA types based on ``stat_sRNA_class_NC_000915.1.csv``. 
 
 ::
 
@@ -697,8 +703,8 @@ blast to sRNA database (class 5 for without homologs, class 6 for with homologs)
     class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
     ...
 
-As we know, the expressed region without annotation can be sORF as well. Therefore, the potential sRNAs
-may be sORFs not sRNAs. In order to get information of sORFs, you can use subcommand ``sorf`` to get it.
+As we know, expressed region without annotation may be sORF as well. 
+In order to get information of sORFs, we can use subcommand ``sorf``.
 
 ::
 
@@ -713,10 +719,10 @@ may be sORFs not sRNAs. In order to get information of sORFs, you can use subcom
         -rt all_1 -u \
         ANNOgesic
 
-For generating best candidates, The criteria can be assigned by you 
+For generating best candidates, some filters can be assigned 
 (ex: with ribosome binding site, with TSS, without overlap with sRNA, etc.).
-After running ``sorf``, gff files, statistics files and tables of sORF can be gained. ``all_candidates`` 
-is the gff files and tables without filtering; ``best`` is the gff_files and tables with filtering.
+After running ``sorf``, gff files, statistic files and tables of the sORF will be generated. ``all_candidates`` 
+stores the gff files and tables without filtering; ``best`` stores the gff_files and tables with filtering.
 
 ::
 
@@ -734,7 +740,7 @@ is the gff files and tables without filtering; ``best`` is the gff_files and tab
 Performing sRNA target prediction
 ------------------
 
-Now we have the sRNA candidates. If you want to know the targets of these sRNAs, you can use ``srna_target``.
+Now we have sRNA candidates. If we want to know targets of these sRNAs, we can use ``srna_target``.
 
 ::
 
@@ -746,18 +752,18 @@ Now we have the sRNA candidates. If you want to know the targets of these sRNAs,
         -p both \
         ANNOgesic
 
-For testing, we just do the prediction for one sRNA. You can also assign several of sRNAs like 
+For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like 
 ``NC_000915.1:-:7249:7321,NC_000915.1:-:16651:16765``. If you want to compute all sRNAs, you 
-can assign ``all`` to ``-q``. However, it may take several days.
+can assign ``all`` to ``-q`` (may take several days).
 
-``srna_target`` will generate several folders.
+Several output folders will be generated. 
 
 ::
 
     $ ls ANNOgesic/output/sRNA_targets/
     merge  RNAplex  RNAup  sRNA_seqs  target_seqs
 
-``sRNA_seqs`` and ``target_seqs`` are for the sequences of sRNAs and potential targets.
+``sRNA_seqs`` and ``target_seqs`` are for sequences of the sRNAs and the potential targets.
 
 ::
 
@@ -766,7 +772,7 @@ can assign ``all`` to ``-q``. However, it may take several days.
     $ ls ANNOgesic/output/sRNA_targets/target_seqs
     NC_000915.1_target.fa
 
-``RNAplex`` and ``RNAup`` are for the output of `RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
+``RNAplex`` and ``RNAup`` are for output of `RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
 
 ::
 
@@ -776,8 +782,8 @@ can assign ``all`` to ``-q``. However, it may take several days.
     NC_000915.1_RNAup.log  NC_000915.1_RNAup_rank.csv  NC_000915.1_RNAup.txt
 
 ``merge`` is for the merged results of `RNAplex <http://www.tbi.univie.ac.at/RNA/RNAplex.1.html>`_ and 
-`RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_. ``NC_000915.1_merge.csv``  merge all the results of 
-both methods. ``NC_000915.1_overlap.csv`` only stores the candidates which are top 20 (default) in both methods.
+`RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_. ``NC_000915.1_merge.csv``  contains all results of the 
+both methods. ``NC_000915.1_overlap.csv`` only stores candidates which are top 20 (default) in the both methods.
 
 ::
 
@@ -787,16 +793,16 @@ both methods. ``NC_000915.1_overlap.csv`` only stores the candidates which are t
 Mapping and detecting of circular RNA
 -------------------
 
-You may also be interested in circular RNAs. The subcommand ``circrna`` can help you to get the information. 
-It apply `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ to detect circular RNAs. Since 
-we didn't map the reads of test case before, we can also do it by running ``circrna``. If your mapping is 
-generated by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``, then you can 
-remove ``-a`` and add the path of bam files to ``-nb`` or ``-fb``. However, 
+You may also be interested in circular RNAs. The subcommand ``circrna`` can help us to get circular RNAs by  
+using `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. Since 
+we didn't map reads of the test case before, we can also do mapping by running ``circrna``. If you already mapped 
+the reads by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``, then you can 
+remove ``-a`` and add path of the bam files to ``-nb`` or ``-fb``. However, 
 if you mapped the reads by other tools or you mapped the reads by 
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``-S``, Unfortunately, 
-you have to re-mapping again. You can assign parallel (``-p``) to run it as well.
+you have to re-map the reads again. You can assign parallel (``-p``) for mapping.
 
-Since it is only a test case, we can reduce the running time by selecting the subset of reads (first 50000).
+For testing, we can reduce the running time by selecting the subset of reads (first 50000).
 
 ::
 
@@ -816,16 +822,16 @@ Now, we can try ``circrna``
          -a \
          ANNOgesic
 
-``circrna`` will generate several folders.
+	Several output folders will be generated.
 
 ::
 
     $ ls ANNOgesic/output/circRNA/
     circRNA_tables  gffs  segemehl_align  segemehl_splice statistics
 
-``segemehl_align`` and ``segemehl_splice`` are for the results of 
-`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. ``segemehl_align`` stores the bam files of 
-alignment and ``segemehl_splice`` stores the results of splice detection.
+``segemehl_align`` and ``segemehl_splice`` are for results of 
+`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. ``segemehl_align`` stores Bam files of 
+the alignment and ``segemehl_splice`` stores results of the splice detection.
 
 ::
 
@@ -834,7 +840,7 @@ alignment and ``segemehl_splice`` stores the results of splice detection.
     $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915.1/
     splicesites_all.bed  transrealigned_all.bed    
 
-The gff files, tables and statistics files are stored in ``gffs``, ``circRNA_tables`` and ``statistics``.
+Gff files, tables and statistic files are stored in ``gffs``, ``circRNA_tables`` and ``statistics``.
 
 ::
 
@@ -845,30 +851,28 @@ The gff files, tables and statistics files are stored in ``gffs``, ``circRNA_tab
     $ ls ANNOgesic/output/circRNA/statistics/
     stat_circRNA_NC_000915.1.csv
 
-``NC_000915.1_circRNA_all.gff`` and ``circRNA_NC_000915.1_all.csv`` are for all circular RNAs without filtering. 
-``NC_000915.1_circRNA_best.gff`` and ``circRNA_NC_000915.1_best.csv`` 
-are the circular RNAs after filering by mapping ratio and comparison of genome annotation.
+``NC_000915.1_circRNA_all.gff`` and ``circRNA_NC_000915.1_all.csv`` store all circular RNAs without filtering. 
+``NC_000915.1_circRNA_best.gff`` and ``circRNA_NC_000915.1_best.csv`` store
+the circular RNAs after filering.
 
 SNP calling
 --------------
 
-If you want to know the SNPs or mutations of your RNA-seq data, you can use ``snp`` to get it.
-``snp`` is divided by two parts. One part is for comparing with the "reference strain" which is the
-closed strain of your query strain ("target strain"). It is useful for users who have no fasta files of their 
-strain. You can refer to the section of ``Retrieving the input data``.
-Because you may not have time to check the mutations between "reference strain" and "target strain",
-``snp`` can help you to detect the mutations automatically. You just need to put your bam files of 
-"reference strain" in correct path. It will generate the potential sequences.
-The other part is for detecting the mutations of "target strain". In this part, 
-you can know the real mutations of "target strain". Therefore, you need to put the bam files of 
-"target strain" to the correct folder.
+If we want to know SNPs or mutations of our RNA-seq data, we can use ``snp`` to achieve this purpose.
+``snp`` is compose of two parts. One part is for obtaining the differences between our query strain ("target strain") 
+and the close strain of our query strain ("reference strain"). If we have no fasta file of our "target strain", 
+this part will be very useful. We just need to map reads of the "target strain" on fasta file of the "reference strain". Then 
+using ``snp`` can automatically detect differences between the "target strain" and the "reference strain". 
+Furthermore, potential fasta files of the "target strain" can be generated automatically as well. 
+The other part is for detecting SNPs or mutations of the "target strain". In this part, 
+you can know real mutations of the "target strain".
 
-Before running the subcommand, we must have the bam files. Since we already generated them through 
-running ``circrna``, we can just use them. However, please remember that the mapping function of 
-``circrna`` is very basic. If you have other request, please do mapping by yourself.
+Before running the subcommand, bam files are required. Since we already generated them through 
+running ``circrna``, we can just need to put them to right place. Please remember that the mapping function of 
+``circrna`` is very basic.
 
-For testing, we only run the mutations of "target strain" because our mapping is based on the 
-fasta of "target strain" - NC_000915. Therefore, we copy the bam files to ``BAMs_map_target``.
+Now, we can try to detect mutations of the "target strain" because our mapping is based on 
+fasta file of the "target strain" - NC_000915. Therefore, we copy the bam files to ``BAMs_map_target``.
 
 ::
 
@@ -885,42 +889,42 @@ Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ
         -f ANNOgesic/output/target/fasta \
         ANNOgesic
 
-If you want to compare between "reference strain" and "target strain", you just need to change 
-``-t`` to ``reference`` and assign the correct bam files.
+If you want to compare between the "reference strain" and the "target strain", you just need to change 
+``-t`` to ``reference`` and assign correct bam files.
 
-``snp`` will generate two folders, ``compare_reference`` is for the results of comparison of "reference strain" 
-and "target strain". ``validate_target`` is for the results of real mutations of "target strain".
+Two output folders will be generated, ``compare_reference`` is for results of the comparison between the "reference strain" 
+and the "target strain", ``validate_target`` is for results of detecting mutations of the "target strain".
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/                                                                                                      
     compare_reference  validate_target
 
-Becaues we run ``validate_target``, you can see there are several folders under ``validate_target``.
+Since we run ``validate_target``,  the output folders are produced under ``validate_target``.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/validate_target/
     SNP_raw_outputs  SNP_table  seqs  statistics
 
-All folders are divided by three parts - ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``.
+The output folders are compose of three parts - ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/
     extend_BAQ/  with_BAQ/    without_BAQ/
 
-In ``seqs``, there are the potential sequences.
+In ``seqs``, the potential sequences can be found.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
       NC_000915.1_NC_000915.1_1_1.fa
 
-``SNP_raw_outputs`` stores the output of `Samtools and Bcftools<https://github.com/samtools>`_. 
-``SNP_table`` stores the results after filtering and the indices of potential sequence(
-the information of potential sequences in ``seqs``).
-``statistics`` stores the statistics and visualization files.
+``SNP_raw_outputs`` stores output of `Samtools and Bcftools<https://github.com/samtools>`_. 
+``SNP_table`` stores results after filtering and the indices of potential sequence 
+(potential sequences are stored in ``seqs``).
+``statistics`` stores the statistic files.
 
 ::
 
@@ -938,8 +942,8 @@ the information of potential sequences in ``seqs``).
 Mapping Gene ontology
 ------------------
 
-Gene ontology is useful for understanding the function of gene products. ``go_term`` is the 
-subcommand for mapping your annotations to gene ontology. Before running ``go_term``, we 
+Gene ontology is useful for understanding function of gene products. 
+Implementing ``go_term`` can map our annotations to gene ontology. Before running ``go_term``, we 
 need to prepare some databases. First, please download 
 `goslim.obo <http://geneontology.org/page/go-slim-and-subset-guide>`_ and 
 `go.obo <http://geneontology.org/page/download-ontology>`_ and 
@@ -952,8 +956,8 @@ need to prepare some databases. First, please download
     $ wget -cP ANNOgesic/input/database ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
     $ gunzip ANNOgesic/input/database/idmapping_selected.tab.gz
 
-Now, we have all required databases. You can also import the information of transcript to 
-generate the results which only included the expressed CDS.
+Now, we have all required databases. We can also import information of the transcripts to 
+generate results which only included the expressed CDS.
 
 Let's try it.
 
@@ -964,7 +968,7 @@ Let's try it.
         -a ANNOgesic/output/transcriptome_assembly/gffs \
         ANNOgesic
 
-The output of ``go_term`` are stored in ``Go_term_results``. The statistics files and 
+Output of ``go_term`` are stored in ``Go_term_results``. The statistic files and 
 figures are stored in ``statistics``.
 
 ::
@@ -982,10 +986,10 @@ figures are stored in ``statistics``.
 Prediction of Subcellular localization
 ------------------
 
-Subcellular localization may be a useful information for analysis of protein function. For 
-generating the information of subcellular localization, you can use the subcommand 
-``subcellular_localization`` to get it. Like ``go_term``, you can also import the 
-information of transcript to generate the results which only included the expressed CDS.
+Subcellular localization is also a useful information for analysis of protein function. For 
+detecting subcellular localization, we can use the subcommand 
+``subcellular_localization``. Like ``go_term``, we can also import 
+information of the transcript to generate results which only included the expressed CDS.
 
 ::
 
@@ -996,9 +1000,9 @@ information of transcript to generate the results which only included the expres
         -m -b negative \
         ANNOgesic
 
-``subcellular_localization`` will generate two folders. ``psortb_results`` stores the output 
+Two output folders will be generated. ``psortb_results`` stores output 
 of `Psortb <http://www.psort.org/psortb/>`_. ``statistics`` stores 
-the statistics files and figures.
+statistic files and figures.
 
 ::
 
@@ -1014,15 +1018,13 @@ the statistics files and figures.
 Generating protein-protein interaction network
 -------------------
 
-Protein-protein interaction network is an important feature for analysis of regulation. 
-The subcommand ``ppi_network`` combines `STRING <http://string-db.org/>`_ 
-(database of protein-protein interaction) 
-and `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ 
-(text-mining for protein-protein interaction). It can generate the protein-protein 
-interaction networks with literatures support. You can refer to relevance of literatures 
-and networks to seach your interesting candidates.
+``ppi_network`` can detect protein-protein interaction from `STRING <http://string-db.org/>`_ 
+(database of protein-protein interaction) and searching the literatures by implementing 
+`PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ 
+(text-mining for protein-protein interaction). Therefore, ``ppi_network`` can generate protein-protein 
+interaction networks with supported literatures.
 
-Before running the subcommand, you need to download the 
+Before running the subcommand, you need to download 
 `species.vXXXX.txt from STRING <http://string-db.org/cgi/download.pl>`_
 
 ::
@@ -1041,10 +1043,10 @@ Now, we can try the subcommand.
         -n \
         ANNOgesic
 
-We only tried to compute two proteins. If you want to get all proteins in ptt files, 
-you just need to assign ``all`` in ``-q``.
+We only detected for two proteins. If you want to detectc for all proteins in ptt files, 
+you can easily assign ``all`` in ``-q``.
 
-``ppi_network`` will generate three folders.
+Three output folders will be generated.
 
 ::
 
@@ -1052,11 +1054,11 @@ you just need to assign ``all`` in ``-q``.
     all_results/  best_results/ figures/
 
 ``all_results`` is for all interactions without filtering. ``best_results`` is for the interactions with 
-filtering of `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ score. ``figures`` is for 
-the figures of protein-protein interaction networks. There are two subfolders - ``with_strain`` and ``without_strain``. 
-These two folders store all information of interactions and literature scores. 
-``with_strain`` is for the information with giving specific strain name for searching literatures. 
-``without_strain`` is for the information without giving specific strain name for searching literatures.
+the high `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ score. ``figures`` is for 
+figures of the protein-protein interaction networks. There are two subfolders - ``with_strain`` and ``without_strain`` in 
+``figures``. These two folders store all information of the interactions and literature scores. 
+``with_strain`` is for results with assignning specific strain name for searching literatures. 
+``without_strain`` is for results without giving specific strain name for searching literatures.
 
 ::
 
@@ -1089,16 +1091,16 @@ These two folders store all information of interactions and literature scores.
 Generating riboswitch and RNA thermometer
 -----------------
 
-If you want to know the riboswitches and RNA thermometer, you can use the subcommand ``riboswitch_thermometer``.
-Before running it, you need to get the information of known riboswitches and RNA thermometer in Rfam. 
-You can download them from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
+If we want to detect riboswitches and RNA thermometer, we can use subcommand ``riboswitch_thermometer``.
+Before running it, we need to get information of the known riboswitches and RNA thermometer in Rfam. 
+The files can be downloaded them from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
     $ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
     $ wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
 
-You also need to download Rfam.
+We also need to download Rfam.
 
 ::
 
@@ -1122,9 +1124,9 @@ Now we can try the subcommand.
         -t ANNOgesic/output/TSS/gffs \
         ANNOgesic
 
-The output is the following, ``gffs`` is for gff files of riboswitchs / RNA_thermometer; 
-``tables`` is for tables of riboswitchs / RNA_thermometer; 
-``scan_Rfam`` is for the output files of scanning Rfam; ``statistics`` is for the statistics files.
+Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_thermometer; 
+``tables`` stores tables of the riboswitchs / RNA_thermometer; 
+``scan_Rfam`` stores output files of scanning Rfam; ``statistics`` is for statistic files.
 
 ::
 
@@ -1151,8 +1153,8 @@ The output is the following, ``gffs`` is for gff files of riboswitchs / RNA_ther
 
 Detection of CRISPR
 ----------------
-CRISPR is an unique features for the research of immunology. ``crispr`` is a useful subcommand for detection 
-of CRISPR. ``crispr`` integrates `CRT <http://www.room220.com/crt/>`_ and compare genome 
+CRISPR is an unique features for research of immunology. ``crispr`` is a useful subcommand for CRISPR detectiion. 
+``crispr`` integrates `CRT <http://www.room220.com/crt/>`_ and compare genome 
 annotation to remove false positive. Let's try it.
 
 ::
@@ -1161,8 +1163,8 @@ annotation to remove false positive. Let's try it.
         -f ANNOgesic/output/target/fasta \
         ANNOgesic
 
-The output is the following, ``CRT_output`` is for the output of `CRT <http://www.room220.com/crt/>`_; 
-``gffs`` is for gff files of CRISPRs; ``statistics`` is for the statistics files.
+Output are as following, ``CRT_output`` stores output of `CRT <http://www.room220.com/crt/>`_; 
+``gffs`` stores gff files of the CRISPRs; ``statistics`` is for statistic files.
 
 ::
      $ ls ANNOgesic/output/crispr/
@@ -1178,10 +1180,10 @@ The output is the following, ``CRT_output`` is for the output of `CRT <http://ww
      $ ls ANNOgesic/output/crispr/statistics
      NC_000915.1.csv
 
-Unfortunately, our test strain has no CRISPRs. If you really want to know the output information, 
-please follow the commands to get the other strain.
+Unfortunately, our test strain has no CRISPRs. If you really want to see the output information, 
+please check following commands to get the other strain which has CRISPRs.
 
-First, we download the fasta and gff files of the other strain. 
+First, we download fasta and gff files of the other strain. 
 
 ::
 
@@ -1199,9 +1201,9 @@ Then, run ``crispr`` again.
         -f ANNOgesic/output/target/fasta \
         ANNOgesic
 
-Now, there are CRISPRs in this strain and you can refer to them.
+Now, CRISPRs in this strain can be detected.
 
-In order to run the other subcommands, we restore our original strain again.
+In order to run the other subcommands of ANNOgesic, we restore our original strain again.
 
 ::
     rm -rf ANNOgesic/output/target/annotation
@@ -1212,10 +1214,10 @@ In order to run the other subcommands, we restore our original strain again.
 Merge all features to be one gff file
 -------------------------------------
 
-Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features to be 
-one gff file is useful. ``merge_features`` is the subcommand to achieve 
-this purpose. Moreover, ``merge_features`` can find the parent transcript to each feature that 
-you assigned. It can reveal the relationship between all features.
+Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features into 
+one gff file is useful. ``merge_features`` is the subcommand to achieve this purpose. 
+Moreover, ``merge_features`` can search parent transcript to each feature that 
+you assigned. the relationship between all features can be revealed.
 
 Now let's do it. We merge all features that we have.
 
@@ -1239,7 +1241,7 @@ Now let's do it. We merge all features that we have.
        -s NC_000915.1 \
         ANNOgesic
 
-The output gff file is store in ``merge_all_features``
+Output gff file is stored in ``merge_all_features``
 
 ::
     $ ls ANNOgesic/output/merge_all_features/
@@ -1248,14 +1250,13 @@ The output gff file is store in ``merge_all_features``
 Producing the screenshots
 -----------------
 
-It is a good idea if we can get the screenshots of our interesting features. Then we can 
+It is a good idea if we can get screenshots of our interesting features. Then we can 
 check them very quickly. Therefore, ANNOgesic provides a subcommand ``screenshot`` for 
 generating screenshots.
 
-Before you running it, you have to install `IGV <https://www.broadinstitute.org/software/igv/home>`_ 
-for generating screenshot.
+Before we running it, we have to install `IGV <https://www.broadinstitute.org/software/igv/home>`_.
 
-For testing, we use TSSs as main feature, sRNAs and CDSs information as side features.
+For testing, we use TSSs as main feature, sRNAs and CDSs as side features.
 
 ::
 
@@ -1268,21 +1269,22 @@ For testing, we use TSSs as main feature, sRNAs and CDSs information as side fea
         -tw ANNOgesic/input/wigs/tex_notex \
     ANNOgesic
 
-``screenshot`` will generate two txt files and two folders.
+Two txt files and two folders will be generated.
 
 ::
 
     $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/
     forward/     forward.txt  reverse/     reverse.txt
 
-``forward.txt`` and ``reverse.txt`` are batch files for `IGV <https://www.broadinstitute.org/software/igv/home>`_.
+``forward.txt`` and ``reverse.txt`` are batch files for running in `IGV <https://www.broadinstitute.org/software/igv/home>`_.
 ``forward`` and ``reverse`` are the folders for storing screenshots.
 
 Now, please open `IGV <https://www.broadinstitute.org/software/igv/home>`_ and follow the procedures: Tools -> 
-Run Batch Script -> choose ``forward.txt``. When it has done, please do it again for reverse strand: Tools ->
+Run Batch Script -> choose ``forward.txt``. Once it is done, please do it again for reverse strand: Tools ->
 Run Batch Script -> choose ``reverse.txt``. If you just want to test it, you can delete some lines of gff files of TSSs.
 
-After that, you can see that there are several screenshots in ``forward`` and ``reverse``.
+As soon as the gneration of the screenshots is done, 
+we can see that there are several screenshots in ``forward`` and ``reverse``.
 
 ::
 
@@ -1304,9 +1306,9 @@ After that, you can see that there are several screenshots in ``forward`` and ``
 Coloring the screenshots
 -----------------
 
-If you have numerous samples and you want to check TSSs, it will be painful for distinguish the 
-tracks of TEX+ and TEX-. Therefore, we provide a subcommand ``color_png`` to color
-your screenshots.
+If we have numerous samples and we want to check TSSs, Distinguishing the 
+tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``color_png`` to color
+our screenshots.
 
 ::
 
@@ -1315,7 +1317,7 @@ your screenshots.
         -f ANNOgesic/output/TSS \
         ANNOgesic
 
-You will see the filenames of png files are the same as before. However, when you open them, the tracks are colored.
+We will see output filenames are the same as before. However, when we open the figures, the tracks are colored.
 
 ::
 
@@ -1334,4 +1336,4 @@ You will see the filenames of png files are the same as before. However, when yo
     ...
 
 
-Now you already finished your first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!
+Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!

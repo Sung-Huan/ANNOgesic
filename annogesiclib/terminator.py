@@ -389,22 +389,29 @@ class Terminator(object):
             if file_.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(folder, file_))
 
-    def _compare_term_tran(self, args_term):
+    def _compare_term_tran(self, args_term, prefixs):
         '''searching the associated terminator to transcript'''
         self.multiparser.combine_gff(args_term.gffs, self.tran_path,
                                      None, "transcript")
+        prefixs = []
+        for file_ in os.listdir(self.tran_path):
+            if file_.endswith("_transcript.gff"):
+                prefixs.append(file_.replace("_transcript.gff", ""))
         for type_ in ("best", "express", "all_candidates"):
             compare_term_tran(self.tran_path,
                               os.path.join(self.outfolder["term"], type_),
                               args_term.fuzzy_up_ta, args_term.fuzzy_down_ta,
-                              args_term.out_folder, "terminator")
-            shutil.move(
-                os.path.join(
-                    args_term.out_folder, "statistics",
-                    "stat_comparison_terminator_transcript.csv"),
-                os.path.join(
-                    args_term.out_folder, "statistics",
-                    "stat_comparison_terminator_transcript_" + type_ + ".csv"))
+                              args_term.out_folder, "terminator",
+                              self.outfolder["term"], args_term.trans)
+            for prefix in prefixs:
+                shutil.move(
+                    os.path.join(
+                        args_term.out_folder, "statistics",
+                        "stat_compare_transcript_terminator_" + prefix + ".csv"),
+                    os.path.join(
+                        args_term.out_folder, "statistics",
+                        "_".join(["stat_compare_terminator_transcript", prefix,
+                                  type_ + ".csv"])))
 
     def run_terminator(self, args_term):
         self._check_gff_file(args_term.gffs)
@@ -428,5 +435,5 @@ class Terminator(object):
                 prefixs, merge_path, args_term.wig_path,
                 args_term.merge_wigs, args_term)
         self._compute_stat(args_term)
-        self._compare_term_tran(args_term)
+        self._compare_term_tran(args_term, prefixs)
         self._remove_tmp_file(args_term.merge_wigs, args_term)

@@ -325,20 +325,17 @@ class ArgsContainer(object):
             fasta_folder, mountain_plot, nr_format, srna_format,
             sRNA_database_path, nr_database_path, cutoff_energy,
             run_intergenic_TEX_coverage, run_intergenic_noTEX_coverage,
-            run_intergenic_fragmented_coverage, run_antisense_TEX_coverage,
-            run_antisense_noTEX_coverage, run_antisense_fragmented_coverage,
-            intergenic_tolerance, run_utr_TEX_coverage, run_utr_noTEX_coverage,
-            run_utr_fragmented_coverage, max_length, min_length,
-            tex_notex_libs, frag_libs, replicates_tex, replicates_frag,
-            tex_notex, blast_e_nr, blast_e_srna, detect_sRNA_in_CDS,
-            table_best, decrease_intergenic, decrease_utr, fuzzy_intergenic,
-            fuzzy_utr, cutoff_nr_hit, sORF, best_with_all_sRNAhit,
-            best_without_sORF_candidate, overlap_percent_CDS,
-            terminator_folder, terminator_fuzzy_in_CDS,
-            terminator_fuzzy_out_CDS, best_with_terminator,
-            ignore_hypothetical_protein, TSS_source, min_utr_coverage,
-            promoter_table, best_with_promoter, ranking_promoter,
-            promoter_name):
+            run_intergenic_fragmented_coverage, break_tran,
+            run_antisense_TEX_coverage, run_antisense_noTEX_coverage,
+            run_antisense_fragmented_coverage, run_utr_TEX_coverage,
+            run_utr_noTEX_coverage, run_utr_fragmented_coverage, max_length,
+            min_length, tex_notex_libs, frag_libs, replicates_tex,
+            replicates_frag, tex_notex, blast_e_nr, blast_e_srna,
+            detect_sRNA_in_CDS, table_best, decrease_intergenic, decrease_utr,
+            fuzzy_intergenic, fuzzy_utr, cutoff_nr_hit, sORF,
+            overlap_percent_CDS, terminator_folder, terminator_fuzzy_in_sRNA,
+            terminator_fuzzy_out_sRNA, ignore_hypothetical_protein, TSS_source,
+            min_utr_coverage, promoter_table, ranking_promoter, promoter_name):
         self.vienna_path = Vienna_folder
         self.vienna_util = Vienna_utils
         self.blast_path = blast_plus_folder
@@ -386,7 +383,9 @@ class ArgsContainer(object):
         self.anti_cover_frag = self._deal_multi_inputs(
                 run_antisense_fragmented_coverage, "float", 5,
                 "--run_antisense_fragmented_coverage")
-        self.tolerance = intergenic_tolerance
+        self.break_tran = self._deal_multi_inputs(
+                break_tran, "float", 3,
+                "--run_break_transcript")
         self.utr_tex_cover = self._deal_multi_inputs(
                 run_utr_TEX_coverage, "str", 3, "--run_utr_TEX_coverage")
         self.utr_notex_cover = self._deal_multi_inputs(
@@ -414,18 +413,14 @@ class ArgsContainer(object):
         self.fuzzy_utr = fuzzy_utr
         self.nr_hits_num = cutoff_nr_hit
         self.sorf_file = sORF
-        self.all_hit = best_with_all_sRNAhit
-        self.best_sorf = best_without_sORF_candidate
         self.cutoff_overlap = overlap_percent_CDS
         self.terms = terminator_folder
-        self.fuzzy_b = terminator_fuzzy_in_CDS
-        self.fuzzy_a = terminator_fuzzy_out_CDS
-        self.best_term = best_with_terminator
+        self.fuzzy_b = terminator_fuzzy_in_sRNA
+        self.fuzzy_a = terminator_fuzzy_out_sRNA
         self.hypo = ignore_hypothetical_protein
         self.tss_source = TSS_source
         self.min_utr = min_utr_coverage
         self.promoter_table = promoter_table
-        self.best_promoter = best_with_promoter
         if ranking_promoter < 1:
             print("Error: --ranking_time_promoter must larger than 1...")
             sys.exit()
@@ -516,14 +511,14 @@ class ArgsContainer(object):
             args_srna.cover_notex = None
         return args_srna
 
-    def extend_inter_container(self, args_srna, tsss, pros, wigs_f, wigs_r,
+    def extend_inter_container(self, args_srna, tsss, pros,
                                nums, output, out_table, texs, detects,
                                cutoff_coverage, notex):
         '''Especially for intergenic and antisense sRNA'''
         args_srna.tsss = tsss
         args_srna.pros = pros
-        args_srna.wigs_f = wigs_f
-        args_srna.wigs_r = wigs_r
+#        args_srna.wigs_f = wigs_f
+#        args_srna.wigs_r = wigs_r
         args_srna.nums = nums
         args_srna.output = output
         args_srna.out_table = out_table
@@ -533,14 +528,14 @@ class ArgsContainer(object):
         args_srna.notex = notex
         return args_srna
 
-    def extend_utr_container(self, args_srna, cdss, tsss, pros, wig_fs, wig_rs,
+    def extend_utr_container(self, args_srna, cdss, tsss, pros,
                              out, out_t, texs):
         '''Especially for UTR-derived sRNA'''
         args_srna.cdss = cdss
         args_srna.tsss = tsss
         args_srna.pros = pros
-        args_srna.wig_fs = wig_fs
-        args_srna.wig_rs = wig_rs
+#        args_srna.wig_fs = wig_fs
+#        args_srna.wig_rs = wig_rs
         args_srna.out = out
         args_srna.out_t = out_t
         args_srna.texs = texs
@@ -684,17 +679,20 @@ class ArgsContainer(object):
         self.meme_path = MEME_path
         self.output_folder = promoter_output_folder
         self.input_libs = self._deal_multi_inputs(tex_libs, "str", None, None)
+        self.libs = self.input_libs
         self.tsss = TSS_folder
         self.fastas = fasta_folder
         self.num_motif = num_motif
         self.nt_before = nt_before_TSS
         self.widths = self._deal_multi_inputs(motif_width, "str", None, None)
         self.source = TSS_source
-        self.wigs = tex_wig_path
+        self.tex_wigs = tex_wig_path
+        self.frag_wigs = None
         self.gffs = annotation_folder
         self.combine = combine_all
         self.e_value = e_value
         self.para = para
+        self = self._parser_combine_wigs("promoter")
         return self
 
     def container_operon(self, TSS_folder, annotation_folder,

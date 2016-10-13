@@ -1,5 +1,6 @@
-import os
+import os, gc
 import math
+import numpy as np
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.lib_reader import read_wig, read_libs
 from annogesiclib.coverage_detection import coverage_comparison, get_repmatch
@@ -68,17 +69,39 @@ def get_terminal(cdss, inters, seq, type_):
                     len(seq[cds.seq_id]), cds.end - cds.start))
 
 
-def check_pos(cover, check_point, checks):
-    if (cover["pos"] >= min(check_point["utr_start"],
+def check_pos(cover, check_point, checks, cover_pos):
+    if (cover_pos >= min(check_point["utr_start"],
                             check_point["utr_end"])) and (
-        cover["pos"] <= max(check_point["utr_start"],
+        cover_pos <= max(check_point["utr_start"],
                             check_point["utr_end"])):
         checks["utr"] = True
-    if (cover["pos"] >= min(check_point["srna_start"],
+    if (cover_pos >= min(check_point["srna_start"],
                             check_point["srna_end"])) and (
-        cover["pos"] <= max(check_point["srna_start"],
+        cover_pos <= max(check_point["srna_start"],
                             check_point["srna_end"])):
         checks["srna"] = True
+
+
+def check_start_and_end(start, end, covers, strand, fuzzy):
+    if strand == "-":
+        if (start - 2 - fuzzy) < 0:
+            c_start = 0
+        else:
+            c_start = start - 2 - fuzzy
+        if (end + 1) > len(covers):
+            c_end = len(covers)
+        else:
+            c_end = end + 1
+    else:
+        if (start - 2) < 0:
+            c_start = 0
+        else:
+            c_start = start - 2
+        if (end + 1 + fuzzy) > len(covers):
+            c_end = len(covers)
+        else:
+            c_end = end + 1 + fuzzy
+    return c_start, c_end
 
 
 def set_cover_and_point(cover_results, inter, covers, pos, fuzzy_end):
@@ -89,40 +112,56 @@ def set_cover_and_point(cover_results, inter, covers, pos, fuzzy_end):
     else:
         ori_start = pos["ori_start"]
     if inter["strand"] == "-":
-        covers = reversed(
-                 covers[ori_start - 2 - fuzzy_end: pos["ori_end"] + 1])
+        c_start, c_end = check_start_and_end(ori_start, pos["ori_end"],
+                                             covers, "-", fuzzy_end)
+        covers = covers[c_start: c_end]
+        covers = covers[::-1]
         check_point["srna_start"] = pos["end"] + 1
         check_point["srna_end"] = pos["start"] - 2 - fuzzy_end
         check_point["utr_start"] = pos["ori_end"]
         check_point["utr_end"] = ori_start
+        start = c_start
+        end = c_end
     elif inter["strand"] == "+":
-        covers = covers[ori_start - 2: pos["ori_end"] + 1 + fuzzy_end]
+        c_start, c_end = check_start_and_end(ori_start, pos["ori_end"], 
+                                             covers, "+", fuzzy_end)
+        covers = covers[c_start: c_end]
         check_point["srna_start"] = pos["start"] - 2
         check_point["srna_end"] = pos["end"] + 1 + fuzzy_end
         check_point["utr_start"] = ori_start
         check_point["utr_end"] = pos["ori_end"]
+        start = c_start
+        end = c_end
     cover_results["check_point"] = check_point
     cover_results["covers"] = covers
+    return start, end
 
 
-def detect_cover_utr_srna(cover_results, pos, inter, cond, track, args_srna):
+def detect_cover_utr_srna(cover_results, pos, inter, cond, track,
+                          args_srna, lib_type, start, end, strand):
     datas = {"num": 0, "cover_tmp": {"5utr": 0, "total": 0, "ori_total": 0},
              "checks": {"first": True, "detect_decrease": False,
                         "srna": False, "utr": False},
              "final_poss": {"start": pos["start"], "end": pos["end"]}}
+    index_pos = 0
     for cover in cover_results["covers"]:
+        if strand == "+":
+            cover_pos = start + index_pos
+        else:
+            cover_pos = end - index_pos
         datas["checks"]["srna"] = False
         datas["checks"]["utr"] = False
-        check_pos(cover, cover_results["check_point"], datas["checks"])
+        check_pos(cover, cover_results["check_point"], datas["checks"],
+                  cover_pos)
         if datas["checks"]["utr"]:
             datas["cover_tmp"]["ori_total"] = \
-                datas["cover_tmp"]["ori_total"] + cover["coverage"]
+                datas["cover_tmp"]["ori_total"] + cover
         if datas["checks"]["srna"]:
             datas["cover_tmp"]["total"] = \
-                datas["cover_tmp"]["total"] + cover["coverage"]
+                datas["cover_tmp"]["total"] + cover
             datas["checks"]["first"] = coverage_comparison(
                     cover, cover_results["cover_sets"], cover_results["pos"],
-                    datas["checks"]["first"], inter["strand"])
+                    datas["checks"]["first"], inter["strand"], cover_pos)
             if (datas["checks"]["first"] is not True) and (
                     cover_results["cover_sets"]["high"] > 0):
                 if (cover_results["type"] == "5utr") or (
@@ -134,16 +173,17 @@ def detect_cover_utr_srna(cover_results, pos, inter, cond, track, args_srna):
                             args_srna.decrease_utr) and (
                             cover_results["cover_sets"]["low"] > -1):
                         datas["checks"]["detect_decrease"] = True
-                        datas["cover_tmp"]["5utr"] = cover["coverage"]
+                        datas["cover_tmp"]["5utr"] = cover
             if datas["checks"]["detect_decrease"]:
                 go_out = get_cover_5utr(datas, cover_results["cover_sets"],
-                                        cover, inter, args_srna)
+                                        cover, inter, args_srna, cover_pos)
                 if go_out is True:
                     break
+        index_pos += 1
     if (datas["checks"]["first"] is not True) and (
             cover_results["cover_sets"]["high"] > 0):
         check_import_srna_covers(datas, cover_results, inter, cond, track,
-                                 cover, pos, args_srna)
+                                 cover, pos, args_srna, lib_type)
 
 
 def get_coverage(wigs, inter, pos, type_, intercds_type, args_srna):
@@ -156,43 +196,48 @@ def get_coverage(wigs, inter, pos, type_, intercds_type, args_srna):
             for cond, tracks in conds.items():
                 cover_results["srna_covers"][cond] = []
                 cover_results["utr_covers"][cond] = []
-                for track, covers in tracks.items():
-                    set_cover_and_point(cover_results, inter, covers,
-                                        pos, args_srna.fuzzy_utr)
+                for lib_name, covers in tracks.items():
+                    track = lib_name.split("|")[-3]
+                    lib_strand = lib_name.split("|")[-2]
+                    lib_type = lib_name.split("|")[-1]
+                    start, end = set_cover_and_point(
+                            cover_results, inter, covers,
+                            pos, args_srna.fuzzy_utr)
                     detect_cover_utr_srna(cover_results, pos, inter,
-                                          cond, track, args_srna)
+                                          cond, track, args_srna, lib_type,
+                                          start, end, lib_strand)
     return cover_results["srna_covers"], cover_results["utr_covers"]
 
 
-def get_cover_5utr(datas, cover_sets, cover, inter, args_srna):
+def get_cover_5utr(datas, cover_sets, cover, inter, args_srna, cover_pos):
     go_out = False
     if (datas["num"] == args_srna.fuzzy_utr) or (
             datas["cover_tmp"]["5utr"] == 0) or (
-            (cover["coverage"] > datas["cover_tmp"]["5utr"]) and (
-            cover["coverage"] / datas["cover_tmp"]["5utr"]) > (
+            (cover > datas["cover_tmp"]["5utr"]) and (
+            cover / datas["cover_tmp"]["5utr"]) > (
             1 + args_srna.decrease_utr)):
         if inter["strand"] == "+":
-            datas["final_poss"]["end"] = cover["pos"]
+            datas["final_poss"]["end"] = cover_pos
         elif inter["strand"] == "-":
-            datas["final_poss"]["start"] = cover["pos"]
+            datas["final_poss"]["start"] = cover_pos
         go_out = True
-    elif (cover["coverage"] <= datas["cover_tmp"]["5utr"]):
-        if (cover["coverage"] / datas["cover_tmp"]["5utr"]) >= (
+    elif (cover <= datas["cover_tmp"]["5utr"]):
+        if (cover / datas["cover_tmp"]["5utr"]) >= (
                 args_srna.decrease_utr / 2):
             datas["num"] += 1
         else:
             datas["num"] = 0
-        datas["cover_tmp"]["5utr"] = cover["coverage"]
-        cover_sets["low"] = cover["coverage"]
-    elif (cover["coverage"] > datas["cover_tmp"]["5utr"]) and (
-            (cover["coverage"] / datas["cover_tmp"]["5utr"]) <= (
+        datas["cover_tmp"]["5utr"] = cover
+        cover_sets["low"] = cover
+    elif (cover > datas["cover_tmp"]["5utr"]) and (
+            (cover / datas["cover_tmp"]["5utr"]) <= (
             1 + args_srna.decrease_utr)):
         datas["num"] += 1
     return go_out
 
 
 def import_cover(inter, covers, track, cover_sets, avgs, cover,
-                 final_poss, pos):
+                 final_poss, pos, lib_type):
     if final_poss["start"] < final_poss["end"]:
         if (inter["strand"] == "+") and (final_poss["end"] > pos["end"]):
             final_poss["end"] = pos["end"]
@@ -201,14 +246,14 @@ def import_cover(inter, covers, track, cover_sets, avgs, cover,
         covers.append({"track": track,
                        "high": cover_sets["high"],
                        "low": cover_sets["low"], "avg": avgs["avg"],
-                       "type": cover["type"],
+                       "type": lib_type,
                        "ori_avg": avgs["ori_avg"],
                        "final_start": final_poss["start"],
                        "final_end": final_poss["end"]})
 
 
 def check_import_srna_covers(datas, cover_results, inter, cond, track,
-                             cover, pos, args_srna):
+                             cover, pos, args_srna, lib_type):
     avgs = {"avg": datas["cover_tmp"]["total"] / float(
                    pos["end"] - pos["start"] + 1),
             "ori_avg": datas["cover_tmp"]["ori_total"] / float(
@@ -233,14 +278,14 @@ def check_import_srna_covers(datas, cover_results, inter, cond, track,
              cover_results["intercds"] == "two_pro"))):
         import_cover(inter, cover_results["srna_covers"][cond], track,
                      cover_results["cover_sets"], avgs, cover,
-                     datas["final_poss"], pos)
+                     datas["final_poss"], pos, lib_type)
         import_cover(inter, cover_results["utr_covers"][cond], track,
                      cover_results["cover_sets"], avgs, cover,
-                     datas["final_poss"], pos)
+                     datas["final_poss"], pos, lib_type)
     else:
         import_cover(inter, cover_results["utr_covers"][cond], track,
                      cover_results["cover_sets"], avgs, cover,
-                     datas["final_poss"], pos)
+                     datas["final_poss"], pos, lib_type)
 
 
 def detect_3utr_pro(inter, pos, wigs, utr_type, args_srna):
@@ -494,35 +539,35 @@ def run_utr_detection(wigs, inter, start, end, utr_type, args_srna):
                 pos, utr_type, "NA", "NA", utr_covers, "NA"))
 
 
-def class_utr(inter, ta, args_srna):
+def class_utr(inter, ta, args_srna, wig_fs, wig_rs):
     '''classify the UTR-dervied sRNA'''
     if inter["strand"] == "+":
         if (inter["start"] <= ta.end) and (
                 inter["end"] >= ta.end) and (
                 ta.start <= inter["start"]):
-            run_utr_detection(args_srna.wig_fs, inter, inter["start"] + 1,
+            run_utr_detection(wig_fs, inter, inter["start"] + 1,
                               ta.end, "3utr", args_srna)
         elif (inter["start"] <= ta.start) and (
                 inter["end"] >= ta.start) and (
                 ta.end >= inter["end"]):
-            run_utr_detection(args_srna.wig_fs, inter, ta.start,
+            run_utr_detection(wig_fs, inter, ta.start,
                               inter["end"] - 1, "5utr", args_srna)
         elif (inter["start"] >= ta.start) and (inter["end"] <= ta.end):
-            run_utr_detection(args_srna.wig_fs, inter, inter["start"] + 1,
+            run_utr_detection(wig_fs, inter, inter["start"] + 1,
                               inter["end"] - 1, "interCDS", args_srna)
     else:
         if (inter["start"] <= ta.end) and (
                 inter["end"] >= ta.end) and (
                 ta.start <= inter["start"]):
-            run_utr_detection(args_srna.wig_rs, inter, inter["start"] + 1,
+            run_utr_detection(wig_rs, inter, inter["start"] + 1,
                               ta.end, "5utr", args_srna)
         elif (inter["start"] <= ta.start) and (
                 inter["end"] >= ta.start) and (
                 ta.end >= inter["end"]):
-            run_utr_detection(args_srna.wig_rs, inter, ta.start,
+            run_utr_detection(wig_rs, inter, ta.start,
                               inter["end"] - 1, "3utr", args_srna)
         elif (inter["start"] >= ta.start) and (inter["end"] <= ta.end):
-            run_utr_detection(args_srna.wig_rs, inter,  inter["start"] + 1,
+            run_utr_detection(wig_rs, inter,  inter["start"] + 1,
                               inter["end"] - 1, "interCDS", args_srna)
 
 
@@ -650,7 +695,6 @@ def read_data(args_srna):
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     if len(pros) != 0:
         pros = sorted(pros, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
-    fh.close()
     return cdss, tas, tsss, pros, seq
 
 
@@ -751,14 +795,12 @@ def print_median(out_folder, mediandict):
 def free_memory(paras):
     for data in (paras):
         del(data)
+    gc.collect()
 
 
-def utr_derived_srna(args_srna):
+def utr_derived_srna(args_srna, libs, texs, wig_fs, wig_rs):
     inters = []
     cdss, tas, tsss, pros, seq = read_data(args_srna)
-    libs, texs = read_libs(args_srna.input_libs, args_srna.wig_folder)
-    wig_fs = read_wig(args_srna.wig_f_file, "+", libs)
-    wig_rs = read_wig(args_srna.wig_r_file, "-", libs)
     out = open(args_srna.output_file, "w")
     out.write("##gff-version 3\n")
     out_t = open(args_srna.output_table, "w")
@@ -768,20 +810,19 @@ def utr_derived_srna(args_srna):
     inters = sorted(inters, key=lambda k: (k["strain"], k["start"],
                                            k["end"], k["strand"]))
     args_srna = ArgsContainer().extend_utr_container(
-                            args_srna, cdss, tsss, pros, wig_fs, wig_rs, out,
+                            args_srna, cdss, tsss, pros, out,
                             out_t, texs)
     for inter in inters:
         for ta in tas:
             if (inter["strain"] == ta.seq_id) and (
                     inter["strand"] == ta.strand):
-                class_utr(inter, ta, args_srna)
+                class_utr(inter, ta, args_srna, wig_fs, wig_rs)
     covers = get_utr_coverage(args_srna.utrs)
     mediandict = set_cutoff(covers, args_srna)
     print_median(args_srna.out_folder, mediandict)
     detect_srna(mediandict, args_srna)
     args_srna.out.close()
     args_srna.out_t.close()
-    paras = [wig_fs, wig_rs, args_srna.srnas, args_srna.utrs,
-             args_srna.wig_fs, args_srna.wig_rs, seq, inters,
+    paras = [args_srna.srnas, args_srna.utrs, seq, inters,
              tas, cdss, tas, tsss, pros, covers]
     free_memory(paras)

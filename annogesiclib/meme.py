@@ -204,14 +204,14 @@ class MEME(object):
                                       self.out_fasta, "allfasta"))
         args_pro.source = True
         upstream(self.all_tss, self.all_fasta, None,
-                 None, args_pro)
+                 None, args_pro, None)
         self._move_and_merge_fasta(input_path, "allfasta")
 
     def _remove_files(self, args_pro):
         self.helper.remove_tmp(args_pro.fastas)
         self.helper.remove_tmp(args_pro.tsss)
         self.helper.remove_tmp(args_pro.gffs)
-        self.helper.remove_tmp(args_pro.wigs)
+        self.helper.remove_tmp(args_pro.tex_wigs)
         if "allfasta.fa" in os.listdir(args_pro.fastas):
             os.remove(self.all_fasta)
         if "allfasta" in os.listdir(os.getcwd()):
@@ -238,22 +238,23 @@ class MEME(object):
             print("generating fasta file of {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
-                     None, None, args_pro)
+                     None, None, args_pro, prefix)
         else:
             if (args_pro.gffs is None) or (
-                    args_pro.wigs is None) or (
+                    args_pro.tex_wigs is None) or (
                     args_pro.input_libs is None):
                 print("Error:please assign proper annotation, tex +/- "
                       "wig folder and tex treated libs!!!")
                 sys.exit()
             if "TSS_class" not in os.listdir(args_pro.output_folder):
                 os.mkdir(os.path.join(args_pro.output_folder, "TSS_class"))
+            
             print("classifying TSS and extracting fasta {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
                      os.path.join(self.gff_path, prefix + ".gff"),
                      os.path.join(args_pro.output_folder, "TSS_class",
-                     "_".join([prefix, "TSS.gff"])), args_pro)
+                     "_".join([prefix, "TSS.gff"])), args_pro, prefix)
 
     def run_meme(self, args_pro):
         if "allfasta.fa" in os.listdir(args_pro.fastas):

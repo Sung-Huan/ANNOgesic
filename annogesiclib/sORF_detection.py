@@ -1,8 +1,21 @@
 import copy
+import numpy as np
 from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.lib_reader import read_libs, read_wig
 from annogesiclib.coverage_detection import replicate_comparison, get_repmatch
+
+
+def check_start_and_end(start, end, covers):
+    if (start - 2) < 0:
+        c_start = 0
+    else:
+        c_start = start - 2
+    if (end + 2) > len(covers):
+        c_end = len(covers)
+    else:
+        c_end = end + 2
+    return c_start, c_end
 
 
 def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
@@ -13,28 +26,37 @@ def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
         if wig_strain == sorf["strain"]:
             for cond, tracks in conds.items():
                 sorf_covers[cond] = []
-                for track, covers in tracks.items():
+                for lib_name, covers in tracks.items():
+                    track = lib_name.split("|")[-3]
+                    lib_strand = lib_name.split("|")[-2]
+                    lib_type = lib_name.split("|")[-1]
                     total_cover = 0
                     first = True
-                    if strand == "+":
-                        covers = covers[sorf["start"] - 2: sorf["end"] + 1]
-                    elif strand == "-":
-                        covers = reversed(
-                                covers[sorf["start"] - 2: sorf["end"] + 1])
+                    c_start, c_end = check_start_and_end(
+                            sorf["start"], sorf["end"], covers)
+                    covers = covers[c_start: c_end]
+                    if strand == "-":
+                        covers = covers[::-1]
+                    pos = 0
                     for cover in covers:
-                        if (cover["strand"] == strand):
-                            if (sorf["start"] <= cover["pos"]) and (
-                                    sorf["end"] >= cover["pos"]):
-                                total_cover = total_cover + cover["coverage"]
+                        if (lib_strand == strand):
+                            if strand == "+":
+                                cover_pos = c_start + pos
+                            else:
+                                cover_pos = c_end - pos
+                            if (sorf["start"] <= cover_pos) and (
+                                    sorf["end"] >= cover_pos):
+                                total_cover = total_cover + cover
                                 if first:
                                     first = False
-                                    high_cover = cover["coverage"]
-                                    low_cover = cover["coverage"]
+                                    high_cover = cover
+                                    low_cover = cover
                                 else:
-                                    if high_cover < cover["coverage"]:
-                                        high_cover = cover["coverage"]
-                                    if low_cover > cover["coverage"]:
-                                        low_cover = cover["coverage"]
+                                    if high_cover < cover:
+                                        high_cover = cover
+                                    if low_cover > cover:
+                                        low_cover = cover
+                        pos += 1
                     avg = total_cover / float(sorf["end"] - sorf["start"] + 1)
                     if medianlist is not None:
                         cutoff_cover = get_cutoff(sorf, track,
@@ -47,7 +69,7 @@ def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
                         sorf_covers[cond].append({"track": track,
                                                   "high": high_cover,
                                                   "low": low_cover, "avg": avg,
-                                                  "type": cover["type"],
+                                                  "type": lib_type,
                                                   "pos": sorf["start"]})
     return sorf_covers
 
@@ -883,14 +905,14 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
     if args_sorf.print_all:
         out_t.write("\t".join([
             "strain", "Name", "start", "end", "strand", "type", "TSS", "RBS",
-            "all_start_points", "all_stop_pointss", "sRNA_confliction",
+            "all_start_points", "all_stop_pointss", "sRNA_conflict",
             "frame_shift", "lib_type", "best_avg_coverage",
             "best_highest_coverage", "best_lowest_coverage", "track_detail",
             "seq", "combinations"]) + "\n")
     else:
         out_t.write("\t".join([
             "strain", "Name", "start", "end", "strand", "type", "TSS", "RBS",
-            "all_start_points", "all_stop_points", "sRNA_confliction",
+            "all_start_points", "all_stop_points", "sRNA_conflict",
             "frame_shift", "lib_type", "best_avg_coverage",
             "best_highest_coverage", "best_lowest_coverage",
             "track_detail", "seq"]) + "\n")

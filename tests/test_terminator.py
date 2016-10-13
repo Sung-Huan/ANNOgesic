@@ -40,7 +40,7 @@ class Mock_func(object):
     def mock_stat_term(self, gff, table, stat, detect, express, non):
         pass
 
-    def mock_compare_term_tran(self, args):
+    def mock_compare_term_tran(self, args, test1):
         pass
 
     def mock_remove_tmp_file(self, term, tran):

@@ -95,9 +95,15 @@ def detect_srna(line, blast_f, out_t, blasts, prefix):
     print_ = False
     blasts["name"] = ""
     if line[0] == ">":
+        name_complete = False
         blasts["name"] = line[1:]
         blasts["hit_num"] += 1
         for line in blast_f:
+            if line.startswith("Length="):
+                name_complete = True
+            if not name_complete:
+                line = line.strip()
+                blasts["name"] = " ".join([blasts["name"], line])
             if "Expect =" in line:
                 e_value = line.split(" ")[-1].strip()
                 print_ = True

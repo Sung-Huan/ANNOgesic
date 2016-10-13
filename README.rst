@@ -43,11 +43,11 @@ Arguments
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,color_png,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. annotation files, fasta
@@ -60,30 +60,30 @@ Arguments
         optimize_tsspredator
                             Optimize TSSpredator based on (partial)manual detect
                             one.
-        color_png           Generating color screenshots of TSS or processing
-                            site. It only works after running batch script.
-        terminator          Detect Terminators.
+        terminator          Detect rho-independant terminators.
         transcript_assembly
                             Run transcriptome assembly for detecting transcripts.
         utr                 Run UTR detection to detect 5'UTR and 3'UTR.
-        srna                Run sRNA detection to detect sRNA candidates.
-        sorf                Run sORF detection to detect sORF candidates which has
-                            expression.
+        srna                Detect intergenic, antisense and UTR-derived sRNA.
+        sorf                Detect expressed sORF.
         promoter            Run MEME to dicover promoter.
-        operon              Detect operon and combine features together.
-        circrna             Detect circular RNA.
-        go_term             Extract and find Go terms.
-        srna_target         sRNA target prediction.
-        snp                 Detection of SNP of transcripts.
+        operon              Detect operon and sub-operon.
+        circrna             Detect circular RNA by segemehl.
+        go_term             Extract Go terms from Uniprot.
+        srna_target         Detect sRNA-mRNA interaction by RNAup and RNAplex.
+        snp                 Detect SNP/mutation and generate potential fasta file.
         ppi_network         Generate protein-protein interaction with literature
                             supported.
         subcellular_localization
-                            Prediction of subcellular localization of genomic CDS.
+                            Predict subcellular localization of genome CDS.
         riboswitch_thermometer
-                            Prediction of riboswitch and RNA thermometer.
-        crispr              Prediction of CRISPR.
+                            Predict riboswitch and RNA thermometer.
+        crispr              Run CRT to predict CRISPR.
         merge_features      Merge all features to one gff file.
         screenshot          Generate screenshot for selected feature.
+        color_png           Generate color screenshots of TSS or processing site.
+                            It only works after running "screenshot" (after
+                            running batch script).
     
     optional arguments:
       -h, --help            show this help message and exit

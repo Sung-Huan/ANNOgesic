@@ -66,8 +66,7 @@ class TestsORFDetection(unittest.TestCase):
                 "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                 "type": "3utr", "print": False, "rbs": [1]}
         covers = sd.get_coverage(sorf, self.example.wigs, "+", coverages, medianlist, cutoffs)
-        self.assertDictEqual(covers, {'frag_1': [{'avg': 19.4, 'pos': 2, 'type': 'frag',
-                                                  'high': 30, 'track': 'track_1', 'low': 2}]})
+        self.assertDictEqual(covers, {'frag_1': [{'low': 2, 'avg': 33.4, 'high': 100, 'pos': 2, 'track': 'track_1', 'type': 'frag'}]})
 
     def test_detect_rbs_site(self):
         args = self.mock_args.mock()
@@ -376,30 +375,8 @@ class Example(object):
     inter = """aaa	UTR_derived	sORF	2	6	.	+	.	ID=inter0;Name=inter_00000;UTR_type=3utr"""
     srna = """aaa	UTR_derived	sRNA	5	8	.	+	.	ID=srna0;Name=srna_00000;UTR_type=3utr"""
     tss = """aaa	tsspredator	TSS	1	1	.	+	.	ID=tss0;Name=TSS_00000"""
-    wigs = {"aaa": {"frag_1": {"track_1": [{"strand": "+", "pos": 1, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 2, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 3, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 4, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 5, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 6, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 7, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 8, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 9, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 10, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 11, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 12, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 13, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 14, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 15, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 16, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 17, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 18, "coverage": 2, "type": "frag"},
-                                           {"strand": "+", "pos": 19, "coverage": 100, "type": "frag"},
-                                           {"strand": "+", "pos": 20, "coverage": 30, "type": "frag"},
-                                           {"strand": "+", "pos": 21, "coverage": 23, "type": "frag"},
-                                           {"strand": "+", "pos": 22, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 23, "coverage": 21, "type": "frag"},
-                                           {"strand": "+", "pos": 24, "coverage": 2, "type": "frag"}]}}}
+    wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21, 2, 100, 30, 23, 21, 21,
+                                                  2, 100, 30, 23, 21, 21, 2, 100, 30, 23, 21, 21, 2]}}}
     ta_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "Transcript", "start": 1,
                 "end": 23, "phase": ".", "strand": "+", "score": "."}]
     attributes_tas = [{"ID": "tran0", "Name": "Transcript_0"}]

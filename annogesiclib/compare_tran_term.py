@@ -19,25 +19,31 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
         if ta.strand == "+":
             if ((ta.end >= ter.start) and (
                      ta.end <= ter.end)) or (
-                    (ta.end < ter.start) and (
+                    (ta.end <= ter.start) and (
                      (ter.start - ta.end) <= fuzzy_down_ta)) or (
-                    (ta.end > ter.end) and (
-                     (ta.end - ter.end) <= fuzzy_up_ta)):
-                stats[ta.seq_id]["overlap"] += 1
-                ta.attributes["associated_term"] = (
-                    "terminator:" + str(ter.start) + "-" +
-                    str(ter.end) + "_" + ter.strand)
-                ter.attributes["Parent"] = (
-                    "transcript:" + str(ta.start) + "-" +
-                    str(ta.end) + "_" + ta.strand)
+                    (ta.end >= ter.end) and (
+                     (ta.end - ter.end) <= fuzzy_up_ta)) or (
+                    (ta.start <= ter.start) and (
+                     ta.end >= ter.end)):
+                if ter.attributes["Parent"] == "NA":
+                    stats[ta.seq_id]["overlap"] += 1
+                    ta.attributes["associated_term"] = (
+                        "terminator:" + str(ter.start) + "-" +
+                        str(ter.end) + "_" + ter.strand)
+                    ter.attributes["Parent"] = (
+                        "transcript:" + str(ta.start) + "-" +
+                        str(ta.end) + "_" + ta.strand)
         else:
             if ((ta.start >= ter.start) and (
                      ta.start <= ter.end)) or (
-                    (ta.start < ter.start) and (
+                    (ta.start <= ter.start) and (
                      (ter.start - ta.start) <= fuzzy_up_ta)) or (
-                    (ta.start > ter.end) and (
-                     (ta.start - ter.end) <= fuzzy_down_ta)):
-                stats[ta.seq_id]["overlap"] += 1
+                    (ta.start >= ter.end) and (
+                     (ta.start - ter.end) <= fuzzy_down_ta)) or (
+                    (ta.start <= ter.start) and (
+                     ta.end >= ter.end)):
+                if ter.attributes["Parent"] == "NA":
+                    stats[ta.seq_id]["overlap"] += 1
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
@@ -46,7 +52,7 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                     str(ta.end) + "_" + ta.strand)
 
 
-def output_term(ters, term_file, type_):
+def output_term(ters, term_file, type_, term_outfolder):
     out = open(term_file + "tmp", "w")
     out.write("##gff-version 3\n")
     for ter in ters:
@@ -56,7 +62,11 @@ def output_term(ters, term_file, type_):
                              attribute_string]) + "\n")
     out.close()
     os.remove(term_file)
-    shutil.move(term_file + "tmp", term_file)
+    filename = term_file.split("/")[-1]
+    if filename in os.listdir(term_outfolder):
+        os.remove(os.path.join(term_outfolder, filename))
+    shutil.copy(term_file + "tmp", term_file)
+    shutil.move(term_file + "tmp", os.path.join(term_outfolder, filename))
     if type_ == "terminator":
         table_file = term_file.replace("/gffs/", "/tables/")
         table_file = table_file.replace(".gff", ".csv")
@@ -98,11 +108,9 @@ def read_gff(filename, index):
 
 
 def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
-                      out_folder, type_):
+                      out_folder, type_, term_outfolder, tran_outfolder):
     '''Comparison of terminator and transcript. It can realise the 
     relationship of terminator and transcript'''
-    stats = {}
-    pre_seq = ""
     for tran in os.listdir(trans):
         if tran.endswith("_transcript.gff"):
             prefix = tran.replace("_transcript.gff", "")
@@ -111,6 +119,8 @@ def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
             tas = read_gff(os.path.join(trans, tran), "associated_term")
             ters = read_gff(os.path.join(terms, prefix + "_term.gff"),
                             "Parent")
+            stats = {}
+            pre_seq = ""
             for ta in tas:
                 if ta.seq_id != pre_seq:
                     stats[ta.seq_id] = {"all_tran": 0, "all_term": 0,
@@ -129,18 +139,23 @@ def compare_term_tran(trans, terms, fuzzy_up_ta, fuzzy_down_ta,
                 out_g.write("\t".join([ta.info_without_attributes,
                                        attribute_string]) + "\n")
             os.remove(os.path.join(trans, tran))
+            if tran in os.listdir(tran_outfolder):
+                os.remove(os.path.join(tran_outfolder, tran))
+            shutil.copy(os.path.join(trans, tran) + "tmp",
+                        os.path.join(tran_outfolder, tran))
             shutil.move(os.path.join(trans, tran) + "tmp",
                         os.path.join(trans, tran))
-            output_term(ters, os.path.join(terms, prefix + "_term.gff"), type_)
-    out = open(os.path.join(out_folder,
-               "statistics/stat_comparison_terminator_transcript.csv"), "w")
-    for strain, stat in stats.items():
-        out.write(strain + ":\n")
-        out.write("\tThe overlap between transcripts "
-                  "and terminators are {0}\n".format(
-                   stat["overlap"]))
-        out.write("\tThe overlap percentage of transcripts are {0}\n".format(
-                  float(stat["overlap"])/float(stat["all_tran"])))
-        out.write("\tThe overlap percentage of terminators are {0}\n".format(
-                  float(stat["overlap"])/float(stat["all_term"])))
-    out.close()
+            output_term(ters, os.path.join(terms, prefix + "_term.gff"), type_,
+                        term_outfolder)
+            out = open(os.path.join(out_folder,
+                       "statistics/stat_compare_transcript_terminator_" + prefix + ".csv"), "w")
+            for strain, stat in stats.items():
+                out.write(strain + ":\n")
+                out.write("\tThe overlap between transcripts "
+                          "and terminators are {0}\n".format(
+                           stat["overlap"]))
+                out.write("\tThe overlap percentage of transcripts are {0}\n".format(
+                          float(stat["overlap"])/float(stat["all_tran"])))
+                out.write("\tThe overlap percentage of terminators are {0}\n".format(
+                          float(stat["overlap"])/float(stat["all_term"])))
+            out.close()

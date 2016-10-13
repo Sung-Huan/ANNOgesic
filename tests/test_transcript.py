@@ -95,6 +95,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_compute(self):
+        pre_assembly = tr.assembly
         tr.assembly = self.mock.mock_assembly
         gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
         args = self.mock_args.mock()
@@ -102,8 +103,10 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.out_foler = self.out
         strains = self.tran._compute("frag", self.frag, "libs", args)
         self.assertListEqual(strains, ['test'])
+        tr.assembly = pre_assembly
 
     def test_for_one_wig(self):
+        pre_assembly = tr.assembly
         tr.assembly = self.mock.mock_assembly
         self.tran.multiparser = self.mock_parser
         gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
@@ -119,8 +122,10 @@ class TestsTranscriptAssembly(unittest.TestCase):
         self.assertListEqual(strains, ['test'])
         datas = import_data(os.path.join(self.out_gff, "test_transcript_assembly_frag.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
+        tr.assembly = pre_assembly
 
     def test_for_two_wigs(self):
+        pre_combine = tr.combine
         tr.combine = self.mock.mock_combine
         gen_file(os.path.join(self.out_gff, "test_transcript_assembly_fragment.gff"), "test")
         gen_file(os.path.join(self.out_gff, "test_transcript_assembly_tex_notex.gff"), "test")
@@ -131,8 +136,11 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.tolerance = 5
         self.tran._for_two_wigs(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_transcript.gff")))
+        tr.combine = pre_combine
 
     def test_post_modify(self):
+        pre_longer = tr.longer_ta
+        pre_fill = tr.fill_gap
         tr.longer_ta = self.mock.mock_longer_ta
         tr.fill_gap = self.mock.mock_fill_gap
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
@@ -147,6 +155,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.length = 20
         self.tran._post_modify(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(gff_out, "test_transcript.gff")))
+        tr.longer_ta = pre_longer
+        tr.fill_gap = pre_fill
 
     def test_compare_cds(self):
         tr.stat_ta_gff = self.mock.mock_stat_ta_gff
@@ -194,6 +204,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         tr.longer_ta = self.mock.mock_longer_ta
         tr.fill_gap = self.mock.mock_fill_gap
         tr.combine = self.mock.mock_combine
+        pre_assembly = tr.assembly
         tr.assembly = self.mock.mock_assembly
         tr.gen_table_transcript = self.mock.mock_gen_table_tran
         gen_file(os.path.join(self.frag, "tmp/test1_forward.wig"), self.example.wig_f)
@@ -220,6 +231,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.fuzzy_term = 1
         args.max_dist = 2000
         self.tran.run_transcript_assembly(args)
+        tr.assembly = pre_assembly
 
 
 class Example(object):
