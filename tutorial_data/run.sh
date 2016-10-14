@@ -198,7 +198,7 @@ utr_detection(){
 sRNA_detection(){
     $ANNOGESIC_PATH \
         srna \
-	-d tss,blast_srna,promoter,term,blast_nr,sec_str \
+	-d tss,blast_srna,blast_nr,sec_str \
 	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-t $ANNOGESIC_FOLDER/output/TSS/gffs \
 	-p $ANNOGESIC_FOLDER/output/processing_site/gffs \
@@ -216,7 +216,6 @@ sRNA_detection(){
 	-nd $ANNOGESIC_FOLDER/input/database/nr \
 	-tl $tex_notex_libs \
 	-rt all_1 \
-	-ba \
 	$ANNOGESIC_FOLDER
 }
 
