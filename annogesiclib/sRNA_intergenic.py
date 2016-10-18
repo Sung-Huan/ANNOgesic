@@ -1,7 +1,6 @@
 import sys
 import os
 import gc
-import pandas
 import numpy as np
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.coverage_detection import coverage_comparison
