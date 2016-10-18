@@ -12,7 +12,7 @@ libpng-dev python3-pip python-pip python3-numpy imagemagick infernal git \
 openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
 ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
 libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
-snap cpanminus mummer exonerate mafft fasttree circos libsvg-perl \
+snap cpanminus mummer exonerate mafft fasttree libsvg-perl \
 libgd-svg-perl python-setuptools libc6-i386 lib32stdc++6 lib32gcc1 \
 netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
