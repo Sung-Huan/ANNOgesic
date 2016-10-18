@@ -3,23 +3,12 @@ main(){
     PYTHON_PATH=python3
     ANNOGESIC_PATH=annogesic
     ANNOGESIC_FOLDER=ANNOgesic
-    FTP_SOURCE=ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Helicobacter_pylori_26695_uid57787/
-    PAGIT_HOME=/home/silas/ANNOgesic/tools/PAGIT
-    tex_notex_libs="GSM1649587_Hp26695_ML_B1_HS1_-TEX_forward.wig:notex:1:a:+,\
-GSM1649587_Hp26695_ML_B1_HS1_-TEX_reverse.wig:notex:1:a:-,\
-GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig:tex:1:a:+,\
-GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig:tex:1:a:-,\
-GSM1649589_Hp26695_ML_B2_HS2_-TEX_forward.wig:notex:1:b:+,\
-GSM1649589_Hp26695_ML_B2_HS2_-TEX_reverse.wig:notex:1:b:-,\
-GSM1649590_Hp26695_ML_B2_HS2_+TEX_forward.wig:tex:1:b:+,\
-GSM1649590_Hp26695_ML_B2_HS2_+TEX_reverse.wig:tex:1:b:-,\
-GSM1649591_Hp26695_ML_B3_HS2_-TEX_forward.wig:notex:1:c:+,\
-GSM1649591_Hp26695_ML_B3_HS2_-TEX_reverse.wig:notex:1:c:-,\
-GSM1649592_Hp26695_ML_B3_HS2_+TEX_forward.wig:tex:1:c:+,\
-GSM1649592_Hp26695_ML_B3_HS2_+TEX_reverse.wig:tex:1:c:-"
-
-    frag_libs="ML-Lib_div_by_14583533.0_multi_by_14583533.0_forward.wig:frag:1:a:+,\
-ML-Lib_div_by_14583533.0_multi_by_14583533.0_reverse.wig:frag:1:a:-"
+    FTP_SOURCE="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/"
+    PAGIT_HOME="$YOUR_PATH"
+    tex_notex_libs="GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig:notex:1:a:-,\
+GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig:tex:1:a:-,\
+GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+,\
+GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
 #    set_up_analysis_folder
 #    get_input_files    
