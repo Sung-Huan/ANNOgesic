@@ -15,19 +15,19 @@ args = parser.parse_args()
 def main():
     for wig in os.listdir(args.input_wig_folder):
         out = open("tmp", "w")
-        with open(os.path.join(args.input_wig, wig)) as fh:
+        with open(os.path.join(args.input_wig_folder, wig)) as fh:
             for line in fh:
-                if line.starswith("variableStep"):
+                if line.startswith("variableStep"):
                     data = line.split(" ")
                     choms = data[1].split("=")
                     choms[-1] = args.strain_name
                     data[1] = "=".join(choms)
                     out.write(" ".join(data))
                 else:
-                    out.write(" ".join(data))
+                    out.write(line)
         out.close()
-        os.remove(os.path.join(args.input_wig, wig))
-        shutil.move("tmp", os.path.join(args.input_wig, wig))
+        os.remove(os.path.join(args.input_wig_folder, wig))
+        shutil.move("tmp", os.path.join(args.input_wig_folder, wig))
 
 if __name__ == "__main__":
     main()
