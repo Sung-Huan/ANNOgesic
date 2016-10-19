@@ -141,7 +141,6 @@ class RATT(object):
             ref = pair.split(":")[0]
             tar = pair.split(":")[1]
             out = open(self.ratt_log, "w+")
-            print(tar)
             self._run_ratt(args_ratt, tar, ref, out)
             for filename in os.listdir():
                 if ("final" in filename):
@@ -194,10 +193,17 @@ class RATT(object):
                                 self.helper.merge_file(os.path.join(
                                      args_ratt.gff_outfolder, gff),
                                      self.tmp_files["rnt"])
-                    shutil.move(self.tmp_files["gff"], os.path.join(
-                                self.tmp_files["out_gff"], prefix + ".gff"))
-                    shutil.move(self.tmp_files["ptt"], os.path.join(
-                                self.tmp_files["out_gff"], prefix + ".ptt"))
-                    shutil.move(self.tmp_files["rnt"], os.path.join(
-                                self.tmp_files["out_gff"], prefix + ".rnt"))
+                    if os.path.exists(self.tmp_files["gff"]):
+                        shutil.move(self.tmp_files["gff"], os.path.join(
+                                    self.tmp_files["out_gff"], prefix + ".gff"))
+                        shutil.move(self.tmp_files["ptt"], os.path.join(
+                                    self.tmp_files["out_gff"], prefix + ".ptt"))
+                        shutil.move(self.tmp_files["rnt"], os.path.join(
+                                    self.tmp_files["out_gff"], prefix + ".rnt"))
+                    else:
+                        print("Error: Please check your output fasta or "
+                              "annotation folder, they should only contain "
+                              "the query strain. And make sure your RATT can "
+                              "work properly (check $ANNOgesic/output/"
+                              "annotation_transfer/ratt_log.txt).")
         self._remove_files(args_ratt, out_gbk)
