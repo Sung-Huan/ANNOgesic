@@ -62,14 +62,6 @@ RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --enable-build-libxslt && \
 make && make test && make install && cp /tools/meme/bin/meme /usr/local/bin
 
-# RATT
-RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git
-RUN mv rapid_annotation_transfer_tool /opt/RATT
-
-ENV RATT_HOME /opt/RATT
-ENV PERL5LIB /opt/ORTHOMCLV1.4/:/opt/RATT/:/opt/ABACAS2/:$PERL5LIB
-ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/augustus/bin:/opt/augustus/scripts:/opt/ORTHOMCLV1.4:/opt/RATT:/opt/ABACAS2:$PATH
-
 # segemehl
 RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_0_2_0.tar.gz && \
 tar -zxvf segemehl_0_2_0.tar.gz && cd segemehl_0_2_0/segemehl && \
@@ -170,6 +162,17 @@ tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make instal
 RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2 && \
 tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
 
+# RATT
+RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git && \
+mv rapid_annotation_transfer_tool /opt/RATT
+# patch the error of perl version and the path of mummer
+RUN sed -i '244s/defined//' /opt/RATT/main.ratt.pl && \
+sed -i '19s/$PAGIT_HOME/\/usr/' /opt/RATT/start.ratt.sh
+
+ENV RATT_HOME /opt/RATT
+ENV PERL5LIB /opt/RATT/:$PERL5LIB
+ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
+
 RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
@@ -177,7 +180,7 @@ ViennaRNA-2.2.5.tar.gz \
 htslib-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
 bcftools-1.3.1.tar.bz2 \
-CRT1.2-CLI.jar.zip
+CRT1.2-CLI.jar.zip 
 
 RUN pip3 install ANNOgesic --upgrade
 
