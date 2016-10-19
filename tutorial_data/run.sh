@@ -79,8 +79,6 @@ get_target_fasta(){
 }
 
 annotation_transfer(){
-    # instead of using "source"
-    . $PAGIT_HOME/sourceme.pagit
     $ANNOGESIC_PATH \
         annotation_transfer \
 	-re $ANNOGESIC_FOLDER/input/reference/annotation \
@@ -88,7 +86,7 @@ annotation_transfer(){
 	-tf $ANNOGESIC_FOLDER/output/target/fasta \
 	-e chromosome \
 	-t Strain \
-	-p NC_000915.1:NC_test.1,NC_000915.1:test_case2 \
+	-p NC_009839.1:NC_test.1,NC_009839.1:test_case2 \
 	-g \
 	$ANNOGESIC_FOLDER
 }
