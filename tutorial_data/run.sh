@@ -4,7 +4,6 @@ main(){
     ANNOGESIC_PATH=annogesic
     ANNOGESIC_FOLDER=ANNOgesic
     FTP_SOURCE="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/"
-    PAGIT_HOME="$YOUR_PATH"
     tex_notex_libs="GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig:notex:1:a:-,\
 GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig:tex:1:a:-,\
 GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+,\
@@ -14,9 +13,9 @@ GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
-#    expression_analysis
 #    SNP_calling_reference
 #    TSS_prediction
+    Optimize_TSSpredator
 #    Transcriptome_assembly
 #    Terminator_prediction
 #    processing_site_prediction
@@ -32,7 +31,6 @@ GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 #    PPI_network
 #    Subcellular_localization
 #    riboswitch_and_RNA_thermometer
-#    Optimize_TSSpredator
 #    gen_screenshot
 #    color_png
 #    merge_features
@@ -91,6 +89,20 @@ annotation_transfer(){
 	$ANNOGESIC_FOLDER
 }
 
+Optimize_TSSpredator(){
+    $ANNOGESIC_PATH \
+        optimize_tsspredator \
+        -w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
+        -fs $ANNOGESIC_FOLDER/output/target/fasta \
+        -g $ANNOGESIC_FOLDER/output/target/annotation \
+        -n NC_009839.1 \
+        -l $tex_notex_libs \
+        -p TSS -s 25 \
+        -m $ANNOGESIC_FOLDER/input/manual_TSS/NC_009839_manual_TSS.gff \
+        -le 200000 \
+        $ANNOGESIC_FOLDER
+}
+
 SNP_calling_reference(){
     $ANNOGESIC_PATH \
          snp \
@@ -110,17 +122,17 @@ TSS_prediction(){
 	-g $ANNOGESIC_FOLDER/output/target/annotation \
 	-l $tex_notex_libs \
 	-p test \
-	-he 0.3 \
-	-rh 0.2 \
-	-fa 2.0 \
-	-rf 0.5 \
-	-bh 0.0 \
-	-ef 1.7 \
-	-pf 1.5 \
+        -he 0.4 \
+        -rh 0.1 \
+        -fa 1.7 \
+        -rf 0.2 \
+        -bh 0.039 \
+        -ef 1.1 \
+        -pf 4.5 \
 	-s \
 	-v \
 	-le 200000 \
-	-m $ANNOGESIC_FOLDER/input/manual_TSS/NC_000915_manual_TSS.gff \
+	-m $ANNOGESIC_FOLDER/input/manual_TSS/NC_009839_manual_TSS.gff \
 	$ANNOGESIC_FOLDER
 }
 
@@ -312,20 +324,6 @@ riboswitch_and_RNA_thermometer(){
 	-R $ANNOGESIC_FOLDER/input/database/CMs/Rfam.cm \
 	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs \
 	-t $ANNOGESIC_FOLDER/output/TSS/gffs \
-	$ANNOGESIC_FOLDER
-}
-
-Optimize_TSSpredator(){
-    $ANNOGESIC_PATH \
-        optimize_tsspredator \
-	-w $ANNOGESIC_FOLDER/input/wigs/tex_notex \
-	-fs $ANNOGESIC_FOLDER/output/target/fasta \
-	-g $ANNOGESIC_FOLDER/output/target/annotation \
-	-n NC_000915.1 \
-	-l $tex_notex_libs \
-	-p TSS -s 25 \
-	-m $ANNOGESIC_FOLDER/input/manual_TSS/NC_000915_manual_TSS.gff \
-	-le 200000 \
 	$ANNOGESIC_FOLDER
 }
 
