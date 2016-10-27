@@ -8,7 +8,6 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-"AAAAA"
 __version__ = "0.4.7"
 
 def main():
