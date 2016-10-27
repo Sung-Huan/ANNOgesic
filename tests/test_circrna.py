@@ -63,9 +63,15 @@ class TestCircRNADetection(unittest.TestCase):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
         if os.path.exists("test1"):
-            shutil.rmtree("test1")
+            if os.path.isfile("test1"):
+                os.remove("test1")
+            if os.path.isdir("test1"):
+                shutil.rmtree("test1")
         if os.path.exists("test2"):
-            shutil.rmtree("test2")
+            if os.path.isfile("test2"):
+                os.remove("test2")
+            if os.path.isdir("test2"):
+                shutil.rmtree("test2")
 
     def test_deal_zip_file(self):
         out1 = os.path.join(self.test_folder, "test1.fa")

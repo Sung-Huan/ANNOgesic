@@ -28,7 +28,7 @@ class Mock_func(object):
         pass
 
     def mock_merge_srna_target(self, rnaplex_file, rnaup_file, top, out_rnaplex,
-                               out_rnaup, merge, overlap, srna, gff):
+                               out_rnaup, merge, overlap, srna, gff, fasta):
         gen_file("test_folder/out", rnaplex_file + rnaup_file)
 
 
@@ -111,7 +111,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         datas = import_data(os.path.join(srna_seq, "aaa_sRNA.fa"))
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
         datas = import_data(os.path.join(tar_seq, "aaa_target_1.fa"))
-        self.assertEqual("\n".join(datas), '>AAA_000001|CDS_00000\nTAAATTCC')
+        self.assertEqual("\n".join(datas), '>AAA_000001|cds0|12-16_+\nTAAATTCC')
 
     def test_rna_plex(self):
         self.star._run_rnaplex = self.mock.mock_run_rnaplex
@@ -169,7 +169,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
 class Example(object):
     srna_file = """aaa	UTR_derived	sRNA	5	8	.	+	.	ID=srna0;Name=srna_00000;UTR_type=3utr"""
     seq_file = """>aaa\nAAATTAATTAAATTCCGGCCGGCCGG"""
-    gff_file = """aaa	RefSeq	CDS	12	16	.	+	.	ID=cds0;Name=CDS_00000;locus_tag=AAA_000001"""
+    gff_file = """aaa	RefSeq	CDS	12	16	.	+	.	ID=cds0;Name=CDS_00000;locus_tag=AAA_000001;Parent=gene0
+aaa	RefSeq	gene	12	16	.	+	.	ID=gene0;Name=CDS_00000;locus_tag=AAA_000001"""
     rnaplex = """>SAOUHSC_00001|dnaA
 >srna437
 ((((((((&)))))))) 163,170 :  12,19  (-2.27 = -5.08 +  1.88 +  0.93)

@@ -318,6 +318,39 @@ def get_seq_sec(s_h, sec_seq):
             sec_seq["seq"] = line
 
 
+def print_term(terms, out):
+#    First = True
+    for term in terms:
+#        if First:
+#            Fisrt = False
+#            pre_term = term
+#        else:
+#            if (term["strain"] == pre_term["strain"]) and (
+#                    term["strand"] == pre_term["strand"]):
+#                if ((term["start"] >= pre_term["start"]) and (
+#                        term["end"] <= pre_term["end"])) or (
+#                        (term["start"] <= pre_term["start"]) and (
+#                        term["end"] >= pre_term["end"])) or (
+#                        (term["start"] >= pre_term["start"]) and (
+#                        term["start"] <= pre_term["end"]) and (
+#                        term["end"] >= pre_term["end"])) or (
+#                        (term["start"] <= pre_term["start"]) and (
+#                        term["end"] >= pre_term["start"]) and (
+#                        term["end"] <= pre_term["end"])):
+        print_ = False
+        if (term["strand"] == "+") and (len(term["parent_p"]) != 0):
+            print_ = True
+        elif (term["strand"] == "-") and (len(term["parent_m"]) != 0):
+            print_ = True
+        if print_: 
+            out.write("\t".join([term["strain"], str(term["start"]),
+                      str(term["end"]), term["name"], str(term["miss"]),
+                      str(term["loop"]), str(term["length"]),
+                      str(term["r_stem"]), term["strand"], str(term["l_stem"]),
+                      term["parent_p"], term["parent_m"],
+                      str(term["ut"])]) + "\n")
+
+
 def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
     '''detect the sec str of terminator'''
     terms = []
@@ -356,16 +389,4 @@ def poly_t(seq_file, sec_file, gff_file, tran_file, out_file, args_term):
                 new_cands = merge_cands(new_cands_gene, new_cands_ta)
                 filter_term(new_cands, terms, args_term.miss_rate)
     parents(terms, genes, args_term)
-    for term in terms:
-        print_ = False
-        if (term["strand"] == "+") and (len(term["parent_p"]) != 0):
-            print_ = True
-        elif (term["strand"] == "-") and (len(term["parent_m"]) != 0):
-            print_ = True
-        if print_:
-            out.write("\t".join([term["strain"], str(term["start"]),
-                      str(term["end"]), term["name"], str(term["miss"]),
-                      str(term["loop"]), str(term["length"]),
-                      str(term["r_stem"]), term["strand"], str(term["l_stem"]),
-                      term["parent_p"], term["parent_m"],
-                      str(term["ut"])]) + "\n")
+    print_term(terms, out)

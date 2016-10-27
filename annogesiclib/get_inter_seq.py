@@ -243,7 +243,39 @@ def read_file(seq_file, tran_file, gff_file):
     return seq, tas, merges, genes
 
 
-def intergenic_seq(seq_file, tran_file, gff_file, out_file):
+def get_fasta(seq, merge, num, strand, args_term, out):
+    if (merge["end"] - merge["start"]) > args_term.window:
+        detect_out = False
+        for start in range(merge["start"], merge["end"] + 1, args_term.shift):
+            if (merge["end"] - (start + args_term.window)) < args_term.shift:
+                end = merge["end"]
+                detect_out = True
+            else:
+                end = start + args_term.window
+            inter_seq = Helper().extract_gene(
+                seq[merge["strain"]], start, end, strand)
+            out.write(">" + "|".join([
+                "inter_" + str(num), str(start),
+                str(end), merge["strain"], merge["parent_p"],
+                merge["parent_m"], merge["p_pos"], merge["m_pos"],
+                strand]) + "\n")
+            out.write(inter_seq + "\n")
+            num += 1
+            if detect_out:
+                break
+    else:
+        inter_seq = Helper().extract_gene(
+            seq[merge["strain"]], merge["start"], merge["end"], strand)
+        out.write(">" + "|".join([
+            "inter_" + str(num), str(merge["start"]),
+            str(merge["end"]), merge["strain"], merge["parent_p"],
+            merge["parent_m"], merge["p_pos"], merge["m_pos"],
+            strand]) + "\n")
+        out.write(inter_seq + "\n")
+        num += 1
+    return num
+
+def intergenic_seq(seq_file, tran_file, gff_file, out_file, args_term):
     '''get intergenic seq'''
     out = open(out_file, "w")
     seq, tas, merges, genes = read_file(seq_file, tran_file, gff_file)
@@ -256,24 +288,6 @@ def intergenic_seq(seq_file, tran_file, gff_file, out_file):
         for merge in corr_merges:
             if merge["start"] < merge["end"]:
                 if merge["strand"] == "+":
-                    inter_seq = Helper().extract_gene(
-                        seq[merge["strain"]], merge["start"],
-                        merge["end"], "+")
-                    out.write(">" + "|".join([
-                        "inter_" + str(num), str(merge["start"]),
-                        str(merge["end"]), merge["strain"], merge["parent_p"],
-                        merge["parent_m"], merge["p_pos"], merge["m_pos"],
-                        "+"]) + "\n")
-                    out.write(inter_seq + "\n")
-                    num += 1
+                    num = get_fasta(seq, merge, num, "+", args_term, out)
                 else:
-                    inter_seq = Helper().extract_gene(
-                            seq[merge["strain"]],
-                            merge["start"], merge["end"], "-")
-                    out.write(">" + "|".join([
-                        "inter_" + str(num), str(merge["start"]),
-                        str(merge["end"]), merge["strain"], merge["parent_p"],
-                        merge["parent_m"], merge["p_pos"], merge["m_pos"],
-                        "-"]) + "\n")
-                    out.write(inter_seq + "\n")
-                    num += 1
+                    num = get_fasta(seq, merge, num, "-", args_term, out)

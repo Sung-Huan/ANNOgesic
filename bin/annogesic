@@ -447,6 +447,12 @@ def main():
         "-tb","--table_best", default=False, action="store_true",
         help="Output table only contains the information of the library which has most significant coverage decrease. Default is False.")
     Terminator_parser.add_argument(
+        "-wz","--window_size", default=100, type=int,
+        help="Window size for searching secondary structure of intergenic region. Default is 100 nts.")
+    Terminator_parser.add_argument(
+        "-ws","--window_shift", default=20, type=int,
+        help="The number of nucleotides for window shift. Default is 20 nts.")
+    Terminator_parser.add_argument(
         "-ml","--min_loop_length", default=3, type=int,
         help="The minimum loop length of terminator. Default is 3 nts.")
     Terminator_parser.add_argument(

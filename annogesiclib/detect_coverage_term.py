@@ -343,31 +343,34 @@ def print2file(num, term, coverage, parent, out, out_t, method, args_term):
     out_t.write("\n")
 
 
-def print_detect_undetect(terms, num, out, out_t, detect, args_term):
+def print_detect_undetect(term, num, out, out_t, detect, args_term):
     '''For controlling the output of different strand of terminator'''
-    for term in terms:
-        if term["strand"] == "+":
-            print2file(num, term, detect, term["parent_p"], out,
-                       out_t, term["method"], args_term)
-            num += 1
-        else:
-            print2file(num, term, detect, term["parent_m"], out,
-                       out_t, term["method"], args_term)
-            num += 1
+    if term["strand"] == "+":
+        print2file(num, term, detect, term["parent_p"], out,
+                   out_t, term["method"], args_term)
+        num += 1
+    else:
+        print2file(num, term, detect, term["parent_m"], out,
+                   out_t, term["method"], args_term)
+        num += 1
     return num
 
 
 def term_validation(pre_term, term, detect, detect_terms, out,
-                    out_t, num, args_term):
+                    out_t, num, args_term, final_terms):
     '''Classification of terminators'''
     if (pre_term["name"] != term["name"]) or (args_term.keep_multi):
         if detect:
-            num = print_detect_undetect(detect_terms["detect"], num, out,
-                                        out_t, "True", args_term)
+            final_terms["detect"] = (final_terms["detect"] +
+                                     detect_terms["detect"])
+#            num = remove_repeat(detect_terms["detect"], num, out,
+#                                out_t, "True", args_term)
             detect = False
         else:
-            num = print_detect_undetect(detect_terms["undetect"], num, out,
-                                        out_t, "False", args_term)
+            final_terms["undetect"] = (final_terms["undetect"] +
+                                       detect_terms["undetect"])
+#            num = remove_repeat(detect_terms["undetect"], num, out,
+#                                out_t, "False", args_term)
         detect_terms["detect"] = []
         detect_terms["undetect"] = []
         detect = first_term(term["strand"], term, detect_terms, detect)
@@ -398,6 +401,7 @@ def print_term(terms, out, out_t, args_term):
     detect = False
     detect_terms = {"detect": [], "undetect": []}
     num = 0
+    final_terms = {"detect": [], "undetect": []}
     for term in terms:
         if first:
             first = False
@@ -405,14 +409,22 @@ def print_term(terms, out, out_t, args_term):
             detect = first_term(term["strand"], term, detect_terms, detect)
         else:
             num, detect = term_validation(pre_term, term, detect, detect_terms,
-                                          out, out_t, num, args_term)
+                                          out, out_t, num, args_term,
+                                          final_terms)
             pre_term = term
     if detect:
-        num = print_detect_undetect(detect_terms["detect"], num, out, out_t,
-                                    "True", args_term)
+        final_terms["detect"] = final_terms["detect"] + detect_terms["detect"]
+#        num = remove_repeat(detect_terms["detect"], num, out, out_t,
+#                            "True", args_term)
     else:
-        num = print_detect_undetect(detect_terms["undetect"], num, out, out_t,
-                                    "False", args_term)
+        final_terms["undetect"] = (final_terms["undetect"] + 
+                                   detect_terms["undetect"])
+#        num = remove_repeat(detect_terms["undetect"], num, out, out_t,
+#                            "False", args_term)
+    remove_repeat(final_terms["detect"], num, out, out_t,
+                  "True", args_term)
+    remove_repeat(final_terms["undetect"], num, out, out_t,
+                  "False", args_term)
 
 
 def del_repeat_term(terms):
@@ -506,6 +518,49 @@ def compute_wig(wig_file, libs, terms, strand, texs, args_term):
                 term["detect_num"][cond] = str(num)
 
 
+
+def remove_repeat(terms, num, out, out_t, detect, args_term):
+    finals = []
+    for term1 in terms:
+        if args_term.keep_multi:
+            num = print_detect_undetect(term1, num, out, out_t,
+                                        detect, args_term)
+        else:
+            tmp_term = term1
+            for term2 in terms:
+                if (term1["strain"] == term2["strain"]) and (
+                        term1["strand"] == term2["strand"]):
+                    if term1["strand"] == "+":
+                        parents1 = set(tmp_term["parent_p"].split(","))
+                        parents2 = set(term2["parent_p"].split(","))
+                        if (parents1.issubset(parents2)):
+                            if (parents2.issubset(parents1)):
+                                if tmp_term["end"] < term2["end"]:
+                                    tmp_term = term2
+                                elif (tmp_term["end"] == term2["end"]) and (
+                                        tmp_term["start"] > term2["start"]):
+                                    tmp_term = term2
+                            else:
+                                tmp_term = term2
+                    else:
+                        parents1 = set(tmp_term["parent_m"].split(","))
+                        parents2 = set(term2["parent_m"].split(","))
+                        if (parents1.issubset(parents2)):
+                            if (parents2.issubset(parents1)):
+                                if tmp_term["start"] > term2["start"]:
+                                    tmp_term = term2
+                                elif (tmp_term["start"] == term2["start"]) and (
+                                        term1["end"] < term2["end"]):
+                                    tmp_term = term2
+                            else:
+                                tmp_term = term2
+            if tmp_term not in finals:
+                num = print_detect_undetect(tmp_term, num, out, out_t,
+                                            detect, args_term)
+                finals.append(tmp_term)
+    return num
+
+
 def detect_coverage(term_table, gff_file, tran_file, seq_file,
                     wig_f_file, wig_r_file, tranterm_file, wig_folder,
                     output_file, output_table, args_term):
@@ -520,4 +575,6 @@ def detect_coverage(term_table, gff_file, tran_file, seq_file,
     compute_wig(wig_r_file, libs, terms, "-", texs, args_term)
     out = open(output_file, "w")
     out_t = open(output_table, "w")
+#    if not args_term.keep_multi:
+#        terms = remove_repeat(terms)
     print_term(terms, out, out_t, args_term)

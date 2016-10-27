@@ -826,7 +826,6 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                                          args_srna)
     anti_cutoff_coverage, anti_notex = get_intergenic_antisense_cutoff(
                                        args_srna)
-    testa = pandas.DataFrame.from_dict(wigs_f)
     nums, cdss, tas, pros, genes, ncs = read_data(args_srna)
     if not args_srna.tss_source:
         print("Classifying TSS...")

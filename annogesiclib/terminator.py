@@ -286,7 +286,7 @@ class Terminator(object):
             gff_file = os.path.join(merge_path, prefix + ".gff")
             print("Extracting seq of {0}".format(prefix))
             intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
-                           tran_file, gff_file, tmp_seq)
+                           tran_file, gff_file, tmp_seq, args_term)
             self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
             tmp_cand = os.path.join(args_term.out_folder,
                                     "_".join(["term_candidates", prefix]))
@@ -326,6 +326,8 @@ class Terminator(object):
         shutil.rmtree(self.tmps["term_table"])
         self.helper.remove_all_content(args_term.out_folder,
                                        "inter_seq_", "file")
+        self.helper.remove_all_content(self.outfolder["term"],
+                                       "_term.gff", "file")
         self.helper.remove_all_content(args_term.out_folder,
                                        "inter_sec_", "file")
         self.helper.remove_all_content(args_term.out_folder,

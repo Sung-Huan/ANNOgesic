@@ -3,23 +3,30 @@ from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
 
 
-def print_fasta(entry, seq, out):
-    try:
-        if entry.attributes["locus_tag"] == entry.attributes["Name"]:
-            out.write(">{0}\n{1}\n".format(
-                      entry.attributes["locus_tag"], seq))
+def assign_name(entry):
+    if entry.attributes["locus_tag"] == entry.attributes["Name"]:
+        return None
+    else:
+        return entry.attributes["Name"]
+
+def print_fasta(entry, seq, out, gene):
+    if gene is not None:
+        if ("locus_tag" in gene.attributes.keys()):
+            locus = gene.attributes["locus_tag"]
         else:
-            out.write(">" + "|".join([entry.attributes["locus_tag"],
-                      entry.attributes["Name"]]) + "\n")
-            out.write(seq + "\n")
-    except KeyError:
-        if "locus_tag" in entry.attributes.keys():
-            out.write(">{0}\n{1}\n".format(
-                      entry.attributes["locus_tag"], seq))
-        else:
-            out.write(">{0}:{1}-{2}_{3}\n{4}\n".format(
-                      entry.feature, entry.start, entry.end,
-                      entry.strand, seq))
+            locus = "NA"
+    else:
+        locus = "NA"
+    if ("ID" in entry.attributes.keys()):
+        out.write(">{0}|{1}-{2}_{3}\n{4}\n".format(
+                  "|".join([locus,
+                            entry.attributes["ID"]]),
+                  entry.start, entry.end,
+                  entry.strand, seq))
+    else:
+        out.write(">{0}|{1}-{2}_{3}\n{4}\n".format(
+                  "|".join([locus, "NA"]) , entry.start, entry.end,
+                  entry.strand, seq))
 
 
 def read_file(seq_file, gff_file, target_folder, features):
@@ -52,6 +59,32 @@ def read_file(seq_file, gff_file, target_folder, features):
     return fasta, cdss_f, cdss_r, genes
 
 
+def check_parent_gene(cds, genes):
+    target_gene = None
+    for gene in genes:
+        if "Parent" in cds.attributes.keys():
+            if (gene.attributes["ID"] in
+                    cds.attributes["Parent"].split(",")):
+                target_gene = gene
+                break
+        else:
+            if (gene.seq_id == cds.seq_id) and (
+                    gene.strand == cds.strand):
+                if ((cds.start <= gene.start) and (
+                        cds.end >= gene.end)) or (
+                        (cds.start >= gene.start) and (
+                        cds.end <= gene.end)) or (
+                        (cds.start <= gene.start) and (
+                        cds.end <= gene.end) and (
+                        cds.end >= gene.start)) or (
+                        (cds.start >= gene.start) and (
+                        cds.start <= gene.end) and (
+                        cds.end >= gene.end)):
+                    target_gene = gene
+                    break
+    return target_gene
+
+
 def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
     '''for forward strand'''
     pre_id = ""
@@ -74,13 +107,8 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
             end = cds.end
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
-        for gene in genes:
-            if "Parent" in cds.attributes.keys():
-                if (gene.attributes["ID"] in 
-                        cds.attributes["Parent"].split(",")):
-                    target = gene
-                    break
-        print_fasta(target, seq, out)
+        target_gene = check_parent_gene(cds, genes)
+        print_fasta(target, seq, out, target_gene)
     if out is not None:
         out.close()
 
@@ -106,13 +134,8 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
             start = cds.start
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
-        for gene in genes:
-            if "Parent" in cds.attributes.keys():
-                if (gene.attributes["ID"] in 
-                        cds.attributes["Parent"].split(",")):
-                    target = gene
-                    break
-        print_fasta(target, seq, out)
+        target_gene = check_parent_gene(cds, genes)
+        print_fasta(target, seq, out, target_gene)
     if out is not None:
         out.close()
 

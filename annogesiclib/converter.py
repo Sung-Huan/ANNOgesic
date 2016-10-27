@@ -28,13 +28,17 @@ class Converter(object):
                     pid = "-"
                 if "locus_tag" in entry.attributes.keys():
                     locus_tag = entry.attributes["locus_tag"]
-                if "Parent" in entry.attributes.keys():
+                elif "Parent" in entry.attributes.keys():
                     for gene in genes:
                         if (gene.attributes["ID"] in 
                                 entry.attributes["Parent"].split(",")):
                             if "gene" in gene.attributes.keys():
                                 gene_tag = gene.attributes["gene"]
                             locus_tag = gene.attributes["locus_tag"]
+                else:
+                    locus_tag = "".join([
+                        entry.feature, ":", str(entry.start), "-",
+                        str(entry.end), "_", entry.strand])
             else:
                 pid = "-"
                 gene_tag = "-"
@@ -47,6 +51,10 @@ class Converter(object):
                             if "gene" in gene.attributes.keys():
                                 gene_tag = gene.attributes["gene"]
                             locus_tag = gene.attributes["locus_tag"]
+                else:
+                    locus_tag = "".join([
+                        entry.feature, ":", str(entry.start), "-",
+                        str(entry.end), "_", entry.strand])
             if "product" in entry.attributes.keys():
                 product = entry.attributes["product"]
             else:

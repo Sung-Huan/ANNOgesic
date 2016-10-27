@@ -334,7 +334,8 @@ class Controller(object):
             self._args.min_loop_length, self._args.max_loop_length,
             self._args.min_stem_length, self._args.max_stem_length,
             self._args.min_U_tail_length, self._args.miss_rate,
-            self._args.range_U_tail, self._args.keep_multi_term)
+            self._args.range_U_tail, self._args.keep_multi_term,
+            self._args.window_size, self._args.window_shift)
         terminator = Terminator(args_term)
         terminator.run_terminator(args_term)
 

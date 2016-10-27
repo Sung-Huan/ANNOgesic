@@ -31,7 +31,7 @@ class OperonDetection(object):
     def _detect_operon(self, prefixs, args_op):
         for prefix in prefixs:
             out_table = os.path.join(self.table_path,
-                                     "_".join(["operon", prefix + ".csv"]))
+                                     "_".join([prefix, "operon.csv"]))
             print("Detection operons of {0}".format(prefix))
             tss = self.helper.get_correct_file(
                     self.tss_path, "_TSS.gff", prefix, None, None)

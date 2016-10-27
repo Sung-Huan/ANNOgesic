@@ -220,7 +220,7 @@ class ArgsContainer(object):
             fuzzy_downstream_gene, transtermhp_folder, tex_notex_libs,
             frag_libs, tex_notex, replicates_tex, replicates_frag, table_best,
             min_loop_length, max_loop_length, min_stem_length, max_stem_length,
-            min_AT_tail_length, miss_rate, range_u, keep_multi):
+            min_AT_tail_length, miss_rate, range_u, keep_multi, window, shift):
         self.TransTermHP_path = TransTermHP_path
         self.expterm_path = expterm_path
         self.RNAfold_path = RNAfold_path
@@ -257,6 +257,8 @@ class ArgsContainer(object):
         self.miss_rate = miss_rate
         self.range_u = range_u
         self.keep_multi = keep_multi
+        self.window = window
+        self.shift = shift
         self = self._parser_combine_wigs("terminator")
         return self
 
@@ -692,7 +694,8 @@ class ArgsContainer(object):
         self.combine = combine_all
         self.e_value = e_value
         self.para = para
-        self = self._parser_combine_wigs("promoter")
+        if self.tex_wigs is not None:
+            self = self._parser_combine_wigs("promoter")
         return self
 
     def container_operon(self, TSS_folder, annotation_folder,

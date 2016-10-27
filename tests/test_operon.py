@@ -77,7 +77,7 @@ class TestOperonDetection(unittest.TestCase):
         args.length = 100
         self.operon._detect_operon(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(self.output, "tables",
-                        "operon_test.csv")))
+                        "test_operon.csv")))
     
     def test_stat(self):
         op.stat = self.mock.mock_stat
