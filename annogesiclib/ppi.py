@@ -22,6 +22,7 @@ class PPINetwork(object):
         self.all_result = os.path.join(out_folder, "all_results")
         self.best_result = os.path.join(out_folder, "best_results")
         self.fig = os.path.join(out_folder, "figures")
+        self.ref_tags = {}
         self.with_strain = "with_strain"
         self.without_strain = "without_strain"
         self.tmp_files = {"log": "tmp_log", "action": "tmp_action.log",
@@ -60,8 +61,14 @@ class PPINetwork(object):
 
     def _retrieve_id(self, strain_id, genes, files):
         for gene in genes:
-            detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
-                                      strain_id, files)
+            if gene["gene"] != "-":
+                detect_id = self._wget_id(gene["strain"], gene["gene"],
+                                          strain_id, files)
+                self.ref_tags[gene["gene"]] = gene["locus_tag"]
+            else:
+                detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
+                                          strain_id, files)
+                self.ref_tags[gene["locus_tag"]] = gene["locus_tag"]
             if not detect_id:
                 print("Error:there is no {0} in {1}".format(
                        gene, strain_id["file"]))
@@ -86,7 +93,8 @@ class PPINetwork(object):
         for row_i in csv.reader(id_h, delimiter="\t"):
             prefername = row_i[3]
         id_h.close()
-        out.write("Interaction of {0} | {1}\n".format(id_file, prefername))
+        out.write("Interaction of {0} | {1}\n".format(
+            self.ref_tags[prefername], prefername))
         out.write("strain\titem_id_a\titem_id_b\tmode\taction\ta_is_acting\t"
                   "STRING_action_score\tpubmed_id\tpubmed_score\n")
 
@@ -191,7 +199,8 @@ class PPINetwork(object):
                 name = (row[0].split("-"))[0].strip().split(",")[0].strip()
             if ("all" in args_ppi.querys):
                 if (len(row) > 1) and (row[0] != "Location"):
-                    genes.append({"strain": name, "locus_tag": row[5]})
+                    genes.append({"strain": name, "locus_tag": row[5],
+                                  "gene": row[4]})
             else:
                 for query in args_ppi.querys:
                     datas = query.split(":")
@@ -204,7 +213,8 @@ class PPINetwork(object):
                             start == row[0].split("..")[0]) and (
                             end == row[0].split("..")[1]) and (
                             strand == row[1]):
-                        genes.append({"strain": name, "locus_tag": row[5]})
+                        genes.append({"strain": name, "locus_tag": row[5],
+                                      "gene": row[4]})
         fh.close()
         return genes
 

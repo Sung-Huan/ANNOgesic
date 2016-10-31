@@ -81,11 +81,11 @@ class TestOperonDetection(unittest.TestCase):
     
     def test_stat(self):
         op.stat = self.mock.mock_stat
-        table_file = os.path.join(self.output, "tables", "operon_test.csv")
+        table_file = os.path.join(self.output, "tables", "test_operon.csv")
         if not os.path.exists(table_file):
             gen_file(table_file, "test")
         self.operon._stat(os.path.join(self.output, "tables"), self.stat)
-        self.assertTrue(os.path.exists(os.path.join(self.stat, "stat_operon_test.csv")))
+        self.assertTrue(os.path.exists(os.path.join(self.stat, "stat_test_operon.csv")))
 
     def test_combine_gff(self):
         op.combine_gff = self.mock.mock_combine_gff

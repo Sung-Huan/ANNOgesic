@@ -13,9 +13,9 @@ class GoTermFinding(object):
         self.helper = Helper()
         self.out_all = os.path.join(args_go.out_folder, "all_CDS")
         self.out_express = os.path.join(args_go.out_folder, "expressed_CDS")
-        self.result_all_path = os.path.join(self.out_all, "Go_term_results")
+        self.result_all_path = os.path.join(self.out_all, "GO_term_results")
         self.result_express_path = os.path.join(self.out_express,
-                                                "Go_term_results")
+                                                "GO_term_results")
         self.gff_path = os.path.join(args_go.gffs, "tmp")
         if args_go.trans is not None:
             self.tran_path = os.path.join(args_go.trans, "tmp")
@@ -34,7 +34,7 @@ class GoTermFinding(object):
             self.helper.check_make_folder(os.path.join(out_path, prefix))
             out_file = os.path.join(out_path, prefix,
                                     "_".join([prefix, "uniprot.csv"]))
-            print("extracting Go terms of {0} from UniProt...".format(prefix))
+            print("extracting GO terms of {0} from UniProt...".format(prefix))
             if self.tran_path is not None:
                 tran_file = os.path.join(self.tran_path,
                                          "_".join([prefix, "transcript.gff"]))

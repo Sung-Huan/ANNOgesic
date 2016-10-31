@@ -198,8 +198,12 @@ class SNPCalling(object):
     def _remove_bams(self):
         if os.path.exists(self.bams["whole"]):
             os.remove(self.bams["whole"])
+        if os.path.exists(self.bams["whole"] + ".bai"):
+            os.remove(self.bams["whole"] + ".bai")
         if os.path.exists(self.bams["sort"]):
             os.remove(self.bams["sort"])
+        if os.path.exists(self.bams["sort"] + ".bai"):
+            os.remove(self.bams["sort"] + ".bai")
         if os.path.exists(self.header):
             os.remove(self.header)
         os.remove(self.outputs["depth"])

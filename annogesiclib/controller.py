@@ -602,6 +602,8 @@ class Controller(object):
                 self._args.caller != "m"):
             print("Error: please assign \"c\" or"
                   " \"m\" to --caller!!")
+        self.check_parameter([self._args.sample_number],
+                             ["--sample_number"])
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         args_snp = self.args_container.container_snp(
             self._args.samtools_path, self._args.bcftools_path,

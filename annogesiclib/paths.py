@@ -62,7 +62,7 @@ class Paths(object):
              self.output_folder)
         self.operon_output_folder = "%s/operons" % self.output_folder
         self.circrna_output_folder = "%s/circRNA" % self.output_folder
-        self.goterm_output_folder = "%s/Go_term" % self.output_folder
+        self.goterm_output_folder = "%s/GO_term" % self.output_folder
         self.starget_output_folder = "%s/sRNA_targets" % self.output_folder
         self.snp_output_folder = "%s/SNP_calling" % self.output_folder
         self.ppi_output_folder = "%s/PPI" % self.output_folder
@@ -236,15 +236,15 @@ class Paths(object):
              self.circrna_base_folder)
 
     def _set_goterm_folder_names(self):
-        self.goterm_base_folder = "%s/Go_term" % self.output_folder
+        self.goterm_base_folder = "%s/GO_term" % self.output_folder
         self.goterm_all_folder = "%s/all_CDS" % self.goterm_base_folder
         self.goterm_express_folder = "%s/expressed_CDS" % (
              self.goterm_base_folder)
-        self.goterm_express_result_folder = "%s/Go_term_results" % (
+        self.goterm_express_result_folder = "%s/GO_term_results" % (
              self.goterm_express_folder)
         self.goterm_express_stat_folder = "%s/statistics" % (
              self.goterm_express_folder)
-        self.goterm_all_result_folder = "%s/Go_term_results" % (
+        self.goterm_all_result_folder = "%s/GO_term_results" % (
              self.goterm_all_folder)
         self.goterm_all_stat_folder = "%s/statistics" % (
              self.goterm_all_folder)

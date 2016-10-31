@@ -73,7 +73,7 @@ class OperonDetection(object):
 
     def _stat(self, table_path, stat_folder):
         for table in os.listdir(table_path):
-            if table.startswith("operon_") and table.endswith(".csv"):
+            if table.endswith("_operon.csv"):
                 filename = "_".join(["stat", table])
                 out_stat = os.path.join(stat_folder, filename)
                 stat(os.path.join(table_path, table), out_stat)

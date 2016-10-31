@@ -289,13 +289,12 @@ class CircRNADetection(object):
                                self.splices["all_file"]), os.path.join(
                                self.gff_path, prefix + ".gff"),
                                os.path.join(self.candidate_path, prefix,
-                               "_".join(["circRNA", prefix + "_all.csv"])),
+                               "_".join([prefix, "circRNA_all.csv"])),
                                args_circ, os.path.join(args_circ.stat_folder,
                                "_".join(["stat_circRNA", prefix + ".csv"])))
                 self.converter.convert_circ2gff(
                      os.path.join(self.candidate_path, prefix,
-                                  "_".join(["circRNA",
-                                            prefix + "_all.csv"])),
+                                  "_".join([prefix, "circRNA_all.csv"])),
                      args_circ, os.path.join(
                                 self.gff_folder, prefix,
                                 "_".join([prefix, "circRNA_all.gff"])),

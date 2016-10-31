@@ -93,20 +93,6 @@ class sRNADetection(object):
     def _formatdb(self, database, type_, out_folder,
                   blast_path, database_type):
         err = open(os.path.join(out_folder, "log.txt"), "w")
-        if (database.endswith(".fa")) or (
-                database.endswith(".fna")) or (
-                database.endswith(".fasta")):
-            pass
-        else:
-            folders = database.split("/")
-            filename = folders[-1]
-            folder = "/".join(folders[:-1])
-            for fasta in os.listdir(folder):
-                if (fasta.endswith(".fa")) or (
-                        fasta.endswith(".fna")) or (
-                        fasta.endswith(".fasta")):
-                    if ".".join(fasta.split(".")[:-1]) == filename:
-                        database = os.path.join(folder, fasta)
         if database_type == "sRNA":
             change_format(database, "tmp_srna_database")
             os.remove(database)
@@ -114,6 +100,11 @@ class sRNADetection(object):
         db_file = ".".join(database.split(".")[:-1])
         self._run_format(blast_path, database, type_, db_file, err)
         err.close()
+        if (database.endswith(".fa")) or (
+                database.endswith(".fna")) or (
+                database.endswith(".fasta")):
+            database = ".".join(database.split(".")[:-1])
+        return database
 
     def _merge_frag_tex_file(self, files, args_srna):
         '''merge the results of fragmented and tex treated libs'''
@@ -228,6 +219,30 @@ class sRNADetection(object):
         self._merge_frag_tex_file(files, args_srna)
         filter_utr(files["merge_gff"], files["merge_csv"], args_srna.min_utr)
 
+    def _check_database(self, formatdb, database):
+        if formatdb:
+            if (database.endswith(".fa")) or (
+                    database.endswith(".fna")) or (
+                    database.endswith(".fasta")):
+                return database
+            else:
+                folders = database.split("/")
+                filename = folders[-1]
+                folder = "/".join(folders[:-1])
+                for fasta in os.listdir(folder):
+                    if (fasta.endswith(".fa")) or (
+                            fasta.endswith(".fna")) or (
+                            fasta.endswith(".fasta")):
+                        if ".".join(fasta.split(".")[:-1]) == filename:
+                            database = os.path.join(folder, fasta)
+                            return database
+        else:
+            return database
+        print("Error: The nr database or sRNA database is not in fasta "
+              "format or the file name is not end with "
+              ".fa or .fna or .fasta!!!")
+        sys.exit()
+
     def _check_necessary_file(self, args_srna):
         if (args_srna.gffs is None) or (args_srna.trans is None) or (
                 (args_srna.tex_wigs is None) and (
@@ -245,6 +260,10 @@ class sRNADetection(object):
                 print("it may effect the results!!!!")
         self._check_gff(args_srna.gffs)
         self._check_gff(args_srna.trans)
+        args_srna.nr_database = self._check_database(args_srna.nr_format,
+                                                args_srna.nr_database)
+        args_srna.srna_database = self._check_database(args_srna.srna_format,
+                                                  args_srna.srna_database)
         if args_srna.tss_folder is not None:
             self._check_gff(args_srna.tss_folder)
             self.multiparser.parser_gff(args_srna.tss_folder, "TSS")
@@ -509,8 +528,9 @@ class sRNADetection(object):
             print("Error: No database assigned!")
         else:
             if database_format:
-                self._formatdb(database, data_type, args_srna.out_folder,
-                               args_srna.blast_path, database_type)
+                database = self._formatdb(database, data_type,
+                                          args_srna.out_folder,
+                                          args_srna.blast_path, database_type)
             for prefix in prefixs:
                 blast_file = os.path.join(
                         args_srna.out_folder, "blast_result_and_misc",
