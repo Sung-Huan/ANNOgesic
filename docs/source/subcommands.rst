@@ -1071,171 +1071,178 @@ which have coverage significant decrease.
 
 ::
 
-     usage: annogesic terminator [-h] [--TransTermHP_path TRANSTERMHP_PATH]
-                                 [--expterm_path EXPTERM_PATH]
-                                 [--RNAfold_path RNAFOLD_PATH]
-                                 [--fasta_folder FASTA_FOLDER]
-                                 [--annotation_folder ANNOTATION_FOLDER]
-                                 [--transcript_folder TRANSCRIPT_FOLDER]
-                                 [--sRNA SRNA] [--statistics]
-                                 [--tex_wig_folder TEX_WIG_FOLDER]
-                                 [--frag_wig_folder FRAG_WIG_FOLDER]
-                                 [--decrease DECREASE]
-                                 [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
-                                 [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
-                                 [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
-                                 [--fuzzy_within_gene FUZZY_WITHIN_GENE]
-                                 [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
-                                 [--highest_coverage HIGHEST_COVERAGE]
-                                 [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
-                                 [-te TEX_NOTEX] [-rt REPLICATES_TEX]
-                                 [-rf REPLICATES_FRAG] [-tb] [-ml MIN_LOOP_LENGTH]
-                                 [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
-                                 [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
-                                 [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
-                                 [project_path]
-     
-     positional arguments:
-       project_path          Path of the project folder. If none is given, the
-                             current directory is used.
-     
-     optional arguments:
-       -h, --help            show this help message and exit
-       --TransTermHP_path TRANSTERMHP_PATH
-                             Please assign the path of "transterm" in TransTermHP.
-       --expterm_path EXPTERM_PATH
-                             Please assign the path of expterm.dat for TransTermHP.
-                             Default is /usr/local/bin/expterm.dat
-       --RNAfold_path RNAFOLD_PATH
-                             If you want to assign the path of "RNAfold" of Vienna
-                             package, please assign here.
-       --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                             Path of the genome fasta folder.
-       --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                             Path of the genome annotation gff folder.
-       --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
-                             Path of the transcript assembly gff folder.
-       --sRNA SRNA, -sr SRNA
-                             If you want to include sRNA information to detect
-                             terminator, please assign the folder of sRNA gff
-                             files.
-       --statistics, -s      Doing statistics for terminator. The name of
-                             statistics file is - stat_terminator_$STRAIN_NAME.csv.
-                             Default is False.
-       --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                             If TEX+/- libraries can be provided, please assign
-                             TEX+/- wig folder.
-       --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                             If fragmented libraries can be provided, please assign
-                             fragmented wig folder.
-       --decrease DECREASE, -d DECREASE
-                             This value is maximum ratio -- (lowest coverage /
-                             highest coverage) within (or nearby) the terminator.
-                             If the ratio is smaller than --decrease, the candidate
-                             will be considered as the terminator which has
-                             coverage dramatic decreasing. Default is 0.5.
-       --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
-                             This value is the extended region (nucleotides) of the
-                             terminators for detecting coverage significant
-                             decreasing. Ex: the location of terminator is 300-400,
-                             and --fuzzy_detect_coverage is 30. If the coverage
-                             decrease is detected within 270-430, this candidate
-                             will be still considered as the terminator which have
-                             coverage dramatic decrease. Default is 30.
-       --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
-                             If the candidates are within transcript and the
-                             distance (nucleotides) between the end of
-                             gene/transcript and terminator is within this value,
-                             the candidate will be consider as a terminator.
-                             Otherwise, it will be removed. Default is 30.
-       --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
-                             The meaning is similar to --fuzzy_within_transcript.
-                             This value is for the candidates which are downstream
-                             of transcript. Default is 30.
-       --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
-                             The meaning is similar to --fuzzy_within_transcript.
-                             This value is for gene in stead of transcript. Default
-                             is 10.
-       --fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE, -fdg FUZZY_DOWNSTREAM_GENE
-                             The meaning is similar to
-                             --fuzzy_downstream_transcript. This value is for gene
-                             in stead of transcript. Default is 310.
-       --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
-                             The highest coverage of terminator must be higher than
-                             this value. The low expressed terminator will not be
-                             included in "best" results, but still in
-                             "all_candidates". Default is 10.
-       -tl TEX_NOTEX_LIBS, --tex_notex_libs TEX_NOTEX_LIBS
-                             If the libraries of TEX+/- can be provided, please
-                             assign the name of TEX+/- library. The format is:
-                             wig_file_name:TEX+/-(tex or notex):condition_id(intege
-                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                             wig files need to be assigned, please use comma to
-                             separate the wig files. For example,
-                             wig1:tex:1:a:+,wig2:tex:1:a:-.
-       -fl FRAG_LIBS, --frag_libs FRAG_LIBS
-                             If the fragmented libraries can be provided, please
-                             assign the name of fragmented library. The format is: 
-                             wig_file_name:fragmented(frag):condition_id(integer):r
-                             eplicate_id(alphabet):strand(+ or -). If multiple wig
-                             files need to be assigned, please use comma to
-                             separate the wig files. For example,
-                             wig1:frag:1:a:+,wig2:frag:1:a:-.
-       -te TEX_NOTEX, --tex_notex TEX_NOTEX
-                             If the libraries of TEX+/- can be provided, please
-                             assign this value as well. This value is that the
-                             terminator should be detected in both (TEX+ and TEX-)
-                             or can be detected in only one library (TEX+ or TEX-).
-                             Please assign 1 or 2. Default is 1.
-       -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
-                             This value (for TEX+/- libraries) is the minimal
-                             number of replicates that a terminator has to be
-                             detected. The format is
-                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
-                             --replicate_tex values need to be assigned to
-                             different conditions, please use comma to separate
-                             them. For example, 1_2,2_2,3_3. It means that
-                             --replicate_tex is 2 in number 1 and number 2
-                             conditions. In number 3 condition, --replcate_tex is
-                             3. For assigning the same --replicate_tex to all
-                             conditions, just use like all_1 (--replicate_tex is 1
-                             in all conditions). Default is all_1.
-       -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
-                             The meaning and input type is the same as
-                             --replicates_tex. This value is for fragmented
-                             libraries.
-       -tb, --table_best     Output table only contains the information of the
-                             library which has most significant coverage decrease.
-                             Default is False.
-       -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
-                             The minimum loop length of terminator. Default is 3
-                             nts.
-       -Ml MAX_LOOP_LENGTH, --max_loop_length MAX_LOOP_LENGTH
-                             The maximum loop length of terminator. Default is 10
-                             nts.
-       -ms MIN_STEM_LENGTH, --min_stem_length MIN_STEM_LENGTH
-                             The minimum stem length of terminator. Default is 4
-                             nts.
-       -Ms MAX_STEM_LENGTH, --max_stem_length MAX_STEM_LENGTH
-                             The maximum stem length of terminator. Default is 20
-                             nts.
-       -mr MISS_RATE, --miss_rate MISS_RATE
-                             The percentage of nucleotides which can be no pair in
-                             the stem. Default is 0.25.
-       -mu MIN_U_TAIL_LENGTH, --min_U_tail_length MIN_U_TAIL_LENGTH
-                             The minimum U-tail length of terminator. Default is 3
-                             nts.
-       -ru RANGE_U_TAIL, --range_U_tail RANGE_U_TAIL
-                             The range (nucleotides) for detection of U-tail. For
-                             example, if --range_U_tail is 6 and
-                             --min_U_tail_length is 3, and there are 3 Us within 6
-                             nts, This candidate will be assigned as the terminator
-                             which has poly U-tail. Default is 6.
-       -kp, --keep_multi_term
-                             Sometimes, one gene is associated with more terminator
-                             candidates. In default, it will only keep the high
-                             confident one. This function can keep all terminators
-                             which associated with the same gene. Default is False.
+    usage: annogesic terminator [-h] [--TransTermHP_path TRANSTERMHP_PATH]
+                                [--expterm_path EXPTERM_PATH]
+                                [--RNAfold_path RNAFOLD_PATH]
+                                [--fasta_folder FASTA_FOLDER]
+                                [--annotation_folder ANNOTATION_FOLDER]
+                                [--transcript_folder TRANSCRIPT_FOLDER]
+                                [--sRNA SRNA] [--statistics]
+                                [--tex_wig_folder TEX_WIG_FOLDER]
+                                [--frag_wig_folder FRAG_WIG_FOLDER]
+                                [--decrease DECREASE]
+                                [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
+                                [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
+                                [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
+                                [--fuzzy_within_gene FUZZY_WITHIN_GENE]
+                                [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
+                                [--highest_coverage HIGHEST_COVERAGE]
+                                [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
+                                [-te TEX_NOTEX] [-rt REPLICATES_TEX]
+                                [-rf REPLICATES_FRAG] [-tb] [-wz WINDOW_SIZE]
+                                [-ws WINDOW_SHIFT] [-ml MIN_LOOP_LENGTH]
+                                [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
+                                [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
+                                [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
+                                [project_path]
+    
+    positional arguments:
+      project_path          Path of the project folder. If none is given, the
+                            current directory is used.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --TransTermHP_path TRANSTERMHP_PATH
+                            Please assign the path of "transterm" in TransTermHP.
+      --expterm_path EXPTERM_PATH
+                            Please assign the path of expterm.dat for TransTermHP.
+                            Default is /usr/local/bin/expterm.dat
+      --RNAfold_path RNAFOLD_PATH
+                            If you want to assign the path of "RNAfold" of Vienna
+                            package, please assign here.
+      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+                            Path of the genome fasta folder.
+      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
+                            Path of the genome annotation gff folder.
+      --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
+                            Path of the transcript assembly gff folder.
+      --sRNA SRNA, -sr SRNA
+                            If you want to include sRNA information to detect
+                            terminator, please assign the folder of sRNA gff
+                            files.
+      --statistics, -s      Doing statistics for terminator. The name of
+                            statistics file is - stat_terminator_$STRAIN_NAME.csv.
+                            Default is False.
+      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
+                            If TEX+/- libraries can be provided, please assign
+                            TEX+/- wig folder.
+      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
+                            If fragmented libraries can be provided, please assign
+                            fragmented wig folder.
+      --decrease DECREASE, -d DECREASE
+                            This value is maximum ratio -- (lowest coverage /
+                            highest coverage) within (or nearby) the terminator.
+                            If the ratio is smaller than --decrease, the candidate
+                            will be considered as the terminator which has
+                            coverage dramatic decreasing. Default is 0.5.
+      --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
+                            This value is the extended region (nucleotides) of the
+                            terminators for detecting coverage significant
+                            decreasing. Ex: the location of terminator is 300-400,
+                            and --fuzzy_detect_coverage is 30. If the coverage
+                            decrease is detected within 270-430, this candidate
+                            will be still considered as the terminator which have
+                            coverage dramatic decrease. Default is 30.
+      --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
+                            If the candidates are within transcript and the
+                            distance (nucleotides) between the end of
+                            gene/transcript and terminator is within this value,
+                            the candidate will be consider as a terminator.
+                            Otherwise, it will be removed. Default is 30.
+      --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
+                            The meaning is similar to --fuzzy_within_transcript.
+                            This value is for the candidates which are downstream
+                            of transcript. Default is 30.
+      --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
+                            The meaning is similar to --fuzzy_within_transcript.
+                            This value is for gene in stead of transcript. Default
+                            is 10.
+      --fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE, -fdg FUZZY_DOWNSTREAM_GENE
+                            The meaning is similar to
+                            --fuzzy_downstream_transcript. This value is for gene
+                            in stead of transcript. Default is 310.
+      --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
+                            The highest coverage of terminator must be higher than
+                            this value. The low expressed terminator will not be
+                            included in "best" results, but still in
+                            "all_candidates". Default is 10.
+      -tl TEX_NOTEX_LIBS, --tex_notex_libs TEX_NOTEX_LIBS
+                            If the libraries of TEX+/- can be provided, please
+                            assign the name of TEX+/- library. The format is:
+                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            r):replicate_id(alphabet):strand(+ or -). If multiple
+                            wig files need to be assigned, please use comma to
+                            separate the wig files. For example,
+                            wig1:tex:1:a:+,wig2:tex:1:a:-.
+      -fl FRAG_LIBS, --frag_libs FRAG_LIBS
+                            If the fragmented libraries can be provided, please
+                            assign the name of fragmented library. The format is: 
+                            wig_file_name:fragmented(frag):condition_id(integer):r
+                            eplicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use comma to
+                            separate the wig files. For example,
+                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+      -te TEX_NOTEX, --tex_notex TEX_NOTEX
+                            If the libraries of TEX+/- can be provided, please
+                            assign this value as well. This value is that the
+                            terminator should be detected in both (TEX+ and TEX-)
+                            or can be detected in only one library (TEX+ or TEX-).
+                            Please assign 1 or 2. Default is 1.
+      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+                            This value (for TEX+/- libraries) is the minimal
+                            number of replicates that a terminator has to be
+                            detected. The format is
+                            $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
+                            --replicate_tex values need to be assigned to
+                            different conditions, please use comma to separate
+                            them. For example, 1_2,2_2,3_3. It means that
+                            --replicate_tex is 2 in number 1 and number 2
+                            conditions. In number 3 condition, --replcate_tex is
+                            3. For assigning the same --replicate_tex to all
+                            conditions, just use like all_1 (--replicate_tex is 1
+                            in all conditions). Default is all_1.
+      -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
+                            The meaning and input type is the same as
+                            --replicates_tex. This value is for fragmented
+                            libraries.
+      -tb, --table_best     Output table only contains the information of the
+                            library which has most significant coverage decrease.
+                            Default is False.
+      -wz WINDOW_SIZE, --window_size WINDOW_SIZE
+                            Window size for searching secondary structure of
+                            intergenic region. Default is 100 nts.
+      -ws WINDOW_SHIFT, --window_shift WINDOW_SHIFT
+                            The number of nucleotides for window shift. Default is
+                            20 nts.
+      -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
+                            The minimum loop length of terminator. Default is 3
+                            nts.
+      -Ml MAX_LOOP_LENGTH, --max_loop_length MAX_LOOP_LENGTH
+                            The maximum loop length of terminator. Default is 10
+                            nts.
+      -ms MIN_STEM_LENGTH, --min_stem_length MIN_STEM_LENGTH
+                            The minimum stem length of terminator. Default is 4
+                            nts.
+      -Ms MAX_STEM_LENGTH, --max_stem_length MAX_STEM_LENGTH
+                            The maximum stem length of terminator. Default is 20
+                            nts.
+      -mr MISS_RATE, --miss_rate MISS_RATE
+                            The percentage of nucleotides which can be no pair in
+                            the stem. Default is 0.25.
+      -mu MIN_U_TAIL_LENGTH, --min_U_tail_length MIN_U_TAIL_LENGTH
+                            The minimum U-tail length of terminator. Default is 3
+                            nts.
+      -ru RANGE_U_TAIL, --range_U_tail RANGE_U_TAIL
+                            The range (nucleotides) for detection of U-tail. For
+                            example, if --range_U_tail is 6 and
+                            --min_U_tail_length is 3, and there are 3 Us within 6
+                            nts, This candidate will be assigned as the terminator
+                            which has poly U-tail. Default is 6.
+      -kp, --keep_multi_term
+                            Sometimes, one gene is associated with more terminator
+                            candidates. In default, it will only keep the high
+                            confident one. This function can keep all terminators
+                            which associated with the same gene. Default is False.
 
 - **Output files**
 

@@ -25,8 +25,8 @@ Tools
 `MPICH <http://www.mpich.org/>`_ : version higher or equal than 3.2 (for parallel version of promoter detection)
 
 `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal than 1.64 (for annotation transfer)
-Please be attation, before you start to run RATT(annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. it will
-modify the path for execute RATT.
+Please be attation, before you start to run RATT (annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. it will
+modify the path for execute RATT. If you run ANNOgesic through Docker container, you can skip this step.
 
 `Psortb <http://www.psort.org/psortb/>`_ : version higher or equal than 3.0 (for subcellular localization detection)
 

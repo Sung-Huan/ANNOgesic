@@ -1157,7 +1157,8 @@ which have coverage significant decrease.</p>
                             [--highest_coverage HIGHEST_COVERAGE]
                             [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
                             [-te TEX_NOTEX] [-rt REPLICATES_TEX]
-                            [-rf REPLICATES_FRAG] [-tb] [-ml MIN_LOOP_LENGTH]
+                            [-rf REPLICATES_FRAG] [-tb] [-wz WINDOW_SIZE]
+                            [-ws WINDOW_SHIFT] [-ml MIN_LOOP_LENGTH]
                             [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
                             [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
                             [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
@@ -1275,6 +1276,12 @@ optional arguments:
   -tb, --table_best     Output table only contains the information of the
                         library which has most significant coverage decrease.
                         Default is False.
+  -wz WINDOW_SIZE, --window_size WINDOW_SIZE
+                        Window size for searching secondary structure of
+                        intergenic region. Default is 100 nts.
+  -ws WINDOW_SHIFT, --window_shift WINDOW_SHIFT
+                        The number of nucleotides for window shift. Default is
+                        20 nts.
   -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
                         The minimum loop length of terminator. Default is 3
                         nts.

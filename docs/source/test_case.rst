@@ -4,8 +4,8 @@ Tutorial of ANNOgesic
 Here we will guide you how to use ANNOgesic through a small test case. 
 You will see how to run each subcommand of ANNOgesic. The test case is a public 
 RNA-Seq data from NCBI GEO that was part of a work by
-`Bischler et al. <http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564>`_.
-The differential RNA-seq data is of Helicobacter pylori 26695. 
+`Dugar et al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
+The differential RNA-seq data is of Campylobacter jejuni subsp. jejuni 81116. 
 There will be several output files which are generated in different formats - 
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures. 
 For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bioviz.org/igb/index.html>`_, 
@@ -25,7 +25,7 @@ First of all, we need to create a working folder by running ``create``.
 
 ::
 
-    annogesic create ANNOgesic
+    $ annogesic create ANNOgesic
 
 Then we will see 
 
@@ -39,12 +39,12 @@ Retrieving the input data
 -------------------
 
 For our test case, the input data can be downloaded from 
-`NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1>`_.
+`NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/>`_.
 Let's setting the ``$FTP_SOURCE`` first
 
 ::
 
-    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1/
+    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/
 
 Then, we can download fasta files(``-f``), gff files(``-g``), gbk files(``-k``), ptt files(``-p``), 
 rnt files(``-r``), and converts to embl(``-e``).
@@ -58,9 +58,9 @@ Then we will get following results
 ::
 
     $ ls ANNOgesic/input/reference/fasta/
-    NC_000915.fa
+    NC_009839.1.fa
     $ ls ANNOgesic/input/reference/annotation/
-    NC_000915.1.embl  NC_000915.1.gbk  NC_000915.gff
+    NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 
 If the fasta files and annotation files from NCBI is exactly what you want,
 you can add ``-t`` for putting the files to ``ANNOgesic/output/target``. Then you can skip running ``get_target_fasta`` 
@@ -73,12 +73,14 @@ After testing these subcommands, we will reorganize the data again.
 Putting wig, bam files and reads to proper location
 ------------------
 For the test case, we can download reads from 
-`here <http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE67564>`_.
+`here <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
 
 ::
 
-    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951997/SRR1951997.sra
-    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP%2FSRP056%2FSRP056856/SRR1951998/SRR1951998.sra
+    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515254/SRR515254.sra
+    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515255/SRR515255.sra
+    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515256/SRR515256.sra
+    $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515257/SRR515257.sra
 
 Then we need to convert SRA files to Fasta or Fastq format for mapping. We can 
 use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
@@ -88,26 +90,37 @@ use `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_ for that.
    $ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
    $ tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
    $ rm sratoolkit.2.5.2-ubuntu64.tar.gz
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR1951997.sra
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR1951998.sra
+   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515254.sra
+   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515255.sra
+   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515256.sra
+   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515257.sra
    $ mv *.fasta ANNOgesic/input/reads
-   $ rm SRR1951997.sra
-   $ rm SRR1951998.sra
+   $ rm SRR515254.sra SRR515255.sra SRR515256.sra SRR515257.sra
 
 Now we get the reads. Then we have to download the wiggle files.
 
 ::
 
-    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Fforward%2Ewig%2Egz
-    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649587/suppl/GSM1649587%5FHp26695%5FML%5FB1%5FHS1%5F%2DTEX%5Freverse%2Ewig%2Egz
-    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Fforward%2Ewig%2Egz
-    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM1649nnn/GSM1649588/suppl/GSM1649588%5FHp26695%5FML%5FB1%5FHS1%5F%2BTEX%5Freverse%2Ewig%2Egz
-    cd ANNOgesic/input/wigs/tex_notex
-    gunzip GSM1649587_Hp26695_ML_B1_HS1_-TEX_forward.wig.gz \
-           GSM1649587_Hp26695_ML_B1_HS1_-TEX_reverse.wig.gz \
-           GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig.gz \
-           GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig.gz
-    cd ../../../../
+   $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+   $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+   $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+   $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+   $ cd ANNOgesic/input/wigs/tex_notex
+   $ gunzip GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig.gz \
+            GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig.gz \
+            GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig.gz \
+            GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig.gz
+   $ cd ../../../../
+
+If we check the wiggle files, we will find that the strain name (presented by "chrom") is not the same as fasta or annotation gff file. 
+Thus, we need to change it. We can use ``replace_seq_id.py`` from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
+to replace the strain name properly. If the strain names in your fasta, annotation, wiggle files are the same, you can skip this step.
+
+::
+
+   $ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/replace_seq_id.py
+   $ python3 replace_seq_id.py -i ANNOgesic/input/wigs/tex_notex -n NC_009839.1
+   $ rm replace_seq_id.py
 
 We only download one replicate to reduce the running time.
 
@@ -137,6 +150,10 @@ We use a simple example to modify our test case. The
 Every column is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files 
 will be generated in ``ANNOgesic/output/target/fasta``.
 
+::
+
+     $ wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+
 Now, let's try it
 
 ::
@@ -155,31 +172,31 @@ Now we can check the results.
 
 ::
 
-    $ head ANNOgesic/input/reference/fasta/NC_000915.fa
-    >NC_000915.1
-    TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
-    TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAG
-    TGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTATAGCATCATTTTTTAAATTTAGGTATAAA
-    ACACCCTCAATTCAAGGGTTTTTGAGTGAGCTTTTTGCTCAAAGAATCCAAGATAGCGTTTAAAAATTTA
-    GGGGTGTTAGGCTCAGCGTAGAGTTTGCCAAGCTCTATGCATTCATTGATGATGATAGGGTTTTGCGTGG
-    GCGTGAAGCCAATTTCATACGCTCCTAAGCGTAAAATCGCCTTTTCCATGCTCCCTAATCGCTTGAAATC
-    CCAGTCTTTTAAATGCGGCTCGATGAGGGCGTCAATTTCATTGATTTTTTCTAACACGCCATTAAAAAGG
-    CTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATGCTAGAAGCGATTTTTTTAA
-    TTTCTTCATTACCGCTCTCAAACGCATACAACAATTCAACCACAGCCCCCCTGGCTTGAGTTCGTGTCGC
+    $ head ANNOgesic/input/reference/fasta/NC_009839.1.fa
+    >NC_009839.1
+    ATGAATCCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAAATTATATCGCTATCTTAAA
+    ATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTAACGCTCCTAATGAGCTTTTAGCCAAATTCATACAAACAA
+    AATACGGTAAAAAAATTTCACATTTTTATGAAGTACAAAGCGGAAATAAAGCGAGCGTTTTGATACAAGCACAAAGTGCT
+    AAACAAAGTAGCAAAAGCACTAAAATCGATATCGCTCATATCAAGGCGCAAAGTACGATTTTAAATCCTTCTTTTACTTT
+    TGAAAGCTTTGTAGTGGGGGATTCTAACAAATACGCTTATGGAGCTTGTAAAGCTATCTCACAAAAAGACAAACTGGGAA
+    AACTTTATAATCCTATCTTTATCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGT
+    TTGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTTCAAATTTAAAAAATGGCTC
+    TTTAGATAAATTTCACGAAAAATATAGAAATTGTGATGTTTTACTCATAGATGATGTGCAGTTTTTAGGAAAAACCGATA
+    AAATTCAAGAAGAATTTTTCTTTATATTTAATGAAATCAAAAATAACGATGGACAAATCATCATGACTTCAGACAATCCA
     $ head ANNOgesic/output/target/fasta/test_case1.fa
     >NC_test.1
-    TGcTTGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATT
-    AGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTG
-    ATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTAGTGATTA
-    TAGCATCATTTTTTAAATTTAGGTATAAAACACCCTCAATTCAAGGGTTTTTGAGTGAGC
-    TTTTTGCTCAAAGAATCCAAGATAGCGTTTAAAAATTTAGGGGTGTTAGGCTCAGCGTAG
-    AGTTTGCCAAGCTCTATGCATTCATTGATGATGATAGGGTTTTGCGTGGGCGTGAAGCCA
-    ATTTCATACGCTCCTAAGCGTAAAATCGCCTTTTCCATGCTCCCTAATCGCTTGAAATCC
-    CAGTCTTTTAAATGCGGCTCGATGAGGGCGTCAATTTCATTGATTTTTTCTAACACGCCA
-    TTAAAAAGGCTTAAAGCGAAAGCGAGTTGGTTGTTTTTAATCTTTTTTTCTTCTAACATG
+    ATcAACCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAA
+    ATTATATCGCTATCTTAAAATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTA
+    ACGCTCCTAATGAGCTTTTAGCCAAATTCATACAAACAAAATACGGTAAAAAAATTTCAC
+    ATTTTTATGAAGTACAAAGCGGAAATAAAGCGAGCGTTTTGATACAAGCACAAAGTGCTA
+    AACAAAGTAGCAAAAGCACTAAAATCGATATCGCTCATATCAAGGCGCAAAGTACGATTT
+    TAAATCCTTCTTTTACTTTTGAAAGCTTTGTAGTGGGGGATTCTAACAAATACGCTTATG
+    GAGCTTGTAAAGCTATCTCACAAAAAGACAAACTGGGAAAACTTTATAATCCTATCTTTA
+    TCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGTT
+    TGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTT
 
 We can see that the sequence of "NC_tetst.1" is stored in ``test_case1.fa``. 
-Moreover, the third nucleotide is replaced from A to c. Moreover, The sixth nucleotide is deleted.
+Moreover, the third nucleotide is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
 If we check ``test_case2.fa``, the modification is also according to the mutation table and our setting.
 
 If we have no mutation table, we can also use subcommand ``snp`` to detect mutations and generate 
@@ -202,12 +219,12 @@ After setting the environment, we can try it.
 ::
 
     anngesic annotation_transfer \
-        -rg ANNOgesic/input/reference/annotation \
+        -re ANNOgesic/input/reference/annotation \
         -rf ANNOgesic/input/reference/fasta \
         -tf ANNOgesic/output/target/fasta \
         -e chromosome \
         -t Strain \
-        -p NC_000915.1:NC_test.1,NC_000915.1:test_case2 \
+        -p NC_009839.1:NC_test.1,NC_009839.1:test_case2 \
         -g \
         ANNOgesic
 
@@ -239,22 +256,22 @@ First, we remove the fake files for testing the previous subcommands.
 
 ::
     $ rm ANNOgesic/output/target/annotation/*
-      rm ANNOgesic/output/target/fasta/*
+    $ rm ANNOgesic/output/target/fasta/*
 
 Then put the correct files that we used as references before into ``ANNOgesic/output/target``.
 
 ::
     $ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-      mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+    $ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 
 Before running following subcommands, we need to setup our libraries as a correct format.
 
 ::
 
-    tex_notex_libs="GSM1649587_Hp26695_ML_B1_HS1_-TEX_forward.wig:notex:1:a:+,\
-    GSM1649587_Hp26695_ML_B1_HS1_-TEX_reverse.wig:notex:1:a:-,\
-    GSM1649588_Hp26695_ML_B1_HS1_+TEX_forward.wig:tex:1:a:+,\
-    GSM1649588_Hp26695_ML_B1_HS1_+TEX_reverse.wig:tex:1:a:-"
+    tex_notex_libs="GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig:notex:1:a:-,\
+    GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig:tex:1:a:-,\
+    GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+,\
+    GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
 Now, we can start to test other subcommands. 
 Before running ``tsspredator``, if we want to use the optimized parameters, 
@@ -266,24 +283,24 @@ you can download it.
 
 ::
 
-    wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_000915_manual_TSS.gff
+    $ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
 Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSS``. 
 we can try ``optimize_TSSpredator`` right now (since we only check first 200kb, we set ``--le`` as 200000).
 
 ::
 
-    annogesic optimize_tsspredator \
-        -w ANNOgesic/input/wigs/tex_notex \
-        -fs ANNOgesic/output/target/fasta \
-        -g ANNOgesic/output/target/annotation \
-        -n NC_000915.1 \
-        -l $tex_notex_libs \
-        -p TSS -s 25 \
-        -rm all_1 \
-        -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
-        -le 200000 \
-        ANNOgesic
+    $ annogesic optimize_tsspredator \
+         optimize_tsspredator \
+         -w ANNOgesic/input/wigs/tex_notex \
+         -fs ANNOgesic/output/target/fasta \
+         -g ANNOgesic/output/target/annotation \
+         -n NC_009839.1 \
+         -l $tex_notex_libs \
+         -p TSS -s 25 \
+         -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
+         -le 200000 \
+         ANNOgesic
 
 ``optimize_TSSpredator`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
 Results of the different parameters will be printed in the screen. we only set 25 runs for testing. 
@@ -296,30 +313,31 @@ Once the optimization is done, you can find several files.
 
 ``best.csv`` is for the best parameters; ``stat.csv`` is for parameters of each step.
 
-Now, we assume the best parameters are following: height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5, 
-base_height is 0.0, enrichment_factor is 1.7, processing_factor is 1.5. We can set these parameters for running  
+Now, we assume the best parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2, 
+base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can set these parameters for running  
 ``tss``.
 
 ::
 
-    annogesic tsspredator \
+    $ annogesic tsspredator \
+        tsspredator \
+        annogesic tsspredator \
         -w ANNOgesic/input/wigs/tex_notex \
         -f ANNOgesic/output/target/fasta \
         -g ANNOgesic/output/target/annotation \
         -l $tex_notex_libs \
         -p test \
-        -he 0.3 \
-        -rh 0.2 \
-        -fa 2.0 \
-        -rf 0.5 \
-        -bh 0.0 \
-        -ef 1.7 \
-        -pf 1.5 \
+        -he 0.4 \
+        -rh 0.1 \
+        -fa 1.7 \
+        -rf 0.2 \
+        -bh 0.039 \
+        -ef 1.1 \
+        -pf 4.5 \
         -s \
-        -rm all_1 \
         -v \
         -le 200000 \
-        -m ANNOgesic/input/manual_TSS/NC_000915_manual_TSS.gff \
+        -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
         ANNOgesic
 
 We assign the manual-checked TSS gff file to ``-m``. Therefore, the output gff file contains the manual-detected TSSs and predicted TSSs. 
@@ -329,39 +347,38 @@ The output files are gff file, MasterTable and statistic files.
 ::
 
     $ ls ANNOgesic/output/TSS/
-    configs  gffs  MasterTables  statistics
+    MasterTables  configs  gffs  optimized_TSSpredator  statistics
     $ ls ANNOgesic/output/TSS/configs/
-    config_NC_000915.1.ini
+    config_NC_009839.1.ini
     $ ls ANNOgesic/output/TSS/gffs/
-    NC_000915.1_TSS.gff
-    $ ls ANNOgesic/output/TSS/MasterTables/MasterTable_NC_000915.1/
+    NC_009839.1_TSS.gff
+    $ ls ANNOgesic/output/TSS/MasterTables/MasterTable_NC_009839.1/
     AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff  TSSstatistics.tsv
-    $ ls ANNOgesic/output/TSS/statistics/NC_000915.1/
-    stat_compare_TSSpredator_manual_NC_000915.1.csv  stat_gene_vali_NC_000915.1.csv  stat_TSS_class_NC_000915.1.csv  stat_TSS_libs_NC_000915.1.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
-    
+    $ ls ANNOgesic/output/TSS/statistics/NC_009839.1/
+    TSS_class_NC_009839.1.png  TSSstatistics.tsv               stat_TSS_libs_NC_009839.1.csv                    stat_gene_vali_NC_009839.1.csv
+    TSS_venn_NC_009839.1.png   stat_TSS_class_NC_009839.1.csv  stat_compare_TSSpredator_manual_NC_009839.1.csv 
 
 If we want to predict processing sites, the procedures are the same. we just need to change the program from TSS to 
 processing_site (``-t``) and assign the proper parameter sets. We assume the best parameter sets are following: 
-height is 0.3, height_reduction is 0.2, factor is 2.0, factor_reduction is 0.5,
-base_height is 0.0, enrichment_factor is 1.9, processing_factor is 5.7.
+height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
+base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
 
 ::
 
-    annogesic tsspredator \
+    $ annogesic tsspredator \
         -w ANNOgesic/input/wigs/tex_notex \
         -f ANNOgesic/output/target/fasta \
         -g ANNOgesic/output/target/annotation \
         -l $tex_notex_libs \
         -p test \
-        -he 0.3 \
-        -rh 0.2 \
+        -he 0.2 \
+        -rh 0.1 \
         -fa 2.0 \
         -rf 0.5 \
-        -bh 0.0 \
-        -ef 1.9 \
-        -pf 5.7 \
+        -bh 0.009 \
+        -ef 1.2 \
+        -pf 1.5 \
         -s \
-        -rm all_1 \
         -t processing_site \
         ANNOgesic
 
@@ -372,16 +389,16 @@ The output files are following:
     $ ls ANNOgesic/output/processing_site/
     configs  gffs  MasterTables  statistics
     $ ls ANNOgesic/output/processing_site/configs/
-    config_NC_000915.1.ini
+    config_NC_009839.1.ini
     $ ls ANNOgesic/output/processing_site/gffs/
-    NC_000915.1_processing.gff
-    $ ls ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_000915.1/
+    NC_009839.1_processing.gff
+    $ ls ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_009839.1/
     AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff  TSSstatistics.tsv
-    $ ls ANNOgesic/output/processing_site/statistics/NC_000915.1/
-    stat_TSS_class_NC_000915.1.csv  stat_TSS_libs_NC_000915.1.csv  TSS_class_NC_000915.1.png  TSS_venn_NC_000915.1.png
+    $ ls ANNOgesic/output/processing_site/statistics/NC_009839.1/
+    TSSstatistics.tsv  processing_class_NC_009839.1.png  processing_venn_NC_009839.1.png  stat_processing_class_NC_009839.1.csv  stat_processing_libs_NC_009839.1.csv
 
 Since we use TSSpredator to detect processing site, the files in 
-``ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_000915.1/`` are for processing site not for TSS.
+``ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_009839.1/`` are for processing site not for TSS.
 
 Performing transcript assembly
 ----------------
@@ -395,7 +412,7 @@ The command is like following:
 
 ::
 
-    annogesic transcript_assembly \
+    $ annogesic transcript_assembly \
         -g ANNOgesic/output/target/annotation \
         -tw ANNOgesic/input/wigs/tex_notex \
         -tl $tex_notex_libs \
@@ -409,21 +426,21 @@ The output files are gff files, tables and statistic files.
 ::
 
     $ ls ANNOgesic/output/transcriptome_assembly/gffs
-    NC_000915.1_transcript.gff
+    NC_009839.1_transcript.gff
     $ ls ANNOgesic/output/transcriptome_assembly/tables
-    NC_000915.1_transcript.csv
+    NC_009839.1_transcript.csv
     $ ls ANNOgesic/output/transcriptome_assembly/statistics
-    stat_compare_Transcriptome_assembly_genome_NC_000915.1.csv  stat_compare_Transcriptome_assembly_TSS_NC_000915.1.csv
-    NC_000915.1_length_all.png                                  NC_000915.1_length_less_2000.png
+    NC_009839.1_length_all.png  NC_009839.1_length_less_2000.png  stat_compare_transcript_TSS_NC_009839.1.csv  stat_compare_transcript_genome_NC_009839.1.csv
 
 Prediction of terminator
 ----------------------
 
-We can use subcommand ``terminator`` to detect terminators. The command is like following: 
+We can use subcommand ``terminator`` to detect terminators. ``terminator`` integrates `RNAfold <http://www.tbi.univie.ac.at/RNA/RNAfold.1.html>`_ 
+for computing secondary structure of potential terminators. Therefore, this process will take a while. The command is like following: 
 
 ::
 
-    annogesic terminator \
+    $ annogesic terminator \
         -f ANNOgesic/output/target/fasta \
         -g ANNOgesic/output/target/annotation \
         -s \
@@ -449,38 +466,36 @@ Four different kinds of gff files and tables will be generated.
 ::
 
     $ ls ANNOgesic/output/terminator/gffs/best
-    NC_000915.1_term.gff
+    NC_009839.1_term.gff
     $ ls ANNOgesic/output/terminator/gffs/express
-    NC_000915.1_term.gff
+    NC_009839.1_term.gff
     $ ls ANNOgesic/output/terminator/gffs/all_candidates
-    NC_000915.1_term.gff
+    NC_009839.1_term.gff
     $ ls ANNOgesic/output/terminator/gffs/non_express
-    NC_000915.1_term.gff
+    NC_009839.1_term.gff
     $ ls ANNOgesic/output/terminator/tables/best
-    NC_000915.1_term.csv
+    NC_009839.1_term.csv
     $ ls ANNOgesic/output/terminator/tables/express
-    NC_000915.1_term.csv
+    NC_009839.1_term.csv
     $ ls ANNOgesic/output/terminator/tables/all_candidates
-    NC_000915.1_term.csv
+    NC_009839.1_term.csv
     $ ls ANNOgesic/output/terminator/tables/non_express
-    NC_000915.1_term.csv
+    NC_009839.1_term.csv
 
 In transtermhp folder, output files of `TranstermHP <http://transterm.cbcb.umd.edu/>`_ can be found.
 
 ::
 
-    $ ls ANNOgesic/output/terminator/transtermhp/NC_000915.1
-    NC_000915.1_best_terminator_after_gene.bag  NC_000915.1_terminators.txt  NC_000915.1_terminators_within_robust_tail-to-tail_regions.t2t
+    $ ls ANNOgesic/output/terminator/transtermhp/NC_009839.1
+    NC_009839.1_best_terminator_after_gene.bag  NC_009839.1_terminators.txt  NC_009839.1_terminators_within_robust_tail-to-tail_regions.t2t
 
 Moreover, statistic files are stored in ``statistics``.
 
 ::
 
     $ ls ANNOgesic/output/terminator/statistics/
-    stat_NC_000915.1.csv
-    stat_comparison_terminator_transcript_all_candidates.csv
-    stat_comparison_terminator_transcript_best.csv
-    stat_comparison_terminator_transcript_express.csv
+    stat_NC_009839.1.csv                                               stat_compare_terminator_transcript_NC_009839.1_best.csv
+    stat_compare_terminator_transcript_NC_009839.1_all_candidates.csv  stat_compare_terminator_transcript_NC_009839.1_express.csv
 
 Generating UTR
 --------------
@@ -490,7 +505,7 @@ subcommand ``utr``.
 
 ::
 
-    annogesic utr \
+    $ annogesic utr \
         -g ANNOgesic/output/target/annotation \
         -t ANNOgesic/output/TSS/gffs \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
@@ -507,13 +522,13 @@ Output gff files and statistic files will be stored in ``5UTR`` and ``3UTR``.
     $ ls ANNOgesic/output/UTR/5UTR
     gffs/       statistics/
     $ ls ANNOgesic/output/UTR/3UTR/gffs
-    NC_000915.1_3UTR.gff
+    NC_009839.1_3UTR.gff
     $ ls ANNOgesic/output/UTR/5UTR/gffs
-    NC_000915.1_5UTR.gff
+    NC_009839.1_5UTR.gff
     $ ls ANNOgesic/output/UTR/5UTR/statistics
-    NC_000915.1_all_5utr_length.png
+    NC_009839.1_all_5utr_length.png
     $ ls ANNOgesic/output/UTR/3UTR/statistics
-    NC_000915.1_all_3utr_length.png
+    NC_009839.1_all_3utr_length.png
 
 Now, we have all information for defining the transcript boundary.
 
@@ -525,7 +540,7 @@ detect operons and suboperons by executing subcommand ``operon``.
 
 ::
 
-    annogesic operon \
+    $ annogesic operon \
         -g ANNOgesic/output/target/annotation \
         -t ANNOgesic/output/TSS/gffs \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
@@ -542,22 +557,23 @@ Three folders will be generated to store gff files, tables and statistics files.
     $ ls ANNOgesic/output/operons/
     gffs  statistics  tables
     $ ls ANNOgesic/output/operons/gffs/
-    NC_000915.1_operon.gff
+    NC_009839.1_operon.gff
     $ ls ANNOgesic/output/operons/tables/
-    operon_NC_000915.1.csv
+    NC_009839.1_operon.csv
     $ ls ANNOgesic/output/operons/statistics/
-    stat_operon_NC_000915.1.csv
+    stat_NC_009839.1_operon.csv
 
 Promoter motif detection
 ----------------
 
-As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. The promoters will be detected 
-based on different types of the TSSs. Therefore, if the TSSs gff files are not generated  by ``ANNOgesic``,
+As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. The promoters can be detected 
+by different types of the TSSs. Therefore, if the TSSs gff files are not generated by ``ANNOgesic``,
 you need to add ``-s`` and assign corresponding genome annotation file to ``-g``.
+Now, let try ``promoter``, the process may take a while.
 
 ::
 
-    annogesic promoter \
+    $ annogesic promoter \
         -t ANNOgesic/output/TSS/gffs \
         -f ANNOgesic/output/target/fasta \
         -w 45,2-10 \
@@ -569,16 +585,20 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
 
 ::
 
-    $ ls ANNOgesic/output/promoter_analysis/NC_000915.1
-    promoter_motifs_NC_000915.1_allstrain_all_types_2-10_nt  promoter_motifs_NC_000915.1_allstrain_internal_45_nt   promoter_motifs_NC_000915.1_allstrain_secondary_2-10_nt
-    promoter_motifs_NC_000915.1_allstrain_all_types_45_nt    promoter_motifs_NC_000915.1_allstrain_orphan_2-10_nt   promoter_motifs_NC_000915.1_allstrain_secondary_45_nt
-    promoter_motifs_NC_000915.1_allstrain_antisense_2-10_nt  promoter_motifs_NC_000915.1_allstrain_orphan_45_nt     promoter_motifs_NC_000915.1_allstrain_without_orphan_2-10_nt
-    promoter_motifs_NC_000915.1_allstrain_antisense_45_nt    promoter_motifs_NC_000915.1_allstrain_primary_2-10_nt  promoter_motifs_NC_000915.1_allstrain_without_orphan_45_nt
-    promoter_motifs_NC_000915.1_allstrain_internal_2-10_nt   promoter_motifs_NC_000915.1_allstrain_primary_45_nt
-    $ ls ANNOgesic/output/promoter_analysis/NC_000915.1/promoter_motifs_NC_000915.1_allstrain_all_types_45_nt/
-    logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps      logo_rc10.png  logo_rc2.eps  logo_rc3.png  logo_rc5.eps  logo_rc6.png  logo_rc8.eps  logo_rc9.png  meme.xml
-    logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png      logo_rc1.eps   logo_rc2.png  logo_rc4.eps  logo_rc5.png  logo_rc7.eps  logo_rc8.png  meme.html     meme.csv
-    logo1.eps   logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_rc10.eps  logo_rc1.png   logo_rc3.eps  logo_rc4.png  logo_rc6.eps  logo_rc7.png  logo_rc9.eps  meme.txt
+    $ ls ANNOgesic/output/promoter_analysis/
+    NC_009839.1/ fasta_class
+    $ ls ANNOgesic/output/promoter_analysis/fasta_class/NC_009839.1
+    NC_009839.1_allstrain_all_types.fa  NC_009839.1_allstrain_internal.fa  NC_009839.1_allstrain_primary.fa    NC_009839.1_allstrain_without_orphan.fa
+    NC_009839.1_allstrain_antisense.fa  NC_009839.1_allstrain_orphan.fa    NC_009839.1_allstrain_secondary.fa
+    $ ls ANNOgesic/output/promoter_analysis/NC_009839.1
+    promoter_motifs_NC_009839.1_allstrain_all_types_2-10_nt  promoter_motifs_NC_009839.1_allstrain_internal_45_nt   promoter_motifs_NC_009839.1_allstrain_secondary_2-10_nt
+    promoter_motifs_NC_009839.1_allstrain_all_types_45_nt    promoter_motifs_NC_009839.1_allstrain_orphan_2-10_nt   promoter_motifs_NC_009839.1_allstrain_secondary_45_nt
+    promoter_motifs_NC_009839.1_allstrain_antisense_2-10_nt  promoter_motifs_NC_009839.1_allstrain_orphan_45_nt     promoter_motifs_NC_009839.1_allstrain_without_orphan_2-10_nt
+    promoter_motifs_NC_009839.1_allstrain_antisense_45_nt    promoter_motifs_NC_009839.1_allstrain_primary_2-10_nt  promoter_motifs_NC_009839.1_allstrain_without_orphan_45_nt
+    promoter_motifs_NC_009839.1_allstrain_internal_2-10_nt   promoter_motifs_NC_009839.1_allstrain_primary_45_nt
+    $ ls ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/
+    logo1.eps  logo1.png  logo2.eps  logo2.png  logo3.eps  logo3.png  logo_rc1.eps  logo_rc1.png  
+    logo_rc2.eps  logo_rc2.png  logo_rc3.eps  logo_rc3.png  meme.csv  meme.html  meme.txt  meme.xml
 
 Prediction of sRNA and sORF
 -----------------
@@ -599,27 +619,51 @@ We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ f
 
 ::
 
-    wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
+    $ wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 
-Then we download `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_. If you already had it, 
+If you already had sRNA database in other folders, please assign your path of databases to ``-sd``.
+If your databse is formated before, you can remove ``-sf``.
+Now, we can use three filters (``tss``, ``sec_str``, ``blast_srna``) to run ``srna`` in order to reduce the running time.
+
+::
+
+    $ annogesic srna \
+        -d tss,blast_srna,sec_str \
+        -g ANNOgesic/output/target/annotation \
+        -t ANNOgesic/output/TSS/gffs \
+        -p ANNOgesic/output/processing_site/gffs \
+        -a ANNOgesic/output/transcriptome_assembly/gffs \
+        -tw ANNOgesic/input/wigs/tex_notex \
+        -f ANNOgesic/output/target/fasta \
+        -tf ANNOgesic/output/terminator/gffs/best \
+        -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
+        -pn MOTIF_1 \
+        -m \
+        -u \
+        -sf \
+        -sd ANNOgesic/input/database/sRNA_database_BSRD \
+        -tl $tex_notex_libs \
+        -rt all_1 \
+        ANNOgesic
+
+
+If we want to add ``blast_nr`` to filters, we have to download 
+`nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (takes a while). If you already had it, 
 you can skip this step.
 
 ::
 
-    wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
-    gunzip ANNOgesic/input/database/nr.gz
-    mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
+    $ wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
+    $ gunzip ANNOgesic/input/database/nr.gz
+    $ mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
 
-If you already had these databases in other folders, please assign your path of databases to ``-sd`` and ``-nd``.
-If your databses are formated before, you can remove ``-sf`` and ``-nf``.
-Now we can run ``srna`` with default parameters.
-
-For setting filters (``-d``), if you don't want to use ``blast_nr`` (it takes much time) for testing, 
-you need to remove ``blast_nr`` in ``-d``, ``-nf`` and ``-nd ANNOgesic/input/database/nr``.
+If your nr database is in other folders, please assign your path ``-nd``.
+You can also remove ``-nf`` if your database is already formated.
+Now, we can use the recommanded filters to run ``srna``, but it may takes several hours.
 
 ::
 
-    annogesic srna \
+    $ annogesic srna \
         -d tss,blast_srna,blast_nr,sec_str \
         -g ANNOgesic/output/target/annotation \
         -t ANNOgesic/output/TSS/gffs \
@@ -628,7 +672,7 @@ you need to remove ``blast_nr`` in ``-d``, ``-nf`` and ``-nd ANNOgesic/input/dat
         -tw ANNOgesic/input/wigs/tex_notex \
         -f ANNOgesic/output/target/fasta \
         -tf ANNOgesic/output/terminator/gffs/best \
-        -pt ANNOgesic/output/promoter_analysis/NC_000915.1/promoter_motifs_NC_000915.1_allstrain_all_types_45_nt/meme.csv \
+        -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
         -pn MOTIF_1 \
         -m \
         -u \
@@ -649,35 +693,38 @@ Output files are following.
 ::
 
     $ ls ANNOgesic/output/sRNA/
-    blast_result_and_misc  gffs  log.txt  mountain_plot  sec_structure  sRNA_2d_NC_000915.1  sRNA_seq_NC_000915.1  statistics  tables
+    blast_result_and_misc  gffs  log.txt  mountain_plot  sRNA_2d_NC_009839.1  sRNA_seq_NC_009839.1  sec_structure  statistics  tables
 
 ``blast_result_and_misc`` stores the results of blast; ``mountain_plot`` stores mountain plots of sRNAs; 
 ``sec_structure`` stores the plots of the sRNA secondary structures; ``statistics`` stores statistic files.
 
-``sRNA_2d_NC_000915.1`` and ``sRNA_seq_NC_000915.1`` are text files of sRNA sequences and secondary structures.
+``sRNA_2d_NC_009839.1`` and ``sRNA_seq_NC_009839.1`` are text files of sRNA sequences and secondary structures.
 
 ::
 
     $ ls ANNOgesic/output/sRNA/blast_result_and_misc/
-    nr_blast_NC_000915.1.txt  sRNA_blast_NC_000915.1.txt
-    $ ls ANNOgesic/output/sRNA/mountain_plot/NC_000915/
-    srna0_NC_000915.1_16651_16765_-_mountain.pdf        srna138_NC_000915.1_1496938_1497216_-_mountain.pdf  srna25_NC_000915.1_444979_445114_+_mountain.pdf  srna63_NC_000915.1_761094_761174_+_mountain.pdf
-    srna100_NC_000915.1_1164252_1164295_-_mountain.pdf  srna139_NC_000915.1_1502542_1502637_+_mountain.pdf  srna26_NC_000915.1_445012_445139_-_mountain.pdf  srna64_NC_000915.1_773130_773564_+_mountain.pdf
+    nr_blast_NC_009839.1.txt  sRNA_blast_NC_009839.1.txt
+    $ ls ANNOgesic/output/sRNA/mountain_plot/NC_009839.1/
+    srna0_NC_009839.1_36954_37044_-_mountain.pdf     srna25_NC_009839.1_854600_854673_-_mountain.pdf    srna40_NC_009839.1_1091155_1091251_-_mountain.pdf  srna56_NC_009839.1_1440826_1441414_+_mountain.pdf
+    srna10_NC_009839.1_248098_248257_-_mountain.pdf  srna26_NC_009839.1_879881_880088_-_mountain.pdf    srna41_NC_009839.1_1097654_1097750_-_mountain.pdf  srna57_NC_009839.1_1448211_1448306_+_mountain.pdf
     ...
-    ls ANNOgesic/output/sRNA/sec_structure/dot_plot/NC_000915/
-    srna0_NC_000915.1_16651_16765_-_dp.pdf        srna138_NC_000915.1_1496938_1497216_-_dp.pdf  srna25_NC_000915.1_444979_445114_+_dp.pdf  srna63_NC_000915.1_761094_761174_+_dp.pdf
-    srna100_NC_000915.1_1164252_1164295_-_dp.pdf  srna139_NC_000915.1_1502542_1502637_+_dp.pdf  srna26_NC_000915.1_445012_445139_-_dp.pdf  srna64_NC_000915.1_773130_773564_+_dp.pdf
+
+    $ ls ANNOgesic/output/sRNA/sec_structure/dot_plot/NC_009839.1/
+    srna0_NC_009839.1_36954_37044_-_dp.pdf     srna25_NC_009839.1_854600_854673_-_dp.pdf    srna40_NC_009839.1_1091155_1091251_-_dp.pdf  srna56_NC_009839.1_1440826_1441414_+_dp.pdf
+    srna10_NC_009839.1_248098_248257_-_dp.pdf  srna26_NC_009839.1_879881_880088_-_dp.pdf    srna41_NC_009839.1_1097654_1097750_-_dp.pdf  srna57_NC_009839.1_1448211_1448306_+_dp.pdf
     ...
-    $ ls ANNOgesic/output/sRNA/sec_structure/sec_plot/NC_000915/
-    srna0_NC_000915.1_16651_16765_-_rss.pdf        srna138_NC_000915.1_1496938_1497216_-_rss.pdf  srna25_NC_000915.1_444979_445114_+_rss.pdf  srna63_NC_000915.1_761094_761174_+_rss.pdf
-    srna100_NC_000915.1_1164252_1164295_-_rss.pdf  srna139_NC_000915.1_1502542_1502637_+_rss.pdf  srna26_NC_000915.1_445012_445139_-_rss.pdf  srna64_NC_000915.1_773130_773564_+_rss.pdf
+
+    $ ls ANNOgesic/output/sRNA/sec_structure/sec_plot/NC_009839.1/
+    rna0_NC_009839.1_36954_37044_-_rss.pdf     srna25_NC_009839.1_854600_854673_-_rss.pdf    srna40_NC_009839.1_1091155_1091251_-_rss.pdf  srna56_NC_009839.1_1440826_1441414_+_rss.pdf
+    srna10_NC_009839.1_248098_248257_-_rss.pdf  srna26_NC_009839.1_879881_880088_-_rss.pdf    srna41_NC_009839.1_1097654_1097750_-_rss.pdf  srna57_NC_009839.1_1448211_1448306_+_rss.pdf
     ...
+
     $ ls ANNOgesic/output/sRNA/statistics/
-    stat_sRNA_blast_class_NC_000915.1.csv  stat_sRNA_class_NC_000915.1.csv
+    stat_NC_009839.1_sRNA_blast.csv  stat_sRNA_class_NC_009839.1.csv
 
 In ``gffs`` and ``tables``, three different folders are generated. ``all_candidates`` is for all candidates 
 without filtering; ``best`` is for the candidates after filtering; 
-``for_class`` is for different sRNA types based on ``stat_sRNA_class_NC_000915.1.csv``. 
+``for_class`` is for different sRNA types based on ``stat_sRNA_class_NC_009839.1.csv``. 
 
 ::
 
@@ -686,19 +733,19 @@ without filtering; ``best`` is for the candidates after filtering;
     $ ls ANNOgesic/output/sRNA/tables/
     all_candidates  best  for_class
     $ ls ANNOgesic/output/sRNA/gffs/all_candidates/
-    NC_000915.1_sRNA.gff
+    NC_009839.1_sRNA.gff
     $ ls ANNOgesic/output/sRNA/tables/all_candidates/
-    NC_000915.1_sRNA.csv
+    NC_009839.1_sRNA.csv
     $ ls ANNOgesic/output/sRNA/gffs/best/
-    NC_000915.1_sRNA.gff
+    NC_009839.1_sRNA.gff
     $ ls ANNOgesic/output/sRNA/tables/best/
-    NC_000915.1_sRNA.csv
-    $ ls ANNOgesic/output/sRNA/gffs/for_class/NC_000915.1/
+    NC_009839.1_sRNA.csv
+    $ ls ANNOgesic/output/sRNA/gffs/for_class/NC_009839.1/
     class_1_all.gff                                          class_1_class_2_class_7_all.gff                  class_2_all.gff                                  class_3_all.gff
     class_1_class_2_all.gff                                  class_1_class_3_all.gff                          class_2_class_3_all.gff                          class_3_class_4_all.gff
     ...
 
-    $ ls ANNOgesic/output/sRNA/tables/for_class/NC_000915.1/
+    $ ls ANNOgesic/output/sRNA/tables/for_class/NC_009839.1/
     class_1_all.csv                                          class_1_class_2_class_7_all.csv                  class_2_all.csv                                  class_3_all.csv
     class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
     ...
@@ -708,7 +755,7 @@ In order to get information of sORFs, we can use subcommand ``sorf``.
 
 ::
 
-    annogesic sorf \
+    $ annogesic sorf \
         -g ANNOgesic/output/target/annotation \
         -t ANNOgesic/output/TSS/gffs \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
@@ -727,15 +774,15 @@ stores the gff files and tables without filtering; ``best`` stores the gff_files
 ::
 
     $ ls ANNOgesic/output/sORF/gffs/all_candidates/
-    NC_000915.1_sORF.gff
+    NC_009839.1_sORF.gff
     $ ls ANNOgesic/output/sORF/gffs/best/
-    NC_000915.1_sORF.gff
+    NC_009839.1_sORF.gff
     $ ls ANNOgesic/output/sORF/tables/all_candidates/
-    NC_000915.1_sORF.csv
+    NC_009839.1_sORF.csv
     $ ls ANNOgesic/output/sORF/tables/best/
-    NC_000915.1_sORF.csv
+    NC_009839.1_sORF.csv
     $ ls ANNOgesic/output/sORF/statistics/
-    stat_NC_000915.1_sORF.csv
+    stat_NC_009839.1_sORF.csv
 
 Performing sRNA target prediction
 ------------------
@@ -744,16 +791,16 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
 
 ::
 
-    annogesic srna_target \
+    $ annogesic srna_target \
         -g ANNOgesic/output/target/annotation \
         -f ANNOgesic/output/target/fasta \
         -r ANNOgesic/output/sRNA/gffs/best \
-        -q NC_000915.1:-:7249:7321 \
+        -q NC_009839.1:-:36954:37044 \
         -p both \
         ANNOgesic
 
 For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like 
-``NC_000915.1:-:7249:7321,NC_000915.1:-:16651:16765``. If you want to compute all sRNAs, you 
+``NC_009839.1:-:36954:37044,NC_009839.1:+:75845:75990``. If you want to compute all sRNAs, you 
 can assign ``all`` to ``-q`` (may take several days).
 
 Several output folders will be generated. 
@@ -768,27 +815,27 @@ Several output folders will be generated.
 ::
 
     $ ls ANNOgesic/output/sRNA_targets/sRNA_seqs
-    NC_000915.1_sRNA.fa
+    NC_009839.1_sRNA.fa
     $ ls ANNOgesic/output/sRNA_targets/target_seqs
-    NC_000915.1_target.fa
+    NC_009839.1_target.fa
 
 ``RNAplex`` and ``RNAup`` are for output of `RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
 
 ::
 
-    $ ls ANNOgesic/output/sRNA_targets/RNAplex/NC_000915.1/
-    NC_000915.1_RNAplex_rank.csv  NC_000915.1_RNAplex.txt
-    $ ls ANNOgesic/output/sRNA_targets/RNAup/NC_000915.1/
-    NC_000915.1_RNAup.log  NC_000915.1_RNAup_rank.csv  NC_000915.1_RNAup.txt
+    $ ls ANNOgesic/output/sRNA_targets/RNAplex/NC_009839.1/
+    NC_009839.1_RNAplex_rank.csv  NC_009839.1_RNAplex.txt
+    $ ls ANNOgesic/output/sRNA_targets/RNAup/NC_009839.1/
+    NC_009839.1_RNAup.log  NC_009839.1_RNAup_rank.csv  NC_009839.1_RNAup.txt
 
 ``merge`` is for the merged results of `RNAplex <http://www.tbi.univie.ac.at/RNA/RNAplex.1.html>`_ and 
-`RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_. ``NC_000915.1_merge.csv``  contains all results of the 
-both methods. ``NC_000915.1_overlap.csv`` only stores candidates which are top 20 (default) in the both methods.
+`RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_. ``NC_009839.1_merge.csv``  contains all results of the 
+both methods. ``NC_009839.1_overlap.csv`` only stores candidates which are top 20 (default) in the both methods.
 
 ::
 
-    $ ls ANNOgesic/output/sRNA_targets/merge/NC_000915.1/
-    NC_000915.1_merge.csv  NC_000915.1_overlap.csv
+    $ ls ANNOgesic/output/sRNA_targets/merge/NC_009839.1/
+    NC_009839.1_merge.csv  NC_009839.1_overlap.csv
 
 Mapping and detecting of circular RNA
 -------------------
@@ -806,23 +853,27 @@ For testing, we can reduce the running time by selecting the subset of reads (fi
 
 ::
 
-     head -n 50000 ANNOgesic/input/reads/SRR1951998.fasta > ANNOgesic/input/reads/SRR1951998_50000.fasta
-     head -n 50000 ANNOgesic/input/reads/SRR1951997.fasta > ANNOgesic/input/reads/SRR1951997_50000.fasta
-     rm ANNOgesic/input/reads/SRR1951997.fasta
-     rm ANNOgesic/input/reads/SRR1951998.fasta
+     $ head -n 50000 ANNOgesic/input/reads/SRR515254.fasta > ANNOgesic/input/reads/SRR515254_50000.fasta
+     $ head -n 50000 ANNOgesic/input/reads/SRR515255.fasta > ANNOgesic/input/reads/SRR515255_50000.fasta
+     $ head -n 50000 ANNOgesic/input/reads/SRR515256.fasta > ANNOgesic/input/reads/SRR515256_50000.fasta
+     $ head -n 50000 ANNOgesic/input/reads/SRR515257.fasta > ANNOgesic/input/reads/SRR515257_50000.fasta
+     $ rm ANNOgesic/input/reads/SRR515254.fasta
+     $ rm ANNOgesic/input/reads/SRR515255.fasta
+     $ rm ANNOgesic/input/reads/SRR515256.fasta
+     $ rm ANNOgesic/input/reads/SRR515257.fasta
 
 Now, we can try ``circrna``
 
 ::
 
-     annogesic circrna \
+     $ annogesic circrna \
          -f ANNOgesic/output/target/fasta \
          -p 10 \
          -g ANNOgesic/output/target/annotation \
          -a \
          ANNOgesic
 
-	Several output folders will be generated.
+Several output folders will be generated.
 
 ::
 
@@ -835,25 +886,27 @@ the alignment and ``segemehl_splice`` stores results of the splice detection.
 
 ::
 
-    $ ls ANNOgesic/output/circRNA/segemehl_align/NC_000915.1/
-    SRR1951997_50000_NC_000915.1.bam  SRR1951998_50000_NC_000915.1.bam
-    $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_000915.1/
+    $ ls ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/
+    SRR515254_50000_NC_009839.1.bam  SRR515256_50000_NC_009839.1.bam
+    SRR515255_50000_NC_009839.1.bam  SRR515257_50000_NC_009839.1.bam
+    $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_009839.1/
     splicesites_all.bed  transrealigned_all.bed    
 
 Gff files, tables and statistic files are stored in ``gffs``, ``circRNA_tables`` and ``statistics``.
 
 ::
 
-    $ ls ANNOgesic/output/circRNA/gffs/NC_000915.1/
-    NC_000915.1_circRNA_all.gff  NC_000915.1_circRNA_best.gff
-    $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_000915.1/
-    circRNA_NC_000915.1_all.csv  circRNA_NC_000915.1_best.csv
+    $ ls ANNOgesic/output/circRNA/gffs/NC_009839.1/
+    NC_009839.1_circRNA_all.gff  NC_009839.1_circRNA_best.gff
+    $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_009839.1/
+    NC_009839.1_circRNA_all.csv  NC_009839.1_circRNA_best.csv
     $ ls ANNOgesic/output/circRNA/statistics/
-    stat_circRNA_NC_000915.1.csv
+    stat_circRNA_NC_009839.1.csv
 
-``NC_000915.1_circRNA_all.gff`` and ``circRNA_NC_000915.1_all.csv`` store all circular RNAs without filtering. 
-``NC_000915.1_circRNA_best.gff`` and ``circRNA_NC_000915.1_best.csv`` store
-the circular RNAs after filering.
+``NC_009839.1_circRNA_all.gff`` and ``NC_009839.1_circRNA_all.csv`` store all circular RNAs without filtering. 
+``NC_009839.1_circRNA_best.gff`` and ``NC_009839.1_circRNA_best.csv`` store
+the circular RNAs after filering. In our case, there are some circular RNAs can be detected, but no circular RNAs 
+can exist after filtering.
 
 SNP calling
 --------------
@@ -876,15 +929,16 @@ fasta file of the "target strain" - NC_000915. Therefore, we copy the bam files 
 
 ::
 
-    cp ANNOgesic/output/circRNA/segemehl_align/NC_000915.1/SRR195199* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
+    $ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
 
 Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ`` (assigned as ``-p 1,2,3``).
 
 ::
 
-    annogesic snp \
+    $ annogesic snp \
         -t target \
         -p 1,2,3 \
+        -ms 1 \
         -tw ANNOgesic/input/BAMs/BAMs_map_target/tex_notex \
         -f ANNOgesic/output/target/fasta \
         ANNOgesic
@@ -918,8 +972,8 @@ In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_000915.1/
-      NC_000915.1_NC_000915.1_1_1.fa
+    $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_009839.1/
+    NC_009839.1_NC_009839.1_1_1.fa
 
 ``SNP_raw_outputs`` stores output of `Samtools and Bcftools<https://github.com/samtools>`_. 
 ``SNP_table`` stores results after filtering and the indices of potential sequence 
@@ -928,16 +982,15 @@ In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_000915.1/
-    NC_000915.1_extend_BAQ.vcf  NC_000915.1_with_BAQ.vcf  NC_000915.1_without_BAQ.vcf
-    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_table/NC_000915.1/
-    NC_000915.1_extend_BAQ_best.vcf     NC_000915.1_with_BAQ_best.vcf     NC_000915.1_without_BAQ_best.vcf
-    NC_000915.1_extend_BAQ_seq_reference.csv  NC_000915.1_with_BAQ_seq_reference.csv  NC_000915.1_without_BAQ_seq_reference.csv
+    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_009839.1/
+    NC_009839.1_extend_BAQ.vcf  NC_009839.1_with_BAQ.vcf  NC_009839.1_without_BAQ.vcf
+    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_table/NC_009839.1/
+    NC_009839.1_extend_BAQ_best.vcf     NC_009839.1_with_BAQ_best.vcf     NC_009839.1_without_BAQ_best.vcf
+    NC_009839.1_extend_BAQ_seq_reference.csv  NC_009839.1_with_BAQ_seq_reference.csv  NC_009839.1_without_BAQ_seq_reference.csv
     $ ls ANNOgesic/output/SNP_calling/validate_target/statistics/
-    NC_000915.1_extend_BAQ_NC_000915.1_SNP_QUAL_best.png  NC_000915.1_without_BAQ_NC_000915.1_SNP_QUAL_best.png  NC_000915.1_with_BAQ_NC_000915.1_SNP_QUAL_best.png 
-    NC_000915.1_extend_BAQ_NC_000915.1_SNP_QUAL_raw.png   NC_000915.1_without_BAQ_NC_000915.1_SNP_QUAL_raw.png   NC_000915.1_with_BAQ_NC_000915.1_SNP_QUAL_raw.png
-    stat_NC_000915.1_extend_BAQ_SNP_best.csv              stat_NC_000915.1_without_BAQ_SNP_best.csv              stat_NC_000915.1_with_BAQ_SNP_best.csv
-    stat_NC_000915.1_extend_BAQ_SNP_raw.csv               stat_NC_000915.1_without_BAQ_SNP_raw.csv               stat_NC_000915.1_with_BAQ_SNP_raw.csv
+    NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_raw.png      stat_NC_009839.1_extend_BAQ_SNP_best.csv  stat_NC_009839.1_with_BAQ_SNP_raw.csv
+    NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_best.png  stat_NC_009839.1_extend_BAQ_SNP_raw.csv   stat_NC_009839.1_without_BAQ_SNP_best.csv
+    NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_best.png    NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_raw.png   stat_NC_009839.1_with_BAQ_SNP_best.csv    stat_NC_009839.1_without_BAQ_SNP_raw.csv
 
 Mapping Gene ontology
 ------------------
@@ -963,25 +1016,26 @@ Let's try it.
 
 ::
 
-    annogesic go_term \
+    $ annogesic go_term \
         -g ANNOgesic/output/target/annotation \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
         ANNOgesic
 
-Output of ``go_term`` are stored in ``Go_term_results``. The statistic files and 
+Output of ``go_term`` are stored in ``GO_term_results``. The statistic files and 
 figures are stored in ``statistics``.
 
 ::
-    $ ls ANNOgesic/output/Go_term/
+
+    $ ls ANNOgesic/output/GO_term/
     all_CDS  expressed_CDS
-    $ ls ANNOgesic/output/Go_term/all_CDS/
+    $ ls ANNOgesic/output/GO_term/all_CDS/
     Go_term_results  statistics
-    $ ls ANNOgesic/output/Go_term/all_CDS/Go_term_results/NC_000915.1/
+    $ ls ANNOgesic/output/GO_term/all_CDS/GO_term_results/NC_009839.1/
     all_strains_uniprot.csv
-    $ ls ANNOgesic/output/Go_term/all_CDS/statistics/NC_000915.1/
-    figs  stat_NC_000915.1.csv
-    $ ls ANNOgesic/output/Go_term/all_CDS/statistics/NC_000915.1/figs/
-    NC_000915.1_biological_process.png  NC_000915.1_cellular_component.png  NC_000915.1_molecular_function.png  NC_000915.1_three_roots.png
+    $ ls ANNOgesic/output/GO_term/all_CDS/statistics/NC_009839.1/
+    figs  stat_NC_009839.1.csv
+    $ ls ANNOgesic/output/GO_term/all_CDS/statistics/NC_009839.1/figs/
+    NC_009839.1_biological_process.png  NC_009839.1_cellular_component.png  NC_009839.1_molecular_function.png  NC_009839.1_three_roots.png
 
 Prediction of Subcellular localization
 ------------------
@@ -993,7 +1047,7 @@ information of the transcript to generate results which only included the expres
 
 ::
 
-    annogesic subcellular_localization \
+    $ annogesic subcellular_localization \
         -g ANNOgesic/output/target/annotation \
         -f ANNOgesic/output/target/fasta \
         -a ANNOgesic/output/transcriptome_assembly/gffs \
@@ -1010,10 +1064,10 @@ statistic files and figures.
     all_CDS  expressed_CDS
     $ ls ANNOgesic/output/subcellular_localization/all_CDS/
     psortb_results  statistics
-    $ ls ANNOgesic/output/subcellular_localization/all_CDS/psortb_results/NC_000915.1/
-    NC_000915.1_raw.txt  NC_000915.1_table.csv
-    $ ls ANNOgesic/output/subcellular_localization/all_CDS/statistics/NC_000915.1/
-    NC_000915.1_NC_000915.1_sublocal.png  stat_NC_000915.1_sublocal.csv
+    $ ls ANNOgesic/output/subcellular_localization/all_CDS/psortb_results/NC_009839.1/
+    NC_009839.1_raw.txt  NC_009839.1_table.csv
+    $ ls ANNOgesic/output/subcellular_localization/all_CDS/statistics/NC_009839.1/
+    NC_009839.1_NC_009839.1_sublocal.png  stat_NC_009839.1_sublocal.csv
 
 Generating protein-protein interaction network
 -------------------
@@ -1029,17 +1083,17 @@ Before running the subcommand, you need to download
 
 ::
 
-    wget -cP ANNOgesic/input/database http://string-db.org/newstring_download/species.v10.txt
+    $ wget -cP ANNOgesic/input/database http://string-db.org/newstring_download/species.v10.txt
 
 Now, we can try the subcommand.
 
 ::
 
-    annogesic ppi_network \
-        -s NC_000915.1.gff:NC_000915.1:'Helicobacter pylori 26695':'Helicobacter pylori' \
+    $ annogesic ppi_network \
+        -s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
         -g ANNOgesic/output/target/annotation \
         -d ANNOgesic/input/database/species.v10.txt \
-        -q NC_000915.1:217:633:-,NC_000915.1:2719:3402:+ \
+        -q NC_009839.1:70579:71463:+,NC_009839.1:102567:103973:+ \
         -n \
         ANNOgesic
 
@@ -1062,31 +1116,27 @@ figures of the protein-protein interaction networks. There are two subfolders - 
 
 ::
 
-    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/
-    NC_000915.1_without_strain.csv  NC_000915.1_with_strain.csv     without_strain/               with_strain/
-    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/
-    NC_000915.1_without_strain.csv  NC_000915.1_with_strain.csv  without_strain  with_strain
-    $ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/
+    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_009839.1/
+    NC_009839.1_without_strain.csv  NC_009839.1_with_strain.csv     without_strain/               with_strain/
+    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_009839.1/
+    NC_009839.1_without_strain.csv  NC_009839.1_with_strain.csv  without_strain  with_strain
+    $ ls ANNOgesic/output/PPI/figures/PPI_NC_009839.1/
     without_strain  with_strain
-    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/with_strain/NC_000915.1/
-    carA_C694_01345.csv  carB_C694_01345.csv  pyrB_carB.csv        ribD_ribH.csv
-    carA_carB.csv        carB_guaB.csv        pyrB_guaB.csv        rpsJ_nusB.csv
-    carA_guaB.csv        guaB_C694_01345.csv  pyrD_C694_01345.csv
-    carA_pyrB.csv        nusG_rpoB.csv        pyrE_pyrF.csv
-    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_000915.1/without_strain/NC_000915.1/
-    carA_C694_01345.csv  carB_C694_01345.csv  pyrB_carB.csv        ribD_ribH.csv
-    carA_carB.csv        carB_guaB.csv        pyrB_guaB.csv        rpsJ_nusB.csv
-    carA_guaB.csv        guaB_C694_01345.csv  pyrD_C694_01345.csv
-    carA_pyrB.csv        nusG_rpoB.csv        pyrE_pyrF.csv
-    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/without_strain/NC_000915.1/
-    carA_C694_01345.csv  carB_C694_01345.csv  pyrD_C694_01345.csv
-    carA_carB.csv        guaB_C694_01345.csv
-    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_000915.1/with_strain/NC_000915.1/
-      (It can't find any interactions)
-    $ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/with_strain/NC_000915.1/
-    HP0001_nusB.png  HP0005_pyrF.png 
-    $ ls ANNOgesic/output/PPI/figures/PPI_NC_000915.1/without_strain/NC_000915.1/
-    P0001_nusB.png  HP0005_pyrF.png
+    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_009839.1/with_strain/NC_009839.1/
+    flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
+    flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+    $ ls ANNOgesic/output/PPI/all_results/PPI_NC_009839.1/without_strain/NC_009839.1/
+    flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
+    flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_009839.1/without_strain/NC_009839.1/
+    flgB_flgD.csv    flgE_flgD.csv  flgG_flgC.csv  fliG_fliF.csv
+    flgE-1_flgD.csv  flgF_flgC.csv  flgI_flgH.csv
+    $ ls ANNOgesic/output/PPI/best_results/PPI_NC_009839.1/with_strain/NC_009839.1/
+    fliG_fliF.csv
+    $ ls ANNOgesic/output/PPI/figures/PPI_NC_009839.1/with_strain/NC_009839.1/
+    C8J_RS00250_flgD.png
+    $ ls ANNOgesic/output/PPI/figures/PPI_NC_009839.1/without_strain/NC_009839.1/
+    C8J_RS00250_flgD.png
 
 Generating riboswitch and RNA thermometer
 -----------------
@@ -1114,7 +1164,7 @@ Now we can try the subcommand.
 
 ::
 
-    annogesic riboswitch_thermometer \
+    $ annogesic riboswitch_thermometer \
         -g ANNOgesic/output/target/annotation \
         -f ANNOgesic/output/target/fasta \
         -ri ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
@@ -1133,23 +1183,23 @@ Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_t
      $ ls ANNOgesic/output/riboswitch/
      gffs  scan_Rfam  statistics  tables
      $ ls ANNOgesic/output/riboswitch/gffs/
-     NC_000915.1_riboswitch.gff
-     $ ls ANNOgesic/output/riboswitch/scan_Rfam/NC_000915.1/
-     NC_000915.1_riboswitch_prescan.txt  NC_000915.1_riboswitch_scan.txt
+     NC_009839.1_riboswitch.gff
+     $ ls ANNOgesic/output/riboswitch/scan_Rfam/NC_009839.1/
+     NC_009839.1_riboswitch_prescan.txt  NC_009839.1_riboswitch_scan.txt
      $ ls ANNOgesic/output/riboswitch/tables/
-     NC_000915.1_riboswitch.csv
+     NC_009839.1_riboswitch.csv
      $ ls ANNOgesic/output/riboswitch/statistics/
-     stat_NC_000915.1_riboswitch.txt
+     stat_NC_009839.1_riboswitch.txt
      $ ls ANNOgesic/output/RNA_thermometer/
      gffs  scan_Rfam  statistics  tables
      $ ls ANNOgesic/output/RNA_thermometer/gffs/
-     NC_000915.1_RNA_thermometer.gff
-     $ ls ANNOgesic/output/RNA_thermometer/scan_Rfam/NC_000915.1/
-     NC_000915.1_RNA_thermometer_prescan.txt  NC_000915.1_RNA_thermometer_scan.txt
+     NC_009839.1_RNA_thermometer.gff
+     $ ls ANNOgesic/output/RNA_thermometer/scan_Rfam/NC_009839.1/
+     NC_009839.1_RNA_thermometer_prescan.txt  NC_009839.1_RNA_thermometer_scan.txt
      $ ls ANNOgesic/output/RNA_thermometer/tables/
-     NC_000915.1_RNA_thermometer.csv
+     NC_009839.1_RNA_thermometer.csv
      $ ls ANNOgesic/output/RNA_thermometer/statistics/
-     stat_NC_000915.1_RNA_thermometer.txt
+     stat_NC_009839.1_RNA_thermometer.txt
 
 Detection of CRISPR
 ----------------
@@ -1158,7 +1208,8 @@ CRISPR is an unique features for research of immunology. ``crispr`` is a useful 
 annotation to remove false positive. Let's try it.
 
 ::
-     annogesic crispr \
+
+     $ annogesic crispr \
         -g ANNOgesic/output/target/annotation \
         -f ANNOgesic/output/target/fasta \
         ANNOgesic
@@ -1167,49 +1218,19 @@ Output are as following, ``CRT_output`` stores output of `CRT <http://www.room22
 ``gffs`` stores gff files of the CRISPRs; ``statistics`` is for statistic files.
 
 ::
+
      $ ls ANNOgesic/output/crispr/
      CRT_output  gffs  statistics
      $ ls ANNOgesic/output/crispr/CRT_output
-     NC_000915.1.txt
+     NC_009839.1.txt
      $ ls ANNOgesic/output/crispr/gffs
      all_candidates  best
      $ ls ANNOgesic/output/crispr/gffs/all_candidates
-     NC_000915.1_CRISPR.gff
+     NC_009839.1_CRISPR.gff
      $ ls ANNOgesic/output/crispr/gffs/best
-     NC_000915.1_CRISPR.gff
+     NC_009839.1_CRISPR.gff
      $ ls ANNOgesic/output/crispr/statistics
-     NC_000915.1.csv
-
-Unfortunately, our test strain has no CRISPRs. If you really want to see the output information, 
-please check following commands to get the other strain which has CRISPRs.
-
-First, we download fasta and gff files of the other strain. 
-
-::
-
-     rm -rf ANNOgesic/output/target/annotation
-     rm -rf ANNOgesic/output/target/fasta
-     FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1
-     annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
-
-Then, run ``crispr`` again.
-
-::
-
-    annogesic crispr \
-        -g ANNOgesic/output/target/annotation \
-        -f ANNOgesic/output/target/fasta \
-        ANNOgesic
-
-Now, CRISPRs in this strain can be detected.
-
-In order to run the other subcommands of ANNOgesic, we restore our original strain again.
-
-::
-    rm -rf ANNOgesic/output/target/annotation
-    rm -rf ANNOgesic/output/target/fasta
-    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Helicobacter_pylori/reference/GCF_000008525.1_ASM852v1
-    annogesic get_input_files -F $FTP_SOURCE -g -f -e -k -p -r -t ANNOgesic
+     NC_009839.1.csv
 
 Merge all features to be one gff file
 -------------------------------------
@@ -1222,30 +1243,32 @@ you assigned. the relationship between all features can be revealed.
 Now let's do it. We merge all features that we have.
 
 ::
-     ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff,\
-     ANNOgesic/output/target/annotation/NC_000915.1.gff,\
-     ANNOgesic/output/UTR/5UTR/gffs/NC_000915.1_5UTR.gff,\
-     ANNOgesic/output/UTR/3UTR/gffs/NC_000915.1_3UTR.gff,\
-     ANNOgesic/output/terminator/gffs/best/NC_000915.1_term.gff,\
-     ANNOgesic/output/processing_site/gffs/NC_000915.1_processing.gff,\
-     ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff,\
-     ANNOgesic/output/sORF/gffs/best/NC_000915.1_sORF.gff,\
-     ANNOgesic/output/riboswitch/gffs/NC_000915.1_riboswitch.gff,\
-     ANNOgesic/output/RNA_thermometer/gffs/NC_000915.1_RNA_thermometer.gff,\
-     ANNOgesic/output/crispr/gffs/best/NC_000915.1_CRISPR.gff
+
+    ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff,\
+    ANNOgesic/output/target/annotation/NC_009839.1.gff,\
+    ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff,\
+    ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff,\
+    ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff,\
+    ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff,\
+    ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff,\
+    ANNOgesic/output/sORF/gffs/best/NC_009839.1_sORF.gff,\
+    ANNOgesic/output/riboswitch/gffs/NC_009839.1_riboswitch.gff,\
+    ANNOgesic/output/crispr/gffs/best/NC_009839.1_CRISPR.gff
 
 ::
-     annogesic merge_features \
-       -a ANNOgesic/output/transcriptome_assembly/gffs/NC_000915.1_transcript.gff \
+
+    $ annogesic merge_features \
+       -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
        -of $ALL_FEATURES\
-       -s NC_000915.1 \
+       -s NC_009839.1 \
         ANNOgesic
 
 Output gff file is stored in ``merge_all_features``
 
 ::
+
     $ ls ANNOgesic/output/merge_all_features/
-    NC_000915.1_merge_features.gff
+    NC_009839.1_merge_features.gff
 
 Producing the screenshots
 -----------------
@@ -1260,10 +1283,10 @@ For testing, we use TSSs as main feature, sRNAs and CDSs as side features.
 
 ::
 
-    annogesic screenshot \
-        -mg ANNOgesic/output/TSS/gffs/NC_000915.1_TSS.gff \
-        -sg ANNOgesic/output/target/annotation/NC_000915.1.gff,ANNOgesic/output/sRNA/gffs/best/NC_000915.1_sRNA.gff \
-        -f ANNOgesic/output/target/fasta/NC_000915.1.fa \
+    $ annogesic screenshot \
+        -mg ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
+        -sg ANNOgesic/output/target/annotation/NC_009839.1.gff,ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
+        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
         -o ANNOgesic/output/TSS \
         -tl $tex_notex_libs \
         -tw ANNOgesic/input/wigs/tex_notex \
@@ -1273,35 +1296,33 @@ Two txt files and two folders will be generated.
 
 ::
 
-    $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/
+    $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/
     forward/     forward.txt  reverse/     reverse.txt
 
 ``forward.txt`` and ``reverse.txt`` are batch files for running in `IGV <https://www.broadinstitute.org/software/igv/home>`_.
 ``forward`` and ``reverse`` are the folders for storing screenshots.
 
+Since there are numerous candidates, we can only generate several ones in order to reduce the running time for testing.
+
+::
+
+    $ head -n 30 ANNOgesic/output/TSS/screenshots/NC_009839.1/forward.txt > ANNOgesic/output/TSS/screenshots/NC_009839.1/forward_6_cases.txt
+    $ head -n 30 ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse.txt > ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse_6_cases.txt
+
 Now, please open `IGV <https://www.broadinstitute.org/software/igv/home>`_ and follow the procedures: Tools -> 
-Run Batch Script -> choose ``forward.txt``. Once it is done, please do it again for reverse strand: Tools ->
-Run Batch Script -> choose ``reverse.txt``. If you just want to test it, you can delete some lines of gff files of TSSs.
+Run Batch Script -> choose ``forward_6_cases.txt``. Once it is done, please do it again for reverse strand: Tools ->
+Run Batch Script -> choose ``reverse_6_cases.txt``. If you just want to generate the screenshots for all candidates, 
+you can run ``forward.txt`` and ``reverse.txt``. Please be careful, if you use Docker container, the path may be not correct.
 
 As soon as the gneration of the screenshots is done, 
 we can see that there are several screenshots in ``forward`` and ``reverse``.
 
 ::
 
-    $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/forward
-    ...
-    NC_000915.1:1002230-1002230.png  NC_000915.1:1245705-1245705.png  NC_000915.1:1516949-1516949.png  NC_000915.1:246369-246369.png  NC_000915.1:463673-463673.png  NC_000915.1:741002-741002.png
-    NC_000915.1:1002524-1002524.png  NC_000915.1:124623-124623.png    NC_000915.1:151822-151822.png    NC_000915.1:251753-251753.png  NC_000915.1:463731-463731.png  NC_000915.1:744418-744418.png
-    NC_000915.1:1002728-1002728.png  NC_000915.1:1249488-1249488.png  NC_000915.1:1520156-1520156.png  NC_000915.1:255496-255496.png  NC_000915.1:464179-464179.png  NC_000915.1:744551-744551.png
-    ...
-    
-    $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/reverse
-    ...
-    NC_000915.1:1002215-1002215.png  NC_000915.1:1235881-1235881.png  NC_000915.1:1481470-1481470.png  NC_000915.1:179609-179609.png  NC_000915.1:467716-467716.png  NC_000915.1:767765-767765.png
-    NC_000915.1:1002707-1002707.png  NC_000915.1:1238472-1238472.png  NC_000915.1:1482537-1482537.png  NC_000915.1:181416-181416.png  NC_000915.1:46780-46780.png    NC_000915.1:769891-769891.png
-    NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:1482926-1482926.png  NC_000915.1:181781-181781.png  NC_000915.1:468289-468289.png  NC_000915.1:770316-770316.png
-    ...
-
+    $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/forward
+    NC_009839.1:1396-1396.png  NC_009839.1:14812-14812.png  NC_009839.1:6676-6676.png  NC_009839.1:6680-6680.png  NC_009839.1:8098-8098.png  NC_009839.1:9295-9295.png
+    $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse
+    NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
 
 Coloring the screenshots
 -----------------
@@ -1312,7 +1333,7 @@ our screenshots.
 
 ::
 
-    annogesic color_png \
+    $ annogesic color_png \
         -t 2 \
         -f ANNOgesic/output/TSS \
         ANNOgesic
@@ -1321,19 +1342,9 @@ We will see output filenames are the same as before. However, when we open the f
 
 ::
 
-    $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/forward
-    ...
-    NC_000915.1:1002230-1002230.png  NC_000915.1:1245705-1245705.png  NC_000915.1:1516949-1516949.png  NC_000915.1:246369-246369.png  NC_000915.1:463673-463673.png  NC_000915.1:741002-741002.png
-    NC_000915.1:1002524-1002524.png  NC_000915.1:124623-124623.png    NC_000915.1:151822-151822.png    NC_000915.1:251753-251753.png  NC_000915.1:463731-463731.png  NC_000915.1:744418-744418.png
-    NC_000915.1:1002728-1002728.png  NC_000915.1:1249488-1249488.png  NC_000915.1:1520156-1520156.png  NC_000915.1:255496-255496.png  NC_000915.1:464179-464179.png  NC_000915.1:744551-744551.png
-    ...
-    
-    $ ls ANNOgesic/output/TSS/screenshots/NC_000915.1/reverse
-    ...
-    NC_000915.1:1002215-1002215.png  NC_000915.1:1235881-1235881.png  NC_000915.1:1481470-1481470.png  NC_000915.1:179609-179609.png  NC_000915.1:467716-467716.png  NC_000915.1:767765-767765.png
-    NC_000915.1:1002707-1002707.png  NC_000915.1:1238472-1238472.png  NC_000915.1:1482537-1482537.png  NC_000915.1:181416-181416.png  NC_000915.1:46780-46780.png    NC_000915.1:769891-769891.png
-    NC_000915.1:100498-100498.png    NC_000915.1:1240517-1240517.png  NC_000915.1:1482926-1482926.png  NC_000915.1:181781-181781.png  NC_000915.1:468289-468289.png  NC_000915.1:770316-770316.png
-    ...
-
+    $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/forward
+    NC_009839.1:1396-1396.png  NC_009839.1:14812-14812.png  NC_009839.1:6676-6676.png  NC_009839.1:6680-6680.png  NC_009839.1:8098-8098.png  NC_009839.1:9295-9295.png
+    $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse
+    NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
 
 Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!
