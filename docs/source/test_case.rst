@@ -255,12 +255,14 @@ go through following subcommands, we need to reorganize our data.
 First, we remove the fake files for testing the previous subcommands.
 
 ::
+
     $ rm ANNOgesic/output/target/annotation/*
     $ rm ANNOgesic/output/target/fasta/*
 
 Then put the correct files that we used as references before into ``ANNOgesic/output/target``.
 
 ::
+
     $ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
     $ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 

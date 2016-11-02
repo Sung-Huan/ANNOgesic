@@ -358,17 +358,15 @@ we can find the output of <a class="reference external" href="http://ratt.source
 <p>Now we already saw how to update genome fasta and annotation files. In order to
 go through following subcommands, we need to reorganize our data.
 First, we remove the fake files for testing the previous subcommands.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ rm ANNOgesic/output/target/annotation/*
-$ rm ANNOgesic/output/target/fasta/*</dd>
-</dl>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ rm ANNOgesic/output/target/annotation/*
+$ rm ANNOgesic/output/target/fasta/*
+</pre></div>
+</div>
 <p>Then put the correct files that we used as references before into <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>$ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-$ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/</dd>
-</dl>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
+$ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+</pre></div>
+</div>
 <p>Before running following subcommands, we need to setup our libraries as a correct format.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">tex_notex_libs</span><span class="o">=</span><span class="s2">&quot;GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig:notex:1:a:-,</span><span class="se">\</span>
 <span class="s2">GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig:tex:1:a:-,</span><span class="se">\</span>
