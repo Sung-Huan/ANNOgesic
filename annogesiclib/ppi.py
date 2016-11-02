@@ -93,8 +93,12 @@ class PPINetwork(object):
         for row_i in csv.reader(id_h, delimiter="\t"):
             prefername = row_i[3]
         id_h.close()
+        if prefername not in self.ref_tags.keys():
+            locus = id_file
+        else:
+            locus = self.ref_tags[prefername]
         out.write("Interaction of {0} | {1}\n".format(
-            self.ref_tags[prefername], prefername))
+            locus, prefername))
         out.write("strain\titem_id_a\titem_id_b\tmode\taction\ta_is_acting\t"
                   "STRING_action_score\tpubmed_id\tpubmed_score\n")
 

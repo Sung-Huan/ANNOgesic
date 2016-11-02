@@ -92,6 +92,9 @@ class Mock_func(object):
     def mock_srna_sorf_comparison(self, gff, sorf, tmp_srna, tmp_sorf):
         pass
 
+    def mock_check_database(self, database, db_format):
+        pass
+
 class Mock_multiparser(object):
 
     def parser_gff(tsss, type_):
@@ -179,6 +182,7 @@ class TestsRNADetection(unittest.TestCase):
     def test_check_necessary_file(self):
         self.srna.multiparser = Mock_multiparser
         self.srna._check_gff = self.mock.mock_check_gff
+        self.srna._check_database = self.mock.mock_check_database
         args = self.mock_args.mock()
         args.trans = self.trans
         args.tsss = self.tsss
@@ -191,6 +195,10 @@ class TestsRNADetection(unittest.TestCase):
         args.tex_wigs = self.tex
         args.frag_wigs = self.frag
         args.utr_srna = True
+        args.nr_format = True
+        args.srna_format = True
+        args.nr_database = "test"
+        args.srna_database = "test"
         self.srna._check_necessary_file(args)
 
     def test_run_program(self):
