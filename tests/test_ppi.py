@@ -51,7 +51,7 @@ class TestPPI(unittest.TestCase):
         self.ppi._run_wget = self.mock.mock_run_wget
         strain_id = {"ptt": "test_strain", "string": "string_test", "file": "file_test"}
         files = {"id_list": "test", "id_log": "test"}
-        genes = [{"strain": "test_strain", "locus_tag": "test_locus"}]
+        genes = [{"strain": "test_strain", "locus_tag": "test_locus", "gene": "dnaA"}]
         self.ppi._retrieve_id(strain_id, genes, files)
 
     def test_get_prefer_name(self):
@@ -123,9 +123,9 @@ class TestPPI(unittest.TestCase):
         args.ptts = self.test_folder
         args.querys = "all"
         genes = self.ppi._detect_protein(strain_id, args)
-        self.assertListEqual(genes, [{'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00001'},
-                                     {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00002'},
-                                     {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00003'}])
+        self.assertListEqual(genes, [{'locus_tag': 'SAOUHSC_00001', 'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003'},
+                                     {'locus_tag': 'SAOUHSC_00002', 'gene': '-', 'strain': 'Staphylococcus_aureus_HG003'},
+                                     {'locus_tag': 'SAOUHSC_00003', 'gene': '-', 'strain': 'Staphylococcus_aureus_HG003'}])
 
     def test_setup_nospecific(self):
         out_all = StringIO()
@@ -167,9 +167,9 @@ class TestPPI(unittest.TestCase):
             files[index].close()
         self.assertTrue(os.path.exists("test_folder/best_results/test"))
         self.assertTrue(os.path.exists("test_folder/all_results/test"))
-        self.assertListEqual(genes, [{'locus_tag': 'SAOUHSC_00001', 'strain': 'Staphylococcus_aureus_HG003'},
-                                     {'locus_tag': 'SAOUHSC_00002', 'strain': 'Staphylococcus_aureus_HG003'},
-                                     {'locus_tag': 'SAOUHSC_00003', 'strain': 'Staphylococcus_aureus_HG003'}])
+        self.assertListEqual(genes, [{'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00001'},
+                                     {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00002'},
+                                     {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00003'}])
 
     def test_wget_actions(self):
         gen_file(os.path.join(self.test_folder, "test.txt"), "93061\ttest")
