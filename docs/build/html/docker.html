@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Dockfiles &mdash; ANNOgesic 0.4.3 documentation</title>
+    <title>Docker Image &mdash; ANNOgesic 0.4.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -69,12 +69,17 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="dockfiles">
-<h1>Dockfiles<a class="headerlink" href="#dockfiles" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="docker-image">
+<h1>Docker Image<a class="headerlink" href="#docker-image" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://www.docker.com">Docker</a> is a platform for distributing package.
 It is light and easy to manage. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> includes a <code class="docutils literal"><span class="pre">Dockfile</span></code> which
 is for build up a environment and install all required tools for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>.</p>
-<p>Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
+<p>You can simply pull the Docker image by running</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>docker pull silasysh/annogesic:$VERSION
+</pre></div>
+</div>
+<p>Alternatively, you can build the image by <code class="docutils literal"><span class="pre">Dockfile</span></code>.
+Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span><span class="o">=</span><span class="s2">&quot;annogesic&quot;</span> <span class="o">.</span>
 </pre></div>
 </div>
