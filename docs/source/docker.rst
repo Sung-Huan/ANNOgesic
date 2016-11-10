@@ -1,4 +1,4 @@
-Docker Image
+Docker image
 ==============
 
 `Docker <https://www.docker.com>`_ is a platform for distributing package. 
@@ -9,7 +9,7 @@ You can simply pull the Docker image by running
 
 ::
 
-    docker pull silasysh/annogesic:$VERSION
+    docker pull silasysh/annogesic
 
 Alternatively, you can build the image by ``Dockfile``.
 Please go to the folder where ``Dockfile`` are located. Then type
