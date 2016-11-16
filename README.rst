@@ -50,11 +50,11 @@ Arguments
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. annotation files, fasta
@@ -63,8 +63,8 @@ Arguments
         annotation_transfer
                             Run RATT to transfer the annotation files from
                             reference to target.
-        tsspredator         Run TSSpredator to predict TSSs or processing sites.
-        optimize_tsspredator
+        tss_processing      Run TSSpredator to predict TSSs or processing sites.
+        optimize_tss_processing
                             Optimize TSSpredator based on (partial)manual detect
                             one.
         terminator          Detect rho-independant terminators.
