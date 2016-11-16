@@ -1,7 +1,7 @@
 main(){
     PATH_FILE=$(pwd)
     PYTHON_PATH=python3
-    ANNOGESIC_PATH=/home/silas/ANNOgesic/bin/annogesic
+    ANNOGESIC_PATH=annogesic
     ANNOGESIC_FOLDER=ANNOgesic
     FTP_SOURCE="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/"
     WIG_FOLDER="ANNOgesic/input/wigs/tex_notex"
