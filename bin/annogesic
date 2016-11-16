@@ -1743,7 +1743,7 @@ def main():
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of genome fasta files.")
     sub_local_parser.add_argument(
-        "--transcript_files", "-a", default=None,
+        "--transcript_files", "-a", default=None, nargs='+',
         help="If paths of the transcript gff files are provided, "
         "it can get the results based on expressed CDS and all CDS.")
     sub_local_parser.add_argument(
