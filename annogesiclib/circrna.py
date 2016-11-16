@@ -69,7 +69,7 @@ class CircRNADetection(object):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
                     tmp_reads.append(mod_read)
-                    print(" ".join(["unzip", read]))
+                    print(" ".join(["Unzipping", read]))
                     call(["bzcat", read], stdout=read_out)
                     read_out.close()
                 elif read.endswith(".gz"):
@@ -80,16 +80,13 @@ class CircRNADetection(object):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
                     tmp_reads.append(mod_read)
-                    print(" ".join(["unzip", read]))
+                    print(" ".join(["Unzipping", read]))
                     call(["zcat", read], stdout=read_out)
                     read_out.close()
         return tmp_reads
 
     def _run_segemehl_fasta_index(self, segemehl_path, fasta_path,
                                   index, fasta):
-        print(" ".join([segemehl_path,
-                "-x", os.path.join(fasta_path, index),
-                "-d", os.path.join(fasta_path, fasta)]))
         call([segemehl_path,
               "-x", os.path.join(fasta_path, index),
               "-d", os.path.join(fasta_path, fasta)])
@@ -133,7 +130,7 @@ class CircRNADetection(object):
                         sam_file = "_".join([read_prefix, fasta_prefix + ".sam"])
                         log_file = "_".join([read_prefix, fasta_prefix + ".log"])
                         align_files.append("_".join([read_prefix, fasta_prefix]))
-                        print("mapping {0}".format(sam_file))
+                        print("Mapping {0}".format(sam_file))
                         p = self._run_segemehl_align(
                                 args_circ, index, fasta, read,
                                 sam_file, log_file, fasta_prefix)
@@ -155,7 +152,7 @@ class CircRNADetection(object):
             pre_sam = os.path.join(sub_alignment_path, sam)
             if sam.endswith(".sam"):
                 bam_file = sam.replace(".sam", ".bam")
-                print("Convert {0} to {1}".format(sam, bam_file))
+                print("Converting {0} to {1}".format(sam, bam_file))
                 out_bam = os.path.join(sub_alignment_path, bam_file)
                 self._run_samtools_convert_bam(samtools_path, pre_sam, out_bam)
                 bam_files.append(out_bam)
@@ -285,7 +282,7 @@ class CircRNADetection(object):
             shutil.copytree(prefix, os.path.join(self.splice_path, prefix))
             self.helper.check_make_folder(os.path.join(
                                           self.candidate_path, prefix))
-            print("comparing with annotation of {0}".format(prefix))
+            print("Comparing with annotation of {0}".format(prefix))
             if self.splices["all_file"] in os.listdir(os.path.join(
                                            self.splice_path, prefix)):
                 detect_circrna(os.path.join(self.splice_path, prefix,
