@@ -139,7 +139,7 @@ class Controller(object):
 
     def get_input(self):
         """Download required files from website."""
-        print("Running get input files...")
+        print("Running get input files")
         if self._args.ftp_path is None:
             print("Error: Please assign the path for downloading the data!")
             sys.exit()
@@ -183,7 +183,7 @@ class Controller(object):
 
     def get_target_fasta(self):
         """Get target fasta"""
-        print("Running get target fasta...")
+        print("Running get target fasta")
         self.check_multi_files([self._args.ref_fasta_files], ["--ref_fasta_files"])
         self.check_parameter([self._args.output_format], ["--output_format"])
         self.check_file([self._args.mutation_table], "--mutation_table", True)
@@ -200,7 +200,7 @@ class Controller(object):
 
     def ratt(self):
         """Run RATT to transfer annotation file from reference to target."""
-        print("Running annotation transfer...")
+        print("Running annotation transfer")
         if (self._args.transfer_type != "Strain") and (
                 self._args.transfer_type != "Assembly") and (
                 self._args.transfer_type != "Species") and (
@@ -248,12 +248,12 @@ class Controller(object):
                              ["--tex_notex_libs", "--condition_names"])
         self.check_execute_file(self._args.tsspredator_path)
         if self._args.compute_program.lower() == "tss":
-            print("Running TSS prediction...")
+            print("Running TSS prediction")
             project_creator.create_subfolders(
                 self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
         elif self._args.compute_program.lower() == "processing_site":
-            print("Running processing site prediction...")
+            print("Running processing site prediction")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(
                 self._paths.required_folders("processing"))
@@ -288,17 +288,17 @@ class Controller(object):
                              ["--strain_name", "--tex_notex_lib",
                               "--condition_names"])
         if self._args.program.lower() == "tss":
-            print("Running optimization of TSS prediction...")
+            print("Running optimization of TSS prediction")
             project_creator.create_subfolders(
                 self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
         elif self._args.program.lower() == "processing_site":
-            print("Running optimization of processing site prediction...")
+            print("Running optimization of processing site prediction")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(
                 self._paths.required_folders("processing"))
         else:
-            print("Error:No such program!")
+            print("Error: No such program!")
             sys.exit()
         args_ops = self.args_container.container_optimize(
             self._args.tsspredator_path, self._args.fasta_file,
@@ -317,7 +317,7 @@ class Controller(object):
 
     def color(self):
         """color the screenshots"""
-        print("Running png files coloring...")
+        print("Running png files coloring")
         self.check_parameter([self._args.track_number], ["--track_numer"])
         self.check_folder([self._args.screenshot_folder], ["--screenshot_folder"])
         self.check_execute_file(self._args.imagemagick_covert_path)
@@ -327,8 +327,8 @@ class Controller(object):
                 self._args.imagemagick_covert_path)
 
     def terminator(self):
-        """Run TransTermHP for detecting terminators."""
-        print("Running terminator prediction...")
+        """Run TransTermHP and Gene converaged for detecting terminators"""
+        print("Running terminator prediction")
         if self._args.transtermhp_path is None:
             print("Please assign the folder where you install TransTermHP.")
         self.check_multi_files(
@@ -366,7 +366,7 @@ class Controller(object):
 
     def transcript(self):
         """Run Transcriptome assembly."""
-        print("Running transcriptome assembly...")
+        print("Running transcriptome assembly")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.tss_files,
                  self._args.terminator_files],
@@ -390,7 +390,7 @@ class Controller(object):
 
     def utr_detection(self):
         """Run UTR detection."""
-        print("Running UTR detection...")
+        print("Running UTR detection")
         self.check_multi_files(
             [self._args.annotation_files, self._args.terminator_files,
              self._args.transcript_files, self._args.tss_files],
@@ -416,7 +416,7 @@ class Controller(object):
 
     def srna_detection(self):
         """sRNA_detection."""
-        print("Running sRNA prediction...")
+        print("Running sRNA prediction")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.transcript_files,
                  self._args.fasta_files, self._args.sorf_files,
@@ -450,7 +450,7 @@ class Controller(object):
                 self._check_filter_input(self._args.tss_files,
                                          "TSS", "tss")
             else:
-                print("Error: please check the --filter_info, "
+                print("Error: Please check the --filter_info, "
                       "invalid value was assigned!")
                 sys.exit()
         if self._args.utr_derived_srna:
@@ -504,7 +504,7 @@ class Controller(object):
 
     def sorf_detection(self):
         """sORF_detection."""
-        print("Running sORF prediction...")
+        print("Running sORF prediction")
         self.check_multi_files(
                 [self._args.transcript_files, self._args.annotation_files,
                  self._args.fasta_files, self._args.srna_files,
@@ -539,7 +539,7 @@ class Controller(object):
 
     def meme(self):
         """promoter detectopn"""
-        print("Running promoter detection...")
+        print("Running promoter detection")
         self.check_multi_files(
                 [self._args.tss_files, self._args.fasta_files],
                 ["--tss_files", "--fasta_files"])
@@ -563,7 +563,7 @@ class Controller(object):
 
     def operon(self):
         """operon detection"""
-        print("Running operon detection...")
+        print("Running operon detection")
         self.check_multi_files(
                 [self._args.tss_files, self._args.annotation_files,
                  self._args.transcript_files, self._args.utr5_files,
@@ -586,7 +586,7 @@ class Controller(object):
 
     def circrna(self):
         """circRNA detection"""
-        print("Running circular RNA prediction...")
+        print("Running circular RNA prediction")
         if self._args.align:
             self.check_execute_file(self._args.segemehl_path)
             if self._args.read_files is None:
@@ -616,7 +616,7 @@ class Controller(object):
 
     def goterm(self):
         """Go term discovery"""
-        print("Running GO term mapping...")
+        print("Running GO term mapping")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.transcript_files],
                 ["--annotation_files", "--transcript_files"])
@@ -635,7 +635,7 @@ class Controller(object):
 
     def srna_target(self):
         """sRNA target prediction"""
-        print("Running sRNA target prediction...")
+        print("Running sRNA target prediction")
         self.check_multi_files(
                 [self._args.fasta_files, self._args.srna_files,
                  self._args.annotation_files],
@@ -673,22 +673,22 @@ class Controller(object):
 
     def snp(self):
         """SNP transcript detection"""
-        print("Running SNP/mutations calling...")
+        print("Running SNP/mutations calling")
         self.check_multi_files(
                 [self._args.fasta_files, self._args.bam_files],
                 ["--fasta_files", "--bam_files"])
         if (self._args.bam_type != "target") and (
                 self._args.bam_type != "reference"):
-            print("Error: please assign \"target\" or"
+            print("Error: Please assign \"target\" or"
                   " \"reference\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
                 self._args.ploidy != "diploid"):
-            print("Error: please assign \"haploid\" or"
+            print("Error: Please assign \"haploid\" or"
                   " \"diploid\" to --chromosome_type!")
         if (self._args.caller != "c") and (
                 self._args.caller != "m"):
-            print("Error: please assign \"c\" or"
+            print("Error: Please assign \"c\" or"
                   " \"m\" to --caller!")
         self.check_parameter([self._args.sample_number],
                              ["--sample_number"])
@@ -709,7 +709,7 @@ class Controller(object):
 
     def ppi(self):
         """PPI network retrieve"""
-        print("Running protein-protein interaction networks prediction...")
+        print("Running protein-protein interaction networks prediction")
         self.check_multi_files([self._args.annotation_files],
                                ["--annotation_files"])
         self.check_parameter([self._args.proteinid_strains,
@@ -727,7 +727,7 @@ class Controller(object):
 
     def sublocal(self):
         """Subcellular Localization prediction"""
-        print("Running subcellular localization prediction...")
+        print("Running subcellular localization prediction")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.fasta_files,
                  self._args.transcript_files],
@@ -735,7 +735,7 @@ class Controller(object):
                  "--transcript_files"])
         if (self._args.bacteria_type != "positive") and (
                 self._args.bacteria_type != "negative"):
-            print("Error: please assign \"positive\" or"
+            print("Error: Please assign \"positive\" or"
                   " \"negative\" to --bacteria_type!")
             sys.exit()
         self.check_execute_file(self._args.psortb_path)
@@ -751,7 +751,7 @@ class Controller(object):
 
     def ribos(self):
         """riboswitch and RNA thermometer prediction"""
-        print("Running riboswitch and RNA thermometer prediction...")
+        print("Running riboswitch and RNA thermometer prediction")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.fasta_files,
                  self._args.tss_files, self._args.transcript_files],
@@ -805,7 +805,7 @@ class Controller(object):
 
     def crispr(self):
         """CRISPR prediction"""
-        print("Running CRISPR prediction...")
+        print("Running CRISPR prediction")
         self.check_multi_files(
                 [self._args.fasta_files, self._args.annotation_files],
                 ["--fasta_files", "--annotation_files"])
@@ -824,7 +824,7 @@ class Controller(object):
 
     def merge(self):
         """Merge all features"""
-        print("Merging all features to one gff file...")
+        print("Merging all features to one gff file")
         merge_folder = os.path.join(self._paths.output_folder,
                                     "merge_all_features")
         self.helper.check_make_folder(merge_folder)
@@ -840,7 +840,7 @@ class Controller(object):
 
     def screen(self):
         """generate screenshot"""
-        print("Running screenshot generating...")
+        print("Running screenshot generation")
         self.check_file([self._args.main_gff, self._args.fasta],
                         ["--main_gff", "--fasta"], True)
         if self._args.side_gffs is not None:
@@ -850,12 +850,12 @@ class Controller(object):
                     print("Error: The --side_gffs no exist!")
                     sys.exit()
         if self._args.output_folder is None:
-            print("Error: please assign --output_folder!")
+            print("Error: Please assign --output_folder!")
             sys.exit()
         if (self._args.present != "expand") and (
                 self._args.present != "collapse") and (
                 self._args.present != "squish"):
-            print("Error: please assign \"expand\" or "
+            print("Error: Please assign \"expand\" or "
                   "\"collapse\" or \"squish\" to --present!")
             sys.exit()
         args_sc = self.args_container.container_screen(
