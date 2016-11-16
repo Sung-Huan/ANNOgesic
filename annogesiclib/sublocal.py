@@ -82,7 +82,7 @@ class SubLocal(object):
         fasta = self.helper.get_correct_file(self.fasta_path, ".fa",
                                              prefix, None, None)
         dna_seq_file = os.path.join(tmp_path, "_".join([prefix, "dna.fa"]))
-        print("Generate CDS fasta files of {0}".format(prefix))
+        print("Generating CDS fasta files of {0}".format(prefix))
         if tran_path is not None:
             self._compare_cds_tran(os.path.join(self.gff_path, gff),
                                    os.path.join(tran_path, "_".join([
@@ -93,7 +93,7 @@ class SubLocal(object):
         else:
             self.helper.get_cds_seq(os.path.join(self.gff_path, gff),
                                     fasta, dna_seq_file)
-        print("transfer DNA seq to protein seq of {0}".format(prefix))
+        print("Transfering DNA seq to protein seq of {0}".format(prefix))
         self.helper.translation(dna_seq_file, "tmp")
         prot_seq_file = os.path.join(
                 tmp_path, "_".join([prefix, "protein.fa"]))
@@ -120,7 +120,7 @@ class SubLocal(object):
             self._psortb(args_sub.psortb_path, "-n", prot_seq_file,
                          out_raw, out_err)
         else:
-            print("Error:It is not a proper bacteria type - {0}!!".format(
+            print("Error: It is not a proper bacteria type - {0}!!".format(
                   args_sub.gram))
             sys.exit()
         out_err.close()
@@ -129,7 +129,7 @@ class SubLocal(object):
     def _extract_result(self, args_sub, tmp_psortb_path, prefix, gff_file):
         '''extract the result of psortb'''
         if args_sub.merge:
-            print("Merge to gff")
+            print("Merging gff")
             extract_psortb(os.path.join(
                 tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
                 os.path.join(tmp_psortb_path, "_".join([

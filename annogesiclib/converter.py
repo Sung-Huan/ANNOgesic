@@ -326,7 +326,7 @@ class Converter(object):
              (srna_output_file is None):
             pass
         else:
-            print("Error: lack sRNA input gff file or "
+            print("Error: Lack sRNA input gff file or "
                   "the name sRNA output rnt file\n")
 
     def convert_embl2gff(self, embl_file, gff_file):

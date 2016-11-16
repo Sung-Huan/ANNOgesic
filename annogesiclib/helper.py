@@ -169,7 +169,7 @@ class Helper(object):
                 else:
                     filename = data.split("_STRAIN_")
                     if ("reverse" in data) and ("forward" in data):
-                        print("Error: assign reverse or forward wigs!!!")
+                        print("Error: Assign reverse or forward wigs!!!")
                         sys.exit()
                     elif (prefix == filename[-1][:-1 * len(feature)]):
                         if (for_wig_type == "forward"):
@@ -183,7 +183,7 @@ class Helper(object):
         if detect:
             detect = False
         else:
-            print("Warning: no proper file - " + prefix + feature)
+            print("Warning: No proper file - " + prefix + feature)
             return None
 
     def check_make_folder(self, folder):
@@ -264,7 +264,7 @@ class Helper(object):
                     if gff.end > length:
                         name = "".join([gff.feature, ":", str(gff.start), "-",
                                         str(gff.end), "_", gff.strand])
-                        print("Error: the end point of " + name +
+                        print("Error: The end point of " + name +
                               " is longer than the length of whole genome.")
                         print("Please check the gff file.")
                         sys.exit()
@@ -276,14 +276,14 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Warninng: repeat ID {0} "
+                            print("Warninng: Repeat ID {0} "
                                   "in gff file!!!".format(
                                       gff.attributes["ID"]))
                         else:
                             self._add_element(ids, "ID", gff)
                     if "locus_tag" in gff.attributes.keys():
                         if gff.attributes["locus_tag"] in ids:
-                            print("Warning:repeat locus_tag {0} "
+                            print("Warning: Repeat locus_tag {0} "
                                   "in gff file!!!".format(
                                       gff.attributes["locus_tag"]))
                         else:

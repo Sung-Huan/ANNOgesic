@@ -11,7 +11,7 @@ class Screen(object):
         self.helper = Helper()
         out_folder = os.path.join(args_sc.output_folder, "screenshots")
         if os.path.exists(out_folder):
-            print("Error: The {0} already exist!!!".format(
+            print("Error: The {0} already exist!".format(
                   out_folder))
             sys.exit()
         else:
@@ -52,7 +52,7 @@ class Screen(object):
             for lib in args_sc.tlibs:
                 lib_datas = lib.split(":")
                 if not lib_datas[0].endswith(".wig"):
-                    print("Error:Exist a not proper wig files!!")
+                    print("Error: Exist a not proper wig files!")
                     sys.exit()
                 else:
                     if lib_datas[-1] == "+":
@@ -67,7 +67,7 @@ class Screen(object):
             for lib in args_sc.flibs:
                 lib_datas = lib.split(":")
                 if not lib_datas[0].endswith(".wig"):
-                    print("Error:Exist a not proper wig files!!")
+                    print("Error: Exist a not proper wig files!")
                     sys.exit()
                 else:
                     if lib_datas[-1] == "+":
@@ -77,5 +77,5 @@ class Screen(object):
         gen_screenshot(args_sc, lib_dict, self.forward_file + ".txt",
                        self.reverse_file + ".txt", self.strain)
         if (args_sc.tlibs is None) and (args_sc.flibs is None):
-            print("Error: There are no wig file assigned!!!")
+            print("Error: There are no wig file assigned!")
             sys.exit()

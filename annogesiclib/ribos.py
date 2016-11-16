@@ -80,7 +80,7 @@ class Ribos(object):
                 first_seq = os.path.join(tmp_files["fasta"],
                                          prefix + ".fa")
                 prefixs.append(prefix)
-                print("extracting seq of candidates of {0}".format(
+                print("Extracting seq of candidates of {0}".format(
                       prefix))
                 extract_potential_rbs(
                       os.path.join(self.fasta_path, prefix + ".fa"),
@@ -88,7 +88,7 @@ class Ribos(object):
                       os.path.join(self.tss_path, prefix + "_TSS.gff"),
                       os.path.join(self.tran_path, prefix + "_transcript.gff"),
                       first_seq, args_ribo, feature)
-                print("pre-scanning of {0}".format(prefix))
+                print("Pre-scanning of {0}".format(prefix))
                 first_scan_file = self._run_cmscan(
                         args_ribo, first_seq, "txt", prefix, tmp_files,
                         suffixs, rfam)
@@ -99,7 +99,7 @@ class Ribos(object):
                         "_".join([prefix, suffixs["csv"]]))
                 regenerate_seq(first_scan_file, first_seq,
                                first_table, sec_seq)
-                print("scanning of {0}".format(prefix))
+                print("Scanning of {0}".format(prefix))
                 sec_scan_file = self._run_cmscan(
                         args_ribo, sec_seq, "re_txt", prefix, tmp_files,
                         suffixs, rfam)
@@ -118,7 +118,7 @@ class Ribos(object):
         for gff in os.listdir(args_ribo.gffs):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
-                print("Merge results of {0}".format(prefix))
+                print("Merging results of {0}".format(prefix))
                 pre_strain = ""
                 self.helper.check_make_folder(os.path.join(
                                               scan_folder, prefix))
@@ -151,7 +151,7 @@ class Ribos(object):
                 out_stat = os.path.join(
                         stat_folder,
                         "_".join(["stat", prefix, feature + ".txt"]))
-                print("compute statistics of {0}".format(prefix))
+                print("Computing statistics of {0}".format(prefix))
                 stat_and_covert2gff(os.path.join(
                     table_folder, "_".join([prefix, suffixs["csv"]])),
                     feature_id, os.path.join(gff_outfolder,
@@ -180,7 +180,7 @@ class Ribos(object):
                          stat_folder, gff_outfolder, out_folder):
         '''main part of detection'''
         rbs_from_rfam(feature_id, args_ribo.rfam, rfam)
-        print("compressing Rfam of " + feature)
+        print("Compressing Rfam of " + feature)
         call([args_ribo.cmpress_path, "-F", rfam])
         prefixs = []
         self.helper.check_make_folder(tmp_files["fasta"])

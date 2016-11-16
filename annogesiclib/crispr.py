@@ -31,6 +31,7 @@ class Crispr(object):
 
     def _run_crt(self, args_cris):
         '''Running CRT'''
+        print("Running CRT")
         for seq in os.listdir(self.fasta_path):
             prefix = ".".join(seq.split(".")[:-1])
             call(["java", "-cp", args_cris.crt_path, "crt", "-minNR",

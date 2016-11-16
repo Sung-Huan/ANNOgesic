@@ -68,7 +68,7 @@ class PPINetwork(object):
                                           strain_id, files)
                 self.ref_tags[gene["locus_tag"]] = gene["locus_tag"]
             if not detect_id:
-                print("Error:there is no {0} in {1}".format(
+                print("Error: There is no {0} in {1}".format(
                        gene, strain_id["file"]))
 
     def _get_prefer_name(self, row_a, strain_id, files, querys):
@@ -292,7 +292,7 @@ class PPINetwork(object):
                         os.path.join(paths["best"], self.without_strain),
                         strain_id["ptt"])
         else:
-            print("Error:wrong .ptt file!!")
+            print("Error: Wrong .ptt file!!")
             sys.exit()
         return genes
 
@@ -379,7 +379,7 @@ class PPINetwork(object):
         files["best_specific"].close()
         for folder in os.listdir(self.all_result):
             if folder in os.listdir(self.fig):
-                print("plotting {0}".format(folder))
+                print("Plotting {0}".format(folder))
                 plot_ppi(os.path.join(self.all_result, folder,
                          "_".join([folder, self.with_strain + ".csv"])),
                          args_ppi.score, os.path.join(self.fig, folder,

@@ -50,11 +50,11 @@ class TargetFasta(object):
                         for line in f_h:
                             out.write(line)
                 else:
-                    print("Error:no fasta information of {0}.fa".format(
+                    print("Error: No fasta information of {0}.fa".format(
                           strain))
             out.close()
         shutil.rmtree(self.folders["tmp_tar"])
         shutil.rmtree(self.folders["tmp_ref"])
         if "tmp_reference" in os.listdir(out_folder):
             shutil.rmtree(new_ref_folder)
-        print("please use the new fasta file to remapping again.")
+        print("Please use the new fasta file to remapping again.")

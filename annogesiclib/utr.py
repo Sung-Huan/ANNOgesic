@@ -20,7 +20,7 @@ class UTRDetection(object):
 
     def _check_folder(self, folder):
         if folder is None:
-            print("Error: lack required files!!!")
+            print("Error: Lack required files!!!")
             sys.exit()
 
     def _check_gff(self, folder):

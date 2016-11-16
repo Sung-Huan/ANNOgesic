@@ -210,7 +210,7 @@ class SNPCalling(object):
         if ("with_BAQ" not in args_snp.program) and (
                 "without_BAQ" not in args_snp.program) and (
                 "extend_BAQ" not in args_snp.program):
-            print("Error:Please assign a correct programs: "
+            print("Error: Please assign a correct programs: "
                   "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\".")
             sys.exit()
         else:

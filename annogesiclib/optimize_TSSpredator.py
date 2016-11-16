@@ -284,7 +284,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
     for lib in args_ops.libs:
         lib_datas = lib.split(":")
         if lib_datas[0].endswith(".wig") is not True:
-            print("Error:Exist a not proper wig files!!")
+            print("Error: Exist a not proper wig files!!")
             sys.exit()
         for wig in os.listdir(wig_folder):
             filename = wig.split("_STRAIN_")
@@ -324,7 +324,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
         print_lib(lib_num, lib_dict["np"], out, wig_folder,
                   "fivePrimePlus", rep_set)
     else:
-        print("Error:the program name is wrong!!")
+        print("Error: The program name is wrong!!")
         sys.exit()
     for num_id in range(1, lib_num+1):
         out.write("genome_%s = %s\n" % (str(num_id), fasta))
@@ -837,7 +837,7 @@ def start_data(current_para, list_num):
 
 def extend_data(out_path, best, best_para, step):
     '''extend the data from previous run'''
-    print("extend step from {0}".format(step))
+    print("Extending step from {0}".format(step))
     print("\t".join(["Best Parameter:height={0}", "height_reduction={1}",
                      "factor={2}", "factor_reduction={3}", "base_height={4}",
                      "enrichment_factor={5}", "processing_factor={6}"]).format(
@@ -910,7 +910,7 @@ def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
     if len(list_num) > 0:
         indexs["extend"] = True
     else:
-        print("Error: the stat.csv has something wrong, "
+        print("Error: stat.csv has something wrong, "
               "please check it or remove it!!!")
         sys.exit()
     new_line = 0

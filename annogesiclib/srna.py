@@ -256,24 +256,24 @@ class sRNADetection(object):
             return database
         print("Error: The nr database or sRNA database is not in fasta "
               "format or the file name is not end with "
-              ".fa or .fna or .fasta!!!")
+              ".fa or .fna or .fasta!")
         sys.exit()
 
     def _check_necessary_file(self, args_srna):
         if (args_srna.gffs is None) or (args_srna.trans is None) or (
                 (args_srna.tex_wigs is None) and (
                 args_srna.frag_wigs is None)):
-            print("Error: lack required files!!!!")
+            print("Error: Lack required files!")
             sys.exit()
         if args_srna.utr_srna:
             if (args_srna.tss_folder is None):
-                print("Error: lack required TSS files for UTR "
-                      "derived sRNA detection!!!!")
+                print("Error: Lack required TSS files for UTR "
+                      "derived sRNA detection!")
                 sys.exit()
             if (args_srna.pro_folder is None):
-                print("Warning: lack Processing site files for UTR "
-                      "derived sRNA detection!!!")
-                print("it may effect the results!!!!")
+                print("Warning: Lack Processing site files for UTR "
+                      "derived sRNA detection!")
+                print("It may effect the results!")
         self._check_gff(args_srna.gffs)
         self._check_gff(args_srna.trans)
         args_srna.nr_database = self._check_database(args_srna.nr_format,
@@ -300,8 +300,8 @@ class sRNADetection(object):
                    args_srna.nr_database is not None) or (
                    args_srna.srna_database is not None):
                 if args_srna.fastas is None:
-                    print("Error: lack required fasta files for UTR "
-                          "derived sRNA detection!!!!")
+                    print("Error: Lack required fasta files for UTR "
+                          "derived sRNA detection!")
                     sys.exit()
                 self.multiparser.parser_fasta(args_srna.fastas)
                 self.multiparser.combine_fasta(args_srna.gffs,
@@ -376,7 +376,7 @@ class sRNADetection(object):
 
     def _merge_srna(self, args_srna, gffs, csvs, prefix,
                     gff_file, tss, tex_datas):
-        print("merging data of sRNA")
+        print("Merging data of sRNA")
         merge_srna_gff(gffs, args_srna.in_cds,
                        args_srna.cutoff_overlap, gff_file)
         merge_srna_table(gffs["merge"], csvs, tex_datas[2], tex_datas[3],
@@ -402,8 +402,8 @@ class sRNADetection(object):
             self.helper.get_seq("_".join([self.prefixs["basic"], prefix]),
                                 os.path.join(fasta_path, fasta), seq_file)
         else:
-            print("Error:There is not fasta file of {0}".format(prefix))
-            print("please check your imported information")
+            print("Error: There is not fasta file of {0}".format(prefix))
+            print("Please check your imported information")
             sys.exit()
         tmp_path = os.path.join(out_folder, "tmp_srna")
         self.helper.check_make_folder(tmp_path)
@@ -439,13 +439,13 @@ class sRNADetection(object):
             if file_.endswith("ss.ps"):
                 dot_file = file_.replace("ss.ps", "dp.ps")
                 rel_file = file_.replace("ss.ps", "rss.ps")
-                print("replot {0}".format(file_))
+                print("Replotting {0}".format(file_))
                 self._run_replot(relplot_pl, tmp_paths, file_,
                                  dot_file, rel_file)
         for file_ in os.listdir(tmp_paths["tmp"]):
             if (file_.endswith("rss.ps")) or (file_.endswith("dp.ps")):
                 pdf_file = file_.replace(".ps", ".pdf")
-                print("convert {0} to pdf".format(file_))
+                print("Converting {0} to pdf".format(file_))
                 self._convert_pdf(ps2pdf14_path, tmp_paths,
                                   file_, pdf_file)
         os.mkdir(os.path.join(tmp_paths["sec"], prefix))
@@ -656,7 +656,7 @@ class sRNADetection(object):
                 self.term_path is not None) or (
                 args_srna.promoter_table is not None):
             for prefix in prefixs:
-                print("classifying sRNA of {0}".format(prefix))
+                print("Classifying sRNA of {0}".format(prefix))
                 class_gff = os.path.join(self.gff_output, "for_class")
                 class_table = os.path.join(self.table_output, "for_class")
                 self.helper.check_make_folder(os.path.join(class_table,

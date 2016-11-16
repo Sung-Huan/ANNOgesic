@@ -119,7 +119,7 @@ class RATT(object):
                 detect_gbk = True
                 gbks.append(os.path.join(ref_embls, embl))
         if not detect_gbk:
-            print("Error: please assign proper folder for Genebank file!!!")
+            print("Error: Please assign proper folder for Genebank file!!!")
             sys.exit()
         elif detect_gbk:
             out_gbk = self._parser_embl_gbk(gbks)

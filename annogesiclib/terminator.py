@@ -92,7 +92,7 @@ class Terminator(object):
                 fasta = self.helper.get_correct_file(
                              fasta_path, ".fa", prefix, None, None)
                 if not fasta:
-                    print("Error: no proper file - {0}.fa".format(prefix))
+                    print("Error: No proper file - {0}.fa".format(prefix))
                     sys.exit()
                 if sRNAs:
                     self.multiparser.parser_gff(sRNAs, "sRNA")
@@ -146,7 +146,7 @@ class Terminator(object):
                 fasta = self.helper.get_correct_file(
                              self.fasta_path, ".fa", prefix, None, None)
                 if not fasta:
-                    print("Error: no proper file - {0}.fa".format(prefix))
+                    print("Error: No proper file - {0}.fa".format(prefix))
                     sys.exit()
                 out_path = os.path.join(args_term.hp_folder, prefix)
                 self.helper.check_make_folder(out_path)
@@ -196,7 +196,7 @@ class Terminator(object):
         elif (args_term.frag_wigs is not None):
             merge_wigs = args_term.frag_wigs
         else:
-            print("Error: no proper wig files!!!")
+            print("Error: No proper wig files!!!")
             sys.exit()
         return merge_wigs
 
@@ -291,7 +291,7 @@ class Terminator(object):
             tmp_cand = os.path.join(args_term.out_folder,
                                     "_".join(["term_candidates", prefix]))
             poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)
-            print("detection of terminator")
+            print("Detecting terminator")
             detect_coverage(
                 tmp_cand, os.path.join(merge_path, prefix + ".gff"),
                 os.path.join(self.tran_path, "_".join([
@@ -421,7 +421,7 @@ class Terminator(object):
         self._check_gff_file(args_term.trans)
         self.multiparser.parser_fasta(args_term.fastas)
         if (not args_term.gffs) or (not args_term.fastas):
-            print("Error: please assign gff annotation folder "
+            print("Error: Please assign gff annotation folder "
                   "and fasta folder!!!")
             sys.exit()
         file_types, prefixs = self._convert_gff2rntptt(

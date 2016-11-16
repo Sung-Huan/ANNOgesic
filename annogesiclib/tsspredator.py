@@ -78,7 +78,7 @@ class TSSpredator(object):
         for lib in libs:
             lib_datas = lib.split(":")
             if not lib_datas[0].endswith(".wig"):
-                print("Error:Exist a not proper wig files!!")
+                print("Error: Exist a not proper wig files!!")
                 sys.exit()
             for wig in os.listdir(wig_folder):
                 filename = wig.split("_STRAIN_")
@@ -214,7 +214,7 @@ class TSSpredator(object):
             out_path = os.path.join(self.master, "_".join([
                            "MasterTable", prefix]))
             if "MasterTable.tsv" not in os.listdir(out_path):
-                print("Error:there is not MasterTable file in {0}".format(
+                print("Error: There is not MasterTable file in {0}".format(
                       out_path))
                 print("Please check configuration file.")
             else:
@@ -238,7 +238,7 @@ class TSSpredator(object):
                     break
             filename = "_".join([tss, args_tss.program]) + ".gff"
             predict = os.path.join(self.gff_outfolder, filename)
-            print("Running merge and classify manual")
+            print("Merging and classiflying manual")
             stat_file = "stat_compare_TSSpredator_manual_{0}.csv".format(tss)
             merge_manual_predict_tss(
                 predict, stat_file,

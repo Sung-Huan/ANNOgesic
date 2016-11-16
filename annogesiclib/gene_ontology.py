@@ -295,7 +295,7 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     initiate_dict(classes, total_nums, "All_strain")
     pre_strain = ""
     g_h = open(go_table, "r")
-    print("load go table")
+    print("Loading go table")
     for row in csv.reader(g_h, delimiter="\t"):
         if row[0] != "strain":
             if row[0] != pre_strain:
@@ -304,11 +304,11 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
             go_terms = row[-1].split("; ")
             gos[row[0]]["\t".join(row[1:4])] = go_terms
             pre_strain = row[0]
-    print("load obo file")
+    print("Loading obo file")
     term_obos = import_obo(term_file)
     slim_obos = import_obo(slim_file)
-    print("start mapping")
+    print("Starting mapping")
     compare_go_slim(gos, term_obos, slim_obos, classes, total_nums)
-    print("statistics and ploting...")
+    print("Doing statistics and ploting")
     print_file(classes, total_nums, out_folder, stat)
     g_h.close()

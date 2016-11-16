@@ -152,7 +152,7 @@ class TranscriptAssembly(object):
         '''merge the results of fragemented and tex treated libs'''
         if (args_tran.frag_wigs is not None) and (
                 args_tran.tex_wigs is not None):
-            print("merging fragment and tex treat one")
+            print("Merging fragment and tex treat one")
             for strain in strains:
                 frag_gff = os.path.join(self.gff_outfolder,
                                         "_".join([strain, self.frag]))
@@ -241,7 +241,7 @@ class TranscriptAssembly(object):
     def _compare_term_tran(self, args_tran):
         '''searching the associated terminator to transcript'''
         if args_tran.terms is not None:
-            print("comparing between terminators and transcripts")
+            print("Comparing between terminators and transcripts")
             self.multiparser.parser_gff(args_tran.terms, "term")
             self.multiparser.combine_gff(
                     args_tran.gffs,
@@ -254,7 +254,7 @@ class TranscriptAssembly(object):
 
     def run_transcript_assembly(self, args_tran):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
-            print("Error: there is no wigs files!!!!\n")
+            print("Error: There is no wigs files!!!!\n")
             sys.exit()
         if args_tran.frag_wigs is not None:
             strains = self._for_one_wig("fragment", args_tran)

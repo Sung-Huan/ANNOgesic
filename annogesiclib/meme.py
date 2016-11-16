@@ -154,7 +154,6 @@ class MEME(object):
 
     def _run_program(self, prefixs, args_pro):
         for prefix in prefixs:
-            print(prefix)
             input_path = os.path.join(self.out_fasta, prefix)
             out_path = os.path.join(args_pro.output_folder, prefix)
             for fasta in os.listdir(input_path):
@@ -195,7 +194,7 @@ class MEME(object):
                         fasta.endswith(".fasta")):
                     self.helper.merge_file(os.path.join(
                          args_pro.fastas, fasta), self.all_fasta)
-        print("generating fasta file of all fasta files")
+        print("Generating fasta file of all fasta files")
         prefixs.append("allfasta")
         input_path = os.path.join(self.out_fasta, "allfasta")
         self.helper.check_make_folder(os.path.join(
@@ -234,7 +233,7 @@ class MEME(object):
     def _get_upstream(self, args_pro, prefix, tss, fasta):
         '''get upstream sequence of TSS'''
         if args_pro.source:
-            print("generating fasta file of {0}".format(prefix))
+            print("Generating fasta file of {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
                      None, None, args_pro, prefix)
@@ -242,13 +241,13 @@ class MEME(object):
             if (args_pro.gffs is None) or (
                     args_pro.tex_wigs is None) or (
                     args_pro.input_libs is None):
-                print("Error:please assign proper annotation, tex +/- "
+                print("Error: Please assign proper annotation, tex +/- "
                       "wig folder and tex treated libs!!!")
                 sys.exit()
             if "TSS_class" not in os.listdir(args_pro.output_folder):
                 os.mkdir(os.path.join(args_pro.output_folder, "TSS_class"))
             
-            print("classifying TSS and extracting fasta {0}".format(prefix))
+            print("Classifying TSS and extracting fasta {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
                      os.path.join(self.gff_path, prefix + ".gff"),

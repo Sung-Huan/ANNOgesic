@@ -41,15 +41,6 @@ def detect_hight_toler(cover, height, tmp_covers, tracks, lib_track):
             tmp_covers["toler"] = cover
 
 
-#def get_repmatch(replicates, cond):
-#    if "all" in replicates:
-#        rep = int(replicates.split("_")[-1])
-#    else:
-#        for match in replicates.split(","):
-#            if cond.split("_")[0] == match.split("_")[0]:
-#                rep = int(match.split("_")[-1])
-#    return rep
-
 def elongation(lib_conds, template_texs, libs, strand, trans,
                args_tran, strain, tolers):
     '''check coverage and replicate match to form transcript'''
