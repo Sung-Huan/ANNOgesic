@@ -1,4 +1,5 @@
 import os
+import sys
 import csv
 import shutil
 from annogesiclib.seq_editer import SeqEditer
@@ -202,19 +203,25 @@ class Multiparser(object):
         first = True
         out = None
         out_t = None
+        detect = False
         for fasta in os.listdir(fastas):
-            if (fasta.endswith("fasta") or
-                    fasta.endswith("fa") or
-                    fasta.endswith("fna")):
+            if (fasta.endswith(".fasta") or
+                    fasta.endswith(".fa") or
+                    fasta.endswith(".fna")):
+                detect = True
                 self.seq_editer.modify_header(os.path.join(fastas, fasta))
         self.helper.check_make_folder(par_tmp)
+        if not detect:
+            print("Error: there are folders which conatin no fasta files! "
+                  "The files should end with .fa or .fna or .fasta!")
+            sys.exit()
         for fasta in os.listdir(fastas):
             if ("_folder" not in fasta) and ("tmp" != fasta):
                 if (fasta.endswith(".fa")) or \
                    (fasta.endswith(".fna")) or \
                    (fasta.endswith(".fasta")):
                     out_path = os.path.join(fastas, fasta + "_folder")
-                    print("Parsing " + fasta + "...")
+                    print("Parsing " + fasta)
                     self.helper.check_make_folder(out_path)
                     with open(os.path.join(fastas, fasta), "r") as f_f:
                         for line in f_f:
@@ -249,6 +256,7 @@ class Multiparser(object):
         out = None
         out_t = None
         first = True
+        detect = False
         if feature is None:
             feature = ""
         else:
@@ -259,7 +267,8 @@ class Multiparser(object):
             if ("_folder" not in filename) and ("tmp" != filename):
                 out_path = os.path.join(gff_folder, filename + "_folder")
                 if ".gff" in filename:
-                    print("Parsing " + filename + "...")
+                    detect = True
+                    print("Parsing " + filename)
                     self.helper.check_make_folder(out_path)
                     self.helper.sort_gff(os.path.join(gff_folder, filename),
                                          os.path.join(gff_folder, "tmp.gff"))
@@ -285,6 +294,10 @@ class Multiparser(object):
                                 out.write("\t".join(row) + "\n")
                                 out_t.write("\t".join(row) + "\n")
                     f_h.close()
+        if not detect:
+            print("Error: There are folders which contain no gff3 files! "
+                  "The files should end with .gff!")
+            sys.exit()
         if os.path.exists(os.path.join(gff_folder, "tmp.gff")):
             os.remove(os.path.join(gff_folder, "tmp.gff"))
         out.close()
@@ -296,13 +309,15 @@ class Multiparser(object):
         first = True
         out = None
         out_t = None
+        detect = False
         self.helper.check_make_folder(par_tmp)
         for filename in os.listdir(wig_folder):
             track_info = ""
             if ("_folder" not in filename) and ("tmp" != filename):
                 out_path = os.path.join(wig_folder, filename + "_folder")
                 if ".wig" in filename:
-                    print("Parsing {0}...".format(filename))
+                    detect = True
+                    print("Parsing {0}".format(filename))
                     self.helper.check_make_folder(out_path)
                     with open(os.path.join(wig_folder, filename), "r") as w_f:
                         for line in w_f:
@@ -332,5 +347,9 @@ class Multiparser(object):
                                     line[0] != "variableStep"):
                                 out.write(" ".join(line))
                                 out_t.write(" ".join(line))
+        if not detect:
+            print("Error: There are folders which contain no wig files! "
+                  "The files should end with .wig!")
+            sys.exit()
         out.close()
         out_t.close()

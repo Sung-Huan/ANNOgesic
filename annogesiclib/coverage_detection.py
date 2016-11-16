@@ -29,10 +29,14 @@ def coverage_comparison(cover, cover_sets, poss, first, strand, cover_pos):
 
 def get_repmatch(replicates, cond):
     '''deal with the replicate match'''
-    if "all" in replicates:
-        rep = int(replicates.split("_")[-1])
-    else:
-        for match in replicates.split(","):
+    detect_all = False
+    for rep in replicates:
+        if "all" in rep:
+            detect_all = True
+            rep = int(rep.split("_")[-1])
+            break
+    if not detect_all:
+        for match in replicates:
             if cond.split("_")[0] == match.split("_")[0]:
                 rep = int(match.split("_")[-1])
     return rep

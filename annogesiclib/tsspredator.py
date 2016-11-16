@@ -74,7 +74,7 @@ class TSSpredator(object):
         lib_num = 0
         rep_set = set()
         list_num_id = []
-        print("Runniun {0} now...".format(program))
+        print("Running {0} now".format(program))
         for lib in libs:
             lib_datas = lib.split(":")
             if not lib_datas[0].endswith(".wig"):
@@ -120,13 +120,17 @@ class TSSpredator(object):
 
     def _print_repmatch(self, args_tss, out):
         '''check replicate match'''
-        if "all" in args_tss.repmatch:
-            match = args_tss.repmatch.split("_")[-1]
-            out.write("minNumRepMatches = {0}\n".format(match))
-        else:
+        detect_all = False
+        for rep in args_tss.repmatch:
+            if "all" in rep:
+                detect_all = True
+                match = rep.split("_")[-1]
+                out.write("minNumRepMatches = {0}\n".format(match))
+                break
+        if not detect_all:
             nums = {}
             matchs = {}
-            for match in args_tss.repmatch.split(","):
+            for match in args_tss.repmatch:
                 lib = match.split("_")[0]
                 rep = match.split("_")[-1]
                 matchs[lib] = rep
@@ -234,7 +238,7 @@ class TSSpredator(object):
                     break
             filename = "_".join([tss, args_tss.program]) + ".gff"
             predict = os.path.join(self.gff_outfolder, filename)
-            print("Running merge and classify manual ....")
+            print("Running merge and classify manual")
             stat_file = "stat_compare_TSSpredator_manual_{0}.csv".format(tss)
             merge_manual_predict_tss(
                 predict, stat_file,
@@ -248,7 +252,7 @@ class TSSpredator(object):
 
     def _validate(self, tsss, args_tss):
         '''validate TSS with genome annotation'''
-        print("Running validation of annotation....")
+        print("Running validation of annotation")
         for tss in tsss:
             for gff in os.listdir(args_tss.gffs):
                 if (gff[:-4] == tss) and (".gff" in gff):
@@ -271,7 +275,7 @@ class TSSpredator(object):
     def _compare_ta(self, tsss, args_tss):
         '''compare TSS with transcript'''
         detect = False
-        print("Running compare transcript assembly and TSS ...")
+        print("Running compare transcript assembly and TSS")
         self.multiparser.parser_gff(args_tss.ta_files, "transcript")
         self.multiparser.combine_gff(args_tss.gffs, self.tmps["ta"],
                                      None, "transcript")
@@ -299,7 +303,7 @@ class TSSpredator(object):
                 detect = False
 
     def _stat_tss(self, tsss, feature):
-        print("Running statistaics.....")
+        print("Running statistaics")
         for tss in tsss:
             compare_file = os.path.join(self.gff_outfolder,
                                         "_".join([tss, feature]) + ".gff")
@@ -379,15 +383,17 @@ class TSSpredator(object):
         shutil.rmtree("tmp")
 
     def _remove_files(self, args_tss):
-        print("Remove temperary files and folders...")
-        self.helper.remove_tmp(args_tss.fastas)
-        self.helper.remove_tmp(args_tss.gffs)
-        self.helper.remove_tmp(args_tss.wig_folder)
-        self.helper.remove_tmp(args_tss.ta_files)
+        print("Remove temperary files and folders")
+        self.helper.remove_tmp_dir(args_tss.fastas)
+        self.helper.remove_tmp_dir(args_tss.gffs)
+        self.helper.remove_tmp_dir(args_tss.ta_files)
         if "merge_forward.wig" in os.listdir(os.getcwd()):
             os.remove("merge_forward.wig")
         if "merge_reverse.wig" in os.listdir(os.getcwd()):
             os.remove("merge_reverse.wig")
+        shutil.rmtree(args_tss.wig_folder)
+        if args_tss.manual is not None:
+            os.remove(args_tss.manual)
 
     def _deal_with_overlap(self, out_folder, args_tss):
         '''deal with the situation that TSS and 
@@ -395,7 +401,7 @@ class TSSpredator(object):
         if args_tss.overlap_feature.lower() == "both":
             pass
         else:
-            print("Comparing TSS and Processing site...")
+            print("Comparing TSS and Processing site")
             if args_tss.program.lower() == "tss":
                 for tss in os.listdir(out_folder):
                     if tss.endswith("_TSS.gff"):
@@ -468,7 +474,7 @@ class TSSpredator(object):
             args_tss.program = "processing"
         self._convert_gff(prefixs, args_tss)
         if args_tss.check_orphan:
-            print("checking the orphan TSS...")
+            print("checking the orphan TSS")
             self._check_orphan(prefixs,
                                os.path.join(args_tss.wig_folder, "tmp"),
                                args_tss)

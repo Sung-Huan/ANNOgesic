@@ -23,6 +23,9 @@ class Mock_helper(object):
     def remove_tmp(self, wigs):
         pass
 
+    def remove_tmp_dir(self, folder):
+        pass
+
 
 class Mock_multiparser(object):
 
@@ -95,9 +98,6 @@ class TestOptimizeTSS(unittest.TestCase):
         args.replicate = 2
         args.steps = 2000
         opt.optimize_tss(args)
-#        opt.optimize_tss("test", self.fastas, self.gffs, self.wigs, "test", self.test_folder,
-#                         "test", 9, 9, 9, 9, 9, 9, 9, 200, "test", "test", 3,
-#                         100, 4, "TSS", "test", 5000)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test.csv")))
 
 if __name__ == "__main__":

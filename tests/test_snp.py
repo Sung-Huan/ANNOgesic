@@ -62,14 +62,6 @@ class TestSNPCalling(unittest.TestCase):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
 
-    def test_import_bam(self):
-        gen_file(os.path.join(self.test_folder, "test_1.bam"), "test")
-        gen_file(os.path.join(self.test_folder, "test_2.bam"), "test")
-        bams = []
-        num_bams = self.snp._import_bam(self.test_folder, bams)
-        self.assertEqual(num_bams, 2)
-        self.assertListEqual(bams, ['test_folder/test_1.bam', 'test_folder/test_2.bam'])
-
     def test_transcript_snp(self):
         fasta = os.path.join(self.test_folder, "NC_007795.1.fa")
         gen_file(fasta, self.example.fasta)
@@ -114,7 +106,7 @@ class TestSNPCalling(unittest.TestCase):
     def test_run_program(self):
         self.snp._run_sub = self.mock.mock_run_sub
         args = self.mock_args.mock()
-        args.program = ["1"]
+        args.program = ["with_BAQ"]
         self.snp._run_program("fasta", "test", "test", 10,
                               "table", args)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test")))
@@ -133,9 +125,10 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(os.path.join(args.normal_bams, "tex.bam"), "test")
         gen_file(os.path.join(args.normal_bams, "notex.bam"), "test")
         gen_file(os.path.join(args.frag_bams, "farg.bam"), "test")
+        args.bams = [args.frag_bams, args.normal_bams]
         args.samtools_path = "test"
         num = self.snp._merge_bams(args)
-        self.assertEqual(num, 3)
+        self.assertEqual(num, 2)
 
     def test_modify_header(self):
         gen_file(os.path.join(self.fasta, "test.fa"), ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
@@ -162,7 +155,9 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(os.path.join(self.test_folder, "whole_reads_sorted.bam"), "test")
         args = self.mock_args.mock()
         args.types = "reference"
-        args.program = ["1"]
+        args.program = ["with_BAQ"]
+        args.bams = [os.path.join(self.test_folder, "frag_bams"),
+                     os.path.join(self.test_folder, "tex_bams")]
         args.frag_bams = os.path.join(self.test_folder, "frag_bams")
         args.normal_bams = os.path.join(self.test_folder, "tex_bams")
         os.mkdir(args.normal_bams)

@@ -88,9 +88,11 @@ class TestCheckOrphan(unittest.TestCase):
                      "end": 22, "phase": ".", "strand": "+", "score": "."},
                     {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 122,
                      "end": 122, "phase": ".", "strand": "-", "score": "."}]
-        attributes = [{"type": "Primary", "ID": "tss0", "Name": "TSS:2_+", "UTR_length": "Primary_100",
+        attributes = [{"type": "Primary", "ID": "tss0", "Name": "TSS:2_+",
+                       "UTR_length": "Primary_100",
                        "associated_gene": "AAA_00001"},
-                      {"type": "Primary&Primary", "ID": "tss1", "Name": "TSS:22_+", "UTR_length": "Primary_20&Primary_50",
+                      {"type": "Primary&Primary", "ID": "tss1", "Name": "TSS:22_+",
+                       "UTR_length": "Primary_20&Primary_50",
                        "associated_gene": "AAA_00004&AAA_00005"},
                        {"type": "Secondary&Internal", "ID": "tss2", "Name": "TSS:122_-",
                         "UTR_length": "Secondary_220&Internal_NA",

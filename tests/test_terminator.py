@@ -152,7 +152,7 @@ class TestTerminator(unittest.TestCase):
         args.hp_folder = self.out
         args.gffs = self.gffs
         self.term._convert_to_gff(["aaa"], args)
-        datas = import_data("/home/silas/ANNOgesic/tmp_transterm/aaa_transtermhp.gff")
+        datas = import_data(os.getcwd() + "/tmp_transterm/aaa_transtermhp.gff")
         self.assertEqual("\n".join(datas), self.example.gff_bag)
 
     def test_merge_sRNA(self):

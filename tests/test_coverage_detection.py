@@ -105,7 +105,7 @@ class TestCoverageDetection(unittest.TestCase):
                   "frag": {"median": 80, "mean": 100}}
         texs = {"track1_tex@AND@track1_notex": 0, "track2_tex@AND@track2_notex": 0}
         args = self.mock_args.mock()
-        args.replicates = {"tex": "all_2", "frag": "all_1"}
+        args.replicates = {"tex": ["all_2"], "frag": ["all_1"]}
         args.tex_notex = 2
         srna_datas = cover_detect.replicate_comparison(args, srna_covers, "+",
                      "sRNA_utr_derived", median,

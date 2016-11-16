@@ -33,8 +33,10 @@ class TestColorPng(unittest.TestCase):
             os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa"))
             os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa", "forward"))
             os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa", "reverse"))
-        gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "forward", "test_f.png"), "None")
-        gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "reverse", "test_r.png"), "None")
+        gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "forward",
+                              "test_f.png"), "None")
+        gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "reverse",
+                              "test_r.png"), "None")
         self.color = ColorPNG()
 
     def tearDown(self):
@@ -46,7 +48,8 @@ class TestColorPng(unittest.TestCase):
         self.color._convert_png = self.mock.mock_convert_png
         self.color.gen_svg = self.mock.mock_gen_svg
         self.color.generate_color_png(4, self.test_folder, "test")
-        data = import_data(os.path.join(self.test_folder, "screenshots", "aaa", "forward", "test_f.png"))
+        data = import_data(os.path.join(self.test_folder, "screenshots", "aaa",
+                                        "forward", "test_f.png"))
         self.assertListEqual(data, ["test"])
 
 if __name__ == "__main__":

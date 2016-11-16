@@ -372,7 +372,9 @@ class Converter(object):
         out = open(out_gff, "w")
         out.write("##gff-version 3\n")
         tss_libs = self._get_libs(tss_file)
+        detect_run = False
         for tss in self.tssparser.entries(tss_fh):
+            detect_run = True
             key = "_".join([str(tss.super_pos), tss.super_strand])
             if ((tss.super_pos == temps["tss"])) and (
                     temps["strand"] == tss.super_strand) and (
@@ -403,7 +405,7 @@ class Converter(object):
                         nums["tss_uni"] += 1
                     tss_features = {"tss_types": [], "locus_tags": [],
                                     "utr_lengths": []}
-        if (check_print is False):
+        if (check_print is False) and detect_run:
             self._print_tssfile(nums, tss_features, tss, tss_pro,
                                 strain, method, out, tss_libs[key])
         tss_fh.close()
@@ -506,7 +508,7 @@ class Converter(object):
 
     def convert_gbk2embl(self, input_folder):
         """Convert gbk to embl."""
-        print("Convert gbk to embl...")
+        print("Converting gbk to embl")
         for annotation_file in os.listdir(input_folder):
             if annotation_file[-3:] == "gbk":
                 gbk_file = annotation_file

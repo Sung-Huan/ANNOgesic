@@ -8,12 +8,15 @@ import sys
 sys.path.append(".")
 from io import StringIO
 from annogesiclib.get_target_fasta import TargetFasta
+from mock_helper import gen_file
 
 
 class Mock_multiparser(object):
 
     def parser_fasta(folder):
-        tmp_folder = os.path.join(folder, "tmp")
+        if not isinstance(folder, str):
+            folder = "a_test_project/ref"
+        tmp_folder = os.path.join(folder ,"tmp")
         os.mkdir(tmp_folder)
         fasta_file1 = """>aaa
 CGCAGGTTGAGTTCCTGTTCCCGATAGATCCGATAAACCCGCTTATGATTCCAGAGCTGTCCCTGCACAT
@@ -37,6 +40,7 @@ GCCGCTTCATTTTTTTCCAAGGGCTTCCTTCAGGATATCCGTCTGCATGCTCAAATCCGCATACATGCGC"""
 class Mock_seq_editer(object):
 
     def modify_seq(ref, mut_table, tar):
+        Mock_multiparser().parser_fasta()
         shutil.copyfile("a_test_project/ref/tmp/aaa.fa", os.path.join(tar, "aaa.fa"))
         shutil.copyfile("a_test_project/ref/tmp/bbb.fa", os.path.join(tar, "bbb.fa"))
 
@@ -44,6 +48,13 @@ class Mock_helper(object):
 
     def remove_all_content(file_, type_, folder):
         pass
+
+    def check_make_folder(folder):
+        path = "/".join(folder.split("/")[:-1])
+        folder = folder.split("/")[-1]
+        if folder in os.listdir(path):
+            shutil.rmtree(os.path.join(path, folder))
+        os.mkdir(os.path.join(path, folder))
         
 
 class TestTargetFasta(unittest.TestCase):
@@ -68,10 +79,12 @@ class TestTargetFasta(unittest.TestCase):
             shutil.rmtree(self.root_folder)
 
     def test_get_target_fasta(self):
+        gen_file("a_test_project/ref/ddd.fa", "test")
         self.target_fasta.get_target_fasta(None,
                                            self.tar_folder,
-                                           self.ref_folder,
-                                           ["ccc:aaa,bbb"])
+                                           ["a_test_project/ref/ddd.fa"],
+                                           ["a_test_project/tar/ccc.fa:aaa"],
+                                           self.root_folder)
         self.assertTrue(os.path.exists(os.path.join(self.tar_folder, "ccc.fa")))
 
 class ExampleData(object):

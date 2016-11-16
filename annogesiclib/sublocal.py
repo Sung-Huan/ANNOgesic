@@ -129,7 +129,7 @@ class SubLocal(object):
     def _extract_result(self, args_sub, tmp_psortb_path, prefix, gff_file):
         '''extract the result of psortb'''
         if args_sub.merge:
-            print("Merge to gff...")
+            print("Merge to gff")
             extract_psortb(os.path.join(
                 tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
                 os.path.join(tmp_psortb_path, "_".join([
@@ -171,14 +171,15 @@ class SubLocal(object):
                                       "stat", prefix, "sublocal.csv"])))
 
     def _remove_tmps(self, args_sub):
-        self.helper.remove_tmp(args_sub.fastas)
-        self.helper.remove_tmp(args_sub.gffs)
+        self.helper.remove_tmp_dir(args_sub.fastas)
+        self.helper.remove_tmp_dir(args_sub.gffs)
         self.helper.remove_all_content(args_sub.out_folder, "tmp", "dir")
         self.helper.remove_all_content(self.out_all, "tmp", "dir")
         self.helper.remove_all_content(self.out_express, "tmp", "dir")
         os.remove(os.path.join(self.out_all, "tmp_log"))
         if args_sub.trans is not None:
             os.remove(os.path.join(self.out_express, "tmp_log"))
+            self.helper.remove_tmp_dir(args_sub.trans)
 
     def run_sub_local(self, args_sub):
         for gff in os.listdir(args_sub.gffs):
@@ -195,7 +196,7 @@ class SubLocal(object):
         self.helper.check_make_folder(self.all_tmp_result)
         for gff in os.listdir(self.gff_path):
             if args_sub.trans is not None:
-                print("Running expressed gene now...")
+                print("Running expressed gene now")
                 prefix = self._get_protein_seq(gff, self.express_tmp_path,
                                                self.tran_path)
                 self._run_psortb(args_sub, prefix, self.out_express,
@@ -203,7 +204,7 @@ class SubLocal(object):
                                  self.express_tmp_result)
                 self._extract_result(args_sub, self.express_tmp_result, prefix,
                                      os.path.join(self.gff_path, gff))
-            print("Running all gene now...")
+            print("Running all gene now")
             prefix = self._get_protein_seq(gff, self.all_tmp_path, None)
             self._run_psortb(args_sub, prefix, self.out_all,
                              self.all_tmp_path, self.all_tmp_result)

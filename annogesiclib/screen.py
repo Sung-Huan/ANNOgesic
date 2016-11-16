@@ -1,6 +1,5 @@
 import os
 import sys
-from annogesiclib.multiparser import Multiparser
 from annogesiclib.gen_screenshots import gen_screenshot
 from annogesiclib.helper import Helper
 
@@ -9,7 +8,6 @@ class Screen(object):
     '''generation of screenshot'''
 
     def __init__(self, args_sc):
-        self.multiparser = Multiparser()
         self.helper = Helper()
         out_folder = os.path.join(args_sc.output_folder, "screenshots")
         if os.path.exists(out_folder):
@@ -30,7 +28,7 @@ class Screen(object):
         os.mkdir(self.forward_file)
         os.mkdir(self.reverse_file)
 
-    def _import_libs(self, texs, strand, wig_path, lib_dict):
+    def _import_libs(self, texs, strand, lib_dict):
         if strand == "+":
             tex = "ft"
             notex = "fn"
@@ -39,12 +37,12 @@ class Screen(object):
             notex = "rn"
         for flib in texs:
             if (flib[1] == "tex"):
-                lib_dict[tex].append(os.path.join(wig_path, flib[0]))
+                lib_dict[tex].append(flib[0])
                 for nlib in texs:
                     if (nlib[1] == "notex") and \
                        (flib[2] == nlib[2]) and \
                        (flib[3] == nlib[3]):
-                        lib_dict[notex].append(os.path.join(wig_path, nlib[0]))
+                        lib_dict[notex].append(nlib[0])
 
     def screenshot(self, args_sc):
         lib_dict = {"ft": [], "fn": [], "rt": [], "rn": [], "ff": [], "rf": []}
@@ -63,8 +61,8 @@ class Screen(object):
                         r_texs.append(lib_datas)
             f_texs = sorted(f_texs, key=lambda x: (x[1], x[2], x[3]))
             r_texs = sorted(r_texs, key=lambda x: (x[1], x[2], x[3]))
-            self._import_libs(f_texs, "+", args_sc.tex_wigs, lib_dict)
-            self._import_libs(r_texs, "-", args_sc.tex_wigs, lib_dict)
+            self._import_libs(f_texs, "+", lib_dict)
+            self._import_libs(r_texs, "-", lib_dict)
         if args_sc.flibs is not None:
             for lib in args_sc.flibs:
                 lib_datas = lib.split(":")
@@ -73,11 +71,9 @@ class Screen(object):
                     sys.exit()
                 else:
                     if lib_datas[-1] == "+":
-                        lib_dict["ff"].append(os.path.join(
-                                       args_sc.frag_wigs, lib_datas[0]))
+                        lib_dict["ff"].append(lib_datas[0])
                     else:
-                        lib_dict["rf"].append(os.path.join(
-                                       args_sc.frag_wigs, lib_datas[0]))
+                        lib_dict["rf"].append(lib_datas[0])
         gen_screenshot(args_sc, lib_dict, self.forward_file + ".txt",
                        self.reverse_file + ".txt", self.strain)
         if (args_sc.tlibs is None) and (args_sc.flibs is None):

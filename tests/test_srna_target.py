@@ -88,7 +88,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         srna_out = os.path.join(self.test_folder, "out")
         gen_file(srna_file, self.example.srna_file)
         gen_file(seq_file, self.example.seq_file)
-        self.star._get_specific_seq(srna_file, seq_file, srna_out, ["aaa:+:5:8"])
+        self.star._get_specific_seq(srna_file, seq_file, srna_out, ["aaa:5:8:+"])
         datas = import_data(srna_out)
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
 
@@ -103,7 +103,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         gen_file(os.path.join(self.fastas, "tmp", "aaa.fa"), self.example.seq_file)
         gen_file(os.path.join(self.gffs, "tmp", "aaa.gff"), self.example.gff_file)
         args = self.mock_args.mock()
-        args.query = ["aaa:+:5:8"]
+        args.query = ["aaa:5:8:+"]
         args.features = ["CDS"]
         args.tar_start = 3
         args.tar_end = 5
@@ -126,6 +126,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.span_s = 5
         args.span_t = 5
         args.unstr_region_rnaplex_s = 5
+        args.rnaplfold_path = None
         args.unstr_region_rnaplex_t = 5
         self.star._rna_plex(["test"], args)
         datas = import_data("test_folder/test/test_RNAplex.txt")

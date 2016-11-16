@@ -16,8 +16,8 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_run_infernal(self, e_value,
-                          seq, type_, prefix, test1, test2, test3):
+    def mock_run_cmscan(self, e_value,
+                        seq, type_, prefix, test1, test2, test3):
         suffixs = {"csv": "test.csv",
                    "txt": "test_prescan.txt",
                    "re_txt": "test_scan.txt",
@@ -100,7 +100,7 @@ class TestRibos(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_scan_extract_rfam(self):
-        self.ribo._run_infernal = self.mock.mock_run_infernal
+        self.ribo._run_cmscan = self.mock.mock_run_cmscan
         rb.modify_table = self.mock.mock_modify_table
         rb.regenerate_seq = self.mock.mock_regenerate_seq
         rb.reextract_rbs = self.mock.mock_reextract_rbs

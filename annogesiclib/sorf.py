@@ -103,13 +103,15 @@ class sORFDetection(object):
 
     def _remove_tmp(self, args_sorf):
         self.helper.remove_all_content(args_sorf.out_folder, ".gff", "file")
-        self.helper.remove_tmp(args_sorf.fastas)
-        self.helper.remove_tmp(args_sorf.gffs)
-        self.helper.remove_tmp(args_sorf.tsss)
-        self.helper.remove_tmp(args_sorf.trans)
-        self.helper.remove_tmp(args_sorf.srnas)
-        self.helper.remove_wigs(args_sorf.tex_wigs)
-        self.helper.remove_wigs(args_sorf.frag_wigs)
+        self.helper.remove_tmp_dir(args_sorf.fastas)
+        self.helper.remove_tmp_dir(args_sorf.gffs)
+        self.helper.remove_tmp_dir(args_sorf.tsss)
+        self.helper.remove_tmp_dir(args_sorf.trans)
+        self.helper.remove_tmp_dir(args_sorf.srnas)
+        if "temp_wig" in os.listdir(args_sorf.out_folder):
+            shutil.rmtree(os.path.join(args_sorf.out_folder, "temp_wig"))
+        if "merge_wigs" in os.listdir(args_sorf.out_folder):
+            shutil.rmtree(os.path.join(args_sorf.out_folder, "merge_wigs"))
 
     def _compare_tran_cds(self, args_sorf):
         '''compare transcript and CDS to find the intergenic region'''

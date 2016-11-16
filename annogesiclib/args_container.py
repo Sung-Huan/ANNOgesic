@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+from glob import glob
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 
@@ -10,6 +11,18 @@ class ArgsContainer(object):
     def __init__(self):
         self.multiparser = Multiparser()
         self.helper = Helper()
+
+    def _create_working_wigs(self, out_folder, libs, wig_folder):
+        new_libs = []
+        if libs is not None:
+            self.helper.check_make_folder(wig_folder)
+            for lib in libs:
+                shutil.copy(lib.split(":")[0], wig_folder)
+                wig = lib.split(":")[0].split("/")[-1]
+                new_libs.append(":".join([wig, ":".join(lib.split(":")[1:])]))
+        else:
+            new_libs = None
+        return new_libs
 
     def _check_replicates(self, replicates_tex, replicates_frag):
         '''Check the replicate of frag and tex libs'''
@@ -21,9 +34,89 @@ class ArgsContainer(object):
         elif replicates_frag is not None:
             replicates = {"tex": -1, "frag": replicates_frag}
         else:
-            print("Error:No replicates number assign!!!")
+            print("Error: No replicates number assign!")
             sys.exit()
+        if replicates["tex"] != -1:
+            for rep in replicates["tex"]:
+                if ("_" not in rep):
+                    print("Error: Please check the input format of replicate_tex! "
+                          "It should also contain condition name.")
+                    sys.exit()
+        if replicates["frag"] != -1:
+            for rep in replicates["frag"]:
+                if ("_" not in rep):
+                    print("Error: Please check the input format of replicate_frag! "
+                          "It should also contain condition name.")
+                    sys.exit()
         return replicates
+
+    def _check_assign_info(self, infos, file_type, wig_type):
+        if file_type == "cond":
+            index = 1
+        elif file_type == "rep":
+            index = 97
+        for info, num in sorted(infos.items()):
+            if (file_type == "cond") or (file_type == "rep"):
+                if file_type == "cond":
+                    if info != index:
+                        print("Error: The condition number and order "
+                              "of --tex_notex_libs should follow 1, 2, 3.")
+                        sys.exit()
+                elif file_type == "rep":
+                    if ord(info) != index:
+                        print("Error: The replicate index and order "
+                              "of --tex_notex_libs should follow a, b, c.")
+                        sys.exit()
+                if (wig_type == "tex") and (num % 4 != 0):
+                    print("Error: The --tex_notex_libs was assinged incorrectly. "
+                          "Please check it again.")
+                    sys.exit()
+                elif (wig_type == "frag") and (num % 2 != 0):
+                    print("Error: The --frag_libs was assinged incorrectly. "
+                          "Please check it again.")
+                    sys.exit()
+                index += 1
+            elif file_type == "strand":
+                if num % 2 != 0:
+                    if wig_type == "frag":
+                        print("Error: The --frag_libs was assinged incorrectly. "
+                              "Please check it again.")
+                        sys.exit()
+                    elif wig_type == "tex":
+                        print("Error: The --tex_notex_libs was assinged incorrectly.  "
+                              "Please check it again.")
+                        sys.exit()
+
+    def _check_tex_frag(self, libs, wig_type):
+        conds = {}
+        reps = {}
+        strands = {}
+        for lib in libs:
+            datas = lib.split(":")
+            if not datas[0].endswith(".wig"):
+                print("Error: The input wiggle file should end with .wig!")
+                sys.exit()
+            if (datas[1] != "notex") and (
+                    datas[1] != "tex") and (
+                    datas[1] != "frag"):
+                print("Error: Please assign \"tex\", \"notex\" or "
+                      "\"frag\" to your input libraries.")
+                sys.exit()
+            if int(datas[2]) not in conds.keys():
+                conds[int(datas[2])] = 0
+            conds[int(datas[2])] += 1
+            if datas[3] not in reps.keys():
+                reps[datas[3]] = 0
+            reps[datas[3]] += 1
+            if (datas[4] != "+") and (datas[4] != "-"):
+                print("Error: Strand of libs should be assigned as + or -")
+                sys.exit()
+            if datas[4] not in strands.keys():
+                strands[datas[4]] = 0
+            strands[datas[4]] += 1
+        self._check_assign_info(conds, "cond", wig_type)
+        self._check_assign_info(reps, "rep", wig_type)
+        self._check_assign_info(strands, "strand", wig_type)
 
     def _check_libs(self, tex_notex_libs, frag_libs):
         '''Check the libs of frag and tex'''
@@ -31,11 +124,33 @@ class ArgsContainer(object):
             print("Error: please input proper libraries!!")
         elif (tex_notex_libs is not None) and (frag_libs is not None):
             libs = tex_notex_libs + frag_libs
+            self._check_tex_frag(tex_notex_libs, "tex")
+            self._check_tex_frag(frag_libs, "frag")
         elif (tex_notex_libs is not None):
             libs = tex_notex_libs
+            self._check_tex_frag(tex_notex_libs, "tex")
         elif (frag_libs is not None):
             libs = frag_libs
+            self._check_tex_frag(frag_libs, "frag")
         return libs
+
+    def _check_condition_num(self, out_prefix, libs):
+        high = 0
+        for lib in libs:
+            datas = lib.split(":")
+            if int(datas[2]) > high:
+                high = int(datas[2])
+        if len(out_prefix) != high:
+            print("Error: The number of --condition_names should be "
+                  "the same to the condition of input libraries!")
+            sys.exit()
+
+    def _combine_files(self, ref_files, out_folder, filename):
+        tar_file = os.path.join(out_folder, filename)
+        for files in ref_files:
+            for file_ in glob(files):
+                self.helper.merge_file(file_, tar_file)
+        return tar_file
 
     def _parser_combine_wigs(self, subcommand):
         '''Check the wig folders of frag and tex, then merge them'''
@@ -120,6 +235,26 @@ class ArgsContainer(object):
         else:
             return inputs
 
+    def _gen_copy_new_folder(self, file_types, out_folder,
+                             folder_name, ref_files, flag):
+        if ref_files is not None:
+            new_ref_folder = os.path.join(out_folder, folder_name)
+            self.helper.check_make_folder(new_ref_folder)
+            for files in ref_files:
+                detect = False
+                for file_ in glob(files):
+                    for type_ in file_types:
+                        if file_.endswith(type_):
+                            detect = True
+                if not detect:
+                    print("Error: The {0} is not end with {1}!".format(
+                          flag, " ".join(file_types)))
+                    sys.exit()
+                shutil.copy(file_, new_ref_folder)
+            return new_ref_folder
+        else:
+            return None
+
     def container_ratt(self, ratt_path, element, transfer_type,
                        ref_embl, ref_gbk, target_fasta, ref_fasta, ratt_folder,
                        convert_to_gff_rnt_ptt, tar_annotation_folder,
@@ -127,34 +262,49 @@ class ArgsContainer(object):
         self.ratt_path = ratt_path
         self.element = element
         self.transfer_type = transfer_type
-        self.ref_embls = ref_embl
-        self.ref_gbk = ref_gbk
-        self.tar_fastas = target_fasta
-        self.ref_fastas = ref_fasta
+        self.ref_embls = self._gen_copy_new_folder(
+                [".embl"], ratt_folder, "temp_embl",
+                ref_embl, ["--ref_embl_files"])
+        self.ref_gbk = self._gen_copy_new_folder(
+                [".gbk", ".gbff", ".gb"], ratt_folder, "temp_gbk",
+                ref_gbk, ["--ref_gbk_files"])
+        file_types = [".fa", ".fna", ".fasta"]
+        self.tar_fastas = self._gen_copy_new_folder(
+                file_types, ratt_folder, "temp_tar", target_fasta,
+                ["--ref_fasta_files"])
+        self.ref_fastas = self._gen_copy_new_folder(
+                file_types, ratt_folder, "temp_ref", ref_fasta,
+                ["--target_fasta_files"])
         self.output_path = ratt_folder
         self.convert = convert_to_gff_rnt_ptt
         self.gff_outfolder = tar_annotation_folder
-        self.pairs = self._deal_multi_inputs(compare_pair, "str", None, None)
+        self.pairs = compare_pair
         return self
 
     def container_tsspredator(self, TSSpredator_path, compute_program,
-                              fasta_folder, annotation_folder, wig_folder, lib,
+                              fasta_files, annotation_files, lib,
                               output_prefix, height, height_reduction, factor,
                               factor_reduction, base_height, enrichment_factor,
                               processing_factor, replicate_match, out_folder,
                               statistics, validate_gene, merge_manual,
                               compare_transcript_assembly, fuzzy, utr_length,
                               cluster, length, re_check_orphan,
-                              overlap_feature, reference_gff_folder,
+                              overlap_feature, reference_gff_files,
                               remove_low_expression):
         self.tsspredator_path = TSSpredator_path
         self.program = compute_program
-        self.fastas = fasta_folder
-        self.gffs = annotation_folder
-        self.wig_folder = wig_folder
-        self.libs = self._deal_multi_inputs(lib, "str", None, None)
-        self.output_prefixs = self._deal_multi_inputs(output_prefix, "str",
-                                                      None, None)
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta", fasta_files,
+                ["--fasta_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
+        self.wig_folder = os.path.join(out_folder, "tmp_wig")
+        self.helper.check_make_folder(self.wig_folder)
+        self.libs = self._create_working_wigs(out_folder, lib, self.wig_folder)
+        self.libs = self._check_libs(self.libs, None)
+        self._check_condition_num(output_prefix, self.libs)
+        self.output_prefixs = output_prefix
         self.height = height
         self.height_reduction = height_reduction
         self.factor = factor
@@ -166,29 +316,41 @@ class ArgsContainer(object):
         self.out_folder = out_folder
         self.stat = statistics
         self.validate = validate_gene
-        self.manual = merge_manual
-        self.ta_files = compare_transcript_assembly
+        self.manual = self._combine_files(merge_manual, out_folder,
+                                          "tmp_manual_file")
+        self.ta_files = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_ta", compare_transcript_assembly,
+                ["--compare_transcript_assembly"])
         self.fuzzy = fuzzy
         self.utr_length = utr_length
         self.cluster = cluster
         self.nt_length = length
         self.check_orphan = re_check_orphan
         self.overlap_feature = overlap_feature
-        self.references = reference_gff_folder
+        self.references = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_reference", reference_gff_files,
+                ["--eference_gff_files"])
         self.remove_low_expression = remove_low_expression
         return self
 
     def container_optimize(self, TSSpredator_path, fasta_file, annotation_file,
-                           wig_folder, manual, out_folder, strain_name,
+                           manual, out_folder, strain_name,
                            max_height, max_height_reduction, max_factor,
                            max_factor_reduction, max_base_height,
                            max_enrichment_factor, max_processing_factor,
                            utr_length, lib, output_prefix, cluster, length,
                            core, program, replicate_match, steps):
         self.tsspredator_path = TSSpredator_path
-        self.fastas = fasta_file
-        self.gffs = annotation_file
-        self.wigs = wig_folder
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta",
+                [fasta_file], ["--fasta_file"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno",
+                [annotation_file], ["--annotation_file"])
+        self.wigs = os.path.join(out_folder, "tmp_wig")
+        self.helper.check_make_folder(self.wigs)
+        self.libs = self._create_working_wigs(out_folder, lib, self.wigs)
+        self.libs = self._check_libs(self.libs, None)
         self.manual = manual
         self.output_folder = out_folder
         self.project_strain = strain_name
@@ -200,9 +362,8 @@ class ArgsContainer(object):
         self.enrichment = max_enrichment_factor
         self.processing = max_processing_factor
         self.utr = utr_length
-        self.libs = self._deal_multi_inputs(lib, "str", None, None)
-        self.replicate_name = self._deal_multi_inputs(output_prefix, "str",
-                                                      None, None)
+        self._check_condition_num(output_prefix, self.libs)
+        self.replicate_name = output_prefix
         self.cluster = cluster
         self.length = length
         self.cores = core
@@ -211,27 +372,45 @@ class ArgsContainer(object):
         self.steps = steps
         return self
 
+    def _create_wig_folder(self, folder, libs):
+        if libs is not None:
+            self.helper.check_make_folder(folder)
+            return folder
+        else:
+            return None
+
     def container_terminator(
             self, TransTermHP_path, expterm_path, RNAfold_path, out_folder,
-            fasta_folder, annotation_folder, transcript_folder, srna,
-            statistics, tex_wig_folder, frag_wig_folder, decrease,
-            highest_coverage, fuzzy_detect_coverage, fuzzy_within_transcript,
-            fuzzy_downstream_transcript, fuzzy_within_gene,
-            fuzzy_downstream_gene, transtermhp_folder, tex_notex_libs,
-            frag_libs, tex_notex, replicates_tex, replicates_frag, table_best,
-            min_loop_length, max_loop_length, min_stem_length, max_stem_length,
-            min_AT_tail_length, miss_rate, range_u, keep_multi, window, shift):
+            fasta_files, annotation_files, transcript_files, srna, statistics,
+            decrease, highest_coverage, fuzzy_detect_coverage,
+            fuzzy_within_transcript, fuzzy_downstream_transcript,
+            fuzzy_within_gene, fuzzy_downstream_gene, transtermhp_folder,
+            tex_notex_libs, frag_libs, tex_notex, replicates_tex,
+            replicates_frag, table_best, min_loop_length, max_loop_length,
+            min_stem_length, max_stem_length, min_AT_tail_length, miss_rate,
+            range_u, keep_multi, window, shift):
         self.TransTermHP_path = TransTermHP_path
         self.expterm_path = expterm_path
         self.RNAfold_path = RNAfold_path
         self.out_folder = out_folder
-        self.fastas = fasta_folder
-        self.gffs = annotation_folder
-        self.trans = transcript_folder
-        self.srnas = srna
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta", fasta_files,
+                ["--fasta_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_ta", transcript_files,
+                ["--transcript_files"])
+        self.srnas = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_srna", srna, ["srna_files"])
         self.stat = statistics
-        self.tex_wigs = tex_wig_folder
-        self.frag_wigs = frag_wig_folder
+        self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
+        self.tex_wigs = self._create_wig_folder(
+                os.path.join(out_folder, "tmp_wig", "tex_notex"),
+                tex_notex_libs)
+        self.frag_wigs = self._create_wig_folder(
+                os.path.join(out_folder, "tmp_wig", "frag"), frag_libs)
         self.decrease = decrease
         self.cutoff_coverage = highest_coverage
         self.fuzzy = fuzzy_detect_coverage
@@ -240,8 +419,11 @@ class ArgsContainer(object):
         self.fuzzy_up_gene = fuzzy_within_gene
         self.fuzzy_down_gene = fuzzy_downstream_gene
         self.hp_folder = transtermhp_folder
-        self.tlibs = self._deal_multi_inputs(tex_notex_libs, "str", None, None)
-        self.flibs = self._deal_multi_inputs(frag_libs, "str", None, None)
+        self.tlibs = tex_notex_libs
+        self.tlibs = self._create_working_wigs(
+                out_folder, tex_notex_libs, self.tex_wigs)
+        self.flibs = self._create_working_wigs(
+                out_folder, frag_libs, self.frag_wigs)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
@@ -262,18 +444,23 @@ class ArgsContainer(object):
         self = self._parser_combine_wigs("terminator")
         return self
 
-    def container_transcript(
-            self, frag_wig_path, tex_wig_path, tex_notex, length,
-            annotation_folder, height, width, tolerance, tolerance_coverage,
-            replicates_tex, replicates_frag, transcript_assembly_output_folder,
-            compare_TSS, compare_genome_annotation, TSS_fuzzy,
-            tex_treated_libs, fragmented_libs, compare_feature_genome,
-            table_best, terminator_folder, fuzzy_term, max_dist):
-        self.frag_wigs = frag_wig_path
-        self.tex_wigs = tex_wig_path
+    def container_transcript(self, tex_notex, length, annotation_files, height,
+                             width, tolerance, tolerance_coverage,
+                             replicates_tex, replicates_frag, out_folder,
+                             tss_files, TSS_fuzzy, tex_treated_libs,
+                             fragmented_libs, compare_feature_genome,
+                             table_best, terminator_files, fuzzy_term, max_dist):
+        self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
+        self.tex_wigs = self._create_wig_folder(
+                os.path.join(out_folder, "tmp_wig", "tex_notex"),
+                tex_treated_libs)
+        self.frag_wigs = self._create_wig_folder(
+                os.path.join(out_folder, "tmp_wig", "frag"), fragmented_libs)
         self.tex = tex_notex
         self.length = length
-        self.gffs = annotation_folder
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
         self.height = height
         self.width = width
         self.tolerance = tolerance
@@ -282,32 +469,40 @@ class ArgsContainer(object):
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
                 replicates_tex, replicates_frag)
-        self.out_folder = transcript_assembly_output_folder
-        self.compare_tss = compare_TSS
-        self.compare_cds = compare_genome_annotation
+        self.out_folder = out_folder
+        self.compare_tss = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_tss", tss_files, ["--tss_files"])
         self.fuzzy = TSS_fuzzy
-        self.tlibs = self._deal_multi_inputs(tex_treated_libs, "str", None,
-                                             None)
-        self.flibs = self._deal_multi_inputs(fragmented_libs, "str", None,
-                                             None)
+        self.tlibs = self._create_working_wigs(
+                out_folder, tex_treated_libs, self.tex_wigs)
+        self.flibs = self._create_working_wigs(
+                out_folder, fragmented_libs, self.frag_wigs)
         self.libs = self._check_libs(self.tlibs, self.flibs)
-        self.c_feature = self._deal_multi_inputs(compare_feature_genome, "str",
-                                                 None, None)
+        self.c_feature = compare_feature_genome
         self.table_best = table_best
-        self.terms = terminator_folder
+        self.terms = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_term", terminator_files,
+                ["--terminator_files"])
         self.fuzzy_term = fuzzy_term
         self.max_dist = max_dist
         self = self._parser_combine_wigs("transcript")
         return self
 
-    def container_utr(self, tss_folder, annotation_folder,
-                      transcript_assembly_folder, terminator_folder,
+    def container_utr(self, tss_files, annotation_files,
+                      transcript_assembly_files, terminator_files,
                       terminator_fuzzy, utr_folder, tss_source, base_5utr,
                       length, base_3utr, fuzzy_3utr, fuzzy_5utr):
-        self.tsss = tss_folder
-        self.gffs = annotation_folder
-        self.trans = transcript_assembly_folder
-        self.terms = terminator_folder
+        self.tsss = self._gen_copy_new_folder(
+                [".gff"], utr_folder, "tmp_tss", tss_files, ["--tss_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], utr_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], utr_folder, "tmp_ta", transcript_assembly_files,
+                ["--transcript_files"])
+        self.terms = self._gen_copy_new_folder(
+                [".gff"], utr_folder, "tmp_term", terminator_files,
+                ["--terminator_files"])
         self.fuzzy = terminator_fuzzy
         self.out_folder = utr_folder
         self.source = tss_source
@@ -318,35 +513,47 @@ class ArgsContainer(object):
         self.fuzzy_5utr = fuzzy_5utr
         return self
 
-    def container_srna(
-            self, Vienna_folder, Vienna_utils, blast_plus_folder,
-            ps2pdf14_path, srna_folder, UTR_derived_sRNA, annotation_folder,
-            TSS_folder, transcript_assembly_folder, TSS_intergenic_fuzzy,
-            TSS_5UTR_fuzzy, TSS_3UTR_fuzzy, TSS_interCDS_fuzzy, import_info,
-            tex_wig_folder, frag_wig_folder, processing_site_folder,
-            fasta_folder, mountain_plot, nr_format, srna_format,
-            sRNA_database_path, nr_database_path, cutoff_energy,
-            run_intergenic_TEX_coverage, run_intergenic_noTEX_coverage,
-            run_intergenic_fragmented_coverage, break_tran,
-            run_antisense_TEX_coverage, run_antisense_noTEX_coverage,
-            run_antisense_fragmented_coverage, run_utr_TEX_coverage,
-            run_utr_noTEX_coverage, run_utr_fragmented_coverage, max_length,
-            min_length, tex_notex_libs, frag_libs, replicates_tex,
-            replicates_frag, tex_notex, blast_e_nr, blast_e_srna,
-            detect_sRNA_in_CDS, table_best, decrease_intergenic, decrease_utr,
-            fuzzy_intergenic, fuzzy_utr, cutoff_nr_hit, sORF,
-            overlap_percent_CDS, terminator_folder, terminator_fuzzy_in_sRNA,
-            terminator_fuzzy_out_sRNA, ignore_hypothetical_protein, TSS_source,
-            min_utr_coverage, promoter_table, ranking_promoter, promoter_name):
-        self.vienna_path = Vienna_folder
-        self.vienna_util = Vienna_utils
-        self.blast_path = blast_plus_folder
+    def container_srna(self, rnafold, relplot_pl, mountain_pl, blastn, blastx,
+                       blastdb, ps2pdf14_path, srna_folder, UTR_derived_sRNA,
+                       annotation_files, TSS_files, transcript_files,
+                       TSS_intergenic_fuzzy, TSS_5UTR_fuzzy, TSS_3UTR_fuzzy,
+                       TSS_interCDS_fuzzy, import_info, processing_site_files,
+                       fasta_files, mountain_plot, nr_format, srna_format,
+                       sRNA_database_path, nr_database_path, cutoff_energy,
+                       para_blast, run_intergenic_TEX_coverage,
+                       run_intergenic_noTEX_coverage,
+                       run_intergenic_fragmented_coverage, break_tran,
+                       run_antisense_TEX_coverage,
+                       run_antisense_noTEX_coverage,
+                       run_antisense_fragmented_coverage, run_utr_TEX_coverage,
+                       run_utr_noTEX_coverage, run_utr_fragmented_coverage,
+                       max_length, min_length, tex_notex_libs, frag_libs,
+                       replicates_tex, replicates_frag, tex_notex, blast_e_nr,
+                       blast_e_srna, detect_sRNA_in_CDS, table_best,
+                       decrease_intergenic, decrease_utr, fuzzy_intergenic,
+                       fuzzy_utr, cutoff_nr_hit, sORF, overlap_percent_CDS,
+                       terminator_files, terminator_fuzzy_in_sRNA,
+                       terminator_fuzzy_out_sRNA, ignore_hypothetical_protein,
+                       TSS_source, min_utr_coverage, promoter_tables,
+                       ranking_promoter, promoter_name):
+        self.rnafold = rnafold
+        self.para_blast = para_blast
+        self.relplot_pl = relplot_pl
+        self.mountain_pl = mountain_pl
+        self.blastx = blastx
+        self.blastn = blastn
+        self.blastdb = blastdb
         self.ps2pdf14_path = ps2pdf14_path
         self.out_folder = srna_folder
         self.utr_srna = UTR_derived_sRNA
-        self.gffs = annotation_folder
-        self.tss_folder = TSS_folder
-        self.trans = transcript_assembly_folder
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_anno", annotation_files,
+                ["--annotation_files"])
+        self.tss_folder = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_tss", TSS_files, ["--tss_files"])
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_ta", transcript_files,
+                ["--transcript_files"])
         self.fuzzy_inter_tss = TSS_intergenic_fuzzy
         self.fuzzy_5utr_tss = TSS_5UTR_fuzzy
         self.fuzzy_3utr_tss = TSS_3UTR_fuzzy
@@ -355,12 +562,19 @@ class ArgsContainer(object):
                            "3utr": self.fuzzy_3utr_tss,
                            "interCDS": self.fuzzy_intercds_tss,
                            "inter": self.fuzzy_inter_tss}
-        self.import_info = self._deal_multi_inputs(import_info, "str",
-                                                   None, None)
-        self.tex_wigs = tex_wig_folder
-        self.frag_wigs = frag_wig_folder
-        self.pro_folder = processing_site_folder
-        self.fastas = fasta_folder
+        self.import_info = import_info
+        self.helper.check_make_folder(os.path.join(srna_folder, "temp_wig"))
+        self.tex_wigs = self._create_wig_folder(
+                os.path.join(srna_folder, "temp_wig", "tex_notex"),
+                tex_notex_libs)
+        self.frag_wigs = self._create_wig_folder(
+                os.path.join(srna_folder, "temp_wig", "frag"), frag_libs)
+        self.pro_folder = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_pro", processing_site_files,
+                ["--processing_site_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], srna_folder,
+                "temp_fasta", fasta_files, ["--fasta_files"])
         self.mountain = mountain_plot
         self.nr_format = nr_format
         self.srna_format = srna_format
@@ -397,8 +611,10 @@ class ArgsContainer(object):
                 "--run_utr_fragmented_coverage")
         self.max_len = max_length
         self.min_len = min_length
-        self.tlibs = self._deal_multi_inputs(tex_notex_libs, "str", None, None)
-        self.flibs = self._deal_multi_inputs(frag_libs, "str", None, None)
+        self.tlibs = self._create_working_wigs(
+                srna_folder, tex_notex_libs, self.tex_wigs)
+        self.flibs = self._create_working_wigs(
+                srna_folder, frag_libs, self.frag_wigs)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
@@ -414,21 +630,24 @@ class ArgsContainer(object):
         self.fuzzy_inter = fuzzy_intergenic
         self.fuzzy_utr = fuzzy_utr
         self.nr_hits_num = cutoff_nr_hit
-        self.sorf_file = sORF
+        self.sorf_file = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_sorf", sORF, ["--sorf_files"])
         self.cutoff_overlap = overlap_percent_CDS
-        self.terms = terminator_folder
+        self.terms = self._gen_copy_new_folder(
+                [".gff"], srna_folder, "temp_term", terminator_files,
+                ["--terminator_files"])
         self.fuzzy_b = terminator_fuzzy_in_sRNA
         self.fuzzy_a = terminator_fuzzy_out_sRNA
         self.hypo = ignore_hypothetical_protein
         self.tss_source = TSS_source
         self.min_utr = min_utr_coverage
-        self.promoter_table = promoter_table
+        self.promoter_table = self._combine_files(
+                promoter_tables, srna_folder, "temp_promoter_table")
         if ranking_promoter < 1:
             print("Error: --ranking_time_promoter must larger than 1...")
             sys.exit()
         self.rank_promoter = ranking_promoter
-        self.promoter_name = self._deal_multi_inputs(promoter_name, "str",
-                                                     None, None)
+        self.promoter_name = promoter_name
         self = self._parser_combine_wigs("srna")
         return self
 
@@ -519,8 +738,6 @@ class ArgsContainer(object):
         '''Especially for intergenic and antisense sRNA'''
         args_srna.tsss = tsss
         args_srna.pros = pros
-#        args_srna.wigs_f = wigs_f
-#        args_srna.wigs_r = wigs_r
         args_srna.nums = nums
         args_srna.output = output
         args_srna.out_table = out_table
@@ -536,8 +753,6 @@ class ArgsContainer(object):
         args_srna.cdss = cdss
         args_srna.tsss = tsss
         args_srna.pros = pros
-#        args_srna.wig_fs = wig_fs
-#        args_srna.wig_rs = wig_rs
         args_srna.out = out
         args_srna.out_t = out_t
         args_srna.texs = texs
@@ -545,36 +760,50 @@ class ArgsContainer(object):
         args_srna.srnas = []
         return args_srna
 
-    def container_sorf(self, sorf_folder, UTR_derived_sORF, transcript_folder,
-                       annotation_folder, TSS_folder, utr_length, min_length,
-                       max_length, tex_wig_folder, frag_wig_folder,
-                       cutoff_intergenic_coverage, cutoff_antisense_coverage,
-                       cutoff_5utr_coverage, cutoff_3utr_coverage,
-                       cutoff_interCDS_coverage, fasta_folder, tex_notex_libs,
-                       frag_libs, tex_notex, replicates_tex, replicates_frag,
-                       table_best, sRNA_folder, start_codon, stop_codon,
-                       cutoff_background, fuzzy_rbs, rbs_not_after_TSS,
-                       print_all_combination, best_no_sRNA, best_no_TSS,
-                       ignore_hypothetical_protein, min_rbs_distance,
-                       max_rbs_distance):
+    def container_sorf(self, sorf_folder, UTR_derived_sORF, transcript_files,
+                       annotation_files, TSS_files, utr_length, min_length,
+                       max_length, cutoff_intergenic_coverage,
+                       cutoff_antisense_coverage, cutoff_5utr_coverage,
+                       cutoff_3utr_coverage, cutoff_interCDS_coverage,
+                       fasta_files, tex_notex_libs, frag_libs, tex_notex,
+                       replicates_tex, replicates_frag, table_best,
+                       sRNA_files, start_codon, stop_codon, cutoff_background,
+                       fuzzy_rbs, rbs_not_after_TSS, print_all_combination,
+                       best_no_sRNA, best_no_TSS, ignore_hypothetical_protein,
+                       min_rbs_distance, max_rbs_distance):
         self.out_folder = sorf_folder
         self.utr_detect = UTR_derived_sORF
-        self.trans = transcript_folder
-        self.gffs = annotation_folder
-        self.tsss = TSS_folder
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], sorf_folder, "temp_ta", transcript_files,
+                ["--transcript_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], sorf_folder, "temp_anno", annotation_files,
+                ["--annotation_files"])
+        self.tsss = self._gen_copy_new_folder(
+                [".gff"], sorf_folder, "temp_tss", TSS_files, ["--tss_files"])
         self.utr_length = utr_length
         self.min_len = min_length
         self.max_len = max_length
-        self.tex_wigs = tex_wig_folder
-        self.frag_wigs = frag_wig_folder
+        self.helper.check_make_folder(os.path.join(sorf_folder, "temp_wig"))
+        self.tex_wigs = self._create_wig_folder(
+                os.path.join(sorf_folder, "temp_wig", "tex_notex"),
+                tex_notex_libs)
+        self.frag_wigs = self._create_wig_folder(
+                os.path.join(sorf_folder, "temp_wig", "frag"), frag_libs)
         self.cutoff_inter = cutoff_intergenic_coverage
         self.cutoff_anti = cutoff_antisense_coverage
         self.cutoff_5utr = cutoff_5utr_coverage
         self.cutoff_3utr = cutoff_3utr_coverage
         self.cutoff_intercds = cutoff_interCDS_coverage
-        self.fastas = fasta_folder
-        self.tlibs = self._deal_multi_inputs(tex_notex_libs, "str", None, None)
-        self.flibs = self._deal_multi_inputs(frag_libs, "str", None, None)
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], sorf_folder,
+                "temp_fasta", fasta_files, ["--fasta_files"])
+        self.tlibs = tex_notex_libs
+        self.flibs = frag_libs
+        self.tlibs = self._create_working_wigs(
+                sorf_folder, tex_notex_libs, self.tex_wigs)
+        self.flibs = self._create_working_wigs(
+                sorf_folder, frag_libs, self.frag_wigs)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
@@ -582,11 +811,11 @@ class ArgsContainer(object):
         self.replicates = self._check_replicates(
                 replicates_tex, replicates_frag)
         self.table_best = table_best
-        self.srnas = sRNA_folder
-        self.start_codon = self._deal_multi_inputs(start_codon, "str",
-                                                   None, None)
-        self.stop_codon = self._deal_multi_inputs(stop_codon, "str",
-                                                  None, None)
+        self.srnas = self._gen_copy_new_folder(
+                [".gff"], sorf_folder, "temp_srna", sRNA_files,
+                ["--srna_files"])
+        self.start_codon = start_codon
+        self.stop_codon = stop_codon
         self.background = cutoff_background
         self.fuzzy_rbs = fuzzy_rbs
         self.noafter_tss = rbs_not_after_TSS
@@ -599,22 +828,28 @@ class ArgsContainer(object):
         self = self._parser_combine_wigs("sorf")
         return self
 
-    def container_srna_target(self, Vienna_folder, annotation_path, fasta_path,
-                              sRNA_path, query_sRNA, program,
-                              interaction_length, window_size_target,
-                              span_target, window_size_srna, span_srna,
-                              unstructured_region_RNAplex_target,
-                              unstructured_region_RNAplex_srna,
-                              unstructured_region_RNAup, energy_threshold,
-                              duplex_distance, top, starget_output_folder,
-                              process_rnaplex, process_rnaup, continue_rnaup,
-                              potential_target_start, potential_target_end,
-                              target_feature):
-        self.vienna_path = Vienna_folder
-        self.gffs = annotation_path
-        self.fastas = fasta_path
-        self.srnas = sRNA_path
-        self.query = self._deal_multi_inputs(query_sRNA, "str", None, None)
+    def container_srna_target(
+            self, rnaplfold_path, rnaplex_path, rnaup_path, annotation_files,
+            fasta_files, sRNA_files, query_sRNA, program, interaction_length,
+            window_size_target, span_target, window_size_srna, span_srna,
+            unstructured_region_RNAplex_target,
+            unstructured_region_RNAplex_srna, unstructured_region_RNAup,
+            energy_threshold, duplex_distance, top, starget_output_folder,
+            process_rnaplex, process_rnaup, continue_rnaup,
+            potential_target_start, potential_target_end, target_feature):
+        self.rnaplfold_path = rnaplfold_path
+        self.rnaplex_path = rnaplex_path
+        self.rnaup_path = rnaup_path
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], starget_output_folder, "tmp_anno",
+                annotation_files, ["--annotation_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], starget_output_folder,
+                "tmp_fasta", fasta_files, ["--fasta_files"])
+        self.srnas = self._gen_copy_new_folder(
+                [".gff"], starget_output_folder, "tmp_srna", sRNA_files,
+                ["--srna_files"])
+        self.query = query_sRNA
         self.program = program
         self.inter_length = interaction_length
         self.win_size_t = window_size_target
@@ -633,82 +868,113 @@ class ArgsContainer(object):
         self.continue_rnaup = continue_rnaup
         self.tar_start = potential_target_start
         self.tar_end = potential_target_end
-        self.features = self._deal_multi_inputs(target_feature, "str",
-                                                None, None)
+        self.features = target_feature
         return self
 
-    def container_goterm(self, annotation_path, goterm_output_folder,
-                         UniProt_id, go_obo, goslim_obo, transcript_path):
-        self.gffs = annotation_path
+    def container_goterm(self, annotation_files, goterm_output_folder,
+                         UniProt_id, go_obo, goslim_obo, transcript_files):
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], goterm_output_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
         self.out_folder = goterm_output_folder
         self.uniprot = UniProt_id
         self.go = go_obo
         self.goslim = goslim_obo
-        self.trans = transcript_path
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], goterm_output_folder, "tmp_ta", transcript_files,
+                ["--transcript_files"])
         return self
 
-    def container_sublocal(self, Psortb_path, gff_path, fasta_path,
+    def container_sublocal(self, Psortb_path, annotation_files, fasta_files,
                            bacteria_type, difference_multi, merge_to_gff,
-                           sublocal_output_folder, transcript_path):
+                           sublocal_output_folder, transcript_files):
         self.psortb_path = Psortb_path
-        self.gffs = gff_path
-        self.fastas = fasta_path
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], sublocal_output_folder, "tmp_anno",
+                annotation_files, ["--annotation_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], sublocal_output_folder,
+                "tmp_fa", fasta_files, ["--fasta_files"])
         self.gram = bacteria_type
         self.fuzzy = difference_multi
         self.merge = merge_to_gff
         self.out_folder = sublocal_output_folder
-        self.trans = transcript_path
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], sublocal_output_folder, "tmp_ta",
+                transcript_files, ["--transcript_files"])
         return self
 
-    def container_ppi(self, gff_path, proteinID_strains, without_strain_pubmed,
-                      species_STRING, score, ppi_output_folder, node_size,
-                      query):
-        self.ptts = gff_path
-        self.strains = self._deal_multi_inputs(proteinID_strains, "str",
-                                               None, None)
+    def container_ppi(self, annotation_files, proteinID_strains,
+                      without_strain_pubmed, species_STRING, score,
+                      ppi_output_folder, node_size, query):
+        self.ptts = self._gen_copy_new_folder(
+                [".gff"], ppi_output_folder, "temp_anno",
+                annotation_files, ["--annotation_files"])
+        self.strains = proteinID_strains
         self.no_specific = without_strain_pubmed
         self.species = species_STRING
         self.score = score
         self.out_folder = ppi_output_folder
         self.size = node_size
-        self.querys = self._deal_multi_inputs(query, "str", None, None)
+        self.querys = query
         return self
 
-    def container_promoter(self, MEME_path, promoter_output_folder, tex_libs,
-                           TSS_folder, fasta_folder, num_motif, nt_before_TSS,
-                           motif_width, TSS_source, tex_wig_path,
-                           annotation_folder, combine_all, e_value, para):
+    def container_promoter(self, MEME_path, out_folder, tex_libs,
+                           TSS_files, fasta_files, num_motif, nt_before_TSS,
+                           motif_width, TSS_source,
+                           annotation_files, combine_all, e_value, para):
         self.meme_path = MEME_path
-        self.output_folder = promoter_output_folder
-        self.input_libs = self._deal_multi_inputs(tex_libs, "str", None, None)
-        self.libs = self.input_libs
-        self.tsss = TSS_folder
-        self.fastas = fasta_folder
+        self.output_folder = out_folder
+        self.tsss = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_tss", TSS_files, ["--tss_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta",
+                fasta_files, ["--fasta_files"])
         self.num_motif = num_motif
         self.nt_before = nt_before_TSS
-        self.widths = self._deal_multi_inputs(motif_width, "str", None, None)
+        self.widths = motif_width
         self.source = TSS_source
-        self.tex_wigs = tex_wig_path
+        self.tex_wigs = None
         self.frag_wigs = None
-        self.gffs = annotation_folder
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
         self.combine = combine_all
         self.e_value = e_value
         self.para = para
-        if self.tex_wigs is not None:
+        if tex_libs is not None:
+            self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
+            self.tex_wigs = self._create_wig_folder(
+                    os.path.join(out_folder, "tmp_wig", "tex_notex"), tex_libs)
+            self.input_libs = self._create_working_wigs(
+                     out_folder, tex_libs, self.tex_wigs)
+            self.libs = self.input_libs
             self = self._parser_combine_wigs("promoter")
         return self
 
-    def container_operon(self, TSS_folder, annotation_folder,
-                         transcript_folder, UTR5_folder, UTR3_folder,
-                         term_folder, TSS_fuzzy, term_fuzzy, min_length,
+    def container_operon(self, TSS_files, annotation_files,
+                         transcript_files, UTR5_files, UTR3_files,
+                         term_files, TSS_fuzzy, term_fuzzy, min_length,
                          statistics, operon_output_folder, combine_gff,
                          operon_statistics_folder):
-        self.tsss = TSS_folder
-        self.gffs = annotation_folder
-        self.trans = transcript_folder
-        self.utr5s = UTR5_folder
-        self.utr3s = UTR3_folder
-        self.terms = term_folder
+        self.tsss = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_tss",
+                TSS_files, ["--tss_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_anno",
+                annotation_files, ["--annotation_files"])
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_ta",
+                transcript_files, ["--transcript_files"])
+        self.utr5s = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_utr5",
+                UTR5_files, ["--utr5_files"])
+        self.utr3s = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_utr3",
+                UTR3_files, ["--utr3_files"])
+        self.terms = self._gen_copy_new_folder(
+                [".gff"], operon_output_folder, "tmp_term",
+                term_files, ["--term_files"])
         self.tss_fuzzy = TSS_fuzzy
         self.term_fuzzy = term_fuzzy
         self.length = min_length
@@ -719,16 +985,17 @@ class ArgsContainer(object):
         return self
 
     def container_snp(self, samtools_path, bcftools_path, bam_type, min_sample,
-                      program, fasta_path, tex_bam_path, frag_bam_path,
+                      program, fasta_files, bam_files,
                       quality, read_depth_range, snp_output_folder,
                       indel_fraction, chrom, rg, caller, filters, DP4_cutoff):
         self.samtools_path = samtools_path
         self.bcftools_path = bcftools_path
         self.types = bam_type
-        self.program = self._deal_multi_inputs(program, "str", None, None)
-        self.fastas = fasta_path
-        self.normal_bams = tex_bam_path
-        self.frag_bams = frag_bam_path
+        self.program = program 
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], snp_output_folder,
+                "tmp_fa", fasta_files, ["--fasta_files"])
+        self.bams = bam_files
         self.quality = quality
         self.depth_s = read_depth_range.split(",")[0]
         self.depth_b = read_depth_range.split(",")[-1]
@@ -742,27 +1009,31 @@ class ArgsContainer(object):
         self.chrom = chrom
         self.rg = rg
         self.caller = caller
-        self.filters = filters.split(",")
+        self.filters = filters
         self.dp4_sum = DP4_cutoff.split(",")[0]
         self.dp4_frac = DP4_cutoff.split(",")[-1]
         self.min_sample = min_sample
         return self
 
-    def container_circrna(self, align, process, fasta_path, annotation_path,
-                          tex_bam_path, fragmented_bam_path, read_folder,
-                          circrna_stat_folder, support_reads,
-                          segemehl_folder, samtools_path, start_ratio,
+    def container_circrna(self, align, process, fasta_files, annotation_files,
+                          bam_files, read_files,
+                          circrna_stat_folder, support_reads, segemehl_path,
+                          testrealign, samtools_path, start_ratio,
                           end_ratio, ignore_hypothetical_protein, out_folder):
         self.align = align
         self.cores = process
-        self.fastas = fasta_path
-        self.gffs = annotation_path
-        self.normal_bams = tex_bam_path
-        self.frag_bams = fragmented_bam_path
-        self.read_folder = read_folder
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], out_folder, "tmp_fa", fasta_files,
+                ["--fasta_files"])
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
+        self.bams = bam_files
+        self.read_files = read_files
         self.stat_folder = circrna_stat_folder
         self.support = support_reads
-        self.segemehl_path = segemehl_folder
+        self.segemehl_path = segemehl_path
+        self.testrealign_path = testrealign
         self.samtools_path = samtools_path
         self.start_ratio = start_ratio
         self.end_ratio = end_ratio
@@ -770,19 +1041,33 @@ class ArgsContainer(object):
         self.output_folder = out_folder
         return self
 
-    def container_ribos(self, program, thermo_ID, infernal_path, riboswitch_ID,
-                        gff_path, fasta_path, tss_path, transcript_path, Rfam,
-                        ribos_output_folder, thermo_output_folder, e_value,
-                        output_all, database_folder, fuzzy, start_codon,
-                        min_dist_rbs, max_dist_rbs, fuzzy_rbs, UTR_length):
+    def container_ribos(self, program, thermo_ID, cmscan_path, cmpress_path,
+                        riboswitch_ID, annotation_files, fasta_files,
+                        tss_files, transcript_files, Rfam, ribos_output_folder,
+                        thermo_output_folder, e_value, output_all,
+                        database_folder, fuzzy, start_codon, min_dist_rbs,
+                        max_dist_rbs, fuzzy_rbs, UTR_length):
         self.program = program
+        if (program.lower() == "riboswitch") or (
+                program.lower() == "both"):
+            output = ribos_output_folder
+        elif (program.lower() == "thermometer"):
+            output = thermo_output_folder
         self.thermo_id = thermo_ID
-        self.infernal_path = infernal_path
+        self.cmscan_path = cmscan_path
+        self.cmpress_path = cmpress_path
         self.ribos_id = riboswitch_ID
-        self.gffs = gff_path
-        self.fastas = fasta_path
-        self.tsss = tss_path
-        self.trans = transcript_path
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], output, "temp_anno", annotation_files,
+                ["--annotation_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], output, "temp_fa",
+                fasta_files, ["--fasta_files"])
+        self.tsss = self._gen_copy_new_folder(
+                [".gff"], output, "temp_tss", tss_files, ["--tss_files"])
+        self.trans = self._gen_copy_new_folder(
+                [".gff"], output, "temp_ta", transcript_files,
+                ["--transcript_files"])
         self.rfam = Rfam
         self.ribos_out_folder = ribos_output_folder
         self.thermo_out_folder = thermo_output_folder
@@ -790,20 +1075,23 @@ class ArgsContainer(object):
         self.output_all = output_all
         self.database = database_folder
         self.fuzzy = fuzzy
-        self.start_codons = self._deal_multi_inputs(start_codon, "str",
-                                                    None, None)
+        self.start_codons = start_codon
         self.start_rbs = min_dist_rbs
         self.end_rbs = max_dist_rbs
         self.fuzzy_rbs = fuzzy_rbs
         self.utr = UTR_length
         return self
 
-    def container_cris(self, fasta_path, gff_path, CRT_path, window_size,
-                       min_number_repeat, min_length_repeat, Max_length_repeat,
-                       min_length_spacer, Max_length_spacer, cris_out_folder,
-                       ignore_hypo):
-        self.fastas = fasta_path
-        self.gffs = gff_path
+    def container_cris(self, fasta_files, annotation_files, CRT_path,
+                       window_size, min_number_repeat, min_length_repeat,
+                       Max_length_repeat, min_length_spacer, Max_length_spacer,
+                       cris_out_folder, ignore_hypo):
+        self.gffs = self._gen_copy_new_folder(
+                [".gff"], cris_out_folder, "tmp_anno", annotation_files,
+                ["--annotation_files"])
+        self.fastas = self._gen_copy_new_folder(
+                [".fa", ".fna", ".fasta"], cris_out_folder, "tmp_fa",
+                fasta_files, ["--fasta_files"])
         self.crt_path = CRT_path
         self.win_size = window_size
         self.out_folder = cris_out_folder
@@ -815,17 +1103,14 @@ class ArgsContainer(object):
         self.ignore_hypo = ignore_hypo
         return self
 
-    def container_screen(self, main_gff, side_gffs, fasta, frag_wig_folder,
-                         tex_wig_folder, height, tex_libs, frag_libs, present,
-                         output_folder):
+    def container_screen(self, main_gff, side_gffs, fasta, height, tex_libs,
+                         frag_libs, present, output_folder):
         self.main_gff = main_gff
-        self.side_gffs = self._deal_multi_inputs(side_gffs, "str", None, None)
+        self.side_gffs = side_gffs
         self.fasta = fasta
-        self.frag_wigs = frag_wig_folder
-        self.tex_wigs = tex_wig_folder
         self.height = height
-        self.tlibs = self._deal_multi_inputs(tex_libs, "str", None, None)
-        self.flibs = self._deal_multi_inputs(frag_libs, "str", None, None)
+        self.tlibs = tex_libs
+        self.flibs = frag_libs
         self.present = present
         self.output_folder = output_folder
         return self

@@ -2,6 +2,7 @@ import os
 import sys
 import csv
 import shutil
+from glob import glob
 from subprocess import call
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.seq_editer import SeqEditer
@@ -41,14 +42,6 @@ class SNPCalling(object):
         self.header = os.path.join(args_snp.out_folder, "header")
         self.baqs = {"with": "with_BAQ", "without": "without_BAQ",
                      "extend": "extend_BAQ"}
-
-    def _import_bam(self, bam_folder, bams):
-        num_bam = 0
-        for bam in os.listdir(bam_folder):
-            if bam.endswith(".bam"):
-                num_bam += 1
-                bams.append(os.path.join(bam_folder, bam))
-        return num_bam
 
     def _transcript_snp(self, fasta, snp, out_table_prefix, type_,
                         prefix, bam_number, table_path, args_snp):
@@ -104,17 +97,18 @@ class SNPCalling(object):
     def _run_program(self, fasta_file, file_prefixs, prefix, bam_number,
                      table_path, args_snp):
         for index in args_snp.program:
-            if index == "1":
+            if index == "with_BAQ":
                 type_ = "with"
-                print("Running SNP calling with BAQ...")
-            elif index == "2":
+                print("Running SNP calling with BAQ")
+            elif index == "without_BAQ":
                 type_ = "without"
-                print("Running SNP calling without BAQ...")
-            elif index == "3":
-                print("Running SNP calling extend BAQ...")
+                print("Running SNP calling without BAQ")
+            elif index == "extend_BAQ":
+                print("Running SNP calling extend BAQ")
                 type_ = "extend"
             else:
-                print("Error: No correct program, please assign 1, 2, 3")
+                print("Error: No correct program, please assign "
+                      "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\"!")
                 sys.exit()
             self._run_sub(args_snp, fasta_file, type_, file_prefixs, prefix,
                           table_path, bam_number)
@@ -146,25 +140,25 @@ class SNPCalling(object):
         bams = []
         num_normal = 0
         num_frag = 0
-        if (args_snp.frag_bams is None) and (args_snp.normal_bams is None):
+        if (args_snp.bams is None):
             print("Error: There is no BAMs folders!!")
             sys.exit()
         else:
-            if args_snp.normal_bams is not None:
-                num_normal = self._import_bam(args_snp.normal_bams, bams)
-            if args_snp.frag_bams is not None:
-                num_frag = self._import_bam(args_snp.frag_bams, bams)
-        num_bam = num_normal + num_frag
+            num_bam = 0
+            for files in args_snp.bams:
+                for bam in glob(files):
+                    bams.append(bam)
+                    num_bam += 1
         if num_bam <= 1:
             shutil.copyfile(bams[0], self.bams["whole"])
-            print("Sort BAM file now ...")
+            print("Sorting BAM file now")
             self._run_bam(args_snp.samtools_path, "sort",
                           self.bams["sort"])
         else:
-            print("Merge BAM files now ...")
+            print("Merging BAM files now")
             self._run_bam(args_snp.samtools_path, "merge",
                           " ".join(bams))
-            print("Sort BAM file now ...")
+            print("Sorting BAM file now")
             self._run_bam(args_snp.samtools_path, "sort",
                           self.bams["sort"])
         out_depth = open(self.outputs["depth"], "w")
@@ -213,12 +207,11 @@ class SNPCalling(object):
         self._modify_header(args_snp.fastas)
         bam_number = self._merge_bams(args_snp)
         seq_names = self._get_genome_name(args_snp)
-        if ("1" not in args_snp.program) and (
-                "2" not in args_snp.program) and (
-                "3" not in args_snp.program):
-            print("Error:Please assign a correct BAQ type: "
-                  "'1' means 'with_BAQ', '2' means 'with_BAQ' or "
-                  "'3' means 'extend_BAQ'.")
+        if ("with_BAQ" not in args_snp.program) and (
+                "without_BAQ" not in args_snp.program) and (
+                "extend_BAQ" not in args_snp.program):
+            print("Error:Please assign a correct programs: "
+                  "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\".")
             sys.exit()
         else:
             for fasta in os.listdir(self.fasta_path):
@@ -228,7 +221,7 @@ class SNPCalling(object):
                     prefix = fasta_datas[1]
                     if detect:
                         detect = False
-                        print("Computing {0} now ...".format(fasta))
+                        print("Computing {0} now".format(fasta))
                         self.helper.check_make_folder(
                              os.path.join(self.outputs["table"], prefix))
                         self.helper.check_make_folder(
@@ -243,5 +236,5 @@ class SNPCalling(object):
                         self._run_program(fasta_file, file_prefixs, prefix,
                                           bam_number, table_path, args_snp)
                         os.remove(self.outputs["tmp"])
-        self.helper.remove_tmp(args_snp.fastas)
+        self.helper.remove_tmp_dir(args_snp.fastas)
         self._remove_bams()

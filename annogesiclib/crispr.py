@@ -243,13 +243,15 @@ class Crispr(object):
         self.multiparser.parser_gff(args_cris.gffs, None)
         self._run_crt(args_cris)
         self._convert_gff(args_cris.ignore_hypo)
+        print("All candidates:")
         self.multiparser.combine_gff(args_cris.gffs, self.all_out,
                                      None, "CRISPR")
+        print("Best candidates:")
         self.multiparser.combine_gff(args_cris.gffs, self.best_out,
                                      None, "CRISPR")
         stats = {"all": {}, "best": {}}
         self._stat_and_correct(stats["all"], self.all_out)
         self._stat_and_correct(stats["best"], self.best_out)
         self._print_stat(stats)
-        self.helper.remove_tmp(args_cris.gffs)
-        self.helper.remove_tmp(args_cris.fastas)
+        self.helper.remove_tmp_dir(args_cris.gffs)
+        self.helper.remove_tmp_dir(args_cris.fastas)

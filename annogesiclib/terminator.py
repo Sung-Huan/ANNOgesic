@@ -310,17 +310,17 @@ class Terminator(object):
         self._move_file(self.outfolder["term"], self.outfolder["csv"])
 
     def _remove_tmp_file(self, merge_wigs, args_term):
-        self.helper.remove_tmp(args_term.gffs)
-        self.helper.remove_tmp(args_term.fastas)
+        self.helper.remove_tmp_dir(args_term.gffs)
+        self.helper.remove_tmp_dir(args_term.fastas)
         if args_term.srnas is not None:
             self.helper.remove_tmp(args_term.srnas)
             shutil.rmtree(self.tmps["merge"])
         if (args_term.tex_wigs is not None) and (
                 args_term.frag_wigs is not None):
             shutil.rmtree(merge_wigs)
-        self.helper.remove_tmp(args_term.trans)
-        self.helper.remove_tmp(args_term.tex_wigs)
-        self.helper.remove_tmp(args_term.frag_wigs)
+        self.helper.remove_tmp_dir(args_term.trans)
+        if "tmp_wig" in os.listdir(args_term.out_folder):
+            shutil.rmtree(os.path.join(args_term.out_folder, "tmp_wig"))
         self.helper.remove_tmp(self.outfolder["term"])
         shutil.rmtree(self.tmps["transterm"])
         shutil.rmtree(self.tmps["term_table"])
@@ -396,6 +396,7 @@ class Terminator(object):
         self.multiparser.combine_gff(args_term.gffs, self.tran_path,
                                      None, "transcript")
         prefixs = []
+        print("Comparing terminator with transcript now")
         for file_ in os.listdir(self.tran_path):
             if file_.endswith("_transcript.gff"):
                 prefixs.append(file_.replace("_transcript.gff", ""))

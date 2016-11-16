@@ -63,7 +63,7 @@ class TestTranscriptAssembly(unittest.TestCase):
                  "cond": "texnotex_1", "strand": "+", "rep": "a"},
                 {"name": "test2", "type": "notex",
                  "cond": "texnotex_1", "strand": "+", "rep": "a"}]
-        reps = {"tex": "all_1", "frag": "all_1"}
+        reps = {"tex": ["all_1"], "frag": ["all_1"]}
         tmp_texs = {"test1_test2": 2}
         tolers = []
         trans = {"aaa": []}
@@ -75,7 +75,7 @@ class TestTranscriptAssembly(unittest.TestCase):
         self.assertDictEqual(trans, {'aaa': [-1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 100]})
 
     def test_transfer_to_tran(self):
-        reps = {"tex": "all_1", "frag": "all_1"}
+        reps = {"tex": ["all_1"], "frag": ["all_1"]}
         tmp_texs = {"test1": 2}
         libs = [{"name": "test1", "type": "frag",
                  "cond": "frag_1", "strand": "+", "rep": "a"}]

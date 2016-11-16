@@ -7,7 +7,7 @@ sys.path.append(".")
 from mock_gff3 import Create_generator
 import annogesiclib.gen_screenshots as gs
 from mock_args_container import MockClass
-
+from mock_helper import gen_file
 
 class Mock_func(object):
 
@@ -53,7 +53,9 @@ class TestGenScreenshots(unittest.TestCase):
         args.main_gff = "main_gff"
         args.present = "expend"
         args.height = 1000
-        args.side_gffs = "side1 side2"
+        args.side_gffs = ["test_folder/side1", "test_folder/side2"]
+        gen_file("test_folder/side1", "test")
+        gen_file("test_folder/side2", "test")
         args.output_folder = self.test_folder
         gs.print_batch(args, out, "+", lib_t, lib_n, lib_f, "test")
         self.assertEqual(out.getvalue(), self.example.out)
@@ -91,28 +93,10 @@ class Example(object):
 genome /home/silas/ANNOgesic/fasta
 load /home/silas/ANNOgesic/main_gff
 expend main_gff
-load /home/silas/ANNOgesic/s
-expend s
-load /home/silas/ANNOgesic/i
-expend i
-load /home/silas/ANNOgesic/d
-expend d
-load /home/silas/ANNOgesic/e
-expend e
-load /home/silas/ANNOgesic/1
-expend 1
-load /home/silas/ANNOgesic/ 
-expend  
-load /home/silas/ANNOgesic/s
-expend s
-load /home/silas/ANNOgesic/i
-expend i
-load /home/silas/ANNOgesic/d
-expend d
-load /home/silas/ANNOgesic/e
-expend e
-load /home/silas/ANNOgesic/2
-expend 2
+load /home/silas/ANNOgesic/test_folder/side1
+expend side1
+load /home/silas/ANNOgesic/test_folder/side2
+expend side2
 load /home/silas/ANNOgesic/w
 load /home/silas/ANNOgesic/w
 load /home/silas/ANNOgesic/i
@@ -138,6 +122,7 @@ load /home/silas/ANNOgesic/5
 maxPanelHeight 1000
 snapshotDirectory /home/silas/ANNOgesic/test_folder/test/forward
 """
+    out = out.replace("/home/silas/ANNOgesic", os.getcwd())
     out_print_wig = """goto aaa:1-36
 setDataRange 0,10
 snapshot aaa:3-6.png

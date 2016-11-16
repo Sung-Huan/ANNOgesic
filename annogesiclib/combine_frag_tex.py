@@ -79,13 +79,13 @@ def combine(frag_file, tex_file, tolerance, output_file):
         else:
             store(frag, "fragmented", finals)
     for norm in sort_norms:
-        if norm.attributes["print"] is False:
+        if not norm.attributes["print"]:
             store(norm, "tex_notex", finals)
     sort_finals = sorted(finals, key=lambda k: (k.seq_id, k.start,
                                                 k.end, k.strand))
     num = 0
     for tar in sort_finals:
-        if tar.attributes["print"] is True:
+        if tar.attributes["print"]:
             continue
         overlap = False
         for ref in sort_finals:

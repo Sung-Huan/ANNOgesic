@@ -34,7 +34,7 @@ class GoTermFinding(object):
             self.helper.check_make_folder(os.path.join(out_path, prefix))
             out_file = os.path.join(out_path, prefix,
                                     "_".join([prefix, "uniprot.csv"]))
-            print("extracting GO terms of {0} from UniProt...".format(prefix))
+            print("Extracting GO terms of {0} from UniProt".format(prefix))
             if self.tran_path is not None:
                 tran_file = os.path.join(self.tran_path,
                                          "_".join([prefix, "transcript.gff"]))
@@ -106,19 +106,19 @@ class GoTermFinding(object):
         self.multiparser.parser_gff(args_go.gffs, None)
         if args_go.trans is not None:
             self.multiparser.parser_gff(args_go.trans, "transcript")
-        print("Computing all CDS...")
+        print("Computing all CDS")
         self._retrieve_go(args_go.uniprot, self.result_all_path, "all")
         self._merge_files(args_go.gffs, self.result_all_path, self.out_all)
         self._stat(self.result_all_path, self.stat_all_path, args_go.go,
                    args_go.goslim, self.out_all)
         if args_go.trans is not None:
-            print("Computing express CDS...")
+            print("Computing express CDS")
             self._retrieve_go(args_go.uniprot, self.result_express_path,
                               "express")
             self._merge_files(args_go.gffs, self.result_express_path,
                               self.out_express)
             self._stat(self.result_express_path, self.stat_express_path,
                        args_go.go, args_go.goslim, self.out_express)
-        self.helper.remove_tmp(args_go.gffs)
+        self.helper.remove_tmp_dir(args_go.gffs)
         if args_go.trans is not None:
-            self.helper.remove_tmp(args_go.trans)
+            self.helper.remove_tmp_dir(args_go.trans)

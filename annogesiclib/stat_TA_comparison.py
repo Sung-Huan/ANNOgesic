@@ -363,7 +363,10 @@ def read_tag_file(gff_file, ta_file, c_feature):
                 for parent in parents:
                     if "gene" in parent:
                         ori_parents.append(parent)
-                entry.attributes["Parent"] = ",".join(ori_parents)
+                if len(ori_parents) == 0:
+                    entry.attributes = del_attributes(entry, ["Parent"])
+                else:
+                    entry.attributes["Parent"] = ",".join(ori_parents)
             if entry.seq_id in stats.keys():
                 stats[entry.seq_id]["gene"] += 1
                 stats["All"]["gene"] += 1

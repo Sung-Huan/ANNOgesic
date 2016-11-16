@@ -208,12 +208,11 @@ class MEME(object):
         self._move_and_merge_fasta(input_path, "allfasta")
 
     def _remove_files(self, args_pro):
-        self.helper.remove_tmp(args_pro.fastas)
-        self.helper.remove_tmp(args_pro.tsss)
-        self.helper.remove_tmp(args_pro.gffs)
-        self.helper.remove_tmp(args_pro.tex_wigs)
-        if "allfasta.fa" in os.listdir(args_pro.fastas):
-            os.remove(self.all_fasta)
+        self.helper.remove_tmp_dir(args_pro.fastas)
+        self.helper.remove_tmp_dir(args_pro.tsss)
+        self.helper.remove_tmp_dir(args_pro.gffs)
+        if "tmp_wig" in os.listdir(args_pro.output_folder):
+            shutil.rmtree(os.path.join(args_pro.output_folder, "tmp_wig"))
         if "allfasta" in os.listdir(os.getcwd()):
             shutil.rmtree("allfasta")
         shutil.rmtree("tmp")
@@ -292,6 +291,6 @@ class MEME(object):
         if args_pro.combine:
             self._combine_file(prefixs, args_pro)
         self._run_program(prefixs, args_pro)
-        print("generating the table...")
+        print("Generating the table")
         self._gen_table(args_pro.output_folder, prefixs, args_pro.combine)
         self._remove_files(args_pro)

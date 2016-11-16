@@ -155,12 +155,13 @@ class TestsTSSpredator(unittest.TestCase):
         args.processing_factor = 1.5
         args.utr_length = 300
         args.cluster = 3
-        args.repmatch = "all_2"
+        args.repmatch = ["all_2"]
         args.libs = libs
         args.output_prefixs = ["test1"]
         self.tss._gen_config("test", args, self.gffs + "/tmp/test.gff",
                              self.wigs + "/tmp", self.fastas + "/tmp/test.fa", config_file)
         datas = import_data(config_file)
+        print(datas)
         self.assertEqual("\n".join(datas), self.example.config)
 
     def test_set_gen_config(self):
@@ -191,7 +192,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.libs = libs
         args.out_folder = self.out
         args.cluster = 3
-        args.repmatch = "all_2"
+        args.repmatch = ["all_2"]
         args.output_prefixs = ["test1"]
         self.tss._set_gen_config(args, self.test_folder)
         datas = import_data(os.path.join(self.test_folder, "config_test.ini"))
@@ -271,7 +272,8 @@ class TestsTSSpredator(unittest.TestCase):
         ts.merge_manual_predict_tss = self.mock.mock_merge_manual_predict_tss
         args = self.mock_args.mock()
         args.gffs = self.gffs
-        args.manual = "manual"
+        args.manual = "test_folder/manual"
+        gen_file("test_folder/manual", "test")
         args.wig_folder = self.wigs
         args.out_folder = self.out
         args.program = "TSS"
@@ -373,7 +375,8 @@ class TestsTSSpredator(unittest.TestCase):
         args.output_prefixs = "test"
         args.check_orphan = True
         args.remove_low_expression = True
-        args.manual = "manual"
+        args.manual = "test_folder/manual"
+        gen_file("test_folder/manual", "test")
         args.overlap_feature = "TSS"
         args.stat = True
         args.references = self.gffs

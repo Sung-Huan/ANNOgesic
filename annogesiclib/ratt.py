@@ -57,10 +57,10 @@ class RATT(object):
         shutil.rmtree(self.tmp_files["out_gff"])
         shutil.rmtree(self.tmp_files["tar"])
         shutil.rmtree(self.tmp_files["ref"])
-        self.helper.remove_all_content(args_ratt.tar_fastas, "_folder", "dir")
-        self.helper.remove_all_content(args_ratt.ref_fastas, "_folder", "dir")
-        if out_gbk:
-            shutil.rmtree(out_gbk)
+        self.helper.remove_tmp_dir(args_ratt.tar_fastas)
+        self.helper.remove_tmp_dir(args_ratt.ref_fastas)
+        self.helper.remove_tmp_dir(args_ratt.ref_embls)
+        self.helper.remove_tmp_dir(args_ratt.ref_gbk)
 
     def _convert_to_gff(self, ratt_result, args_ratt, files):
         name = ratt_result.split(".")
@@ -136,7 +136,7 @@ class RATT(object):
              stdout=out, stderr=DEVNULL)
 
     def _format_and_run(self, args_ratt):
-        print("Running RATT...")
+        print("Running RATT")
         for pair in args_ratt.pairs:
             ref = pair.split(":")[0]
             tar = pair.split(":")[1]

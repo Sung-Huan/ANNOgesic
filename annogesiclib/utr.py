@@ -42,11 +42,11 @@ class UTRDetection(object):
                                 "_term.gff", prefix, None, None)
                 else:
                     term = None
-                print("computing 5'UTR of {0} .....".format(prefix))
+                print("Computing 5'UTR of {0}".format(prefix))
                 detect_5utr(tss, os.path.join(args_utr.gffs, gff),
                             tran, os.path.join(self.utr5_path, "gffs",
                             "_".join([prefix, "5UTR.gff"])), args_utr)
-                print("computing 3'UTR of {0} .....".format(prefix))
+                print("Computing 3'UTR of {0}".format(prefix))
                 detect_3utr(tran, os.path.join(args_utr.gffs, gff),
                             term, os.path.join(self.utr3_path, "gffs",
                             "_".join([prefix, "3UTR.gff"])), args_utr)
@@ -75,9 +75,9 @@ class UTRDetection(object):
                                          os.path.join(args_utr.terms, "tmp"),
                                          None, "term")
         self._compute_utr(args_utr)
-        self.helper.remove_tmp(args_utr.gffs)
-        self.helper.remove_tmp(args_utr.tsss)
-        self.helper.remove_tmp(args_utr.trans)
-        self.helper.remove_tmp(args_utr.terms)
+        self.helper.remove_tmp_dir(args_utr.gffs)
+        self.helper.remove_tmp_dir(args_utr.tsss)
+        self.helper.remove_tmp_dir(args_utr.trans)
+        self.helper.remove_tmp_dir(args_utr.terms)
         self.helper.remove_tmp(self.utr5_path)
         self.helper.remove_tmp(self.utr3_path)

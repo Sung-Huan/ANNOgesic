@@ -61,12 +61,12 @@ class Ribos(object):
         return (stat_folder, gff_outfolder, table_folder, scan_folder,
                 tmp_files, rfam, suffixs)
 
-    def _run_infernal(self, args_ribo, seq, type_, prefix, tmp_files,
-                      suffixs, rfam):
+    def _run_cmscan(self, args_ribo, seq, type_, prefix, tmp_files,
+                    suffixs, rfam):
         scan_file = os.path.join(tmp_files["scan"],
                                  "_".join([prefix, suffixs[type_]]))
         scan = open(scan_file, "w")
-        call([os.path.join(args_ribo.infernal_path, "cmscan"), "--incE",
+        call([args_ribo.cmscan_path, "--incE",
               str(args_ribo.e_value), "--acc", rfam, seq], stdout=scan)
         scan.close()
         return scan_file
@@ -89,7 +89,7 @@ class Ribos(object):
                       os.path.join(self.tran_path, prefix + "_transcript.gff"),
                       first_seq, args_ribo, feature)
                 print("pre-scanning of {0}".format(prefix))
-                first_scan_file = self._run_infernal(
+                first_scan_file = self._run_cmscan(
                         args_ribo, first_seq, "txt", prefix, tmp_files,
                         suffixs, rfam)
                 sec_seq = os.path.join(tmp_files["fasta"],
@@ -100,7 +100,7 @@ class Ribos(object):
                 regenerate_seq(first_scan_file, first_seq,
                                first_table, sec_seq)
                 print("scanning of {0}".format(prefix))
-                sec_scan_file = self._run_infernal(
+                sec_scan_file = self._run_cmscan(
                         args_ribo, sec_seq, "re_txt", prefix, tmp_files,
                         suffixs, rfam)
                 sec_table = os.path.join(
@@ -160,10 +160,10 @@ class Ribos(object):
                 fh.close()
 
     def _remove_tmp(self, args_ribo):
-        self.helper.remove_tmp(args_ribo.gffs)
-        self.helper.remove_tmp(args_ribo.fastas)
-        self.helper.remove_tmp(args_ribo.trans)
-        self.helper.remove_tmp(args_ribo.tsss)
+        self.helper.remove_tmp_dir(args_ribo.gffs)
+        self.helper.remove_tmp_dir(args_ribo.fastas)
+        self.helper.remove_tmp_dir(args_ribo.trans)
+        self.helper.remove_tmp_dir(args_ribo.tsss)
 
     def _remove_overlap(self, gff_path, tmp_files, suffixs):
         for gff in os.listdir(gff_path):
@@ -181,8 +181,7 @@ class Ribos(object):
         '''main part of detection'''
         rbs_from_rfam(feature_id, args_ribo.rfam, rfam)
         print("compressing Rfam of " + feature)
-        call([os.path.join(args_ribo.infernal_path, "cmpress"),
-              "-F", rfam])
+        call([args_ribo.cmpress_path, "-F", rfam])
         prefixs = []
         self.helper.check_make_folder(tmp_files["fasta"])
         self.helper.check_make_folder(tmp_files["scan"])
@@ -208,18 +207,18 @@ class Ribos(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(
                                                  args_ribo.gffs, gff))
-        if (args_ribo.program == "both") or (
-                args_ribo.program == "riboswitch"):
-            print("Detecting riboswtich now...")
+        if (args_ribo.program.lower() == "both") or (
+                args_ribo.program.lower() == "riboswitch"):
+            print("Detecting riboswtich now")
             self._core_prediction(
                     args_ribo, args_ribo.ribos_id, self.ribos_rfam,
                     self.ribos_tmp_files, self.ribos_table_folder,
                     "riboswitch", self.ribos_scan_folder, self.ribos_suffixs,
                     self.ribos_stat_folder, self.ribos_gff_outfolder,
                     args_ribo.ribos_out_folder)
-        if (args_ribo.program == "both") or (
-                args_ribo.program == "thermometer"):
-            print("Detecting RNA thermometer now...")
+        if (args_ribo.program.lower() == "both") or (
+                args_ribo.program.lower() == "thermometer"):
+            print("Detecting RNA thermometer now")
             self._core_prediction(
                     args_ribo, args_ribo.thermo_id, self.thermo_rfam,
                     self.thermo_tmp_files, self.thermo_table_folder,

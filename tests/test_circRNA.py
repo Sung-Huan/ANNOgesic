@@ -68,7 +68,8 @@ class TestCircRNA(unittest.TestCase):
         out = StringIO()
         out_best = StringIO()
         circ.detect_conflict(gffs, circrna, 0, out, out_best, args)
-        self.assertEqual(out.getvalue(), "circRNA_0	aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571\n")
+        self.assertEqual(out.getvalue(),
+                         "circRNA_0\taaa\t+\t100\t467\tAAA_00001\t30\t1.0\t0.8571428571428571\n")
         out.close()
 
     def test_get_circrna(self):

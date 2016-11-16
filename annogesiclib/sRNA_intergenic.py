@@ -514,12 +514,8 @@ def detect_include_tss(ta, args_srna, cdss, wigs_f, wigs_r):
     args_srna.detects["uni_with_tss"] = False
     notex = None
     for tss in args_srna.tsss:
-#        print("AAA")
-#        print(tss.start)
-#        print(tss.attributes["type"])
         cutoff = get_tss_type(tss, args_srna.cutoff_coverage, ta, cdss,
                               args_srna.file_type, args_srna.break_tran)
-#        print(cutoff)
         if args_srna.notex is not None:
             notex = get_tss_type(tss, args_srna.notex, ta, cdss, "notex",
                                  args_srna.break_tran)
@@ -785,41 +781,6 @@ def check_ncRNA(gene, ncs):
     return detect
 
 
-def check_tss_ncRNA(tsss, ncs, genes):
-    for tss in tsss:
-        print("VVVV")
-        print(tss.start)
-        print(tss.attributes["type"])
-        new_types = []
-        if "associated_gene" in tss.attributes.keys():
-            index = 0
-            types = tss.attributes["type"].split(",")
-            print(types)
-            for ass in tss.attributes["associated_gene"].split(","):
-                detect = False
-                for gene in genes:
-                    if "locus_tag" in gene.attributes.keys():
-                        if ass == gene.attributes["locus_tag"]:
-                            detect = check_ncRNA(gene, ncs)
-                    elif "gene" in gene.attributes.keys():
-                        if ass == gene.attributes["gene"]:
-                            detect = check_ncRNA(gene, ncs)
-                    elif "Name" in gene.attributes.keys():
-                        if ass == gene.attributes["Name"]:
-                            detect = check_ncRNA(gene, ncs)
-                if detect:
-                    print("NNNN")
-                    if ("Primary" == types[index]) or (
-                            "Secondary" == types[index]):
-                        print("BBB")
-                        new_types.append("Orphan")
-                else:
-                    new_types.append(types[index])
-                index += 1
-            tss.attributes["type"] = ",".join(new_types)
-        print(tss.attributes["type"])
-
-
 def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
     '''get intergenic and antisense sRNA'''
     inter_cutoff_coverage, inter_notex = get_intergenic_antisense_cutoff(
@@ -832,7 +793,6 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
         compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r)
         print("Classification of TSS has done...")
     tsss, num_tss = read_tss(args_srna.tss_file)
-#    check_tss_ncRNA(tsss, ncs, genes)
     detects = {"overlap": False, "uni_with_tss": False, "anti": False}
     output = open(args_srna.output_file, "w")
     out_table = open(args_srna.output_table, "w")

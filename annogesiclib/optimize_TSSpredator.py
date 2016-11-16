@@ -194,7 +194,7 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                           nums["manual"],
                           float(nums["manual"]) / float(num_manual)))
             if nums["overlap"] == -1:
-                out.write("No TSS is detected within the range...\n")
+                out.write("No TSS is detected within the range\n")
             stats.append({"tp": nums["overlap"],
                           "tp_rate": float(
                               nums["overlap"]) / float(num_manual),
@@ -334,13 +334,17 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
 
 def print_repmatch(args_ops, out):
     '''deal with the replicate match'''
-    if "all" in args_ops.replicate:
-        match = args_ops.replicate.split("_")[-1]
-        out.write("minNumRepMatches = {0}\n".format(match))
-    else:
+    detect_all = False
+    for rep in args_ops.replicate:
+        if "all" in args_ops.replicate:
+            detect_all = True
+            match = args_ops.replicate.split("_")[-1]
+            out.write("minNumRepMatches = {0}\n".format(match))
+            break
+    if not detect_all:
         nums = {}
         matchs = {}
-        for match in args_ops.replicate.split(","):
+        for match in args_ops.replicate:
             lib = match.split("_")[0]
             rep = match.split("_")[-1]
             matchs[lib] = rep
@@ -803,8 +807,8 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
                     best, num_manual, args_ops)
             tmp_step = 0
         if tmp_step >= 2:
-            print("The number of steps may be enough..., it "
-                  "may not be able to find more parameters...\n")
+            print("The number of steps may be enough, it "
+                  "may not be able to find more parameters\n")
             sys.exit()
         best_para = datas[1]
         if datas[0]:

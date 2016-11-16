@@ -80,7 +80,7 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(out2, self.example.fasta_file)
         os.system("gzip " + out1)
         os.system("bzip2 -z " + out2)
-        reads = self.circ._deal_zip_file(self.test_folder)
+        reads = self.circ._deal_zip_file([out1 + ".gz", out2 + ".bz2"])
         self.assertEqual(set(reads), set([out1, out2 + ".fa"]))
         self.assertTrue(os.path.exists(out1))
         self.assertTrue(os.path.exists(out2 + ".fa"))
@@ -104,7 +104,7 @@ class TestCircRNADetection(unittest.TestCase):
         args.align = True
         args.fastas = self.fasta_folder
         args.segemehl_path = None
-        args.read_folder = self.read_folder
+        args.read_files = [read1, read2]
         args.cores = 2
         align_results, prefixs = self.circ._align(args)
         self.assertEqual(set(align_results), set(['read1_test1', 'read2_test1',

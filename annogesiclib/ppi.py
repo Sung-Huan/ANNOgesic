@@ -3,7 +3,6 @@ import sys
 import csv
 import time
 from subprocess import call
-from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.plot_PPI import plot_ppi
 from annogesiclib.converter import Converter
@@ -14,7 +13,6 @@ class PPINetwork(object):
     '''detection of PPI'''
 
     def __init__(self, out_folder):
-        self.multiparser = Multiparser()
         self.helper = Helper()
         self.converter = Converter()
         self.gffparser = Gff3Parser()
@@ -76,15 +74,17 @@ class PPINetwork(object):
     def _get_prefer_name(self, row_a, strain_id, files, querys):
         prefername = ""
         filename = row_a.split(".")
-        if (filename[1] not in os.listdir(files["id_list"])) and (
-                "all" not in querys):
+        if ((filename[1] not in os.listdir(files["id_list"])) and (
+                "all" not in querys)) or ("all" in querys):
             self._wget_id(strain_id["ptt"], filename[1], strain_id, files)
-        if filename[1] in os.listdir(files["id_list"]):
-            id_h = open(os.path.join(files["id_list"], filename[1]), "r")
-            for row_i in csv.reader(id_h, delimiter="\t"):
-                if row_a == row_i[0]:
-                    prefername = row_i[3]
-            id_h.close()
+        if (filename[1] in os.listdir(files["id_list"])) or (
+                "all" in querys):
+            if (filename[1] in os.listdir(files["id_list"])):
+                id_h = open(os.path.join(files["id_list"], filename[1]), "r")
+                for row_i in csv.reader(id_h, delimiter="\t"):
+                    if row_a == row_i[0]:
+                        prefername = row_i[3]
+                id_h.close()
         return prefername
 
     def _print_title(self, out, id_file, id_folder):
@@ -316,7 +316,7 @@ class PPINetwork(object):
                     break
         t_h.close()
         if not detect:
-            print("Warning: " + id_file + " can not be found in STRING...")
+            print("Warning: " + id_file + " can not be found in STRING!")
         return detect
 
     def _retrieve_actions(self, files, strain_id, paths, args_ppi):
@@ -338,7 +338,7 @@ class PPINetwork(object):
                            id_file, strain_id["string"], strain_id["file"]))
                     for row_a in csv.reader(a_h, delimiter="\t"):
                         if row_a == []:
-                            print("No interaction can be detected...")
+                            print("No interaction can be detected")
                             break
                         if row_a[0].startswith("item_id_a"):
                             continue

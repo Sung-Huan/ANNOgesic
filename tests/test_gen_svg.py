@@ -92,6 +92,7 @@ class Example(object):
      id="rect3070"
      style="opacity:0.25;fill:#c8374f;fill-opacity:0.25;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.25" />
 </svg>"""
+    svg = svg.replace("/home/silas/ANNOgesic", os.getcwd())
 
 if __name__ == "__main__":
     unittest.main()

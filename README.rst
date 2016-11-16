@@ -50,11 +50,11 @@ Arguments
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcript_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tsspredator,optimize_tsspredator,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. annotation files, fasta
@@ -68,7 +68,7 @@ Arguments
                             Optimize TSSpredator based on (partial)manual detect
                             one.
         terminator          Detect rho-independant terminators.
-        transcript_assembly
+        transcriptome_assembly
                             Run transcriptome assembly for detecting transcripts.
         utr                 Run UTR detection to detect 5'UTR and 3'UTR.
         srna                Detect intergenic, antisense and UTR-derived sRNA.

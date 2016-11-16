@@ -2,6 +2,7 @@ import os
 import csv
 import sys
 import shutil
+from glob import glob
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 
@@ -27,30 +28,31 @@ def read_gffs(gff_files, feature):
                                                    x.end, x.strand))
     else:
         num = 0
-        for gff_file in gff_files:
-            gffs[num] = []
-            gff_f = open(gff_file, "r")
-            for entry in Gff3Parser().entries(gff_f):
-                parent = None
-                if (entry.feature == "CDS") or (
-                        entry.feature == "exon") or (
-                        entry.feature == "repeat_unit") or (
-                        entry.feature == "tRNA") or (
-                        entry.feature == "rRNA") or (
-                        entry.feature == "ncRNA"):
-                    if "Parent" in entry.attributes.keys():
-                        parent = entry.attributes["Parent"]
-                del_attributes(entry, ["associated_tran", "parent_tran",
-                                       "Parent", "Parent"])
-                if parent is not None:
-                    entry.attributes["Parent"] = parent
-                entry.attributes["print"] = False
-                gffs[num].append(entry)
-            gff_f.close()
-            gffs[num] = sorted(
-                gffs[num], key=lambda x: (x.seq_id, x.start,
-                                          x.end, x.strand))
-            num += 1
+        for files in gff_files:
+            for gff_file in glob(files):
+                gffs[num] = []
+                gff_f = open(gff_file, "r")
+                for entry in Gff3Parser().entries(gff_f):
+                    parent = None
+                    if (entry.feature == "CDS") or (
+                            entry.feature == "exon") or (
+                            entry.feature == "repeat_unit") or (
+                            entry.feature == "tRNA") or (
+                            entry.feature == "rRNA") or (
+                            entry.feature == "ncRNA"):
+                        if "Parent" in entry.attributes.keys():
+                            parent = entry.attributes["Parent"]
+                    del_attributes(entry, ["associated_tran", "parent_tran",
+                                           "Parent", "Parent"])
+                    if parent is not None:
+                        entry.attributes["Parent"] = parent
+                    entry.attributes["print"] = False
+                    gffs[num].append(entry)
+                gff_f.close()
+                gffs[num] = sorted(
+                    gffs[num], key=lambda x: (x.seq_id, x.start,
+                                              x.end, x.strand))
+                num += 1
     return gffs
 
 
@@ -193,7 +195,6 @@ def run_merge(out_folder, tran, others, fuzzy_term, fuzzy_tss, strain):
     elif (tran is not None) and (others is None):
         shutil.copy(tran, os.path.join(out_folder, output))
     elif others is not None:
-        others = others.split(",")
         if (tran is not None):
             tran_gffs = read_gffs(tran, "transcript")
             other_gffs = read_gffs(others, "others")

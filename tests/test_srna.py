@@ -74,7 +74,7 @@ class Mock_func(object):
     def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out):
         pass
 
-    def mock_run_blast(self, blast_path, program, database, e, seq_file, blast_file, strand):
+    def mock_run_blast(self, program, database, e, seq_file, blast_file, strand, para):
         gen_file('tmp_blast.txt', "test")
 
     def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file, database_type):
@@ -93,6 +93,9 @@ class Mock_func(object):
         pass
 
     def mock_check_database(self, database, db_format):
+        pass
+
+    def mock_merge_blast_out(self, file1, file2):
         pass
 
 class Mock_multiparser(object):
@@ -286,8 +289,9 @@ class TestsRNADetection(unittest.TestCase):
         args = self.mock_args.mock()
         args.out_folder = self.out
         args.fastas = self.fastas
-        args.vienna_path = "test"
-        args.vienna_util = "test"
+        args.rnafold = "test"
+        args.relplot_pl = "test"
+        args.mountain_pl = "test"
         args.mountain = True
         args.ps2pdf14_path = "test"
         self.srna._compute_2d_and_energy(args, ["test"])
@@ -295,6 +299,7 @@ class TestsRNADetection(unittest.TestCase):
         self.assertEqual("\n".join(datas), "test")
 
     def test_blast(self):
+        self.srna.helper.merge_blast_out = self.mock.mock_merge_blast_out
         sr.extract_blast = self.mock.mock_extract_blast
         self.srna._run_blast = self.mock.mock_run_blast
         self.srna._run_format = self.mock.mock_run_format
@@ -303,6 +308,7 @@ class TestsRNADetection(unittest.TestCase):
         gen_file(os.path.join(self.fastas, "tmp/test.fa"), ">test\nAAATTTGGGCCC")
         args = self.mock_args.mock()
         args.blast_path = "test"
+        args.para_blast = 1
         args.fastas = self.fastas
         args.out_folder = self.out
         self.srna._blast("database", False, "dna", args,
@@ -330,6 +336,7 @@ class TestsRNADetection(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(table_out, "for_class/test")))
 
     def test_filter_srna(self):
+        self.srna.helper.merge_blast_out = self.mock.mock_merge_blast_out
         sr.classify_srna = self.mock.mock_classify_srna
         sr.gen_srna_table = self.mock.mock_gen_srna_table
         sr.extract_blast = self.mock.mock_extract_blast
@@ -372,8 +379,9 @@ class TestsRNADetection(unittest.TestCase):
         args.import_info = ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"]
         args.out_folder = self.out
         args.fastas = self.fastas
-        args.vienna_path = "test"
-        args.vienna_util = "test"
+        args.rnafold = "test"
+        args.relplot_pl = "test"
+        args.mountain_pl = "test"
         args.table_best = True
         args.in_cds = False
         args.ps2pdf14_path = "test"
@@ -381,11 +389,13 @@ class TestsRNADetection(unittest.TestCase):
         args.mountain = True
         args.nr_database = os.path.join(self.test_folder, "nr")
         args.srna_database = os.path.join(self.test_folder, "srna")
-        args.blast_path = "blast_path"
+        args.blastx = "blast_path"
+        args.blastn = "blast_path"
         args.nr_format = False
         args.srna_format = False
         args.e_nr = 0
         args.e_srna = 0
+        args.para_blast = 1
         self.srna._filter_srna(args, ["test"])
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")

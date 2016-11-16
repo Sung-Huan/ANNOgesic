@@ -113,10 +113,10 @@ class OperonDetection(object):
             self._stat(self.table_path, args_op.stat_folder)
         if args_op.combine:
             self._combine_gff(prefixs, args_op)
-        self.helper.remove_tmp(args_op.gffs)
-        self.helper.remove_tmp(args_op.utr3s)
-        self.helper.remove_tmp(args_op.utr5s)
-        self.helper.remove_tmp(args_op.tsss)
-        self.helper.remove_tmp(args_op.trans)
+        self.helper.remove_tmp_dir(args_op.gffs)
+        self.helper.remove_tmp_dir(args_op.utr3s)
+        self.helper.remove_tmp_dir(args_op.utr5s)
+        self.helper.remove_tmp_dir(args_op.tsss)
+        self.helper.remove_tmp_dir(args_op.trans)
         if args_op.terms is not None:
-            self.helper.remove_tmp(args_op.terms)
+            self.helper.remove_tmp_dir(args_op.terms)

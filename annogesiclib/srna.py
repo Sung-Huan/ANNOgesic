@@ -1,7 +1,8 @@
 import os, gc
 import sys
 import shutil
-from subprocess import call
+import time
+from subprocess import call, Popen
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.sRNA_intergenic import intergenic_srna
@@ -86,19 +87,34 @@ class sRNADetection(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
-    def _run_format(self, blast_path, database, type_, db_file, err):
-        call([os.path.join(blast_path, "makeblastdb"), "-in", database,
+    def _run_format(self, blastdb, database, type_, db_file, err):
+        call([blastdb, "-in", database,
               "-dbtype", type_, "-out", db_file], stderr=err)
 
+    def _wait_process(self, processes):
+        for p in processes:
+            p.wait()
+            if p.stdout:
+                p.stdout.close()
+            if p.stdin:
+                p.stdin.close()
+            if p.stderr:
+                p.stderr.close()
+            try:
+                p.kill()
+            except OSError:
+                pass
+            time.sleep(5)
+
     def _formatdb(self, database, type_, out_folder,
-                  blast_path, database_type):
+                  blastdb, database_type):
         err = open(os.path.join(out_folder, "log.txt"), "w")
         if database_type == "sRNA":
             change_format(database, "tmp_srna_database")
             os.remove(database)
             shutil.move("tmp_srna_database", database)
         db_file = ".".join(database.split(".")[:-1])
-        self._run_format(blast_path, database, type_, db_file, err)
+        self._run_format(blastdb, database, type_, db_file, err)
         err.close()
         if (database.endswith(".fa")) or (
                 database.endswith(".fna")) or (
@@ -318,7 +334,7 @@ class sRNADetection(object):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
                 prefixs.append(prefix)
-                print("Running sRNA detection of {0}....".format(prefix))
+                print("Running sRNA detection of {0}".format(prefix))
                 tran = self.helper.get_correct_file(
                         self.tran_path, "_transcript.gff", prefix, None, None)
                 gffs = {"merge": "_".join([self.prefixs["merge"], prefix]),
@@ -360,19 +376,18 @@ class sRNADetection(object):
 
     def _merge_srna(self, args_srna, gffs, csvs, prefix,
                     gff_file, tss, tex_datas):
-        print("merging data of sRNA...")
+        print("merging data of sRNA")
         merge_srna_gff(gffs, args_srna.in_cds,
                        args_srna.cutoff_overlap, gff_file)
         merge_srna_table(gffs["merge"], csvs, tex_datas[2], tex_datas[3],
                          tss, args_srna)
 
-    def _run_RNAfold(self, seq_file, vienna_path, sec_file):
+    def _run_RNAfold(self, seq_file, rnafold, sec_file):
         os.system(" ".join(["cat", seq_file, "|",
-                  os.path.join(vienna_path, "RNAfold"),
-                  "-p", ">", sec_file]))
+                  rnafold, "-p", ">", sec_file]))
 
     def _get_seq_sec(self, fasta_path, out_folder, prefix, sec_path,
-                     dot_path, vienna_path):
+                     dot_path, rnafold):
         '''extract the sec str energy'''
         detect = False
         for fasta in os.listdir(fasta_path):
@@ -398,7 +413,7 @@ class sRNADetection(object):
         seq_file = os.path.join(main_path, seq_file)
         tmp_sec_path = os.path.join(main_path, sec_path)
         tmp_dot_path = os.path.join(main_path, dot_path)
-        self._run_RNAfold(seq_file, vienna_path, sec_file)
+        self._run_RNAfold(seq_file, rnafold, sec_file)
         extract_energy(os.path.join(main_path,
                        "_".join([self.prefixs["basic"], prefix])),
                        sec_file, os.path.join(main_path,
@@ -409,8 +424,8 @@ class sRNADetection(object):
         return {"sec": tmp_sec_path, "dot": tmp_dot_path, "main": main_path,
                 "tmp": os.path.join(main_path, tmp_path)}
 
-    def _run_replot(self, vienna_util, tmp_paths, file_, dot_file, rel_file):
-        os.system(" ".join([os.path.join(vienna_util, "relplot.pl"),
+    def _run_replot(self, relplot_pl, tmp_paths, file_, dot_file, rel_file):
+        os.system(" ".join([relplot_pl,
                   os.path.join(tmp_paths["tmp"], file_),
                   os.path.join(tmp_paths["tmp"], dot_file),
                   ">", os.path.join(tmp_paths["tmp"], rel_file)]))
@@ -418,14 +433,14 @@ class sRNADetection(object):
     def _convert_pdf(self, ps2pdf14_path, tmp_paths, file_, pdf_file):
         call([ps2pdf14_path, os.path.join(tmp_paths["tmp"], file_), pdf_file])
 
-    def _replot_sec_to_pdf(self, vienna_util, tmp_paths,
+    def _replot_sec_to_pdf(self, relplot_pl, tmp_paths,
                            ps2pdf14_path, prefix):
         for file_ in os.listdir(os.getcwd()):
             if file_.endswith("ss.ps"):
                 dot_file = file_.replace("ss.ps", "dp.ps")
                 rel_file = file_.replace("ss.ps", "rss.ps")
                 print("replot {0}".format(file_))
-                self._run_replot(vienna_util, tmp_paths, file_,
+                self._run_replot(relplot_pl, tmp_paths, file_,
                                  dot_file, rel_file)
         for file_ in os.listdir(tmp_paths["tmp"]):
             if (file_.endswith("rss.ps")) or (file_.endswith("dp.ps")):
@@ -442,25 +457,25 @@ class sRNADetection(object):
                 tmp_paths["tmp"], os.path.join(tmp_paths["dot"], prefix),
                 ["dp.pdf"])
 
-    def _run_mountain(self, vienna_util, tmp_paths, dot_file, out):
-        call([os.path.join(vienna_util, "mountain.pl"),
+    def _run_mountain(self, mountain_pl, tmp_paths, dot_file, out):
+        call([mountain_pl,
               os.path.join(tmp_paths["tmp"], dot_file)], stdout=out)
 
     def _plot_mountain(self, mountain, moun_path,
-                       tmp_paths, prefix, vienna_util):
+                       tmp_paths, prefix, mountain_pl):
         if mountain:
             tmp_moun_path = os.path.join(tmp_paths["main"], moun_path)
             os.mkdir(os.path.join(tmp_moun_path, prefix))
             txt_path = os.path.join(tmp_paths["tmp"], "tmp_txt")
             self.helper.check_make_folder(txt_path)
-            print("Generating mountain plot of {0}....".format(prefix))
+            print("Generating mountain plot of {0}".format(prefix))
             for dot_file in os.listdir(tmp_paths["tmp"]):
                 if dot_file.endswith("dp.ps"):
                     moun_txt = os.path.join(tmp_paths["tmp"], "mountain.txt")
                     out = open(moun_txt, "w")
                     moun_file = dot_file.replace("dp.ps", "mountain.pdf")
                     print("Generating {0}".format(moun_file))
-                    self._run_mountain(vienna_util, tmp_paths, dot_file, out)
+                    self._run_mountain(mountain_pl, tmp_paths, dot_file, out)
                     plot_mountain_plot(moun_txt, moun_file)
                     shutil.move(moun_file,
                                 os.path.join(tmp_moun_path, prefix, moun_file))
@@ -468,7 +483,7 @@ class sRNADetection(object):
                     os.remove(moun_txt)
 
     def _compute_2d_and_energy(self, args_srna, prefixs):
-        print("Running energy calculation....")
+        print("Running energy calculation")
         moun_path = os.path.join(args_srna.out_folder, "mountain_plot")
         sec_path = os.path.join(args_srna.out_folder, "sec_structure",
                                 "sec_plot")
@@ -480,22 +495,85 @@ class sRNADetection(object):
         for prefix in prefixs:
             tmp_paths = self._get_seq_sec(
                     self.fasta_path, args_srna.out_folder, prefix, sec_path,
-                    dot_path, args_srna.vienna_path)
-            self._replot_sec_to_pdf(args_srna.vienna_util, tmp_paths,
+                    dot_path, args_srna.rnafold)
+            self._replot_sec_to_pdf(args_srna.relplot_pl, tmp_paths,
                                     args_srna.ps2pdf14_path, prefix)
             self._plot_mountain(args_srna.mountain, moun_path, tmp_paths,
-                                prefix, args_srna.vienna_util)
+                                prefix, args_srna.mountain_pl)
             self.helper.remove_all_content(os.getcwd(), ".ps", "file")
             os.chdir(tmp_paths["main"])
             shutil.move("_".join([self.prefixs["energy"], prefix]),
                         "_".join([self.prefixs["basic"], prefix]))
             shutil.rmtree(os.path.join(args_srna.out_folder, "tmp_srna"))
 
-    def _run_blast(self, blast_path, program, database, e, seq_file,
-                   blast_file, strand):
-        call([os.path.join(blast_path, program), "-db", database,
-              "-evalue", str(e), "-strand", strand, "-query", seq_file,
-              "-out", blast_file])
+    def _run_blast(self, program, database, e, seq_file,
+                   blast_file, strand, para_num):
+        processes = []
+        if para_num == 1:
+            call([program, "-db", database,
+                  "-evalue", str(e), "-strand", strand, "-query", seq_file,
+                  "-out", blast_file])
+        else:
+            p = Popen([program, "-db", database,
+                       "-evalue", str(e), "-strand", strand, "-query", seq_file,
+                       "-out", blast_file])
+            processes.append(p)
+        return processes
+
+    def _run_para_blast(self, program, database, e, seq_file,
+                        blast_file, strand, paras):
+        srnas = {}
+        with open(seq_file) as fh:
+            for line in fh:
+                line = line.strip()
+                if line.startswith(">"):
+                    name = line
+                    srnas[name] = ""
+                else:
+                    srnas[name] = line
+        file_num = int(len(srnas) / paras)
+        if (file_num == 0) or (paras == 1):
+            processes = self._run_blast(program, database, e, seq_file,
+                                        blast_file, strand, 1)
+        else:
+            cur_para = 0
+            line_num = 0
+            first = True
+            seq_files = []
+            for name, seq in srnas.items():
+                if (line_num >= file_num) or first:
+                    if (not first) and (cur_para < paras):
+                        out.close()
+                    first = False
+                    if cur_para < paras:
+                        out = open("_".join([seq_file, str(cur_para)]),
+                                   "w")
+                        seq_files.append("_".join([seq_file, str(cur_para)]))
+                        line_num = 0
+                        cur_para += 1
+                if line_num < file_num:
+                    out.write(name + "\n")
+                    out.write(seq + "\n")
+                if (cur_para == paras) and (line_num >= file_num):
+                    out.write(name + "\n")
+                    out.write(seq + "\n")
+                line_num += 1
+            out.close()
+            for para in range(paras):
+                processes = self._run_blast(
+                        program, database, e, "_".join([seq_file, str(para)]),
+                        "_".join([blast_file, str(para)]), strand, paras)
+            self._wait_process(processes)
+            for para in range(paras):
+                cur_blast_file = "_".join([blast_file, str(para)])
+                if para == 0:
+                    shutil.copy(cur_blast_file, blast_file)
+                    os.remove(cur_blast_file)
+                else:
+                    cur_blast_file = "_".join([blast_file, str(para)])
+                    self.helper.merge_blast_out(cur_blast_file, blast_file)
+            for file_ in seq_files:
+                os.remove(file_)
 
     def _get_strand_fasta(self, seq_file, out_folder):
         tmp_plus = os.path.join(out_folder, "tmp_plus.fa")
@@ -530,7 +608,7 @@ class sRNADetection(object):
             if database_format:
                 database = self._formatdb(database, data_type,
                                           args_srna.out_folder,
-                                          args_srna.blast_path, database_type)
+                                          args_srna.blastdb, database_type)
             for prefix in prefixs:
                 blast_file = os.path.join(
                         args_srna.out_folder, "blast_result_and_misc",
@@ -551,17 +629,19 @@ class sRNADetection(object):
                     tmp_plus, tmp_minus = self._get_strand_fasta(
                             seq_file, args_srna.out_folder)
                     tmp_blast = os.path.join("tmp_blast.txt")
-                    self._run_blast(args_srna.blast_path, program, database, e,
-                                    tmp_plus, tmp_blast, "plus")
-                    self._run_blast(args_srna.blast_path, program, database, e,
-                                    tmp_minus, blast_file, "minus")
-                    self.helper.merge_file(tmp_blast, blast_file)
-                    os.remove(tmp_blast)
+                    self._run_para_blast(program, database, e,
+                                         tmp_plus, tmp_blast, "plus",
+                                         args_srna.para_blast)
+                    self._run_para_blast(program, database, e,
+                                         tmp_minus, blast_file, "minus",
+                                         args_srna.para_blast)
+                    self.helper.merge_blast_out(tmp_blast, blast_file)
                     os.remove(tmp_plus)
                     os.remove(tmp_minus)
                 else:
-                    self._run_blast(args_srna.blast_path, program, database, e,
-                                    seq_file, blast_file, "both")
+                    self._run_para_blast(program, database, e,
+                                         seq_file, blast_file, "both",
+                                         args_srna.para_blast)
                 extract_blast(blast_file, srna_file, out_file,
                               out_file + ".csv", database_type)
                 shutil.move(out_file, srna_file)
@@ -622,27 +702,27 @@ class sRNADetection(object):
     def _remove_file(self, args_srna):
         self.helper.remove_all_content(args_srna.out_folder, "tmp_", "dir")
         self.helper.remove_all_content(args_srna.out_folder, "tmp_", "file")
-        self.helper.remove_tmp(args_srna.fastas)
-        self.helper.remove_tmp(args_srna.gffs)
+        self.helper.remove_tmp_dir(args_srna.fastas)
+        self.helper.remove_tmp_dir(args_srna.gffs)
         self.helper.remove_tmp(self.gff_output)
-        if args_srna.frag_wigs is not None:
-            self.helper.remove_tmp(args_srna.frag_wigs)
-        if args_srna.tex_wigs is not None:
-            self.helper.remove_tmp(args_srna.tex_wigs)
+        if "temp_wig" in os.listdir(args_srna.out_folder):
+            shutil.rmtree(os.path.join(args_srna.out_folder, "temp_wig"))
         if (args_srna.frag_wigs is not None) and (
                 args_srna.tex_wigs is not None):
             shutil.rmtree(args_srna.merge_wigs)
-        self.helper.remove_tmp(args_srna.trans)
+        self.helper.remove_tmp_dir(args_srna.trans)
         if args_srna.tss_folder is not None:
-            self.helper.remove_tmp(args_srna.tss_folder)
+            self.helper.remove_tmp_dir(args_srna.tss_folder)
         if args_srna.pro_folder is not None:
-            self.helper.remove_tmp(args_srna.pro_folder)
+            self.helper.remove_tmp_dir(args_srna.pro_folder)
         if args_srna.sorf_file is not None:
-            self.helper.remove_tmp(args_srna.sorf_file)
+            self.helper.remove_tmp_dir(args_srna.sorf_file)
         if "tmp_median" in os.listdir(args_srna.out_folder):
             os.remove(os.path.join(args_srna.out_folder, "tmp_median"))
         if self.term_path is not None:
-            self.helper.remove_tmp(args_srna.terms)
+            self.helper.remove_tmp_dir(args_srna.terms)
+        if args_srna.promoter_table is not None:
+            os.remove(args_srna.promoter_table)
 
     def _filter_srna(self, args_srna, prefixs):
         '''set the filter of sRNA'''
@@ -651,7 +731,8 @@ class sRNADetection(object):
                 self._compute_2d_and_energy(args_srna, prefixs)
         if args_srna.nr_database is not None:
             self._blast(args_srna.nr_database, args_srna.nr_format, "prot",
-            args_srna, prefixs, "blastx", "nr", args_srna.e_nr)
+                        args_srna, prefixs, args_srna.blastx, "nr",
+                        args_srna.e_nr)
         if self.sorf_path is not None:
             for prefix in prefixs:
                 if ("_".join([prefix, "sORF.gff"]) in
@@ -670,7 +751,8 @@ class sRNADetection(object):
                                 "_".join([self.prefixs["basic"], prefix]))
         if args_srna.srna_database is not None:
             self._blast(args_srna.srna_database, args_srna.srna_format, "nucl",
-                        args_srna, prefixs, "blastn", "sRNA", args_srna.e_srna)
+                        args_srna, prefixs, args_srna.blastn, "sRNA",
+                        args_srna.e_srna)
 
     def _import_info_format(self, import_info):
         new_info = []

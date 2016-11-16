@@ -170,8 +170,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args = self.mock_args.mock()
         args.out_folder = self.out
         args.trans = self.trans
-        args.compare_cds = self.gffs
-        args.c_feature = "CDS"
+        args.gffs = self.gffs
+        args.c_feature = ["CDS"]
         self.tran._compare_cds(["test"], args)
         datas = import_data(os.path.join(self.gffs, "test.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
@@ -227,7 +227,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.gffs = self.gffs
         args.terms = None
         args.compare_tss = None
-        args.compare_cds = None
+        args.c_feature = None
         args.fuzzy_term = 1
         args.max_dist = 2000
         self.tran.run_transcript_assembly(args)

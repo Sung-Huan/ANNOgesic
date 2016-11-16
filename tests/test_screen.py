@@ -51,9 +51,9 @@ class TestScreen(unittest.TestCase):
         args.frag_wigs = self.frag_wig
         args.tex_wigs = self.tex_wig
         args.height = 1000
-        args.tlibs = ["tex_1_f.wig:tex:1:a:+", "tex_1_r.wig:tex:1:a:-",
-                      "notex_1_f.wig:notex:1:a:+", "notex_1_r.wig:notex:1:a:-"]
-        args.flibs = ["frag_f.wig:frag:1:a:+", "frag_r.wig:frag:1:a:-"]
+        args.tlibs = ["test_folder/tex/tex_1_f.wig:tex:1:a:+", "test_folder/tex/tex_1_r.wig:tex:1:a:-",
+                      "test_folder/tex/notex_1_f.wig:notex:1:a:+", "test_folder/tex/notex_1_r.wig:notex:1:a:-"]
+        args.flibs = ["test_folder/frag/frag_f.wig:frag:1:a:+", "test_folder/frag/frag_r.wig:frag:1:a:-"]
         args.present = "expand"
         args.output_folder = self.output
         self.screen.screenshot(args)
@@ -64,9 +64,10 @@ class TestScreen(unittest.TestCase):
         self.assertEqual("\n".join(datas), self.example.out_r)
 
     def test_import_libs(self):
-        texs = [["tex_1.wig", "tex", "1", "a", "+"], ["notex_1.wig", "notex", "1", "a", "+"]]
+        texs = [[os.path.join(self.tex_wig, "tex_1.wig"), "tex", "1", "a", "+"],
+                [os.path.join(self.tex_wig, "notex_1.wig"), "notex", "1", "a", "+"]]
         lib_dict = {"ft": [], "fn": [], "rt": [], "rn": [], "ff": [], "rf": []}
-        self.screen._import_libs(texs, "+", self.tex_wig, lib_dict)
+        self.screen._import_libs(texs, "+", lib_dict)
         self.assertDictEqual(lib_dict, {'fn': ['test_folder/tex/notex_1.wig'], 'rn': [],
                              'rt': [], 'ft': ['test_folder/tex/tex_1.wig'], 'rf': [], 'ff': []})
 
@@ -129,6 +130,7 @@ snapshotDirectory /home/silas/ANNOgesic/test_folder/output/aaa/forward
 goto aaa:-186-218
 setDataRange 0,10
 snapshot aaa:14-18.png"""
+    out_f = out_f.replace("/home/silas/ANNOgesic", os.getcwd())
     out_r = """new
 genome /home/silas/ANNOgesic/test_folder/aaa.fa
 load /home/silas/ANNOgesic/test_folder/main.gff
@@ -140,6 +142,7 @@ load /home/silas/ANNOgesic/test_folder/tex/notex_1_r.wig
 load /home/silas/ANNOgesic/test_folder/frag/frag_r.wig
 maxPanelHeight 1000
 snapshotDirectory /home/silas/ANNOgesic/test_folder/output/aaa/reverse"""
+    out_r = out_r.replace("/home/silas/ANNOgesic", os.getcwd())
 
 if __name__ == "__main__":
     unittest.main()
