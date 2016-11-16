@@ -662,7 +662,7 @@ def main():
         help="The output table only includes the information of the highest "
         "expressed library. Default is False.")
     Transcript_parser.add_argument(
-        "--terminator_files", "-tr", default=None,
+        "--terminator_files", "-tr", default=None, nargs='+',
         help="If the paths of terminator gff files are assigned here, "
         "this function will compare transcripts with terminators to detect "
         "the parent transcript of terminator. Default is None.")
