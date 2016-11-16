@@ -58,5 +58,3 @@ class TargetFasta(object):
         if "tmp_reference" in os.listdir(out_folder):
             shutil.rmtree(new_ref_folder)
         print("please use the new fasta file to remapping again.")
-        print("Then copy BAMs and wigs back to input/align_results/BAMs "
-              "and input/align_results/wigs")
