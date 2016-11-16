@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Docker image &mdash; ANNOgesic 0.4.3 documentation</title>
+    <title>Docker image &mdash; ANNOgesic 0.5.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4.3',
+        VERSION:     '0.5.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ANNOgesic 0.4.3 documentation" href="index.html" />
+    <link rel="top" title="ANNOgesic 0.5.0 documentation" href="index.html" />
     <link rel="next" title="ANNOgesic’s subcommands" href="subcommands.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.4.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -75,12 +75,12 @@
 It is light and easy to manage. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> includes a <code class="docutils literal"><span class="pre">Dockfile</span></code> which
 is for build up a environment and install all required tools for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>.</p>
 <p>You can simply pull the Docker image by running</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">pull</span> <span class="n">silasysh</span><span class="o">/</span><span class="n">annogesic</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker pull silasysh/annogesic
 </pre></div>
 </div>
 <p>Alternatively, you can build the image by <code class="docutils literal"><span class="pre">Dockfile</span></code>.
 Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span><span class="o">=</span><span class="s2">&quot;annogesic&quot;</span> <span class="o">.</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo docker build -t=&quot;annogesic&quot; .
 </pre></div>
 </div>
 <p>It will build up an image called annogesic. You can see the images by typing <code class="docutils literal"><span class="pre">docker</span> <span class="pre">images</span></code></p>
@@ -90,7 +90,7 @@ Please go to the folder where <code class="docutils literal"><span class="pre">D
 </pre></div>
 </div>
 <p>Then we can use the image to create a container for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>. Please type</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="n">annogesic</span> <span class="n">bash</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -t -i annogesic bash
 </pre></div>
 </div>
 <p>Then you will jump into the container.</p>
@@ -99,12 +99,12 @@ Please go to the folder where <code class="docutils literal"><span class="pre">D
 </pre></div>
 </div>
 <p>If you want to mount the files from your host to the container, just add <code class="docutils literal"><span class="pre">-v</span></code> to the command.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">v</span> <span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">target</span><span class="p">:</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">within</span><span class="o">/</span><span class="n">container</span> <span class="n">annogesic</span> <span class="n">bash</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
 </pre></div>
 </div>
 <p>The paths should be absolute path. If we go to <code class="docutils literal"><span class="pre">root</span></code> in container. We can see the file.</p>
 <p>If you want to copy the files from container to host, you can use <code class="docutils literal"><span class="pre">cp</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">cp</span> <span class="o">&lt;</span><span class="n">containerId</span><span class="o">&gt;</span><span class="p">:</span><span class="o">/</span><span class="n">file</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">within</span><span class="o">/</span><span class="n">container</span> <span class="o">/</span><span class="n">host</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">target</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker cp &lt;containerId&gt;:/file/path/within/container /host/path/target
 </pre></div>
 </div>
 </div>
@@ -124,7 +124,7 @@ Please go to the folder where <code class="docutils literal"><span class="pre">D
         <li class="right" >
           <a href="installation.html" title="Installation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.4.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -9,14 +9,14 @@ You can simply pull the Docker image by running
 
 ::
 
-    docker pull silasysh/annogesic
+    $ docker pull silasysh/annogesic
 
 Alternatively, you can build the image by ``Dockfile``.
 Please go to the folder where ``Dockfile`` are located. Then type
 
 ::
 
-    sudo docker build -t="annogesic" .
+    $ sudo docker build -t="annogesic" .
 
 It will build up an image called annogesic. You can see the images by typing ``docker images``
 
@@ -30,7 +30,7 @@ Then we can use the image to create a container for running ``ANNOgesic``. Pleas
 
 ::
 
-    docker run -t -i annogesic bash
+    $ docker run -t -i annogesic bash
 
 Then you will jump into the container.
 
@@ -43,7 +43,7 @@ If you want to mount the files from your host to the container, just add ``-v`` 
 
 ::
 
-    docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
+    $ docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
 
 The paths should be absolute path. If we go to ``root`` in container. We can see the file.
 
@@ -52,4 +52,4 @@ If you want to copy the files from container to host, you can use ``cp``.
 
 ::
 
-    docker cp <containerId>:/file/path/within/container /host/path/target
+    $ docker cp <containerId>:/file/path/within/container /host/path/target

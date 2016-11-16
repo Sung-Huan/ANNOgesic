@@ -60,20 +60,20 @@ for TEX +/- treated libraries:
 
 ::
 
-  TSB_OD_0.2_TEX_reverse.wig:tex:1:a:-,\
-  TSB_OD_0.5_TEX_reverse.wig:tex:2:a:-,\
-  TSB_OD_0.2_TEX_forward.wig:tex:1:a:+,\
-  TSB_OD_0.5_TEX_forward.wig:tex:2:a:+,\
-  TSB_OD_0.2_reverse.wig:notex:1:a:-,\
-  TSB_OD_0.5_reverse.wig:notex:2:a:-,\
-  TSB_OD_0.2_forward.wig:notex:1:a:+,\
-  TSB_OD_0.5_forward.wig:notex:2:a:+,
+  TSB_OD_0.2_TEX_reverse.wig:tex:1:a:- \
+  TSB_OD_0.5_TEX_reverse.wig:tex:2:a:- \
+  TSB_OD_0.2_TEX_forward.wig:tex:1:a:+ \
+  TSB_OD_0.5_TEX_forward.wig:tex:2:a:+ \
+  TSB_OD_0.2_reverse.wig:notex:1:a:- \
+  TSB_OD_0.5_reverse.wig:notex:2:a:- \
+  TSB_OD_0.2_forward.wig:notex:1:a:+ \
+  TSB_OD_0.5_forward.wig:notex:2:a:+
 
 or for fragmented libraries:
 
 ::
 
-  fragmented_forward.wig:frag:1:a:+,fragmented_reverse.wig:frag:1:a:-
+  fragmented_forward.wig:frag:1:a:+ fragmented_reverse.wig:frag:1:a:-
 
 If only conventional RNA-seq data without fragementation or TEX treated can be provided, 
 it can still be assigned to fragmented libraries and used by ANNOgesic.
@@ -168,13 +168,12 @@ For format details, please check the section of
 
 ::
 
-  usage: ANNOgesic.py create [-h] project_path
-  
-  positional arguments:
-    project_path  Name/path of the project.
-  
-  optional arguments:
-    -h, --help    show this help message and exit
+    usage: annogesic create [-h] [--project_path PROJECT_PATH]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Name/path of the project.
 
 get_input_files
 --------------
@@ -194,18 +193,17 @@ Then, the user can assign the file type for download.
 
 ::
 
-    usage: annogesic get_input_files [-h] [--FTP_path FTP_PATH] [--ref_fasta]
+    usage: annogesic get_input_files [-h] [--project_path [PROJECT_PATH]]
+                                     [--ftp_path FTP_PATH] [--ref_fasta]
                                      [--ref_gff] [--ref_ptt] [--ref_rnt]
                                      [--ref_gbk] [--convert_embl] [--for_target]
-                                     [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --FTP_path FTP_PATH, -F FTP_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --ftp_path FTP_PATH, -F FTP_PATH
                             Path of NCBI FTP where can download the required
                             files.
       --ref_fasta, -f       Download fasta files of the reference. Default is
@@ -266,32 +264,32 @@ If no mutation information is provided, ``SNP_calling`` can be used for detectin
 
 ::
 
-    usage: annogesic get_target_fasta [-h] [--ref_fasta_folder REF_FASTA_FOLDER]
-                                      [--mutation_table MUTATION_TABLE]
-                                      [--output_format OUTPUT_FORMAT]
-                                      [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic get_target_fasta [-h] [--project_path [PROJECT_PATH]]
+                                      --ref_fasta_files REF_FASTA_FILES
+                                      [REF_FASTA_FILES ...] --mutation_table
+                                      MUTATION_TABLE
+                                      [--output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...]]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --ref_fasta_folder REF_FASTA_FOLDER, -r REF_FASTA_FOLDER
-                            Path of the fasta folder.
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --ref_fasta_files REF_FASTA_FILES [REF_FASTA_FILES ...], -r REF_FASTA_FILES [REF_FASTA_FILES ...]
+                            Path of the fasta files.
       --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                             Path of the mutation table which stores the mutation
                             information between the target strain and reference
                             strain.
-      --output_format OUTPUT_FORMAT, -o OUTPUT_FORMAT
+      --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                             Please assign the filename and the strain name which
                             should be included in output files. For example:
-                            FILE1:strain1_and_strain2,FILE2:strain3. FILE1 is a
-                            output fasta file which include the information of
-                            strain1 and strain2 (import multi-strains to one file
-                            should be separated by "_and_".) And FILE2 is for
-                            strain3. The multiple output files are splitted by
-                            comma.
+                            $FILE_PATH1:strain1_and_strain2 $FILE_PATH2:strain3.
+                            FILE_PATH1 is a output fasta file which include the
+                            information of strain1 and strain2 (import multi-
+                            strains to one file should be separated by ",".) And
+                            FILE_PATH2 is for strain3. The multiple output files
+                            are splitted by space.
 
 - **Output files**
 
@@ -323,32 +321,33 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 
 ::
 
-    usage: annogesic annotation_transfer [-h] [--RATT_path RATT_PATH]
-                                         [--compare_pair COMPARE_PAIR]
-                                         [--element ELEMENT]
-                                         [--transfer_type TRANSFER_TYPE]
-                                         [--ref_embl REF_EMBL] [--ref_gbk REF_GBK]
-                                         [--ref_fasta REF_FASTA]
-                                         [--target_fasta TARGET_FASTA]
+    usage: annogesic annotation_transfer [-h] [--project_path [PROJECT_PATH]]
+                                         [--ratt_path RATT_PATH] --compare_pair
+                                         COMPARE_PAIR [COMPARE_PAIR ...] --element
+                                         ELEMENT [--transfer_type TRANSFER_TYPE]
+                                         [--ref_embl_files REF_EMBL_FILES [REF_EMBL_FILES ...]]
+                                         [--ref_gbk_files REF_GBK_FILES [REF_GBK_FILES ...]]
+                                         --ref_fasta_files REF_FASTA_FILES
+                                         [REF_FASTA_FILES ...]
+                                         --target_fasta_files TARGET_FASTA_FILES
+                                         [TARGET_FASTA_FILES ...]
                                          [--convert_to_gff_rnt_ptt]
-                                         [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --RATT_path RATT_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --ratt_path RATT_PATH
                             Path of the start.ratt.sh file of RATT folder. Default
                             is start.ratt.sh.
-      --compare_pair COMPARE_PAIR, -p COMPARE_PAIR
+      --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
                             Please assign the name of strain pairs. ex.
                             NC_007795:NEW_NC_007795. The reference strain is
                             NC_007795 and the target strain is NEW_NC_007795. the
                             assigned names are the strain names in the fasta file
                             (start with ">"), not the filename of fasta file. If
-                            multiple strains need to be assigned, please use comma
+                            multiple strains need to be assigned, please use space
                             to separate the strains.
       --element ELEMENT, -e ELEMENT
                             --element will become the prefix of all output file.
@@ -356,16 +355,15 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             The transfer type for running RATT. (For the details,
                             please refer to the manual of RATT.) Default is
                             Strain.
-      --ref_embl REF_EMBL, -re REF_EMBL
-                            The folder of embl files.
-      --ref_gbk REF_GBK, -rg REF_GBK
-                            If you have no embl file, you can assign the folder of
-                            genbank files. The genbank can be ended by .gbk, .gbff
-                            or .gb
-      --ref_fasta REF_FASTA, -rf REF_FASTA
-                            The folder of reference fasta files.
-      --target_fasta TARGET_FASTA, -tf TARGET_FASTA
-                            The folder of target fasta files.
+      --ref_embl_files REF_EMBL_FILES [REF_EMBL_FILES ...], -re REF_EMBL_FILES [REF_EMBL_FILES ...]
+                            The paths of embl files.
+      --ref_gbk_files REF_GBK_FILES [REF_GBK_FILES ...], -rg REF_GBK_FILES [REF_GBK_FILES ...]
+                            If you have no embl file, you can assign genbank
+                            files. The genbank can be ended by .gbk, .gbff or .gb
+      --ref_fasta_files REF_FASTA_FILES [REF_FASTA_FILES ...], -rf REF_FASTA_FILES [REF_FASTA_FILES ...]
+                            The paths of reference fasta files.
+      --target_fasta_files TARGET_FASTA_FILES [TARGET_FASTA_FILES ...], -tf TARGET_FASTA_FILES [TARGET_FASTA_FILES ...]
+                            The paths of target fasta files.
       --convert_to_gff_rnt_ptt, -g
                             Convert the annotation to gff, rnt and ptt. Default is
                             False.
@@ -403,24 +401,23 @@ There are multiple programs which can be applied to detect mutations
 
 ::
 
-    usage: annogesic snp [-h] [--samtools_path SAMTOOLS_PATH]
-                         [--bcftools_path BCFTOOLS_PATH] [--bam_type BAM_TYPE]
-                         [--program PROGRAM] [--fasta_path FASTA_PATH]
-                         [--tex_bam_path TEX_BAM_PATH]
-                         [--frag_bam_path FRAG_BAM_PATH] [--quality QUALITY]
-                         [--read_depth_range READ_DEPTH_RANGE] [--ploidy PLOIDY]
-                         [--RG_tag] [--sample_number SAMPLE_NUMBER]
-                         [--caller CALLER] [--DP4_cutoff DP4_CUTOFF]
+    usage: annogesic snp [-h] [--project_path [PROJECT_PATH]]
+                         [--samtools_path SAMTOOLS_PATH]
+                         [--bcftools_path BCFTOOLS_PATH] --bam_type BAM_TYPE
+                         --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
+                         [FASTA_FILES ...] [--bam_files BAM_FILES [BAM_FILES ...]]
+                         [--quality QUALITY] [--read_depth_range READ_DEPTH_RANGE]
+                         [--ploidy PLOIDY] [--rg_tag]
+                         [--sample_number SAMPLE_NUMBER] [--caller CALLER]
+                         [--dp4_cutoff DP4_CUTOFF]
                          [--indel_fraction INDEL_FRACTION]
-                         [--filter_tag_info FILTER_TAG_INFO]
-                         [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+                         [--filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...]]
     
     optional arguments:
       -h, --help            show this help message and exit
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
       --samtools_path SAMTOOLS_PATH
                             If you want to assign the path of samtools, please
                             assign here.
@@ -428,97 +425,94 @@ There are multiple programs which can be applied to detect mutations
                             If you want to assign the path of bcftools, please
                             assign here.
       --bam_type BAM_TYPE, -t BAM_TYPE
-                            Please assign the type of BAM files. If the BAM files
-                            are produced by mapping to the reference strain,
-                            please keyin "reference". It is for detecting the
-                            mutations between refenece strain and target strain,
-                            and generate potential target fasta file. If the BAM
-                            files are produced by mapping to the target strain,
-                            please keyin 'target'. It is for detecting the real
-                            mutations of target genome sequence.
-      --program PROGRAM, -p PROGRAM
+                            Please assign the type of BAM. If the BAM files are
+                            produced by mapping to the close strain ("reference
+                            strain") of the query strain ("target strain"), please
+                            keyin "reference". This kind of BAM file can be used
+                            for detecting the mutations between "reference strain"
+                            and "target strain". If the BAM files are produced by
+                            mapping to exact query strain ("target strain"),
+                            please keyin "target". This kind of BAM file can be
+                            used for detecting the exact mutations of target
+                            genome sequence.
+      --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
                             Please assign the program for detecting SNP of
-                            transcript: 1: calculate with BAQ, 2: calculate
-                            without BAQ, 3: calculate with extend BAQ. Multi-
-                            programs can be executed at the same time. For
-                            example: 1,2,3. Default is 1,2,3.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            Path of the genome fasta folder.
-      --tex_bam_path TEX_BAM_PATH, -tw TEX_BAM_PATH
-                            If the TEX+/- libraries can be provided, please assign
-                            the path of the tex+/- BAM folder.
-      --frag_bam_path FRAG_BAM_PATH, -fw FRAG_BAM_PATH
-                            If the TEX+/- libraries can be provided, please assign
-                            the path of the fragmented BAM folder.
+                            transcript: "with_BAQ", "without_BAQ", "extend_BAQ".
+                            Multi-programs can be executed at the same time
+                            (separated by space). For example: with_BAQ
+                            without_BAQ extend_BAQ.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
+                            Paths of the bam files.
       --quality QUALITY, -q QUALITY
-                            The minimum quality of a real snp. Default is 40.
+                            The minimum quality of a real mutation. Default is 40.
       --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
-                            The range of read depth. If the read depth is higher
-                            or lower than this range, the SNPs will be excluded in
-                            output table. The format is $MIN,$MAX.
-                            --read_depth_range can be assigned by different types:
-                            1. real number (r), 2. the read depth based on the
-                            number of samples (n) or 3. times of average read
-                            depth (a). For example, n_10,a_2 means the range of
-                            read depth should be higher than 10 * --sample_number
-                            (if --sample_number is 2, DP value in output will be
-                            higher than 20) and lower than 2 * average read
-                            depth.If r_10,a_2 is assigned, it means that the
-                            minimum read depth becomes exactly 10. Default is
-                            n_10,a_2.
+                            Range of the read depth of a real mutation. The format
+                            is $MIN,$MAX. This value can be assigned by different
+                            types: 1. real number ("r"), 2. times of the number of
+                            samples ("n") or 3. times of the average read depth
+                            ("a"). For example, n_10,a_2 is assinged, the average
+                            read depth is 70 and the number of samples
+                            (--sample_number) is 4. Then, n_10 will be 40 (10 *
+                            --sample_number) and a_2 will be 140 (average read
+                            depth * 2). Based on the same example, if this value
+                            is r_10,a_2, the minimum read depth will become exact
+                            10 reads. Default is n_10,a_2.
       --ploidy PLOIDY, -pl PLOIDY
-                            Running for haploid or diploid genome. Default is
+                            The query bacteria is haploid or diploid. Default is
                             haploid.
-      --RG_tag, -R          It is opposite of --ignore-RG in samtools (one BAM
-                            file includes multi samples). Default is False.
-      --sample_number SAMPLE_NUMBER, -sn SAMPLE_NUMBER
-                            The numbers of samples. It will affect
-                            --read_depth_range, --DP4_cutoff and --indel_fraction.
+      --rg_tag, -R          This function is for one BAM file which includes multi
+                            samples (opposite of --ignore-RG in samtools). Default
+                            is False.
+      --sample_number SAMPLE_NUMBER, -ms SAMPLE_NUMBER
+                            This value is the number of samples. It will affect
+                            --read_depth_range, --dp4_cutoff and --indel_fraction.
       --caller CALLER, -c CALLER
                             The types of caller - consensus-caller or
                             multiallelic-caller. For details, please check
                             bcftools. "c" represents consensus-caller. "m"
                             represents multiallelic-caller. Default is m.
-      --DP4_cutoff DP4_CUTOFF, -D DP4_CUTOFF
-                            The cutoff of DP4. DP4 is compose of four numbers:
-                            high-quality reference forward bases (number 1),
+      --dp4_cutoff DP4_CUTOFF, -D DP4_CUTOFF
+                            The cutoff of DP4. DP4 is compose of four numbers: the
+                            reads covering the reference forward bases (number 1),
                             reference reverse bases (number 2), alternate forward
-                            bases (number 3) and alternative reverse bases (number
-                            4). Two cutoff values can be assigned, ex: n_10,0.8.
-                            First cutoff is for (number 3 + number 4). It can be
-                            assigned based on 1. real number (r), 2. the read
-                            depth based on the number of samples (n) or 3. the
-                            times of average read depth (a). The second cutoff is
-                            for (number 3 + number 4) / (number 1 + number 2 +
-                            number 3 + number 4). These two cutoff is splited by
-                            comma. For example, n_10,0.8 means the first cutoff
-                            should be higher than 10 * --sample_number (if
-                            --sample_number is 2, DP value in output will be
-                            higher than 20). And the second cutoff should be
-                            higher than 0.8. If r_10,0.8 is assigned, it means
-                            that the first cutoff becomes exactly 10. Default is
-                            n_10,0.8.
+                            bases (number 3) and alternate reverse bases (number
+                            4). Two values need to be assigned, ex: n_10,0.8. The
+                            first value is for (number 3 + number 4). This value
+                            can be assigned based on 1. real number ("r"), 2.
+                            times of the number of samples ("n") or 3. times of
+                            average read depth ("a"). The second value is for
+                            (number 3 + number 4) / (number 1 + number 2 + number
+                            3 + number 4). These two values are splited by comma.
+                            For example, n_10,0.8 is assigned and the average read
+                            depth is 70 and the number of samples
+                            (--sample_number) is 4. It means that the sum of
+                            number 3 and number 4 should be higher than 40 (10 *
+                            --sample_number), and the fraction -- (number 3 +
+                            number 4) / (number 1 + number 2 + number 3 + number
+                            4) should be higher than 0.8. Based on the same
+                            example, if r_10,0.8 is assigned, the sum of read
+                            depth of number 3 and number 4 will become exact 10
+                            reads. Default is n_10,0.8.
       --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
-                            The cutoff of the IMF and IDV, which supports
-                            insertion of deletion. For the details, please check
-                            the vcf format.IDV can be assigned by three types of
-                            input: 1. real number (r), 2. the read depth based on
-                            the number of samples (n) or 3. the times of average
-                            read depth (a). For example, n_10,0.8 means that the
-                            IDV should be higher than 10 * --sample_number (if
-                            --sample_number, DP value in output will be higher
-                            than 20). And IMF should be higher than 0.8. If
-                            r_10,0.8 is assigned, it means that IDV become exactly
-                            10. Default is n_10,0.8.
-      --filter_tag_info FILTER_TAG_INFO, -ft FILTER_TAG_INFO
-                            Please assign the tag of output data which can be used
-                            as filters. You need to assign three information: 1.
-                            the tag (tag name), 2. bigger or samller (b or s) and
-                            3. value for filters (integer or float). If multiple
-                            tags need to be assigned, please use comma to separate
-                            them. For example, "RPB_b0.1,MQ0F_s0" means that RPB
-                            should be bigger than 0.1 and MQ0F should be smaller
-                            than 0. Default is
+                            This value is the minimum IDV and IMF which supports
+                            insertion of deletion. The minimum IDV can be assigned
+                            by different types: 1. real number ("r"), 2. times of
+                            the number of samples ("n") or 3. times of the average
+                            read depth ("a"). For example, n_10,0.8 is assigned,
+                            the average read depth is 70 and the number of sample
+                            is 4. It means that IDV should be higher than 40 (10 *
+                            --sample_number), and IMF should be higher than 0.8.
+                            Based on the same example, if r_10,0.8 is assigned,
+                            the minimum IDV will become exact 10 reads. Default is
+                            n_10,0.8 and the two numbers are separated by comma.
+      --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
+                            This function can set more filters to improve the
+                            results. Please assign 1. the tag, 2. bigger ("b") or
+                            samller ("s") and 3. value for filters. For example,
+                            "RPB_b0.1,MQ0F_s0" means that RPB should be bigger
+                            than 0.1 and MQ0F should be smaller than 0. Default is
                             RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
 
 - **Output files**
@@ -574,14 +568,14 @@ will be generated based on the first line of ``$STRAIN_$PROGRAM_seq_reference.cs
 
 **statistics**: Stores the statistic files, ex: the distribution of SNPs based on QUAL.
 
-tsspredator(TSS and processing site prediction)
+tss_processing (TSS and processing site prediction)
 --------------
 
-``tsspredator`` can generate the TSS and processing sites via running  
+``tss_processing`` can generate the TSS and processing sites via running  
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Since the parameters can affect the 
-results strongly, ``optimize_tsspredator`` can obtain the optimized parameters of 
+results strongly, ``optimize_tss_processing`` can obtain the optimized parameters of 
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. please check the section 
-``optimize_tsspredator`` for details.
+``optimize_tss_processing`` for details.
 
 - **Required tools**
 
@@ -597,7 +591,7 @@ results strongly, ``optimize_tsspredator`` can obtain the optimized parameters o
 
 - **Optional input files**
 
-**Gff file of the manual detected TSS:** If gff file of the manual detected TSSs can be provided, ``tsspredator`` can merge the manual detected TSSs
+**Gff file of the manual detected TSS:** If gff file of the manual detected TSSs can be provided, ``tss_processing`` can merge the manual detected TSSs
 and TSSpredator predicted ones.
 
 **Gff file of transcript:** If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
@@ -607,46 +601,45 @@ For the transcripts, please check the section ``transcript_assembly``.
 
 ::
 
-    usage: annogesic tsspredator [-h] [--TSSpredator_path TSSPREDATOR_PATH]
-                                 [--fasta_folder FASTA_FOLDER]
-                                 [--annotation_folder ANNOTATION_FOLDER]
-                                 [--wig_folder WIG_FOLDER] [--height HEIGHT]
-                                 [--height_reduction HEIGHT_REDUCTION]
-                                 [--factor FACTOR]
-                                 [--factor_reduction FACTOR_REDUCTION]
-                                 [--enrichment_factor ENRICHMENT_FACTOR]
-                                 [--processing_factor PROCESSING_FACTOR]
-                                 [--base_height BASE_HEIGHT]
-                                 [--replicate_match REPLICATE_MATCH]
-                                 [--utr_length UTR_LENGTH] [--lib LIB]
-                                 [--output_prefix OUTPUT_PREFIX]
-                                 [--merge_manual MERGE_MANUAL] [--statistics]
-                                 [--validate_gene]
-                                 [--compute_program COMPUTE_PROGRAM]
-                                 [--compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY]
-                                 [--fuzzy FUZZY] [--cluster CLUSTER]
-                                 [--partial_length PARTIAL_LENGTH]
-                                 [--re_check_orphan]
-                                 [--overlap_feature OVERLAP_FEATURE]
-                                 [--reference_gff_folder REFERENCE_GFF_FOLDER]
-                                 [--remove_low_expression REMOVE_LOW_EXPRESSION]
-                                 [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic tss_processing [-h] [--project_path [PROJECT_PATH]]
+                                    [--tsspredator_path TSSPREDATOR_PATH]
+                                    --fasta_files FASTA_FILES [FASTA_FILES ...]
+                                    --annotation_files ANNOTATION_FILES
+                                    [ANNOTATION_FILES ...] [--height HEIGHT]
+                                    [--height_reduction HEIGHT_REDUCTION]
+                                    [--factor FACTOR]
+                                    [--factor_reduction FACTOR_REDUCTION]
+                                    [--enrichment_factor ENRICHMENT_FACTOR]
+                                    [--processing_factor PROCESSING_FACTOR]
+                                    [--base_height BASE_HEIGHT]
+                                    [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                    [--utr_length UTR_LENGTH] --tex_notex_libs
+                                    TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                                    --condition_names CONDITION_NAMES
+                                    [CONDITION_NAMES ...]
+                                    [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
+                                    [--statistics] [--validate_gene]
+                                    [--compute_program COMPUTE_PROGRAM]
+                                    [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
+                                    [--fuzzy FUZZY] [--cluster CLUSTER]
+                                    [--partial_length PARTIAL_LENGTH]
+                                    [--re_check_orphan]
+                                    [--overlap_feature OVERLAP_FEATURE]
+                                    [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
+                                    [--remove_low_expression REMOVE_LOW_EXPRESSION]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --TSSpredator_path TSSPREDATOR_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --tsspredator_path TSSPREDATOR_PATH
                             If you want to assign the path of TSSpredator, please
                             assign here. Default is /usr/local/bin/TSSpredator.jar
-      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                            Path of the target genome fasta folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the target genome gff folder.
-      --wig_folder WIG_FOLDER, -w WIG_FOLDER
-                            The folder of the TEX+/- wig folder.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the target genome fasta files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the target genome gff files.
       --height HEIGHT, -he HEIGHT
                             This value relates to the minimal number of read
                             starts at a certain genomic position to be considered
@@ -679,34 +672,35 @@ For the transcripts, please check the section ``transcript_assembly``.
       --base_height BASE_HEIGHT, -bh BASE_HEIGHT
                             This is the minimal number of reads should be mapped
                             on TSS. Default is 0.0.
-      --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
+      --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
-                            --replicate_match values need to be assigned to
-                            different conditions, please use comma to separate
-                            them. For example, 1_2,2_2,3_3. It means that
-                            --replicate_match is 2 in number 1 and number 2
-                            conditions. In number 3 condition, --replcate_match is
-                            3. For assigning the same --replicate_match to all
-                            conditions, just use like all_1 (--replicate_match is
-                            1 in all conditions). Default is all_1.
+                            --replicate_tex values need to be assigned to
+                            different conditions, please use space to separate
+                            them. For example, 1_2 2_2 3_3. It means that
+                            --replicate_tex is 2 in number 1 and number 2
+                            conditions. In number 3 condition, --replcate_tex is
+                            3. For assigning the same --replicate_tex to all
+                            conditions, just use like all_1 (--replicate_tex is 1
+                            in all conditions). Default is all_1.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The length of UTR. It is for Primary and Secondary
                             TSSs. Default is 300.
-      --lib LIB, -l LIB     The libraries of TEX+/- wig files. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                            The libraries of TEX+/- wig files. The format is:
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -p CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefix of all conditions. If multiple
-                            conditions need to be assigned, please use comma to
-                            separate them. For example,
-                            prefix_condition1,prefix_condition2.
-      --merge_manual MERGE_MANUAL, -m MERGE_MANUAL
-                            If gff file of the manual checked TSS is provided,
+                            conditions need to be assigned, please use space to
+                            separate them. For example, prefix_condition1
+                            prefix_condition2.
+      --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
+                            If gff files of the manual checked TSS are provided,
                             this function will merge manual checked ones and
                             TSSpredator predicted ones. please assign the path of
                             manual-checked TSS gff file.
@@ -718,10 +712,10 @@ For the transcripts, please check the section ``transcript_assembly``.
       --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
                             Which feature you want to predict, please assign "TSS"
                             or "processing_site". Default is TSS.
-      --compare_transcript_assembly COMPARE_TRANSCRIPT_ASSEMBLY, -ta COMPARE_TRANSCRIPT_ASSEMBLY
-                            If the folder of transcript gff file is provided, this
-                            function will compare TSS and transcript to obtain the
-                            overlap information. Default is False.
+      --compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...], -ta COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]
+                            If the paths of transcript gff files are provided,
+                            this function will compare TSS and transcript to
+                            obtain the overlap information. Default is False.
       --fuzzy FUZZY, -fu FUZZY
                             If --compare_transcript_assembly is provided, please
                             assign the fuzzy for comparing TSS and transcript
@@ -748,9 +742,9 @@ For the transcripts, please check the section ``transcript_assembly``.
       --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
                             If processing site and TSS are overlap, you can keep
                             "TSS" or "processing_site" or "both". Default is both.
-      --reference_gff_folder REFERENCE_GFF_FOLDER, -rg REFERENCE_GFF_FOLDER
+      --reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...], -rg REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]
                             If --overlap_feature is "TSS" or "processing_site",
-                            --reference_gff_folder need to be assigned. For TSS,
+                            --reference_gff_files need to be assigned. For TSS,
                             please assign the folder of processing site. For
                             processing_site, please assign the folder of TSS. If
                             --overlap_feature is "both", please don't use this
@@ -804,14 +798,6 @@ Based on this information, we can know the details of the specific TSS. The tags
 	
 	**libs:** Shows in which libraries the TSS can be detected.
 
-Once the comparison between TSSs and genome annotation files is done, a tag will also be generated in the genome annotation gff file.
-
-	**start_TSS:** Represents which TSSs are associated with this CDS/tRNA/rRNA.
-
-As soon as the comparison between TSSs and transcripts is done, a tag will also be generated in the transcript gff file.
-
-	**associated_tss:** Shows which TSSs are located on the transcript.
-
 transcript_assembly
 -------------------
 
@@ -839,53 +825,42 @@ Based on the comparison, the performance of ``transcript_assembly`` can be impro
 
 ::
 
-    usage: annogesic transcript_assembly [-h]
-                                         [--annotation_folder ANNOTATION_FOLDER]
-                                         [--length LENGTH]
-                                         [--tex_wig_path TEX_WIG_PATH]
-                                         [--frag_wig_path FRAG_WIG_PATH]
-                                         [--height HEIGHT] [--width WIDTH]
-                                         [--tolerance TOLERANCE]
-                                         [--tolerance_coverage TOLERANCE_COVERAGE]
-                                         [-rt REPLICATES_TEX]
-                                         [--replicates_frag REPLICATES_FRAG]
-                                         [--tex_notex TEX_NOTEX]
-                                         [--compare_TSS COMPARE_TSS]
-                                         [--compare_genome_annotation COMPARE_GENOME_ANNOTATION]
-                                         [--compare_feature_genome COMPARE_FEATURE_GENOME]
-                                         [--TSS_fuzzy TSS_FUZZY]
-                                         [--Tex_treated_libs TEX_TREATED_LIBS]
-                                         [--fragmented_libs FRAGMENTED_LIBS]
-                                         [--table_best]
-                                         [--terminator_folder TERMINATOR_FOLDER]
-                                         [--fuzzy_term FUZZY_TERM]
-                                         [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
-                                         [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic transcriptome_assembly [-h] [--project_path [PROJECT_PATH]]
+                                            [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
+                                            [--length LENGTH] [--height HEIGHT]
+                                            [--width WIDTH]
+                                            [--tolerance TOLERANCE]
+                                            [--tolerance_coverage TOLERANCE_COVERAGE]
+                                            [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
+                                            [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                                            [--tex_notex TEX_NOTEX]
+                                            [--tss_files TSS_FILES [TSS_FILES ...]]
+                                            [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
+                                            [--tss_fuzzy TSS_FUZZY]
+                                            [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                                            [--fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]]
+                                            [--table_best]
+                                            [--terminator_files TERMINATOR_FILES]
+                                            [--fuzzy_term FUZZY_TERM]
+                                            [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            If the genome annotation gff folder is provided, this
-                            function can compare transcript with genome
-                            annotation. If multiple transcipts overlap the same
-                            gene, this function will merge these transcript into a
-                            long one.
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            If paths of the genome annotation gff files are
+                            provided, this function can compare transcripts with
+                            genome annotations. If multiple transcipts overlap the
+                            same gene, this function will merge these transcript
+                            into a long one.
       --length LENGTH, -l LENGTH
                             The minimum length of the transcript after modifying
                             by genome annotation. If --annotation_folder is
                             assigned, this value will be for the final output.
                             Otherwise, --width will be the minimum length for the
-                            final output. The default is 20.
-      --tex_wig_path TEX_WIG_PATH, -tw TEX_WIG_PATH
-                            If the TEX+/- libraries need to be assigned, please
-                            assign the path of TEX+/- wig folder.
-      --frag_wig_path FRAG_WIG_PATH, -fw FRAG_WIG_PATH
-                            If the fragmented libraries need to be assigned,
-                            please assign the path of fragmented wig folder.
+                            final output. Default is 20.
       --height HEIGHT, -he HEIGHT
                             The minimum coverage of the transcript. The default is
                             10.
@@ -902,71 +877,66 @@ Based on the comparison, the performance of ``transcript_assembly`` can be impro
       --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
                             If the coverage is lower than tolerance_coverage, even
                             the length is within --tolerance, the algorithm will
-                            still devide the current transcript to two parts. The
-                            default is 0.
-      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+                            still devide the current transcript to two parts.
+                            Default is 0.
+      --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
                             This value (for TEX+/- libraries) is the minimal
                             number of replicates that a transcript has to be
                             detected. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
                             --replicate_tex values need to be assigned to
-                            different conditions, please use comma to separate
-                            them. For example, 1_2,2_2,3_3. It means that
+                            different conditions, please use space to separate
+                            them. For example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replcate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+      --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
                             The meaning and input type is the same to
                             --replicates_tex. This value is for fragmented
                             libraries.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If the libraries of TEX+/- need to be provided, please
-                            assign this value as well.This value is that a
+                            assign this value as well. This value is that a
                             transcript should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 1.
-      --compare_TSS COMPARE_TSS, -ct COMPARE_TSS
-                            If the path of TSS folder is assigned here, this
+      --tss_files TSS_FILES [TSS_FILES ...], -ct TSS_FILES [TSS_FILES ...]
+                            If the paths of TSS files are assigned here, this
                             function will compare transcripts with TSSs to detect
                             the overlap.
-      --compare_genome_annotation COMPARE_GENOME_ANNOTATION, -cg COMPARE_GENOME_ANNOTATION
-                            If the paht of annotation folder is assigned here,
-                            this function will compare transcripts with genome
-                            annotation to detect the parent transcripts of genome
-                            annotation.
-      --compare_feature_genome COMPARE_FEATURE_GENOME, -cf COMPARE_FEATURE_GENOME
+      --compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...], -cf COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]
                             If --compare_genome_annotation is provided, please
                             assign the feature which you want to compare. Default
-                            is gene,CDS. If multiple features need to be assigned,
-                            just insert comma between each feature, such as
-                            gene,CDS.
-      --TSS_fuzzy TSS_FUZZY, -fu TSS_FUZZY
+                            is None. If multiple features need to be assigned,
+                            just insert space between each feature, such as gene
+                            CDS.
+      --tss_fuzzy TSS_FUZZY, -fu TSS_FUZZY
                             If --compare_TSS is assigned. please type the fuzzy
                             for comparing TSS with transcript assembly here.
                             Default is 5.
-      --Tex_treated_libs TEX_TREATED_LIBS, -tl TEX_TREATED_LIBS
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If the TEX+/- libraries can be provided, please assign
                             the name of TEX+/- library. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --fragmented_libs FRAGMENTED_LIBS, -fl FRAGMENTED_LIBS
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...], -fl FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]
                             If the fragmented libraries can be provided, please
                             assign the name of fragmented library. The format is: 
-                            wig_file_name:fragmented(frag):condition_id(integer):r
+                            wig_file_path:fragmented(frag):condition_id(integer):r
                             eplicate_id(alphabet):strand(+ or -). If multiple wig
-                            files need to be assigned, please use comma to
+                            files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
       --table_best, -tb     The output table only includes the information of the
                             highest expressed library. Default is False.
-      --terminator_folder TERMINATOR_FOLDER, -tr TERMINATOR_FOLDER
-                            If the folder of terminator gff file is assigned here,
-                            this function will compare transcripts with
+      --terminator_files TERMINATOR_FILES, -tr TERMINATOR_FILES
+                            If the paths of terminator gff files are assigned
+                            here, this function will compare transcripts with
                             terminators to detect the parent transcript of
                             terminator. Default is None.
       --fuzzy_term FUZZY_TERM, -fz FUZZY_TERM
@@ -1034,14 +1004,6 @@ Based on this information, we can know the details of the specific transcript. T
 
 	**best_avg_coverage:** The average coverage of the highest expressed library within this transcript.
 
-Once the comparison between transcript and genome annotation files is done, a tag will also be generated in the genome annotation gff file.
-
-	**Parent:** Shows the parent transcript of the genome annotation.
-
-As soon as the comparison between transcript and TSS files is done, a tag will also be generated in the TSS gff file.
-
-	**Parent:** Shows the parent transcript of the TSS.
-
 terminator
 -----------
 
@@ -1071,64 +1033,62 @@ which have coverage significant decrease.
 
 ::
 
-    usage: annogesic terminator [-h] [--TransTermHP_path TRANSTERMHP_PATH]
+    usage: annogesic terminator [-h] [--project_path [PROJECT_PATH]]
+                                [--transtermhp_path TRANSTERMHP_PATH]
                                 [--expterm_path EXPTERM_PATH]
-                                [--RNAfold_path RNAFOLD_PATH]
-                                [--fasta_folder FASTA_FOLDER]
-                                [--annotation_folder ANNOTATION_FOLDER]
-                                [--transcript_folder TRANSCRIPT_FOLDER]
-                                [--sRNA SRNA] [--statistics]
-                                [--tex_wig_folder TEX_WIG_FOLDER]
-                                [--frag_wig_folder FRAG_WIG_FOLDER]
-                                [--decrease DECREASE]
+                                [--rnafold_path RNAFOLD_PATH] --fasta_files
+                                FASTA_FILES [FASTA_FILES ...] --annotation_files
+                                ANNOTATION_FILES [ANNOTATION_FILES ...]
+                                --transcript_files TRANSCRIPT_FILES
+                                [TRANSCRIPT_FILES ...]
+                                [--srna_files SRNA_FILES [SRNA_FILES ...]]
+                                [--statistics] [--decrease DECREASE]
                                 [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
                                 [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
                                 [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
                                 [--fuzzy_within_gene FUZZY_WITHIN_GENE]
                                 [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
                                 [--highest_coverage HIGHEST_COVERAGE]
-                                [-tl TEX_NOTEX_LIBS] [-fl FRAG_LIBS]
-                                [-te TEX_NOTEX] [-rt REPLICATES_TEX]
-                                [-rf REPLICATES_FRAG] [-tb] [-wz WINDOW_SIZE]
-                                [-ws WINDOW_SHIFT] [-ml MIN_LOOP_LENGTH]
-                                [-Ml MAX_LOOP_LENGTH] [-ms MIN_STEM_LENGTH]
-                                [-Ms MAX_STEM_LENGTH] [-mr MISS_RATE]
-                                [-mu MIN_U_TAIL_LENGTH] [-ru RANGE_U_TAIL] [-kp]
-                                [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+                                [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                                [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                                [--tex_notex TEX_NOTEX]
+                                [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
+                                [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                                [--table_best] [--window_size WINDOW_SIZE]
+                                [--window_shift WINDOW_SHIFT]
+                                [--min_loop_length MIN_LOOP_LENGTH]
+                                [--max_loop_length MAX_LOOP_LENGTH]
+                                [--min_stem_length MIN_STEM_LENGTH]
+                                [--max_stem_length MAX_STEM_LENGTH]
+                                [--miss_rate MISS_RATE]
+                                [--min_u_tail_length MIN_U_TAIL_LENGTH]
+                                [--range_u_tail RANGE_U_TAIL] [--keep_multi_term]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --TransTermHP_path TRANSTERMHP_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --transtermhp_path TRANSTERMHP_PATH
                             Please assign the path of "transterm" in TransTermHP.
       --expterm_path EXPTERM_PATH
                             Please assign the path of expterm.dat for TransTermHP.
                             Default is /usr/local/bin/expterm.dat
-      --RNAfold_path RNAFOLD_PATH
+      --rnafold_path RNAFOLD_PATH
                             If you want to assign the path of "RNAfold" of Vienna
                             package, please assign here.
-      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                            Path of the genome fasta folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the genome annotation gff folder.
-      --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
-                            Path of the transcript assembly gff folder.
-      --sRNA SRNA, -sr SRNA
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcript assembly gff files.
+      --srna_files SRNA_FILES [SRNA_FILES ...], -sr SRNA_FILES [SRNA_FILES ...]
                             If you want to include sRNA information to detect
-                            terminator, please assign the folder of sRNA gff
-                            files.
+                            terminator, please assign the paths of sRNA gff files.
       --statistics, -s      Doing statistics for terminator. The name of
                             statistics file is - stat_terminator_$STRAIN_NAME.csv.
                             Default is False.
-      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                            If TEX+/- libraries can be provided, please assign
-                            TEX+/- wig folder.
-      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                            If fragmented libraries can be provided, please assign
-                            fragmented wig folder.
       --decrease DECREASE, -d DECREASE
                             This value is maximum ratio -- (lowest coverage /
                             highest coverage) within (or nearby) the terminator.
@@ -1147,7 +1107,7 @@ which have coverage significant decrease.
                             If the candidates are within transcript and the
                             distance (nucleotides) between the end of
                             gene/transcript and terminator is within this value,
-                            the candidate will be consider as a terminator.
+                            the candidate will be considered as a terminator.
                             Otherwise, it will be removed. Default is 30.
       --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
                             The meaning is similar to --fuzzy_within_transcript.
@@ -1166,79 +1126,79 @@ which have coverage significant decrease.
                             this value. The low expressed terminator will not be
                             included in "best" results, but still in
                             "all_candidates". Default is 10.
-      -tl TEX_NOTEX_LIBS, --tex_notex_libs TEX_NOTEX_LIBS
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If the libraries of TEX+/- can be provided, please
                             assign the name of TEX+/- library. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      -fl FRAG_LIBS, --frag_libs FRAG_LIBS
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented libraries can be provided, please
                             assign the name of fragmented library. The format is: 
-                            wig_file_name:fragmented(frag):condition_id(integer):r
+                            wig_file_path:fragmented(frag):condition_id(integer):r
                             eplicate_id(alphabet):strand(+ or -). If multiple wig
-                            files need to be assigned, please use comma to
+                            files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:frag:1:a:+,wig2:frag:1:a:-.
-      -te TEX_NOTEX, --tex_notex TEX_NOTEX
+                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
+      --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If the libraries of TEX+/- can be provided, please
                             assign this value as well. This value is that the
                             terminator should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 1.
-      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+      --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
                             This value (for TEX+/- libraries) is the minimal
                             number of replicates that a terminator has to be
                             detected. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
                             --replicate_tex values need to be assigned to
-                            different conditions, please use comma to separate
-                            them. For example, 1_2,2_2,3_3. It means that
+                            different conditions, please use space to separate
+                            them. For example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replcate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      -rf REPLICATES_FRAG, --replicates_frag REPLICATES_FRAG
+      --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
                             The meaning and input type is the same as
                             --replicates_tex. This value is for fragmented
                             libraries.
-      -tb, --table_best     Output table only contains the information of the
+      --table_best, -tb     Output table only contains the information of the
                             library which has most significant coverage decrease.
                             Default is False.
-      -wz WINDOW_SIZE, --window_size WINDOW_SIZE
+      --window_size WINDOW_SIZE, -wz WINDOW_SIZE
                             Window size for searching secondary structure of
                             intergenic region. Default is 100 nts.
-      -ws WINDOW_SHIFT, --window_shift WINDOW_SHIFT
+      --window_shift WINDOW_SHIFT, -ws WINDOW_SHIFT
                             The number of nucleotides for window shift. Default is
                             20 nts.
-      -ml MIN_LOOP_LENGTH, --min_loop_length MIN_LOOP_LENGTH
+      --min_loop_length MIN_LOOP_LENGTH, -ml MIN_LOOP_LENGTH
                             The minimum loop length of terminator. Default is 3
                             nts.
-      -Ml MAX_LOOP_LENGTH, --max_loop_length MAX_LOOP_LENGTH
+      --max_loop_length MAX_LOOP_LENGTH, -Ml MAX_LOOP_LENGTH
                             The maximum loop length of terminator. Default is 10
                             nts.
-      -ms MIN_STEM_LENGTH, --min_stem_length MIN_STEM_LENGTH
+      --min_stem_length MIN_STEM_LENGTH, -ms MIN_STEM_LENGTH
                             The minimum stem length of terminator. Default is 4
                             nts.
-      -Ms MAX_STEM_LENGTH, --max_stem_length MAX_STEM_LENGTH
+      --max_stem_length MAX_STEM_LENGTH, -Ms MAX_STEM_LENGTH
                             The maximum stem length of terminator. Default is 20
                             nts.
-      -mr MISS_RATE, --miss_rate MISS_RATE
+      --miss_rate MISS_RATE, -mr MISS_RATE
                             The percentage of nucleotides which can be no pair in
                             the stem. Default is 0.25.
-      -mu MIN_U_TAIL_LENGTH, --min_U_tail_length MIN_U_TAIL_LENGTH
+      --min_u_tail_length MIN_U_TAIL_LENGTH, -mu MIN_U_TAIL_LENGTH
                             The minimum U-tail length of terminator. Default is 3
                             nts.
-      -ru RANGE_U_TAIL, --range_U_tail RANGE_U_TAIL
+      --range_u_tail RANGE_U_TAIL, -ru RANGE_U_TAIL
                             The range (nucleotides) for detection of U-tail. For
-                            example, if --range_U_tail is 6 and
-                            --min_U_tail_length is 3, and there are 3 Us within 6
+                            example, if --range_u_tail is 6 and
+                            --min_u_tail_length is 3, and there are 3 Us within 6
                             nts, This candidate will be assigned as the terminator
                             which has poly U-tail. Default is 6.
-      -kp, --keep_multi_term
+      --keep_multi_term, -kp
                             Sometimes, one gene is associated with more terminator
                             candidates. In default, it will only keep the high
                             confident one. This function can keep all terminators
@@ -1350,58 +1310,57 @@ ANNOgesic, please use --TSS_source. ``utr`` will classify TSSs for the analysis.
 
 ::
 
-    usage: annogesic utr [-h] [--annotation_folder ANNOTATION_FOLDER]
-                         [--TSS_folder TSS_FOLDER]
-                         [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-                         [--terminator_folder TERMINATOR_FOLDER] [--TSS_source]
-                         [--base_5UTR BASE_5UTR] [--UTR_length UTR_LENGTH]
-                         [--base_3UTR BASE_3UTR]
+    usage: annogesic utr [-h] [--project_path [PROJECT_PATH]] --annotation_files
+                         ANNOTATION_FILES [ANNOTATION_FILES ...] --tss_files
+                         TSS_FILES [TSS_FILES ...] --transcript_files
+                         TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                         [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
+                         [--tss_source] [--base_5utr BASE_5UTR]
+                         [--utr_length UTR_LENGTH] [--base_3utr BASE_3UTR]
                          [--terminator_fuzzy TERMINATOR_FUZZY]
                          [--fuzzy_3utr FUZZY_3UTR] [--fuzzy_5utr FUZZY_5UTR]
-                         [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the genome annotation gff folder.
-      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-                            Path of the TSS folder.
-      --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
-                            Path of the transcriptome assembly folder.
-      --terminator_folder TERMINATOR_FOLDER, -e TERMINATOR_FOLDER
-                            If the path of terminator folder is assigned here,
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            Paths of the TSS files.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcriptome fils.
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
+                            If the paths of terminator files are assigned here,
                             this function will also apply terminator to detect
                             3'UTR.
-      --TSS_source, -s      The TSS gff file is generated by ANNOgesic or not. If
+      --tss_source, -s      The TSS gff file is generated by ANNOgesic or not. If
                             the TSS file is not generated by ANNOgesic, this
                             function will classify the TSSs for detecting UTRs.
                             Default is True (from ANNOgesic).
-      --base_5UTR BASE_5UTR, -b5 BASE_5UTR
+      --base_5utr BASE_5UTR, -b5 BASE_5UTR
                             Please assign the information for detection of 5'UTR.
                             It can be "TSS" or "transcript" or "both". Default is
                             both.
-      --UTR_length UTR_LENGTH, -l UTR_LENGTH
+      --utr_length UTR_LENGTH, -l UTR_LENGTH
                             The maximum UTR length. Default is 300.
-      --base_3UTR BASE_3UTR, -b3 BASE_3UTR
+      --base_3utr BASE_3UTR, -b3 BASE_3UTR
                             please assign the information for detection of 3'UTR.
                             It can be "transcript" or "terminator" or "both".
                             Default is transcript.
       --terminator_fuzzy TERMINATOR_FUZZY, -f TERMINATOR_FUZZY
-                            This is only for --base_3UTR which is assigned by
+                            This is only for --base_3utr which is assigned by
                             "transcript" or "both", and terminator file are
                             provided. If the distance (nucleotides) between
                             terminator and the end of transcript is lower than
                             this value, the terminator is consider to be
                             associated with the 3'UTR. Default is 30.
       --fuzzy_3utr FUZZY_3UTR, -f3 FUZZY_3UTR
-                            If --base_3UTR includes transcript, please assign the
+                            If --base_3utr includes transcript, please assign the
                             fuzzy of 3'UTR. Default is 10 nucleotides.
       --fuzzy_5utr FUZZY_5UTR, -f5 FUZZY_5UTR
-                            If --base_5UTR includes transcript, please assign the
+                            If --base_5utr includes transcript, please assign the
                             fuzzy of 5'UTR. Default is 5 nucleotides.
 
 - **Output files**
@@ -1545,79 +1504,90 @@ this candidates will be removed.
 
 ::
 
-    usage: annogesic srna [-h] [--Vienna_folder VIENNA_FOLDER]
-                          [--Vienna_utils VIENNA_UTILS]
-                          [--blast_plus_folder BLAST_PLUS_FOLDER]
-                          [--ps2pdf14_path PS2PDF14_PATH] [--UTR_derived_sRNA]
-                          [--filter_info FILTER_INFO]
-                          [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-                          [--annotation_folder ANNOTATION_FOLDER]
-                          [--TSS_folder TSS_FOLDER]
-                          [--processing_site_folder PROCESSING_SITE_FOLDER]
-                          [--promoter_table PROMOTER_TABLE]
-                          [--promoter_name PROMOTER_NAME] [--TSS_source]
-                          [--TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
-                          [--TSS_5UTR_fuzzy TSS_5UTR_FUZZY]
-                          [--TSS_3UTR_fuzzy TSS_3UTR_FUZZY]
-                          [--TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY]
-                          [--terminator_folder TERMINATOR_FOLDER]
-                          [--terminator_fuzzy_in_sRNA TERMINATOR_FUZZY_IN_SRNA]
-                          [--terminator_fuzzy_out_sRNA TERMINATOR_FUZZY_OUT_SRNA]
+    usage: annogesic srna [-h] [--project_path [PROJECT_PATH]]
+                          [--rnafold_path RNAFOLD_PATH]
+                          [--relplot_path RELPLOT_PATH]
+                          [--mountain_path MOUNTAIN_PATH]
+                          [--blastn_path BLASTN_PATH] [--blastx_path BLASTX_PATH]
+                          [--makeblastdb_path MAKEBLASTDB_PATH]
+                          [--ps2pdf14_path PS2PDF14_PATH] [--utr_derived_srna]
+                          [--filter_info FILTER_INFO [FILTER_INFO ...]]
+                          [--parallel_blast PARALLEL_BLAST] --transcript_files
+                          TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                          --annotation_files ANNOTATION_FILES
+                          [ANNOTATION_FILES ...]
+                          [--tss_files TSS_FILES [TSS_FILES ...]]
+                          [--processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]]
+                          [--promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...]]
+                          [--promoter_name PROMOTER_NAME [PROMOTER_NAME ...]]
+                          [--tss_source]
+                          [--tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
+                          [--tss_5utr_fuzzy TSS_5UTR_FUZZY]
+                          [--tss_3utr_fuzzy TSS_3UTR_FUZZY]
+                          [--tss_intercds_fuzzy TSS_INTERCDS_FUZZY]
+                          [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
+                          [--terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA]
+                          [--terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA]
                           [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-                          [--tex_wig_folder TEX_WIG_FOLDER]
-                          [--frag_wig_folder FRAG_WIG_FOLDER]
-                          [--run_intergenic_TEX_coverage RUN_INTERGENIC_TEX_COVERAGE]
-                          [--run_intergenic_noTEX_coverage RUN_INTERGENIC_NOTEX_COVERAGE]
+                          [--run_intergenic_tex_coverage RUN_INTERGENIC_TEX_COVERAGE]
+                          [--run_intergenic_notex_coverage RUN_INTERGENIC_NOTEX_COVERAGE]
                           [--run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE]
                           [--run_break_transcript RUN_BREAK_TRANSCRIPT]
-                          [--run_antisense_TEX_coverage RUN_ANTISENSE_TEX_COVERAGE]
-                          [--run_antisense_noTEX_coverage RUN_ANTISENSE_NOTEX_COVERAGE]
+                          [--run_antisense_tex_coverage RUN_ANTISENSE_TEX_COVERAGE]
+                          [--run_antisense_notex_coverage RUN_ANTISENSE_NOTEX_COVERAGE]
                           [--run_antisense_fragmented_coverage RUN_ANTISENSE_FRAGMENTED_COVERAGE]
-                          [--run_utr_TEX_coverage RUN_UTR_TEX_COVERAGE]
-                          [--run_utr_noTEX_coverage RUN_UTR_NOTEX_COVERAGE]
+                          [--run_utr_tex_coverage RUN_UTR_TEX_COVERAGE]
+                          [--run_utr_notex_coverage RUN_UTR_NOTEX_COVERAGE]
                           [--run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE]
                           [--min_utr_coverage MIN_UTR_COVERAGE]
-                          [--fasta_folder FASTA_FOLDER]
+                          [--fasta_files FASTA_FILES [FASTA_FILES ...]]
                           [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
                           [--nr_format] [--srna_format]
-                          [--sRNA_database_path SRNA_DATABASE_PATH]
+                          [--srna_database_path SRNA_DATABASE_PATH]
                           [--nr_database_path NR_DATABASE_PATH]
-                          [--tex_notex_libs TEX_NOTEX_LIBS]
-                          [--frag_libs FRAG_LIBS] [--tex_notex TEX_NOTEX]
-                          [-rt REPLICATES_TEX] [--replicates_frag REPLICATES_FRAG]
+                          [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                          [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                          [--tex_notex TEX_NOTEX]
+                          [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
+                          [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
                           [--table_best]
                           [--decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE]
                           [--decrease_utr DECREASE_UTR]
                           [--fuzzy_intergenic_antisense FUZZY_INTERGENIC_ANTISENSE]
                           [--fuzzy_utr FUZZY_UTR] [--cutoff_nr_hit CUTOFF_NR_HIT]
                           [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
-                          [--sORF SORF] [--detect_sRNA_in_CDS]
-                          [--overlap_percent_CDS OVERLAP_PERCENT_CDS]
+                          [--sorf_files SORF_FILES [SORF_FILES ...]]
+                          [--detect_srna_in_cds]
+                          [--overlap_percent_cds OVERLAP_PERCENT_CDS]
                           [--ignore_hypothetical_protein]
                           [--ranking_time_promoter RANKING_TIME_PROMOTER]
-                          [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --Vienna_folder VIENNA_FOLDER
-                            Please assign the folder of Vienna package. It should
-                            include RNAfold.
-      --Vienna_utils VIENNA_UTILS
-                            Please assign the folder of Utils of Vienna package.
-                            It should include relplot.pl and mountain.pl.
-      --blast_plus_folder BLAST_PLUS_FOLDER
-                            Please assign the folder of blast+ which include
-                            blastn, blastx, makeblastdb.
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --rnafold_path RNAFOLD_PATH
+                            Please assign RNAfold path.
+      --relplot_path RELPLOT_PATH
+                            Please assign the path of relplot.pl in Vienna
+                            package.
+      --mountain_path MOUNTAIN_PATH
+                            Please assign the path of mountain.pl in Vienna
+                            package.
+      --blastn_path BLASTN_PATH
+                            Please assign the path of blastn in blast+ package.
+      --blastx_path BLASTX_PATH
+                            Please assign the path of blastx in blast+ package.
+      --makeblastdb_path MAKEBLASTDB_PATH
+                            Please assign the path of makeblastdb in blast+
+                            package.
       --ps2pdf14_path PS2PDF14_PATH
                             Please assign the path of ps2pdf14.
-      --UTR_derived_sRNA, -u
+      --utr_derived_srna, -u
                             The function is for detecting UTR-derived sRNA.
                             Default is False.
-      --filter_info FILTER_INFO, -d FILTER_INFO
+      --filter_info FILTER_INFO [FILTER_INFO ...], -d FILTER_INFO [FILTER_INFO ...]
                             There are several filters that you can use to imporve
                             sRNA detection: 1. tss (sRNA has to start with TSS),
                             2. sec_str (free energy change of secondary structure
@@ -1633,72 +1603,75 @@ this candidates will be removed.
                             with a promoter motif). ATTENTION: without importing
                             any information, the results may include many false
                             positives. If multiple filters needs to be assigned,
-                            please use comma to separated them. ex:
-                            tss,sec_str,blast_nr - means it used 1. TSS, 2. free
-                            energy change of secondary structure and 3. blast to
-                            nr database to detect sRNA. If you want to use
-                            blast_srna as a filter, please follow the format:
-                            $ID|$STRAIN|$SRNANAME.
-                            "tss,sec_str,blast_nr,blast_srna" is recommanded to be
-                            assigned. Default is None.
-      --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
-                            Path of the transcriptome assembly folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the genome annotation gff folder.
-      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-                            If the path of TSS gff folder is assigned here, TSS
+                            please use space to separated them. ex: tss sec_str
+                            blast_nr - means it used 1. TSS, 2. free energy change
+                            of secondary structure and 3. blast to nr database to
+                            detect sRNA. If you want to use blast_srna as a
+                            filter, please follow the format:
+                            $ID|$STRAIN|$SRNANAME. "tss sec_str blast_nr
+                            blast_srna" is recommanded to be assigned. Default is
+                            tss sec_str blast_nr blast_srna.
+      --parallel_blast PARALLEL_BLAST, -pb PARALLEL_BLAST
+                            How many parallels that you want to use for blast.
+                            Default is 10.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcript files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            If the paths of TSS gff files are assigned here, TSS
                             information will be used for detecting sRNA. For
                             detection of UTR-derived sRNA, TSS information MUST be
                             provided.
-      --processing_site_folder PROCESSING_SITE_FOLDER, -p PROCESSING_SITE_FOLDER
-                            If the path of processing site gff folder is assigned
+      --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
+                            If the paths of processing site gff files are assigned
                             here, processing site information will be used for
                             detecting sRNA. For detection of UTR-derived sRNA,
                             processing site information can improve the results.
-      --promoter_table PROMOTER_TABLE, -pt PROMOTER_TABLE
-                            If the path of promoter table is assigned here, the
+      --promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...], -pt PROMOTER_TABLES [PROMOTER_TABLES ...]
+                            If the paths of promoter tables are assigned here, the
                             promoter information will be used for detecting of
                             sRNA. The format of table is $STRAIN $TSS_POSITION
                             $TSS_STRAND $PROMOTER_NAME. TSS information is also
                             required.
-      --promoter_name PROMOTER_NAME, -pn PROMOTER_NAME
-                            If --promoter_table is provided, please assign the
+      --promoter_name PROMOTER_NAME [PROMOTER_NAME ...], -pn PROMOTER_NAME [PROMOTER_NAME ...]
+                            If --promoter_tables is provided, please assign the
                             promoter name (the last column of promoter table)
                             which you want to compare. If multiple promoters need
-                            to be assigned, please put comma between the
+                            to be assigned, please put space between the
                             promoters. Default is None.
-      --TSS_source, -ts     If the TSS gff file is not generated by ANNOgesic,
+      --tss_source, -ts     If the TSS gff file is not generated by ANNOgesic,
                             please use this function to classify TSSs and generate
                             the proper format for sRNA prediction. Default is True
                             (from ANNOgesic).
-      --TSS_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
-                            If --TSS_folder is provided, please assign the fuzzy
+      --tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
+                            If --tss_folder is provided, please assign the fuzzy
                             for comparing TSS with transcript. It is for
                             intergenic sRNA. Default is 3.
-      --TSS_5UTR_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
-                            If --TSS_folder is provided, please assign the fuzzy
+      --tss_5utr_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
+                            If --tss_folder is provided, please assign the fuzzy
                             for comparing TSS with transcript. It is for 5'UTR-
                             derived sRNA.The input type can be percentage ("p") or
                             the real amount of reads ("n"). Ex: p_0.05 means the
                             fuzzy is 5 percent of the length of 5'UTR. n_10 means
                             the fuzzy is 10 base pair. Default is n_3.
-      --TSS_3UTR_fuzzy TSS_3UTR_FUZZY, -f3 TSS_3UTR_FUZZY
-                            The meaning is similar to --TSS_5UTR_fuzzy. This value
+      --tss_3utr_fuzzy TSS_3UTR_FUZZY, -f3 TSS_3UTR_FUZZY
+                            The meaning is similar to --tss_5utr_fuzzy. This value
                             is for 3'UTR-derived sRNA instead of 5'UTR-derived
                             sRNA. Default is p_0.04.
-      --TSS_interCDS_fuzzy TSS_INTERCDS_FUZZY, -fc TSS_INTERCDS_FUZZY
-                            The meaning is similar to --TSS_5UTR_fuzzy. This value
+      --tss_intercds_fuzzy TSS_INTERCDS_FUZZY, -fc TSS_INTERCDS_FUZZY
+                            The meaning is similar to --tss_5utr_fuzzy. This value
                             is for interCDS-derived sRNA instead of 5'UTR-derived
                             sRNA. Default is p_0.04.
-      --terminator_folder TERMINATOR_FOLDER, -tf TERMINATOR_FOLDER
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -tf TERMINATOR_FILES [TERMINATOR_FILES ...]
                             If terminator information is required, please assign
-                            the path of gff folder of terminator.
-      --terminator_fuzzy_in_sRNA TERMINATOR_FUZZY_IN_SRNA, -tfi TERMINATOR_FUZZY_IN_SRNA
+                            the paths of gff files of terminator.
+      --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -tfi TERMINATOR_FUZZY_IN_SRNA
                             If --terminator_folder is provided, please assign the
                             fuzzy for comparing terminator with transcript. This
                             value is for the terminator which is within sRNA.
                             Default is 30.
-      --terminator_fuzzy_out_sRNA TERMINATOR_FUZZY_OUT_SRNA, -tfo TERMINATOR_FUZZY_OUT_SRNA
+      --terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA, -tfo TERMINATOR_FUZZY_OUT_SRNA
                             The meaning is the same as --terminator_fuzzy_in_sRNA.
                             This value is for the terminator which is outside of
                             sRNA. Default is 30.
@@ -1706,13 +1679,7 @@ this candidates will be removed.
                             Please assign the minimum sRNA length. Default is 30.
       --max_length MAX_LENGTH, -lM MAX_LENGTH
                             Please assign the maximum sRNA length. Default is 500.
-      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                            If TEX+/- libraries can be provided, please assign the
-                            path of TEX+/- wig folder.
-      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                            If fragmented libraries can be provided, please assign
-                            the path of fragment wig folder.
-      --run_intergenic_TEX_coverage RUN_INTERGENIC_TEX_COVERAGE, -it RUN_INTERGENIC_TEX_COVERAGE
+      --run_intergenic_tex_coverage RUN_INTERGENIC_TEX_COVERAGE, -it RUN_INTERGENIC_TEX_COVERAGE
                             The minimum average coverage of intergenic sRNA
                             candidates in TEX+ libraries. This value is based on
                             different types of TSSs. The order of numbers is
@@ -1725,15 +1692,18 @@ this candidates will be removed.
                             provided, it will choose the lowest one as a general
                             cutoff for prediction. Ex: if the input is 0,0,0,50,10
                             and --TSS_folder is not provided, 10 will be the
-                            general cutoff for prediction. Default is 0,0,0,40,20.
-      --run_intergenic_noTEX_coverage RUN_INTERGENIC_NOTEX_COVERAGE, -in RUN_INTERGENIC_NOTEX_COVERAGE
+                            general cutoff for prediction. Default is 0,0,0,40,20
+                            and each number is separated by comma.
+      --run_intergenic_notex_coverage RUN_INTERGENIC_NOTEX_COVERAGE, -in RUN_INTERGENIC_NOTEX_COVERAGE
                             The meaning is the same as
-                            --run_intergenic_TEX_coverage. This value is for TEX-
-                            libraries. Default is 0,0,0,30,10.
+                            --run_intergenic_tex_coverage. This value is for TEX-
+                            libraries. Default is 0,0,0,30,10 and each number is
+                            separated by comma.
       --run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE, -if RUN_INTERGENIC_FRAGMENTED_COVERAGE
                             The meaning is the same as
-                            --run_intergenic_TEX_coverage. This value is for
-                            fragmented libraries. Default is 400,200,0,50,20.
+                            --run_intergenic_tex_coverage. This value is for
+                            fragmented libraries. Default is 400,200,0,50,20 and
+                            each number is separated by comma.
       --run_break_transcript RUN_BREAK_TRANSCRIPT, -ib RUN_BREAK_TRANSCRIPT
                             Several primary/secondary TSSs are associated with
                             transcripts which has no CDSs/tRNA/rRNA inside
@@ -1743,23 +1713,24 @@ this candidates will be removed.
                             candidates. The format is $TEX,$NOTEX,$FRAG. ex:
                             200,100,100 is means that the minimum average coverage
                             is 200 for TEX+ libraries, 100 for TEX- and fragmented
-                            libraries. Default is 50,40,60
-      --run_antisense_TEX_coverage RUN_ANTISENSE_TEX_COVERAGE, -at RUN_ANTISENSE_TEX_COVERAGE
+                            libraries. Default is 30,20,30 and each number is
+                            separated by comma.
+      --run_antisense_tex_coverage RUN_ANTISENSE_TEX_COVERAGE, -at RUN_ANTISENSE_TEX_COVERAGE
                             The meaning is the same as
-                            --run_intergenic_TEX_coverage. This value is for
+                            --run_intergenic_tex_coverage. This value is for
                             antisense in stead of intergenic. Default is
-                            0,0,0,40,20.
-      --run_antisense_noTEX_coverage RUN_ANTISENSE_NOTEX_COVERAGE, -an RUN_ANTISENSE_NOTEX_COVERAGE
+                            0,0,0,40,20 and each number is separated by comma.
+      --run_antisense_notex_coverage RUN_ANTISENSE_NOTEX_COVERAGE, -an RUN_ANTISENSE_NOTEX_COVERAGE
                             The meaning is the same as
-                            --run_intergenic_noTEX_coverage. This value is for
+                            --run_intergenic_notex_coverage. This value is for
                             antisense in stead of intergenic. Default is
-                            0,0,0,30,10.
+                            0,0,0,30,10 and each number is separated by comma.
       --run_antisense_fragmented_coverage RUN_ANTISENSE_FRAGMENTED_COVERAGE, -af RUN_ANTISENSE_FRAGMENTED_COVERAGE
                             The meaning is the same as
                             --run_intergenic_fragmented_coverage. This value is
                             for antisense in stead of intergenic. Default is
-                            400,200,0,50,20.
-      --run_utr_TEX_coverage RUN_UTR_TEX_COVERAGE, -ut RUN_UTR_TEX_COVERAGE
+                            400,200,0,50,20 and each number is separated by comma.
+      --run_utr_tex_coverage RUN_UTR_TEX_COVERAGE, -ut RUN_UTR_TEX_COVERAGE
                             The minimum average coverage of UTR-derived sRNA
                             candidates in TEX+ libraries. The input can be
                             assigned by the percentile ("p") or real number of
@@ -1773,27 +1744,30 @@ this candidates will be removed.
                             minimum coverage for 5'UTR-derived sRNA, 10 as minimum
                             coverage for 3'UTR-derived sRNA and 20 as minimum
                             coverage for interCDS-derived sRNA. Default is
-                            p_0.8,p_0.6,p_0.7.
-      --run_utr_noTEX_coverage RUN_UTR_NOTEX_COVERAGE, -un RUN_UTR_NOTEX_COVERAGE
-                            The meaning is the same as --run_utr_TEX_coverage.
+                            p_0.8,p_0.6,p_0.7 and each number is separated by
+                            comma.
+      --run_utr_notex_coverage RUN_UTR_NOTEX_COVERAGE, -un RUN_UTR_NOTEX_COVERAGE
+                            The meaning is the same as --run_utr_tex_coverage.
                             This value is for TEX- libraries. Default is
-                            p_0.7,p_0.5,p_0.6.
+                            p_0.7,p_0.5,p_0.6 and each number is separated by
+                            comma.
       --run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE, -uf RUN_UTR_FRAGMENTED_COVERAGE
-                            The meaning is the same as --run_utr_TEX_coverage.
+                            The meaning is the same as --run_utr_tex_coverage.
                             This value is for fragmented libraries. Default is
-                            p_0.7,p_0.5,p_0.6.
+                            p_0.7,p_0.5,p_0.6 and each number is separated by
+                            comma.
       --min_utr_coverage MIN_UTR_COVERAGE, -mu MIN_UTR_COVERAGE
                             The minimum general coverage of UTR-derived sRNA. The
                             coverage of UTR-derived sRNA should not only fit the
                             --run_utr_TEX_coverage, --run_utr_noTEX_coverage and
                             --run_utr_fragmented_coverage, but also this value.
                             Defaul is 50.
-      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             If "sec_str" or "blast_nr" or "blast_srna" is assigned
-                            to --import_info, please assign the path of genome
-                            fasta folder here.
+                            to --filter_info, please assign the paths of genome
+                            fasta files here.
       --cutoff_energy CUTOFF_ENERGY, -e CUTOFF_ENERGY
-                            If "sec_str" is included in --import_info, please
+                            If "sec_str" is included in --filter_info, please
                             assign the maximum folding energy change (normalized
                             by length of gene). Default is -0.05.
       --mountain_plot, -m   This function will generate mountain plot of sRNA
@@ -1803,46 +1777,46 @@ this candidates will be removed.
                             is False.
       --srna_format, -sf    The meaning is the same as --nr_format. It is for sRNA
                             database in stead of nr database. Default is False.
-      --sRNA_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
-                            If "blast_srna" is included in --import_info, please
+      --srna_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
+                            If "blast_srna" is included in --filter_info, please
                             assign the path of sRNA database.
       --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
-                            If "blast_nr" is included in --import_info, please
+                            If "blast_nr" is included in --filter_info, please
                             assign the path of nr database.
-      --tex_notex_libs TEX_NOTEX_LIBS, -tl TEX_NOTEX_LIBS
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If TEX+/- libraries can be provided, please assign the
                             name of TEX+/- libraries here. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --frag_libs FRAG_LIBS, -fl FRAG_LIBS
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If fragmented libraries can be provided, please assign
                             the name of fragmented libraries here. The format is: 
-                            wig_file_name:fragmented(frag):condition_id(integer):r
+                            wig_file_path:fragmented(frag):condition_id(integer):r
                             eplicate_id(alphabet):strand(+ or -). If multiple wig
-                            files need to be assigned, please use comma to
+                            files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If TEX+/- libraries is assigned, this value is that a
                             sRNA should be detected in both (TEX+ and TEX-) or can
                             be detected in only one library (TEX+ or TEX-). Please
                             assign 1 or 2. Default is 2.
-      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+      --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
                             This value (for TEX+/- libraries) is the minimal
                             number of replicates that a sRNA has to be detected.
                             The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
                             If different --replicate_tex values need to be
-                            assigned to different conditions, please use comma to
-                            separate them. For example, 1_2,2_2,3_3. It means that
+                            assigned to different conditions, please use space to
+                            separate them. For example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replcate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+      --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
                             The meaning and input type is the same as
                             --replicates_tex. This value is for fragmented
                             libraries.
@@ -1880,7 +1854,7 @@ this candidates will be removed.
                             decrease. Ex: the location of intergenic sRNA is
                             300-400, and --fuzzy_intergenic_antisense is 30. The
                             algorithm will search the coverage decrease within
-                            270-430 Default is 10.
+                            270-430. Default is 10.
       --fuzzy_utr FUZZY_UTR, -fu FUZZY_UTR
                             It is simliar with --fuzzy_intergenic_antisense. This
                             is for UTR-derived sRNAs. Default is 10.
@@ -1892,22 +1866,23 @@ this candidates will be removed.
       --blast_e_srna BLAST_E_SRNA, -es BLAST_E_SRNA
                             The maximum e value for blast in sRNA database.
                             Default is 0.0001.
-      --sORF SORF, -O SORF  If the path of sORF gff folder is assigned here, this
+      --sorf_files SORF_FILES [SORF_FILES ...], -O SORF_FILES [SORF_FILES ...]
+                            If the paths of sORF gff files are assigned here, this
                             function will include the sORF information for
                             detecting sRNA.
-      --detect_sRNA_in_CDS, -ds
+      --detect_srna_in_cds, -ds
                             This function will search sRNA in CDS (ex: the genome
                             annotation is not correct). More sRNA candidates which
                             overlap with CDS will be detected. Default is False.
-      --overlap_percent_CDS OVERLAP_PERCENT_CDS, -oc OVERLAP_PERCENT_CDS
-                            If --detect_sRNA_in_CDS is True, please assign the
+      --overlap_percent_cds OVERLAP_PERCENT_CDS, -oc OVERLAP_PERCENT_CDS
+                            If --detect_srna_in_cds is True, please assign the
                             maximum ratio of overlap between CDS and sRNA
                             candidates. Default is 0.5
       --ignore_hypothetical_protein, -ih
                             This function is for ignoring the hypothetical
                             proteins in genome annotation file. Default is False.
       --ranking_time_promoter RANKING_TIME_PROMOTER, -rp RANKING_TIME_PROMOTER
-                            If --promoter_table is provided, the information of
+                            If --promoter_tables is provided, the information of
                             promoter can be use for ranking sRNA candidates as
                             well. The ranking score is --ranking_time_promoter *
                             average coverage. For example, a sRNA candidate which
@@ -2072,51 +2047,53 @@ Please be aware this point for using the results.
 
 ::
 
-    usage: annogesic sorf [-h] [--UTR_derived_sORF]
-                          [--transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER]
-                          [--annotation_folder ANNOTATION_FOLDER]
-                          [--TSS_folder TSS_FOLDER] [--utr_length UTR_LENGTH]
-                          [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-                          [--tex_wig_folder TEX_WIG_FOLDER]
-                          [--frag_wig_folder FRAG_WIG_FOLDER]
+    usage: annogesic sorf [-h] [--project_path [PROJECT_PATH]]
+                          [--utr_derived_sorf] --transcript_files TRANSCRIPT_FILES
+                          [TRANSCRIPT_FILES ...] --annotation_files
+                          ANNOTATION_FILES [ANNOTATION_FILES ...]
+                          [--tss_files TSS_FILES [TSS_FILES ...]]
+                          [--utr_length UTR_LENGTH] [--min_length MIN_LENGTH]
+                          [--max_length MAX_LENGTH]
                           [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
                           [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
                           [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
                           [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-                          [--cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE]
-                          [--cutoff_background CUTOFF_BACKGROUND]
-                          [--fasta_folder FASTA_FOLDER]
-                          [--tex_notex_libs TEX_NOTEX_LIBS]
-                          [--frag_libs FRAG_LIBS] [--tex_notex TEX_NOTEX]
-                          [-rt REPLICATES_TEX] [--replicates_frag REPLICATES_FRAG]
-                          [--table_best] [--sRNA_folder SRNA_FOLDER]
-                          [--start_codon START_CODON] [--stop_codon STOP_CODON]
+                          [--cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE]
+                          [--cutoff_background CUTOFF_BACKGROUND] --fasta_files
+                          FASTA_FILES [FASTA_FILES ...]
+                          [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                          [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                          [--tex_notex TEX_NOTEX]
+                          [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
+                          [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                          [--table_best]
+                          [--srna_files SRNA_FILES [SRNA_FILES ...]]
+                          [--start_codon START_CODON [START_CODON ...]]
+                          [--stop_codon STOP_CODON [STOP_CODON ...]]
                           [--min_rbs_distance MIN_RBS_DISTANCE]
                           [--max_rbs_distance MAX_RBS_DISTANCE]
-                          [--rbs_not_after_TSS] [--fuzzy_rbs FUZZY_RBS]
-                          [--print_all_combination] [--best_no_sRNA]
-                          [--best_no_TSS]
+                          [--rbs_not_after_tss] [--fuzzy_rbs FUZZY_RBS]
+                          [--print_all_combination] [--best_no_srna]
+                          [--best_no_tss]
                           [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-                          [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --UTR_derived_sORF, -u
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --utr_derived_sorf, -u
                             This function will detect UTR-derived sORF. Default is
                             False.
-      --transcript_assembly_folder TRANSCRIPT_ASSEMBLY_FOLDER, -a TRANSCRIPT_ASSEMBLY_FOLDER
-                            Path of the transcriptome assembly folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the genome annotation gff folder.
-      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-                            If the path of TSS gff folder is assigned here, this
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcriptome files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            If the paths of TSS gff files are assigned here, this
                             function will use the TSS information to detect sORF.
       --utr_length UTR_LENGTH, -ul UTR_LENGTH
-                            If --TSS_folder is provided, please assign the utr
+                            If --tss_folder is provided, please assign the utr
                             length for comparing TSS with sORF. The default number
                             is 300.
       --min_length MIN_LENGTH, -lm MIN_LENGTH
@@ -2125,12 +2102,6 @@ Please be aware this point for using the results.
       --max_length MAX_LENGTH, -lM MAX_LENGTH
                             Please assign the maximum residue length of sORF.
                             Default is 150.
-      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                            If TEX+/- libraries can be provided, please assign the
-                            path of TEX+/- wig folder here.
-      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                            If fragmented libraries can be provided, please assign
-                            the path of fragmented wig folder here.
       --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
                             The minimum coverage of intergenic sORF candidates.
       --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
@@ -2146,74 +2117,74 @@ Please be aware this point for using the results.
       --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
                             The meaning is the same as --cutoff_5utr_coverage.
                             This value is for 3'UTR. Default is p_0.5.
-      --cutoff_interCDS_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
+      --cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
                             The meaning is the same as --cutoff_5utr_coverage.
                             This value is for interCDS. Default is p_0.5.
       --cutoff_background CUTOFF_BACKGROUND, -cub CUTOFF_BACKGROUND
                             The general minimum coverage of all sORF candidates.
                             All candidates should fit this condition as well.
                             Default is 10.
-      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                            The folder of genome fasta file.
-      --tex_notex_libs TEX_NOTEX_LIBS, -tl TEX_NOTEX_LIBS
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            The paths of genome fasta files.
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If the TEX+/- libraries can be provided, please assign
                             the name of TEX+/- library here. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --frag_libs FRAG_LIBS, -fl FRAG_LIBS
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented libraries can be provided, please
                             assign the name of fragmented library here. The format
-                            is: wig_file_name:fragmented(frag):condition_id(intege
+                            is: wig_file_path:fragmented(frag):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If the TEX+/- libraries is provided, this value is
                             that a sORF should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 2.
-      -rt REPLICATES_TEX, --replicates_tex REPLICATES_TEX
+      --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
                             This value (for TEX+/- libraries) is the minimal
                             number of replicates that a sORF has to be detected.
                             The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
                             If different --replicate_tex values need to be
-                            assigned to different conditions, please use comma to
-                            separate them. For example, 1_2,2_2,3_3. It means that
+                            assigned to different conditions, please use space to
+                            separate them. For example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replcate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      --replicates_frag REPLICATES_FRAG, -rf REPLICATES_FRAG
+      --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
                             The meaning and input type is the same as
                             --replicates_tex. This value is for fragmented
                             libraries.
       --table_best, -tb     The output table of sORF candidates only includes
                             information of the highest expressed library. Default
                             is False.
-      --sRNA_folder SRNA_FOLDER, -s SRNA_FOLDER
-                            If the path of sRNA gff folder is assigned here, this
+      --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
+                            If the paths of sRNA gff files are assigned here, this
                             function will compare sORF and sRNA to detect the
                             overlap.
-      --start_codon START_CODON, -ac START_CODON
+      --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
                             The types of start coden. If multiple types of start
-                            codon need to be assigned, please use comma to
+                            codon need to be assigned, please use space to
                             separate them. Default is ATG.
-      --stop_codon STOP_CODON, -oc STOP_CODON
+      --stop_codon STOP_CODON [STOP_CODON ...], -oc STOP_CODON [STOP_CODON ...]
                             The types of stop coden. If multiple types of stop
-                            codon need to be assigned, please use comma to
-                            separate them. Default is TTA,TAG,TGA.
+                            codon need to be assigned, please use space to
+                            separate them. Default is TTA TAG TGA.
       --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
                             The minimum distance (nucleotides) between the
                             ribosome binding site and start codon. Default is 3.
       --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
                             The maximum distance (nucleotides) between the
                             ribosome binding site and start codon. Default is 15.
-      --rbs_not_after_TSS, -at
+      --rbs_not_after_tss, -at
                             For generating best results, if the ribosome binding
                             site of sORF is not associted with TSS, this function
                             will include this candidate as well. Default is False.
@@ -2224,9 +2195,9 @@ Please be aware this point for using the results.
                             Non-annotated transcript may has many start codons and
                             stop codons. This function can print all combinations
                             of start codons and stop codons. Default is False.
-      --best_no_sRNA, -bs   For generating best results, this function can exclude
+      --best_no_srna, -bs   For generating best results, this function can exclude
                             the sORFs which overlap with sRNA. Default is False.
-      --best_no_TSS, -bt    For generating best results, this function can include
+      --best_no_tss, -bt    For generating best results, this function can include
                             the sORFs which are not associated with TSS. Default
                             is False.
       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
@@ -2338,67 +2309,63 @@ Please refer to the ``The format of libraries for import to ANNOgesic`` in order
 
 ::
 
-    usage: annogesic promoter [-h] [--MEME_path MEME_PATH]
-                              [--fasta_folder FASTA_FOLDER]
-                              [--TSS_folder TSS_FOLDER] [--num_motif NUM_MOTIF]
-                              [--nt_before_TSS NT_BEFORE_TSS] [--e_value E_VALUE]
-                              [--motif_width MOTIF_WIDTH] [--parallel PARALLEL]
-                              [--TSS_source] [--tex_libs TEX_LIBS]
-                              [--tex_wig_path TEX_WIG_PATH]
-                              [--annotation_folder ANNOTATION_FOLDER]
+    usage: annogesic promoter [-h] [--project_path [PROJECT_PATH]]
+                              [--meme_path MEME_PATH] --fasta_files FASTA_FILES
+                              [FASTA_FILES ...] --tss_files TSS_FILES
+                              [TSS_FILES ...] [--num_motif NUM_MOTIF]
+                              [--nt_before_tss NT_BEFORE_TSS] [--e_value E_VALUE]
+                              [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
+                              [--parallel PARALLEL] [--tss_source]
+                              [--tex_libs TEX_LIBS [TEX_LIBS ...]]
+                              [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
                               [--combine_all]
-                              [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --MEME_path MEME_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --meme_path MEME_PATH
                             path of MEME.
-      --fasta_folder FASTA_FOLDER, -f FASTA_FOLDER
-                            Path of genome fasta folder.
-      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-                            Path of TSS gff folder.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of genome fasta files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            Paths of TSS gff files.
       --num_motif NUM_MOTIF, -n NUM_MOTIF
                             The number of motifs that you want to detect. Default
                             is 10.
-      --nt_before_TSS NT_BEFORE_TSS, -b NT_BEFORE_TSS
+      --nt_before_tss NT_BEFORE_TSS, -b NT_BEFORE_TSS
                             The number of upstream nucleotides of TSS for promoter
                             prediction. Default is 50.
       --e_value E_VALUE, -e E_VALUE
                             The maximum e value. Default is 0.05.
-      --motif_width MOTIF_WIDTH, -w MOTIF_WIDTH
+      --motif_width MOTIF_WIDTH [MOTIF_WIDTH ...], -w MOTIF_WIDTH [MOTIF_WIDTH ...]
                             The length for motif detection. For detecting a range
                             of length, please insert "-" between two values.
                             Moreover, if multiple motif length need to be
-                            assigned, please use comma to separate them. for
-                            example, 50,2-10. It means that the length of motif
+                            assigned, please use space to separate them. for
+                            example, 50 2-10. It means that the length of motif
                             for detection is 50 and within 2 to 10. The number
                             should be less or equal than --nt_before_TSS. Default
                             is 50.
       --parallel PARALLEL, -pl PARALLEL
                             This function is for running parallel. Please input
                             the number of parallel runs.
-      --TSS_source, -s      If the TSS gff file is not generated by ANNOgesic,
+      --tss_source, -s      If the TSS gff file is not generated by ANNOgesic,
                             this function can classify TSS and generate the proper
                             format for promoter detection. Default is True (from
                             ANNOgesic)
-      --tex_libs TEX_LIBS, -tl TEX_LIBS
-                            If --TSS_source is False, please assign the name of
+      --tex_libs TEX_LIBS [TEX_LIBS ...], -tl TEX_LIBS [TEX_LIBS ...]
+                            If --tss_source is False, please assign the name of
                             TEX+/- library. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --tex_wig_path TEX_WIG_PATH, -tw TEX_WIG_PATH
-                            If --TSS_source is False, please assign the path of
-                            TEX+/- wig folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            If --TSS_source is False, please assign the path of
-                            genome annotation gff file.
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            If --tss_source is False, please assign the paths of
+                            genome annotation gff files.
       --combine_all, -c     This function will combine all TSS files in
                             "TSS_folder" to generate global promoter motifs.
                             Default is False.
@@ -2455,36 +2422,37 @@ sub-operons.
 
 ::
 
-    usage: annogesic operon [-h] [--TSS_folder TSS_FOLDER]
-                            [--annotation_folder ANNOTATION_FOLDER]
-                            [--transcript_folder TRANSCRIPT_FOLDER]
-                            [--UTR5_folder UTR5_FOLDER]
-                            [--UTR3_folder UTR3_FOLDER]
-                            [--term_folder TERM_FOLDER] [--TSS_fuzzy TSS_FUZZY]
-                            [--term_fuzzy TERM_FUZZY] [--min_length MIN_LENGTH]
-                            [--statistics] [--combine_gff]
-                            [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic operon [-h] [--project_path [PROJECT_PATH]] --tss_files
+                            TSS_FILES [TSS_FILES ...] --annotation_files
+                            ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            --transcript_files TRANSCRIPT_FILES
+                            [TRANSCRIPT_FILES ...] --utr5_files UTR5_FILES
+                            [UTR5_FILES ...] --utr3_files UTR3_FILES
+                            [UTR3_FILES ...]
+                            [--term_files TERM_FILES [TERM_FILES ...]]
+                            [--tss_fuzzy TSS_FUZZY] [--term_fuzzy TERM_FUZZY]
+                            [--min_length MIN_LENGTH] [--statistics]
+                            [--combine_gff]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --TSS_folder TSS_FOLDER, -t TSS_FOLDER
-                            Path of the TSS gff folder.
-      --annotation_folder ANNOTATION_FOLDER, -g ANNOTATION_FOLDER
-                            Path of the genome annotation gff folder.
-      --transcript_folder TRANSCRIPT_FOLDER, -a TRANSCRIPT_FOLDER
-                            Path of the transcript gff folder.
-      --UTR5_folder UTR5_FOLDER, -u5 UTR5_FOLDER
-                            Path of the 5'UTR gff folder.
-      --UTR3_folder UTR3_FOLDER, -u3 UTR3_FOLDER
-                            Path of the 3'UTR gff folder.
-      --term_folder TERM_FOLDER, -e TERM_FOLDER
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            Paths of the TSS gff files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcript gff files.
+      --utr5_files UTR5_FILES [UTR5_FILES ...], -u5 UTR5_FILES [UTR5_FILES ...]
+                            Paths of the 5'UTR gff files.
+      --utr3_files UTR3_FILES [UTR3_FILES ...], -u3 UTR3_FILES [UTR3_FILES ...]
+                            Paths of the 3'UTR gff files.
+      --term_files TERM_FILES [TERM_FILES ...], -e TERM_FILES [TERM_FILES ...]
                             If terminator information can be provided, please
-                            assign the path of terminator gff folder here.
-      --TSS_fuzzy TSS_FUZZY, -tf TSS_FUZZY
+                            assign the paths of terminator gff files here.
+      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
                             The fuzzy for comparing between TSS and transcript
                             assembly. Default is 5.
       --term_fuzzy TERM_FUZZY, -ef TERM_FUZZY
@@ -2566,27 +2534,31 @@ mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with
 
 ::
 
-    usage: annogesic circrna [-h] [--segemehl_folder SEGEMEHL_FOLDER]
+    usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]]
+                             [--segemehl_path SEGEMEHL_PATH]
+                             [--testrealign_path TESTREALIGN_PATH]
                              [--samtools_path SAMTOOLS_PATH] [--align]
-                             [--tex_bam_path TEX_BAM_PATH]
-                             [--fragmented_bam_path FRAGMENTED_BAM_PATH]
-                             [--read_path READ_PATH] [--process PROCESS]
-                             [--fasta_path FASTA_PATH]
-                             [--annotation_path ANNOTATION_PATH]
+                             [--bam_files BAM_FILES [BAM_FILES ...]]
+                             [--read_files READ_FILES [READ_FILES ...]]
+                             [--process PROCESS] --fasta_files FASTA_FILES
+                             [FASTA_FILES ...] --annotation_files ANNOTATION_FILES
+                             [ANNOTATION_FILES ...]
                              [--support_reads SUPPORT_READS]
                              [--start_ratio START_RATIO] [--end_ratio END_RATIO]
                              [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-                             [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --segemehl_folder SEGEMEHL_FOLDER, -sg SEGEMEHL_FOLDER
-                            Please assign the folder of segemehl.
-      --samtools_path SAMTOOLS_PATH, -st SAMTOOLS_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --segemehl_path SEGEMEHL_PATH
+                            Please assign the path of segemehl.x in segemehl
+                            package.
+      --testrealign_path TESTREALIGN_PATH
+                            Please assign the path of testrealign.x in segemehl
+                            package.
+      --samtools_path SAMTOOLS_PATH
                             Please assign the path of samtools.
       --align, -a           This function will map the reads (included splice
                             detection) by segemehl. If you already used segemehl
@@ -2597,21 +2569,19 @@ mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with
                             functions of segemehl need to be implemented, please
                             directly run segemehl (MUST run with -S). Default is
                             False.
-      --tex_bam_path TEX_BAM_PATH, -tb TEX_BAM_PATH
-                            If Bam files of TEX+/- libraries can be provided,
-                            Please assign the path of TEX+/- Bam folder.
-      --fragmented_bam_path FRAGMENTED_BAM_PATH, -fb FRAGMENTED_BAM_PATH
-                            If Bam files of fragmented libraries can be provided,
-                            Please assign the path of fragmented Bam folder.
-      --read_path READ_PATH, -rp READ_PATH
-                            If --align is True, please assign the path of reads.
+      --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
+                            If you want to skip --align, Please assign the paths
+                            of Bam files.
+      --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
+                            If --align is True, please assign the paths of read
+                            fasta files.
       --process PROCESS, -p PROCESS
                             The number of parallels processes for --align. Default
                             is 10.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            Path of the genome fasta folder.
-      --annotation_path ANNOTATION_PATH, -g ANNOTATION_PATH
-                            Path of the genome annotation gff folder.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
       --support_reads SUPPORT_READS, -s SUPPORT_READS
                             The minimum supported reads of circular RNA. Default
                             is 10.
@@ -2695,25 +2665,25 @@ Some analysis of Go terms can be done as well.
 
 ::
 
-    usage: annogesic go_term [-h] [--annotation_path ANNOTATION_PATH]
-                             [--transcript_path TRANSCRIPT_PATH]
-                             [--UniProt_id UNIPROT_ID] [--go_obo GO_OBO]
+    usage: annogesic go_term [-h] [--project_path [PROJECT_PATH]]
+                             --annotation_files ANNOTATION_FILES
+                             [ANNOTATION_FILES ...]
+                             [--transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]]
+                             [--uniprot_id UNIPROT_ID] [--go_obo GO_OBO]
                              [--goslim_obo GOSLIM_OBO]
-                             [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --annotation_path ANNOTATION_PATH, -g ANNOTATION_PATH
-                            Path of the genome annotation gff folder.
-      --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
-                            If the path of transcript gff folder is provided, GO
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            If paths of the transcript gff files are provided, GO
                             term can be retreived based on expressed CDS and all
                             CDS.
-      --UniProt_id UNIPROT_ID, -u UNIPROT_ID
+      --uniprot_id UNIPROT_ID, -u UNIPROT_ID
                             Path of the UniProt ID mapping database. Default is
                             ANNOgesic/input/database/idmapping_selected.tab.
       --go_obo GO_OBO, -go GO_OBO
@@ -2775,18 +2745,23 @@ programs. ``srna_target`` can also compare the both results and provide the best
 
 ::
 
-    usage: annogesic srna_target [-h] [--Vienna_folder VIENNA_FOLDER]
-                                 [--annotation_path ANNOTATION_PATH]
-                                 [--fasta_path FASTA_PATH] [--sRNA_path SRNA_PATH]
-                                 [--query_sRNA QUERY_SRNA] [--program PROGRAM]
+    usage: annogesic srna_target [-h] [--project_path [PROJECT_PATH]]
+                                 [--rnaplfold_path RNAPLFOLD_PATH]
+                                 [--rnaplex_path RNAPLEX_PATH]
+                                 [--rnaup_path RNAUP_PATH] --annotation_files
+                                 ANNOTATION_FILES [ANNOTATION_FILES ...]
+                                 --fasta_files FASTA_FILES [FASTA_FILES ...]
+                                 --srna_files SRNA_FILES [SRNA_FILES ...]
+                                 [--query_srna QUERY_SRNA [QUERY_SRNA ...]]
+                                 [--program PROGRAM]
                                  [--interaction_length INTERACTION_LENGTH]
                                  [--window_size_target WINDOW_SIZE_TARGET]
                                  [--span_target SPAN_TARGET]
                                  [--window_size_srna WINDOW_SIZE_SRNA]
                                  [--span_srna SPAN_SRNA]
-                                 [--unstructured_region_RNAplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET]
-                                 [--unstructured_region_RNAplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA]
-                                 [--unstructured_region_RNAup UNSTRUCTURED_REGION_RNAUP]
+                                 [--unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET]
+                                 [--unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA]
+                                 [--unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP]
                                  [--energy_threshold ENERGY_THRESHOLD]
                                  [--duplex_distance DUPLEX_DISTANCE] [--top TOP]
                                  [--process_rnaplex PROCESS_RNAPLEX]
@@ -2794,32 +2769,33 @@ programs. ``srna_target`` can also compare the both results and provide the best
                                  [--continue_rnaup]
                                  [--potential_target_start POTENTIAL_TARGET_START]
                                  [--potential_target_end POTENTIAL_TARGET_END]
-                                 [--target_feature TARGET_FEATURE]
-                                 [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+                                 [--target_feature TARGET_FEATURE [TARGET_FEATURE ...]]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --Vienna_folder VIENNA_FOLDER
-                            Please assign the folder of Vienna package. It should
-                            include RNAplfold, RNAup and RNAplex.
-      --annotation_path ANNOTATION_PATH, -g ANNOTATION_PATH
-                            Path of the genome annotation gff folder.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            Path of the genome fasta folder.
-      --sRNA_path SRNA_PATH, -r SRNA_PATH
-                            Path of the sRNA gff folder.
-      --query_sRNA QUERY_SRNA, -q QUERY_SRNA
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --rnaplfold_path RNAPLFOLD_PATH
+                            Please assign the path of RNAplfold in Vienna package.
+      --rnaplex_path RNAPLEX_PATH
+                            Please assign the path of RNAplex in Vienna package.
+      --rnaup_path RNAUP_PATH
+                            Please assign the path of RNAup in Vienna package.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --srna_files SRNA_FILES [SRNA_FILES ...], -r SRNA_FILES [SRNA_FILES ...]
+                            Paths of the sRNA gff files.
+      --query_srna QUERY_SRNA [QUERY_SRNA ...], -q QUERY_SRNA [QUERY_SRNA ...]
                             Please assign the query sRNA. The input format is
-                            $STRAIN:$STRAND:$START:$END. If multiple sRNAs need to
-                            be assigned, please use comma to separate them.For
-                            example,
-                            NC_007795.1:+:200:534,NC_007795.1:-:6767:6900. If you
-                            want to detect all sRNAs in gff file, please assign
-                            "all". Default is all.
+                            $STRAIN:$START:$END:$STRAND. If multiple sRNAs need to
+                            be assigned, please use space to separate them. For
+                            example, NC_007795.1:200:534:+
+                            NC_007795.1:6767:6900:-. If you want to detect all
+                            sRNAs in gff file, please assign "all". Default is
+                            all.
       --program PROGRAM, -p PROGRAM
                             The program for detecting sRNA-mRNA interaction.
                             Please assign "RNAplex" or "RNAup" or "both". Default
@@ -2840,15 +2816,15 @@ programs. ``srna_target`` can also compare the both results and provide the best
       --span_srna SPAN_SRNA, -ss SPAN_SRNA
                             The meaning is similar to --span_target. This value is
                             for sRNA. Default is 30.
-      --unstructured_region_RNAplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET, -ut UNSTRUCTURED_REGION_RNAPLEX_TARGET
+      --unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET, -ut UNSTRUCTURED_REGION_RNAPLEX_TARGET
                             Calculate the mean probability that from length 1 to
                             this value are unpaired for mRNA target. This function
                             only works for "RNAplex". Default is 30.
-      --unstructured_region_RNAplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA, -us UNSTRUCTURED_REGION_RNAPLEX_SRNA
+      --unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA, -us UNSTRUCTURED_REGION_RNAPLEX_SRNA
                             The meaning is similar to
-                            --unstructured_region_RNAplex_target. This value is
+                            --unstructured_region_rnaplex_target. This value is
                             for sRNA. Default is 30.
-      --unstructured_region_RNAup UNSTRUCTURED_REGION_RNAUP, -uu UNSTRUCTURED_REGION_RNAUP
+      --unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP, -uu UNSTRUCTURED_REGION_RNAUP
                             Compute the mean probability that from length 1 to
                             this value are unpaired. This function only works for
                             "RNAup". Default is 30.
@@ -2886,10 +2862,10 @@ programs. ``srna_target`` can also compare the both results and provide the best
                             downstream of --target_feature starting point which
                             will be extracted as part of the potential target.
                             Default is 150.
-      --target_feature TARGET_FEATURE, -tf TARGET_FEATURE
+      --target_feature TARGET_FEATURE [TARGET_FEATURE ...], -tf TARGET_FEATURE [TARGET_FEATURE ...]
                             This is the feature name for extracting as potential
                             targets. If multiple features need to be assigned,
-                            please use comma to separate them. Ex: CDS,gene.
+                            please use space to separate them. Ex: CDS tRNA.
                             Default is CDS.
 
 - **Output files**
@@ -2951,26 +2927,27 @@ the supported literatures of the protein-protein interaction networks.
 
 ::
 
-    usage: annogesic ppi_network [-h] [--gff_path GFF_PATH]
-                                 [--proteinID_strains PROTEINID_STRAINS]
-                                 [--without_strain_pubmed]
-                                 [--species_STRING SPECIES_STRING] [--score SCORE]
-                                 [--node_size NODE_SIZE] [--query QUERY]
-                                 [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic ppi_network [-h] [--project_path [PROJECT_PATH]]
+                                 --annotation_files ANNOTATION_FILES
+                                 [ANNOTATION_FILES ...] --proteinid_strains
+                                 PROTEINID_STRAINS [PROTEINID_STRAINS ...]
+                                 [--without_strain_pubmed] --species_string
+                                 SPECIES_STRING [--score SCORE]
+                                 [--node_size NODE_SIZE]
+                                 [--query QUERY [QUERY ...]]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --gff_path GFF_PATH, -g GFF_PATH
-                            Path of the genome annotation gff folder. BE CAREFUL:
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the genome annotation gff files. BE CAREFUL:
                             The gff files MUST have proper locus_tag item in the
                             attributes. The locus_tag items can be assigned by a
                             real locus tag like locus_tag=SAOUHSC_00003, or a gene
                             name, such as, locus_tag=dnaA.
-      --proteinID_strains PROTEINID_STRAINS, -s PROTEINID_STRAINS
+      --proteinid_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
                             This is for query strain and filename. In order to
                             retrieve the data from STRING and Pubmed, The strain
                             name must be assigned. If the query strain is not
@@ -2994,18 +2971,18 @@ the supported literatures of the protein-protein interaction networks.
                             STRING_name_compact or official_name_NCBI can be
                             assigned here), and the fourth one is for searching
                             Pubmed. If you want to detect for multiple strains,
-                            just put comma between these strains. Before running
+                            just put space between these strains. Before running
                             it, please check the species table (species.vXXX.txt)
-                            which should be located in ANNOgesic/input/database
-                            .If the file was not downloaded before, please
-                            download it. BE CAREFUL, if the assigned name is with
-                            spaces, please put "" at two ends. For searching
-                            Pubmen, if a specific name is assigned, it may not be
-                            able to find the related literatures.
+                            which should be downloaded. If the file was not
+                            downloaded before, please download it. BE CAREFUL, if
+                            the assigned name is with spaces, please put "" at two
+                            ends. For searching Pubmen, if a specific name is
+                            assigned, it may not be able to find the related
+                            literatures.
       --without_strain_pubmed, -n
                             Retrieving the literatures from Pubmed without
                             assigning strains, Default is False.
-      --species_STRING SPECIES_STRING, -d SPECIES_STRING
+      --species_string SPECIES_STRING, -d SPECIES_STRING
                             Please assign path of the species table of STRING
                             (species.vXXX.txt).
       --score SCORE, -ps SCORE
@@ -3015,14 +2992,14 @@ the supported literatures of the protein-protein interaction networks.
       --node_size NODE_SIZE, -ns NODE_SIZE
                             Please assign the size of nodes in figure, default is
                             4000.
-      --query QUERY, -q QUERY
+      --query QUERY [QUERY ...], -q QUERY [QUERY ...]
                             Please assign the query protein here. The format is
-                            $STRAINOFGFF:$START_POINT:$END_POINT:$STRAND.If
+                            $STRAINOFGFF:$START_POINT:$END_POINT:$STRAND. If
                             multiple proteins need to be assigned, please use
-                            comma to separate them. For example, Staphylococcus_au
-                            reus_HG003:345:456:+,Staphylococcus_aureus_HG003:2000:
-                            3211:-. For computing all protein, just type "all".
-                            Default is all.
+                            space to separate them. For example,
+                            Staphylococcus_aureus_HG003:345:456:+
+                            Staphylococcus_aureus_HG003:2000:3211:-. For computing
+                            all protein, just type "all". Default is all.
 
 - **Output files**
 
@@ -3073,30 +3050,30 @@ Some statistics and visualization files are provided as well.
 
 ::
 
-    usage: annogesic subcellular_localization [-h] [--Psortb_path PSORTB_PATH]
-                                              [--gff_path GFF_PATH]
-                                              [--fasta_path FASTA_PATH]
-                                              [--transcript_path TRANSCRIPT_PATH]
-                                              [--bacteria_type BACTERIA_TYPE]
+    usage: annogesic subcellular_localization [-h] [--project_path [PROJECT_PATH]]
+                                              [--psortb_path PSORTB_PATH]
+                                              --annotation_files ANNOTATION_FILES
+                                              [ANNOTATION_FILES ...] --fasta_files
+                                              FASTA_FILES [FASTA_FILES ...]
+                                              [--transcript_files TRANSCRIPT_FILES]
+                                              --bacteria_type BACTERIA_TYPE
                                               [--difference_multi DIFFERENCE_MULTI]
                                               [--merge_to_gff]
-                                              [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --Psortb_path PSORTB_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --psortb_path PSORTB_PATH
                             If you want to assign the path of Psortb, please
                             assign here.
-      --gff_path GFF_PATH, -g GFF_PATH
-                            The path of genome annotation gff folder.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            The path of genome fasta folder.
-      --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
-                            If the path of transcript gff folder is provided, it
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of genome annotation gff files.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of genome fasta files.
+      --transcript_files TRANSCRIPT_FILES, -a TRANSCRIPT_FILES
+                            If paths of the transcript gff files are provided, it
                             can get the results based on expressed CDS and all
                             CDS.
       --bacteria_type BACTERIA_TYPE, -b BACTERIA_TYPE
@@ -3173,57 +3150,62 @@ Name and Description of riboswitchs or RNA thermometer (refer to
 
 ::
 
-    usage: annogesic riboswitch_thermometer [-h] [--program PROGRAM]
-                                            [--infernal_path INFERNAL_PATH]
-                                            [--riboswitch_ID RIBOSWITCH_ID]
-                                            [--RNA_thermometer_ID RNA_THERMOMETER_ID]
-                                            [--gff_path GFF_PATH]
-                                            [--tss_path TSS_PATH]
-                                            [--UTR_length UTR_LENGTH]
-                                            [--transcript_path TRANSCRIPT_PATH]
-                                            [--fasta_path FASTA_PATH]
-                                            [--Rfam RFAM] [--e_value E_VALUE]
-                                            [--output_all] [--fuzzy FUZZY]
+    usage: annogesic riboswitch_thermometer [-h] [--project_path [PROJECT_PATH]]
+                                            [--program PROGRAM]
+                                            [--cmscan_path CMSCAN_PATH]
+                                            [--cmpress_path CMPRESS_PATH]
+                                            [--riboswitch_id RIBOSWITCH_ID]
+                                            [--rna_thermometer_id RNA_THERMOMETER_ID]
+                                            --annotation_files ANNOTATION_FILES
+                                            [ANNOTATION_FILES ...] --tss_files
+                                            TSS_FILES [TSS_FILES ...]
+                                            [--utr_length UTR_LENGTH]
+                                            --transcript_files TRANSCRIPT_FILES
+                                            [TRANSCRIPT_FILES ...] --fasta_files
+                                            FASTA_FILES [FASTA_FILES ...]
+                                            [--rfam_path RFAM_PATH]
+                                            [--e_value E_VALUE] [--output_all]
+                                            [--fuzzy FUZZY]
                                             [--fuzzy_rbs FUZZY_RBS]
-                                            [--start_codon START_CODON]
+                                            [--start_codon START_CODON [START_CODON ...]]
                                             [--max_dist_rbs MAX_DIST_RBS]
                                             [--min_dist_rbs MIN_DIST_RBS]
-                                            [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
       --program PROGRAM, -p PROGRAM
                             Please assign the feature that you want to detect. The
                             options can be "riboswitch", "thermometer", "both".
                             Default is both.
-      --infernal_path INFERNAL_PATH, -if INFERNAL_PATH
-                            Please assign the path of Infernal folder which
-                            include cmscan and cmsearch.
-      --riboswitch_ID RIBOSWITCH_ID, -ri RIBOSWITCH_ID
+      --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
+                            Please assign the path of cmscan in Infernal package.
+      --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
+                            Please assign the path of cmpress in Infernal package.
+      --riboswitch_id RIBOSWITCH_ID, -ri RIBOSWITCH_ID
                             If --program is "riboswitch" or "both", please assigh
                             the file path of riboswitch ID in Rfam. The file
                             should include the Accession, ID and Description of
                             riboswitch in Rfam.
-      --RNA_thermometer_ID RNA_THERMOMETER_ID, -ti RNA_THERMOMETER_ID
+      --rna_thermometer_id RNA_THERMOMETER_ID, -ti RNA_THERMOMETER_ID
                             If --program is "thermometer" or "both", please assigh
                             the file path of RNA thermometer ID of Rfam. The file
                             should include the Accession, ID and Description of
                             RNA thermometer in Rfam.
-      --gff_path GFF_PATH, -g GFF_PATH
-                            Path of the annotation gff folder.
-      --tss_path TSS_PATH, -t TSS_PATH
-                            Path of the TSS gff folder.
-      --UTR_length UTR_LENGTH, -u UTR_LENGTH
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the annotation gff files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            Paths of the TSS gff files.
+      --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The UTR length. Default is 300.
-      --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
-                            Path of the transcript gff folder.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            Path of the genome fasta folder.
-      --Rfam RFAM, -R RFAM  Path of the Rfam CM database.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcript gff files.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --rfam_path RFAM_PATH, -R RFAM_PATH
+                            Path of the Rfam CM database.
       --e_value E_VALUE, -e E_VALUE
                             The maximum e value. Default is 0.001.
       --output_all, -o      One query sequence may fit multiple riboswitches or
@@ -3237,9 +3219,9 @@ Name and Description of riboswitchs or RNA thermometer (refer to
       --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
                             The number of nucleotides of ribosome binding site can
                             be different with AGGAGG. Default is 2.
-      --start_codon START_CODON, -ac START_CODON
+      --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
                             The types of start coden. If multiple types need to be
-                            assigned, please use comma to separate them. Default
+                            assigned, please use space to separate them. Default
                             is ATG.
       --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
                             The maximum distance (nucleotides) between ribosome
@@ -3313,30 +3295,32 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 
 ::
 
-    usage: annogesic crispr [-h] [--CRT_path CRT_PATH] [--gff_path GFF_PATH]
-                            [--fasta_path FASTA_PATH] [--window_size WINDOW_SIZE]
+    usage: annogesic crispr [-h] [--project_path [PROJECT_PATH]]
+                            [--crt_path CRT_PATH]
+                            [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
+                            --fasta_files FASTA_FILES [FASTA_FILES ...]
+                            [--window_size WINDOW_SIZE]
                             [--min_number_repeat MIN_NUMBER_REPEAT]
                             [--min_length_repeat MIN_LENGTH_REPEAT]
                             [--Max_length_repeat MAX_LENGTH_REPEAT]
                             [--min_length_spacer MIN_LENGTH_SPACER]
                             [--Max_length_spacer MAX_LENGTH_SPACER]
                             [--ignore_hypothetical_protein]
-                            [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
     
     optional arguments:
       -h, --help            show this help message and exit
-      --CRT_path CRT_PATH   If you want to assign the path of CRT.jar, please
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --crt_path CRT_PATH   If you want to assign the path of CRT.jar, please
                             assign here. Default is /usr/local/bin/CRT.jar
-      --gff_path GFF_PATH, -g GFF_PATH
-                            If genome gff file is provided, this function will
-                            compare CRISPRs with the genome annotation for
-                            removing the false positives. Default is None.
-      --fasta_path FASTA_PATH, -f FASTA_PATH
-                            Path of the genome fasta folder.
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            If paths of the genome gff files are provided, this
+                            function will compare CRISPRs with the genome
+                            annotation for removing the false positives. Default
+                            is None.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Path of the genome fasta files.
       --window_size WINDOW_SIZE, -w WINDOW_SIZE
                             Length of the window size for searching CRISPR (range:
                             6-9). Default is 8.
@@ -3369,13 +3353,13 @@ Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are g
 
 **statistics:** Stores statistic files.
 
-optimize_tsspredator
+optimize_tss_processing
 ---------------
 
-``optimize_tsspredator`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
+``optimize_tss_processing`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
-Then ``optimize_tsspredator`` can scan whole genome based on the principle of the manual detection to get optimized parameters.
+Then ``optimize_tss_processing`` can scan whole genome based on the principle of the manual detection to get optimized parameters.
 
 - **Required tools**
 
@@ -3395,48 +3379,48 @@ Then ``optimize_tsspredator`` can scan whole genome based on the principle of th
 
 ::
 
-    usage: annogesic optimize_tsspredator [-h]
-                                          [--TSSpredator_path TSSPREDATOR_PATH]
-                                          [--fasta_file FASTA_FILE]
-                                          [--annotation_file ANNOTATION_FILE]
-                                          [--wig_folder WIG_FOLDER]
-                                          [--manual MANUAL]
-                                          [--strain_name STRAIN_NAME]
-                                          [--max_height MAX_HEIGHT]
-                                          [--max_height_reduction MAX_HEIGHT_REDUCTION]
-                                          [--max_factor MAX_FACTOR]
-                                          [--max_factor_reduction MAX_FACTOR_REDUCTION]
-                                          [--max_base_height MAX_BASE_HEIGHT]
-                                          [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
-                                          [--max_processing_factor MAX_PROCESSING_FACTOR]
-                                          [--utr_length UTR_LENGTH] [--lib LIB]
-                                          [--output_prefix OUTPUT_PREFIX]
-                                          [--cluster CLUSTER]
-                                          [--partial_length PARTIAL_LENGTH]
-                                          [--core CORE] [--program PROGRAM]
-                                          [--replicate_match REPLICATE_MATCH]
-                                          [--steps STEPS]
-                                          [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic optimize_tss_processing [-h] [--project_path [PROJECT_PATH]]
+                                             [--tsspredator_path TSSPREDATOR_PATH]
+                                             --fasta_file FASTA_FILE
+                                             --annotation_file ANNOTATION_FILE
+                                             --manual MANUAL --strain_name
+                                             STRAIN_NAME [--max_height MAX_HEIGHT]
+                                             [--max_height_reduction MAX_HEIGHT_REDUCTION]
+                                             [--max_factor MAX_FACTOR]
+                                             [--max_factor_reduction MAX_FACTOR_REDUCTION]
+                                             [--max_base_height MAX_BASE_HEIGHT]
+                                             [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
+                                             [--max_processing_factor MAX_PROCESSING_FACTOR]
+                                             [--utr_length UTR_LENGTH]
+                                             --tex_notex_libs TEX_NOTEX_LIBS
+                                             [TEX_NOTEX_LIBS ...]
+                                             --condition_names CONDITION_NAMES
+                                             [CONDITION_NAMES ...]
+                                             [--cluster CLUSTER]
+                                             [--partial_length PARTIAL_LENGTH]
+                                             [--parallels PARALLELS]
+                                             [--program PROGRAM]
+                                             [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                             [--steps STEPS]
     
     optional arguments:
       -h, --help            show this help message and exit
-      --TSSpredator_path TSSPREDATOR_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --tsspredator_path TSSPREDATOR_PATH
                             If you want to assign the path of TSSpredator, please
                             assign here. Default is /usr/local/bin/TSSpredator.jar
       --fasta_file FASTA_FILE, -fs FASTA_FILE
-                            Path of one target genome fasta file.
+                            Paths of the fasta file that you want to optimize.
       --annotation_file ANNOTATION_FILE, -g ANNOTATION_FILE
-                            Path of one target genome annotation gff file.
-      --wig_folder WIG_FOLDER, -w WIG_FOLDER
-                            Path of the TEX+/- wig folder.
+                            Paths of the target genome annotation gff file.
       --manual MANUAL, -m MANUAL
                             Path of the manual-checked gff file.
       --strain_name STRAIN_NAME, -n STRAIN_NAME
-                            The strain name for optimization.
+                            The name of the strain that you want to do
+                            optimization. For optimization, it can only optimize
+                            one file in one time.
       --max_height MAX_HEIGHT, -he MAX_HEIGHT
                             This value relates to the minimum number of read
                             starts at a certain genomic position to be considered
@@ -3481,17 +3465,18 @@ Then ``optimize_tsspredator`` can scan whole genome based on the principle of th
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The length of UTR. It is for Primary and Secondary
                             TSSs. Default is 300.
-      --lib LIB, -l LIB     TEX+/- wig files for TSSpredator. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                            TEX+/- wig files for TSSpredator. The format is:
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --output_prefix OUTPUT_PREFIX, -p OUTPUT_PREFIX
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -p CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefixs of all conditions. If multiple
-                            conditions need to be assigned, please use comma to
-                            separate them. For example,
-                            prefix_condition1,prefix_condition2.
+                            conditions need to be assigned, please use space to
+                            separate them. For example, prefix_condition1
+                            prefix_condition2.
       --cluster CLUSTER, -cu CLUSTER
                             This value defines the maximal distance (nucleotides)
                             between TSS candidates have to be clustered together.
@@ -3505,17 +3490,18 @@ Then ``optimize_tsspredator`` can scan whole genome based on the principle of th
                             to compare whole genome, please don't use this
                             function (Default). The default is comparing whole
                             genome.
-      --core CORE, -c CORE  Paralle runs for optimization. Default is 4.
+      --parallels PARALLELS, -c PARALLELS
+                            Paralle runs for optimization. Default is 4.
       --program PROGRAM, -t PROGRAM
                             The feature for optimization. Please assign "TSS" or
                             "Processint_site". Default is TSS.
-      --replicate_match REPLICATE_MATCH, -rm REPLICATE_MATCH
+      --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
                             --replicate_match values need to be assigned to
-                            different conditions, please use comma to separate
-                            them. For example, 1_2,2_2,3_3. It means that
+                            different conditions, please use space to separate
+                            them. For example, 1_2 2_ 3_3. It means that
                             --replicate_match is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replcate_match is
                             3. For assigning the same --replicate_match to all
@@ -3570,56 +3556,47 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
 
 ::
 
-    usage: annogesic screenshot [-h] [--main_gff MAIN_GFF] [--side_gffs SIDE_GFFS]
-                                [--fasta FASTA]
-                                [--frag_wig_folder FRAG_WIG_FOLDER]
-                                [--tex_wig_folder TEX_WIG_FOLDER]
-                                [--height HEIGHT] [--tex_libs TEX_LIBS]
-                                [--frag_libs FRAG_LIBS] [--present PRESENT]
-                                [--output_folder OUTPUT_FOLDER]
-                                [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic screenshot [-h] [--project_path [PROJECT_PATH]] --main_gff
+                                MAIN_GFF [--side_gffs SIDE_GFFS [SIDE_GFFS ...]]
+                                --fasta FASTA [--height HEIGHT]
+                                [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                                [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                                [--present PRESENT] --output_folder OUTPUT_FOLDER
     
     optional arguments:
       -h, --help            show this help message and exit
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
       --main_gff MAIN_GFF, -mg MAIN_GFF
                             Screenshot will be generated based on the position of
                             --main_gff file.
-      --side_gffs SIDE_GFFS, -sg SIDE_GFFS
+      --side_gffs SIDE_GFFS [SIDE_GFFS ...], -sg SIDE_GFFS [SIDE_GFFS ...]
                             If you want to compare other features with the
                             --main_gff, please assign the path of other gff files
                             here. If multiple gff files need to be assigned, just
-                            use comma to separate them.
+                            use space to separate them.
       --fasta FASTA, -f FASTA
                             Path of the genome fasta folder.
-      --frag_wig_folder FRAG_WIG_FOLDER, -fw FRAG_WIG_FOLDER
-                            If the information of fragmented wig file is required,
-                            please assign the fragmented wig folder.
-      --tex_wig_folder TEX_WIG_FOLDER, -tw TEX_WIG_FOLDER
-                            If the information of TEX+/- wig file is required,
-                            please assign the TEX+/- wig folder.
       --height HEIGHT, -he HEIGHT
                             Please assign the height of the screenshot. Default is
                             1500.
-      --tex_libs TEX_LIBS, -tl TEX_LIBS
+      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If TEX+/- wig file is required, please also assign the
                             proper format here. The format is:
-                            wig_file_name:TEX+/-(tex or notex):condition_id(intege
+                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use comma to
+                            wig files need to be assigned, please use space to
                             separate the wig files. For example,
-                            wig1:tex:1:a:+,wig2:tex:1:a:-.
-      --frag_libs FRAG_LIBS, -fl FRAG_LIBS
+                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+      --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented wig file is required, please also
                             assign the proper format here. The format is: wig_file
-                            _name:fragmented(frag):condition_id(integer):replicate
+                            _path:fragmented(frag):condition_id(integer):replicate
                             _id(alphabet):strand(+ or -). If multiple wig files
-                            need to be assigned, please use comma to separate the
-                            wig files. For example,
-                            wig1:frag:1:a:+,wig2:frag:1:a:-.
+                            need to be assigned, please use space to separate the
+                            wig files. For example, $WIG_PATH_1:frag:1:a:+
+                            $WIG_PATH_2:frag:1:a:-.
       --present PRESENT, -p PRESENT
                             The presentation type of the features in the
                             screenshot. expand/collapse/squish. Default is expand.
@@ -3667,23 +3644,22 @@ exist in the folder of ``screenshots``.
 
 ::
 
-    usage: annogesic color_png [-h] [--screenshot_folder SCREENSHOT_FOLDER]
-                               [--track_number TRACK_NUMBER]
-                               [--ImageMagick_covert_path IMAGEMAGICK_COVERT_PATH]
-                               [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+    usage: annogesic color_png [-h] [--project_path [PROJECT_PATH]]
+                               --screenshot_folder SCREENSHOT_FOLDER
+                               --track_number TRACK_NUMBER
+                               [--imagemagick_covert_path IMAGEMAGICK_COVERT_PATH]
     
     optional arguments:
       -h, --help            show this help message and exit
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
       --screenshot_folder SCREENSHOT_FOLDER, -f SCREENSHOT_FOLDER
                             The folder which stores "screenshots" (a folder
                             generated by subcommand "screenshot").
       --track_number TRACK_NUMBER, -t TRACK_NUMBER
                             The number of tracks.
-      --ImageMagick_covert_path IMAGEMAGICK_COVERT_PATH, -m IMAGEMAGICK_COVERT_PATH
+      --imagemagick_covert_path IMAGEMAGICK_COVERT_PATH, -m IMAGEMAGICK_COVERT_PATH
                             Please assign the path of "convert" in ImageMagick
                             package.
 
@@ -3700,34 +3676,34 @@ If storing multiple features of the annotation to one gff file is needed, ``merg
 
 ::
 
-    usage: annogesic merge_features [-h] [--transcript_path TRANSCRIPT_PATH]
-                                    [--other_features_path OTHER_FEATURES_PATH]
+    usage: annogesic merge_features [-h] [--project_path [PROJECT_PATH]]
+                                    [--transcript_file_path TRANSCRIPT_FILE_PATH]
+                                    [--other_features_files_path OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...]]
                                     [--fuzzy_term FUZZY_TERM]
-                                    [--fuzzy_TSS FUZZY_TSS]
-                                    [--strain_name STRAIN_NAME]
-                                    [project_path]
-    
-    positional arguments:
-      project_path          Path of the project folder. If none is given, the
-                            current directory is used.
+                                    [--fuzzy_tss FUZZY_TSS] --strain_name
+                                    STRAIN_NAME
     
     optional arguments:
       -h, --help            show this help message and exit
-      --transcript_path TRANSCRIPT_PATH, -a TRANSCRIPT_PATH
+      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                            Path of the project folder. If none is given, the
+                            current directory is used.
+      --transcript_file_path TRANSCRIPT_FILE_PATH, -a TRANSCRIPT_FILE_PATH
                             If transcript gff file is provided. The parent
                             transcripts ("Parent" in gff attributes) of all
                             features will be generated. If there is no transcript,
                             this function will just simply combine all input gff
                             files.
-      --other_features_path OTHER_FEATURES_PATH, -of OTHER_FEATURES_PATH
+      --other_features_files_path OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...], -of OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...]
                             Please assign the gff files (besides transcript gff
-                            file) which you want to merge.
+                            file) which you want to merge. You can use space to
+                            separate multiple gff files.
       --fuzzy_term FUZZY_TERM, -fm FUZZY_TERM
                             For merging terminators, please assign the fuzzy
                             nucleotides between transcript and terminator.
                             ATTENTION, the third column of gff file of terminator
                             should be exact "terminator". Default is 30.
-      --fuzzy_TSS FUZZY_TSS, -ft FUZZY_TSS
+      --fuzzy_tss FUZZY_TSS, -ft FUZZY_TSS
                             For merging TSSs, please assign the fuzzy between TSS
                             and transcript. ATTENTION, the third column of gff
                             file of terminator should be exact "TSS". Default is
