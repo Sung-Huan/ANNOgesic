@@ -50,8 +50,8 @@ class Controller(object):
         '''Check the emtpy or wrong assigned folder'''
         for folder in folders:
             if folder is None:
-                print("Error: There is wrong path of folder assigned, "
-                      "please check it!!")
+                print("Error: There is wrong path or folder assigned. "
+                      "Please check it!")
                 sys.exit()
             else:
                 if os.path.exists(folder):
@@ -60,15 +60,16 @@ class Controller(object):
                               "please check it!!")
                         sys.exit()
                 else:
-                    print("Error: There is wrong folder, please check it!!")
+                    print("Error: An invalid folder was given. "
+                          "Please check it!")
                     sys.exit()
 
     def check_parameter(self, paras, names):
         '''Check the parameter is assigned correct or not'''
         for i in range(len(paras)):
             if paras[i] is None:
-                print("Error: {0} is wrong, "
-                      "please check it!!".format(names[i]))
+                print("Error: {0} is wrong. "
+                      "Please check it!".format(names[i]))
                 sys.exit()
 
     def check_no_require_folder(self, folders):
@@ -78,12 +79,12 @@ class Controller(object):
             if folder is not None:
                 if os.path.exists(folder):
                     if len(os.listdir(folder)) == 0:
-                        print("Error: There is empty folder, "
-                              "please check it!!")
+                        print("Error: There is an empty folder. "
+                              "Please check it!")
                         sys.exit()
                 else:
-                    print("Error: There is wrong folder, "
-                          "please check it!!")
+                    print("Error: There is invalid folder given. "
+                          "Please check it!")
                     sys.exit()
 
     def check_file(self, files, names, require):
@@ -91,19 +92,19 @@ class Controller(object):
         for i in range(len(files)):
             if require:
                 if files[i] is None:
-                    print("Error: {0} is wrong, "
-                          "please check it!!".format(names[i]))
+                    print("Error: {0} is wrong. "
+                          "Please check it!".format(names[i]))
                     sys.exit()
                 else:
                     if not os.path.isfile(files[i]):
-                        print("Error: There is wrong path of {0}, "
-                              "please check it!!".format(names[i]))
+                        print("Error: {0} is an invalid path."
+                              "Please check it!".format(names[i]))
                         sys.exit()
             else:
                 if files[i] is not None:
                     if not os.path.isfile(files[i]):
-                        print("Error: There is wrong path of {0}, "
-                              "please check it!!".format(names[i]))
+                        print("Error: {0} is an invalid path. "
+                              "Please check it!".format(names[i]))
                         sys.exit()
 
     def create_project(self, version):
@@ -121,7 +122,7 @@ class Controller(object):
         """Download required files from website."""
         print("Running get input files...")
         if self._args.FTP_path is None:
-            print("Error: Please assign the path for downloading the data!!")
+            print("Error: Please assign the path for downloading the data!")
             sys.exit()
         if self._args.for_target:
             annotation_folder = self._paths.tar_annotation_folder
@@ -157,7 +158,7 @@ class Controller(object):
         if self._args.convert_embl is True:
             annotation_files = os.listdir(annotation_folder)
             if len(annotation_files) == 0:
-                sys.stdout.write("No gff files!!\n")
+                sys.stdout.write("No gff files!\n")
             else:
                 Converter().convert_gbk2embl(annotation_folder)
 
@@ -189,7 +190,7 @@ class Controller(object):
                 self._args.transfer_type != "Species.Repetitive") and (
                 self._args.transfer_type != "Multiple") and (
                 self._args.transfer_type != "Free"):
-            print("Error: please assign correct --transfer_type!!")
+            print("Error: please assign correct --transfer_type!")
             sys.exit()
         if (self._args.ref_embl is None) and (self._args.ref_gbk is None):
             print("Error: please assign proper embl or genbank folder")
@@ -234,7 +235,7 @@ class Controller(object):
             project_creator.create_subfolders(
                 self._paths.required_folders("processing"))
         else:
-            print("Error:No such program!!!!")
+            print("Error: No such program!")
             sys.exit()
         args_tss = self.args_container.container_tsspredator(
             self._args.TSSpredator_path, self._args.compute_program,
@@ -275,7 +276,7 @@ class Controller(object):
             project_creator.create_subfolders(
                 self._paths.required_folders("processing"))
         else:
-            print("Error:No such program!!!!")
+            print("Error: No such program!")
             sys.exit()
         args_ops = self.args_container.container_optimize(
             self._args.TSSpredator_path, self._args.fasta_file,
@@ -592,16 +593,16 @@ class Controller(object):
         if (self._args.bam_type != "target") and (
                 self._args.bam_type != "reference"):
             print("Error: please assign \"target\" or"
-                  " \"reference\" to --bam_type!!")
+                  " \"reference\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
                 self._args.ploidy != "diploid"):
             print("Error: please assign \"haploid\" or"
-                  " \"diploid\" to --chromosome_type!!")
+                  " \"diploid\" to --chromosome_type!")
         if (self._args.caller != "c") and (
                 self._args.caller != "m"):
             print("Error: please assign \"c\" or"
-                  " \"m\" to --caller!!")
+                  " \"m\" to --caller!")
         self.check_parameter([self._args.sample_number],
                              ["--sample_number"])
         project_creator.create_subfolders(self._paths.required_folders("snp"))
@@ -642,7 +643,7 @@ class Controller(object):
         if (self._args.bacteria_type != "positive") and (
                 self._args.bacteria_type != "negative"):
             print("Error: please assign \"positive\" or"
-                  " \"negative\" to --bacteria_type!!")
+                  " \"negative\" to --bacteria_type!")
             sys.exit()
         project_creator.create_subfolders(
             self._paths.required_folders("subcellular_localization"))
@@ -686,7 +687,7 @@ class Controller(object):
             thermo_path = None
         else:
             print("Error: Please assign \"thermometer\", \"riboswitch\" "
-                  "or \"both\" in --program!!")
+                  "or \"both\" in --program!")
             sys.exit()
         args_ribo = self.args_container.container_ribos(
             self._args.program, self._args.RNA_thermometer_ID,
@@ -744,10 +745,10 @@ class Controller(object):
             for gff in (self._args.side_gffs.split(",")):
                 gff = gff.strip()
                 if not os.path.isfile(gff):
-                    print("Error: The --side_gffs no exist!!")
+                    print("Error: The --side_gffs no exist!")
                     sys.exit()
         if self._args.output_folder is None:
-            print("Error: please assign --output_folder!!")
+            print("Error: please assign --output_folder!")
             sys.exit()
         if (self._args.present != "expand") and (
                 self._args.present != "collapse") and (

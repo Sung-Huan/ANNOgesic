@@ -214,7 +214,7 @@ class Multiparser(object):
                    (fasta.endswith(".fna")) or \
                    (fasta.endswith(".fasta")):
                     out_path = os.path.join(fastas, fasta + "_folder")
-                    print("Parser " + fasta + "...")
+                    print("Parsing " + fasta + "...")
                     self.helper.check_make_folder(out_path)
                     with open(os.path.join(fastas, fasta), "r") as f_f:
                         for line in f_f:
@@ -259,7 +259,7 @@ class Multiparser(object):
             if ("_folder" not in filename) and ("tmp" != filename):
                 out_path = os.path.join(gff_folder, filename + "_folder")
                 if ".gff" in filename:
-                    print("Parser " + filename + "...")
+                    print("Parsing " + filename + "...")
                     self.helper.check_make_folder(out_path)
                     self.helper.sort_gff(os.path.join(gff_folder, filename),
                                          os.path.join(gff_folder, "tmp.gff"))
@@ -302,7 +302,7 @@ class Multiparser(object):
             if ("_folder" not in filename) and ("tmp" != filename):
                 out_path = os.path.join(wig_folder, filename + "_folder")
                 if ".wig" in filename:
-                    print("Parser {0}...".format(filename))
+                    print("Parsing {0}...".format(filename))
                     self.helper.check_make_folder(out_path)
                     with open(os.path.join(wig_folder, filename), "r") as w_f:
                         for line in w_f:
