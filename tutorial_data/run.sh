@@ -10,11 +10,17 @@ main(){
               $WIG_FOLDER/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+ \
 	      $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
+"""
+This script is for tutorial. As long as \"#\" is removed,
+the subcommand will be executed. And put \"#\" back to disfunction
+the subcommand again. Therefore, the user can check the subcommands one by one.
+"""
 
-#    set_up_analysis_folder
+
+    set_up_analysis_folder
 #    get_input_files    
 #    get_target_fasta
-    annotation_transfer
+#    annotation_transfer
 #    Optimize_TSSpredator
 #    TSS_prediction
 #    processing_site_prediction
@@ -197,10 +203,7 @@ promoter_detection(){
 sRNA_detection(){
     $ANNOGESIC_PATH \
         srna \
-        -d tss blast_srna sec_str \
-	--rnafold_path /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Progs/RNAfold \
-	--relplot_path /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Utils/relplot.pl \
-	--mountain_path /home/silas/ANNOgesic/tools/ViennaRNA-2.1.7/Utils/mountain.pl \
+        -d tss blast_srna blast_nr sec_str \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p $ANNOGESIC_FOLDER/output/processing_site/gffs/NC_009839.1_processing.gff \
@@ -211,15 +214,15 @@ sRNA_detection(){
         -pn MOTIF_1 \
         -m \
         -u \
+        -sf \
+        -nf \
 	-sd $ANNOGESIC_FOLDER/input/database/sRNA_database_BSRD \
+        -nd $ANNOGESIC_FOLDER/input/database/nr \
 	-tl $TEX_LIBS \
         -rt all_1 \
         -pj $ANNOGESIC_FOLDER
 }
 
-#-nd $ANNOGESIC_FOLDER/input/database/nr \
-#-nf \ 
-#-sf \
 sORF_detection(){
     $ANNOGESIC_PATH \
         sorf \
