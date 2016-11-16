@@ -3055,7 +3055,7 @@ Some statistics and visualization files are provided as well.
                                               --annotation_files ANNOTATION_FILES
                                               [ANNOTATION_FILES ...] --fasta_files
                                               FASTA_FILES [FASTA_FILES ...]
-                                              [--transcript_files TRANSCRIPT_FILES]
+                                              [--transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]]
                                               --bacteria_type BACTERIA_TYPE
                                               [--difference_multi DIFFERENCE_MULTI]
                                               [--merge_to_gff]
@@ -3072,7 +3072,7 @@ Some statistics and visualization files are provided as well.
                             Paths of genome annotation gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of genome fasta files.
-      --transcript_files TRANSCRIPT_FILES, -a TRANSCRIPT_FILES
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             If paths of the transcript gff files are provided, it
                             can get the results based on expressed CDS and all
                             CDS.
