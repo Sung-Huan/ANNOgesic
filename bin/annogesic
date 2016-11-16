@@ -397,12 +397,12 @@ def main():
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
         "to be detected. The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
-        "If different --replicate_match values need to be assigned to "
+        "If different --replicate_tex values need to be assigned to "
         "different conditions, please use space to separate them. For example, "
-        "1_2 2_ 3_3. It means that --replicate_match is 2 in number 1 and "
+        "1_2 2_ 3_3. It means that --replicate_tex is 2 in number 1 and "
         "number 2 conditions. In number 3 condition, --replcate_match is 3. "
-        "For assigning the same --replicate_match to all conditions, "
-        "just use like all_1 (--replicate_match is 1 in all conditions). "
+        "For assigning the same --replicate_tex to all conditions, "
+        "just use like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     op_TSSpredator_parser.add_argument(
         "--steps", "-s", default=4000, type=int,
@@ -505,7 +505,7 @@ def main():
         "in both (TEX+ and TEX-) or can be detected in only one library "
         "(TEX+ or TEX-). Please assign 1 or 2. Default is 1.")
     Terminator_parser.add_argument(
-        "--replicates_tex", "-rt", default=None, nargs='+',
+        "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a terminator has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
@@ -517,7 +517,7 @@ def main():
         "just use ""like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     Terminator_parser.add_argument(
-        "--replicates_frag", "-rf", default=None, nargs='+',
+        "--replicate_frag", "-rf", default=None, nargs='+',
         help="The meaning and input type is the same as --replicates_tex. "
         "This value is for fragmented libraries.")
     Terminator_parser.add_argument(
@@ -581,7 +581,7 @@ def main():
     Transcript_parser.add_argument(
         "--length", "-l", default=20, type=int,
         help="The minimum length of the transcript after modifying by genome "
-        "annotation. If --annotation_folder is assigned, this value will be "
+        "annotation. If --annotation_files is assigned, this value will be "
         "for the final output. Otherwise, --width will be the minimum length "
         "for the final output. Default is 20.")
     Transcript_parser.add_argument(
@@ -592,7 +592,7 @@ def main():
         "--width", "-w", default=20, type=int,
         help="The minimum length of the transcript without modifying by "
         "genome annotation. This value will be for the final output if "
-        "--annotation_folder is not provided. Otherwise, --length would be "
+        "--annotation_files is not provided. Otherwise, --length would be "
         "the minimum length of the transcript for the final output. "
         "The default is 20.")
     Transcript_parser.add_argument(
@@ -606,7 +606,7 @@ def main():
         "length is within --tolerance, the algorithm will still devide the "
         "current transcript to two parts. Default is 0.")
     Transcript_parser.add_argument(
-        "--replicates_tex", "-rt", default=None, nargs='+',
+        "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a transcript has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
@@ -618,7 +618,7 @@ def main():
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     Transcript_parser.add_argument(
-        "--replicates_frag", "-rf", default=None, nargs='+',
+        "--replicate_frag", "-rf", default=None, nargs='+',
         help="The meaning and input type is the same to --replicates_tex. "
         "This value is for fragmented libraries.")
     Transcript_parser.add_argument(
@@ -650,7 +650,7 @@ def main():
         "separate the wig files. For example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     Transcript_parser.add_argument(
-        "--fragmented_libs", "-fl", default=None, nargs='+',
+        "--frag_libs", "-fl", default=None, nargs='+',
         help="If the fragmented libraries can be provided, please assign the "
         "name of fragmented library. The format is: wig_file_path:fragmented("
         "frag):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
@@ -668,7 +668,7 @@ def main():
         "the parent transcript of terminator. Default is None.")
     Transcript_parser.add_argument(
         "--fuzzy_term", "-fz", default=30, type=int,
-        help="If --terminator_folder is assigned, please assign the fuzzy "
+        help="If --terminator_files is assigned, please assign the fuzzy "
         "here. Default is 30.")
     Transcript_parser.add_argument(
         "--max_length_distribution", "-mb", default=2000, type=int,
@@ -827,12 +827,12 @@ def main():
         "format for sRNA prediction. Default is True (from ANNOgesic).")
     sRNA_parser.add_argument(
         "--tss_intergenic_fuzzy", "-ft", default=3, type=int,
-        help="If --tss_folder is provided, please assign the fuzzy for "
+        help="If --tss_files is provided, please assign the fuzzy for "
         "comparing TSS with transcript. It is for intergenic sRNA. "
         "Default is 3.")
     sRNA_parser.add_argument(
         "--tss_5utr_fuzzy", "-f5", default="n_3", type=str,
-        help="If --tss_folder is provided, please assign the fuzzy for "
+        help="If --tss_files is provided, please assign the fuzzy for "
         "comparing TSS with transcript. It is for 5'UTR-derived sRNA."
         "The input type can be percentage (\"p\") or the real amount of reads "
         "(\"n\"). Ex: p_0.05 means the fuzzy is 5 percent of the length of "
@@ -852,7 +852,7 @@ def main():
         "of gff files of terminator.")
     sRNA_parser.add_argument(
         "--terminator_fuzzy_in_srna", "-tfi", default=30, type=int,
-        help="If --terminator_folder is provided, please assign the fuzzy for "
+        help="If --terminator_files is provided, please assign the fuzzy for "
         "comparing terminator with transcript. "
         "This value is for the terminator which is within sRNA. Default is 30.")
     sRNA_parser.add_argument(
@@ -876,7 +876,7 @@ def main():
         "are used for sRNA prediction. The other types of TSSs will not be "
         "used for sRNA detection (assign to 0). If TSS information is not "
         "provided, it will choose the lowest one as a general cutoff for "
-        "prediction. Ex: if the input is 0,0,0,50,10 and --TSS_folder is not "
+        "prediction. Ex: if the input is 0,0,0,50,10 and --tss_files is not "
         "provided, 10 will be the general cutoff for prediction. "
         "Default is 0,0,0,40,20 and each number is separated by comma.")
     sRNA_parser.add_argument(
@@ -997,7 +997,7 @@ def main():
         "only one library (TEX+ or TEX-). "
         "Please assign 1 or 2. Default is 2.")
     sRNA_parser.add_argument(
-        "--replicates_tex", "-rt", default=None, nargs='+',
+        "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a sRNA has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
@@ -1009,7 +1009,7 @@ def main():
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     sRNA_parser.add_argument(
-        "--replicates_frag", "-rf", default=None, nargs='+',
+        "--replicate_frag", "-rf", default=None, nargs='+',
         help="The meaning and input type is the same as --replicates_tex. "
         "This value is for fragmented libraries.")
     sRNA_parser.add_argument(
@@ -1112,7 +1112,7 @@ def main():
         "this function will use the TSS information to detect sORF.")
     sORF_parser.add_argument(
         "--utr_length", "-ul", default=300, type=int,
-        help="If --tss_folder is provided, please assign the utr length "
+        help="If --tss_files is provided, please assign the utr length "
         "for comparing TSS with sORF. The default number is 300.")
     sORF_parser.add_argument(
         "--min_length", "-lm",default=30,
@@ -1173,7 +1173,7 @@ def main():
         "can be detected in only one library (TEX+ or TEX-). "
         "Please assign 1 or 2. Default is 2.")
     sORF_parser.add_argument(
-        "--replicates_tex", "-rt", default=None, nargs='+',
+        "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a sORF has to be detected. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATED. If different --replicate_tex "
@@ -1185,7 +1185,7 @@ def main():
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     sORF_parser.add_argument(
-        "--replicates_frag", "-rf", default=None, nargs='+',
+        "--replicate_frag", "-rf", default=None, nargs='+',
         help="The meaning and input type is the same as --replicates_tex. "
         "This value is for fragmented libraries.")
     sORF_parser.add_argument(
@@ -1299,7 +1299,7 @@ def main():
         "annotation gff files.")
     promoter_parser.add_argument(
         "--combine_all", "-c", default=False, action="store_true",
-        help="This function will combine all TSS files in \"TSS_folder\" "
+        help="This function will combine all TSS files in \"tss_files\" "
         "to generate global promoter motifs. Default is False.")
     promoter_parser.set_defaults(func=run_MEME)
     # Parameters of operon detection
@@ -1938,7 +1938,7 @@ def main():
         "separate them.")
     screen_parser.add_argument(
         "--fasta", "-f", required=True,
-        help="Path of the genome fasta folder.")
+        help="Path of the genome fasta file.")
     screen_parser.add_argument(
         "--height", "-he", default=1500, type=int,
         help="Please assign the height of the screenshot. "

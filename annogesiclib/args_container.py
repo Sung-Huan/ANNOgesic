@@ -77,12 +77,13 @@ class ArgsContainer(object):
                     sys.exit()
                 index += 1
             elif file_type == "strand":
-                if num % 2 != 0:
-                    if wig_type == "frag":
+                if wig_type == "frag":
+                    if (infos["+"] != infos["-"]):
                         print("Error: The --frag_libs was assinged incorrectly. "
                               "Please check it again.")
                         sys.exit()
-                    elif wig_type == "tex":
+                if wig_type == "tex":
+                    if (num % 2 != 0) and (infos["+"] != infos["-"]):
                         print("Error: The --tex_notex_libs was assinged incorrectly.  "
                               "Please check it again.")
                         sys.exit()
