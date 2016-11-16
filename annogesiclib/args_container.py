@@ -146,11 +146,14 @@ class ArgsContainer(object):
             sys.exit()
 
     def _combine_files(self, ref_files, out_folder, filename):
-        tar_file = os.path.join(out_folder, filename)
-        for files in ref_files:
-            for file_ in glob(files):
-                self.helper.merge_file(file_, tar_file)
-        return tar_file
+        if ref_files is not None:
+            tar_file = os.path.join(out_folder, filename)
+            for files in ref_files:
+                for file_ in glob(files):
+                    self.helper.merge_file(file_, tar_file)
+            return tar_file
+        else:
+            return None
 
     def _parser_combine_wigs(self, subcommand):
         '''Check the wig folders of frag and tex, then merge them'''
