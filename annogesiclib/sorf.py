@@ -120,7 +120,7 @@ class sORFDetection(object):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
                 prefixs.append(prefix)
-                print("comparing transcript and CDS of {0}".format(prefix))
+                print("Comparing transcript and CDS of {0}".format(prefix))
                 get_intergenic(os.path.join(args_sorf.gffs, gff),
                                os.path.join(self.tran_path,
                                "_".join([prefix, "transcript.gff"])),
@@ -142,7 +142,7 @@ class sORFDetection(object):
         prefixs = self._compare_tran_cds(args_sorf)
         self._start_stop_codon(prefixs, args_sorf)
         for sorf in os.listdir(os.path.join(self.gff_output, self.all_cand)):
-            print("statistics of {0}".format(sorf))
+            print("Running statistics of {0}".format(sorf))
             if sorf.endswith("_sORF.gff"):
                 stat(os.path.join(self.gff_output, self.all_cand, sorf),
                      os.path.join(self.gff_output, self.best, sorf),
