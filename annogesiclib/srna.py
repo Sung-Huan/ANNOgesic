@@ -104,7 +104,7 @@ class sRNADetection(object):
                 p.kill()
             except OSError:
                 pass
-            time.sleep(5)
+        time.sleep(5)
 
     def _formatdb(self, database, type_, out_folder,
                   blastdb, database_type):
@@ -507,8 +507,7 @@ class sRNADetection(object):
             shutil.rmtree(os.path.join(args_srna.out_folder, "tmp_srna"))
 
     def _run_blast(self, program, database, e, seq_file,
-                   blast_file, strand, para_num):
-        processes = []
+                   blast_file, strand, para_num, processes):
         if para_num == 1:
             call([program, "-db", database,
                   "-evalue", str(e), "-strand", strand, "-query", seq_file,
@@ -518,7 +517,6 @@ class sRNADetection(object):
                        "-evalue", str(e), "-strand", strand, "-query", seq_file,
                        "-out", blast_file])
             processes.append(p)
-        return processes
 
     def _run_para_blast(self, program, database, e, seq_file,
                         blast_file, strand, paras):
@@ -532,9 +530,10 @@ class sRNADetection(object):
                 else:
                     srnas[name] = line
         file_num = int(len(srnas) / paras)
+        processes = []
         if (file_num == 0) or (paras == 1):
-            processes = self._run_blast(program, database, e, seq_file,
-                                        blast_file, strand, 1)
+            self._run_blast(program, database, e, seq_file,
+                            blast_file, strand, 1, processes)
         else:
             cur_para = 0
             line_num = 0
@@ -560,18 +559,15 @@ class sRNADetection(object):
                 line_num += 1
             out.close()
             for para in range(paras):
-                processes = self._run_blast(
+                self._run_blast(
                         program, database, e, "_".join([seq_file, str(para)]),
-                        "_".join([blast_file, str(para)]), strand, paras)
+                        "_".join([blast_file, strand, str(para)]), strand, paras,
+                        processes)
             self._wait_process(processes)
             for para in range(paras):
-                cur_blast_file = "_".join([blast_file, str(para)])
-                if para == 0:
-                    shutil.copy(cur_blast_file, blast_file)
-                    os.remove(cur_blast_file)
-                else:
-                    cur_blast_file = "_".join([blast_file, str(para)])
-                    self.helper.merge_blast_out(cur_blast_file, blast_file)
+                cur_blast_file = "_".join([blast_file, strand, str(para)])
+                self.helper.merge_file(cur_blast_file, blast_file)
+                os.remove(cur_blast_file)
             for file_ in seq_files:
                 os.remove(file_)
 
@@ -601,7 +597,7 @@ class sRNADetection(object):
         return tmp_plus, tmp_minus
 
     def _blast(self, database, database_format, data_type, args_srna,
-               prefixs, program, database_type, e):
+               prefixs, program, database_type, e, filters):
         if (database is None):
             print("Error: No database assigned!")
         else:
@@ -613,6 +609,8 @@ class sRNADetection(object):
                 blast_file = os.path.join(
                         args_srna.out_folder, "blast_result_and_misc",
                         "_".join([database_type, "blast", prefix + ".txt"]))
+                if os.path.exists(blast_file):
+                    os.remove(blast_file)
                 srna_file = "_".join([self.prefixs["basic"], prefix])
                 out_file = os.path.join(
                         args_srna.out_folder,
@@ -620,7 +618,8 @@ class sRNADetection(object):
                 print("Running Blast of {0} in {1}".format(prefix, database))
                 seq_file = os.path.join(
                         args_srna.out_folder, "_".join(["sRNA_seq", prefix]))
-                if seq_file not in os.listdir(args_srna.out_folder):
+                if (seq_file not in os.listdir(args_srna.out_folder)) or ((
+                        database_type == "nr") and ("sec_str" in filters)):
                     self.helper.get_seq(
                             srna_file,
                             os.path.join(self.fasta_path, prefix + ".fa"),
@@ -628,14 +627,18 @@ class sRNADetection(object):
                 if database_type == "nr":
                     tmp_plus, tmp_minus = self._get_strand_fasta(
                             seq_file, args_srna.out_folder)
-                    tmp_blast = os.path.join("tmp_blast.txt")
+                    tmp_blast = os.path.join(args_srna.out_folder,
+                                             "blast_result_and_misc",
+                                             "tmp_blast.txt")
+                    if os.path.exists(tmp_blast):
+                        os.remove(tmp_blast)
                     self._run_para_blast(program, database, e,
                                          tmp_plus, tmp_blast, "plus",
                                          args_srna.para_blast)
                     self._run_para_blast(program, database, e,
                                          tmp_minus, blast_file, "minus",
                                          args_srna.para_blast)
-                    self.helper.merge_blast_out(tmp_blast, blast_file)
+                    self.helper.merge_file(tmp_blast, blast_file)
                     os.remove(tmp_plus)
                     os.remove(tmp_minus)
                 else:
@@ -721,8 +724,6 @@ class sRNADetection(object):
             os.remove(os.path.join(args_srna.out_folder, "tmp_median"))
         if self.term_path is not None:
             self.helper.remove_tmp_dir(args_srna.terms)
-        if args_srna.promoter_table is not None:
-            os.remove(args_srna.promoter_table)
 
     def _filter_srna(self, args_srna, prefixs):
         '''set the filter of sRNA'''
@@ -732,7 +733,7 @@ class sRNADetection(object):
         if args_srna.nr_database is not None:
             self._blast(args_srna.nr_database, args_srna.nr_format, "prot",
                         args_srna, prefixs, args_srna.blastx, "nr",
-                        args_srna.e_nr)
+                        args_srna.e_nr, args_srna.import_info)
         if self.sorf_path is not None:
             for prefix in prefixs:
                 if ("_".join([prefix, "sORF.gff"]) in
@@ -752,7 +753,7 @@ class sRNADetection(object):
         if args_srna.srna_database is not None:
             self._blast(args_srna.srna_database, args_srna.srna_format, "nucl",
                         args_srna, prefixs, args_srna.blastn, "sRNA",
-                        args_srna.e_srna)
+                        args_srna.e_srna, args_srna.import_info)
 
     def _import_info_format(self, import_info):
         new_info = []

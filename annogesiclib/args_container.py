@@ -149,6 +149,8 @@ class ArgsContainer(object):
     def _combine_files(self, ref_files, out_folder, filename):
         if ref_files is not None:
             tar_file = os.path.join(out_folder, filename)
+            if os.path.exists(tar_file):
+                os.remove(tar_file)
             for files in ref_files:
                 for file_ in glob(files):
                     self.helper.merge_file(file_, tar_file)
@@ -646,7 +648,7 @@ class ArgsContainer(object):
         self.tss_source = TSS_source
         self.min_utr = min_utr_coverage
         self.promoter_table = self._combine_files(
-                promoter_tables, srna_folder, "temp_promoter_table")
+                promoter_tables, srna_folder, "tmp_promoter_table")
         if ranking_promoter < 1:
             print("Error: --ranking_time_promoter must larger than 1...")
             sys.exit()

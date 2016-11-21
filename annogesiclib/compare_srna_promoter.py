@@ -7,6 +7,11 @@ from annogesiclib.gff3 import Gff3Parser
 def read_file(gff_file, args_srna):
     srnas = []
     for entry in Gff3Parser().entries(open(gff_file)):
+        attributes = {}
+        for key, value in entry.attributes.items():
+            if "promoter" not in key:
+                attributes[key] = value
+        entry.attributes = attributes
         srnas.append(entry)
     srnas = sorted(srnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     fh = open(args_srna.promoter_table, "r")
@@ -16,6 +21,7 @@ def read_file(gff_file, args_srna):
                 row[3] in args_srna.promoter_name):
             pros.append({"strain": row[0], "pos": row[1],
                          "strand": row[2], "name": row[3]})
+    fh.close()
     return srnas, pros
 
 

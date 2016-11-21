@@ -32,7 +32,8 @@ def get_proteins(datas, checks, blast_f):
             if not checks["detect"]:
                 for line in blast_f:
                     line = line.strip()
-                    if "Expect =" in line:
+                    if ("Expect" in line) and ("Score" in line) and (
+                            "Method" in line):
                         e_value = line.split(",")[1].split(" ")[-1]
                         checks["detect"] = True
                         checks["print"] = True
@@ -99,10 +100,10 @@ def detect_srna(line, blast_f, out_t, blasts, prefix):
         blasts["name"] = line[1:]
         blasts["hit_num"] += 1
         for line in blast_f:
+            line.strip()
             if line.startswith("Length="):
                 name_complete = True
             if not name_complete:
-                line = line.strip()
                 blasts["name"] = " ".join([blasts["name"], line])
             if "Expect =" in line:
                 e_value = line.split(" ")[-1].strip()
@@ -144,7 +145,7 @@ def print_file(database, out_f, info, srna_hit, nr_hit):
         out_f.write("{0};nr_hit={1}\n".format(info, nr_hit))
 
 
-def output_flie(blasts, out_t, prefix, out_f, database, srna, names):
+def gen_out_flie(blasts, out_t, prefix, out_f, database, srna, names):
     if not blasts["blast"]:
         out_t.write("{0}\tNA\n".format(prefix))
         print_file(database, out_f,
@@ -170,6 +171,7 @@ def extract_blast(blast_result, srna_file, output_file,
             for line in blast_f:
                 line = line.strip()
                 if line.startswith("Query= "):
+                    go_out = False
                     query = line.split("=")[1].strip()
                     if (query == ("|".join([
                             srna.attributes["ID"], srna.seq_id,
@@ -185,9 +187,10 @@ def extract_blast(blast_result, srna_file, output_file,
                                            "significant alignments:") != -1:
                                 for line in blast_f:
                                     line = line.strip()
-                                    if line:
+                                    if len(line) != 0:
                                         if line.startswith(
                                                 "Effective search space"):
+                                            go_out = True
                                             break
                                         if database == "sRNA":
                                             detect_srna(line, blast_f, out_t,
@@ -199,10 +202,12 @@ def extract_blast(blast_result, srna_file, output_file,
                                         elif database == "nr":
                                             detect_nr(line, blast_f, out_t,
                                                       blasts, prefix)
-                                output_flie(blasts, out_t, prefix, out_f,
-                                            database, srna, names)
+                                gen_out_flie(blasts, out_t, prefix, out_f,
+                                             database, srna, names)
                                 blasts["hit_num"] = 0
                                 break
+                        if go_out:
+                            break
     out_f.close()
     out_t.close()
 

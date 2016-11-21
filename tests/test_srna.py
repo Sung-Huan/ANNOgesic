@@ -74,7 +74,7 @@ class Mock_func(object):
     def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out):
         pass
 
-    def mock_run_blast(self, program, database, e, seq_file, blast_file, strand, para):
+    def mock_run_blast(self, program, database, e, seq_file, blast_file, strand, para, test):
         gen_file('tmp_blast.txt', "test")
 
     def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file, database_type):
@@ -312,7 +312,7 @@ class TestsRNADetection(unittest.TestCase):
         args.fastas = self.fastas
         args.out_folder = self.out
         self.srna._blast("database", False, "dna", args,
-                         ["test"], "blast_all", "nr", 0.0001)
+                         ["test"], "blast_all", "nr", 0.0001, "tss")
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")
 
