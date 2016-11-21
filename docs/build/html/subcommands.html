@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.1 documentation</title>
+    <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.2 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ANNOgesic 0.5.1 documentation" href="index.html" />
+    <link rel="top" title="ANNOgesic 0.5.2 documentation" href="index.html" />
     <link rel="next" title="Tutorial of ANNOgesic" href="test_case.html" />
     <link rel="prev" title="Docker image" href="docker.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="docker.html" title="Docker image"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -924,16 +924,16 @@ Based on the comparison, the performance of <code class="docutils literal"><span
                                         [--width WIDTH]
                                         [--tolerance TOLERANCE]
                                         [--tolerance_coverage TOLERANCE_COVERAGE]
-                                        [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
-                                        [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                                        [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                        [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                                         [--tex_notex TEX_NOTEX]
                                         [--tss_files TSS_FILES [TSS_FILES ...]]
                                         [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
                                         [--tss_fuzzy TSS_FUZZY]
                                         [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                                        [--fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]]
+                                        [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                                         [--table_best]
-                                        [--terminator_files TERMINATOR_FILES]
+                                        [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
                                         [--fuzzy_term FUZZY_TERM]
                                         [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
 
@@ -950,7 +950,7 @@ optional arguments:
                         into a long one.
   --length LENGTH, -l LENGTH
                         The minimum length of the transcript after modifying
-                        by genome annotation. If --annotation_folder is
+                        by genome annotation. If --annotation_files is
                         assigned, this value will be for the final output.
                         Otherwise, --width will be the minimum length for the
                         final output. Default is 20.
@@ -960,7 +960,7 @@ optional arguments:
   --width WIDTH, -w WIDTH
                         The minimum length of the transcript without modifying
                         by genome annotation. This value will be for the final
-                        output if --annotation_folder is not provided.
+                        output if --annotation_files is not provided.
                         Otherwise, --length would be the minimum length of the
                         transcript for the final output. The default is 20.
   --tolerance TOLERANCE, -t TOLERANCE
@@ -972,7 +972,7 @@ optional arguments:
                         the length is within --tolerance, the algorithm will
                         still devide the current transcript to two parts.
                         Default is 0.
-  --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
+  --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a transcript has to be
                         detected. The format is
@@ -985,7 +985,7 @@ optional arguments:
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
-  --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
+  --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                         The meaning and input type is the same to
                         --replicates_tex. This value is for fragmented
                         libraries.
@@ -1017,7 +1017,7 @@ optional arguments:
                         wig files need to be assigned, please use space to
                         separate the wig files. For example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
-  --fragmented_libs FRAGMENTED_LIBS [FRAGMENTED_LIBS ...], -fl FRAGMENTED_LIBS [FRAGMENTED_LIBS ...]
+  --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If the fragmented libraries can be provided, please
                         assign the name of fragmented library. The format is:
                         wig_file_path:fragmented(frag):condition_id(integer):r
@@ -1027,13 +1027,13 @@ optional arguments:
                         $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
   --table_best, -tb     The output table only includes the information of the
                         highest expressed library. Default is False.
-  --terminator_files TERMINATOR_FILES, -tr TERMINATOR_FILES
+  --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -tr TERMINATOR_FILES [TERMINATOR_FILES ...]
                         If the paths of terminator gff files are assigned
                         here, this function will compare transcripts with
                         terminators to detect the parent transcript of
                         terminator. Default is None.
   --fuzzy_term FUZZY_TERM, -fz FUZZY_TERM
-                        If --terminator_folder is assigned, please assign the
+                        If --terminator_files is assigned, please assign the
                         fuzzy here. Default is 30.
   --max_length_distribution MAX_LENGTH_DISTRIBUTION, -mb MAX_LENGTH_DISTRIBUTION
                         For generating the figure of distribution of
@@ -1124,8 +1124,8 @@ which have coverage significant decrease.</p>
                             [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                             [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                             [--tex_notex TEX_NOTEX]
-                            [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
-                            [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                            [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                            [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                             [--table_best] [--window_size WINDOW_SIZE]
                             [--window_shift WINDOW_SHIFT]
                             [--min_loop_length MIN_LOOP_LENGTH]
@@ -1220,7 +1220,7 @@ optional arguments:
                         terminator should be detected in both (TEX+ and TEX-)
                         or can be detected in only one library (TEX+ or TEX-).
                         Please assign 1 or 2. Default is 1.
-  --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
+  --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a terminator has to be
                         detected. The format is
@@ -1233,7 +1233,7 @@ optional arguments:
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
-  --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
+  --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                         The meaning and input type is the same as
                         --replicates_tex. This value is for fragmented
                         libraries.
@@ -1591,8 +1591,8 @@ this candidates will be removed.</p>
                       [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                       [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                       [--tex_notex TEX_NOTEX]
-                      [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
-                      [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                      [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                      [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                       [--table_best]
                       [--decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE]
                       [--decrease_utr DECREASE_UTR]
@@ -1688,11 +1688,11 @@ optional arguments:
                         the proper format for sRNA prediction. Default is True
                         (from ANNOgesic).
   --tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
-                        If --tss_folder is provided, please assign the fuzzy
+                        If --tss_files is provided, please assign the fuzzy
                         for comparing TSS with transcript. It is for
                         intergenic sRNA. Default is 3.
   --tss_5utr_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
-                        If --tss_folder is provided, please assign the fuzzy
+                        If --tss_files is provided, please assign the fuzzy
                         for comparing TSS with transcript. It is for 5&#39;UTR-
                         derived sRNA.The input type can be percentage (&quot;p&quot;) or
                         the real amount of reads (&quot;n&quot;). Ex: p_0.05 means the
@@ -1710,7 +1710,7 @@ optional arguments:
                         If terminator information is required, please assign
                         the paths of gff files of terminator.
   --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -tfi TERMINATOR_FUZZY_IN_SRNA
-                        If --terminator_folder is provided, please assign the
+                        If --terminator_files is provided, please assign the
                         fuzzy for comparing terminator with transcript. This
                         value is for the terminator which is within sRNA.
                         Default is 30.
@@ -1734,7 +1734,7 @@ optional arguments:
                         detection (assign to 0). If TSS information is not
                         provided, it will choose the lowest one as a general
                         cutoff for prediction. Ex: if the input is 0,0,0,50,10
-                        and --TSS_folder is not provided, 10 will be the
+                        and --tss_files is not provided, 10 will be the
                         general cutoff for prediction. Default is 0,0,0,40,20
                         and each number is separated by comma.
   --run_intergenic_notex_coverage RUN_INTERGENIC_NOTEX_COVERAGE, -in RUN_INTERGENIC_NOTEX_COVERAGE
@@ -1847,7 +1847,7 @@ optional arguments:
                         sRNA should be detected in both (TEX+ and TEX-) or can
                         be detected in only one library (TEX+ or TEX-). Please
                         assign 1 or 2. Default is 2.
-  --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
+  --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a sRNA has to be detected.
                         The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
@@ -1859,7 +1859,7 @@ optional arguments:
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
-  --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
+  --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                         The meaning and input type is the same as
                         --replicates_tex. This value is for fragmented
                         libraries.
@@ -1991,7 +1991,7 @@ TSS gff files with TSS types will be stored here.</p>
 <p><strong>overlap_CDS:</strong> If the sRNA overlaps CDS, the information of CDS will be showed here.</p>
 <p><strong>overlap_percent:</strong> If the sRNA overlaps CDS, the percentage of overlap between sRNA and CDS will be showed here.</p>
 <p><strong>end_with_terminator:</strong> The terminator which is associated with this sRNA.</p>
-<p><strong>associated_promoter:</strong> The promoter which is associated with this sRNA.</p>
+<p><strong>associated_promoter:</strong> The promoter which is associated with this sRNA. Each promoter (separated by comma) corresponds with the related TSSs.</p>
 <p><strong>sRNA_length:</strong> sRNA length.</p>
 </div></blockquote>
 <p><strong>gffs:</strong> Stores gff files of the sRNA. There are also some sub-folders:</p>
@@ -2013,7 +2013,7 @@ Based on this information, we can know the details of the specific sRNA. The tag
 <p><strong>end_cleavage:</strong> If this sRNA ends with a cleavage site, information of the cleavage site will be showed here.</p>
 <p><strong>overlap_cds:</strong> This sRNA overlaps CDS or not.</p>
 <p><strong>overlap_percentage:</strong> If this sRNA overlap CDS. The percentage of the overlap between CDS and sRNA will be showed here.</p>
-<p><strong>promoter:</strong> Promoters which are associated with the sRNA.</p>
+<p><strong>promoter:</strong> Promoters which are associated with the sRNA. Each promoter (separated by comma) corresponds with the related TSSs.</p>
 </div></blockquote>
 </div>
 <div class="section" id="sorf">
@@ -2058,8 +2058,8 @@ Please be aware this point for using the results.</p>
                       [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                       [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                       [--tex_notex TEX_NOTEX]
-                      [--replicates_tex REPLICATES_TEX [REPLICATES_TEX ...]]
-                      [--replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...]]
+                      [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                      [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                       [--table_best]
                       [--srna_files SRNA_FILES [SRNA_FILES ...]]
                       [--start_codon START_CODON [START_CODON ...]]
@@ -2087,7 +2087,7 @@ optional arguments:
                         If the paths of TSS gff files are assigned here, this
                         function will use the TSS information to detect sORF.
   --utr_length UTR_LENGTH, -ul UTR_LENGTH
-                        If --tss_folder is provided, please assign the utr
+                        If --tss_files is provided, please assign the utr
                         length for comparing TSS with sORF. The default number
                         is 300.
   --min_length MIN_LENGTH, -lm MIN_LENGTH
@@ -2141,7 +2141,7 @@ optional arguments:
                         that a sORF should be detected in both (TEX+ and TEX-)
                         or can be detected in only one library (TEX+ or TEX-).
                         Please assign 1 or 2. Default is 2.
-  --replicates_tex REPLICATES_TEX [REPLICATES_TEX ...], -rt REPLICATES_TEX [REPLICATES_TEX ...]
+  --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a sORF has to be detected.
                         The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
@@ -2153,7 +2153,7 @@ optional arguments:
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
-  --replicates_frag REPLICATES_FRAG [REPLICATES_FRAG ...], -rf REPLICATES_FRAG [REPLICATES_FRAG ...]
+  --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                         The meaning and input type is the same as
                         --replicates_tex. This value is for fragmented
                         libraries.
@@ -2329,7 +2329,7 @@ optional arguments:
                         If --tss_source is False, please assign the paths of
                         genome annotation gff files.
   --combine_all, -c     This function will combine all TSS files in
-                        &quot;TSS_folder&quot; to generate global promoter motifs.
+                        &quot;tss_files&quot; to generate global promoter motifs.
                         Default is False.
 </pre></div>
 </div>
@@ -3348,14 +3348,14 @@ optional arguments:
                         This value is the minimal number of replicates that a
                         TSS has to be detected. The format is
                         $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
-                        --replicate_match values need to be assigned to
+                        --replicate_tex values need to be assigned to
                         different conditions, please use space to separate
                         them. For example, 1_2 2_ 3_3. It means that
-                        --replicate_match is 2 in number 1 and number 2
+                        --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replcate_match is
-                        3. For assigning the same --replicate_match to all
-                        conditions, just use like all_1 (--replicate_match is
-                        1 in all conditions). Default is all_1.
+                        3. For assigning the same --replicate_tex to all
+                        conditions, just use like all_1 (--replicate_tex is 1
+                        in all conditions). Default is all_1.
   --steps STEPS, -s STEPS
                         The total runs for optimization. Default is 4000 runs.
 </pre></div>
@@ -3421,7 +3421,7 @@ optional arguments:
                         here. If multiple gff files need to be assigned, just
                         use space to separate them.
   --fasta FASTA, -f FASTA
-                        Path of the genome fasta folder.
+                        Path of the genome fasta file.
   --height HEIGHT, -he HEIGHT
                         Please assign the height of the screenshot. Default is
                         1500.
@@ -3574,7 +3574,7 @@ gff file shows the parent transcript.</p>
         <li class="right" >
           <a href="docker.html" title="Docker image"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
