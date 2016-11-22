@@ -10,12 +10,6 @@ main(){
               $WIG_FOLDER/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+ \
 	      $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
-"""
-This script is for tutorial. As long as \"#\" is removed,
-the subcommand will be executed. And put \"#\" back to disfunction
-the subcommand again. Therefore, the user can check the subcommands one by one.
-"""
-
 
     set_up_analysis_folder
 #    get_input_files    
@@ -203,7 +197,7 @@ promoter_detection(){
 sRNA_detection(){
     $ANNOGESIC_PATH \
         srna \
-        -d tss blast_srna blast_nr sec_str \
+        -d tss blast_srna sec_str blast_nr \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p $ANNOGESIC_FOLDER/output/processing_site/gffs/NC_009839.1_processing.gff \
@@ -214,10 +208,8 @@ sRNA_detection(){
         -pn MOTIF_1 \
         -m \
         -u \
-        -sf \
-        -nf \
-	-sd $ANNOGESIC_FOLDER/input/database/sRNA_database_BSRD \
         -nd $ANNOGESIC_FOLDER/input/database/nr \
+	-sd $ANNOGESIC_FOLDER/input/database/sRNA_database_BSRD \
 	-tl $TEX_LIBS \
         -rt all_1 \
         -pj $ANNOGESIC_FOLDER

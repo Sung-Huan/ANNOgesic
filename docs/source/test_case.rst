@@ -630,31 +630,11 @@ We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ f
 
     $ wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 
+
+
 If you already had sRNA database in other folders, please assign your path of databases to ``-sd``.
 If your databse is formated before, you can remove ``-sf``.
-Now, we can use three filters (``tss``, ``sec_str``, ``blast_srna``) to run ``srna`` in order to reduce the running time.
-
-::
-
-    $ annogesic srna \
-        -d tss blast_srna sec_str \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -p ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-        -tf ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
-        -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
-        -pn MOTIF_1 \
-        -m \
-        -u \
-        -sf \
-        -sd ANNOgesic/input/database/sRNA_database_BSRD \
-        -tl $TEX_LIBS \
-        -rt all_1 \
-        -pj ANNOgesic
-
-If we want to add ``blast_nr`` to filters, we have to download 
+In order to use the recommaned filters, we have to download 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (takes a while). If you already had it, 
 you can skip this step.
 
@@ -685,13 +665,13 @@ Now, we can use the recommanded filters to run ``srna``, but it may takes severa
         -sf \
         -nf \
         -sd ANNOgesic/input/database/sRNA_database_BSRD \
-        -sd ANNOgesic/input/database/nr \
+        -nd ANNOgesic/input/database/nr \
         -tl $TEX_LIBS \
         -rt all_1 \
         -pj ANNOgesic
 
 If you have sORF information, you can also assign path of the sORF gff folder to ``-O``. 
-Then, comparison of sRNAs and sORFs can be done. 
+Then, comparison of sRNAs and sORFs can be done.
 
 Output files are following.
 

@@ -678,27 +678,7 @@ We can download fasta file of <a class="reference external" href="http://www.bac
 </div>
 <p>If you already had sRNA database in other folders, please assign your path of databases to <code class="docutils literal"><span class="pre">-sd</span></code>.
 If your databse is formated before, you can remove <code class="docutils literal"><span class="pre">-sf</span></code>.
-Now, we can use three filters (<code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>) to run <code class="docutils literal"><span class="pre">srna</span></code> in order to reduce the running time.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic srna \
-    -d tss blast_srna sec_str \
-    -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-    -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-    -p ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
-    -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-    -tf ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
-    -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
-    -pn MOTIF_1 \
-    -m \
-    -u \
-    -sf \
-    -sd ANNOgesic/input/database/sRNA_database_BSRD \
-    -tl $TEX_LIBS \
-    -rt all_1 \
-    -pj ANNOgesic
-</pre></div>
-</div>
-<p>If we want to add <code class="docutils literal"><span class="pre">blast_nr</span></code> to filters, we have to download
+In order to use the recommaned filters, we have to download
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (takes a while). If you already had it,
 you can skip this step.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
@@ -724,7 +704,7 @@ Now, we can use the recommanded filters to run <code class="docutils literal"><s
     -sf \
     -nf \
     -sd ANNOgesic/input/database/sRNA_database_BSRD \
-    -sd ANNOgesic/input/database/nr \
+    -nd ANNOgesic/input/database/nr \
     -tl $TEX_LIBS \
     -rt all_1 \
     -pj ANNOgesic
