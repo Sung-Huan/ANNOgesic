@@ -581,7 +581,7 @@ def print_file(final_tsss, program, out_gff):
         else:
             strand = Helper().get_strand_name(tss.strand)
             tss.attributes["Name"] = "Processing:" + "_".join(
-                                              [str(tss.start), tss.strand])
+                                              [str(tss.start), strand])
         tss.attribute_string = ";".join(
             ["=".join(items) for items in tss.attributes.items()])
         out.write("\t".join([str(field) for field in [
