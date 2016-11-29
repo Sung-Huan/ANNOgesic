@@ -2,8 +2,10 @@
    :target: https://pypi.python.org/pypi/ANNOgesic/
 .. image:: https://img.shields.io/pypi/l/annogesic.svg
    :target: https://pypi.python.org/pypi/ANNOgesic/
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.168017.svg
-   :target: https://doi.org/10.5281/zenodo.168017
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.183160.svg
+   :target: https://doi.org/10.5281/zenodo.183160
+
+
 
 About ANNOgesic
 ---------------
