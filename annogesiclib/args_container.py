@@ -24,8 +24,17 @@ class ArgsContainer(object):
             new_libs = None
         return new_libs
 
-    def _check_replicates(self, replicates_tex, replicates_frag):
+    def _check_replicates(self, replicates_tex, replicates_frag,
+                          tex_lib, frag_lib):
         '''Check the replicate of frag and tex libs'''
+        if (tex_lib is not None) and (replicates_tex is None):
+            print("Error: No replicates numbers for "
+                  "TEX treated libraries are assigned!")
+            sys.exit()
+        if (frag_lib is not None) and (replicates_frag is None):
+            print("Error: No replicates numbers for "
+                  "fragmented libraries are assigned!")
+            sys.exit()
         if (replicates_tex is not None) and (replicates_frag is not None):
             replicates = {"tex": replicates_tex,
                           "frag": replicates_frag}
@@ -34,7 +43,7 @@ class ArgsContainer(object):
         elif replicates_frag is not None:
             replicates = {"tex": -1, "frag": replicates_frag}
         else:
-            print("Error: No replicates number assign!")
+            print("Error: No replicates number was assigned!")
             sys.exit()
         if replicates["tex"] != -1:
             for rep in replicates["tex"]:
@@ -435,7 +444,7 @@ class ArgsContainer(object):
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
-                replicates_tex, replicates_frag)
+                replicates_tex, replicates_frag, tex_notex_libs, frag_libs)
         self.table_best = table_best
         self.min_loop = min_loop_length
         self.max_loop = max_loop_length
@@ -474,7 +483,8 @@ class ArgsContainer(object):
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
-                replicates_tex, replicates_frag)
+                replicates_tex, replicates_frag,
+                tex_treated_libs, fragmented_libs)
         self.out_folder = out_folder
         self.compare_tss = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_tss", tss_files, ["--tss_files"])
@@ -625,7 +635,7 @@ class ArgsContainer(object):
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
-                replicates_tex, replicates_frag)
+                replicates_tex, replicates_frag, tex_notex_libs, frag_libs)
         self.tex_notex = tex_notex
         self.e_nr = blast_e_nr
         self.e_srna = blast_e_srna
@@ -815,7 +825,7 @@ class ArgsContainer(object):
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
-                replicates_tex, replicates_frag)
+                replicates_tex, replicates_frag, tex_notex_libs, frag_libs)
         self.table_best = table_best
         self.srnas = self._gen_copy_new_folder(
                 [".gff"], sorf_folder, "temp_srna", sRNA_files,
