@@ -55,16 +55,16 @@ def srna_sorf_comparison(sRNA_file, sORF_file, sRNA_out, sORF_out):
                     if "sORF" not in srna.attributes.keys():
                         srna.attributes["sORF"] = []
                         strand = Helper().get_strand_name(sorf.strand)
-                    srna.attributes["sORF"].append("".join(
-                                              [sorf.attributes["ID"], ":",
+                    srna.attributes["sORF"].append("".join([
+                                               "sORF:",
                                                str(sorf.start), "-",
                                                str(sorf.end),
                                                "_", strand]))
                     if "sRNA" not in sorf.attributes.keys():
                         sorf.attributes["sRNA"] = []
                         strand = Helper().get_strand_name(srna.strand)
-                    sorf.attributes["sRNA"].append("".join(
-                                              [srna.attributes["ID"], ":",
+                    sorf.attributes["sRNA"].append("".join([
+                                               "sRNA:",
                                                str(srna.start), "-",
                                                str(srna.end),
                                                "_", strand]))

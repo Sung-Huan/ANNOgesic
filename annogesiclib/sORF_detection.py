@@ -325,7 +325,7 @@ def compare_sorf_srna(sorfs, srnas, srna_gff):
                             (srna.start >= sorf["start"]) and (
                              srna.start <= sorf["end"]) and (
                              srna.end >= sorf["end"])):
-                        sorf["srna"].append(srna.attributes["ID"] + ":" +
+                        sorf["srna"].append("sRNA:" +
                                             str(srna.start) + "-" +
                                             str(srna.end) + "_" + srna.strand)
             if len(sorf["srna"]) == 0:
@@ -566,8 +566,8 @@ def check_candidates_srnas(sorf, min_rbs, max_rbs):
                 strand = "-"
             else:
                 strand = "+"
-            srna_end = int(srna.split("_")[0].split("-")[-1])
-            srna_start = int(srna.split("_")[0].split("-")[0].split(":")[-1])
+            srna_end = int(srna.split("_")[-2].split("-")[-1])
+            srna_start = int(srna.split("_")[-2].split("-")[0].split(":")[-1])
             if (strand == sorf["strand"]):
                 if ((srna_start <= int(sorf["start"])) and (
                          srna_end >= int(sorf["end"]))) or (

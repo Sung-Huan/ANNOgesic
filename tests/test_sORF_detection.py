@@ -137,7 +137,7 @@ class TestsORFDetection(unittest.TestCase):
                  "type": "3utr", "print": False, "rbs": [1]}]
         sd.compare_sorf_srna(sorfs, self.example.srnas, "test")
         self.assertListEqual(sorfs, [{'print': False, 'starts': ['2'], 'seq': 'ATGTA', 'strand': '+',
-                                      'srna': ['srna0:5-8_+'], 'end': 6, 'rbs': [1], 'ends': ['10'],
+                                      'srna': ['sRNA:5-8_+'], 'end': 6, 'rbs': [1], 'ends': ['10'],
                                       'start': 2, 'strain': 'aaa', 'type': '3utr'}])
 
     def test_import_overlap(self):

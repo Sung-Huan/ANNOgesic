@@ -77,13 +77,13 @@ class Example(object):
                        {"ID": "sorf2", "Name": "sORF_2"}]
     sorf_out = """##gff-version 3
 aaa	Refseq	sORF	3	38	.	+	.	sRNA=NA;ID=sorf1;Name=sORF_1
-aaa	Refseq	sORF	160	300	.	+	.	sRNA=srna0:140-367_f;ID=sorf0;Name=sORF_0
-bbb	Refseq	sORF	420	577	.	-	.	sRNA=srna2:430-567_r;ID=sorf2;Name=sORF_2"""
+aaa	Refseq	sORF	160	300	.	+	.	sRNA=sRNA:140-367_f;ID=sorf0;Name=sORF_0
+bbb	Refseq	sORF	420	577	.	-	.	sRNA=sRNA:430-567_r;ID=sorf2;Name=sORF_2"""
 
     srna_out = """##gff-version 3
 aaa	Refseq	sRNA	30	40	.	+	.	ID=srna1;sORF=NA;Name=sRNA_1
-aaa	Refseq	sRNA	140	367	.	+	.	ID=srna0;sORF=sorf0:160-300_f;Name=sRNA_0
-bbb	Refseq	sRNA	430	567	.	-	.	ID=srna2;sORF=sorf2:420-577_r;Name=sRNA_2"""
+aaa	Refseq	sRNA	140	367	.	+	.	ID=srna0;sORF=sORF:160-300_f;Name=sRNA_0
+bbb	Refseq	sRNA	430	567	.	-	.	ID=srna2;sORF=sORF:420-577_r;Name=sRNA_2"""
 
 if __name__ == "__main__":
     unittest.main()
