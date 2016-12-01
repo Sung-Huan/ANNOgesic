@@ -281,9 +281,9 @@ SAOUHSC_00006    9676 ..    9705 + -14.5  -4.91109   AAGAATAATAAAAAA       TAAGA
 SAOUHSC_00008   12682 ..   12708 + -17.4  -6.14618   GGGTGGCAACGCGTA         GACCACGTCCCT TGT AGGGATGTGGTC         TTTTTTTATTTTCTA 100 300
 SAOUHSC_00009   14156 ..   14177 +  -8.7  -5.69473   ATAATATTTTAAAAA           GTGGTGACG AAGC TGTCGCCAC            TTTTTTTGTGCTGTA 100 109"""
     gff_bag = """##gff-version 3
-aaa	TransTermHP	terminator	9676	9705	.	+	.	associated_gene=SAOUHSC_00006;ID=term0;Name=terminator_00000
-aaa	TransTermHP	terminator	12682	12708	.	+	.	associated_gene=SAOUHSC_00008;ID=term1;Name=terminator_00001
-aaa	TransTermHP	terminator	14156	14177	.	+	.	associated_gene=SAOUHSC_00009;ID=term2;Name=terminator_00002"""
+aaa	TransTermHP	terminator	9676	9705	.	+	.	associated_gene=SAOUHSC_00006;ID=aaa_terminator0;Name=terminator_00000
+aaa	TransTermHP	terminator	12682	12708	.	+	.	associated_gene=SAOUHSC_00008;ID=aaa_terminator1;Name=terminator_00001
+aaa	TransTermHP	terminator	14156	14177	.	+	.	associated_gene=SAOUHSC_00009;ID=aaa_terminator2;Name=terminator_00002"""
 
 if __name__ == "__main__":
     unittest.main()

@@ -91,7 +91,7 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
                           locus_tag, ta, source, out, start, end):
     attribute_string = ";".join(
              ["=".join(items) for items in [
-              ("ID", "_".join(["utr5", str(num_utr)])),
+              ("ID", "_".join([ta.seq_id, "utr5", str(num_utr)])),
               ("Name", "_".join(["5'UTR", name_utr])),
               ("length", str(length)),
               ("associated_cds", cds_name),
@@ -101,10 +101,13 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
         attribute_string = ";".join([
             attribute_string, "=".join(["tss_type", tss.attributes["type"]])])
     if ta is not None:
-        attribute_string = ";".join([
-            attribute_string, "=".join(["Parent", "Transcript:" +
-                                        str(ta.start) + "-" + str(ta.end) +
-                                        "_" + ta.strand])])
+        if "ID" in ta.attributes.keys():
+            attribute_string = ";".join([attribute_string, "Parent=" + ta.attributes["ID"]])
+        else:
+            attribute_string = ";".join([
+                attribute_string, "=".join(["Parent", "Transcript:" +
+                                            str(ta.start) + "-" + str(ta.end) +
+                                            "_" + ta.strand])])
     out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
               tss.seq_id, start, end,
               tss.strand, attribute_string))
@@ -305,13 +308,20 @@ def get_attribute_string(num_utr, length, cds, gene_name, ta, id_name, name,
     cds_name = get_feature(cds)
     attribute_string = ";".join(
                  ["=".join(items) for items in [
-                  ("ID", "_".join([id_name, str(num_utr)])),
+                  ("ID", "_".join([ta.seq_id, id_name, str(num_utr)])),
                   ("Name", "_".join([name, name_utr])),
                   ("length", str(length)),
                   ("associated_cds", cds_name),
-                  ("associated_gene", gene_name),
-                  (feature, feature_name + str(ta.start) + "-" +
-                   str(ta.end) + "_" + ta.strand)]])
+                  ("associated_gene", gene_name)]])
+    if feature == "Parent":
+        if "ID" in ta.attributes.keys():
+            attribute_string = ";".join([attribute_string,
+                                         "Parent=" + ta.attributes["ID"]])
+        else:
+            attribute_string = ";".join(
+                [attribute_string,
+                 "Parent=" + (feature, feature_name + str(ta.start) + "-" +
+                 str(ta.end) + "_" + ta.strand)])
     return attribute_string
 
 
@@ -476,14 +486,18 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
         utr_all.append(length)
         utr_strain[ta.seq_id].append(length)
     attributes.append("=".join(["length", str(length)]))
-    attributes.append("=".join([
-        "Parent", "Transcript:" + str(ta.start) +
-        "-" + str(ta.end) + "_" + ta.strand]))
+    if "ID" not in ta.attributes.keys():
+        attributes.append("=".join([
+            "Parent", "Transcript:" + str(ta.start) +
+            "-" + str(ta.end) + "_" + ta.strand]))
+    else:
+        attributes.append("=".join([
+            "Parent", ta.attributes["ID"]]))
     attribute = ";".join(attributes)
     if (length <= args_utr.length) and (length > 0):
         name_utr = '%0*d' % (5, num_utr)
         name = "=".join(["Name", "_".join(["3'UTR", name_utr])])
-        id_ = "ID=utr3_" + str(num_utr)
+        id_ = "ID=" + ta.seq_id + "_utr3_" + str(num_utr)
         num_utr += 1
         attribute_string = ";".join([id_, name, attribute])
         if args_utr.base_3utr == "transcript":

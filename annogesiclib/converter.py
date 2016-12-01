@@ -283,7 +283,8 @@ class Converter(object):
                           ["=".join(items) for items in (
                               ["Name", "".join([tss_pro, ":",
                                str(tss.super_pos), "_", strand])],
-                              ["ID", tss_pro.lower() + str(nums["tss_uni"])],
+                              ["ID", strain + "_" + tss_pro.lower() 
+                               + str(nums["tss_uni"])],
                               ["type", tss_merge_type],
                               ["utr_length", str(utr_length)],
                               ["associated_gene", merge_locus_tag],
@@ -454,7 +455,8 @@ class Converter(object):
                                 term.strand, term.phase,
                                 term.attribute_string]]))
             name = '%0*d' % (5, num)
-            out.write(";ID=term{0};Name=terminator_{1}\n".format(num, name))
+            out.write(";ID={0}_terminator{1};Name=terminator_{2}\n".format(
+                      term.seq_id, num, name))
             num += 1
         out.close()
 
@@ -478,7 +480,8 @@ class Converter(object):
         for circ in circs:
             id_ = circ["name"].split("_")[1]
             attribute_string = ";".join(["=".join(items) for items in [
-                                           ("ID", "circrna" + id_),
+                                           ("ID", circ["strain"] +
+                                            "_circrna" + id_),
                                            ("name", circ["name"]),
                                            ("support_reads",
                                             str(circ["depth"])),

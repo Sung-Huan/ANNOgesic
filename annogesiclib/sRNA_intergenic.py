@@ -135,9 +135,10 @@ def get_best(wigs, strain, strand, start, end, type_, args_srna, cutoff):
     return srna_covers
 
 
-def get_attribute_string(srna_datas, tss_pro, num, name, srna_type):
+def get_attribute_string(srna_datas, tss_pro, num, name, srna_type, strain):
     attribute_string = ";".join(
-                    ["=".join(items) for items in (["ID", "srna" + str(num)],
+                    ["=".join(items) for items in (
+                     ["ID", strain + "_srna" + str(num)],
                      ["Name", "_".join(["sRNA", name])],
                      ["sRNA_type", srna_type])])
     datas = tss_pro.split(";")
@@ -187,7 +188,7 @@ def get_attribute_string(srna_datas, tss_pro, num, name, srna_type):
     return attribute_string
 
 
-def print_file(string, tss, srna_datas, srna_type, args_srna):
+def print_file(string, tss, srna_datas, srna_type, args_srna, strain):
     name = '%0*d' % (5, args_srna.nums["uni"])
     datas = string.split("\t")
     if (srna_datas is None):
@@ -196,7 +197,8 @@ def print_file(string, tss, srna_datas, srna_type, args_srna):
                 datas[0], name, datas[3], datas[4], datas[6],
                 "NA", "NA", "NA", "NA", "NA"))
         attribute_string = get_attribute_string(
-                srna_datas, tss, args_srna.nums["uni"], name, srna_type)
+                srna_datas, tss, args_srna.nums["uni"], name, srna_type,
+                strain)
         args_srna.output.write("\t".join([string, attribute_string]) + "\n")
         args_srna.out_table.write(tss + "\n")
     else:
@@ -207,7 +209,8 @@ def print_file(string, tss, srna_datas, srna_type, args_srna):
                 ";".join(srna_datas["conds"].values()),
                 srna_datas["best"], srna_datas["high"], srna_datas["low"]))
         attribute_string = get_attribute_string(
-                srna_datas, tss, args_srna.nums["uni"], name, srna_type)
+                srna_datas, tss, args_srna.nums["uni"], name, srna_type,
+                strain)
         args_srna.output.write("\t".join([string, attribute_string]) + "\n")
         if srna_datas["detail"] is not None:
             args_srna.out_table.write(tss + "\t")
@@ -246,7 +249,7 @@ def get_coverage(start, end, strain, wigs, strand, ta, tss, cutoff_coverage,
                              str(end), ".", ta.strand, "."]]))
     if srna_datas["best"] != 0:
         print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
-                   args_srna)
+                   args_srna, strain)
 
 
 def check_pro(ta, start, end, srna_datas, type_, cutoff,
@@ -347,7 +350,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
             if pro != "NA":
                 tss = ";".join([tss, pro])
             print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
-                       args_srna)
+                       args_srna, ta.seq_id)
     else:
         if detect:
             string = ("\t".join([str(field) for field in [
@@ -356,7 +359,7 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
             if pro != "NA":
                 tss = ";".join([tss, pro])
             print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
-                       args_srna)
+                       args_srna, ta.seq_id)
 
 
 def detect_longer(ta, args_srna, cdss, wigs_f, wigs_r):
@@ -504,7 +507,7 @@ def compare_ta_tss(tss_pos, ta_start, ta_end, ta, tss, diff, cutoff_coverage,
                      str(end), ta.score, ta.strand, ta.phase]])
             print_file(string, "".join(["TSS:", str(tss.start),
                        "_", tss.strand]), None,
-                       ta.attributes["sRNA_type"], args_srna)
+                       ta.attributes["sRNA_type"], args_srna, ta.seq_id)
         if args_srna.detects is not None:
             args_srna.detects["uni_with_tss"] = True
 
@@ -547,7 +550,8 @@ def detect_include_tss(ta, args_srna, cdss, wigs_f, wigs_r):
         elif (len(wigs_f) == 0) and (len(wigs_r) == 0):
             print_file(
                 ta.info_without_attributes.replace("Transcript", "ncRNA"),
-                "False", None, ta.attributes["sRNA_type"], args_srna)
+                "False", None, ta.attributes["sRNA_type"], args_srna,
+                ta.seq_id)
 
 
 def get_proper_tss(tss_file, cutoff_coverage):
@@ -686,7 +690,7 @@ def check_srna_condition(ta, args_srna, cdss, wigs_f, wigs_r):
             if (len(wigs_f) == 0) and (len(wigs_r) == 0):
                 print_file(ta.info_without_attributes.replace("Transcript",
                            "ncRNA"), "NA", None, ta.attributes["sRNA_type"],
-                           args_srna)
+                           args_srna, ta.seq_id)
     if ((ta.end - ta.start) > args_srna.max_len):
         detect_longer(ta, args_srna, cdss, wigs_f, wigs_r)
 
@@ -736,8 +740,9 @@ def compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r):
     for tss in tsss:
         tss_type = compare_tss_cds(tss, cdss, genes)
         tss.attributes = tss_type[1]
-        tss.attributes["ID"] = "tss" + str(num_tss)
-        tss.attribute_string = "".join([tss_type[0], ";ID=tss", str(num_tss)])
+        tss.attributes["ID"] = tss.seq_id + "_tss" + str(num_tss)
+        tss.attribute_string = "".join([tss_type[0],
+            ";ID=", tss.seq_id, "_tss", str(num_tss)])
         num_tss += 1
     final_tsss = fix_primary_type(tsss, wigs_f, wigs_r)
     for tss in final_tsss:

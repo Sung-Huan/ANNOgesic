@@ -572,7 +572,8 @@ def print_file(final_tsss, program, out_gff):
     for tss in final_tsss:
         if "print" in tss.attributes.keys():
             del tss.attributes["print"]
-        tss.attributes["ID"] = program.lower() + str(num_final)
+        tss.attributes["ID"] = "_".join([
+            tss.seq_id, program.lower() + str(num_final)])
         num_final += 1
         if program == "TSS":
             strand = Helper().get_strand_name(tss.strand)
@@ -580,7 +581,7 @@ def print_file(final_tsss, program, out_gff):
                                               [str(tss.start), strand])
         else:
             strand = Helper().get_strand_name(tss.strand)
-            tss.attributes["Name"] = "Processing:" + "_".join(
+            tss.attributes["Name"] = "processing:" + "_".join(
                                               [str(tss.start), strand])
         tss.attribute_string = ";".join(
             ["=".join(items) for items in tss.attributes.items()])

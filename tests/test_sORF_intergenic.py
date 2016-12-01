@@ -48,9 +48,9 @@ class Example(object):
 aaa	Refseq	CDS	800	1100	.	+	.	ID=trna1;Name=tRNA_00001"""
     tran_file = """aaa	Refseq	transcript	19	100	.	+	.	ID=tran0;Name=Tran_00000
 aaa	Refseq	transcript	600	1800	.	+	.	ID=tran1;Name=Tran_00001"""
-    out_file = """aaa	intergenic	sORF	19	100	.	+	.	ID=sorf0;Name=sORF_00000
-aaa	UTR_derived	sORF	624	799	.	+	.	ID=sorf1;Name=sORF_00001;UTR_type=interCDS
-aaa	UTR_derived	sORF	1101	1800	.	+	.	ID=sorf2;Name=sORF_00002;UTR_type=3utr"""
+    out_file = """aaa	intergenic	sORF	19	100	.	+	.	ID=aaa_sorf0;Name=sORF_00000
+aaa	UTR_derived	sORF	624	799	.	+	.	ID=aaa_sorf1;Name=sORF_00001;UTR_type=interCDS
+aaa	UTR_derived	sORF	1101	1800	.	+	.	ID=aaa_sorf2;Name=sORF_00002;UTR_type=3utr"""
     gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 150,
                  "end": 200, "phase": ".", "strand": "+", "score": "."},
                 {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 1230,

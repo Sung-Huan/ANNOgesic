@@ -119,7 +119,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         tsss = copy.deepcopy(self.example.tsss)
         si.compare_ta_tss(10, 2, 15, tas[0], tsss[0], 50, "cutoff",
                           20, "", args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t10\t15\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
         si.get_coverage = get_coverage
 
@@ -136,9 +136,9 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.out_table = out_table
         args.output = output
         args.table_best = False
-        si.print_file(string, "TSS_160+", srna_datas, "intergenic", args)
+        si.print_file(string, "TSS_160+", srna_datas, "intergenic", args, "aaa")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tcond1\ttest1\t13\t20\t5\tTSS_160+\ttest1(avg=15;high=30;low=10);test2(avg=20;high=25;low=13)\n")
-        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t10\t15\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;best_avg_coverage=13;best_high_coverage=20;best_low_coverage=5\n")
+        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t10\t15\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;best_avg_coverage=13;best_high_coverage=20;best_low_coverage=5\n")
 
     def test_detect_include_tss(self):
         si.get_coverage = self.mock.mock_get_coverage
@@ -172,7 +172,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         tas = copy.deepcopy(self.example.tas)
         si.detect_include_tss(tas[0], args, None, args.wigs_f, args.wigs_r)
         si.get_coverage = get_coverage
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_get_differential_cover(self):
@@ -214,8 +214,8 @@ class TestsRNAIntergenic(unittest.TestCase):
 
     def test_get_attribute_string(self):
         srna_datas = {'best': 23, 'low': 20, 'high': 35}
-        data = si.get_attribute_string(srna_datas, "TSS_100+;Cleavage_150+", 1, "sRNA_00001", "3utr")
-        self.assertEqual(data, "ID=srna1;Name=sRNA_sRNA_00001;sRNA_type=3utr;with_TSS=TSS_100+;end_cleavage=Cleavage_150+;best_avg_coverage=23;best_high_coverage=35;best_low_coverage=20")
+        data = si.get_attribute_string(srna_datas, "TSS_100+;Cleavage_150+", 1, "sRNA_00001", "3utr", "aaa")
+        self.assertEqual(data, "ID=aaa_srna1;Name=sRNA_sRNA_00001;sRNA_type=3utr;with_TSS=TSS_100+;end_cleavage=Cleavage_150+;best_avg_coverage=23;best_high_coverage=35;best_low_coverage=20")
 
     def test_check_pro(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
@@ -293,7 +293,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.output = output
         args.tolerance = 5
         si.detect_wig_pos(self.example.wigs, tas[0], 20, 70, "TSS_160+", 10, 20, args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t20\t190\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t20\t190\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t20\t190\t+\tcond1\ttest1\t40\t50\t10\t\n")
 
     def test_detect_longer(self):
@@ -330,7 +330,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.out_table = out_table
         si.get_tss_type = self.mock.mock_get_tss_type
         si.detect_longer(tas[0], args, None, args.wigs_f, args.wigs_r)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_get_proper_tss(self):
@@ -374,7 +374,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.cutoff_coverage = coverage
         args.out_table = out_table
         si.check_srna_condition(tas[0], args, None, args.wigs_f, args.wigs_r)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
+        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
         self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
 
     def test_intergenic_srna(self):
@@ -453,9 +453,9 @@ class Example(object):
     gffs = []
     for index in range(0, 3):
         gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
-    gff_file = """aaa	RefSeq	CDS	140	160	.	+	.	ID=srna0;Name=sRNA_0
-aaa	RefSeq	CDS	230	280	.	+	.	ID=srna1;Name=sRNA_1
-aaa	RefSeq	CDS	5166	5266	.	-	.	ID=srna2;Name=sRNA_2"""
+    gff_file = """aaa	RefSeq	CDS	140	160	.	+	.	ID=aaa_srna0;Name=sRNA_0
+aaa	RefSeq	CDS	230	280	.	+	.	ID=aaa_srna1;Name=sRNA_1
+aaa	RefSeq	CDS	5166	5266	.	-	.	ID=aaa_srna2;Name=sRNA_2"""
 
 if __name__ == "__main__":
     unittest.main()

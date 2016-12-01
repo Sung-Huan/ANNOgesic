@@ -13,8 +13,8 @@ def modify_position(frag, norm):
 
 def print_file(data, out, name, num):
     attributes = {}
-    attributes["ID"] = "tran" + str(num)
-    attributes["Name"] = "Tran_" + name
+    attributes["ID"] = data.seq_id + "_transcript" + str(num)
+    attributes["Name"] = "transcript_" + name
     attributes["detect_lib"] = data.attributes["detect_lib"]
     attribute_string = ";".join(["=".join(items)
                                  for items in attributes.items()])

@@ -327,7 +327,7 @@ aaa	Refseq	tRNA	4444	5444	.	+	.	Name=AAA_T00018;locus_tag=AAA_T00004;ID=rna0"""
 
     multi_embl = [{'end': '1491245', 'start': '1491015'}, {'end': '1491304', 'start': '1491251'}]
 
-    srna_file = """Staphylococcus_aureus_HG003	intergenic	sRNA	313	417	.	+	.	ID=srna0;Name=sRNA_candidate_00001"""
+    srna_file = """Staphylococcus_aureus_HG003	intergenic	sRNA	313	417	.	+	.	ID=Staphylococcus_aureus_HG003_srna0;Name=sRNA_candidate_00001"""
 
     fasta_file = """>Staphylococcus_aureus_HG003
 GCAGGTTGAGTTCCTGTTCCCGATAGATCCGATAAACCCGCTTATGATTCCAGAGCTGTCCCTGCACATA
@@ -463,8 +463,8 @@ NC_007795.1	Refseq	gene	1491014	1491304	.	-	.	locus_tag=SAOUHSC_01545;db_xref=Ge
 2131	+	2	1	TSB_OD_0.5	0	1	31.77	5.45	0.48	2	2131	+	SAOUHSC_00003		DNA polymerase III subunit beta	NA	1134	0	0	1	0	1	0	0	0		ACAGCACCTACTACTATTACTAAGAACTTAAAACCTATATAATTATATATA"""
 
     tss_file = """##gff-version 3
-aaa	ANNOgesic	TSS	313	313	.	+	.	Name=TSS:313_f;ID=tss0;type=Primary;utr_length=Primary_204;associated_gene=SAOUHSC_00001;libs=TSB_OD_0.2,TSB_OD_0.5;method=TSSpredator
-aaa	ANNOgesic	TSS	2131	2131	.	+	.	Name=TSS:2131_f;ID=tss1;type=Primary,Internal;utr_length=Primary_25,Internal_NA;associated_gene=SAOUHSC_00002,SAOUHSC_00003;libs=TSB_OD_0.2;method=TSSpredator"""
+aaa	ANNOgesic	TSS	313	313	.	+	.	Name=TSS:313_f;ID=aaa_tss0;type=Primary;utr_length=Primary_204;associated_gene=SAOUHSC_00001;libs=TSB_OD_0.2,TSB_OD_0.5;method=TSSpredator
+aaa	ANNOgesic	TSS	2131	2131	.	+	.	Name=TSS:2131_f;ID=aaa_tss1;type=Primary,Internal;utr_length=Primary_25,Internal_NA;associated_gene=SAOUHSC_00002,SAOUHSC_00003;libs=TSB_OD_0.2;method=TSSpredator"""
 
     transterm = """        recF NONE
 SAOUHSC_00005 NONE
@@ -474,8 +474,8 @@ SAOUHSC_00010 NONE
 SAOUHSC_00014 NONE"""
 
     term_file = """##gff-version 3
-test	TransTermHP	terminator	9676	9705	.	+	.	associated_gene=SAOUHSC_00006;ID=term0;Name=terminator_00000
-test	TransTermHP	terminator	14156	14177	.	+	.	associated_gene=SAOUHSC_00009;ID=term1;Name=terminator_00001"""
+test	TransTermHP	terminator	9676	9705	.	+	.	associated_gene=SAOUHSC_00006;ID=test_terminator0;Name=terminator_00000
+test	TransTermHP	terminator	14156	14177	.	+	.	associated_gene=SAOUHSC_00009;ID=test_terminator1;Name=terminator_00001"""
 
     circrna_table = """ID	strain	strand	start	end	annotation_overlap	supported_reads	supported_reads/reads_at_start	supported_reads/reads_at_end
 circRNA_0	Staphylococcus_aureus_HG003	+	497897	498038	SAOUHSC_R0007	36	0.56822429906542055	0.52040133779264214
@@ -485,13 +485,13 @@ circRNA_3	Staphylococcus_aureus_HG003	+	23442	49504	NA	52	0.2106796116504854	0.8
 """
 
     circrna_all = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492	4956	.	+	.	ID=circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;conflict=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	23442	49504	.	+	.	ID=circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;conflict=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	497897	498038	.	+	.	ID=circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;conflict=SAOUHSC_R0007;method=segemehl"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492	4956	.	+	.	ID=Staphylococcus_aureus_HG003_circrna2;name=circRNA_2;support_reads=2;read_at_start=0.5106796116504854;read_at_end=0.11940298507462686;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	23442	49504	.	+	.	ID=Staphylococcus_aureus_HG003_circrna3;name=circRNA_3;support_reads=52;read_at_start=0.2106796116504854;read_at_end=0.8194029850746268;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=Staphylococcus_aureus_HG003_circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	497897	498038	.	+	.	ID=Staphylococcus_aureus_HG003_circrna0;name=circRNA_0;support_reads=36;read_at_start=0.5682242990654206;read_at_end=0.5204013377926422;conflict=SAOUHSC_R0007;method=segemehl"""
 
     circrna_best = """##gff-version 3
-Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl"""
+Staphylococcus_aureus_HG003	ANNOgesic	circRNA	492193	495089	.	+	.	ID=Staphylococcus_aureus_HG003_circrna1;name=circRNA_1;support_reads=32;read_at_start=1.0;read_at_end=1.0;conflict=NA;method=segemehl"""
 if __name__ == "__main__":
     unittest.main()
 

@@ -131,10 +131,10 @@ class TestMergesRNA(unittest.TestCase):
                                      'aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.'])
         self.assertEqual(set(attributes[0]), set(['overlap_percent=NA', 'end_cleavage=cleavage_40',
                                                   'start_cleavage=cleavage_4', 'Name=sRNA_00000',
-                                                  'with_TSS=TSS_3', 'ID=srna0', 'sRNA_type=interCDS',
+                                                  'with_TSS=TSS_3', 'ID=aaa_srna0', 'sRNA_type=interCDS',
                                                   'overlap_cds=NA']))
         self.assertEqual(set(attributes[1]), set(['overlap_percent=NA', 'end_cleavage=NA', 'Name=sRNA_00001',
-                                                  'with_TSS=NA', 'ID=srna1', 'sRNA_type=intergenic',
+                                                  'with_TSS=NA', 'ID=aaa_srna1', 'sRNA_type=intergenic',
                                                   'overlap_cds=NA']))
 
     def test_compare_table(self):

@@ -77,7 +77,7 @@ class Crispr(object):
                             overlap = True
         if not overlap:
             id_ = "CRISPR_" + str(indexs["best"])
-            attribute = ";".join(["ID=" + id_,
+            attribute = ";".join(["ID=" + strain + "_" + id_,
                                   "method=CRT"])
             bh.write("\t".join([strain, "ANNOgesic", "CRISPR", str(start),
                                 str(end), ".", ".", ".", attribute]) + "\n")
@@ -96,7 +96,7 @@ class Crispr(object):
                 not row[0].startswith("POSITION")):
             start = row[0].strip()
             end = str(int(start) + len(row[2].strip()) - 1)
-            attribute = ";".join(["ID=Repeat_" + str(num),
+            attribute = ";".join(["ID=" + strain + "_Repeat_" + str(num),
                                   "method=CRT", "Parent=" + id_])
             file_h.write("\t".join([strain, "ANNOgesic", "repeat_unit",
                                     start, end, ".", ".", ".",
@@ -125,7 +125,7 @@ class Crispr(object):
                         end = row[0].split("-")[-1].strip()
                         start = row[0].split("-")[0].split(":")[-1].strip()
                         id_ = "CRISPR_" + str(indexs["all"])
-                        attribute = ";".join(["ID=" + id_,
+                        attribute = ";".join(["ID=" + strain + "_" + id_,
                                               "method=CRT"])
                         oh.write("\t".join([
                             strain, "ANNOgesic", "CRISPR", start,
@@ -161,7 +161,7 @@ class Crispr(object):
                     stats[prefix][entry.seq_id] = {"cri": 0, "re": {}}
                 if entry.feature == "CRISPR":
                     id_ = "CRISPR_" + str(cr_num)
-                    attribute = ";".join(["ID=" + id_,
+                    attribute = ";".join(["ID=" + entry.seq_id + "_" + id_,
                                           "method=CRT"])
                     cr_num += 1
                     if first:
@@ -179,7 +179,7 @@ class Crispr(object):
                     stats[prefix][entry.seq_id]["cri"] += 1
                     stats[prefix]["all"]["cri"] += 1
                 elif entry.feature == "repeat_unit":
-                    attribute = ";".join(["ID=Repeat_" + str(re_num),
+                    attribute = ";".join(["ID=" + entry.seq_id + "_Repeat_" + str(re_num),
                                           "method=CRT", "Parent=" + id_])
                     re_num += 1
                     repeat += 1

@@ -43,7 +43,7 @@ def get_overlap(pre_ribo, ribo, overlap, overlaps):
 
 def print_gff(num, ribo, out, stats, strain, feature):
     attribute = ";".join(["=".join(items) for items in [
-                          ("ID", "_".join([feature.lower(), str(num)])),
+                          ("ID", "_".join([strain, feature.lower() + str(num)])),
                           ("Name", ribo["rfam_name"]),
                           ("rfam_id", ribo["rfam"]),
                           ("e_value", ribo["e"]),

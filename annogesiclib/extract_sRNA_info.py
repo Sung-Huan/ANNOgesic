@@ -230,7 +230,8 @@ def extract_energy(srna_file, sec_file, out_file):
                     if (("|".join([srna.attributes["ID"], srna.seq_id,
                          str(srna.start),
                          str(srna.end), srna.strand])) == structure[1:]) or (
-                        ("|".join([srna.feature, srna.seq_id, str(srna.start),
+                        ("|".join([srna.feature, srna.seq_id,
+                         str(srna.start),
                          str(srna.end), srna.strand])) == structure[1:]):
                         check = True
                         get_length = True

@@ -260,7 +260,8 @@ def first_term(strand, term, detect_terms, detect):
 
 def get_attribute_string(num, name, parent, diff, term, coverage, method):
     attribute_string = ";".join(
-                 ["=".join(items) for items in [("ID", "term_" + str(num)),
+                 ["=".join(items) for items in [
+                  ("ID", term["strain"] + "_terminator" + str(num)),
                   ("Name", name), ("associated_gene", parent),
                   ("coverage_decrease", coverage),
                   ("diff_coverage", diff),

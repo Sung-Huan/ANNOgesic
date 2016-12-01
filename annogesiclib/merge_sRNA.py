@@ -260,7 +260,8 @@ def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
     for srna in sort_srnas:
         new_srna = compare_srna_cds(srna, cdss, cutoff_overlap)
         if new_srna:
-            new_srna.attributes["ID"] = "srna" + str(num_srna)
+            new_srna.attributes["ID"] = (
+                    new_srna.seq_id + "_srna" + str(num_srna))
             name = '%0*d' % (5, num_srna)
             new_srna.attributes["Name"] = "sRNA_" + str(name)
             new_srna.attributes = del_attributes("best_high_coverage",

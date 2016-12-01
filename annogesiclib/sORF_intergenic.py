@@ -114,7 +114,7 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
             if utr_detect:
                 attribute_string = ";".join(
                        ["=".join(items) for items in (
-                           ["ID", "sorf" + str(num)],
+                           ["ID", inter["strain"] + "_sorf" + str(num)],
                            ["Name", "sORF_" + name],
                            ["UTR_type", inter["source"]])])
         else:
@@ -124,7 +124,8 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
                 source = "antisense"
             attribute_string = ";".join(
                    ["=".join(items) for items in (
-                       ["ID", "sorf" + str(num)], ["Name", "sORF_" + name])])
+                       ["ID", inter["strain"] + "_sorf" + str(num)],
+                       ["Name", "sORF_" + name])])
         if ((source == "UTR_derived") and (utr_detect)) or (
                 source == "intergenic") or (source == "antisense"):
             out.write("\t".join([str(field) for field in [

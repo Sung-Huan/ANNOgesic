@@ -473,8 +473,8 @@ writeNocornacFiles = 0"""
 681	-	1	1	test	1	1	4.2	3.0	3.54	2	681	-	HP0001		transcription antitermination protein NusB	48	417	1	0	0	0	1	0	0	0		GATTGAAAGAGCGGGCAGTAAAGCCGGCAATAAGGGCTTTGAAGCGATGAG
 681	-	1	1	test	1	1	4.2	3.0	3.54	2	681	-	HP0002		6%2C7-dimethyl-8-ribityllumazine synthase	NA	471	0	0	1	0	1	0	0	0		GATTGAAAGAGCGGGCAGTAAAGCCGGCAATAAGGGCTTTGAAGCGATGAG"""
     master_gff = """##gff-version 3
-test	ANNOgesic	TSS	179	179	.	-	.	Name=TSS:179_r;ID=tss0;type=Orphan;utr_length=Orphan_NA;associated_gene=orphan;libs=test;method=TSSpredator
-test	ANNOgesic	TSS	681	681	.	-	.	Name=TSS:681_r;ID=tss1;type=Primary,Internal;utr_length=Primary_48,Internal_NA;associated_gene=HP0001,HP0002;libs=test;method=TSSpredator"""
+test	ANNOgesic	TSS	179	179	.	-	.	Name=TSS:179_r;ID=test_tss0;type=Orphan;utr_length=Orphan_NA;associated_gene=orphan;libs=test;method=TSSpredator
+test	ANNOgesic	TSS	681	681	.	-	.	Name=TSS:681_r;ID=test_tss1;type=Primary,Internal;utr_length=Primary_48,Internal_NA;associated_gene=HP0001,HP0002;libs=test;method=TSSpredator"""
 
 if __name__ == "__main__":
     unittest.main()

@@ -121,17 +121,17 @@ def print_transctipt(start, end, width, num, high_cover, wig_type,
     if (start != -1) and (end != -1) and (
             (end - start) >= width):
         name = '%0*d' % (5, num)
-        attribute = gen_attribute_string(num, name, high_cover,
-                                         low_cover, wig_type)
+        attribute = gen_attribute_string(
+                num, name, high_cover, low_cover, wig_type, strain)
         out.write("\t".join([str(field) for field in [
                   strain, "ANNOgesic", "transcript", str(start),
                   str(end), ".", strand, ".", attribute]]) + "\n")
 
 
-def gen_attribute_string(num, name, high_cover, low_cover, wig_type):
+def gen_attribute_string(num, name, high_cover, low_cover, wig_type, strain):
     attribute = ";".join(
                 ["=".join(items) for items in ([
-                    ("ID", "tran_" + str(num)),
+                    ("ID", strain + "_transcript" + str(num)),
                     ("Name", "transcript_" + name),
                     ("high_coverage", str(high_cover)),
                     ("low_coverage", str(low_cover)),
@@ -183,8 +183,9 @@ def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
                         if (start != -1) and (end != -1) and (
                                 (end - start) >= args_tran.width):
                             name = '%0*d' % (5, num)
-                            attribute = gen_attribute_string(num, name, high_cover,
-                                                             low_cover, wig_type)
+                            attribute = gen_attribute_string(
+                                    num, name, high_cover, low_cover,
+                                    wig_type, strain)
                             out.write("\t".join([str(field) for field in [
                                 strain, "ANNOgesic", "transcript", str(start),
                                 str(end), ".", strand, ".", attribute]]) + "\n")

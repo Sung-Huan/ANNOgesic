@@ -39,7 +39,7 @@ def del_attributes(entry, features):
 def compare_tran_tss(trans, tsss, fuzzy, stat, out):
     num_tran = 0
     for tran in trans:
-        tran.attributes["ID"] = "tran" + str(num_tran)
+        tran.attributes["ID"] = tran.seq_id + "_transcript" + str(num_tran)
         detect = False
         check = [0, 0, 0]
         for tss in tsss:

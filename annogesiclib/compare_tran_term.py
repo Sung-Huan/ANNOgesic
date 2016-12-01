@@ -30,9 +30,12 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                     ta.attributes["associated_term"] = (
                         "terminator:" + str(ter.start) + "-" +
                         str(ter.end) + "_" + ter.strand)
-                    ter.attributes["Parent"] = (
-                        "transcript:" + str(ta.start) + "-" +
-                        str(ta.end) + "_" + ta.strand)
+                    if "ID" in ta.attributes.keys():
+                        ter.attributes["Parent"] = ta.attributes["ID"]
+                    else:
+                        ter.attributes["Parent"] = (
+                            "transcript:" + str(ta.start) + "-" +
+                            str(ta.end) + "_" + ta.strand)
         else:
             if ((ta.start >= ter.start) and (
                      ta.start <= ter.end)) or (
@@ -47,9 +50,12 @@ def comparing(ta, ter, fuzzy_down_ta, fuzzy_up_ta, stats):
                 ta.attributes["associated_term"] = (
                     "terminator:" + str(ter.start) + "-" +
                     str(ter.end) + "_" + ter.strand)
-                ter.attributes["Parent"] = (
-                    "transcript:" + str(ta.start) + "-" +
-                    str(ta.end) + "_" + ta.strand)
+                if "ID" in ta.attributes.keys():
+                    ter.attributes["Parent"] = ta.attributes["ID"]
+                else:
+                    ter.attributes["Parent"] = (
+                        "transcript:" + str(ta.start) + "-" +
+                        str(ta.end) + "_" + ta.strand)
 
 
 def output_term(ters, term_file, type_, term_outfolder):

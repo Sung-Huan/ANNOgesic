@@ -93,9 +93,9 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
         else:
             tss_type = compare_tss_cds(tss, cdss, genes)
             tss.attributes = tss_type[1]
-            tss.attributes["ID"] = "tss" + str(num_tss)
-            tss.attribute_string = "".join([tss_type[0],
-                                            ";ID=tss", str(num_tss)])
+            tss.attributes["ID"] = tss.seq_id + "_tss" + str(num_tss)
+            tss.attribute_string = "".join([
+                tss_type[0], ";ID=", tss.seq_id, "_tss", str(num_tss)])
             num_tss += 1
     if not args_pro.source:
         libs, texs = read_libs(args_pro.input_libs, args_pro.tex_wigs)

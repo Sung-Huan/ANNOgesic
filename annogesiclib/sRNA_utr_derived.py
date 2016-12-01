@@ -593,7 +593,8 @@ def print_file(num, srna, start, end, srna_datas, args_srna):
                 srna_datas["best"], srna_datas["high"], srna_datas["low"]))
     attribute_string = ";".join(
         ["=".join(items) for items in [
-            ["ID", "srna_utr" + str(num)], ["Name", "UTR_sRNA_" + name],
+            ["ID", srna["strain"] + "_srna_utr" + str(num)],
+            ["Name", "UTR_sRNA_" + name],
             ["sRNA_type", srna["utr"]],
             ["best_avg_coverage", str(srna_datas["best"])],
             ["best_high_coverage", str(srna_datas["high"])],

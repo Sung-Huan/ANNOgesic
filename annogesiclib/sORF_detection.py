@@ -245,8 +245,8 @@ def check_tss(sorf, tss, utr_fuzzy, checks):
          sorf["start"] - tss.start >= 0) and (sorf["strand"] == "+")) or (
         (tss.start - sorf["end"] <= utr_fuzzy) and (
          tss.start - sorf["end"] >= 0) and (sorf["strand"] == "-")):
-        sorf["start_TSS"] = str(tss.start) + tss.strand
-        sorf["with_TSS"].append("TSS_" + str(tss.start) + tss.strand)
+        sorf["start_TSS"] = str(tss.start) + "_" + tss.strand
+        sorf["with_TSS"].append("TSS:" + str(tss.start) + "_" + tss.strand)
         checks["start"] = True
         checks["import"] = True
         rbss = []
@@ -325,10 +325,9 @@ def compare_sorf_srna(sorfs, srnas, srna_gff):
                             (srna.start >= sorf["start"]) and (
                              srna.start <= sorf["end"]) and (
                              srna.end >= sorf["end"])):
-                        strand = Helper().get_strand_name(srna.strand)
                         sorf["srna"].append(srna.attributes["ID"] + ":" +
                                             str(srna.start) + "-" +
-                                            str(srna.end) + "_" + strand)
+                                            str(srna.end) + "_" + srna.strand)
             if len(sorf["srna"]) == 0:
                 sorf["srna"] = ["NA"]
     else:
@@ -450,7 +449,7 @@ def get_attribute(num, name, start_tss, sorf, type_):
     if (type_ == "intergenic") or (type_ == "intergenic"):
         attribute_string = ";".join(
             ["=".join(items) for items in (
-                ["ID", "sorf" + str(num)],
+                ["ID", sorf["strain"] + "_sorf" + str(num)],
                 ["Name", "sORF_" + name],
                 ["start_TSS", start_tss],
                 ["with_TSS", ",".join(sorf["with_TSS"])],
@@ -461,7 +460,7 @@ def get_attribute(num, name, start_tss, sorf, type_):
     else:
         attribute_string = ";".join(
             ["=".join(items) for items in (
-                ["ID", "sorf" + str(num)],
+                ["ID", sorf["strain"] + "_sorf" + str(num)],
                 ["Name", "sORF_" + name],
                 ["start_TSS", start_tss],
                 ["with_TSS", ",".join(sorf["with_TSS"])],
@@ -477,8 +476,8 @@ def check_start_and_tss_point(sorf):
     tsss = []
     for tss in sorf["with_TSS"]:
         if tss != "NA":
-            if (int(tss.replace("TSS_", "")[:-1]) >= int(sorf["start"])) and (
-                    int(tss.replace("TSS_", "")[:-1]) <= int(sorf["end"])):
+            if (int(tss.replace("TSS:", "")[:-2]) >= int(sorf["start"])) and (
+                    int(tss.replace("TSS:", "")[:-2]) <= int(sorf["end"])):
                 tsss.append(tss)
         else:
             tsss.append(tss)
@@ -525,20 +524,20 @@ def gen_new_candidates(sorf, min_rbs, max_rbs):
                             (int(start) - rbs) >= (min_rbs + 6)) and (
                             (int(start) - rbs) <= (max_rbs + 6)):
                         for tss in sorf["with_TSS"]:
-                            if int(tss.split("_")[-1][:-1]) > int(start):
+                            if int(tss.split(":")[-1][:-2]) > int(start):
                                 break
                             pre_tss = tss
                         new_candidates.append("_".join(["-".join([
-                                  start, end]), pre_tss.replace("_", ":"),
+                                  start, end]), pre_tss.replace("TSS_", "TSS:"),
                                   "RBS:" + str(rbs)]))
                     elif (sorf["strand"] == "-") and (
                             (rbs - int(end)) >= (min_rbs + 6)) and (
                             (rbs - int(end)) <= (max_rbs + 6)):
                         for tss in sorf["with_TSS"]:
-                            if int(tss.split("_")[-1][:-1]) <= int(start):
+                            if int(tss.split(":")[-1][:-2]) <= int(start):
                                 break
                         new_candidates.append("_".join(["-".join([
-                                  start, end]), tss.replace("_", ":"),
+                                  start, end]), tss.replace("TSS_", "TSS:"),
                                   "RBS:" + str(rbs)]))
     return new_candidates
 
@@ -804,7 +803,7 @@ def validate_tss(starts, ends, sorf, utr_fuzzy):
     start_pos = "NA"
     if sorf["with_TSS"][0] != "NA":
         for tss in sorf["with_TSS"]:
-            tss_start = int(tss.replace("TSS_", "")[:-1])
+            tss_start = int(tss.replace("TSS:", "")[:-2])
             if sorf["strand"] == "+":
                 if (tss_start >= min(starts) - utr_fuzzy) and (
                         tss_start <= max(ends)):

@@ -345,7 +345,8 @@ class Terminator(object):
                 fh = open(os.path.join(self.terms["all"], gff))
                 for entry in self.gff_parser.entries(fh):
                     name = '%0*d' % (5, num)
-                    entry.attributes["ID"] = "term" + str(num)
+                    entry.attributes["ID"] = (
+                            entry.seq_id + "_terminator" + str(num))
                     entry.attributes["Name"] = "_".join(["terminator_" + name])
                     entry.attribute_string = ";".join([
                         "=".join(items) for items in entry.attributes.items()])
@@ -439,4 +440,4 @@ class Terminator(object):
                 args_term.merge_wigs, args_term)
         self._compute_stat(args_term)
         self._compare_term_tran(args_term, prefixs)
-        self._remove_tmp_file(args_term.merge_wigs, args_term)
+#        self._remove_tmp_file(args_term.merge_wigs, args_term)

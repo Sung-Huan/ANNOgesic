@@ -255,12 +255,12 @@ class Example(object):
     attributes_cds = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001", "protein_id": "YP_000001", "Parent": "gene0"},
                       {"ID": "rna0", "Name": "rRNA_0", "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
-    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;Parent=Transcript:140-367_+"""
-    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;tss_type=Primary;Parent=Transcript:140-367_+"""
-    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;Parent=Transcript:140-367_+"""
-    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;Parent=Transcript:138-540_+"""
+    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;Parent=tran0"""
+    out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;tss_type=Primary;Parent=tran0"""
+    out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;Parent=tran0"""
+    out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=aaa_utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;Parent=tran0"""
     out_3utr_gff = """##gff-version 3
-aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;Parent=Transcript:140-367_+"""
+aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=aaa_utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;Parent=tran0"""
     tas = []
     tsss = []
     terms = []
