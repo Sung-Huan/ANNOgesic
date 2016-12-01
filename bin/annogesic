@@ -250,8 +250,8 @@ def main():
         "information. Default is False. ")
     TSSpredator_parser.add_argument(
         "--fuzzy", "-fu", default=5, type=int,
-        help="If --compare_transcript_assembly is provided, please assign "
-        "the fuzzy for comparing TSS and transcript assembly. Default is 5.")
+        help="If --compare_transcript_files is provided, please assign "
+        "the fuzzy for comparing TSS and transcript. Default is 5.")
     TSSpredator_parser.add_argument(
         "--cluster", "-c", default=2, type=int,
         help="This value defines the maximal distance (nucleotides) between "
@@ -434,7 +434,7 @@ def main():
         help="Paths of the genome annotation gff files.")
     Terminator_parser.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
-        help="Paths of the transcript assembly gff files.")
+        help="Paths of the transcript gff files.")
     Terminator_parser.add_argument(
         "--srna_files", "-sr", default=None, nargs='+',
         help="If you want to include sRNA information to detect terminator, "
@@ -564,10 +564,10 @@ def main():
         "same gene. Default is False.")
     Terminator_parser.set_defaults(func=run_Terminator)
 
-    # Parameter of Transcript assembly
+    # Parameter of Transcript
     Transcript_parser = subparsers.add_parser(
-        "transcriptome_assembly", help="Run transcriptome assembly for "
-        "detecting transcripts.")
+        "transcript", help="Detect transripts based on "
+        "coverage file.")
     Transcript_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -640,7 +640,7 @@ def main():
     Transcript_parser.add_argument(
         "--tss_fuzzy", "-fu", default=5, type=int,
         help="If --compare_TSS is assigned. please type the fuzzy for "
-        "comparing TSS with transcript assembly here. Default is 5.")
+        "comparing TSS with transcript here. Default is 5.")
     Transcript_parser.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
         help="If the TEX+/- libraries can be provided, please assign the "
@@ -1330,12 +1330,12 @@ def main():
         "paths of terminator gff files here.")
     operon_parser.add_argument(
         "--tss_fuzzy", "-tf", default=5, type=int,
-        help="The fuzzy for comparing between TSS and transcript assembly. "
+        help="The fuzzy for comparing between TSS and transcript. "
         "Default is 5.")
     operon_parser.add_argument(
         "--term_fuzzy", "-ef", default=30, type=int,
         help="The fuzzy for comparing bewteen terminator and "
-        "transcript assembly. Default is 30.")
+        "transcript. Default is 30.")
     operon_parser.add_argument(
         "--min_length", "-l", default=20, type=int,
         help="The minimum length of operon. Default is 20.")

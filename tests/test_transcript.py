@@ -6,7 +6,7 @@ from io import StringIO
 sys.path.append(".")
 from mock_helper import gen_file, import_data, extract_info
 import annogesiclib.transcript as tr
-from annogesiclib.transcript import TranscriptAssembly
+from annogesiclib.transcript import TranscriptDetection
 from mock_args_container import MockClass
 
 
@@ -88,15 +88,15 @@ class TestsTranscriptAssembly(unittest.TestCase):
             os.mkdir(self.out_gff)
         args = self.mock_args.mock()
         args.out_folder = self.out
-        self.tran = TranscriptAssembly(args)
+        self.tran = TranscriptDetection(args)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
             shutil.rmtree(self.test_folder)
 
     def test_compute(self):
-        pre_assembly = tr.assembly
-        tr.assembly = self.mock.mock_assembly
+        pre_assembly = tr.detect_transcript
+        tr.detect_transcript = self.mock.mock_assembly
         gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
         args = self.mock_args.mock()
         args.replicates = "rep"
@@ -120,15 +120,15 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.flibs = "flibs"
         strains = self.tran._for_one_wig("frag", args)
         self.assertListEqual(strains, ['test'])
-        datas = import_data(os.path.join(self.out_gff, "test_transcript_assembly_frag.gff"))
+        datas = import_data(os.path.join(self.out_gff, "test_transcript_frag.gff"))
         self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
         tr.assembly = pre_assembly
 
     def test_for_two_wigs(self):
         pre_combine = tr.combine
         tr.combine = self.mock.mock_combine
-        gen_file(os.path.join(self.out_gff, "test_transcript_assembly_fragment.gff"), "test")
-        gen_file(os.path.join(self.out_gff, "test_transcript_assembly_tex_notex.gff"), "test")
+        gen_file(os.path.join(self.out_gff, "test_transcript_fragment.gff"), "test")
+        gen_file(os.path.join(self.out_gff, "test_transcript_tex_notex.gff"), "test")
         args = self.mock_args.mock()
         args.frag_wigs = self.frag
         args.tex_wigs = self.tex
@@ -204,7 +204,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         tr.longer_ta = self.mock.mock_longer_ta
         tr.fill_gap = self.mock.mock_fill_gap
         tr.combine = self.mock.mock_combine
-        pre_assembly = tr.assembly
+        pre_assembly = tr.detect_transcript
         tr.assembly = self.mock.mock_assembly
         tr.gen_table_transcript = self.mock.mock_gen_table_tran
         gen_file(os.path.join(self.frag, "tmp/test1_forward.wig"), self.example.wig_f)
@@ -230,7 +230,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.c_feature = None
         args.fuzzy_term = 1
         args.max_dist = 2000
-        self.tran.run_transcript_assembly(args)
+        self.tran.run_transcript(args)
         tr.assembly = pre_assembly
 
 

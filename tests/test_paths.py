@@ -29,7 +29,7 @@ class TestPaths(unittest.TestCase):
             self.paths.tsspredator_folder,
             self.paths.utr_folder,
             self.paths.transterm_folder,
-            self.paths.transcript_assembly_output_folder,
+            self.paths.transcript_output_folder,
             self.paths.processing_site_folder,
             self.paths.srna_folder,
             self.paths.sorf_folder,
@@ -58,7 +58,7 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(len(self.paths.required_folders("root")), 22)
         self.assertEqual(len(self.paths.required_folders("get_target_fasta")), 25)
         self.assertEqual(len(self.paths.required_folders("TSS")), 27)
-        self.assertEqual(len(self.paths.required_folders("transcript_assembly")), 26)
+        self.assertEqual(len(self.paths.required_folders("transcript")), 26)
         self.assertEqual(len(self.paths.required_folders("terminator")), 27)
         self.assertEqual(len(self.paths.required_folders("annotation_transfer")), 25)
         self.assertEqual(len(self.paths.required_folders("utr")), 29)

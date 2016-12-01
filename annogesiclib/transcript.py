@@ -6,15 +6,15 @@ from annogesiclib.multiparser import Multiparser
 from annogesiclib.converter import Converter
 from annogesiclib.combine_frag_tex import combine
 from annogesiclib.stat_TA_comparison import stat_ta_tss, stat_ta_gff
-from annogesiclib.transcript_assembly import assembly
+from annogesiclib.transcript_detection import detect_transcript
 from annogesiclib.fill_gap import fill_gap, longer_ta
 from annogesiclib.gen_table_tran import gen_table_transcript
 from annogesiclib.compare_tran_term import compare_term_tran
 from annogesiclib.plot_tran import plot_tran
 
 
-class TranscriptAssembly(object):
-    '''doing for transcript assembly'''
+class TranscriptDetection(object):
+    '''doing for transcript detection'''
 
     def __init__(self, args_tran):
         self.multiparser = Multiparser()
@@ -32,15 +32,15 @@ class TranscriptAssembly(object):
                      "uni": os.path.join(self.gff_outfolder, "tmp_uni"),
                      "overlap": os.path.join(
                          self.gff_outfolder, "tmp_overlap")}
-        self.frag = "transcript_assembly_fragment.gff"
-        self.tex = "transcript_assembly_tex_notex.gff"
+        self.frag = "transcript_fragment.gff"
+        self.tex = "transcript_tex_notex.gff"
         self.endfix_tran = "transcript.gff"
 
     def _compute_transcript(self, wig_f, wig_r, wig_folder, wig_type, strain,
                             libs, args_tran):
-        print("Computing transcriptome assembly for {0}".format(strain))
+        print("Computing transcript for {0}".format(strain))
         out = os.path.join(args_tran.out_folder, "_".join([strain, wig_type]))
-        assembly(wig_f, wig_r, wig_folder, libs, out, wig_type, args_tran)
+        detect_transcript(wig_f, wig_r, wig_folder, libs, out, wig_type, args_tran)
 
     def _compute(self, wig_type, wigs, libs, args_tran):
         strains = []
@@ -130,7 +130,7 @@ class TranscriptAssembly(object):
             self._compare_tss(tas, args_tran)
 
     def _for_one_wig(self, type_, args_tran):
-        '''running transcript assembly to one type of wig files'''
+        '''running transcript detection to one type of wig files'''
         if type_ == "tex_notex":
             libs = args_tran.tlibs
             wigs = args_tran.tex_wigs
@@ -141,7 +141,7 @@ class TranscriptAssembly(object):
         strains = self._compute(type_, wigs, libs, args_tran)
         for strain in strains:
             out = os.path.join(self.gff_outfolder, "_".join([
-                strain, "transcript_assembly", type_ + ".gff"]))
+                strain, "transcript", type_ + ".gff"]))
             self.helper.sort_gff(os.path.join(args_tran.out_folder,
                                  "_".join([strain, type_])), out)
             os.remove(os.path.join(args_tran.out_folder,
@@ -161,8 +161,8 @@ class TranscriptAssembly(object):
                 final_gff = os.path.join(self.gff_outfolder,
                                          "_".join([strain, self.endfix_tran]))
                 for gff in os.listdir(self.gff_outfolder):
-                    if "transcript_assembly" in gff:
-                        filename = gff.split("_transcript_assembly_")
+                    if "_transcript_" in gff:
+                        filename = gff.split("_transcript_")
                         if (strain == filename[0]) and (
                                 "tex_notex.gff" == filename[1]):
                             tex_file = gff
@@ -252,7 +252,7 @@ class TranscriptAssembly(object):
                               args_tran.out_folder, "transcript",
                               args_tran.terms, self.gff_outfolder)
 
-    def run_transcript_assembly(self, args_tran):
+    def run_transcript(self, args_tran):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
             print("Error: There is no wigs files!!!!\n")
             sys.exit()

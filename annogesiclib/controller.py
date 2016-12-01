@@ -10,7 +10,7 @@ from annogesiclib.tsspredator import TSSpredator
 from annogesiclib.optimize import optimize_tss
 from annogesiclib.color_png import ColorPNG
 from annogesiclib.terminator import Terminator
-from annogesiclib.transcript import TranscriptAssembly
+from annogesiclib.transcript import TranscriptDetection
 from annogesiclib.utr import UTRDetection
 from annogesiclib.srna import sRNADetection
 from annogesiclib.sorf import sORFDetection
@@ -365,28 +365,28 @@ class Controller(object):
         terminator.run_terminator(args_term)
 
     def transcript(self):
-        """Run Transcriptome assembly."""
-        print("Running transcriptome assembly")
+        """Run Transcript detection"""
+        print("Running transcript detection")
         self.check_multi_files(
                 [self._args.annotation_files, self._args.tss_files,
                  self._args.terminator_files],
                 ["--annotation_files", "--tss_files", "--terminator_files"])
         project_creator.create_subfolders(
-            self._paths.required_folders("transcript_assembly"))
+            self._paths.required_folders("transcript"))
         args_tran = self.args_container.container_transcript(
             self._args.tex_notex,
             self._args.length, self._args.annotation_files,
             self._args.height, self._args.width,
             self._args.tolerance, self._args.tolerance_coverage,
             self._args.replicate_tex, self._args.replicate_frag,
-            self._paths.transcript_assembly_output_folder,
+            self._paths.transcript_output_folder,
             self._args.tss_files,
             self._args.tss_fuzzy, self._args.tex_notex_libs,
             self._args.frag_libs, self._args.compare_feature_genome,
             self._args.table_best, self._args.terminator_files,
             self._args.fuzzy_term, self._args.max_length_distribution)
-        transcript = TranscriptAssembly(args_tran)
-        transcript.run_transcript_assembly(args_tran)
+        transcript = TranscriptDetection(args_tran)
+        transcript.run_transcript(args_tran)
 
     def utr_detection(self):
         """Run UTR detection."""
@@ -395,7 +395,7 @@ class Controller(object):
             [self._args.annotation_files, self._args.terminator_files,
              self._args.transcript_files, self._args.tss_files],
             ["--annotation_folder", "--terminator_files",
-             "--transcript_assembly_folder", "--tss_folder"])
+             "--transcript_folder", "--tss_folder"])
         project_creator.create_subfolders(self._paths.required_folders("utr"))
         args_utr = self.args_container.container_utr(
                 self._args.tss_files, self._args.annotation_files,

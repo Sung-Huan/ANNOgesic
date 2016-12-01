@@ -18,7 +18,7 @@ class Paths(object):
         self._set_tsspredator_folder_names()
         self._set_transterm_folder_names()
         self._set_processing_folder_names()
-        self._set_transcript_assembly_folder_names()
+        self._set_transcript_folder_names()
         self._set_utr_folder_names()
         self._set_srna_folder_names()
         self._set_sorf_folder_names()
@@ -53,8 +53,8 @@ class Paths(object):
         self.tsspredator_folder = "%s/TSS" % self.output_folder
         self.utr_folder = "%s/UTR" % self.output_folder
         self.transterm_folder = "%s/terminator" % self.output_folder
-        self.transcript_assembly_output_folder = (
-                "%s/transcriptome_assembly" % self.output_folder)
+        self.transcript_output_folder = (
+                "%s/transcript" % self.output_folder)
         self.processing_site_folder = "%s/processing_site" % self.output_folder
         self.srna_folder = "%s/sRNA" % self.output_folder
         self.sorf_folder = "%s/sORF" % self.output_folder
@@ -72,8 +72,8 @@ class Paths(object):
         self.thermo_output_folder = "%s/RNA_thermometer" % self.output_folder
         self.crispr_output_folder = "%s/crispr" % self.output_folder
 
-    def _set_transcript_assembly_folder_names(self):
-        self.reference_base_folder = "%s/transcriptome_assembly" % (
+    def _set_transcript_folder_names(self):
+        self.reference_base_folder = "%s/transcript" % (
              self.output_folder)
         self.transcript_gff_folder = "%s/gffs" % self.reference_base_folder
         self.transcript_stat_folder = "%s/statistics" % (
@@ -392,9 +392,9 @@ class Paths(object):
                        "terminator": (
                            [self.transterm_folder] +
                            self.required_transterm_folders()),
-                       "transcript_assembly": (
-                           [self.transcript_assembly_output_folder] +
-                           self.required_transcript_assembly_folders()),
+                       "transcript": (
+                           [self.transcript_output_folder] +
+                           self.required_transcript_folders()),
                        "utr": [self.utr_folder] + self.required_utr_folders(),
                        "srna": (
                            [self.srna_folder] + self.required_srna_folders()),
@@ -461,7 +461,7 @@ class Paths(object):
                 self.processing_Master_folder,
                 self.processing_config_folder]
 
-    def required_transcript_assembly_folders(self):
+    def required_transcript_folders(self):
         return [self.transcript_gff_folder, self.transcript_stat_folder,
                 self.transcript_table_folder]
 
