@@ -18,7 +18,7 @@ main(){
 #    Optimize_TSSpredator
 #    TSS_prediction
 #    processing_site_prediction
-#    Transcriptome_assembly
+#    Transcript_detection
 #    Terminator_prediction
 #    utr_detection
 #    operon_detection
@@ -139,9 +139,9 @@ processing_site_prediction()
         -pj $ANNOGESIC_FOLDER
 }
 
-Transcriptome_assembly(){
+Transcript_detection(){
     $ANNOGESIC_PATH \
-        transcriptome_assembly \
+        transcript \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -rt all_1 \
@@ -156,7 +156,7 @@ Terminator_prediction(){
         -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -s \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
         -pj $ANNOGESIC_FOLDER
@@ -167,7 +167,7 @@ utr_detection(){
         utr \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -e $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pj $ANNOGESIC_FOLDER
 }
@@ -177,7 +177,7 @@ operon_detection(){
         operon \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -u5 $ANNOGESIC_FOLDER/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
         -u3 $ANNOGESIC_FOLDER/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
         -e $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -201,7 +201,7 @@ sRNA_detection(){
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p $ANNOGESIC_FOLDER/output/processing_site/gffs/NC_009839.1_processing.gff \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
         -tf $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pt $ANNOGESIC_FOLDER/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
@@ -220,7 +220,7 @@ sORF_detection(){
         sorf \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
 	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
         -s $ANNOGESIC_FOLDER/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -tl $TEX_LIBS \
@@ -285,7 +285,7 @@ Go_term(){
     $ANNOGESIC_PATH \
         go_term \
 	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+	-a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
 	-pj $ANNOGESIC_FOLDER
 }
 
@@ -294,7 +294,7 @@ Subcellular_localization(){
         subcellular_localization \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -m -b negative \
         -pj $ANNOGESIC_FOLDER
 }
@@ -318,7 +318,7 @@ riboswitch_and_RNA_thermometer(){
 	-ri $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
 	-ti $ANNOGESIC_FOLDER/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
 	-R $ANNOGESIC_FOLDER/input/database/CMs/Rfam.cm \
-	-a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+	-a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
 	-t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
 	-pj $ANNOGESIC_FOLDER
 }
@@ -345,7 +345,7 @@ merge_features(){
 
     $ANNOGESIC_PATH \
         merge_features \
-        -a $ANNOGESIC_FOLDER/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -of $ALL_FEATURES \
         -s NC_009839.1 \
         -pj $ANNOGESIC_FOLDER
