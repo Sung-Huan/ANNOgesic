@@ -23,7 +23,7 @@ Feature name     meaning
 ---------------  --------------------------- 
 TSS              transcription starting site
 processing       processing site
-transcript       transcript assembly
+transcript       transcript
 sRNA             small RNA
 sORF             small open reading frame
 term             terminator
@@ -595,7 +595,7 @@ results strongly, ``optimize_tss_processing`` can obtain the optimized parameter
 and TSSpredator predicted ones.
 
 **Gff file of transcript:** If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
-For the transcripts, please check the section ``transcript_assembly``.
+For the transcripts, please check the section ``transcript``.
 
 - **Arguments**
 
@@ -717,9 +717,9 @@ For the transcripts, please check the section ``transcript_assembly``.
                             this function will compare TSS and transcript to
                             obtain the overlap information. Default is False.
       --fuzzy FUZZY, -fu FUZZY
-                            If --compare_transcript_assembly is provided, please
-                            assign the fuzzy for comparing TSS and transcript
-                            assembly. Default is 5.
+                            If --compare_transcript_files is provided, please
+                            assign the fuzzy for comparing TSS and transcript.
+                            Default is 5.
       --cluster CLUSTER, -c CLUSTER
                             This value defines the maximal distance (nucleotides)
                             between TSS candidates have to be clustered together.
@@ -798,12 +798,11 @@ Based on this information, we can know the details of the specific TSS. The tags
 	
 	**libs:** Shows in which libraries the TSS can be detected.
 
-transcript_assembly
+transcript
 -------------------
 
-``transcript_assembly`` can detect transcripts based on the coverage. Most of the transcript assembly tools are
-cfocus on the assembly of eukaryotic transcript. Due to this, we compiled several proved
-heuristics to detect transcripts based on the nucleotide coverage data, 
+``transcript`` can detect transcripts based on the coverage. Most of the transcript assembly tools are
+focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data, 
 given gene annotations and several parameters that can be set by the user.
 
 For importing the information about libraries, please refer to section of 
@@ -819,30 +818,29 @@ For importing the information about libraries, please refer to section of
 **TSS gff file:** If the user wants to compare transcripts with TSSs, TSS gff file is required.
 
 **Genome anntation gff file:** If the user wants to compare transcripts with genome anntation, genome annotation gff file is required. 
-Based on the comparison, the performance of ``transcript_assembly`` can be improved.
+Based on the comparison, the performance of ``transcript`` can be improved.
 
 - **Arguments**
 
 ::
 
-    usage: annogesic transcriptome_assembly [-h] [--project_path [PROJECT_PATH]]
-                                            [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
-                                            [--length LENGTH] [--height HEIGHT]
-                                            [--width WIDTH]
-                                            [--tolerance TOLERANCE]
-                                            [--tolerance_coverage TOLERANCE_COVERAGE]
-                                            [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                            [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                                            [--tex_notex TEX_NOTEX]
-                                            [--tss_files TSS_FILES [TSS_FILES ...]]
-                                            [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
-                                            [--tss_fuzzy TSS_FUZZY]
-                                            [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                                            [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                                            [--table_best]
-                                            [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                                            [--fuzzy_term FUZZY_TERM]
-                                            [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
+    usage: annogesic transcript [-h] [--project_path [PROJECT_PATH]]
+                                [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
+                                [--length LENGTH] [--height HEIGHT]
+                                [--width WIDTH] [--tolerance TOLERANCE]
+                                [--tolerance_coverage TOLERANCE_COVERAGE]
+                                [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
+                                [--tex_notex TEX_NOTEX]
+                                [--tss_files TSS_FILES [TSS_FILES ...]]
+                                [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
+                                [--tss_fuzzy TSS_FUZZY]
+                                [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                                [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                                [--table_best]
+                                [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
+                                [--fuzzy_term FUZZY_TERM]
+                                [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -914,8 +912,7 @@ Based on the comparison, the performance of ``transcript_assembly`` can be impro
                             CDS.
       --tss_fuzzy TSS_FUZZY, -fu TSS_FUZZY
                             If --compare_TSS is assigned. please type the fuzzy
-                            for comparing TSS with transcript assembly here.
-                            Default is 5.
+                            for comparing TSS with transcript here. Default is 5.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             If the TEX+/- libraries can be provided, please assign
                             the name of TEX+/- library. The format is:
@@ -949,7 +946,7 @@ Based on the comparison, the performance of ``transcript_assembly`` can be impro
 
 - **Output files**
 
-Output files are stored in ``$ANNOgesic/output/transcriptome_assembly``.
+Output files are stored in ``$ANNOgesic/output/transcript``.
 
 The generated output folders are as following:
 
@@ -1082,7 +1079,7 @@ which have coverage significant decrease.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            Paths of the transcript assembly gff files.
+                            Paths of the transcript gff files.
       --srna_files SRNA_FILES [SRNA_FILES ...], -sr SRNA_FILES [SRNA_FILES ...]
                             If you want to include sRNA information to detect
                             terminator, please assign the paths of sRNA gff files.
@@ -2453,11 +2450,11 @@ sub-operons.
                             If terminator information can be provided, please
                             assign the paths of terminator gff files here.
       --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            The fuzzy for comparing between TSS and transcript
-                            assembly. Default is 5.
+                            The fuzzy for comparing between TSS and transcript.
+                            Default is 5.
       --term_fuzzy TERM_FUZZY, -ef TERM_FUZZY
                             The fuzzy for comparing bewteen terminator and
-                            transcript assembly. Default is 30.
+                            transcript. Default is 30.
       --min_length MIN_LENGTH, -l MIN_LENGTH
                             The minimum length of operon. Default is 20.
       --statistics, -s      Doing statistics for operon analysis. Default is

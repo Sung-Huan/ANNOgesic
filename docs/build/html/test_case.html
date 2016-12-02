@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial of ANNOgesic &mdash; ANNOgesic 0.5.2 documentation</title>
+    <title>Tutorial of ANNOgesic &mdash; ANNOgesic 0.5.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.5.2',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ANNOgesic 0.5.2 documentation" href="index.html" />
+    <link rel="top" title="ANNOgesic 0.5.3 documentation" href="index.html" />
     <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
     <link rel="prev" title="ANNOgesic’s subcommands" href="subcommands.html" /> 
   </head>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="subcommands.html" title="ANNOgesic’s subcommands"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -54,7 +54,7 @@
 <li><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
 <li><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
 <li><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
-<li><a class="reference internal" href="#performing-transcript-assembly">Performing transcript assembly</a></li>
+<li><a class="reference internal" href="#performing-transcript-detection">Performing transcript detection</a></li>
 <li><a class="reference internal" href="#prediction-of-terminator">Prediction of terminator</a></li>
 <li><a class="reference internal" href="#generating-utr">Generating UTR</a></li>
 <li><a class="reference internal" href="#detecting-operon-and-suboperon">Detecting operon and suboperon</a></li>
@@ -491,14 +491,14 @@ TSSstatistics.tsv  processing_class_NC_009839.1.png  processing_venn_NC_009839.1
 <p>Since we use TSSpredator to detect processing site, the files in
 <code class="docutils literal"><span class="pre">ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_009839.1/</span></code> are for processing site not for TSS.</p>
 </div>
-<div class="section" id="performing-transcript-assembly">
-<h2>Performing transcript assembly<a class="headerlink" href="#performing-transcript-assembly" title="Permalink to this headline">¶</a></h2>
-<p>transcript assembly is a basic precedure for detecting transcript boundary.
-we can use subcommand <code class="docutils literal"><span class="pre">transcript_assembly</span></code> to do it. Normally, we strongly
+<div class="section" id="performing-transcript-detection">
+<h2>Performing transcript detection<a class="headerlink" href="#performing-transcript-detection" title="Permalink to this headline">¶</a></h2>
+<p>transcript detection is a basic precedure for detecting transcript boundary.
+we can use subcommand <code class="docutils literal"><span class="pre">transcript</span></code> to do it. Normally, we strongly
 recommand that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information
 of 3&#8217;end. However, we only use TEX +/- for testing.</p>
 <p>The command is like following:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic transcript_assembly \
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic transcript \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -tl $TEX_LIBS \
     -rt all_1 \
@@ -508,11 +508,11 @@ of 3&#8217;end. However, we only use TEX +/- for testing.</p>
 </pre></div>
 </div>
 <p>The output files are gff files, tables and statistic files.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/transcriptome_assembly/gffs
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/transcript/gffs
 NC_009839.1_transcript.gff
-$ ls ANNOgesic/output/transcriptome_assembly/tables
+$ ls ANNOgesic/output/transcript/tables
 NC_009839.1_transcript.csv
-$ ls ANNOgesic/output/transcriptome_assembly/statistics
+$ ls ANNOgesic/output/transcript/statistics
 NC_009839.1_length_all.png  NC_009839.1_length_less_2000.png  stat_compare_transcript_TSS_NC_009839.1.csv  stat_compare_transcript_genome_NC_009839.1.csv
 </pre></div>
 </div>
@@ -525,7 +525,7 @@ for computing secondary structure of potential terminators. Therefore, this proc
     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -s \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -tl $TEX_LIBS \
     -rt all_1 -tb \
     -pj ANNOgesic
@@ -578,7 +578,7 @@ subcommand <code class="docutils literal"><span class="pre">utr</span></code>.</
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic utr \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
     -pj ANNOgesic
 </pre></div>
@@ -608,7 +608,7 @@ detect operons and suboperons by executing subcommand <code class="docutils lite
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic operon \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -u5 ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
     -u3 ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
     -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -694,7 +694,7 @@ Now, we can use the recommanded filters to run <code class="docutils literal"><s
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
     -p ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
     -tf ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
     -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
@@ -772,7 +772,7 @@ In order to get information of sORFs, we can use subcommand <code class="docutil
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic sorf \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
     -s ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
     -tl $TEX_LIBS \
@@ -991,7 +991,7 @@ generate results which only included the expressed CDS.</p>
 <p>Let&#8217;s try it.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic go_term \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -pj ANNOgesic
 </pre></div>
 </div>
@@ -1019,7 +1019,7 @@ information of the transcript to generate results which only included the expres
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic subcellular_localization \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -m -b negative \
     -pj ANNOgesic
 </pre></div>
@@ -1121,7 +1121,7 @@ $ cd ../../../
     -ri ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
     -ti ANNOgesic/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
     -R ANNOgesic/input/database/Rfam/CMs/Rfam.cm \
-    -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+    -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
     -pj ANNOgesic
 </pre></div>
@@ -1200,7 +1200,7 @@ you assigned. the relationship between all features can be revealed.</p>
 </pre></div>
 </div>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic merge_features \
-   -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+   -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
    -of $ALL_FEATURES\
    -s NC_009839.1 \
    -pj ANNOgesic
@@ -1291,7 +1291,7 @@ NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-1836
         <li class="right" >
           <a href="subcommands.html" title="ANNOgesic’s subcommands"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">ANNOgesic 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

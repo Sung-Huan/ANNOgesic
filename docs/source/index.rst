@@ -39,11 +39,11 @@ bacterial as well as archaeal samples.
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcriptome_assembly,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. annotation files, fasta
@@ -57,8 +57,7 @@ bacterial as well as archaeal samples.
                             Optimize TSSpredator based on (partial)manual detect
                             one.
         terminator          Detect rho-independant terminators.
-        transcriptome_assembly
-                            Run transcriptome assembly for detecting transcripts.
+        transcript          Detect transripts based on coverage file.
         utr                 Run UTR detection to detect 5'UTR and 3'UTR.
         srna                Detect intergenic, antisense and UTR-derived sRNA.
         sorf                Detect expressed sORF.

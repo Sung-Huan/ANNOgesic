@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ANNOgesic - Transcriptome annotation pipeline &mdash; ANNOgesic 0.5.2 documentation</title>
+    <title>ANNOgesic - Transcriptome annotation pipeline &mdash; ANNOgesic 0.5.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.5.2',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="ANNOgesic 0.5.2 documentation" href="#" />
+    <link rel="top" title="ANNOgesic 0.5.3 documentation" href="#" />
     <link rel="next" title="Required tools or databases" href="prerequired.html" /> 
   </head>
   <body role="document">
@@ -33,7 +33,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="prerequired.html" title="Required tools or databases"
              accesskey="N">next</a></li>
-        <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -113,11 +113,11 @@ predictions resulting from an ANNOgesic analysis. The pipeline is
 modular and was heavily tested with several RNA-Seq data set from
 bacterial as well as archaeal samples.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span>
-                 <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tss_processing</span><span class="p">,</span><span class="n">optimize_tss_processing</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcriptome_assembly</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch_thermometer</span><span class="p">,</span><span class="n">crispr</span><span class="p">,</span><span class="n">merge_features</span><span class="p">,</span><span class="n">screenshot</span><span class="p">,</span><span class="n">color_png</span><span class="p">}</span>
+                 <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tss_processing</span><span class="p">,</span><span class="n">optimize_tss_processing</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcript</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch_thermometer</span><span class="p">,</span><span class="n">crispr</span><span class="p">,</span><span class="n">merge_features</span><span class="p">,</span><span class="n">screenshot</span><span class="p">,</span><span class="n">color_png</span><span class="p">}</span>
                  <span class="o">...</span>
 
 <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tss_processing</span><span class="p">,</span><span class="n">optimize_tss_processing</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcriptome_assembly</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch_thermometer</span><span class="p">,</span><span class="n">crispr</span><span class="p">,</span><span class="n">merge_features</span><span class="p">,</span><span class="n">screenshot</span><span class="p">,</span><span class="n">color_png</span><span class="p">}</span>
+  <span class="p">{</span><span class="n">create</span><span class="p">,</span><span class="n">get_input_files</span><span class="p">,</span><span class="n">get_target_fasta</span><span class="p">,</span><span class="n">annotation_transfer</span><span class="p">,</span><span class="n">tss_processing</span><span class="p">,</span><span class="n">optimize_tss_processing</span><span class="p">,</span><span class="n">terminator</span><span class="p">,</span><span class="n">transcript</span><span class="p">,</span><span class="n">utr</span><span class="p">,</span><span class="n">srna</span><span class="p">,</span><span class="n">sorf</span><span class="p">,</span><span class="n">promoter</span><span class="p">,</span><span class="n">operon</span><span class="p">,</span><span class="n">circrna</span><span class="p">,</span><span class="n">go_term</span><span class="p">,</span><span class="n">srna_target</span><span class="p">,</span><span class="n">snp</span><span class="p">,</span><span class="n">ppi_network</span><span class="p">,</span><span class="n">subcellular_localization</span><span class="p">,</span><span class="n">riboswitch_thermometer</span><span class="p">,</span><span class="n">crispr</span><span class="p">,</span><span class="n">merge_features</span><span class="p">,</span><span class="n">screenshot</span><span class="p">,</span><span class="n">color_png</span><span class="p">}</span>
                         <span class="n">commands</span>
     <span class="n">create</span>              <span class="n">Create</span> <span class="n">a</span> <span class="n">project</span>
     <span class="n">get_input_files</span>     <span class="n">Get</span> <span class="n">required</span> <span class="n">files</span><span class="o">.</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span> <span class="n">annotation</span> <span class="n">files</span><span class="p">,</span> <span class="n">fasta</span>
@@ -131,8 +131,7 @@ bacterial as well as archaeal samples.</p>
                         <span class="n">Optimize</span> <span class="n">TSSpredator</span> <span class="n">based</span> <span class="n">on</span> <span class="p">(</span><span class="n">partial</span><span class="p">)</span><span class="n">manual</span> <span class="n">detect</span>
                         <span class="n">one</span><span class="o">.</span>
     <span class="n">terminator</span>          <span class="n">Detect</span> <span class="n">rho</span><span class="o">-</span><span class="n">independant</span> <span class="n">terminators</span><span class="o">.</span>
-    <span class="n">transcriptome_assembly</span>
-                        <span class="n">Run</span> <span class="n">transcriptome</span> <span class="n">assembly</span> <span class="k">for</span> <span class="n">detecting</span> <span class="n">transcripts</span><span class="o">.</span>
+    <span class="n">transcript</span>          <span class="n">Detect</span> <span class="n">transripts</span> <span class="n">based</span> <span class="n">on</span> <span class="n">coverage</span> <span class="n">file</span><span class="o">.</span>
     <span class="n">utr</span>                 <span class="n">Run</span> <span class="n">UTR</span> <span class="n">detection</span> <span class="n">to</span> <span class="n">detect</span> <span class="mi">5</span><span class="s1">&#39;UTR and 3&#39;</span><span class="n">UTR</span><span class="o">.</span>
     <span class="n">srna</span>                <span class="n">Detect</span> <span class="n">intergenic</span><span class="p">,</span> <span class="n">antisense</span> <span class="ow">and</span> <span class="n">UTR</span><span class="o">-</span><span class="n">derived</span> <span class="n">sRNA</span><span class="o">.</span>
     <span class="n">sorf</span>                <span class="n">Detect</span> <span class="n">expressed</span> <span class="n">sORF</span><span class="o">.</span>
@@ -196,7 +195,7 @@ bacterial as well as archaeal samples.</p>
         <li class="right" style="margin-right: 10px">
           <a href="prerequired.html" title="Required tools or databases"
              >next</a></li>
-        <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.5.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">ANNOgesic 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

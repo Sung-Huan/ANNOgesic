@@ -411,11 +411,11 @@ The output files are following:
 Since we use TSSpredator to detect processing site, the files in 
 ``ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_009839.1/`` are for processing site not for TSS.
 
-Performing transcript assembly
+Performing transcript detection
 ----------------
 
-transcript assembly is a basic precedure for detecting transcript boundary. 
-we can use subcommand ``transcript_assembly`` to do it. Normally, we strongly 
+transcript detection is a basic precedure for detecting transcript boundary. 
+we can use subcommand ``transcript`` to do it. Normally, we strongly 
 recommand that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information 
 of 3'end. However, we only use TEX +/- for testing.
 
@@ -423,7 +423,7 @@ The command is like following:
 
 ::
 
-    $ annogesic transcript_assembly \
+    $ annogesic transcript \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -rt all_1 \
@@ -435,11 +435,11 @@ The output files are gff files, tables and statistic files.
 
 ::
 
-    $ ls ANNOgesic/output/transcriptome_assembly/gffs
+    $ ls ANNOgesic/output/transcript/gffs
     NC_009839.1_transcript.gff
-    $ ls ANNOgesic/output/transcriptome_assembly/tables
+    $ ls ANNOgesic/output/transcript/tables
     NC_009839.1_transcript.csv
-    $ ls ANNOgesic/output/transcriptome_assembly/statistics
+    $ ls ANNOgesic/output/transcript/statistics
     NC_009839.1_length_all.png  NC_009839.1_length_less_2000.png  stat_compare_transcript_TSS_NC_009839.1.csv  stat_compare_transcript_genome_NC_009839.1.csv
 
 Prediction of terminator
@@ -454,7 +454,7 @@ for computing secondary structure of potential terminators. Therefore, this proc
         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -s \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
         -pj ANNOgesic
@@ -517,7 +517,7 @@ subcommand ``utr``.
     $ annogesic utr \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pj ANNOgesic
 
@@ -552,7 +552,7 @@ detect operons and suboperons by executing subcommand ``operon``.
     $ annogesic operon \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -u5 ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
         -u3 ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
         -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -655,7 +655,7 @@ Now, we can use the recommanded filters to run ``srna``, but it may takes severa
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
         -tf ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
@@ -743,7 +743,7 @@ In order to get information of sORFs, we can use subcommand ``sorf``.
     $ annogesic sorf \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
         -s ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -tl $TEX_LIBS \
@@ -1009,7 +1009,7 @@ Let's try it.
 
     $ annogesic go_term \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -pj ANNOgesic
 
 Output of ``go_term`` are stored in ``GO_term_results``. The statistic files and 
@@ -1041,7 +1041,7 @@ information of the transcript to generate results which only included the expres
     $ annogesic subcellular_localization \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -m -b negative \
         -pj ANNOgesic
 
@@ -1161,7 +1161,7 @@ Now we can try the subcommand.
         -ri ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
         -ti ANNOgesic/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
         -R ANNOgesic/input/database/Rfam/CMs/Rfam.cm \
-        -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+        -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -pj ANNOgesic
 
@@ -1249,7 +1249,7 @@ Now let's do it. We merge all features that we have.
 ::
 
     $ annogesic merge_features \
-       -a ANNOgesic/output/transcriptome_assembly/gffs/NC_009839.1_transcript.gff \
+       -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
        -of $ALL_FEATURES\
        -s NC_009839.1 \
        -pj ANNOgesic
