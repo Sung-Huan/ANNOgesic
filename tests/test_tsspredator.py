@@ -161,7 +161,6 @@ class TestsTSSpredator(unittest.TestCase):
         self.tss._gen_config("test", args, self.gffs + "/tmp/test.gff",
                              self.wigs + "/tmp", self.fastas + "/tmp/test.fa", config_file)
         datas = import_data(config_file)
-        print(datas)
         self.assertEqual("\n".join(datas), self.example.config)
 
     def test_set_gen_config(self):
