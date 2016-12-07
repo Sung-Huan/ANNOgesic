@@ -243,7 +243,8 @@ class TranscriptDetection(object):
         if args_tran.terms is not None:
             print("Comparing between terminators and transcripts")
             self.multiparser.parser_gff(args_tran.terms, "term")
-            self.multiparser.combine_gff(
+            if args_tran.gffs is not None:
+                self.multiparser.combine_gff(
                     args_tran.gffs,
                     os.path.join(args_tran.terms, "tmp"), None, "term")
             compare_term_tran(self.gff_outfolder,

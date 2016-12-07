@@ -137,6 +137,10 @@ class Multiparser(object):
                     shutil.move(os.path.join(tar_folder, self.tmp_wig_reverse),
                                 os.path.join(tar_merge,
                                              prefix + "_reverse.wig"))
+                else:
+                    print("Error: .wig files should be compose of "
+                          "forward or reverse files.")
+                    sys.exit()
         self.helper.remove_all_content(tar_folder, ".wig", "file")
         self.helper.move_all_content(tar_merge, tar_folder, None)
         shutil.rmtree(tar_merge)

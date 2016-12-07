@@ -167,28 +167,101 @@ class ArgsContainer(object):
         else:
             return None
 
+    def _merge_by_strain(self, wig_path, libs):
+        strains = []
+        merge_folder = os.path.join(wig_path, "merge_tmp")
+        self.helper.check_make_folder(merge_folder)
+        for wig in os.listdir(wig_path):
+            if "_STRAIN_" in wig:
+                strain = wig.split("_STRAIN_")[-1].replace(".wig", "")
+                if strain not in strains:
+                    strains.append(strain)
+        for strain in strains:
+            change_f = False
+            change_r = False
+            for wig in os.listdir(wig_path):
+                filename = wig.split("_STRAIN_")
+                if ("_STRAIN_" in wig) and (
+                        filename[-1].replace(
+                            ".wig", "") == strain):
+                    for lib in libs:
+                        if (filename[0] in lib) and (lib[-1] == "+"):
+                            self.helper.merge_file(
+                                os.path.join(wig_path, wig),
+                                os.path.join(merge_folder,
+                                             "tmp_forward.wig"))
+                            change_f = True
+                        elif (filename[0] in lib) and (lib[-1] == "-"):
+                            self.helper.merge_file(
+                                os.path.join(wig_path, wig),
+                                os.path.join(merge_folder,
+                                             "tmp_reverse.wig"))
+                            change_r = True
+            if change_f and change_r:
+                change_f = False
+                change_r = False
+                shutil.move(os.path.join(merge_folder, "tmp_forward.wig"),
+                            os.path.join(merge_folder,
+                                         strain + "_forward.wig"))
+                shutil.move(os.path.join(merge_folder, "tmp_reverse.wig"),
+                            os.path.join(merge_folder,
+                                         strain + "_reverse.wig"))
+            else:
+                print("Error: .wig files should be compose of "
+                      "forward or reverse files.")
+                sys.exit()
+        self.helper.remove_all_content(wig_path, ".wig", "file")
+        self.helper.move_all_content(merge_folder, wig_path, None)
+        shutil.rmtree(merge_folder)
+
     def _parser_combine_wigs(self, subcommand):
         '''Check the wig folders of frag and tex, then merge them'''
         self.tex_path = None
         self.frag_path = None
-        self.multiparser.parser_gff(self.gffs, None)
         if subcommand == "terminator":
             gff_path = os.path.join(self.gffs, "tmp")
             self.multiparser.parser_gff(gff_path, None)
+        elif subcommand == "transcript":
+            if self.gffs is not None:
+                self.multiparser.parser_gff(self.gffs, None)
+                gff_path = self.gffs
         else:
+            self.multiparser.parser_gff(self.gffs, None)
             gff_path = self.gffs
         if self.tex_wigs is not None:
             self.tex_path = os.path.join(self.tex_wigs, "tmp")
             self.multiparser.parser_wig(self.tex_wigs)
-            self.multiparser.combine_wig(gff_path, self.tex_path,
-                                         None, self.libs)
+            if self.gffs is not None:
+                self.multiparser.combine_wig(gff_path, self.tex_path,
+                                             None, self.libs)
+#            elif self.compare_tss is not None:
+#                self.multiparser.parser_gff(self.compare_tss, "TSS")
+#                self.multiparser.combine_wig(self.compare_tss, self.tex_path,
+#                                             "TSS", self.libs)
+#            elif self.terms is not None:
+#                self.multiparser.parser_gff(self.terms, "term")
+#                self.multiparser.combine_wig(self.terms, self.tex_path,
+#                                             "term", self.libs)
+            else:
+                self._merge_by_strain(self.tex_path, self.libs)
             self.merge_wigs = self.tex_wigs
             self.wig_path = self.tex_path
         if self.frag_wigs is not None:
             self.frag_path = os.path.join(self.frag_wigs, "tmp")
             self.multiparser.parser_wig(self.frag_wigs)
-            self.multiparser.combine_wig(gff_path, self.frag_path,
-                                         None, self.libs)
+            if self.gffs is not None:
+                self.multiparser.combine_wig(gff_path, self.frag_path,
+                                             None, self.libs)
+#            elif self.compare_tss is not None:
+#                self.multiparser.parser_gff(self.compare_tss, "TSS")
+#                self.multiparser.combine_wig(self.compare_tss, self.frag_path,
+#                                             "TSS", self.libs)
+#            elif self.terms is not None:
+#                self.multiparser.parser_gff(self.terms, "term")
+#                self.multiparser.combine_wig(self.terms, self.frag_path,
+#                                             "term", self.libs)
+            else:
+                self._merge_by_strain(self.frag_path, self.libs)
             self.merge_wigs = self.frag_wigs
             self.wig_path = self.frag_path
         if (self.tex_path is not None) and (
@@ -465,6 +538,10 @@ class ArgsContainer(object):
                              tss_files, TSS_fuzzy, tex_treated_libs,
                              fragmented_libs, compare_feature_genome,
                              table_best, terminator_files, fuzzy_term, max_dist):
+        if (compare_feature_genome is not None) and (annotation_files is None):
+            print("Error: --annotation_files needs to be assigned if "
+                  "--compare_feature_genome is assigned.")
+            sys.exit()
         self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
         self.tex_wigs = self._create_wig_folder(
                 os.path.join(out_folder, "tmp_wig", "tex_notex"),
