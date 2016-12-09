@@ -440,4 +440,4 @@ class Terminator(object):
                 args_term.merge_wigs, args_term)
         self._compute_stat(args_term)
         self._compare_term_tran(args_term, prefixs)
-#        self._remove_tmp_file(args_term.merge_wigs, args_term)
+        self._remove_tmp_file(args_term.merge_wigs, args_term)

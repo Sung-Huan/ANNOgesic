@@ -61,7 +61,7 @@ bacterial as well as archaeal samples.
         utr                 Run UTR detection to detect 5'UTR and 3'UTR.
         srna                Detect intergenic, antisense and UTR-derived sRNA.
         sorf                Detect expressed sORF.
-        promoter            Run MEME to dicover promoter.
+        promoter            Run MEME/GLAM2 to dicover promoter.
         operon              Detect operon and sub-operon.
         circrna             Detect circular RNA by segemehl.
         go_term             Extract Go terms from Uniprot.
@@ -102,6 +102,12 @@ Source code
 ===========
 
 The source code of ANNOgesic can be found at `Github <https://github.com/Sung-Huan/ANNOgesic>`_.
+
+License
+=======
+
+`ICSL <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
+Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhosted.org/ANNOgesic/license.html>`__
 
 Cite
 ====

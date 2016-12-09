@@ -72,7 +72,7 @@ Arguments
         utr                 Run UTR detection to detect 5'UTR and 3'UTR.
         srna                Detect intergenic, antisense and UTR-derived sRNA.
         sorf                Detect expressed sORF.
-        promoter            Run MEME to dicover promoter.
+        promoter            Run MEME/GLAM2 to dicover promoter.
         operon              Detect operon and sub-operon.
         circrna             Detect circular RNA by segemehl.
         go_term             Extract Go terms from Uniprot.

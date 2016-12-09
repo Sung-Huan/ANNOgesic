@@ -546,18 +546,23 @@ class Controller(object):
         if not self._args.tss_source:
             self.check_multi_files([self._args.annotation_files],
                                    ["--annotation_files"])
-        self.check_execute_file(self._args.meme_path)
+        if (self._args.program == "both") or (
+                self._args.program == "meme"):
+            self.check_execute_file(self._args.meme_path)
+        elif (self._args.program == "both") or (
+                self._args.program == "glam2"):
+            self.check_execute_file(self._args.glam2_path)
         project_creator.create_subfolders(
             self._paths.required_folders("promoter"))
         args_pro = self.args_container.container_promoter(
-            self._args.meme_path,
+            self._args.meme_path, self._args.glam2_path,
             self._paths.promoter_output_folder, self._args.tex_libs,
             self._args.tss_files, self._args.fasta_files,
             self._args.num_motif, self._args.nt_before_tss,
             self._args.motif_width, self._args.tss_source,
-            self._args.annotation_files,
+            self._args.annotation_files, self._args.end_run,
             self._args.combine_all, self._args.e_value,
-            self._args.parallel)
+            self._args.parallel, self._args.program)
         meme = MEME(args_pro)
         meme.run_meme(args_pro)
 

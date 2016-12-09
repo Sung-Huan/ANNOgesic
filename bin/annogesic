@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.3"
+__version__ = "0.5.4"
 
 def main():
     print("""
@@ -1243,7 +1243,7 @@ def main():
     sORF_parser.set_defaults(func=run_sORF_detection)
     # Parameters of promoter detection
     promoter_parser = subparsers.add_parser(
-        "promoter", help="Run MEME to dicover promoter.")
+        "promoter", help="Run MEME/GLAM2 to dicover promoter.")
     promoter_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1251,6 +1251,12 @@ def main():
     promoter_parser.add_argument(
         "--meme_path", default="meme",
         help="path of MEME.")
+    promoter_parser.add_argument(
+        "--glam2_path", default="glam2",
+        help="path of GLAM2.")
+    promoter_parser.add_argument(
+        "--program", "-p", default="both",
+        help="Please assign the program -- meme or glam2 or both. Default is both")
     promoter_parser.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of genome fasta files.")
@@ -1266,7 +1272,14 @@ def main():
         "prediction. Default is 50.")
     promoter_parser.add_argument(
         "--e_value", "-e", default=0.05, type=int,
-        help="The maximum e value. Default is 0.05.")
+        help="The maximum e value for running MEME. Default is 0.05.")
+    promoter_parser.add_argument(
+        "--end_run", "-er", default=10000,
+        help="If the result of GLAM2 is not improved after running this "
+        "number of iteration, it will be ended. Default is 10000.")
+    promoter_parser.add_argument(
+        "--no_deletion_pseudocount", "-E", default=2.0, type=float,
+        help="Please check --deletion_pseudocount. Default is 2.0.")
     promoter_parser.add_argument(
         "--motif_width", "-w", default=[50], nargs='+',
         help="The length for motif detection. "
@@ -1278,7 +1291,7 @@ def main():
         "Default is 50.")
     promoter_parser.add_argument(
         "--parallel", "-pl", default=None,
-        help="This function is for running parallel. Please input the "
+        help="This function can run MEME by parallel. Please input the "
         "number of parallel runs.")
     promoter_parser.add_argument(
         "--tss_source", "-s", default=True, action="store_false",

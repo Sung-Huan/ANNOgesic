@@ -364,14 +364,10 @@ def term_validation(pre_term, term, detect, detect_terms, out,
         if detect:
             final_terms["detect"] = (final_terms["detect"] +
                                      detect_terms["detect"])
-#            num = remove_repeat(detect_terms["detect"], num, out,
-#                                out_t, "True", args_term)
             detect = False
         else:
             final_terms["undetect"] = (final_terms["undetect"] +
                                        detect_terms["undetect"])
-#            num = remove_repeat(detect_terms["undetect"], num, out,
-#                                out_t, "False", args_term)
         detect_terms["detect"] = []
         detect_terms["undetect"] = []
         detect = first_term(term["strand"], term, detect_terms, detect)
@@ -415,13 +411,9 @@ def print_term(terms, out, out_t, args_term):
             pre_term = term
     if detect:
         final_terms["detect"] = final_terms["detect"] + detect_terms["detect"]
-#        num = remove_repeat(detect_terms["detect"], num, out, out_t,
-#                            "True", args_term)
     else:
         final_terms["undetect"] = (final_terms["undetect"] + 
                                    detect_terms["undetect"])
-#        num = remove_repeat(detect_terms["undetect"], num, out, out_t,
-#                            "False", args_term)
     remove_repeat(final_terms["detect"], num, out, out_t,
                   "True", args_term)
     remove_repeat(final_terms["undetect"], num, out, out_t,
@@ -576,6 +568,4 @@ def detect_coverage(term_table, gff_file, tran_file, seq_file,
     compute_wig(wig_r_file, libs, terms, "-", texs, args_term)
     out = open(output_file, "w")
     out_t = open(output_table, "w")
-#    if not args_term.keep_multi:
-#        terms = remove_repeat(terms)
     print_term(terms, out, out_t, args_term)

@@ -4,7 +4,7 @@ import shutil
 from glob import glob
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
-
+from contextlib import redirect_stdout
 
 class ArgsContainer(object):
 
@@ -218,13 +218,18 @@ class ArgsContainer(object):
         '''Check the wig folders of frag and tex, then merge them'''
         self.tex_path = None
         self.frag_path = None
-        if subcommand == "terminator":
-            gff_path = os.path.join(self.gffs, "tmp")
-            self.multiparser.parser_gff(gff_path, None)
-        elif subcommand == "transcript":
+        if subcommand == "transcript":
             if self.gffs is not None:
                 self.multiparser.parser_gff(self.gffs, None)
                 gff_path = self.gffs
+        elif subcommand == "terminator":
+            self.multiparser.parser_gff(self.gffs, None)
+            gff_path = os.path.join(self.gffs, "tmp")
+            tmp_file = os.path.join(self.out_folder, "tmp.txt")
+            with open(tmp_file, 'w') as fh:
+                with redirect_stdout(fh):
+                    self.multiparser.parser_gff(gff_path, None)
+            os.remove(tmp_file)
         else:
             self.multiparser.parser_gff(self.gffs, None)
             gff_path = self.gffs
@@ -234,14 +239,6 @@ class ArgsContainer(object):
             if self.gffs is not None:
                 self.multiparser.combine_wig(gff_path, self.tex_path,
                                              None, self.libs)
-#            elif self.compare_tss is not None:
-#                self.multiparser.parser_gff(self.compare_tss, "TSS")
-#                self.multiparser.combine_wig(self.compare_tss, self.tex_path,
-#                                             "TSS", self.libs)
-#            elif self.terms is not None:
-#                self.multiparser.parser_gff(self.terms, "term")
-#                self.multiparser.combine_wig(self.terms, self.tex_path,
-#                                             "term", self.libs)
             else:
                 self._merge_by_strain(self.tex_path, self.libs)
             self.merge_wigs = self.tex_wigs
@@ -252,14 +249,6 @@ class ArgsContainer(object):
             if self.gffs is not None:
                 self.multiparser.combine_wig(gff_path, self.frag_path,
                                              None, self.libs)
-#            elif self.compare_tss is not None:
-#                self.multiparser.parser_gff(self.compare_tss, "TSS")
-#                self.multiparser.combine_wig(self.compare_tss, self.frag_path,
-#                                             "TSS", self.libs)
-#            elif self.terms is not None:
-#                self.multiparser.parser_gff(self.terms, "term")
-#                self.multiparser.combine_wig(self.terms, self.frag_path,
-#                                             "term", self.libs)
             else:
                 self._merge_by_strain(self.frag_path, self.libs)
             self.merge_wigs = self.frag_wigs
@@ -1012,11 +1001,19 @@ class ArgsContainer(object):
         self.querys = query
         return self
 
-    def container_promoter(self, MEME_path, out_folder, tex_libs,
+    def container_promoter(self, MEME_path, GLAM2_path, out_folder, tex_libs,
                            TSS_files, fasta_files, num_motif, nt_before_TSS,
-                           motif_width, TSS_source,
-                           annotation_files, combine_all, e_value, para):
+                           motif_width, TSS_source, annotation_files, end_run,
+                           combine_all, e_value, para, program):
         self.meme_path = MEME_path
+        self.glam2_path = GLAM2_path
+        self.program = program
+        self.end_run = end_run
+        if (program.lower() != "both") and (
+                program.lower() != "meme") and (
+                program.lower() != "glam2"):
+            print("Error: Please assign meme or glam2 or both to --program.")
+            sys.exit()
         self.output_folder = out_folder
         self.tsss = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_tss", TSS_files, ["--tss_files"])

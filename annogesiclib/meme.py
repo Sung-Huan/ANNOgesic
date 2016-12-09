@@ -33,20 +33,38 @@ class MEME(object):
         self.all_fasta = os.path.join(args_pro.fastas, "allfasta.fa")
         self.all_tss = os.path.join(self.tss_path, "allfasta_TSS.gff")
 
+    def _gen_and_check_folder(self, out_path, folder, type_):
+        sub_out_folder = os.path.join(out_path, type_)
+        if folder in os.listdir(sub_out_folder):
+            shutil.rmtree(os.path.join(sub_out_folder, folder))
+        return sub_out_folder
+
     def _run_normal_motif(self, input_path, out_path, filename,
                           fasta, width, args_pro):
         '''run MEME with specific width'''
         folder = "_".join(["promoter_motifs", filename,
                            str(width), "nt"])
-        if folder not in os.listdir(out_path):
+        if (args_pro.program.lower() == "meme") or (
+                args_pro.program.lower() == "both"):
+            meme_folder = self._gen_and_check_folder(
+                            out_path, folder, "MEME")
             command = [args_pro.meme_path, "-maxsize", "1000000",
                        "-dna", "-nmotifs", str(args_pro.num_motif),
                        "-w", str(width), "-maxiter", "100",
                        "-evt", str(args_pro.e_value)]
             if args_pro.para is not None:
                 command = command + ["-p", args_pro.para]
-            call(command + ["-oc", os.path.join(out_path, folder),
+            call(command + ["-oc", os.path.join(meme_folder, folder),
                             os.path.join(input_path, fasta)])
+        if (args_pro.program.lower() == "glam2") or (
+                args_pro.program.lower() == "both"):
+            glam_folder = self._gen_and_check_folder(
+                            out_path, folder, "GLAM2")
+            call([args_pro.glam2_path,
+                  "-O", os.path.join(glam_folder, folder), "-w",
+                  str(width), "-b", str(width), "-r",
+                  str(args_pro.num_motif), "-n", str(args_pro.end_run),
+                  "n", os.path.join(input_path, fasta)])
 
     def _run_small_motif(self, input_path, out_path, filename,
                          fasta, width, args_pro):
@@ -56,7 +74,10 @@ class MEME(object):
         max_width = data[1]
         folder = "_".join(["promoter_motifs", filename,
                            "-".join([str(min_width), str(max_width)]), "nt"])
-        if folder not in os.listdir(out_path):
+        if (args_pro.program.lower() == "meme") or (
+                args_pro.program.lower() == "both"):
+            meme_folder = self._gen_and_check_folder(
+                            out_path, folder, "MEME")
             command = [args_pro.meme_path, "-maxsize", "1000000",
                        "-dna", "-nmotifs", str(args_pro.num_motif),
                        "-minsites", "0", "-maxsites", "2",
@@ -65,8 +86,17 @@ class MEME(object):
                        "-evt", str(args_pro.e_value)]
             if args_pro.para is not None:
                 command = command + ["-p", args_pro.para]
-            call(command + ["-oc", os.path.join(out_path, folder),
+            call(command + ["-oc", os.path.join(meme_folder, folder),
                             os.path.join(input_path, fasta)])
+        elif (args_pro.program.lower() == "glam2") or (
+                args_pro.program.lower() == "both"):
+            glam_folder = self._gen_and_check_folder(
+                            out_path, folder, "GLAM2")
+            call([args_pro.glam2_path,
+                  "-O", os.path.join(glam_folder, folder), "-a",
+                  str(min_width), "-b", str(max_width), "-r",
+                  str(args_pro.num_motif), "-n", str(args_pro.end_run),
+                  "n", os.path.join(input_path, fasta)])
 
     def _get_fasta_file(self, fasta_path, prefix):
         for fasta in os.listdir(fasta_path):
@@ -156,6 +186,13 @@ class MEME(object):
         for prefix in prefixs:
             input_path = os.path.join(self.out_fasta, prefix)
             out_path = os.path.join(args_pro.output_folder, prefix)
+            if args_pro.program.lower() == "both":
+                self.helper.check_make_folder(os.path.join(out_path, "MEME"))
+                self.helper.check_make_folder(os.path.join(out_path, "GLAM2"))
+            elif args_pro.program.lower() == "meme":
+                self.helper.check_make_folder(os.path.join(out_path, "MEME"))
+            elif args_pro.program.lower() == "glam2":
+                self.helper.check_make_folder(os.path.join(out_path, "GLAM2"))
             for fasta in os.listdir(input_path):
                 filename = fasta.replace(".fa", "")
                 for width in args_pro.widths:
@@ -216,19 +253,32 @@ class MEME(object):
             shutil.rmtree("allfasta")
         shutil.rmtree("tmp")
 
-    def _gen_table(self, output_folder, prefixs, combine):
+    def _gen_table(self, output_folder, prefixs, combine, program):
         '''generate the promoter table'''
         if combine:
             strains = prefixs + ["allfasta"]
         else:
             strains = prefixs
         for strain in strains:
-            for folder in os.listdir(os.path.join(output_folder, strain)):
-                tss_file = os.path.join(self.tss_path, strain + "_TSS.gff")
-                gen_promoter_table(os.path.join(output_folder, strain,
-                                   folder, "meme.txt"),
-                                   os.path.join(output_folder, strain,
-                                   folder, "meme.csv"), tss_file)
+            tss_file = os.path.join(self.tss_path, strain + "_TSS.gff")
+            if (program.lower() == "both") or (
+                    program.lower() == "meme"):
+                for folder in os.listdir(os.path.join(output_folder,
+                                                      strain, "MEME")):
+                    gen_promoter_table(os.path.join(output_folder, strain,
+                                       "MEME", folder, "meme.txt"),
+                                       os.path.join(output_folder, strain,
+                                       "MEME", folder, "meme.csv"), tss_file,
+                                       "meme")
+            if (program.lower() == "both") or (
+                    program.lower() == "glam2"):
+                for folder in os.listdir(os.path.join(output_folder,
+                                                      strain, "GLAM2")):
+                    gen_promoter_table(os.path.join(output_folder, strain,
+                                        "GLAM2", folder, "glam2.txt"),
+                                        os.path.join(output_folder, strain,
+                                        "GLAM2", folder, "glam2.csv"),
+                                        tss_file, "glam2")
 
     def _get_upstream(self, args_pro, prefix, tss, fasta):
         '''get upstream sequence of TSS'''
@@ -291,5 +341,6 @@ class MEME(object):
             self._combine_file(prefixs, args_pro)
         self._run_program(prefixs, args_pro)
         print("Generating the table")
-        self._gen_table(args_pro.output_folder, prefixs, args_pro.combine)
+        self._gen_table(args_pro.output_folder, prefixs,
+                        args_pro.combine, args_pro.program)
         self._remove_files(args_pro)

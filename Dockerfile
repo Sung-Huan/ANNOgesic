@@ -60,7 +60,7 @@ RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --with-url=http://meme.nbcr.net/meme \
 --enable-build-libxml2 \
 --enable-build-libxslt && \
-make && make test && make install && cp /tools/meme/bin/meme /usr/local/bin
+make && make test && make install && cp /tools/meme/bin/* /usr/local/bin
 
 # segemehl
 RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_0_2_0.tar.gz && \
