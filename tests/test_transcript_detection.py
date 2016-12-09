@@ -89,20 +89,23 @@ class TestTranscriptAssembly(unittest.TestCase):
 
     def test_fill_gap_and_print(self):
         trans = {'aaa': [-1, -1, 41.0, 47.0, -1, 47.0, -1, 47.0]}
-        out = StringIO()
         tolers = {'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 7, 7, 7, 7, 7, 7, 7, 20]}
         args = self.mock_args.mock()
         args.tolerance = 3
         args.low_cutoff = 5
         args.width = 1
-        ta.fill_gap_and_print(trans, "+", out, tolers, "TEX", args)
-        self.assertEqual(out.getvalue(), self.example.out_tran + "\n")
+        finals = {}
+        ta.fill_gap_and_print(trans, "+", finals, tolers, "TEX", args)
+        self.assertDictEqual(finals, {'aaa': [{
+            'strand': '+', 'high': 47.0, 'end': 4, 'wig': 'TEX', 'low': 41.0, 'start': 3},
+            {'strand': '+', 'high': 47.0, 'end': 8, 'wig': 'TEX', 'low': 47.0, 'start': 6}]})
 
     def test_print_transctipt(self):
         out = StringIO()
-        ta.print_transctipt(100, 200, 20, 1, 40, "TEX",
-                            20, out, "aaa", "+")
-        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\ttranscript\t100\t200\t.\t+\t.\tID=aaa_transcript1;Name=transcript_00001;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
+        tas = {"aaa": [{"start": 100, "end": 200, "strand": "+", "high": 40,
+                        "low": 20, "wig": "TEX"}]}
+        ta.print_transcript(tas, out)
+        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\ttranscript\t100\t200\t.\t+\t.\tID=aaa_transcript0;Name=transcript_00000;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
 
 
     def test_assembly(self):

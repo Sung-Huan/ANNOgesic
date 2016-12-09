@@ -116,41 +116,35 @@ def transfer_to_tran(wigs, libs, template_texs, strand, args_tran):
     return tolers, trans
 
 
-def print_transctipt(start, end, width, num, high_cover, wig_type,
-                     low_cover, out, strain, strand):
-    if (start != -1) and (end != -1) and (
-            (end - start) >= width):
-        name = '%0*d' % (5, num)
-        attribute = gen_attribute_string(
-                num, name, high_cover, low_cover, wig_type, strain)
-        out.write("\t".join([str(field) for field in [
-                  strain, "ANNOgesic", "transcript", str(start),
-                  str(end), ".", strand, ".", attribute]]) + "\n")
+def print_transcript(finals, out):
+    for strain, datas in finals.items():
+        num = 0
+        datas = sorted(datas, key=lambda x: (
+            x["start"], x["end"], x["strand"]))
+        for data in datas:
+            name = '%0*d' % (5, num)
+            attribute = ";".join(["=".join(items) for items in ([
+                        ("ID", strain + "_transcript" + str(num)),
+                        ("Name", "transcript_" + name),
+                        ("high_coverage", str(data["high"])),
+                        ("low_coverage", str(data["low"])),
+                        ("detect_lib", data["wig"])])])
+            out.write("\t".join([str(field) for field in [
+                strain, "ANNOgesic", "transcript", str(data["start"]),
+                str(data["end"]), ".", data["strand"], ".",
+                attribute]]) + "\n")
+            num += 1
 
 
-def gen_attribute_string(num, name, high_cover, low_cover, wig_type, strain):
-    attribute = ";".join(
-                ["=".join(items) for items in ([
-                    ("ID", strain + "_transcript" + str(num)),
-                    ("Name", "transcript_" + name),
-                    ("high_coverage", str(high_cover)),
-                    ("low_coverage", str(low_cover)),
-                    ("detect_lib", wig_type)])])
-    return attribute
-
-
-def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
+def fill_gap_and_print(trans, strand, finals, tolers, wig_type, args_tran):
     '''compare transcript with CDS to modify transcript(merge mutliple 
     transcript based on overlap with the same CDS)'''
-    for strain, datas in tolers.items():
-        num = 0
-        for data in datas:
-            num += 1
     for strain, covers in trans.items():
+        if strain not in finals:
+            finals[strain] = []
         first = True
         start = -1
         end = -1
-        num = 0
         pre_cover = None
         cover_pos = 1
         for cover in covers:
@@ -182,14 +176,10 @@ def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
                             args_tran.tolerance) or (not fit):
                         if (start != -1) and (end != -1) and (
                                 (end - start) >= args_tran.width):
-                            name = '%0*d' % (5, num)
-                            attribute = gen_attribute_string(
-                                    num, name, high_cover, low_cover,
-                                    wig_type, strain)
-                            out.write("\t".join([str(field) for field in [
-                                strain, "ANNOgesic", "transcript", str(start),
-                                str(end), ".", strand, ".", attribute]]) + "\n")
-                            num += 1
+                            finals[strain].append({
+                                "start": start, "end": end, "strand": strand,
+                                "high": high_cover, "low": low_cover,
+                                "wig": wig_type})
                         start = cover_pos
                         end = -1
                         high_cover = cover
@@ -200,21 +190,25 @@ def fill_gap_and_print(trans, strand, out, tolers, wig_type, args_tran):
         if (len(covers) != 0) and (not first) and (
                 (start != -1) and (end != -1) and (
                 (end - start) >= args_tran.width)):
-            print_transctipt(start, end, args_tran.width, num, high_cover,
-                             wig_type, low_cover, out, strain, strand)
-
+            finals[strain].append({
+                "start": start, "end": end, "strand": strand,
+                "high": high_cover, "low": low_cover,
+                "wig": wig_type})
+    return finals
 
 def detect_transcript(wig_f_file, wig_r_file, wig_folder, input_lib,
                       out_file, wig_type, args_tran):
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
+    finals = {}
     libs, texs = read_libs(input_lib, wig_folder)
     wig_fs = read_wig(wig_f_file, "+", libs)
     wig_rs = read_wig(wig_r_file, "-", libs)
     tolers_f, tran_fs = transfer_to_tran(wig_fs, libs, texs, "+", args_tran)
     tolers_r, tran_rs = transfer_to_tran(wig_rs, libs, texs, "-", args_tran)
-    fill_gap_and_print(tran_fs, "+", out, tolers_f, wig_type, args_tran)
-    fill_gap_and_print(tran_rs, "-", out, tolers_r, wig_type, args_tran)
+    fill_gap_and_print(tran_fs, "+", finals, tolers_f, wig_type, args_tran)
+    fill_gap_and_print(tran_rs, "-", finals, tolers_r, wig_type, args_tran)
+    print_transcript(finals, out)
     out.close()
     del wig_fs
     del wig_rs
