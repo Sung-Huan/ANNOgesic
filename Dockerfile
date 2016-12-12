@@ -50,11 +50,11 @@ RUN perl -MCPAN -e 'install HTML::Template; \
 install XML::Compile::SOAP11; install XML::Compile::WSDL11; \
 install XML::Compile::Transport::SOAPHTTP; install XML::RPC'
 
-RUN cpan install HTML::Template
-RUN cpan HTML::PullParser
-RUN cpan XML::Simple
-RUN cpan XML::Compile::WSDL11
-RUN cpan XML::Compile::SOAP11
+RUN cpan install HTML::Template && \
+cpan HTML::PullParser && \
+cpan XML::Simple && \
+cpan XML::Compile::WSDL11 && \
+cpan XML::Compile::SOAP11
 
 RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --with-url=http://meme.nbcr.net/meme \
@@ -80,15 +80,15 @@ unzip CRT1.2-CLI.jar.zip && cp CRT1.2-CLI.jar /usr/local/bin/CRT.jar
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 apt-get -y install supervisor && apt-get clean && \
 rm -rf /var/lib/apt/lists/*
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
-ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_PID_FILE /var/run/apache2.pid
+ENV APACHE_RUN_USER=www-data \
+APACHE_RUN_GROUP=www-data \
+APACHE_LOG_DIR=/var/log/apache2 \
+APACHE_LOCK_DIR=/var/lock/apache2 \
+APACHE_PID_FILE=/var/run/apache2.pid
 
 WORKDIR /usr/local/src
-RUN echo '/usr/local/lib64' >>/etc/ld.so.conf
-RUN wget http://www.psort.org/download/docker/pft2.3.4.docker64bit.tar.gz && \
+RUN echo '/usr/local/lib64' >>/etc/ld.so.conf && \
+wget http://www.psort.org/download/docker/pft2.3.4.docker64bit.tar.gz && \
 tar zxvf pft2.3.4.docker64bit.tar.gz && cp pftools/pfscan /usr/local/bin/
 
 RUN wget http://www.psort.org/download/libpsortb-1.0.tar.gz && \
@@ -99,9 +99,8 @@ RUN wget http://www.psort.org/download/bio-tools-psort-all.3.0.4.tar.gz && \
 tar zxvf bio-tools-psort-all.3.0.4.tar.gz
 WORKDIR /usr/local/src/bio-tools-psort-all
 
-RUN wget http://www.psort.org/download/docker/psortb.defaults
-
-RUN perl Makefile.PL && make && make install && cp -r psort /usr/local/psortb
+RUN wget http://www.psort.org/download/docker/psortb.defaults && \
+perl Makefile.PL && make && make install && cp -r psort /usr/local/psortb
 
 RUN a2enmod cgid && \
 wget http://www.psort.org/download/docker/apache.conf.fragment && \
@@ -169,9 +168,9 @@ mv rapid_annotation_transfer_tool /opt/RATT
 RUN sed -i '244s/defined//' /opt/RATT/main.ratt.pl && \
 sed -i '19s/$PAGIT_HOME/\/usr/' /opt/RATT/start.ratt.sh
 
-ENV RATT_HOME /opt/RATT
-ENV PERL5LIB /opt/RATT/:$PERL5LIB
-ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
+ENV RATT_HOME=/opt/RATT \
+PERL5LIB=/opt/RATT/:$PERL5LIB \
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
 
 RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
