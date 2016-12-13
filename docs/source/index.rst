@@ -17,8 +17,9 @@ Table of content
 
 Introduction
 =========================
+
 ANNOgesic is a modular, command-line tool that can
-integrated different types of RNA-Seq data like dRNA-Seq or RNA-Seq
+integrate different types of RNA-Seq data like dRNA-Seq or RNA-Seq
 generated after transcript fragmentation and generates high quality
 genome annotations. It can detect gene, CDS/tRNA/rRNA, TSS and
 processing sites, transcripts, terminator, Untranslated region (UTR)
