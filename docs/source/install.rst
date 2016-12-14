@@ -1,10 +1,10 @@
 Install
 ============
 
-There are three ways to install ANNOgesic. Please refer to the following 
-sections. Only Dockerfiles can install the requirments automatically. If 
-you install ANNOgesic through other ways, please install the pre-required 
-tools by yourself.
+There are three ways to install ANNOgesic. Please refer to the
+following sections. Only via the requirments are also installed. If
+you install ANNOgesic through on of the other ways, please install the
+pre-required tools by yourself.
 
 
 Github
