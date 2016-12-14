@@ -2,21 +2,21 @@
    :target: https://pypi.python.org/pypi/ANNOgesic/
 .. image:: https://img.shields.io/pypi/l/annogesic.svg
    :target: https://pypi.python.org/pypi/ANNOgesic/
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.183160.svg
-   :target: https://doi.org/10.5281/zenodo.183160
+.. image:: https://zenodo.org/badge/34061246.svg
+   :target: https://zenodo.org/badge/latestdoi/34061246
 
 About ANNOgesic
 ---------------
 ANNOgesic is a modular, command-line tool that can
 integrate different types of RNA-Seq data like dRNA-Seq or RNA-Seq
 generated after transcript fragmentation and generates high quality
-genome annotations. It can detect gene, CDS/tRNA/rRNA, TSS and
-processing sites, transcripts, terminator, Untranslated region (UTR)
-as well as small RNA (sRNA), small open reading frame (sORF), circular
-RNA, CRISPR related RNAs, riboswitch and RNA-thermometer.
-It can also perform RNA-RNA
-and protein-protein interaction predictions. Furthermore, it groups
-genes into operon and sub-operons and reveal promotor motifs. It can
+genome annotations. It can detect genes, CDSs/tRNAs/rRNAs, 
+transcription starting sites (TSS) and processing sites, transcripts, 
+terminators, untranslated regions (UTR) as well as small RNAs (sRNA), 
+small open reading frames (sORF), circular RNAs, CRISPR related RNAs, 
+riboswitches and RNA-thermometers. It can also perform RNA-RNA
+and protein-protein interactions prediction. Furthermore, it groups
+genes into operons and sub-operons and reveal promotor motifs. It can
 also allocate GO term and subcellular localization to genes. Several
 of ANNOgesic features are new implementation while others are
 performed and improved by third-party tools and for some of them
@@ -61,30 +61,30 @@ Arguments
                             files)
         get_target_fasta    Get target fasta.
         annotation_transfer
-                            Run RATT to transfer the annotation files from
-                            reference to target.
-        tss_processing      Run TSSpredator to predict TSSs or processing sites.
+                            Transfer the annotations from reference genome to
+                            target genome.
+        tss_processing      Detect TSSs or processing sites.
         optimize_tss_processing
-                            Optimize TSSpredator based on (partial)manual detect
-                            one.
+                            Optimize TSSs or processing sites based on manual
+                            detected ones.
         terminator          Detect rho-independant terminators.
         transcript          Detect transripts based on coverage file.
-        utr                 Run UTR detection to detect 5'UTR and 3'UTR.
-        srna                Detect intergenic, antisense and UTR-derived sRNA.
-        sorf                Detect expressed sORF.
-        promoter            Run MEME/GLAM2 to dicover promoter.
-        operon              Detect operon and sub-operon.
-        circrna             Detect circular RNA by segemehl.
+        utr                 Detect 5'UTRs and 3'UTRs.
+        srna                Detect intergenic, antisense and UTR-derived sRNAs.
+        sorf                Detect expressed sORFs.
+        promoter            Discover promoter motifs.
+        operon              Detect operons and sub-operons.
+        circrna             Detect circular RNAs.
         go_term             Extract Go terms from Uniprot.
-        srna_target         Detect sRNA-mRNA interaction by RNAup and RNAplex.
+        srna_target         Detect sRNA-mRNA interactions.
         snp                 Detect SNP/mutation and generate potential fasta file.
-        ppi_network         Generate protein-protein interaction with literature
+        ppi_network         Detect protein-protein interactions with literature
                             supported.
         subcellular_localization
-                            Predict subcellular localization of genome CDS.
+                            Predict subcellular localization of CDSs.
         riboswitch_thermometer
-                            Predict riboswitch and RNA thermometer.
-        crispr              Run CRT to predict CRISPR.
+                            Predict riboswitches and RNA thermometers.
+        crispr              Predict CRISPR related RNAs.
         merge_features      Merge all features to one gff file.
         screenshot          Generate screenshot for selected feature.
         color_png           Generate color screenshots of TSS or processing site.
@@ -98,7 +98,7 @@ Arguments
 License
 -------
 
-`ICSL <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
+`ISCL <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
 Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhosted.org/ANNOgesic/license.html>`__
 
 Contact
