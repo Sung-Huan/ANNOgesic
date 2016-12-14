@@ -98,8 +98,8 @@ def main():
 
     # run RATT
     RATT_parser = subparsers.add_parser(
-        "annotation_transfer", help="Run RATT to transfer the annotation "
-        "files from reference to target.")
+        "annotation_transfer", help="Transfer the annotations "
+        "from reference genome to target genome.")
     RATT_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -143,7 +143,7 @@ def main():
 
     # Parameters of TSSpredator
     TSSpredator_parser = subparsers.add_parser(
-        "tss_processing", help="Run TSSpredator to predict TSSs or "
+        "tss_processing", help="Detect TSSs or "
         "processing sites.")
     TSSpredator_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
@@ -291,8 +291,8 @@ def main():
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
     # Parameter of opimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
-        "optimize_tss_processing", help="Optimize TSSpredator based on "
-        "(partial)manual detect one.")
+        "optimize_tss_processing", help="Optimize TSSs or processing "
+        "sites based on manual detected ones.")
     op_TSSpredator_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -679,7 +679,7 @@ def main():
 
     # Parameter of UTR detection
     UTR_parser = subparsers.add_parser(
-        "utr", help="Run UTR detection to detect 5'UTR and 3'UTR.")
+        "utr", help="Detect 5'UTRs and 3'UTRs.")
     UTR_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -734,7 +734,7 @@ def main():
 
     # Parameter of sRNA detectopn
     sRNA_parser = subparsers.add_parser(
-        "srna", help="Detect intergenic, antisense and UTR-derived sRNA.")
+        "srna", help="Detect intergenic, antisense and UTR-derived sRNAs.")
     sRNA_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1092,7 +1092,7 @@ def main():
     sRNA_parser.set_defaults(func=run_sRNA_detection)
     # Parameters of small ORF
     sORF_parser = subparsers.add_parser(
-        "sorf", help="Detect expressed sORF.")
+        "sorf", help="Detect expressed sORFs.")
     sORF_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1243,7 +1243,7 @@ def main():
     sORF_parser.set_defaults(func=run_sORF_detection)
     # Parameters of promoter detection
     promoter_parser = subparsers.add_parser(
-        "promoter", help="Run MEME/GLAM2 to dicover promoter.")
+        "promoter", help="Discover promoter motifs.")
     promoter_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1317,7 +1317,7 @@ def main():
     promoter_parser.set_defaults(func=run_MEME)
     # Parameters of operon detection
     operon_parser = subparsers.add_parser(
-        "operon", help="Detect operon and sub-operon.")
+        "operon", help="Detect operons and sub-operons.")
     operon_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1363,7 +1363,7 @@ def main():
     operon_parser.set_defaults(func=run_operon)
     # Parameters of CircRNA detection
     circrna_parser = subparsers.add_parser(
-        "circrna", help="Detect circular RNA by segemehl.")
+        "circrna", help="Detect circular RNAs.")
     circrna_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1449,8 +1449,7 @@ def main():
     goterm_parser.set_defaults(func=run_goterm)
     # Parameters of sRNA target prediction
     starget_parser = subparsers.add_parser(
-        "srna_target", help="Detect sRNA-mRNA interaction by "
-        "RNAup and RNAplex.")
+        "srna_target", help="Detect sRNA-mRNA interactions.")
     starget_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1674,7 +1673,7 @@ def main():
     snp_parser.set_defaults(func=SNP)
     # Parameters of protein-protein interaction network
     ppi_parser = subparsers.add_parser(
-        "ppi_network", help="Generate protein-protein interaction with "
+        "ppi_network", help="Detect protein-protein interactions with "
         "literature supported.")
     ppi_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
@@ -1741,7 +1740,7 @@ def main():
     # Parameters of subcellular localization
     sub_local_parser = subparsers.add_parser(
         "subcellular_localization", help="Predict subcellular localization "
-        "of genome CDS.")
+        "of CDSs.")
     sub_local_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1776,8 +1775,8 @@ def main():
     sub_local_parser.set_defaults(func=Sub_Local)
     # Parameters of riboswitch and RNA thermometer
     ribos_parser = subparsers.add_parser(
-        "riboswitch_thermometer", help="Predict riboswitch and "
-        "RNA thermometer.")
+        "riboswitch_thermometer", help="Predict riboswitches and "
+        "RNA thermometers.")
     ribos_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
@@ -1854,7 +1853,7 @@ def main():
     ribos_parser.set_defaults(func=Ribos)
     # Parameters of CRISPR finder
     crispr_parser = subparsers.add_parser(
-        "crispr", help="Run CRT to predict CRISPR.")
+        "crispr", help="Predict CRISPR related RNAs.")
     crispr_parser.add_argument(
         "--project_path", "-pj", default=".", nargs="?",
         help="Path of the project folder. If none is given, "
