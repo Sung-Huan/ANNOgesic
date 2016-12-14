@@ -96,15 +96,15 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>ANNOgesic is a modular, command-line tool that can
-integrated different types of RNA-Seq data like dRNA-Seq or RNA-Seq
+integrate different types of RNA-Seq data like dRNA-Seq or RNA-Seq
 generated after transcript fragmentation and generates high quality
-genome annotations. It can detect gene, CDS/tRNA/rRNA, TSS and
-processing sites, transcripts, terminator, Untranslated region (UTR)
-as well as small RNA (sRNA), small open reading frame (sORF), circular
-RNA, CRISPR related RNAs, riboswitch and RNA-thermometer.
-It can also perform RNA-RNA
-and protein-protein interaction predictions. Furthermore, it groups
-genes into operon and sub-operons and reveal promotor motifs. It can
+genome annotations. It can detect genes, CDSs/tRNAs/rRNAs, transcription
+starting sites (TSS) and processing sites, transcripts, terminators,
+untranslated regions (UTR) as well as small RNAs (sRNA), small open
+reading frames (sORF), circular RNAs, CRISPR related RNAs, riboswitches
+and RNA-thermometers. It can also perform RNA-RNA
+and protein-protein interactions prediction. Furthermore, it groups
+genes into operons and sub-operons and reveal promotor motifs. It can
 also allocate GO term and subcellular localization to genes. Several
 of ANNOgesic features are new implementation while others are
 performed and improved by third-party tools and for some of them
@@ -125,30 +125,30 @@ bacterial as well as archaeal samples.</p>
                         <span class="n">files</span><span class="p">)</span>
     <span class="n">get_target_fasta</span>    <span class="n">Get</span> <span class="n">target</span> <span class="n">fasta</span><span class="o">.</span>
     <span class="n">annotation_transfer</span>
-                        <span class="n">Run</span> <span class="n">RATT</span> <span class="n">to</span> <span class="n">transfer</span> <span class="n">the</span> <span class="n">annotation</span> <span class="n">files</span> <span class="kn">from</span>
-                        <span class="nn">reference</span> <span class="n">to</span> <span class="n">target</span><span class="o">.</span>
-    <span class="n">tss_processing</span>      <span class="n">Run</span> <span class="n">TSSpredator</span> <span class="n">to</span> <span class="n">predict</span> <span class="n">TSSs</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">sites</span><span class="o">.</span>
+                        <span class="n">Transfer</span> <span class="n">the</span> <span class="n">annotations</span> <span class="kn">from</span> <span class="nn">reference</span> <span class="n">genome</span> <span class="n">to</span>
+                        <span class="n">target</span> <span class="n">genome</span><span class="o">.</span>
+    <span class="n">tss_processing</span>      <span class="n">Detect</span> <span class="n">TSSs</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">sites</span><span class="o">.</span>
     <span class="n">optimize_tss_processing</span>
-                        <span class="n">Optimize</span> <span class="n">TSSpredator</span> <span class="n">based</span> <span class="n">on</span> <span class="p">(</span><span class="n">partial</span><span class="p">)</span><span class="n">manual</span> <span class="n">detect</span>
-                        <span class="n">one</span><span class="o">.</span>
+                        <span class="n">Optimize</span> <span class="n">TSSs</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">sites</span> <span class="n">based</span> <span class="n">on</span> <span class="n">manual</span>
+                        <span class="n">detected</span> <span class="n">ones</span><span class="o">.</span>
     <span class="n">terminator</span>          <span class="n">Detect</span> <span class="n">rho</span><span class="o">-</span><span class="n">independant</span> <span class="n">terminators</span><span class="o">.</span>
     <span class="n">transcript</span>          <span class="n">Detect</span> <span class="n">transripts</span> <span class="n">based</span> <span class="n">on</span> <span class="n">coverage</span> <span class="n">file</span><span class="o">.</span>
-    <span class="n">utr</span>                 <span class="n">Run</span> <span class="n">UTR</span> <span class="n">detection</span> <span class="n">to</span> <span class="n">detect</span> <span class="mi">5</span><span class="s1">&#39;UTR and 3&#39;</span><span class="n">UTR</span><span class="o">.</span>
-    <span class="n">srna</span>                <span class="n">Detect</span> <span class="n">intergenic</span><span class="p">,</span> <span class="n">antisense</span> <span class="ow">and</span> <span class="n">UTR</span><span class="o">-</span><span class="n">derived</span> <span class="n">sRNA</span><span class="o">.</span>
-    <span class="n">sorf</span>                <span class="n">Detect</span> <span class="n">expressed</span> <span class="n">sORF</span><span class="o">.</span>
-    <span class="n">promoter</span>            <span class="n">Run</span> <span class="n">MEME</span><span class="o">/</span><span class="n">GLAM2</span> <span class="n">to</span> <span class="n">dicover</span> <span class="n">promoter</span><span class="o">.</span>
-    <span class="n">operon</span>              <span class="n">Detect</span> <span class="n">operon</span> <span class="ow">and</span> <span class="n">sub</span><span class="o">-</span><span class="n">operon</span><span class="o">.</span>
-    <span class="n">circrna</span>             <span class="n">Detect</span> <span class="n">circular</span> <span class="n">RNA</span> <span class="n">by</span> <span class="n">segemehl</span><span class="o">.</span>
+    <span class="n">utr</span>                 <span class="n">Detect</span> <span class="mi">5</span><span class="s1">&#39;UTRs and 3&#39;</span><span class="n">UTRs</span><span class="o">.</span>
+    <span class="n">srna</span>                <span class="n">Detect</span> <span class="n">intergenic</span><span class="p">,</span> <span class="n">antisense</span> <span class="ow">and</span> <span class="n">UTR</span><span class="o">-</span><span class="n">derived</span> <span class="n">sRNAs</span><span class="o">.</span>
+    <span class="n">sorf</span>                <span class="n">Detect</span> <span class="n">expressed</span> <span class="n">sORFs</span><span class="o">.</span>
+    <span class="n">promoter</span>            <span class="n">Discover</span> <span class="n">promoter</span> <span class="n">motifs</span><span class="o">.</span>
+    <span class="n">operon</span>              <span class="n">Detect</span> <span class="n">operons</span> <span class="ow">and</span> <span class="n">sub</span><span class="o">-</span><span class="n">operons</span><span class="o">.</span>
+    <span class="n">circrna</span>             <span class="n">Detect</span> <span class="n">circular</span> <span class="n">RNAs</span><span class="o">.</span>
     <span class="n">go_term</span>             <span class="n">Extract</span> <span class="n">Go</span> <span class="n">terms</span> <span class="kn">from</span> <span class="nn">Uniprot.</span>
-    <span class="n">srna_target</span>         <span class="n">Detect</span> <span class="n">sRNA</span><span class="o">-</span><span class="n">mRNA</span> <span class="n">interaction</span> <span class="n">by</span> <span class="n">RNAup</span> <span class="ow">and</span> <span class="n">RNAplex</span><span class="o">.</span>
+    <span class="n">srna_target</span>         <span class="n">Detect</span> <span class="n">sRNA</span><span class="o">-</span><span class="n">mRNA</span> <span class="n">interactions</span><span class="o">.</span>
     <span class="n">snp</span>                 <span class="n">Detect</span> <span class="n">SNP</span><span class="o">/</span><span class="n">mutation</span> <span class="ow">and</span> <span class="n">generate</span> <span class="n">potential</span> <span class="n">fasta</span> <span class="n">file</span><span class="o">.</span>
-    <span class="n">ppi_network</span>         <span class="n">Generate</span> <span class="n">protein</span><span class="o">-</span><span class="n">protein</span> <span class="n">interaction</span> <span class="k">with</span> <span class="n">literature</span>
+    <span class="n">ppi_network</span>         <span class="n">Detect</span> <span class="n">protein</span><span class="o">-</span><span class="n">protein</span> <span class="n">interactions</span> <span class="k">with</span> <span class="n">literature</span>
                         <span class="n">supported</span><span class="o">.</span>
     <span class="n">subcellular_localization</span>
-                        <span class="n">Predict</span> <span class="n">subcellular</span> <span class="n">localization</span> <span class="n">of</span> <span class="n">genome</span> <span class="n">CDS</span><span class="o">.</span>
+                        <span class="n">Predict</span> <span class="n">subcellular</span> <span class="n">localization</span> <span class="n">of</span> <span class="n">CDSs</span><span class="o">.</span>
     <span class="n">riboswitch_thermometer</span>
-                        <span class="n">Predict</span> <span class="n">riboswitch</span> <span class="ow">and</span> <span class="n">RNA</span> <span class="n">thermometer</span><span class="o">.</span>
-    <span class="n">crispr</span>              <span class="n">Run</span> <span class="n">CRT</span> <span class="n">to</span> <span class="n">predict</span> <span class="n">CRISPR</span><span class="o">.</span>
+                        <span class="n">Predict</span> <span class="n">riboswitches</span> <span class="ow">and</span> <span class="n">RNA</span> <span class="n">thermometers</span><span class="o">.</span>
+    <span class="n">crispr</span>              <span class="n">Predict</span> <span class="n">CRISPR</span> <span class="n">related</span> <span class="n">RNAs</span><span class="o">.</span>
     <span class="n">merge_features</span>      <span class="n">Merge</span> <span class="nb">all</span> <span class="n">features</span> <span class="n">to</span> <span class="n">one</span> <span class="n">gff</span> <span class="n">file</span><span class="o">.</span>
     <span class="n">screenshot</span>          <span class="n">Generate</span> <span class="n">screenshot</span> <span class="k">for</span> <span class="n">selected</span> <span class="n">feature</span><span class="o">.</span>
     <span class="n">color_png</span>           <span class="n">Generate</span> <span class="n">color</span> <span class="n">screenshots</span> <span class="n">of</span> <span class="n">TSS</span> <span class="ow">or</span> <span class="n">processing</span> <span class="n">site</span><span class="o">.</span>
@@ -177,7 +177,7 @@ bacterial as well as archaeal samples.</p>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/ISC_license">ICSL</a> (Internet Systems
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/ISC_license">ISCL</a> (Internet Systems
 Consortium license ~ simplified BSD license) - see <a class="reference external" href="https://pythonhosted.org/ANNOgesic/license.html">LICENSE</a></p>
 </div>
 <div class="section" id="cite">
