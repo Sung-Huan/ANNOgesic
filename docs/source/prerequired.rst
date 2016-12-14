@@ -1,7 +1,7 @@
 Required tools or databases
 ==============
 
-Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>_`.
+Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
 Via Docker image, all the required tools are installed.
 
 Tools
