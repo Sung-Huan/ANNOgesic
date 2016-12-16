@@ -878,8 +878,9 @@ Based on the comparison, the performance of ``transcript`` can be improved.
                             Otherwise, --width will be the minimum length for the
                             final output. Default is 20.
       --height HEIGHT, -he HEIGHT
-                            The minimum coverage of the transcript. The default is
-                            10.
+                            The minimum coverage of the transcript. If --tex_notex
+                            is 2, The minimum coverage is for the average of TEX+
+                            and TEX- libraries. The default is 10.
       --width WIDTH, -w WIDTH
                             The minimum length of the transcript without modifying
                             by genome annotation. This value will be for the final
