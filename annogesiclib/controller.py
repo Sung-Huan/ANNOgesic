@@ -652,7 +652,7 @@ class Controller(object):
                 self.check_execute_file(exe)
         elif self._args.program.lower() == "RNAup":
             self.check_execute_file(self._args.rnaup_path)
-        elif elf._args.program.lower() == "RNAplex":
+        elif self._args.program.lower() == "RNAplex":
             for exe in (self._args.rnaplfold_path, self._args.rnaplex_path):
                 self.check_execute_file(exe)
         project_creator.create_subfolders(

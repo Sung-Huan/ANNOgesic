@@ -586,7 +586,8 @@ def main():
         "for the final output. Default is 20.")
     Transcript_parser.add_argument(
         "--height", "-he", default=10, type=int,
-        help="The minimum coverage of the transcript. "
+        help="The minimum coverage of the transcript. If --tex_notex is 2, "
+        "The minimum coverage is for the average of TEX+ and TEX- libraries. "
         "The default is 10.")
     Transcript_parser.add_argument(
         "--width", "-w", default=20, type=int,
