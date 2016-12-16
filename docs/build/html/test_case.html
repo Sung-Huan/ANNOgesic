@@ -105,22 +105,22 @@
 You will see how to run each subcommand of ANNOgesic. The test case is a public
 RNA-Seq data from NCBI GEO that was part of a work by
 <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">Dugar et al.</a>.
-The differential RNA-seq data is of Campylobacter jejuni subsp. jejuni 81116.
+The differential RNA-seq data is of <strong>Campylobacter jejuni</strong> subsp. jejuni 81116.
 There will be several output files which are generated in different formats -
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures.
 For viewing GFF3 file, you can use a genome browser, for example <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
 <a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
-<p>Before we start, please check <code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">filename</span></code> and
-<code class="docutils literal"><span class="pre">The</span> <span class="pre">format</span> <span class="pre">of</span> <span class="pre">libraries</span> <span class="pre">for</span> <span class="pre">import</span> <span class="pre">to</span> <span class="pre">ANNOgesic</span></code> in
-the section <code class="docutils literal"><span class="pre">ANNOgesic's</span> <span class="pre">subcommands</span></code>. All the details are also in <code class="docutils literal"><span class="pre">ANNOgesic's</span> <span class="pre">subcommands</span></code>.
-Moreover, all the requirements are listed in the section <code class="docutils literal"><span class="pre">Required</span> <span class="pre">tools</span> <span class="pre">or</span> <span class="pre">databases</span></code>.
-For command lines which we will present later, please check the <code class="docutils literal"><span class="pre">run.sh</span></code>
-in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">Github</a>.</p>
+<p>Before we start, please check <a class="reference internal" href="subcommands.html#the-format-of-filename"><span class="std std-ref">The format of filename</span></a> and
+<a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in
+the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>. All the details are also in <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>.
+Moreover, all the requirements are listed in the section <a class="reference internal" href="prerequired.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+For command lines which we will present later, please check the
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a> in our Git repository.</p>
 <p>If the subcommand integrates third-party software, ex: TSSpredator,
 please check path of the execute file. If necessary, please assign it properly.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
-<p>First of all, we need to create a working folder by running <code class="docutils literal"><span class="pre">create</span></code>.</p>
+<p>First of all, we need to create a working folder by running <code class="docutils literal"><span class="pre">create</span></code>. <code class="docutils literal"><span class="pre">-pj</span></code> represents project path.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic create -pj ANNOgesic
 </pre></div>
 </div>
@@ -198,8 +198,9 @@ $ cd ../../../../
 </pre></div>
 </div>
 <p>If we check the wiggle files, we will find that the strain name (presented by &#8220;chrom&#8221;) is not the same as fasta or annotation gff file.
-Thus, we need to change it. We can use <code class="docutils literal"><span class="pre">replace_seq_id.py</span></code> from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">Github</a>
-to replace the strain name properly. If the strain names in your fasta, annotation, wiggle files are the same, you can skip this step.</p>
+Thus, we need to change it. We can use <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">replace_seq_id.py</a> from our
+Git repository. to replace the strain name properly. If the strain names in your fasta, annotation,
+wiggle files are the same, you can skip this step.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/replace_seq_id.py
 $ python3 replace_seq_id.py -i ANNOgesic/input/wigs/tex_notex -n NC_009839.1
 $ rm replace_seq_id.py
@@ -215,65 +216,10 @@ Please remember to put or download the fasta file to <code class="docutils liter
 First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain.
 Then, we need to generate a mutation table between these two strains. When these files are produced,
 we can run subcommand <code class="docutils literal"><span class="pre">get_target_fasta</span></code> for getting fasta file of the target strain.
-For mutation table format, please check the section <code class="docutils literal"><span class="pre">ANNOgesic's</span> <span class="pre">subcommands</span></code>.</p>
-<p>We use a simple example to modify our test case. The
-<a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a> is</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="13%" />
-<col width="10%" />
-<col width="12%" />
-<col width="8%" />
-<col width="9%" />
-<col width="20%" />
-<col width="13%" />
-<col width="4%" />
-<col width="12%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>#refernce_id</td>
-<td>target_id</td>
-<td>reference_nt</td>
-<td>position</td>
-<td>target_nt</td>
-<td>impact_of_correction</td>
-<td>locus_tag</td>
-<td>gene</td>
-<td>Description</td>
-</tr>
-<tr class="row-even"><td>NC_000915.1</td>
-<td>NC_test.1</td>
-<td>a</td>
-<td>3</td>
-<td>c</td>
-<td>&nbsp;</td>
-<td>SAOUHSC_00002</td>
-<td>dnaA</td>
-<td>XXXXXX</td>
-</tr>
-<tr class="row-odd"><td>NC_000915.1</td>
-<td>NC_test.1</td>
-<td>t</td>
-<td>6</td>
-<td>-</td>
-<td>deletion</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-<td>YYYYYY</td>
-</tr>
-<tr class="row-even"><td>NC_000915.1</td>
-<td>test_case2</td>
-<td>-</td>
-<td>600</td>
-<td>g</td>
-<td>insertion</td>
-<td>SAOUHSC_00132</td>
-<td>&nbsp;</td>
-<td>&nbsp;</td>
-</tr>
-</tbody>
-</table>
-<p>Every column is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files
+For mutation table format, please check the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>.</p>
+<p>We use a simple example to modify our test case, please check
+<a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
+Every column of the table is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files
 will be generated in <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
 </pre></div>
@@ -390,13 +336,13 @@ First, we set the path of wig file folder.</p>
 Before running <code class="docutils literal"><span class="pre">tss_processing</span></code>, if we want to use the optimized parameters,
 we need to run <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> first. The optimization requires a gff file of the manual-detected TSSs.
 In our experience, we recommand you to detect at least 50 TSSs and check more than 200kb of genome.</p>
-<p>For the test case, we prepared the manual TSS file in our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">Github</a>,
-you can download it.</p>
+<p>For the test case, you can download the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">manual TSS file</a>
+from our git repository.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 </pre></div>
 </div>
 <p>Now, we have a manual TSS gff file which is stored in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSS</span></code>.
-we can try <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> right now (since we only check first 200kb, we set <code class="docutils literal"><span class="pre">--le</span></code> as 200000).</p>
+we can try <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> right now (since we only check first 200kb, we set <code class="docutils literal"><span class="pre">-le</span></code> as 200000).</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic optimize_tss_processing \
      -fs ANNOgesic/output/target/fasta/NC_009839.1.fa \
      -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
@@ -685,7 +631,7 @@ Here, we only use TEX +/- for testing.</p>
 <p>Before running <code class="docutils literal"><span class="pre">srna</span></code>, we have to get sRNA database (we can use <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>) and
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (if you have not downloaded before).
 We can download fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Git repository</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 </pre></div>
 </div>
@@ -823,7 +769,7 @@ stat_NC_009839.1_sORF.csv
 </pre></div>
 </div>
 <p>For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like
-<code class="docutils literal"><span class="pre">NC_009839.1:-:36954:37044,NC_009839.1:+:75845:75990</span></code>. If you want to compute all sRNAs, you
+<code class="docutils literal"><span class="pre">NC_009839.1:36954:37044:-</span> <span class="pre">NC_009839.1:75845:75990:+</span></code>. If you want to compute all sRNAs, you
 can assign <code class="docutils literal"><span class="pre">all</span></code> to <code class="docutils literal"><span class="pre">-q</span></code> (may take several days).</p>
 <p>Several output folders will be generated.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNA_targets/
@@ -933,7 +879,8 @@ fasta file of the &#8220;target strain&#8221; - NC_000915. Therefore, we copy th
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
 </pre></div>
 </div>
-<p>Then we can run the subcommand with three programs &#8211; <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code> (assigned as <code class="docutils literal"><span class="pre">-p</span> <span class="pre">1,2,3</span></code>).</p>
+<p>Then we can run the subcommand with three programs &#8211; <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code>, and sample number
+for this test case is 1 (<code class="docutils literal"><span class="pre">-ms</span></code>).</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic snp \
     -t target \
     -p with_BAQ without_BAQ extend_BAQ \
@@ -969,7 +916,7 @@ extend_BAQ/  with_BAQ/    without_BAQ/
 NC_009839.1_NC_009839.1_1_1.fa
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores output of <a href="#id19"><span class="problematic" id="id20">`Samtools and Bcftools&lt;https://github.com/samtools&gt;`_</span></a>.
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores output of <a class="reference external" href="https://github.com/samtools">Samtools and Bcftools</a>.
 <code class="docutils literal"><span class="pre">SNP_table</span></code> stores results after filtering and the indices of potential sequence
 (potential sequences are stored in <code class="docutils literal"><span class="pre">seqs</span></code>).
 <code class="docutils literal"><span class="pre">statistics</span></code> stores the statistic files.</p>
@@ -1059,7 +1006,7 @@ NC_009839.1_NC_009839.1_sublocal.png  stat_NC_009839.1_sublocal.csv
 (text-mining for protein-protein interaction). Therefore, <code class="docutils literal"><span class="pre">ppi_network</span></code> can generate protein-protein
 interaction networks with supported literatures.</p>
 <p>Before running the subcommand, you need to download
-<a class="reference external" href="http://string-db.org/cgi/download.pl">species.vXXXX.txt from STRING</a></p>
+<a class="reference external" href="http://string-db.org/cgi/download.pl">species.v{$VERSIO}.txt from STRING</a></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/database http://string-db.org/newstring_download/species.v10.txt
 </pre></div>
 </div>
@@ -1114,12 +1061,13 @@ C8J_RS00250_flgD.png
 <h2>Generating riboswitch and RNA thermometer<a class="headerlink" href="#generating-riboswitch-and-rna-thermometer" title="Permalink to this headline">¶</a></h2>
 <p>If we want to detect riboswitches and RNA thermometer, we can use subcommand <code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code>.
 Before running it, we need to get information of the known riboswitches and RNA thermometer in Rfam.
-The files can be downloaded them from our <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Github</a>.</p>
+The <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">riboswitches and RNA thermometer files</a>
+can be downloaded them from our Git repository.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
 $ wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
 </pre></div>
 </div>
-<p>We also need to download Rfam.</p>
+<p>We also need to download <a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/database ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
 $ cd ANNOgesic/input/database
 $ tar -zxvf Rfam.tar.gz
@@ -1285,7 +1233,7 @@ $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse
 NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
 </pre></div>
 </div>
-<p>Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!</p>
+<p>Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!</p>
 </div>
 </div>
 

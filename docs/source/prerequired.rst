@@ -1,3 +1,5 @@
+.. _Required tools or databases:
+
 Required tools or databases
 ==============
 

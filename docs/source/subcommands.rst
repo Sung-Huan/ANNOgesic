@@ -1,9 +1,13 @@
+.. _ANNOgesic's subcommands:
+
 ANNOgesic's subcommands
 ===============
 
 In general, the subcommands need at least one argument - the analysis
 folder. If it is not given, ANNOgesic assumes the current
 folder as the analysis folder.
+
+.. _The format of filename:
 
 The format of filename
 --------------------
@@ -36,6 +40,8 @@ CRISPR           CRISPR
 ===============  ===========================
 
 Please avoid ``|`` in the filename, strain name of Gff3 files or fasta file.
+
+.. _The input format of libraries for running ANNOgesic:
 
 The input format of libraries for running ANNOgesic
 -----------------------------
@@ -79,9 +85,11 @@ If only conventional RNA-seq data without fragementation or TEX treated can be p
 it can still be assigned to fragmented libraries and used by ANNOgesic.
 However, it may influnece the results.
 
+.. _The format of sRNA database:
+
 The format of sRNA database
 -----------------------------
-If sRNA database is used for running ``srna``, please follow the format otherwise the output will become
+If a sRNA database is provided for running ``srna``, please follow the format otherwise the output will become
 nonsense. The format is 
 
 ::
@@ -95,7 +103,9 @@ for example:
   srn_4840|S._aureus_NCTC8325|RsaOV
 
 You can download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
-`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
+`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
+
+.. _Definition of reference strain and target strain:
 
 Definition of reference strain and target strain
 ------------------------------
@@ -104,6 +114,8 @@ Definition of reference strain and target strain
 If the user neither has fasta nor genome annotation file of "target strain", 
 ANNOgesic can generate them if "reference strain" and mutation information 
 are provided by the user.
+
+.. _Riboswitch and RNA thermometer dataset of Rfam:
 
 Riboswitch and RNA thermometer dataset of Rfam
 ----------------------------
@@ -117,8 +129,11 @@ RF00162  SAM  SAM riboswitch box leader
 RF00059  TPP  TPP riboswitch THI element
 ======== ===  ==========================
 
-All columns are separated by ``tab``. You can download the data from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
+All columns are separated by ``tab``. You can download the 
+`riboswitch and RNA thermometer data <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ 
+from our Git repository.
+
+.. _create:
 
 create
 -----
@@ -154,11 +169,11 @@ If they can be downloaded from NCBI, the files can also be obtained via running 
 
 **riboswitch_ID:** For storing the file which contains all the Rfam IDs of riboswitch.
 For format details, please check the section of 
-``Riboswitch and RNA thermometer dataset of Rfam``.
+:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
 
 **RNA_thermometer_ID:** For storing the file which contains all the Rfam IDs of RNA thermometer.
 For format details, please check the section of
-``Riboswitch and RNA thermometer dataset of Rfam``.
+:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
 
 **wigs:** For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in  
 ``fragment`` (fragmented libraries) or ``tex_notex`` (TEX +/- treated libraries).
@@ -174,6 +189,7 @@ For format details, please check the section of
       -h, --help            show this help message and exit
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Name/path of the project.
+.. _get_input_files:
 
 get_input_files
 --------------
@@ -231,28 +247,22 @@ Output folder names are following:
 
 **annotation:** Annotation files.
 
+.. _get_target_fasta:
+
 get_target_fasta
 --------------
 
 ``get_target_fasta`` is the subcommand for generating fasta files of "target strain" from 
-"reference strain". The format of mutation table is as following:
-
-==============  =========  ============  ========  =========  ====================  =============  ====  ============
- #reference_id  target_id  reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description 
---------------  ---------  ------------  --------  ---------  --------------------  -------------  ----  ------------
- NC_007795.1     HG003     a             333       c                                SAOUHSC_00002  dnaA  XXXXXX      
- NC_007795.1     HG003     t             543       \-          deletion                                  YYYYYY      
- NC_007795.1     HG003     \-            600       g           insertion            SAOUHSC_00132                    
-==============  =========  ============  ========  =========  ====================  =============  ====  ============
-
-If the titles of columns is presented on the top, they need to start with ``#``. 
+"reference strain". For the format of the table, please check 
+`mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
+The titles of columns is presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
 the user can type ``-`` to represent them. The information of ``target_id``, ``reference_id``,
 ``reference_nt``, ``position``, ``target_nt`` is required. The other columns can be blank. 
 Please use ``tab`` to separate all columns including blank ones.
 
-If no mutation information is provided, ``SNP_calling`` can be used for detecting mutations. 
-(one module of ``ANNOgesic``). Please check the section of ``SNP_calling``.
+If no mutation information is provided, ``snp`` can be used for detecting mutations. 
+(one module of ``ANNOgesic``). Please check the section of :ref:`snp`.
 
 - **Required files**
 
@@ -294,6 +304,8 @@ If no mutation information is provided, ``SNP_calling`` can be used for detectin
 - **Output files**
 
 **Fasta files of target genome**: This files are stored in ``$ANNOgesic_folder/output/target/fasta``.
+
+.. _annotation_transfer:
 
 annotation_transfer
 -----------
@@ -374,6 +386,8 @@ Output files from `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_
 will be stored in ``$ANNOgesic_folder/output/annotation_transfer``.
 
 **Annotation files** (``.gff``, ``.ptt``, ``.rnt``) will be stored in ``$ANNOgesic_folder/output/target/annotation``.
+
+.. _snp:
 
 snp
 -------
@@ -568,6 +582,8 @@ will be generated based on the first line of ``$STRAIN_$PROGRAM_seq_reference.cs
 
 **statistics**: Stores the statistic files, ex: the distribution of SNPs based on QUAL.
 
+.. _tss_processing:
+
 tss_processing (TSS and processing site prediction)
 --------------
 
@@ -575,7 +591,7 @@ tss_processing (TSS and processing site prediction)
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Since the parameters can affect the 
 results strongly, ``optimize_tss_processing`` can obtain the optimized parameters of 
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. please check the section 
-``optimize_tss_processing`` for details.
+:ref:`optimize_tss_processing` for details.
 
 - **Required tools**
 
@@ -583,7 +599,7 @@ results strongly, ``optimize_tss_processing`` can obtain the optimized parameter
 
 - **Required files**
 
-**Wiggle files of TEX +/-:** Please check the section ``The format of libraries for import to ANNOgesic`` for assigning correct format.
+**Wiggle files of TEX +/-:** Please check the section :ref:`The input format of libraries for running ANNOgesic` for assigning correct format.
 
 **Fasta file of the reference genome**
 
@@ -595,7 +611,7 @@ results strongly, ``optimize_tss_processing`` can obtain the optimized parameter
 and TSSpredator predicted ones.
 
 **Gff file of transcript:** If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
-For the transcripts, please check the section ``transcript``.
+For the transcripts, please check the section :ref:`transcript`.
 
 - **Arguments**
 
@@ -798,6 +814,8 @@ Based on this information, we can know the details of the specific TSS. The tags
 	
 	**libs:** Shows in which libraries the TSS can be detected.
 
+.. _transcript:
+
 transcript
 -------------------
 
@@ -806,12 +824,12 @@ focus on eukaryotic transcript. Due to this, we constructed a subcommand which i
 given gene annotations and several parameters that can be set by the user.
 
 For importing the information about libraries, please refer to section of 
-``The format of libraries for import to ANNOgesic``.
+:ref:`The input format of libraries for running ANNOgesic`.
 
 - **Required files**
 
 **Wiggle files of fragmented libraries or TEX+/- treated libraries:** For importing the information about libraries, please check the section 
-``The format of libraries for import to ANNOgesic``.
+:ref:`The input format of libraries for running ANNOgesic`.
 
 - **Optional input files**
 
@@ -1000,6 +1018,8 @@ Based on this information, we can know the details of the specific transcript. T
 	**detect_lib:** This transcript is detected by tex-treated libraries or fragmented libraries.
 
 	**best_avg_coverage:** The average coverage of the highest expressed library within this transcript.
+
+.. _terminator:
 
 terminator
 -----------
@@ -1282,6 +1302,8 @@ The meanings of the columns are as following:
 	"low" means the lowest coverage of the library, and "diff" represents the difference between "high" and "low". If "No_coverage_decreasing" is showed, 
 	it means this terminator reveal gene expression but no coverage decrease. If "NA" is showed, it means that this terminator has no gene expression.
 
+.. _utr:
+
 utr
 -----
 
@@ -1289,7 +1311,7 @@ utr
 to generate proper UTRs. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
 3'UTRs are based on detecting the 
 regions between the end of the transcripts and CDSs/tRNAs/sRNAs. If the gff files of TSSs are not computed by 
-ANNOgesic, please use --TSS_source. ``utr`` will classify TSSs for the analysis.
+ANNOgesic, please use ``--TSS_source`` to classify TSSs for the analysis.
 
 - **Required files**
 
@@ -1388,6 +1410,8 @@ Based on this information, we can know the details of the specific UTR. The tags
 
 **statiatics:** ``$GFFNAME_$STRAINNAME_$UTRTYPE_length.png`` is the distribution of the UTR length.
 
+.. _srna:
+
 srna
 -----
 ``srna`` can predict different types of sRNAs. For intergenic and antisense sRNA, it 
@@ -1401,7 +1425,8 @@ transcript and genome annotation.
 
 **Gff files of the transcript**
 
-**Wiggle files of the fragmented or TEX+/- libraries:** Please check the section ``The format of libraries for import to ANNOgesic``.
+**Wiggle files of the fragmented or TEX+/- libraries:** Please check the section 
+:ref:`The input format of libraries for running ANNOgesic`.
 
 - **Optional input files**
 
@@ -1428,7 +1453,7 @@ NC_000915.1  729009        \-          MOTIF_1
 
 First row is header of the table, the last column is the name of motif/promoter.
 If subcommand ``promoter`` was used for detecting promoter, the table will be generated automatically.
-Please refer to the section ``promoter``.
+Please refer to the section :ref:`promoter`.
 
 - **Filers with the corresponding input files and tools**
 
@@ -2014,6 +2039,8 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 	**promoter:** Promoters which are associated with the sRNA. Each promoter (separated by comma) corresponds with the related TSSs.
 
+.. _sorf:
+
 sorf
 ----------
 ``sorf`` can detect sORF based on searching ribosome binding sites, start codons and stop codons within the non-annotated transcripts.
@@ -2030,7 +2057,7 @@ Please be aware this point for using the results.
 **Gff files of the genome annotation**
 **Gff files of the transcript**
 
-**Wiggle files of TEX+/- or fragmented libraries:** Please refer to the section ``The format of libraries for import to ANNOgesic``.
+**Wiggle files of TEX+/- or fragmented libraries:** Please refer to the section :ref:`The input format of libraries for running ANNOgesic`.
 
 **fasta files of the genome sequence**
 
@@ -2215,8 +2242,6 @@ Output files are stored in ``$ANNOgesic/output/sORF``.
 
 The meaning of each column is as following:
 
-train  Name    start   end     strand  type    TSS     RBS     all_start_points        all_stop_points sRNA_confliction        frame_shift     lib_type        best_avg_coverage       best_highest_coverage   best_lowest_coverage    track_detail    seq
-
 	**strain:** Strain name.
 
 	**Name:** Name of this sORF which is also used in gff file.
@@ -2278,6 +2303,8 @@ Based on this information, we can know the details of the specific sORF. The tag
 
 **frame_shift:** The number of frame shifts in the regions.
 
+.. _promoter:
+
 promoter
 -----------
 
@@ -2285,7 +2312,7 @@ promoter
 We integrated `MEME <http://meme-suite.org/tools/meme>`_ (for ungapped motifs) and 
 `GLAM2 <http://meme-suite.org/tools/glam2>`_ (for gapped motifs) to compute the promoters.
 Based on the tool, visulization HTML files can be generated. If TSS gff file is not computed by 
-ANNOgesic, please use ``--TSS_source``, then ``promoter`` will classify the TSSs for computing 
+ANNOgesic, please use ``--TSS_source`` to classify TSSs for computing 
 promoter motifs.
 
 - **Required tools**
@@ -2303,7 +2330,7 @@ promoter motifs.
 **Gff files of the genome annotation**
 
 **Gff files of the TSSs:** If the TSS gff file is not computed by ANNOgesic, the libraries and wiggle files are necessary.
-Please refer to the ``The format of libraries for import to ANNOgesic`` in order to assign the correct format.
+Please refer to the :ref:`The input format of libraries for running ANNOgesic` in order to assign the correct format.
 
 - **Arguments**
 
@@ -2416,6 +2443,8 @@ to generate promoter motifs. The results will be stored in this folder.
 **TSS_class:** If the TSSs are not computed by ANNOgesic, ``TSS_class`` will be generated for classification of TSS.
 TSS gff files with TSS types will be stored here.
 
+.. _operon:
+
 operon
 ----------
 
@@ -2527,6 +2556,8 @@ The meanings of each column is following:
 	**Associated_genes_with_whole_operon:** Locus tag of the genes which are associated with the operon.
 
 **statistics:** Stores statistics file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.
+
+.. _circrna:
 
 circrna
 --------------
@@ -2661,6 +2692,8 @@ support_reads=41;read_at_start=1.0;read_at_end=1.0;confliction=NA;method=segemeh
 
 	**supported_reads/reads_at_end:** (supported reads / total reads) at end point of the circular RNA.	
 
+.. _go_term:
+
 go_term
 ----------
 
@@ -2741,6 +2774,8 @@ results of all CDS are stored in ``ANNOgesic/output/Go_term/all_CDS``.
 	``$STRAINNAME_biological_process.png``, ``$STRAINNAME_cellular_component.png``, 
 	``$STRAINNAME_molecular_function.png`` and ``$STRAINNAME_three_roots.png`` are the figures of 
 	biological process, cellular component, molecular_function and three roots of GO term classes respectively.
+
+.. _srna_target:
 
 srna_target
 ---------------
@@ -2930,6 +2965,8 @@ The meaning of each column is similar to the table of RNAplex.
 
 **target_seqs:** Stores fasta sequences of the potential targets.
 
+.. _ppi_network:
+
 ppi_network
 -------------
 
@@ -2939,7 +2976,7 @@ the supported literatures of the protein-protein interaction networks.
 
 - **Required files**
 
-**Species table of STRING:** `species.vXXXX.txt from STRING <http://string-db.org/cgi/download.pl>`_.
+**Species table of STRING:** `species.v${VERSION}.txt from STRING <http://string-db.org/cgi/download.pl>`_.
 
 **Gff files of the genome annotation**
 
@@ -3046,6 +3083,8 @@ Solid line means that strong supported literature can be found. Dash-dot line
 means that the supported literatures are very weak. Dot line means that no supported literatures can be found. 
 Color is the best score of the supported literatures of the interactions.
 
+.. _subcellular_localization:
+
 subcellular_localization
 ------------------
 
@@ -3114,7 +3153,7 @@ two sub-folders will be generated. Results of the expressed CDSs are stored in
 ``ANNOgesic/output/subcellular_localization/expressed_CDS`` and
 results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all_CDS``.
 
-``psortb_results``: Stores the results of Psortb:
+**psortb_results**: Stores the results of Psortb:
 
 	**Raw output data of Psortb:** Format of the filename is ``$STRIAN_raw.txt``.
 
@@ -3141,6 +3180,8 @@ results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all
 
 	**Figure of Subcellular localization with corresponding amount:** Format of the filename is ``$FILENAME_$STRAIN_sublocal.png``.
 
+.. _riboswitch_thermometer:
+
 riboswitch_thermometer
 --------------
 
@@ -3163,8 +3204,9 @@ riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
 
 **Rfam ID files of the riboswitch or RNA thermometer:** The file should contain Rfam ID, 
 Name and Description of riboswitchs or RNA thermometer (refer to 
-``Riboswitch and RNA thermometer dataset of Rfam``). You can download the file from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic>`_ (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
+:ref:`Riboswitch and RNA thermometer dataset of Rfam`). You can download 
+`the file <https://github.com/Sung-Huan/ANNOgesic>`_ from our 
+Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
 
 - **Arguments**
 
@@ -3294,6 +3336,8 @@ The tags are as following:
 
 **statistics:** Stores the file which contains the riboswichs / RNA_thermometer with correspnding amount.
 
+.. _crispr:
+
 crispr
 ---------------
 ``crispr`` integrates CRISPR Recognition Tool (`CRT <http://www.room220.com/crt/>`_) which can detect the repeat 
@@ -3373,6 +3417,8 @@ Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are g
 
 **statistics:** Stores statistic files.
 
+.. _optimize_tss_processing:
+
 optimize_tss_processing
 ---------------
 
@@ -3387,7 +3433,7 @@ Then ``optimize_tss_processing`` can scan whole genome based on the principle of
 
 - **Required files**
 
-**Wiggle files of TEX +/-:** Please check the section ``The format of libraries for import to ANNOgesic``.
+**Wiggle files of TEX +/-:** Please check the section :ref:`The input format of libraries for running ANNOgesic`.
 
 **Fasta file of the genome sequence**
 
@@ -3551,6 +3597,8 @@ columns are missing rate.
 
 **best.csv:** Stores the best parameter set. The meanings of all columns are the same as ``stat.csv``.
 
+.. _screenshot:
+
 screenshot
 -----------
 
@@ -3644,6 +3692,8 @@ Format of the filenames will be ``$STRAIN:$START-$END.png``. For example, ``NC_0
 means the strain is NC_007795, the feature's start point is 1051529 and end point is 
 1051696.
 
+.. _color_png:
+
 color_png
 ----------
 
@@ -3686,6 +3736,8 @@ exist in the folder of ``screenshots``.
 - **Output files**
 
 The new screenshots will replace the previous ones automatically.
+
+.. _merge_feature:
 
 merge_features
 --------------

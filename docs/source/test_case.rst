@@ -5,18 +5,18 @@ Here we will guide you how to use ANNOgesic through a small test case.
 You will see how to run each subcommand of ANNOgesic. The test case is a public 
 RNA-Seq data from NCBI GEO that was part of a work by
 `Dugar et al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
-The differential RNA-seq data is of Campylobacter jejuni subsp. jejuni 81116. 
+The differential RNA-seq data is of **Campylobacter jejuni** subsp. jejuni 81116. 
 There will be several output files which are generated in different formats - 
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures. 
 For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bioviz.org/igb/index.html>`_, 
 `IGV <https://www.broadinstitute.org/igv/>`_ or `Jbrowse <http://jbrowse.org/>`_.
 
-Before we start, please check ``The format of filename`` and 
-``The format of libraries for import to ANNOgesic`` in 
-the section ``ANNOgesic's subcommands``. All the details are also in ``ANNOgesic's subcommands``. 
-Moreover, all the requirements are listed in the section ``Required tools or databases``.
-For command lines which we will present later, please check the ``run.sh``
-in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
+Before we start, please check :ref:`The format of filename` and 
+:ref:`The input format of libraries for running ANNOgesic` in 
+the section :ref:`ANNOgesic's subcommands`. All the details are also in :ref:`ANNOgesic's subcommands`. 
+Moreover, all the requirements are listed in the section :ref:`Required tools or databases`.
+For command lines which we will present later, please check the 
+`run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ in our Git repository.
 
 If the subcommand integrates third-party software, ex: TSSpredator,
 please check path of the execute file. If necessary, please assign it properly.
@@ -24,7 +24,7 @@ please check path of the execute file. If necessary, please assign it properly.
 Generating a project
 --------------------
 
-First of all, we need to create a working folder by running ``create``.
+First of all, we need to create a working folder by running ``create``. ``-pj`` represents project path.
 
 ::
 
@@ -119,8 +119,9 @@ Now we get the reads. Then we have to download the wiggle files.
    $ cd ../../../../
 
 If we check the wiggle files, we will find that the strain name (presented by "chrom") is not the same as fasta or annotation gff file. 
-Thus, we need to change it. We can use ``replace_seq_id.py`` from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
-to replace the strain name properly. If the strain names in your fasta, annotation, wiggle files are the same, you can skip this step.
+Thus, we need to change it. We can use `replace_seq_id.py <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ from our 
+Git repository. to replace the strain name properly. If the strain names in your fasta, annotation, 
+wiggle files are the same, you can skip this step.
 
 ::
 
@@ -140,20 +141,11 @@ Now, we assume that we need to generate fasta file of our target strain.
 First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain. 
 Then, we need to generate a mutation table between these two strains. When these files are produced, 
 we can run subcommand ``get_target_fasta`` for getting fasta file of the target strain. 
-For mutation table format, please check the section ``ANNOgesic's subcommands``.
+For mutation table format, please check the section :ref:`ANNOgesic's subcommands`.
 
-We use a simple example to modify our test case. The 
-`mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_ is 
-
-=============  ==========  ============  ========  =========  ====================  =============  ====  ============
- #refernce_id  target_id   reference_nt  position  target_nt  impact_of_correction  locus_tag      gene  Description
--------------  ----------  ------------  --------  ---------  --------------------  -------------  ----  ------------
- NC_000915.1   NC_test.1   a             3         c                                SAOUHSC_00002  dnaA  XXXXXX
- NC_000915.1   NC_test.1   t             6         \-          deletion                                  YYYYYY
- NC_000915.1   test_case2  \-            600       g           insertion            SAOUHSC_00132
-=============  ==========  ============  ========  =========  ====================  =============  ====  ============
-
-Every column is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files 
+We use a simple example to modify our test case, please check 
+`mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
+Every column of the table is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files 
 will be generated in ``ANNOgesic/output/target/fasta``.
 
 ::
@@ -295,15 +287,15 @@ Before running ``tss_processing``, if we want to use the optimized parameters,
 we need to run ``optimize_tss_processing`` first. The optimization requires a gff file of the manual-detected TSSs. 
 In our experience, we recommand you to detect at least 50 TSSs and check more than 200kb of genome. 
 
-For the test case, we prepared the manual TSS file in our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_, 
-you can download it. 
+For the test case, you can download the `manual TSS file <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
+from our git repository. 
 
 ::
 
     $ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
 Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSS``. 
-we can try ``optimize_tss_processing`` right now (since we only check first 200kb, we set ``--le`` as 200000).
+we can try ``optimize_tss_processing`` right now (since we only check first 200kb, we set ``-le`` as 200000).
 
 ::
 
@@ -637,7 +629,7 @@ For running ``srna``, we can apply several filters to improve the detection. The
 Before running ``srna``, we have to get sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 
 We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 
-`Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
+`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
 
 ::
 
@@ -797,7 +789,7 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
         -pj ANNOgesic
 
 For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like 
-``NC_009839.1:-:36954:37044,NC_009839.1:+:75845:75990``. If you want to compute all sRNAs, you 
+``NC_009839.1:36954:37044:- NC_009839.1:75845:75990:+``. If you want to compute all sRNAs, you 
 can assign ``all`` to ``-q`` (may take several days).
 
 Several output folders will be generated. 
@@ -932,7 +924,8 @@ fasta file of the "target strain" - NC_000915. Therefore, we copy the bam files 
 
     $ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
 
-Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ`` (assigned as ``-p 1,2,3``).
+Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``, and sample number 
+for this test case is 1 (``-ms``).
 
 ::
 
@@ -979,7 +972,7 @@ In ``seqs``, the potential sequences can be found.
     $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_009839.1/
     NC_009839.1_NC_009839.1_1_1.fa
 
-``SNP_raw_outputs`` stores output of `Samtools and Bcftools<https://github.com/samtools>`_. 
+``SNP_raw_outputs`` stores output of `Samtools and Bcftools <https://github.com/samtools>`_. 
 ``SNP_table`` stores results after filtering and the indices of potential sequence 
 (potential sequences are stored in ``seqs``).
 ``statistics`` stores the statistic files.
@@ -1083,7 +1076,7 @@ Generating protein-protein interaction network
 interaction networks with supported literatures.
 
 Before running the subcommand, you need to download 
-`species.vXXXX.txt from STRING <http://string-db.org/cgi/download.pl>`_
+`species.v{$VERSIO}.txt from STRING <http://string-db.org/cgi/download.pl>`_
 
 ::
 
@@ -1147,14 +1140,15 @@ Generating riboswitch and RNA thermometer
 
 If we want to detect riboswitches and RNA thermometer, we can use subcommand ``riboswitch_thermometer``.
 Before running it, we need to get information of the known riboswitches and RNA thermometer in Rfam. 
-The files can be downloaded them from our `Github <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
+The `riboswitches and RNA thermometer files <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ 
+can be downloaded them from our Git repository.
 
 ::
 
     $ wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
     $ wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
 
-We also need to download Rfam.
+We also need to download `Rfam <http://rfam.xfam.org/>`_.
 
 ::
 
@@ -1351,4 +1345,4 @@ We will see output filenames are the same as before. However, when we open the f
     $ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse
     NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
 
-Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!!
+Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!
