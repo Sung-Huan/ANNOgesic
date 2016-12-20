@@ -35,15 +35,21 @@ def compare(data1, data2, overlap, tolerance):
     Then, try to merge them to be a longer one'''
     if (data1.seq_id == data2.seq_id) and (data1.strand == data2.strand):
         if (data1.start <= (data2.end + tolerance)) and (
-                data1.start >= data2.start):
+                data1.start >= data2.start) and (
+                data1.end >= (data2.end + tolerance)):
             modify_position(data1, data2)
             overlap = True
         elif (data1.end >= (data2.start - tolerance)) and (
-                data1.end <= data2.end):
+                data1.end <= data2.end) and (
+                data1.start <= (data2.start - tolerance)):
             modify_position(data1, data2)
             overlap = True
         elif (data1.start <= data2.start) and (
                 data1.end >= data2.end):
+            modify_position(data1, data2)
+            overlap = True
+        elif (data2.start <= data1.start) and (
+                data2.end >= data1.end):
             modify_position(data1, data2)
             overlap = True
     return overlap
