@@ -275,11 +275,32 @@ def get_fasta(seq, merge, num, strand, args_term, out):
         num += 1
     return num
 
+
+def mod_inter_tas_gene(inter_tas, genes):
+    for inter in inter_tas:
+        for gene in genes:
+            if (inter["strain"] == gene.seq_id):
+                if (gene.end > inter["start"]) and (
+                        gene.end < inter["end"]) and (
+                        gene.strand == "+"):
+                    inter["start"] = gene.end
+                    inter["parent_p"], inter["p_pos"] = get_feature(
+                            gene, "gene")
+                elif (gene.start > inter["start"]) and (
+                        gene.start < inter["end"]) and (
+                        gene.strand == "-"):
+                    inter["end"] = gene.start
+                    inter["parent_m"], inter["m_pos"] = get_feature(
+                            gene, "gene")
+                    break
+
+
 def intergenic_seq(seq_file, tran_file, gff_file, out_file, args_term):
     '''get intergenic seq'''
     out = open(out_file, "w")
     seq, tas, merges, genes = read_file(seq_file, tran_file, gff_file)
     inter_tas = get_inter(tas, seq, "tran")
+    mod_inter_tas_gene(inter_tas, genes)
     inter_genes = get_inter(genes, seq, "gene")
     merges = merge_inter(inter_tas, inter_genes)
     num = 0

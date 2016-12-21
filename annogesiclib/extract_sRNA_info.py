@@ -155,6 +155,20 @@ def gen_out_flie(blasts, out_t, prefix, out_f, database, srna, names):
                    len(names), blasts["hit_num"])
 
 
+def get_whole_query(line, blast_f):
+    whole_line = line
+    if (not line.endswith("+")) and (
+            not line.endswith("-")):
+        for line in blast_f:
+            line = line.strip()
+            whole_line = whole_line + line
+            if (line.endswith("+")) or (
+                    line.endswith("-")):
+                return whole_line
+    else:
+        return whole_line
+
+
 def extract_blast(blast_result, srna_file, output_file,
                   output_table, database):
     '''extract the result of blast'''
@@ -171,6 +185,7 @@ def extract_blast(blast_result, srna_file, output_file,
             for line in blast_f:
                 line = line.strip()
                 if line.startswith("Query= "):
+                    line = get_whole_query(line, blast_f)
                     go_out = False
                     query = line.split("=")[1].strip()
                     if (query == ("|".join([

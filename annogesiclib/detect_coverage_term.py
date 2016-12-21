@@ -65,7 +65,13 @@ def compare_transtermhp(hps, fr_terms):
             term["method"] = ",".join([term["method"], "TransTermHP"])
         terms.append(term)
     for hp in hps:
+        need_print = False
         if "print" not in hp.attributes.keys():
+            need_print = True
+        else:
+            if not hp.attributes["print"]:
+                need_print = True
+        if need_print:
             if hp.strand == "+":
                 terms.append({"method": "TransTermHP", "strain": hp.seq_id,
                               "start": hp.start, "end": hp.end,
