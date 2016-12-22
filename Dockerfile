@@ -3,7 +3,7 @@ MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 #ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get upgrade --yes
-RUN apt-get update
+RUN apt-get update --yes
 RUN apt-get install default-jre default-jdk python3 python3-scipy \
 vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
 software-properties-common python3-software-properties bioperl \
