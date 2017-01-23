@@ -22,8 +22,8 @@ class Mock_func(object):
     def mock_TransTermHP(self, fasta, combine_path, file_, out_path, prefix, out):
         pass
 
-    def mock_intergenic_seq(self, fasta, tran_file, gff_file, tmp_seq, args):
-        pass
+    def mock_intergenic_seq(self, fasta, tran_file, gff_file, tmp_seq, tmp_index, args):
+        gen_file('test_folder/output/inter_index_aaa', 'aaa\n..()()...')        
 
     def mock_poly_t(self, gff_file, tran_file, fuzzy_up_ta,
                     fuzzy_down_ta, fuzzy_up_cds, fuzzy_down_cds):

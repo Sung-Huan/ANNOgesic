@@ -57,7 +57,8 @@ class Mock_func(object):
         pass
 
     def mock_get_seq(self, gff, fasta, seq_file):
-        pass
+        gen_file('test_folder/output/sRNA_index_test', ">test\nAAATTTGGGCCC")
+        gen_file('test_folder/output/sRNA_2d_test', ">test\n...()()...")
 
     def mock_extract_energy(self, gff_file, sec_file, energy_file):
         pass
@@ -366,6 +367,7 @@ class TestsRNADetection(unittest.TestCase):
             os.mkdir(os.path.join(sec_path, "dot_plot"))
         gen_file(os.path.join(self.fastas, "tmp/test.fa"), ">test\nAAATTTGGGCCC")
         gen_file(os.path.join(self.out, "sRNA_seq_test"), ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.out, "sRNA_index_test"), ">test\nAAATTTGGGCCC")
         gen_file(os.path.join(self.out, "tmp_basic_test"), self.example.srna_file)
         gen_file(os.path.join(self.out, "tmp_energy_test"), "test")
         gen_file(os.path.join(self.out, "tmp_nr_test"), "test")
