@@ -6,6 +6,7 @@ from annogesiclib.helper import Helper
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.converter import Converter
 from annogesiclib.get_inter_seq import intergenic_seq
+from annogesiclib.extract_sec_info import extract_info_sec
 from annogesiclib.get_polyT import poly_t
 from annogesiclib.detect_coverage_term import detect_coverage
 from annogesiclib.gff3 import Gff3Parser
@@ -279,6 +280,8 @@ class Terminator(object):
         for prefix in prefixs:
             tmp_seq = os.path.join(args_term.out_folder,
                                    "_".join(["inter_seq", prefix]))
+            tmp_index = os.path.join(args_term.out_folder,
+                                     "_".join(["inter_index", prefix]))
             tmp_sec = os.path.join(args_term.out_folder,
                                    "_".join(["inter_sec", prefix]))
             tran_file = os.path.join(self.tran_path,
@@ -286,8 +289,10 @@ class Terminator(object):
             gff_file = os.path.join(merge_path, prefix + ".gff")
             print("Extracting seq of {0}".format(prefix))
             intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
-                           tran_file, gff_file, tmp_seq, args_term)
+                           tran_file, gff_file, tmp_seq, tmp_index, args_term)
             self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
+            extract_info_sec(tmp_sec, tmp_seq, tmp_index)
+            os.remove(tmp_index)
             tmp_cand = os.path.join(args_term.out_folder,
                                     "_".join(["term_candidates", prefix]))
             poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)

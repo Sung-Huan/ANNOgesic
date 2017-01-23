@@ -5,6 +5,7 @@ def uni(tas, genes, out):
     '''This is for the transcript which is not overlap with annotation'''
     start_tmp = 0
     stop_tmp = 0
+    strand_tmp = ""
     detect = False
     for ta in tas:
         for gene in genes:
@@ -19,10 +20,15 @@ def uni(tas, genes, out):
                          ta.start < gene.end) and (
                          ta.end > gene.end)):
                     detect = True
-        if (not detect) and (start_tmp != ta.start) and (stop_tmp != ta.end):
+        if ((not detect) and (start_tmp != ta.start) and (
+                stop_tmp != ta.end)) or (
+                (not detect) and (((start_tmp == ta.start) or (
+                    stop_tmp == ta.end)) and (
+                    strand_tmp != ta.strand))):
             out.write(ta.info + "\n")
             start_tmp = ta.start
             stop_tmp = ta.end
+            strand_tmp = ta.strand
         detect = False
 
 

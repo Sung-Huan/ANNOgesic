@@ -243,7 +243,7 @@ def read_file(seq_file, tran_file, gff_file):
     return seq, tas, merges, genes
 
 
-def get_fasta(seq, merge, num, strand, args_term, out):
+def get_fasta(seq, merge, num, strand, args_term, out, out_i):
     if (merge["end"] - merge["start"]) > args_term.window:
         detect_out = False
         for start in range(merge["start"], merge["end"] + 1, args_term.shift):
@@ -254,11 +254,12 @@ def get_fasta(seq, merge, num, strand, args_term, out):
                 end = start + args_term.window
             inter_seq = Helper().extract_gene(
                 seq[merge["strain"]], start, end, strand)
-            out.write(">" + "|".join([
+            out_i.write(">" + "|".join([
                 "inter_" + str(num), str(start),
                 str(end), merge["strain"], merge["parent_p"],
                 merge["parent_m"], merge["p_pos"], merge["m_pos"],
                 strand]) + "\n")
+            out.write(">inter_" + str(num) + "\n")
             out.write(inter_seq + "\n")
             num += 1
             if detect_out:
@@ -266,11 +267,12 @@ def get_fasta(seq, merge, num, strand, args_term, out):
     else:
         inter_seq = Helper().extract_gene(
             seq[merge["strain"]], merge["start"], merge["end"], strand)
-        out.write(">" + "|".join([
+        out_i.write(">" + "|".join([
             "inter_" + str(num), str(merge["start"]),
             str(merge["end"]), merge["strain"], merge["parent_p"],
             merge["parent_m"], merge["p_pos"], merge["m_pos"],
             strand]) + "\n")
+        out.write(">inter_" + str(num) + "\n")
         out.write(inter_seq + "\n")
         num += 1
     return num
@@ -295,9 +297,11 @@ def mod_inter_tas_gene(inter_tas, genes):
                     break
 
 
-def intergenic_seq(seq_file, tran_file, gff_file, out_file, args_term):
+def intergenic_seq(seq_file, tran_file, gff_file, out_file,
+                   index_file, args_term):
     '''get intergenic seq'''
     out = open(out_file, "w")
+    out_i = open(index_file, "w")
     seq, tas, merges, genes = read_file(seq_file, tran_file, gff_file)
     inter_tas = get_inter(tas, seq, "tran")
     mod_inter_tas_gene(inter_tas, genes)
@@ -309,6 +313,8 @@ def intergenic_seq(seq_file, tran_file, gff_file, out_file, args_term):
         for merge in corr_merges:
             if merge["start"] < merge["end"]:
                 if merge["strand"] == "+":
-                    num = get_fasta(seq, merge, num, "+", args_term, out)
+                    num = get_fasta(seq, merge, num, "+", args_term,
+                                    out, out_i)
                 else:
-                    num = get_fasta(seq, merge, num, "-", args_term, out)
+                    num = get_fasta(seq, merge, num, "-", args_term,
+                                    out, out_i)

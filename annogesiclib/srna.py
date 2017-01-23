@@ -24,6 +24,7 @@ from annogesiclib.sRNA_filter_min_utr import filter_utr
 from annogesiclib.sRNA_antisense import srna_antisense
 from annogesiclib.args_container import ArgsContainer
 from annogesiclib.lib_reader import read_wig, read_libs
+from annogesiclib.extract_sec_info import extract_info_sec, modify_header
 
 
 class sRNADetection(object):
@@ -399,8 +400,11 @@ class sRNADetection(object):
             detect = False
             seq_file = os.path.join(out_folder, "_".join(["sRNA_seq", prefix]))
             sec_file = os.path.join(out_folder, "_".join(["sRNA_2d", prefix]))
+            index_file = os.path.join(out_folder, "_".join(
+                ["sRNA_index", prefix]))
             self.helper.get_seq("_".join([self.prefixs["basic"], prefix]),
-                                os.path.join(fasta_path, fasta), seq_file)
+                                os.path.join(fasta_path, fasta), index_file)
+            modify_header(seq_file, index_file)
         else:
             print("Error: There is not fasta file of {0}".format(prefix))
             print("Please check your imported information")
@@ -411,9 +415,12 @@ class sRNADetection(object):
         os.chdir(tmp_path)
         sec_file = os.path.join(main_path, sec_file)
         seq_file = os.path.join(main_path, seq_file)
+        index_file = os.path.join(main_path, index_file)
         tmp_sec_path = os.path.join(main_path, sec_path)
         tmp_dot_path = os.path.join(main_path, dot_path)
         self._run_RNAfold(seq_file, rnafold, sec_file)
+        extract_info_sec(sec_file, seq_file, index_file)
+        os.remove(index_file)
         extract_energy(os.path.join(main_path,
                        "_".join([self.prefixs["basic"], prefix])),
                        sec_file, os.path.join(main_path,
