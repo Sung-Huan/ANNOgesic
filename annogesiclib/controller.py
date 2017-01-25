@@ -99,12 +99,19 @@ class Controller(object):
         detect = False
         if os.path.exists(exe):
             detect = True
+            full_exe = os.path.realpath(exe)
         for folder in os.environ["PATH"].split(":"):
-            if exe in os.listdir(folder):
+            if os.path.exists(os.path.join(folder, exe)):
                 detect = True
+                full_exe = exe
         if not detect:
-            print("Error: {0} can't be found!".format(exe))
-            sys.exit()
+            if os.path.exists(os.path.realpath(exe)):
+                full_exe = os.path.realpath(exe)
+            else:
+                print("Error: {0} can't be found!".format(exe))
+                print("Please assign the correct path!")
+                sys.exit()
+        return full_exe
 
     def check_file(self, files, names, require):
         '''Check the path of file'''
@@ -219,7 +226,7 @@ class Controller(object):
                 self._args.ref_gbk_files is not None):
             print("Error: please choose embl as input or genbank as input")
             sys.exit()
-        self.check_execute_file(self._args.ratt_path)
+        self._args.ratt_path = self.check_execute_file(self._args.ratt_path)
         self.check_multi_files(
                 [self._args.target_fasta_files, self._args.ref_fasta_files],
                 ["--target_fasta_files", "--ref_fasta_files"])
@@ -246,7 +253,8 @@ class Controller(object):
                  "--manual_files", "--compare_transcript_files"])
         self.check_parameter([self._args.tex_notex_libs, self._args.condition_names],
                              ["--tex_notex_libs", "--condition_names"])
-        self.check_execute_file(self._args.tsspredator_path)
+        self._args.tsspredator_path = self.check_execute_file(
+                self._args.tsspredator_path)
         if self._args.compute_program.lower() == "tss":
             print("Running TSS prediction")
             project_creator.create_subfolders(
@@ -282,7 +290,8 @@ class Controller(object):
         """opimize TSSpredator"""
         self.check_file([self._args.manual],
                         ["--manual"], True)
-        self.check_execute_file(self._args.tsspredator_path)
+        self._args.tsspredator_path = self.check_execute_file(
+                self._args.tsspredator_path)
         self.check_parameter([self._args.strain_name, self._args.tex_notex_libs,
                               self._args.condition_names],
                              ["--strain_name", "--tex_notex_lib",
@@ -320,7 +329,8 @@ class Controller(object):
         print("Running png files coloring")
         self.check_parameter([self._args.track_number], ["--track_numer"])
         self.check_folder([self._args.screenshot_folder], ["--screenshot_folder"])
-        self.check_execute_file(self._args.imagemagick_covert_path)
+        self._args.imagemagick_covert_path = self.check_execute_file(
+                self._args.imagemagick_covert_path)
         color = ColorPNG()
         color.generate_color_png(
                 self._args.track_number, self._args.screenshot_folder,
@@ -336,9 +346,9 @@ class Controller(object):
                  self._args.transcript_files, self._args.srna_files],
                 ["--fasta_files", "--annotation_files",
                  "--transcript_files", "--srna_files"])
-        for exe in (self._args.transtermhp_path, self._args.expterm_path,
-                    self._args.rnafold_path):
-            self.check_execute_file(exe)
+        for prop in ("transtermhp_path", "expterm_path", "rnafold_path"):
+            setattr(self._args, prop,
+                    self.check_execute_file(getattr(self._args, prop)))
         project_creator.create_subfolders(
             self._paths.required_folders("terminator"))
         args_term = self.args_container.container_terminator(
@@ -429,14 +439,15 @@ class Controller(object):
             if "sec_str" == info:
                 self._check_filter_input(
                         self._args.fasta_files, "fasta", "fasta")
-                for exe in (self._args.rnafold_path, self._args.relplot_path,
-                            self._args.mountain_path, self._args.ps2pdf14_path):
-                    self.check_execute_file(exe)
+                for prop in ("rnafold_path", "relplot_path",
+                             "mountain_path", "ps2pdf14_path"):
+                    setattr(self._args, prop,
+                            self.check_execute_file(getattr(self._args, prop)))
             elif ("blast_nr" == info) or (
                     "blast_srna"== info):
-                for exe in (self._args.blastn_path, self._args.blastx_path,
-                            self._args.makeblastdb_path):
-                    self.check_execute_file(exe)
+                for prop in ("blastn_path", "blastx_path", "makeblastdb_path"):
+                    setattr(self._args, prop,
+                            self.check_execute_file(getattr(self._args, prop)))
             elif "sorf" == info:
                 self._check_filter_input(
                         self._args.sorf_files, "sORF", "sorf")
@@ -548,10 +559,10 @@ class Controller(object):
                                    ["--annotation_files"])
         if (self._args.program == "both") or (
                 self._args.program == "meme"):
-            self.check_execute_file(self._args.meme_path)
+            self._args.meme_path = self.check_execute_file(self._args.meme_path)
         elif (self._args.program == "both") or (
                 self._args.program == "glam2"):
-            self.check_execute_file(self._args.glam2_path)
+            self._args.glam2_path = self.check_execute_file(self._args.glam2_path)
         project_creator.create_subfolders(
             self._paths.required_folders("promoter"))
         args_pro = self.args_container.container_promoter(
@@ -593,13 +604,15 @@ class Controller(object):
         """circRNA detection"""
         print("Running circular RNA prediction")
         if self._args.align:
-            self.check_execute_file(self._args.segemehl_path)
+            self._args.segemehl_path = self.check_execute_file(
+                    self._args.segemehl_path)
             if self._args.read_files is None:
                 print("Error: The read files are needed for --align.")
                 sys.exit()
             self.check_multi_files([self._args.read_files], ["--read_files"])
-        for exe in (self._args.testrealign_path, self._args.samtools_path):
-            self.check_execute_file(exe)
+        for prop in ("testrealign_path", "samtools_path"):
+            setattr(self._args, prop,
+                    self.check_execute_file(getattr(self._args, prop)))
         self.check_multi_files(
                 [self._args.fasta_files, self._args.annotation_files,
                  self._args.bam_files],
@@ -647,14 +660,15 @@ class Controller(object):
                 ["--fasta_files", "--srna_files",
                  "--annotation_files"])
         if (self._args.program.lower() == "both"):
-            for exe in (self._args.rnaplfold_path, self._args.rnaplex_path,
-                        self._args.rnaup_path):
-                self.check_execute_file(exe)
+            for prop in ("rnaplfold_path", "rnaplex_path", "rnaup_path"):
+                setattr(self._args, prop,
+                        self.check_execute_file(getattr(self._args, prop)))
         elif self._args.program.lower() == "RNAup":
-            self.check_execute_file(self._args.rnaup_path)
+            self._args.rnaup_path = self.check_execute_file(self._args.rnaup_path)
         elif self._args.program.lower() == "RNAplex":
-            for exe in (self._args.rnaplfold_path, self._args.rnaplex_path):
-                self.check_execute_file(exe)
+            for prop in ("rnaplfold_path", "rnaplex_path"):
+                setattr(self._args, prop,
+                        self.check_execute_file(getattr(self._args, prop)))
         project_creator.create_subfolders(
             self._paths.required_folders("srna_target"))
         args_tar = self.args_container.container_srna_target(
@@ -697,8 +711,9 @@ class Controller(object):
                   " \"m\" to --caller!")
         self.check_parameter([self._args.sample_number],
                              ["--sample_number"])
-        for exe in (self._args.bcftools_path, self._args.samtools_path):
-            self.check_execute_file(exe)
+        for prop in ("bcftools_path", "samtools_path"):
+            setattr(self._args, prop,
+                    self.check_execute_file(getattr(self._args, prop)))
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         args_snp = self.args_container.container_snp(
             self._args.samtools_path, self._args.bcftools_path,
@@ -743,7 +758,7 @@ class Controller(object):
             print("Error: Please assign \"positive\" or"
                   " \"negative\" to --bacteria_type!")
             sys.exit()
-        self.check_execute_file(self._args.psortb_path)
+        self._args.psortb_path = self.check_execute_file(self._args.psortb_path)
         project_creator.create_subfolders(
             self._paths.required_folders("subcellular_localization"))
         args_sub = self.args_container.container_sublocal(
@@ -791,8 +806,8 @@ class Controller(object):
             print("Error: Please assign \"thermometer\", \"riboswitch\" "
                   "or \"both\" in --program!")
             sys.exit()
-        self.check_execute_file(self._args.cmscan_path)
-        self.check_execute_file(self._args.cmpress_path)
+        self._args.cmscan_path = self.check_execute_file(self._args.cmscan_path)
+        self._args.cmpress_path = self.check_execute_file(self._args.cmpress_path)
         args_ribo = self.args_container.container_ribos(
             self._args.program, self._args.rna_thermometer_id,
             self._args.cmscan_path, self._args.cmpress_path,
@@ -814,7 +829,7 @@ class Controller(object):
         self.check_multi_files(
                 [self._args.fasta_files, self._args.annotation_files],
                 ["--fasta_files", "--annotation_files"])
-        self.check_execute_file(self._args.crt_path)
+        self._args.crt_path = self.check_execute_file(self._args.crt_path)
         project_creator.create_subfolders(
             self._paths.required_folders("crispr"))
         args_cris = self.args_container.container_cris(
