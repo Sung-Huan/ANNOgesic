@@ -523,20 +523,30 @@ def gen_new_candidates(sorf, min_rbs, max_rbs):
                     if (sorf["strand"] == "+") and (
                             (int(start) - rbs) >= (min_rbs + 6)) and (
                             (int(start) - rbs) <= (max_rbs + 6)):
-                        for tss in sorf["with_TSS"]:
-                            if int(tss.split(":")[-1][:-2]) > int(start):
-                                break
-                            pre_tss = tss
-                        new_candidates.append("_".join(["-".join([
+                        if sorf["with_TSS"] == ["NA"]:
+                            new_candidates.append("_".join(["-".join([
+                                    start, end]), "NA",
+                                    "RBS:" + str(rbs)]))
+                        else:
+                            for tss in sorf["with_TSS"]:
+                                if int(tss.split(":")[-1][:-2]) > int(start):
+                                    break
+                                pre_tss = tss
+                            new_candidates.append("_".join(["-".join([
                                   start, end]), pre_tss.replace("TSS_", "TSS:"),
                                   "RBS:" + str(rbs)]))
                     elif (sorf["strand"] == "-") and (
                             (rbs - int(end)) >= (min_rbs + 6)) and (
                             (rbs - int(end)) <= (max_rbs + 6)):
-                        for tss in sorf["with_TSS"]:
-                            if int(tss.split(":")[-1][:-2]) <= int(start):
-                                break
-                        new_candidates.append("_".join(["-".join([
+                        if sorf["with_TSS"] == ["NA"]:
+                            new_candidates.append("_".join(["-".join([
+                                    start, end]), "NA",
+                                    "RBS:" + str(rbs)]))
+                        else:
+                            for tss in sorf["with_TSS"]:
+                                if int(tss.split(":")[-1][:-2]) <= int(start):
+                                    break
+                            new_candidates.append("_".join(["-".join([
                                   start, end]), tss.replace("TSS_", "TSS:"),
                                   "RBS:" + str(rbs)]))
     return new_candidates

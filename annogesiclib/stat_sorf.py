@@ -7,7 +7,7 @@ def create_dict(nums, strain, utr_detect):
         types = ["all", "5'UTR_derived", "3'UTR_derived",
                  "interCDS", "intergenic", "antisense"]
     else:
-        types = ["all"]
+        types = ["all", "intergenic", "antisense"]
     for type_ in types:
         nums[strain][type_] = {}
         for feature in ["TSS", "sRNA", "all", "RBS", "TSS_RBS",
@@ -20,7 +20,8 @@ def plus_data(nums, strain, sorf_types, features, utr_detect):
     for sorf_type in sorf_types:
         if ((not utr_detect) and (
                 (sorf_type == "intergenic") or (
-                sorf_type == "antisense"))) or (
+                sorf_type == "antisense") or (
+                sorf_type == "all"))) or (
                 utr_detect):
             for feature in features:
                 nums[strain][sorf_type][feature] += 1
