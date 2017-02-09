@@ -90,8 +90,8 @@ def extract_pos(line, srnas, method):
     if (line.startswith("(")) or (
             line.startswith(")")) or (
             line.startswith(".")):
-        tar_pos = line.split(":")[0].strip().split(" ")[-1]
-        srna_pos = line.split(":")[-1].strip().split(" ")[0]
+        tar_pos = line.split(" : ")[0].strip().split(" ")[-1]
+        srna_pos = line.split(" : ")[-1].strip().split(" ")[0]
         srnas["tar_pos"] = tar_pos
         srnas["srna_pos"] = srna_pos
 
