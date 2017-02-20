@@ -43,7 +43,7 @@ class Mock_multiparser(object):
 
 class Mock_func(object):
 
-    def mock_optimization(self, wig_path, fasta_file, gff_file, args):
+    def mock_optimization(self, wig_path, fasta_file, gff_file, args, strain, manual, length):
         gen_file(os.path.join(args.output_folder, "test.csv"), "test")
 
 class TestOptimizeTSS(unittest.TestCase):
@@ -54,6 +54,7 @@ class TestOptimizeTSS(unittest.TestCase):
         self.fastas = os.path.join(self.test_folder, "fasta")
         self.wigs = os.path.join(self.test_folder, "wigs")
         self.gffs = os.path.join(self.test_folder, "gffs")
+        self.manuals = os.path.join(self.test_folder, "manuals")
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.fastas)
@@ -62,6 +63,8 @@ class TestOptimizeTSS(unittest.TestCase):
             os.mkdir(os.path.join(self.wigs, "tmp"))
             os.mkdir(self.gffs)
             os.mkdir(os.path.join(self.gffs, "tmp"))
+            os.mkdir(self.manuals)
+            os.mkdir(os.path.join(self.manuals, "tmp"))
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -78,7 +81,8 @@ class TestOptimizeTSS(unittest.TestCase):
         args.gffs = self.gffs
         args.wigs = self.wigs
         args.tsspredator_path = "test"
-        args.manual = "test"
+        args.manuals = self.manuals
+        gen_file(os.path.join(self.manuals, "tmp", "test.gff"), "test")
         args.output_folder = self.test_folder
         args.project_strain = "test"
         args.height = 9
@@ -92,7 +96,7 @@ class TestOptimizeTSS(unittest.TestCase):
         args.libs = "test"
         args.replicate_name = "test"
         args.cluster = 2
-        args.length = 100
+        args.strain_lengths = {"test": 100}
         args.cores = 4
         args.program = "TSS"
         args.replicate = 2

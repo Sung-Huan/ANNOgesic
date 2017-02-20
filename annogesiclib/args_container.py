@@ -12,6 +12,21 @@ class ArgsContainer(object):
         self.multiparser = Multiparser()
         self.helper = Helper()
 
+    def _check_strain_length(self, strain_lens, flag):
+        lengths = {}
+        for m_l in strain_lens:
+            if ":" not in m_l:
+                print("Error: The assignment of {0} needs to contain "
+                      "strain names and their length "
+                      "of checked region!".format(flag))
+                sys.exit()
+            else:
+                if m_l.split(":")[-1] == "all":
+                    lengths[m_l.split(":")[0]] = m_l.split(":")[-1]
+                else:
+                    lengths[m_l.split(":")[0]] = int(m_l.split(":")[-1])
+        return lengths
+
     def _create_working_wigs(self, out_folder, libs, wig_folder):
         new_libs = []
         if libs is not None:
@@ -131,7 +146,8 @@ class ArgsContainer(object):
     def _check_libs(self, tex_notex_libs, frag_libs):
         '''Check the libs of frag and tex'''
         if (tex_notex_libs is None) and (frag_libs is None):
-            print("Error: please input proper libraries!!")
+            print("Error: No libraries assigned!!")
+            sys.exit()
         elif (tex_notex_libs is not None) and (frag_libs is not None):
             libs = tex_notex_libs + frag_libs
             self._check_tex_frag(tex_notex_libs, "tex")
@@ -324,8 +340,9 @@ class ArgsContainer(object):
                         if file_.endswith(type_):
                             detect = True
                 if not detect:
-                    print("Error: The {0} is not end with {1}!".format(
-                          flag, " ".join(file_types)))
+                    print("Error: There some files don't exist in {0} or "
+                          "the {0} is/are not ended with {1}!".format(
+                          " and ".join(flag), " ".join(file_types)))
                     sys.exit()
                 shutil.copy(file_, new_ref_folder)
             return new_ref_folder
@@ -358,16 +375,64 @@ class ArgsContainer(object):
         self.pairs = compare_pair
         return self
 
+    def _check_para_num(self, paras, s_strains):
+        if s_strains is None:
+            if len(paras) > 1:
+                print("Error: The assignments of parameters should be single "
+                      "number. Otherwise, please use --specify_strains.")
+                sys.exit()
+        else:
+            if len(s_strains) != len(paras):
+                print("Error: The number of --specify_strains "
+                      "and the paramter set are different!")
+                sys.exit()
+
+    def _assign_tss_para(self, s_strains, hes, rhs, fas, rfs, bhs, efs, pfs):
+        if s_strains is None:
+            for paras in [hes, rhs, fas, rfs, bhs, efs, pfs]:
+                self._check_para_num(paras, s_strains)
+            height = hes[0]
+            height_re = rhs[0]
+            factor = fas[0]
+            factor_re = rfs[0]
+            base = bhs[0]
+            enrichment = efs[0]
+            processing = pfs[0]
+        else:
+            height = {}
+            height_re = {}
+            factor = {}
+            factor_re = {}
+            base = {}
+            enrichment = {}
+            processing = {}
+            for paras, var in zip([hes, rhs, fas, rfs, bhs, efs, pfs],
+                                  [height, height_re, factor, factor_re,
+                                   base, enrichment, processing]):
+                self._check_para_num(paras, s_strains)
+                for s_strain, para in zip(s_strains, paras):
+                    var[s_strain] = para
+            
+        return height, height_re, factor, factor_re, base, enrichment, processing
+
     def container_tsspredator(self, TSSpredator_path, compute_program,
                               fasta_files, annotation_files, lib,
                               output_prefix, height, height_reduction, factor,
                               factor_reduction, base_height, enrichment_factor,
                               processing_factor, replicate_match, out_folder,
-                              statistics, validate_gene, merge_manual,
+                              validate_gene, merge_manual, strain_lengths,
                               compare_transcript_assembly, fuzzy, utr_length,
-                              cluster, length, re_check_orphan,
-                              overlap_feature, reference_gff_files,
-                              remove_low_expression):
+                              cluster, re_check_orphan, specify_strains,
+                              overlap_feature,
+                              reference_gff_files, remove_low_expression):
+        if strain_lengths is not None:
+            nt_lengths = self._check_strain_length(
+                    strain_lengths, "--strain_lengths")
+            self.strain_lengths = nt_lengths
+        else:
+            self.strain_lengths = strain_lengths
+            if merge_manual is not None:
+                self.strain_lengths = {"all": "all"}
         self.tsspredator_path = TSSpredator_path
         self.program = compute_program
         self.fastas = self._gen_copy_new_folder(
@@ -382,55 +447,62 @@ class ArgsContainer(object):
         self.libs = self._check_libs(self.libs, None)
         self._check_condition_num(output_prefix, self.libs)
         self.output_prefixs = output_prefix
-        self.height = height
-        self.height_reduction = height_reduction
-        self.factor = factor
-        self.factor_reduction = factor_reduction
-        self.base_height = base_height
-        self.enrichment_factor = enrichment_factor
-        self.processing_factor = processing_factor
+        self.height, self.height_reduction, self.factor, self.factor_reduction, \
+        self.base_height, self.enrichment_factor, self.processing_factor = \
+        self._assign_tss_para(specify_strains, height, height_reduction, factor,
+                              factor_reduction, base_height, enrichment_factor,
+                              processing_factor)
         self.repmatch = replicate_match
+        self.specify_strains = specify_strains
         self.out_folder = out_folder
-        self.stat = statistics
         self.validate = validate_gene
-        self.manual = self._combine_files(merge_manual, out_folder,
-                                          "tmp_manual_file")
+        self.manual = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_manual", merge_manual,
+                ["--manual_files_lengths"])
         self.ta_files = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_ta", compare_transcript_assembly,
                 ["--compare_transcript_assembly"])
         self.fuzzy = fuzzy
         self.utr_length = utr_length
         self.cluster = cluster
-        self.nt_length = length
         self.check_orphan = re_check_orphan
         self.overlap_feature = overlap_feature
         self.references = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_reference", reference_gff_files,
-                ["--eference_gff_files"])
+                ["--reference_gff_files"])
         self.remove_low_expression = remove_low_expression
         return self
 
     def container_optimize(self, TSSpredator_path, fasta_file, annotation_file,
-                           manual, out_folder, strain_name,
-                           max_height, max_height_reduction, max_factor,
+                           manual, out_folder, max_height,
+                           max_height_reduction, max_factor,
                            max_factor_reduction, max_base_height,
                            max_enrichment_factor, max_processing_factor,
-                           utr_length, lib, output_prefix, cluster, length,
+                           utr_length, lib, output_prefix, cluster, strain_lengths,
                            core, program, replicate_match, steps):
         self.tsspredator_path = TSSpredator_path
+        if strain_lengths is not None:
+            nt_lengths = self._check_strain_length(
+                    strain_lengths, "--strain_lengths")
+            self.strain_lengths = nt_lengths
+        else:
+            self.strain_lengths = strain_lengths
+            if manual is not None:
+                self.strain_lengths = {"all": "all"}
         self.fastas = self._gen_copy_new_folder(
                 [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta",
-                [fasta_file], ["--fasta_file"])
+                fasta_file, ["--fasta_files"])
+        self.manuals = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_manual",
+                manual, ["--manual_files"])
         self.gffs = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_anno",
-                [annotation_file], ["--annotation_file"])
+                annotation_file, ["--annotation_files"])
         self.wigs = os.path.join(out_folder, "tmp_wig")
         self.helper.check_make_folder(self.wigs)
         self.libs = self._create_working_wigs(out_folder, lib, self.wigs)
         self.libs = self._check_libs(self.libs, None)
-        self.manual = manual
         self.output_folder = out_folder
-        self.project_strain = strain_name
         self.height = max_height
         self.height_reduction = max_height_reduction
         self.factor = max_factor
@@ -442,7 +514,6 @@ class ArgsContainer(object):
         self._check_condition_num(output_prefix, self.libs)
         self.replicate_name = output_prefix
         self.cluster = cluster
-        self.length = length
         self.cores = core
         self.program = program
         self.replicate = replicate_match
@@ -458,7 +529,7 @@ class ArgsContainer(object):
 
     def container_terminator(
             self, TransTermHP_path, expterm_path, RNAfold_path, out_folder,
-            fasta_files, annotation_files, transcript_files, srna, statistics,
+            fasta_files, annotation_files, transcript_files, srna,
             decrease, highest_coverage, fuzzy_detect_coverage,
             fuzzy_within_transcript, fuzzy_downstream_transcript,
             fuzzy_within_gene, fuzzy_downstream_gene, transtermhp_folder,
@@ -481,7 +552,6 @@ class ArgsContainer(object):
                 ["--transcript_files"])
         self.srnas = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_srna", srna, ["srna_files"])
-        self.stat = statistics
         self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
         self.tex_wigs = self._create_wig_folder(
                 os.path.join(out_folder, "tmp_wig", "tex_notex"),
@@ -1045,8 +1115,7 @@ class ArgsContainer(object):
     def container_operon(self, TSS_files, annotation_files,
                          transcript_files, UTR5_files, UTR3_files,
                          term_files, TSS_fuzzy, term_fuzzy, min_length,
-                         statistics, operon_output_folder, combine_gff,
-                         operon_statistics_folder):
+                         operon_output_folder, operon_statistics_folder):
         self.tsss = self._gen_copy_new_folder(
                 [".gff"], operon_output_folder, "tmp_tss",
                 TSS_files, ["--tss_files"])
@@ -1068,9 +1137,7 @@ class ArgsContainer(object):
         self.tss_fuzzy = TSS_fuzzy
         self.term_fuzzy = term_fuzzy
         self.length = min_length
-        self.statistics = statistics
         self.output_folder = operon_output_folder
-        self.combine = combine_gff
         self.stat_folder = operon_statistics_folder
         return self
 

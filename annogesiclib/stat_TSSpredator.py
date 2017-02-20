@@ -73,11 +73,11 @@ def stat(tsss, strain, feature_name, out_stat, file_type, out_lib):
     for tss_lib, lib_num in tss_libs.items():
         out_lib.write(": ".join([tss_lib, str(lib_num)]))
         out_lib.write(" ({0})\n".format(lib_num / num_tss))
-    out_stat.write("total number of {0} (if one {1} belong to two class, "
+    out_stat.write("total number of {0} (if one {1} belongs to two classes, "
                    "it count two times) = {2}\n".format(
                        feature_name, feature_name, num_tss_more))
-    out_stat.write("total number of unique {0} (if one {1} belong to "
-                   "two class, it count only one time) = {2}\n".format(
+    out_stat.write("total number of unique {0} (if one {1} belongs to "
+                   "two classes, it count only one time) = {2}\n".format(
                        feature_name, feature_name, num_tss))
     for it in range(1, 5):
         for tss in itertools.combinations(tss_type.keys(), it):

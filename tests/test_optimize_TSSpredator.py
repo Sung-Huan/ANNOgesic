@@ -19,7 +19,7 @@ class Mock_func(object):
     def mock_run_TSSpredator_paralle(self, config_files, tsspredator_path, processes):
         pass
 
-    def mock_convert2gff(self, out_path, gff_files, args):
+    def mock_convert2gff(self, out_path, gff_files, args, test):
         if not os.path.exists("test_folder/gffs"):
             os.mkdir("test_folder/gffs")
         gen_file("test_folder/gffs/aaa.gff", self.example.gff_file)
@@ -60,18 +60,12 @@ class TestOptimizeTSSpredator(unittest.TestCase):
                                       'length': 0, 'exist': False, 'switch': 0, 'extend': False,
                                       'count': 0})
 
-    def test_get_gene_length(self):
-        fasta = os.path.join(self.test_folder, "test.fa")
-        gen_file(fasta, self.example.fasta)
-        seq_len = ot.get_gene_length(fasta, "aaa")
-        self.assertEqual(seq_len, 102)
-
     def test_read_predict_manual_gff(self):
         gff = os.path.join(self.test_folder, "test.gff")
         gen_file(gff, self.example.gff_file)
         args = self.mock_args.mock()
         args.gene_length = 1000
-        num, gffs = ot.read_predict_manual_gff(gff, args)
+        num, gffs = ot.read_predict_manual_gff(gff, 1000)
         self.assertEqual(num, 1)
         self.assertEqual(gffs[0].start, 633)
 
@@ -87,10 +81,12 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         self.assertFalse(self.example.indexs["change"])
 
     def test_load_stat_csv(self):
-        gen_file(os.path.join(self.test_folder, "stat.csv"), self.example.stat)
+        stat_file = os.path.join(self.test_folder, "stat.csv")
+        gen_file(stat_file, self.example.stat)
         list_num = []
         best_para = {}
-        datas = ot.load_stat_csv(self.test_folder, list_num, self.example.best, best_para, self.example.indexs, 1000)
+        datas = ot.load_stat_csv(self.test_folder, list_num, self.example.best,
+                                 best_para, self.example.indexs, 1000, stat_file)
         self.assertEqual(datas[0], 2)
         self.assertDictEqual(datas[1], {'fp': 230.0, 'tp': 789.0, 'missing_ratio': 0.29991126885536823,
                                         'fp_rate': 8.15542105020548e-05, 'tp_rate': 0.7000887311446318,
@@ -100,10 +96,11 @@ class TestOptimizeTSSpredator(unittest.TestCase):
                                         'height': 2.4})
 
     def test_reload_data(self):
-        gen_file(os.path.join(self.test_folder, "stat.csv"), self.example.stat)
+        stat_file = os.path.join(self.test_folder, "stat.csv")
+        gen_file(stat_file, self.example.stat)
         list_num = []
         best_para = {}
-        datas = ot.reload_data(self.test_folder, list_num, self.example.best, best_para, self.example.indexs, 1000)
+        datas = ot.reload_data(self.test_folder, list_num, self.example.best, best_para, self.example.indexs, 1000, stat_file)
         self.assertDictEqual(datas[0], {'base_height': 0.086, 'processing': 5.2,
                                         'height': 2.4, 'enrichment': 3.1, 're_factor': 5.5,
                                         're_height': 2.3, 'factor': 7.6})
@@ -113,7 +110,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
 
     def test_extend_data(self):
         best_para = copy.deepcopy(self.example.best_para)
-        current_para = ot.extend_data(self.test_folder, self.example.best, best_para, 100)
+        current_para = ot.extend_data(self.test_folder, self.example.best, best_para, 100, "aaa")
         self.assertDictEqual(current_para, best_para)
 
     def test_run_random_part(self):
@@ -187,8 +184,8 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.gene_length = 2000
         args.cluster = 3
         ot.compare_manual_predict(1000, para_list, [predict], self.test_folder,
-                                  out, args)
-        self.assertEqual(out.getvalue(), "1000\the_0.3_rh_0.2_fa_0.7_rf_0.3_bh_0.0_ef_2.5_pf_3.3\tTP\t1\tTP_rate\t0.5\tFP\t1\tFP_rate\t0.0005005005005005005\tFN\t1\tmissing_ratio\t0.5\n")
+                                  out, args, self.example.mans, 3, 2000)
+        self.assertEqual(out.getvalue(), "1000\the_0.3_rh_0.2_fa_0.7_rf_0.3_bh_0.0_ef_2.5_pf_3.3\tTP\t0\tTP_rate\t0.0\tFP\t2\tFP_rate\t0.00100150225338007\tFN\t2\tmissing_ratio\t0.6666666666666666\n")
 
     def test_compute_stat(self):
         list_num = [self.example.best_para]
@@ -196,7 +193,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
                      'height': 0.5, 'base_height': 0.0, 're_height': 0.2, 'factor': 0.7}
         self.example.indexs["change"] = True
         best = {"tp_rate": 0.6, "fp_rate": 0.0025, "tp": 40, "fp": 32, "fn": 45, "missing_ratio": 0.004}
-        datas = ot.compute_stat(self.example.best, best, best_para, 1, list_num, self.test_folder, self.example.indexs)
+        datas = ot.compute_stat(self.example.best, best, best_para, 1, list_num, self.test_folder, self.example.indexs, "aaa")
         self.assertDictEqual(datas[0], self.example.best_para)
         self.assertDictEqual(datas[1], self.example.best)
 
@@ -235,7 +232,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         gen_file(args.manual, self.example.manual_file)
         datas = ot.run_tss_and_stat(self.example.indexs, list_num, seeds, 0.4, 0.3,
                      self.test_folder, stat_out, best_para, current_para,
-                     wig, fasta, gff, self.example.best, 3, args)
+                     wig, fasta, gff, self.example.best, 3, args, "aaa", self.example.mans, 2000)
         self.assertFalse(datas[0])
 
     def test_gen_config(self):
@@ -255,7 +252,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.replicate = "all_1"
         args.utr = 200
         args.replicate_name = "test"
-        filename = ot.gen_config(self.example.best_para, self.test_folder, 1, wig, fasta, gff, args)
+        filename = ot.gen_config(self.example.best_para, self.test_folder, 1, wig, fasta, gff, args, "aaa")
         self.assertEqual(filename, "test_folder/config_1.ini")
         data = import_data("test_folder/config_1.ini")
         self.assertEqual("\n".join(data), self.example.config)       
@@ -268,7 +265,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args = self.mock_args.mock()
         args.cluster = 3
         args.gene_length = 2000
-        ot.comparison(self.example.mans, self.example.gffs, nums, args)
+        ot.comparison(self.example.mans, self.example.gffs, nums, args, 2000)
         self.assertDictEqual(nums, {'manual': 1, 'predict': 2, 'overlap': 1})
 
     def test_check_overlap(self):
@@ -301,7 +298,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.program = "TSS"
         args.libs = self.example.libs
         lib_num = ot.import_lib(wig_folder, set(), lib_dict, out, "aaa.gff",
-                                [], "aaa.fa", args)
+                                [], "aaa.fa", args, "aaa")
         self.assertEqual(lib_num, 1)
 
     def test_optimization_process(self):
@@ -340,13 +337,12 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.manual = os.path.join(self.test_folder, "manual.gff")
         ot.optimization_process(indexs, current_para, list_num, self.example.max_nums, best_para,
                                 self.test_folder, stat_out, self.example.best, wig_folder, "aaa.fa", "aaa.gff",
-                                2000, True, args)
+                                2, True, args, "aaa", self.example.mans, 2000)
         self.assertDictEqual(best_para, {'re_height': 0.2, 'factor': 0.7, 'processing': 3.3,
                                          'height': 0.6, 'base_height': 0.0, 're_factor': 0.3,
                                          'enrichment': 2.5})
-        self.assertDictEqual(self.example.best, {'missing_ratio': 0.29991126885536823, 'tp': 789.0,
-                                                 'tp_rate': 0.7000887311446318, 'fp': 230.0,
-                                                 'fn': 338.0, 'fp_rate': 8.15542105020548e-05})
+#        self.assertDictEqual(self.example.best, {'fp': 3, 'missing_ratio': 0.004, 'tp_rate': 0.8,
+#                                                 'tp': 100, 'fn': 45, 'fp_rate': 0.0005})
 
     def test_optimization(self):
         ot.run_TSSpredator_paralle = Mock_func().mock_run_TSSpredator_paralle
@@ -384,8 +380,8 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.manual = os.path.join(self.test_folder, "manual.gff")
         gen_file(args.manual, self.example.manual_file)
         args.output_folder = self.test_folder
-        ot.optimization(wig_folder, fasta, gff, args)
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "optimized_TSSpredator", "stat.csv")))
+        ot.optimization(wig_folder, fasta, gff, args, args.manual, 2000, "aaa")
+        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "optimized_TSSpredator", "stat_aaa.csv")))
 
 class Example(object):
 

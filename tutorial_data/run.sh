@@ -88,13 +88,13 @@ annotation_transfer(){
 Optimize_TSSpredator(){
     $ANNOGESIC_PATH \
         optimize_tss_processing \
-        -fs $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-        -n NC_009839.1 \
         -tl $TEX_LIBS \
         -p TSS -s 25 \
         -m $ANNOGESIC_FOLDER/input/manual_TSS/NC_009839_manual_TSS.gff \
-        -le 200000 \
+        -le NC_009839.1:200000 \
+         -rt all_1 \
         -pj $ANNOGESIC_FOLDER
 }
 
@@ -112,9 +112,9 @@ TSS_prediction(){
         -bh 0.039 \
         -ef 1.1 \
         -pf 4.5 \
-        -s \
         -v \
-        -le 200000 \
+        -rt all_1 \
+        -le NC_009839.1:200000 \
         -m $ANNOGESIC_FOLDER/input/manual_TSS/NC_009839_manual_TSS.gff \
         -pj $ANNOGESIC_FOLDER
 }
@@ -134,7 +134,7 @@ processing_site_prediction()
         -bh 0.009 \
         -ef 1.2 \
         -pf 1.5 \
-        -s \
+        -rt all_1 \
         -t processing_site \
         -pj $ANNOGESIC_FOLDER
 }
@@ -155,7 +155,6 @@ Terminator_prediction(){
         terminator \
         -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-        -s \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
@@ -181,7 +180,6 @@ operon_detection(){
         -u5 $ANNOGESIC_FOLDER/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
         -u3 $ANNOGESIC_FOLDER/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
         -e $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
-        -s -c \
         -pj $ANNOGESIC_FOLDER
 }
 
@@ -286,6 +284,9 @@ Go_term(){
         go_term \
 	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
 	-a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
+        -go $ANNOGESIC_FOLDER/input/database/go.obo \
+        -gs $ANNOGESIC_FOLDER/input/database/goslim_generic.obo \
+        -u $ANNOGESIC_FOLDER/input/database/idmapping_selected.tab \
 	-pj $ANNOGESIC_FOLDER
 }
 

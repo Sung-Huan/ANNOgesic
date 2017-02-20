@@ -173,6 +173,7 @@ def read_file(tss_file, gff_file, ta_file, term_file):
     terms = []
     tsss = []
     tas = []
+    source = False
     gff_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(gff_f):
         if (entry.feature == "CDS"):
@@ -190,11 +191,13 @@ def read_file(tss_file, gff_file, ta_file, term_file):
                                              k.end, k.strand))
     if tss_file is not None:
         for entry in Gff3Parser().entries(open(tss_file)):
+            if entry.attributes["type"] != "Orphan":
+                source = True
             tsss.append(entry)
         tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
-    return genes, cdss, terms, tsss, tas
+    return genes, cdss, terms, tsss, tas, source
 
 
 def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
@@ -268,31 +271,54 @@ def get_5utr_from_TSSpredator(tss, genes, cdss):
     return utr_datas
 
 
+def detect_feature_5utr(feas, tss, cdss, length, check_cds):
+    locus_tag = None
+    near_cds = None
+    cds_name = None
+    check_utr = False
+    for fea in feas:
+        if (tss.seq_id == fea.seq_id) and (
+                tss.strand == fea.strand):
+            if (tss.strand == "+") and (
+                    (fea.start - tss.start) <= length) and (
+                    tss.start <= fea.start):
+                if "locus_tag" in fea.attributes.keys():
+                    locus_tag = fea.attributes["locus_tag"]
+                else:
+                    locus_tag = fea.attributes["ID"]
+                if check_cds:
+                    near_cds, cds_name, check_utr = detect_cds(cdss, fea)
+                else:
+                    near_cds = fea
+                    cds_name = get_feature(fea)
+                    check_utr = True
+                break
+            elif (tss.strand == "-") and (
+                    (tss.start - fea.end) <= length) and (
+                    tss.start >= fea.end):
+                if "locus_tag" in fea.attributes.keys():
+                    locus_tag = fea.attributes["locus_tag"]
+                else:
+                    locus_tag = fea.attributes["ID"]
+                if check_cds:
+                    near_cds, cds_name, check_utr = detect_cds(cdss, fea)
+                else:
+                    near_cds = fea
+                    cds_name = get_feature(fea)
+                    check_utr = True
+                break
+    return near_cds, cds_name, check_utr, locus_tag
+
 def get_5utr_from_other(tss, genes, cdss, length):
     '''It is for TSS file which is not generated from ANNOgesic'''
     check_utr = False
     cds_name = "NA"
-    for gene in genes:
-        if (tss.seq_id == gene.seq_id) and (
-                tss.strand == gene.strand):
-            if (tss.strand == "+") and (
-                    (gene.start - tss.start) <= length) and (
-                    tss.start <= gene.start):
-                if "locus_tag" in gene.attributes.keys():
-                    locus_tag = gene.attributes["locus_tag"]
-                else:
-                    locus_tag = gene.attributes["ID"]
-                near_cds, cds_name, check_utr = detect_cds(cdss, gene)
-                break
-            elif (tss.strand == "-") and (
-                    (tss.start - gene.end) <= length) and (
-                    tss.start >= gene.end):
-                if "locus_tag" in gene.attributes.keys():
-                    locus_tag = gene.attributes["locus_tag"]
-                else:
-                    locus_tag = gene.attributes["ID"]
-                near_cds, cds_name, check_utr = detect_cds(cdss, gene)
-                break
+    if len(genes) != 0:
+        near_cds, cds_name, check_utr, locus_tag = detect_feature_5utr(
+                genes, tss, cdss, length, True)
+    else:
+        near_cds, cds_name, check_utr, locus_tag = detect_feature_5utr(
+                cdss, tss, cdss, length, False)
     if check_utr:
         utr_datas = {"check": check_utr, "cds_name": cds_name,
                      "near_cds": near_cds, "locus": locus_tag}
@@ -326,6 +352,7 @@ def get_attribute_string(num_utr, length, cds, gene_name, ta, id_name, name,
 
 
 def get_gene_name(genes, cds):
+    gene_name = "NA"
     for gene in genes:
         if (cds.seq_id == gene.seq_id) and (
                 cds.strand == gene.strand):
@@ -420,8 +447,10 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
     pre_seq_id = ""
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
-    genes, cdss, terms, tsss, tas = read_file(tss_file, gff_file,
-                                              ta_file, None)
+    genes, cdss, terms, tsss, tas, source = read_file(
+            tss_file, gff_file, ta_file, None)
+    if (args_utr.source) and (not source):
+        args_utr.source = False
     if (args_utr.base_5utr.upper() == "TSS") or (
             args_utr.base_5utr.lower() == "both"):
         for tss in tsss:
@@ -616,8 +645,8 @@ def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
     pre_seq_id = ""
     out = open(out_file, "w")
     out.write("##gff-version 3\n")
-    genes, cdss, terms, tsss, tas = read_file(None, gff_file,
-                                              ta_file, term_file)
+    genes, cdss, terms, tsss, tas, args_utr.source = read_file(
+            None, gff_file, ta_file, term_file)
     if (args_utr.base_3utr == "transcript") or (
             args_utr.base_3utr == "both"):
         for ta in tas:

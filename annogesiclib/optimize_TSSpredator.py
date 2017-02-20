@@ -12,16 +12,16 @@ import copy
 
 
 def compute_stat(stat_value, best, best_para, cores,
-                 list_num, out_path, indexs):
+                 list_num, out_path, indexs, strain):
     if indexs["change"]:
         indexs["change"] = False
         best = stat_value
         best_para = copy.deepcopy(list_num[-1 * cores + indexs["count"]])
-    print("_".join(["Current Parameter:step={0}", "height={1}",
-                    "height_reduction={2}", "factor={3}",
-                    "factor_reduction={4}",
-                    "base_height={5}", "enrichment_factor={6}",
-                    "processing_factor={7}"]).format(
+    print(", ".join(["Current strain={0}", "Current Parameter:step={1}",
+                    "height={2}", "height_reduction={3}", "factor={4}",
+                    "factor_reduction={5}", "base_height={6}",
+                    "enrichment_factor={7}",
+                    "processing_factor={8}"]).format(strain,
                         indexs["step"] - cores + 1 + indexs["count"],
           list_num[-1 * cores + indexs["count"]]["height"],
           list_num[-1 * cores + indexs["count"]]["re_height"],
@@ -49,7 +49,7 @@ def compute_stat(stat_value, best, best_para, cores,
           "\tFN={4}\tMissing_ratio={5}".format(
               best["tp"], best["tp_rate"], best["fp"], best["fp_rate"],
               best["fn"], best["missing_ratio"]))
-    best_out = open(out_path + "/best.csv", "w")
+    best_out = open(out_path + "/best_" + strain + ".csv", "w")
     para_line = "_".join(["he", str(best_para["height"]),
                           "rh", str(best_para["re_height"]),
                           "fa", str(best_para["factor"]),
@@ -119,7 +119,7 @@ def check_overlap(overlap, pre_tss, nums, length, manual, predict, pre_pos):
     return (overlap, pre_pos)
 
 
-def comparison(manuals, predicts, nums, args_ops):
+def comparison(manuals, predicts, nums, args_ops, length):
     overlap = False
     pre_pos = -1
     for tss_m in manuals:
@@ -139,7 +139,7 @@ def comparison(manuals, predicts, nums, args_ops):
                     overlap = True
                     pre_tss = tss_p
         try:
-            datas = check_overlap(overlap, pre_tss, nums, args_ops.gene_length,
+            datas = check_overlap(overlap, pre_tss, nums, length,
                                   tss_m, tss_p, pre_pos)
             overlap = datas[0]
             pre_pos = datas[1]
@@ -147,16 +147,16 @@ def comparison(manuals, predicts, nums, args_ops):
             nums = {"overlap": -1, "predict": -1, "manual": -1}
     for tss_p in predicts:
         if tss_p.attributes["print"] is False:
-            if (tss_p.start <= int(args_ops.gene_length)):
+            if (tss_p.start <= int(length)):
                 nums["predict"] += 1
 
 
-def read_predict_manual_gff(gff_file, args_ops):
+def read_predict_manual_gff(gff_file, length):
     num = 0
     gffs = []
     f_h = open(gff_file, "r")
     for entry in Gff3Parser().entries(f_h):
-        if (entry.start <= int(args_ops.gene_length)):
+        if (entry.start <= int(length)):
             num += 1
             entry.attributes["print"] = False
             gffs.append(entry)
@@ -165,13 +165,13 @@ def read_predict_manual_gff(gff_file, args_ops):
 
 
 def compare_manual_predict(total_step, para_list, gff_files, out_path,
-                           out, args_ops):
+                           out, args_ops, manuals, num_manual, length):
     '''compare manual detected set and prediced set and print to stat.csv'''
-    manual_fh = open(args_ops.manual, "r")
+#    manual_fh = open(manual, "r")
     stats = []
     count = 0
     total_step = total_step - int(args_ops.cores) + 1
-    num_manual, manuals = read_predict_manual_gff(args_ops.manual, args_ops)
+#    num_manual, manuals = read_predict_manual_gff(manual, length)
     if num_manual != 0:
         for gff_file in gff_files:
             nums = {"overlap": 0, "predict": 0, "manual": 0}
@@ -182,15 +182,15 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                              "bh", str(para_list[count]["base_height"]),
                              "ef", str(para_list[count]["enrichment"]),
                              "pf", str(para_list[count]["processing"])])
-            num_predict, predicts = read_predict_manual_gff(gff_file, args_ops)
-            comparison(manuals, predicts, nums, args_ops)
+            num_predict, predicts = read_predict_manual_gff(gff_file, length)
+            comparison(manuals, predicts, nums, args_ops, length)
             out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
                       total_step, para, nums["overlap"],
                       float(nums["overlap"]) / float(num_manual)))
             out.write("FP\t{0}\tFP_rate\t{1}\tFN\t{2}"
                       "\tmissing_ratio\t{3}\n".format(
                           nums["predict"], float(nums["predict"]) / float(
-                              int(args_ops.gene_length) - num_manual),
+                              int(length) - num_manual),
                           nums["manual"],
                           float(nums["manual"]) / float(num_manual)))
             if nums["overlap"] == -1:
@@ -200,17 +200,17 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                               nums["overlap"]) / float(num_manual),
                           "fp": nums["predict"],
                           "fp_rate": float(nums["predict"]) / float(
-                          args_ops.gene_length - num_manual),
+                          length - num_manual),
                           "fn": nums["manual"],
                           "missing_ratio": float(
                               nums["manual"]) / float(num_manual)})
             total_step += 1
             count += 1
-    manual_fh.close()
+#    manual_fh.close()
     return stats
 
 
-def convert2gff(out_path, gff_files, args_ops):
+def convert2gff(out_path, gff_files, args_ops, strain):
     for core in range(1, args_ops.cores+1):
         output_folder = os.path.join(
                 out_path, "_".join(["MasterTable", str(core)]))
@@ -219,7 +219,7 @@ def convert2gff(out_path, gff_files, args_ops):
         Converter().convert_mastertable2gff(
                     os.path.join(output_folder, "MasterTable.tsv"),
                     "TSSpredator", args_ops.program,
-                    args_ops.project_strain, gff_file)
+                    strain, gff_file)
         gff_files.append(gff_file)
 
 
@@ -279,7 +279,7 @@ def assign_dict(lib_datas):
 
 
 def import_lib(wig_folder, rep_set, lib_dict, out, gff,
-               list_num_id, fasta, args_ops):
+               list_num_id, fasta, args_ops, strain):
     lib_num = 0
     for lib in args_ops.libs:
         lib_datas = lib.split(":")
@@ -289,11 +289,11 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
         for wig in os.listdir(wig_folder):
             filename = wig.split("_STRAIN_")
             if (filename[0] == lib_datas[0][:-4]) and \
-               (filename[1][:-4] == args_ops.project_strain):
+               (filename[1][:-4] == strain):
                 lib_datas[0] = wig
             elif (filename[0] == lib_datas[0][:-4]) and \
                  ("." == filename[1][-6]) and \
-                 (filename[1][:-6] == args_ops.project_strain):
+                 (filename[1][:-6] == strain):
                 lib_datas[0] = wig
         if int(lib_datas[2]) > lib_num:
             lib_num = int(lib_datas[2])
@@ -363,7 +363,7 @@ def print_repmatch(args_ops, out):
                             lib, rep))
 
 
-def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
+def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops, strain):
     '''generate config file for TSSpredator'''
     files = os.listdir(out_path)
     if "MasterTable_" + str(core) not in files:
@@ -377,7 +377,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
     out.write("allowedCompareShift = 1\n")
     out.write("allowedRepCompareShift = 1\n")
     lib_num = import_lib(wig, rep_set, lib_dict, out, gff,
-                         list_num_id, fasta, args_ops)
+                         list_num_id, fasta, args_ops, strain)
     out.write("idList = ")
     out.write(",".join(list_num_id) + "\n")
     out.write("maxASutrLength = 100\n")
@@ -410,7 +410,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
     for prefix_id in range(len(args_ops.replicate_name)):
         out.write("outputPrefix_{0} = {1}\n".format(
                   prefix_id + 1, args_ops.replicate_name[prefix_id]))
-    out.write("projectName = {0}\n".format(args_ops.project_strain))
+    out.write("projectName = {0}\n".format(strain))
     out.write("superGraphCompatibility = igb\n")
     out.write("texNormPercentile = 0.5\n")
     out.write("writeGraphs = 0\n")
@@ -421,9 +421,10 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops):
 
 def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
                      out_path, stat_out, best_para, current_para,
-                     wig, fasta, gff, best, num_manual, args_ops):
+                     wig, fasta, gff, best, num_manual, args_ops, strain,
+                     manuals, length):
     '''run TSS and do statistics'''
-    if indexs["step"] >= args_ops.steps + int(args_ops.cores):
+    if indexs["step"] > args_ops.steps + int(args_ops.cores):
         return (True, best_para)
     elif len(list_num) == indexs["length"]:
         indexs["step"] = indexs["step"] - 1
@@ -442,15 +443,16 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
             for para in list_num[-1 * args_ops.cores:]:
                 index += 1
                 config_files.append(gen_config(para, out_path, index, wig,
-                                    fasta, gff, args_ops))
+                                    fasta, gff, args_ops, strain))
             indexs["count"] = 0
             processes = []
             run_TSSpredator_paralle(config_files, args_ops.tsspredator_path,
                                     processes)
-            convert2gff(out_path, gff_files, args_ops)
+            convert2gff(out_path, gff_files, args_ops, strain)
             stat_values = compare_manual_predict(
                               indexs["step"], list_num[-1 * args_ops.cores:],
-                              gff_files, out_path, stat_out, args_ops)
+                              gff_files, out_path, stat_out, args_ops, manuals,
+                              num_manual, length)
             for stat_value in stat_values:
                 if indexs["first"]:
                     indexs["first"] = False
@@ -461,7 +463,7 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
                     scoring_function(best, stat_value, indexs, num_manual)
                 datas = compute_stat(stat_value, best, best_para,
                                      args_ops.cores, list_num,
-                                     out_path, indexs)
+                                     out_path, indexs, strain)
                 best_para = datas[0]
                 best = datas[1]
             indexs["switch"] += 1
@@ -761,7 +763,7 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
-                         num_manual, new, args_ops):
+                         num_manual, new, args_ops, strain, manuals, length):
     '''main part of opimize TSSpredator'''
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed": 0}
@@ -796,16 +798,18 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
             current_para = run_small_change_part(
                     seeds, features, indexs, current_para, best_para,
                     list_num, max_num)
-        diff_h = float(current_para["height"]) - float(
-                current_para["re_height"])
-        diff_f = float(current_para["factor"]) - float(
-                current_para["re_factor"])
         if current_para is not None:
+            diff_h = float(current_para["height"]) - float(
+                    current_para["re_height"])
+            diff_f = float(current_para["factor"]) - float(
+                    current_para["re_factor"])
             datas = run_tss_and_stat(
                     indexs, list_num, seeds, diff_h, diff_f, out_path,
                     stat_out, best_para, current_para, wig, fasta, gff,
-                    best, num_manual, args_ops)
+                    best, num_manual, args_ops, strain, manuals, length)
             tmp_step = 0
+        else:
+            indexs["step"] = indexs["step"] - 1
         if tmp_step >= 2:
             print("The number of steps may be enough, it "
                   "may not be able to find more parameters\n")
@@ -835,9 +839,9 @@ def start_data(current_para, list_num):
     return current_para
 
 
-def extend_data(out_path, best, best_para, step):
+def extend_data(out_path, best, best_para, step, strain):
     '''extend the data from previous run'''
-    print("Extending step from {0}".format(step))
+    print("Current strain is {0}, Extending step from {1}".format(strain, step))
     print("\t".join(["Best Parameter:height={0}", "height_reduction={1}",
                      "factor={2}", "factor_reduction={3}", "base_height={4}",
                      "enrichment_factor={5}", "processing_factor={6}"]).format(
@@ -856,9 +860,10 @@ def extend_data(out_path, best, best_para, step):
     return current_para
 
 
-def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
+def load_stat_csv(out_path, list_num, best, best_para, indexs,
+                  num_manual, stat_file):
     '''load the statistics from stat.csv'''
-    f_h = open(os.path.join(out_path, "stat.csv"), "r")
+    f_h = open(stat_file, "r")
     first_line = True
     line_num = 0
     for row in csv.reader(f_h, delimiter="\t"):
@@ -898,24 +903,25 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs, num_manual):
     return (line_num, best, best_para)
 
 
-def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
+def reload_data(out_path, list_num, best, best_para, indexs,
+                num_manual, stat_file):
     '''if is based on previous run, it is for reload the previous results'''
     indexs["switch"] = 1
     indexs["exist"] = True
     datas = load_stat_csv(out_path, list_num, best, best_para, indexs,
-                          num_manual)
+                          num_manual, stat_file)
     line_num = datas[0]
     best = datas[1]
     best_para = datas[2]
     if len(list_num) > 0:
         indexs["extend"] = True
     else:
-        print("Error: stat.csv has something wrong, "
+        print("Error: stat.csv may be empty or has something wrong, "
               "please check it or remove it!!!")
         sys.exit()
     new_line = 0
     new_stat = open("tmp.csv", "w")
-    with open(os.path.join(out_path, "stat.csv"), "r") as fh:
+    with open(stat_file, "r") as fh:
         for line in fh:
             new_line += 1
             line = line.strip()
@@ -923,25 +929,9 @@ def reload_data(out_path, list_num, best, best_para, indexs, num_manual):
                 break
             else:
                 new_stat.write(line + "\n")
-    shutil.move("tmp.csv", os.path.join(out_path, "stat.csv"))
+    shutil.move("tmp.csv", stat_file)
     new_stat.close()
     return (best_para, best)
-
-
-def get_gene_length(fasta, strain):
-    seq = ""
-    detect = False
-    with open(fasta, "r") as f_h:
-        for line in f_h:
-            line = line.strip()
-            if line.startswith(">"):
-                detect = False
-                if line[1:] == strain:
-                    detect = True
-            else:
-                if detect:
-                    seq = seq + line
-    return len(seq)
 
 
 def initiate(args_ops):
@@ -967,33 +957,29 @@ def initiate(args_ops):
     return max_num, best_para, current_para, indexs
 
 
-def optimization(wig, fasta, gff, args_ops):
+def optimization(wig, fasta, gff, args_ops, manual, length, strain):
     '''opimize TSSpredator'''
     best = {}
     new = True
     max_num, best_para, current_para, indexs = initiate(args_ops)
     out_path = os.path.join(args_ops.output_folder, "optimized_TSSpredator")
     files = os.listdir(args_ops.output_folder)
-    stat_file = os.path.join(out_path, "stat.csv")
-    if args_ops.length is None:
-        args_ops.gene_length = get_gene_length(fasta, args_ops.project_strain)
-    else:
-        args_ops.gene_length = int(args_ops.length)
-    num_manual, manuals = read_predict_manual_gff(args_ops.manual, args_ops)
+    stat_file = os.path.join(out_path, "stat_" + strain + ".csv")
+    num_manual, manuals = read_predict_manual_gff(manual, length)
     if "optimized_TSSpredator" not in files:
         os.mkdir(out_path)
         list_num = []
         stat_out = open(stat_file, "w")
     else:
-        if ("stat.csv" in os.listdir(out_path)):
+        if (("stat_" + strain + ".csv") in os.listdir(out_path)):
             list_num = []
             new = False
             datas = reload_data(out_path, list_num, best, best_para, indexs,
-                                num_manual)
+                                num_manual, stat_file)
             best_para = datas[0]
             best = datas[1]
             current_para = extend_data(out_path, best,
-                                       best_para, indexs["step"])
+                                       best_para, indexs["step"], strain)
             stat_out = open(stat_file, "a")
             indexs["first"] = False
         else:
@@ -1001,5 +987,5 @@ def optimization(wig, fasta, gff, args_ops):
             stat_out = open(stat_file, "w")
     optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
-                         num_manual, new, args_ops)
+                         num_manual, new, args_ops, strain, manuals, length)
     stat_out.close()

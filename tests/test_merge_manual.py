@@ -209,8 +209,8 @@ class TestGensRNAOutput(unittest.TestCase):
             tss.attributes["print"] = False
         tsss["tsss_m"] = self.example.tsss
         tsss["tsss_p"] = self.example.tsss2
-        overlap_num, num_strain = mm.intersection(tsss, 3, nums, 1000,
-                                  self.example.genes, self.example.genes)
+        overlap_num, num_strain = mm.intersection(tsss, 3, nums, {"aaa":1000},
+                                  self.example.genes, self.example.genes, "test")
         self.assertEqual(overlap_num, 2)
         self.assertDictEqual(num_strain, {'aaa': {'tsspredator': 1, 'overlap': 2, 'manual': 1}})
 

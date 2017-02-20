@@ -109,10 +109,8 @@ class OperonDetection(object):
             if gff.endswith(".gff"):
                 prefixs.append(gff.replace(".gff", ""))
         self._detect_operon(prefixs, args_op)
-        if args_op.statistics:
-            self._stat(self.table_path, args_op.stat_folder)
-        if args_op.combine:
-            self._combine_gff(prefixs, args_op)
+        self._stat(self.table_path, args_op.stat_folder)
+        self._combine_gff(prefixs, args_op)
         self.helper.remove_tmp_dir(args_op.gffs)
         self.helper.remove_tmp_dir(args_op.utr3s)
         self.helper.remove_tmp_dir(args_op.utr5s)

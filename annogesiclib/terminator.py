@@ -362,35 +362,34 @@ class Terminator(object):
                 fh.close()
                 shutil.move(self.tmps["gff"], os.path.join(self.terms["all"],
                             "_".join([new_prefix, self.suffixs["gff"]])))
-        if args_term.stat:
-            stat_path = os.path.join(args_term.out_folder, "statistics")
-            for prefix in new_prefixs:
-                stat_term(os.path.join(self.terms["all"],
-                          "_".join([prefix, self.suffixs["gff"]])),
-                          os.path.join(self.csvs["all"],
-                          "_".join([prefix, self.suffixs["csv"]])),
-                          os.path.join(stat_path,
-                          "_".join(["stat", prefix + ".csv"])),
-                          os.path.join(self.terms["best"],
-                          "_".join([prefix, "term"])),
-                          os.path.join(self.terms["express"],
-                          "_".join([prefix, "term"])),
-                          os.path.join(self.terms["non"],
-                          "_".join([prefix, "term"])))
-                shutil.move(os.path.join(self.terms["best"],
-                            "_".join([prefix, self.suffixs["csv"]])),
-                            os.path.join(self.csvs["best"],
-                            "_".join([prefix, self.suffixs["csv"]])))
-                shutil.move(os.path.join(self.terms["express"],
-                            "_".join([prefix, self.suffixs["csv"]])),
-                            os.path.join(self.csvs["express"],
-                            "_".join([prefix, self.suffixs["csv"]])))
-                shutil.move(os.path.join(self.terms["non"],
-                            "_".join([prefix, self.suffixs["csv"]])),
-                            os.path.join(self.csvs["non"],
-                            "_".join([prefix, self.suffixs["csv"]])))
-                os.remove(os.path.join(self.terms["all"],
-                          "_".join([prefix, self.suffixs["allgff"]])))
+        stat_path = os.path.join(args_term.out_folder, "statistics")
+        for prefix in new_prefixs:
+            stat_term(os.path.join(self.terms["all"],
+                      "_".join([prefix, self.suffixs["gff"]])),
+                      os.path.join(self.csvs["all"],
+                      "_".join([prefix, self.suffixs["csv"]])),
+                      os.path.join(stat_path,
+                      "_".join(["stat", prefix + ".csv"])),
+                      os.path.join(self.terms["best"],
+                      "_".join([prefix, "term"])),
+                      os.path.join(self.terms["express"],
+                      "_".join([prefix, "term"])),
+                      os.path.join(self.terms["non"],
+                      "_".join([prefix, "term"])))
+            shutil.move(os.path.join(self.terms["best"],
+                        "_".join([prefix, self.suffixs["csv"]])),
+                        os.path.join(self.csvs["best"],
+                        "_".join([prefix, self.suffixs["csv"]])))
+            shutil.move(os.path.join(self.terms["express"],
+                        "_".join([prefix, self.suffixs["csv"]])),
+                        os.path.join(self.csvs["express"],
+                        "_".join([prefix, self.suffixs["csv"]])))
+            shutil.move(os.path.join(self.terms["non"],
+                        "_".join([prefix, self.suffixs["csv"]])),
+                        os.path.join(self.csvs["non"],
+                        "_".join([prefix, self.suffixs["csv"]])))
+            os.remove(os.path.join(self.terms["all"],
+                      "_".join([prefix, self.suffixs["allgff"]])))
 
     def _check_gff_file(self, folder):
         for file_ in os.listdir(folder):

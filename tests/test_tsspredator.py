@@ -26,7 +26,7 @@ class Mock_func(object):
         return 100
 
     def mock_merge_manual_predict_tss(self, predict, manual, stat_file,
-                                      wig_path, feature):
+                                      wig_path, feature, test1, test2):
         gen_file('tmp_TSS/test_TSS.gff', self.example.tss_file)
         gen_file('stat_compare_TSSpredator_manual_test.csv', "test")
 
@@ -90,6 +90,7 @@ class TestsTSSpredator(unittest.TestCase):
         self.gffs = "test_folder/gffs"
         self.tsss = "test_folder/tsss"
         self.fastas = "test_folder/fastas"
+        self.manual = "test_folder/manuals"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.trans)
@@ -98,12 +99,14 @@ class TestsTSSpredator(unittest.TestCase):
             os.mkdir(self.gffs)
             os.mkdir(self.tsss)
             os.mkdir(self.fastas)
+            os.mkdir(self.manual)
         args = self.mock_args.mock()
         args.out_folder = self.out
         args.ta_files = self.trans
         args.gffs = self.gffs
         args.wig_folder = self.wigs
         args.fastas = self.fastas
+        args.manual = self.manual
         self.tss = TSSpredator(args)
 
     def tearDown(self):
@@ -158,6 +161,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.repmatch = ["all_2"]
         args.libs = libs
         args.output_prefixs = ["test1"]
+        args.specify_strains = None
         self.tss._gen_config("test", args, self.gffs + "/tmp/test.gff",
                              self.wigs + "/tmp", self.fastas + "/tmp/test.fa", config_file)
         datas = import_data(config_file)
@@ -192,6 +196,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.out_folder = self.out
         args.cluster = 3
         args.repmatch = ["all_2"]
+        args.specify_strains = None
         args.output_prefixs = ["test1"]
         self.tss._set_gen_config(args, self.test_folder)
         datas = import_data(os.path.join(self.test_folder, "config_test.ini"))
@@ -271,8 +276,9 @@ class TestsTSSpredator(unittest.TestCase):
         ts.merge_manual_predict_tss = self.mock.mock_merge_manual_predict_tss
         args = self.mock_args.mock()
         args.gffs = self.gffs
-        args.manual = "test_folder/manual"
-        gen_file("test_folder/manual", "test")
+        args.manual = "test_folder/manuals/tmp"
+        os.mkdir(args.manual)
+        gen_file("test_folder/manuals/tmp/test.gff", "test")
         args.wig_folder = self.wigs
         args.out_folder = self.out
         args.program = "TSS"
@@ -283,6 +289,7 @@ class TestsTSSpredator(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.out,
                         "statistics/test/stat_compare_TSSpredator_manual_test.csv")))
         self.assertTrue(os.path.exists(os.path.join(self.out, "gffs/test_TSS.gff")))
+        shutil.rmtree(args.manual)
 
     def test_deal_with_overlap(self):
         ts.filter_tss_pro = self.mock.mock_filter_tss_pro
@@ -373,14 +380,15 @@ class TestsTSSpredator(unittest.TestCase):
         args.repmatch = "all_2"
         args.output_prefixs = "test"
         args.check_orphan = True
+        args.manual = "test_folder/manuals"
         args.remove_low_expression = True
-        args.manual = "test_folder/manual"
-        gen_file("test_folder/manual", "test")
+        gen_file("test_folder/manuals/test.gff", self.example.tss_file)
         args.overlap_feature = "TSS"
         args.stat = True
         args.references = self.gffs
         args.validate = True
         args.fuzzy = 2
+        args.specify_strains = None
         self.tss.run_tsspredator(args)
         self.assertTrue(os.path.exists(os.path.join(self.out, "gffs/test_TSS.gff")))
         self.assertTrue(os.path.exists(os.path.join(self.out,

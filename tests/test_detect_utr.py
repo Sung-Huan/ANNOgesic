@@ -18,10 +18,10 @@ class Mock_func(object):
     def mock_read_file(self, tss_file, gff_file, ta_file, term_file):
         if term_file is None:
             return self.example.genes, self.example.cdss, \
-                   None, self.example.tsss, self.example.tas
+                   None, self.example.tsss, self.example.tas, True
         if tss_file is None:
             return self.example.genes, self.example.cdss, \
-                   self.example.terms, None, self.example.tas
+                   self.example.terms, None, self.example.tas, True
 
     def mock_plot(self, utr, utr_pri, utr_sec, filename, source,
                   utr_type, base_5utr):

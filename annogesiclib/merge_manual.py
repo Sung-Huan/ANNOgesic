@@ -359,52 +359,53 @@ def print_all_unique(out, overlap_num, nums):
 
 
 def print_stat(num_strain, stat_file, overlap_num, nums):
-    out = open(stat_file, "w")
-    if len(num_strain.keys()) == 1:
-        print_all_unique(out, overlap_num, nums)
-    else:
-        out.write("All strains: \n")
-        print_all_unique(out, overlap_num, nums)
-        for strain in num_strain.keys():
-            if (num_strain[strain]["tsspredator"] == 0) and \
-               (num_strain[strain]["overlap"] == 0):
-                perc_tsspredator = "NA"
-                perc_tsspredator_uni = "NA"
-            else:
-                perc_tsspredator = str(
-                    float(num_strain[strain]["overlap"]) / (
-                        float(num_strain[strain]["tsspredator"]) +
-                        float(num_strain[strain]["overlap"])))
-                perc_tsspredator_uni = str(
-                    float(num_strain[strain]["tsspredator"]) / (
-                        float(num_strain[strain]["tsspredator"]) +
-                        float(num_strain[strain]["overlap"])))
-            if (num_strain[strain]["manual"] == 0) and (
-                    num_strain[strain]["overlap"] == 0):
-                perc_manual = "NA"
-                perc_manual_uni = "NA"
-            else:
-                perc_manual = str(
-                    float(num_strain[strain]["overlap"]) / (
-                        float(num_strain[strain]["manual"]) +
-                        float(num_strain[strain]["overlap"])))
-                perc_manual_uni = str(
-                    float(num_strain[strain]["manual"]) / (
-                        float(num_strain[strain]["manual"]) +
-                        float(num_strain[strain]["overlap"])))
-            out.write(strain + ": \n")
-            out.write("the number of overlap between "
-                      "TSSpredator and manual = {0} ".format(
-                          num_strain[strain]["overlap"]))
-            out.write("(overlap of all TSSpredator = {0}, ".format(
-                      perc_tsspredator))
-            out.write("overlap of all manual = {0})\n".format(perc_manual))
-            out.write("the number of unique in "
-                      "TSSpredator = {0} ({1})\n".format(
-                          num_strain[strain]["tsspredator"],
-                          perc_tsspredator_uni))
-            out.write("the number of unique in manual = {0} ({1})\n".format(
-                      num_strain[strain]["manual"], perc_manual_uni))
+    if len(num_strain) != 0:
+        out = open(stat_file, "w")
+        if len(num_strain.keys()) == 1:
+            print_all_unique(out, overlap_num, nums)
+        else:
+            out.write("All strains: \n")
+            print_all_unique(out, overlap_num, nums)
+            for strain in num_strain.keys():
+                if (num_strain[strain]["tsspredator"] == 0) and \
+                   (num_strain[strain]["overlap"] == 0):
+                    perc_tsspredator = "NA"
+                    perc_tsspredator_uni = "NA"
+                else:
+                    perc_tsspredator = str(
+                        float(num_strain[strain]["overlap"]) / (
+                            float(num_strain[strain]["tsspredator"]) +
+                            float(num_strain[strain]["overlap"])))
+                    perc_tsspredator_uni = str(
+                        float(num_strain[strain]["tsspredator"]) / (
+                            float(num_strain[strain]["tsspredator"]) +
+                            float(num_strain[strain]["overlap"])))
+                if (num_strain[strain]["manual"] == 0) and (
+                        num_strain[strain]["overlap"] == 0):
+                    perc_manual = "NA"
+                    perc_manual_uni = "NA"
+                else:
+                    perc_manual = str(
+                        float(num_strain[strain]["overlap"]) / (
+                            float(num_strain[strain]["manual"]) +
+                            float(num_strain[strain]["overlap"])))
+                    perc_manual_uni = str(
+                        float(num_strain[strain]["manual"]) / (
+                            float(num_strain[strain]["manual"]) +
+                            float(num_strain[strain]["overlap"])))
+                out.write(strain + ": \n")
+                out.write("the number of overlap between "
+                          "TSSpredator and manual = {0} ".format(
+                              num_strain[strain]["overlap"]))
+                out.write("(overlap of all TSSpredator = {0}, ".format(
+                          perc_tsspredator))
+                out.write("overlap of all manual = {0})\n".format(perc_manual))
+                out.write("the number of unique in "
+                          "TSSpredator = {0} ({1})\n".format(
+                              num_strain[strain]["tsspredator"],
+                              perc_tsspredator_uni))
+                out.write("the number of unique in manual = {0} ({1})\n".format(
+                          num_strain[strain]["manual"], perc_manual_uni))
 
 
 def read_wig(filename, strand):
@@ -425,7 +426,7 @@ def read_wig(filename, strand):
     return wigs
 
 
-def read_gff(tss_predict_file, tss_manual_file, gff_file):
+def read_gff(tss_predict_file, tss_manual_file, gff_file, lengths):
     tsss = {"tsss_p": [], "tsss_m": [], "merge": []}
     cdss = []
     genes = []
@@ -440,10 +441,11 @@ def read_gff(tss_predict_file, tss_manual_file, gff_file):
     tsss["tsss_p"] = sorted(tsss["tsss_p"], key=lambda k: (k.seq_id, k.start,
                                                            k.end, k.strand))
     for entry in gff_parser.entries(tssm_fh):
-        entry.attributes["print"] = False
-        entry.attributes["libs"] = "manual"
-        entry.attributes["method"] = "manual"
-        tsss["tsss_m"].append(entry)
+        if (entry.seq_id in lengths.keys()) or ("all" in lengths.keys()):
+            entry.attributes["print"] = False
+            entry.attributes["libs"] = "manual"
+            entry.attributes["method"] = "manual"
+            tsss["tsss_m"].append(entry)
     tssm_fh.close()
     tsss["tsss_m"] = sorted(tsss["tsss_m"], key=lambda k: (k.seq_id, k.start,
                                                            k.end, k.strand))
@@ -521,15 +523,24 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
     return (overlap, pre_pos, overlap_num)
 
 
-def intersection(tsss, cluster, nums, length, cdss, genes):
+def intersection(tsss, cluster, nums, lengths, cdss, genes, seqs):
     '''compare the predicted TSS and manual TSS'''
     num_strain = {}
     overlap = False
     overlap_num = 0
     pre_pos = -1
+    start = False
+    length = None
     for tss_m in tsss["tsss_m"]:
         pre_tss = None
         start = False
+        if "all" in lengths.keys():
+            length = seqs[tss_m.seq_id]
+        else:
+            if lengths[tss_m.seq_id] == "all":
+                length = seqs[tss_m.seq_id]
+            else:
+                length = lengths[tss_m.seq_id]
         for tss_p in tsss["tsss_p"]:
             start = True
             if (tss_p.strand == tss_m.strand) and \
@@ -552,13 +563,18 @@ def intersection(tsss, cluster, nums, length, cdss, genes):
             overlap = datas[0]
             pre_pos = datas[1]
             overlap_num = datas[2]
-    if start:
+    if (start) or (len(tsss["tsss_m"]) == 0):
         for tss_p in tsss["tsss_p"]:
+            run = False
             if not tss_p.attributes["print"]:
                 tss_p.attribute_string = define_attributes(tss_p)
                 tsss["merge"].append(tss_p)
-                if (not length) or \
-                   (tss_p.start <= int(length)):
+                if (length is None):
+                    run = True
+                else:
+                   if (tss_p.start <= int(length)):
+                       run = True
+                if run and (tss_p.seq_id in num_strain):
                     num_strain[tss_p.seq_id]["tsspredator"] += 1
                     nums["tss"] += 1
                     nums["tss_p"] += 1
@@ -591,16 +607,31 @@ def print_file(final_tsss, program, out_gff):
                              tss.attribute_string]]) + "\n")
 
 
+def read_seq(seq_file):
+    seqs = {}
+    with open(seq_file) as fh:
+        for line in fh:
+            line = line.strip()
+            if line.startswith(">"):
+                strain = line[1:]
+                seqs[strain] = 0
+            else:
+                seqs[strain] = seqs[strain] + len(line)
+    return seqs
+
 def merge_manual_predict_tss(tss_predict_file, stat_file, out_gff,
-                             gff_file, args_tss):
+                             gff_file, args_tss, manual, seq_file):
     '''merge the manual detected TSS and TSSpredator predicted TSS'''
     nums = {"tss_p": 0, "tss_m": 0, "tss": 0}
     merge_libs(args_tss.libs, args_tss.wig_folder, args_tss.program)
     wigs_f = read_wig("merge_forward.wig", "+")
     wigs_r = read_wig("merge_reverse.wig", "-")
-    tsss, cdss, genes = read_gff(tss_predict_file, args_tss.manual, gff_file)
+    seqs = read_seq(seq_file)
+    tsss, cdss, genes, = read_gff(tss_predict_file, manual,
+                                  gff_file, args_tss.strain_lengths)
     overlap_num, num_strain = intersection(tsss, args_tss.cluster, nums,
-                                           args_tss.nt_length, cdss, genes)
+                                           args_tss.strain_lengths,
+                                           cdss, genes, seqs)
     sort_tsss = sorted(tsss["merge"], key=lambda k: (k.seq_id, k.start,
                                                      k.end, k.strand))
     final_tsss = fix_primary_type(sort_tsss, wigs_f, wigs_r)

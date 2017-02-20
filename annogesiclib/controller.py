@@ -68,8 +68,8 @@ class Controller(object):
                 if files is not None:
                     for file_ in files:
                         if not os.path.exists(file_):
-                            print("Error: Some files in {0} are "
-                                  "no existed!".format(flag))
+                            print("Error: Some files in {0} do "
+                                  "not existed!".format(flag))
                             sys.exit()
 
     def check_parameter(self, paras, names):
@@ -250,7 +250,7 @@ class Controller(object):
                  self._args.reference_gff_files, self._args.manual_files,
                  self._args.compare_transcript_files],
                 ["--fasta_files", "--annotation_files", "--reference_gff_files",
-                 "--manual_files", "--compare_transcript_files"])
+                 "--manual_files","--compare_transcript_files"])
         self.check_parameter([self._args.tex_notex_libs, self._args.condition_names],
                              ["--tex_notex_libs", "--condition_names"])
         self._args.tsspredator_path = self.check_execute_file(
@@ -276,11 +276,11 @@ class Controller(object):
             self._args.factor, self._args.factor_reduction,
             self._args.base_height, self._args.enrichment_factor,
             self._args.processing_factor, self._args.replicate_tex,
-            out_folder, self._args.statistics,
-            self._args.validate_gene, self._args.manual_files,
+            out_folder, self._args.validate_gene,
+            self._args.manual_files, self._args.strain_length,
             self._args.compare_transcript_files, self._args.fuzzy,
             self._args.utr_length, self._args.cluster,
-            self._args.partial_length, self._args.re_check_orphan,
+            self._args.re_check_orphan, self._args.specify_strains,
             self._args.overlap_feature, self._args.reference_gff_files,
             self._args.remove_low_expression)
         tsspredator = TSSpredator(args_tss)
@@ -288,13 +288,15 @@ class Controller(object):
 
     def optimize(self):
         """opimize TSSpredator"""
-        self.check_file([self._args.manual],
-                        ["--manual"], True)
+        self.check_multi_files(
+                [self._args.fasta_files, self._args.annotation_files,
+                 self._args.manual_files],
+                ["--fasta_files", "--annotation_files", "--manual_files"])
         self._args.tsspredator_path = self.check_execute_file(
                 self._args.tsspredator_path)
-        self.check_parameter([self._args.strain_name, self._args.tex_notex_libs,
+        self.check_parameter([self._args.tex_notex_libs,
                               self._args.condition_names],
-                             ["--strain_name", "--tex_notex_lib",
+                             ["--tex_notex_lib",
                               "--condition_names"])
         if self._args.program.lower() == "tss":
             print("Running optimization of TSS prediction")
@@ -310,16 +312,15 @@ class Controller(object):
             print("Error: No such program!")
             sys.exit()
         args_ops = self.args_container.container_optimize(
-            self._args.tsspredator_path, self._args.fasta_file,
-            self._args.annotation_file,
-            self._args.manual, out_folder,
-            self._args.strain_name, self._args.max_height,
+            self._args.tsspredator_path, self._args.fasta_files,
+            self._args.annotation_files,
+            self._args.manual_files, out_folder, self._args.max_height,
             self._args.max_height_reduction, self._args.max_factor,
             self._args.max_factor_reduction, self._args.max_base_height,
             self._args.max_enrichment_factor, self._args.max_processing_factor,
             self._args.utr_length, self._args.tex_notex_libs,
             self._args.condition_names, self._args.cluster,
-            self._args.partial_length, self._args.parallels,
+            self._args.strain_lengths, self._args.parallels,
             self._args.program, self._args.replicate_tex,
             self._args.steps)
         optimize_tss(args_ops)
@@ -339,26 +340,25 @@ class Controller(object):
     def terminator(self):
         """Run TransTermHP and Gene converaged for detecting terminators"""
         print("Running terminator prediction")
-        if self._args.transtermhp_path is None:
-            print("Please assign the folder where you install TransTermHP.")
+        if self._args.transterm_path is None:
+            print("Please assign the path of transterm in TransTermHP.")
         self.check_multi_files(
                 [self._args.fasta_files, self._args.annotation_files,
                  self._args.transcript_files, self._args.srna_files],
                 ["--fasta_files", "--annotation_files",
                  "--transcript_files", "--srna_files"])
-        for prop in ("transtermhp_path", "expterm_path", "rnafold_path"):
+        for prop in ("transterm_path", "expterm_path", "rnafold_path"):
             setattr(self._args, prop,
                     self.check_execute_file(getattr(self._args, prop)))
         project_creator.create_subfolders(
             self._paths.required_folders("terminator"))
         args_term = self.args_container.container_terminator(
-            self._args.transtermhp_path, self._args.expterm_path,
+            self._args.transterm_path, self._args.expterm_path,
             self._args.rnafold_path,
             self._paths.transterm_folder, self._args.fasta_files,
             self._args.annotation_files, self._args.transcript_files,
-            self._args.srna_files, self._args.statistics,
-            self._args.decrease, self._args.highest_coverage,
-            self._args.fuzzy_detect_coverage,
+            self._args.srna_files, self._args.decrease,
+            self._args.highest_coverage, self._args.fuzzy_detect_coverage,
             self._args.fuzzy_within_transcript,
             self._args.fuzzy_downstream_transcript,
             self._args.fuzzy_within_gene,
@@ -405,7 +405,7 @@ class Controller(object):
             [self._args.annotation_files, self._args.terminator_files,
              self._args.transcript_files, self._args.tss_files],
             ["--annotation_folder", "--terminator_files",
-             "--transcript_folder", "--tss_folder"])
+             "--transcript_folder", "--tss_files"])
         project_creator.create_subfolders(self._paths.required_folders("utr"))
         args_utr = self.args_container.container_utr(
                 self._args.tss_files, self._args.annotation_files,
@@ -594,8 +594,7 @@ class Controller(object):
             self._args.transcript_files, self._args.utr5_files,
             self._args.utr3_files, self._args.term_files,
             self._args.tss_fuzzy, self._args.term_fuzzy,
-            self._args.min_length, self._args.statistics,
-            self._paths.operon_output_folder, self._args.combine_gff,
+            self._args.min_length, self._paths.operon_output_folder,
             self._paths.operon_statistics_folder)
         operon = OperonDetection(args_op)
         operon.run_operon(args_op)
