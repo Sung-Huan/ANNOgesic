@@ -19,7 +19,8 @@ For command lines which we will present later, please check the
 `run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ in our Git repository.
 
 If the subcommand integrates third-party software, ex: TSSpredator,
-please check path of the execute file. If necessary, please assign it properly.
+please check path of the execute file. If necessary, please assign it properly. Moreover, 
+if your execute path is not in your ``$PATH``, please specify your execute path of ANNOgesic as well.
 
 Generating a project
 --------------------
@@ -39,7 +40,7 @@ Then we will see
     ANNOgesic
 
 Retrieving the input data
--------------------
+-------------------------
 
 For our test case, the input data can be downloaded from 
 `NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/>`_.
@@ -69,7 +70,7 @@ Then we will get following results
     NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 
 If the fasta files and annotation files from NCBI is exactly what you want,
-you can add ``-t`` for putting the files to ``ANNOgesic/output/target``. Then you can skip running ``get_target_fasta`` 
+you can add ``-t`` for putting the files to ``ANNOgesic/output/target``. Then you can skip ``get_target_fasta`` 
 and ``annotation_transfer``.
 
 In fact, these fasta and gff files are exactly what we want to use for the test case.
@@ -77,7 +78,7 @@ But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we us
 After testing these subcommands, we will reorganize the data again.
 
 Putting wig, bam files and reads to proper location
-------------------
+---------------------------------------------------
 For the test case, we can download reads from 
 `here <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
 
@@ -132,10 +133,14 @@ wiggle files are the same, you can skip this step.
 We only download one replicate to reduce the running time.
 
 Improving the reference genome
-------------------
+------------------------------
 
-Again, if the data retrieved from NCBI is exactly what you want, you can skip this step. 
-Please remember to put or download the fasta file to ``ANNOgesic/output/target/fasta``.
+Again, if the data retrieved from NCBI is exactly what you want, you can skip this step and ``annotation_transfer``. 
+
+Although the data that we downloaded before is our real data (``ANNOgesic/input/reference``),
+we will generate some new fake files via this step and ``annotation_transfer`` in order to 
+show you the function of these subcommands. After testing these two subcommands, 
+we can re-organize the files again.
 
 Now, we assume that we need to generate fasta file of our target strain. 
 First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain. 
@@ -167,6 +172,18 @@ Now, let's try it
 the strains that we want to put into the file. In our case, "test_case1" is the first output fasta file, and "test_case2" 
 is the second output fasta file. "test_case1" stores the sequence of the new strain "NC_test.1", 
 and "test_case2" stores the sequence of the other new strain - "test_case2". 
+
+When the running process is done, the following information will appear.
+
+::
+
+    $ Transfering to target fasta
+      Please use the new fasta file to remapping again.
+
+Since the data (``ANNOgesic/output/target/fasta``) that we generated is not real,
+we can ignore the information now. However, if the new fasta file is real target one,
+you have to remap again in order to get the correct alignment and coverage files.
+
 Now we can check the results.
 
 ::
@@ -202,11 +219,10 @@ If we have no mutation table, we can also use subcommand ``snp`` to detect mutat
 fasta files automatically. For ``snp``, we will go through it later.
 
 Generating annotation files
--------------------
+---------------------------
 
 We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotaion files 
-retrieved from NCBI is exactly what you want, you can skip this step. Please 
-remember to copy or download the annotation files to ``ANNOgesic/output/target/annotation``.
+retrieved from NCBI is exactly what you want, you can skip this step. 
 
 Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
 If you execute ANNOgesic by using docker container, the path is alread setted. 
@@ -247,24 +263,31 @@ Once the transfer is done, we can see
 In ``ANNOgesic/output/target/annotation``, we can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
 we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
 
-TSS and processing site prediction and optimization
------------------
+We already saw how to update genome fasta and annotation files. 
+Now, we can re-organize our data in order to run next subcommand.
+(Normally, you don't need to do it. We re-organize the data becuase the data is only for showing the how to 
+run ``get_target_fasta`` and ``annotation_transfer``. All the data is useless now. The real test case is 
+already downloaded via ``get_input_files``. Therefore, we need to re-organize the data.)
 
-Now we already saw how to update genome fasta and annotation files. In order to 
-go through following subcommands, we need to reorganize our data.
-First, we remove the fake files for testing the previous subcommands.
+Since the data in ``ANNOgesic/output/target`` is fake data, we can remove it.
 
 ::
 
     $ rm ANNOgesic/output/target/annotation/*
     $ rm ANNOgesic/output/target/fasta/*
 
-Then put the correct files that we used as references before into ``ANNOgesic/output/target``.
+The real data of our query strain is stored in ``ANNOgesic/input/reference`` before. Thus,
+we need to move the data to ``ANNOgesic/output/target``
 
 ::
 
     $ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
     $ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+
+Now files are re-organized, we can run following subcommands.
+
+TSS and processing site prediction and optimization
+---------------------------------------------------
 
 Before running following subcommands, we need to setup our libraries as a correct format.
 First, we set the path of wig file folder.
@@ -295,18 +318,19 @@ from our git repository.
     $ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
 Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSS``. 
-we can try ``optimize_tss_processing`` right now (since we only check first 200kb, we set ``-le`` as 200000).
+we can try ``optimize_tss_processing`` right now (since we only check first 200kb, we set ``-le`` as "NC_009839.1:200000" which 
+means only first 200kb of NC_009839.1 is valid.).
 
 ::
 
     $ annogesic optimize_tss_processing \
-         -fs ANNOgesic/output/target/fasta/NC_009839.1.fa \
+         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
          -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-         -n NC_009839.1 \
          -tl $TEX_LIBS \
          -p TSS -s 25 \
          -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
-         -le 200000 \
+         -le NC_009839.1:200000 \
+         -rt all_1 \
          -pj ANNOgesic
 
 ``optimize_tss_processing`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
@@ -316,9 +340,9 @@ Once the optimization is done, you can find several files.
 ::
 
     $ ls ANNOgesic/output/TSS/optimized_TSSpredator/
-    best.csv  log.txt  stat.csv
+    best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
 
-``best.csv`` is for the best parameters; ``stat.csv`` is for parameters of each step.
+``best_NC_009839.1.csv`` is for the best parameters; ``stat_NC_009839.1.csv`` is for parameters of each step.
 
 Now, we assume the best parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2, 
 base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can set these parameters for running  
@@ -338,9 +362,9 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
         -bh 0.039 \
         -ef 1.1 \
         -pf 4.5 \
-        -s \
         -v \
-        -le 200000 \
+        -rt all_1 \
+        -le NC_009839.1:200000 \
         -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
         -pj ANNOgesic
 
@@ -381,7 +405,7 @@ base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
         -bh 0.009 \
         -ef 1.2 \
         -pf 1.5 \
-        -s \
+        -rt all_1 \
         -t processing_site \
         -pj ANNOgesic
 
@@ -404,7 +428,7 @@ Since we use TSSpredator to detect processing site, the files in
 ``ANNOgesic/output/processing_site/MasterTables/MasterTable_NC_009839.1/`` are for processing site not for TSS.
 
 Performing transcript detection
-----------------
+-------------------------------
 
 transcript detection is a basic precedure for detecting transcript boundary. 
 we can use subcommand ``transcript`` to do it. Normally, we strongly 
@@ -435,7 +459,7 @@ The output files are gff files, tables and statistic files.
     NC_009839.1_length_all.png  NC_009839.1_length_less_2000.png  stat_compare_transcript_TSS_NC_009839.1.csv  stat_compare_transcript_genome_NC_009839.1.csv
 
 Prediction of terminator
-----------------------
+------------------------
 
 We can use subcommand ``terminator`` to detect terminators. ``terminator`` integrates `RNAfold <http://www.tbi.univie.ac.at/RNA/RNAfold.1.html>`_ 
 for computing secondary structure of potential terminators. Therefore, this process will take a while. The command is like following: 
@@ -445,7 +469,6 @@ for computing secondary structure of potential terminators. Therefore, this proc
     $ annogesic terminator \
         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -s \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
@@ -534,7 +557,7 @@ Output gff files and statistic files will be stored in ``5UTR`` and ``3UTR``.
 Now, we have all information for defining the transcript boundary.
 
 Detecting operon and suboperon
------------------
+------------------------------
 
 We already had TSSs, transcripts, terminators, CDSs, UTRs. We can integrate all these feature to 
 detect operons and suboperons by executing subcommand ``operon``.
@@ -548,7 +571,6 @@ detect operons and suboperons by executing subcommand ``operon``.
         -u5 ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
         -u3 ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
         -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
-        -s -c \
         -pj ANNOgesic
 
 Three folders will be generated to store gff files, tables and statistics files.
@@ -565,7 +587,7 @@ Three folders will be generated to store gff files, tables and statistics files.
     stat_NC_009839.1_operon.csv
 
 Promoter motif detection
-----------------
+------------------------
 
 As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. The promoters can be detected 
 by different types of the TSSs. Therefore, if the TSSs gff files are not generated by ``ANNOgesic``,
@@ -615,7 +637,7 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
     glam2.meme  logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png  logo_ssc1.eps   logo_ssc2.png  logo_ssc4.eps  logo_ssc5.png  logo_ssc7.eps  logo_ssc8.png
 
 Prediction of sRNA and sORF
------------------
+---------------------------
 
 Based on trascripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we 
 have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can 
@@ -774,7 +796,7 @@ stores the gff files and tables without filtering; ``best`` stores the gff_files
     stat_NC_009839.1_sORF.csv
 
 Performing sRNA target prediction
-------------------
+---------------------------------
 
 Now we have sRNA candidates. If we want to know targets of these sRNAs, we can use ``srna_target``.
 
@@ -827,7 +849,7 @@ both methods. ``NC_009839.1_overlap.csv`` only stores candidates which are top 2
     NC_009839.1_merge.csv  NC_009839.1_overlap.csv
 
 Mapping and detecting of circular RNA
--------------------
+-------------------------------------
 
 You may also be interested in circular RNAs. The subcommand ``circrna`` can help us to get circular RNAs by  
 using `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. Since 
@@ -838,7 +860,8 @@ if you mapped the reads by other tools or you mapped the reads by
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``-S``, Unfortunately, 
 you have to re-map the reads again. You can assign parallel (``-p``) for mapping.
 
-For testing, we can reduce the running time by selecting the subset of reads (first 50000).
+In normal situation, the reads should be directly given to ``circrna``. However, we just want to test the 
+subcommand. Thus, we can reduce the running time by selecting the subset of reads (first 50000) for only testing.
 
 ::
 
@@ -866,6 +889,7 @@ Now, we can try ``circrna``
              ANNOgesic/input/reads/SRR515257_50000.fasta \
          -pj ANNOgesic
 
+If you can't find testrealign.x, please refer to :ref:`Required tools or databases`.
 Several output folders will be generated.
 
 ::
@@ -990,7 +1014,7 @@ In ``seqs``, the potential sequences can be found.
     NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_best.png    NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_raw.png   stat_NC_009839.1_with_BAQ_SNP_best.csv    stat_NC_009839.1_without_BAQ_SNP_raw.csv
 
 Mapping Gene ontology
-------------------
+---------------------
 
 Gene ontology is useful for understanding function of gene products. 
 Implementing ``go_term`` can map our annotations to gene ontology. Before running ``go_term``, we 
@@ -1035,7 +1059,7 @@ figures are stored in ``statistics``.
     NC_009839.1_biological_process.png  NC_009839.1_cellular_component.png  NC_009839.1_molecular_function.png  NC_009839.1_three_roots.png
 
 Prediction of Subcellular localization
-------------------
+--------------------------------------
 
 Subcellular localization is also a useful information for analysis of protein function. For 
 detecting subcellular localization, we can use the subcommand 
@@ -1067,7 +1091,7 @@ statistic files and figures.
     NC_009839.1_NC_009839.1_sublocal.png  stat_NC_009839.1_sublocal.csv
 
 Generating protein-protein interaction network
--------------------
+----------------------------------------------
 
 ``ppi_network`` can detect protein-protein interaction from `STRING <http://string-db.org/>`_ 
 (database of protein-protein interaction) and searching the literatures by implementing 
@@ -1136,7 +1160,7 @@ figures of the protein-protein interaction networks. There are two subfolders - 
     C8J_RS00250_flgD.png
 
 Generating riboswitch and RNA thermometer
------------------
+-----------------------------------------
 
 If we want to detect riboswitches and RNA thermometer, we can use subcommand ``riboswitch_thermometer``.
 Before running it, we need to get information of the known riboswitches and RNA thermometer in Rfam. 
@@ -1200,7 +1224,7 @@ Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_t
      stat_NC_009839.1_RNA_thermometer.txt
 
 Detection of CRISPR
-----------------
+-------------------
 CRISPR is an unique features for research of immunology. ``crispr`` is a useful subcommand for CRISPR detectiion. 
 ``crispr`` integrates `CRT <http://www.room220.com/crt/>`_ and compare genome 
 annotation to remove false positive. Let's try it.
@@ -1269,7 +1293,7 @@ Output gff file is stored in ``merge_all_features``
     NC_009839.1_merge_features.gff
 
 Producing the screenshots
------------------
+-------------------------
 
 It is a good idea if we can get screenshots of our interesting features. Then we can 
 check them very quickly. Therefore, ANNOgesic provides a subcommand ``screenshot`` for 
@@ -1323,7 +1347,7 @@ we can see that there are several screenshots in ``forward`` and ``reverse``.
     NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
 
 Coloring the screenshots
------------------
+------------------------
 
 If we have numerous samples and we want to check TSSs, Distinguishing the 
 tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``color_png`` to color

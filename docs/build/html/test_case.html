@@ -117,7 +117,8 @@ Moreover, all the requirements are listed in the section <a class="reference int
 For command lines which we will present later, please check the
 <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a> in our Git repository.</p>
 <p>If the subcommand integrates third-party software, ex: TSSpredator,
-please check path of the execute file. If necessary, please assign it properly.</p>
+please check path of the execute file. If necessary, please assign it properly. Moreover,
+if your execute path is not in your <code class="docutils literal"><span class="pre">$PATH</span></code>, please specify your execute path of ANNOgesic as well.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
 <p>First of all, we need to create a working folder by running <code class="docutils literal"><span class="pre">create</span></code>. <code class="docutils literal"><span class="pre">-pj</span></code> represents project path.</p>
@@ -155,7 +156,7 @@ NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 </pre></div>
 </div>
 <p>If the fasta files and annotation files from NCBI is exactly what you want,
-you can add <code class="docutils literal"><span class="pre">-t</span></code> for putting the files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>. Then you can skip running <code class="docutils literal"><span class="pre">get_target_fasta</span></code>
+you can add <code class="docutils literal"><span class="pre">-t</span></code> for putting the files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>. Then you can skip <code class="docutils literal"><span class="pre">get_target_fasta</span></code>
 and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>.</p>
 <p>In fact, these fasta and gff files are exactly what we want to use for the test case.
 But, in order to testing <code class="docutils literal"><span class="pre">get_target_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>, we used them as references first.
@@ -210,8 +211,11 @@ $ rm replace_seq_id.py
 </div>
 <div class="section" id="improving-the-reference-genome">
 <h2>Improving the reference genome<a class="headerlink" href="#improving-the-reference-genome" title="Permalink to this headline">¶</a></h2>
-<p>Again, if the data retrieved from NCBI is exactly what you want, you can skip this step.
-Please remember to put or download the fasta file to <code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>.</p>
+<p>Again, if the data retrieved from NCBI is exactly what you want, you can skip this step and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>.</p>
+<p>Although the data that we downloaded before is our real data (<code class="docutils literal"><span class="pre">ANNOgesic/input/reference</span></code>),
+we will generate some new fake files via this step and <code class="docutils literal"><span class="pre">annotation_transfer</span></code> in order to
+show you the function of these subcommands. After testing these two subcommands,
+we can re-organize the files again.</p>
 <p>Now, we assume that we need to generate fasta file of our target strain.
 First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain.
 Then, we need to generate a mutation table between these two strains. When these files are produced,
@@ -236,8 +240,16 @@ will be generated in <code class="docutils literal"><span class="pre">ANNOgesic/
 <p><code class="docutils literal"><span class="pre">-r</span></code> is folder of the close strain fasta file. In <code class="docutils literal"><span class="pre">-o</span></code>, we assign a pairs of output filenames and
 the strains that we want to put into the file. In our case, &#8220;test_case1&#8221; is the first output fasta file, and &#8220;test_case2&#8221;
 is the second output fasta file. &#8220;test_case1&#8221; stores the sequence of the new strain &#8220;NC_test.1&#8221;,
-and &#8220;test_case2&#8221; stores the sequence of the other new strain - &#8220;test_case2&#8221;.
-Now we can check the results.</p>
+and &#8220;test_case2&#8221; stores the sequence of the other new strain - &#8220;test_case2&#8221;.</p>
+<p>When the running process is done, the following information will appear.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ Transfering to target fasta
+  Please use the new fasta file to remapping again.
+</pre></div>
+</div>
+<p>Since the data (<code class="docutils literal"><span class="pre">ANNOgesic/output/target/fasta</span></code>) that we generated is not real,
+we can ignore the information now. However, if the new fasta file is real target one,
+you have to remap again in order to get the correct alignment and coverage files.</p>
+<p>Now we can check the results.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ head ANNOgesic/input/reference/fasta/NC_009839.1.fa
 &gt;NC_009839.1
 ATGAATCCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAAATTATATCGCTATCTTAAA
@@ -271,8 +283,7 @@ fasta files automatically. For <code class="docutils literal"><span class="pre">
 <div class="section" id="generating-annotation-files">
 <h2>Generating annotation files<a class="headerlink" href="#generating-annotation-files" title="Permalink to this headline">¶</a></h2>
 <p>We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotaion files
-retrieved from NCBI is exactly what you want, you can skip this step. Please
-remember to copy or download the annotation files to <code class="docutils literal"><span class="pre">ANNOgesic/output/target/annotation</span></code>.</p>
+retrieved from NCBI is exactly what you want, you can skip this step.</p>
 <p>Before we running this subcommand, we have to modify environment paths of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
 If you execute ANNOgesic by using docker container, the path is alread setted.
 If you setup ANNOgesic by yourself, please check
@@ -305,21 +316,26 @@ chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff
 </div>
 <p>In <code class="docutils literal"><span class="pre">ANNOgesic/output/target/annotation</span></code>, we can find ptt, rnt and gff files. In <code class="docutils literal"><span class="pre">ANNOgesic/output/annotation_transfer</span></code>,
 we can find the output of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.</p>
-</div>
-<div class="section" id="tss-and-processing-site-prediction-and-optimization">
-<h2>TSS and processing site prediction and optimization<a class="headerlink" href="#tss-and-processing-site-prediction-and-optimization" title="Permalink to this headline">¶</a></h2>
-<p>Now we already saw how to update genome fasta and annotation files. In order to
-go through following subcommands, we need to reorganize our data.
-First, we remove the fake files for testing the previous subcommands.</p>
+<p>We already saw how to update genome fasta and annotation files.
+Now, we can re-organize our data in order to run next subcommand.
+(Normally, you don&#8217;t need to do it. We re-organize the data becuase the data is only for showing the how to
+run <code class="docutils literal"><span class="pre">get_target_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>. All the data is useless now. The real test case is
+already downloaded via <code class="docutils literal"><span class="pre">get_input_files</span></code>. Therefore, we need to re-organize the data.)</p>
+<p>Since the data in <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code> is fake data, we can remove it.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ rm ANNOgesic/output/target/annotation/*
 $ rm ANNOgesic/output/target/fasta/*
 </pre></div>
 </div>
-<p>Then put the correct files that we used as references before into <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code>.</p>
+<p>The real data of our query strain is stored in <code class="docutils literal"><span class="pre">ANNOgesic/input/reference</span></code> before. Thus,
+we need to move the data to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
 $ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 </pre></div>
 </div>
+<p>Now files are re-organized, we can run following subcommands.</p>
+</div>
+<div class="section" id="tss-and-processing-site-prediction-and-optimization">
+<h2>TSS and processing site prediction and optimization<a class="headerlink" href="#tss-and-processing-site-prediction-and-optimization" title="Permalink to this headline">¶</a></h2>
 <p>Before running following subcommands, we need to setup our libraries as a correct format.
 First, we set the path of wig file folder.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">WIG_FOLDER</span><span class="o">=</span><span class="s2">&quot;ANNOgesic/input/wigs/tex_notex&quot;</span>
@@ -342,15 +358,16 @@ from our git repository.</p>
 </pre></div>
 </div>
 <p>Now, we have a manual TSS gff file which is stored in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSS</span></code>.
-we can try <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> right now (since we only check first 200kb, we set <code class="docutils literal"><span class="pre">-le</span></code> as 200000).</p>
+we can try <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> right now (since we only check first 200kb, we set <code class="docutils literal"><span class="pre">-le</span></code> as &#8220;NC_009839.1:200000&#8221; which
+means only first 200kb of NC_009839.1 is valid.).</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic optimize_tss_processing \
-     -fs ANNOgesic/output/target/fasta/NC_009839.1.fa \
+     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
      -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-     -n NC_009839.1 \
      -tl $TEX_LIBS \
      -p TSS -s 25 \
      -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
-     -le 200000 \
+     -le NC_009839.1:200000 \
+     -rt all_1 \
      -pj ANNOgesic
 </pre></div>
 </div>
@@ -358,10 +375,10 @@ we can try <code class="docutils literal"><span class="pre">optimize_tss_process
 Results of the different parameters will be printed in the screen. we only set 25 runs for testing.
 Once the optimization is done, you can find several files.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSS/optimized_TSSpredator/
-best.csv  log.txt  stat.csv
+best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">best.csv</span></code> is for the best parameters; <code class="docutils literal"><span class="pre">stat.csv</span></code> is for parameters of each step.</p>
+<p><code class="docutils literal"><span class="pre">best_NC_009839.1.csv</span></code> is for the best parameters; <code class="docutils literal"><span class="pre">stat_NC_009839.1.csv</span></code> is for parameters of each step.</p>
 <p>Now, we assume the best parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2,
 base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can set these parameters for running
 <code class="docutils literal"><span class="pre">tss</span></code>.</p>
@@ -377,9 +394,9 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
     -bh 0.039 \
     -ef 1.1 \
     -pf 4.5 \
-    -s \
     -v \
-    -le 200000 \
+    -rt all_1 \
+    -le NC_009839.1:200000 \
     -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
     -pj ANNOgesic
 </pre></div>
@@ -416,7 +433,7 @@ base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.</p>
     -bh 0.009 \
     -ef 1.2 \
     -pf 1.5 \
-    -s \
+    -rt all_1 \
     -t processing_site \
     -pj ANNOgesic
 </pre></div>
@@ -470,7 +487,6 @@ for computing secondary structure of potential terminators. Therefore, this proc
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic terminator \
     -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-    -s \
     -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
     -tl $TEX_LIBS \
     -rt all_1 -tb \
@@ -558,7 +574,6 @@ detect operons and suboperons by executing subcommand <code class="docutils lite
     -u5 ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
     -u3 ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
     -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
-    -s -c \
     -pj ANNOgesic
 </pre></div>
 </div>
@@ -808,7 +823,8 @@ remove <code class="docutils literal"><span class="pre">-a</span></code> and add
 if you mapped the reads by other tools or you mapped the reads by
 <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> without <code class="docutils literal"><span class="pre">-S</span></code>, Unfortunately,
 you have to re-map the reads again. You can assign parallel (<code class="docutils literal"><span class="pre">-p</span></code>) for mapping.</p>
-<p>For testing, we can reduce the running time by selecting the subset of reads (first 50000).</p>
+<p>In normal situation, the reads should be directly given to <code class="docutils literal"><span class="pre">circrna</span></code>. However, we just want to test the
+subcommand. Thus, we can reduce the running time by selecting the subset of reads (first 50000) for only testing.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ head -n 50000 ANNOgesic/input/reads/SRR515254.fasta &gt; ANNOgesic/input/reads/SRR515254_50000.fasta
 $ head -n 50000 ANNOgesic/input/reads/SRR515255.fasta &gt; ANNOgesic/input/reads/SRR515255_50000.fasta
 $ head -n 50000 ANNOgesic/input/reads/SRR515256.fasta &gt; ANNOgesic/input/reads/SRR515256_50000.fasta
@@ -832,7 +848,8 @@ $ rm ANNOgesic/input/reads/SRR515257.fasta
     -pj ANNOgesic
 </pre></div>
 </div>
-<p>Several output folders will be generated.</p>
+<p>If you can&#8217;t find testrealign.x, please refer to <a class="reference internal" href="prerequired.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+Several output folders will be generated.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/circRNA/
 circRNA_tables  gffs  segemehl_align  segemehl_splice statistics
 </pre></div>

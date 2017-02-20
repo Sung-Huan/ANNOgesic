@@ -1,13 +1,13 @@
 .. _Required tools or databases:
 
 Required tools or databases
-==============
+===========================
 
 Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
 Via Docker image, all the required tools are installed.
 
 Tools
-----
+-----
 
 `Python <https://www.python.org/>`_ : version higher or equal to 3.4
 
@@ -42,6 +42,7 @@ modify the path for execute RATT. If you run ANNOgesic through Docker container,
 `Bcftools <https://github.com/samtools>`_ : version higher or equal to 1.3.1 (using htslib 1.3.1) (for SNP calling)
 
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ : version higher or equal to 0.1.9 (for CircRNA_detection)
+When you install Segemehl, please type 'make all' instead of 'make' after running configure. Otherwise, the testrealign.x won't appear. 
 
 `TranstermHP <http://transterm.cbcb.umd.edu/>`_ : version higher or equal to 2.09 (for rho-independent terminator prediction)
 

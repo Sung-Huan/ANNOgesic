@@ -107,7 +107,7 @@ The source code of ANNOgesic can be found at `Github <https://github.com/Sung-Hu
 License
 =======
 
-`ISCL <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
+`ISC <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
 Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhosted.org/ANNOgesic/license.html>`__
 
 Cite
