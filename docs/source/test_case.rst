@@ -119,10 +119,26 @@ Now we get the reads. Then we have to download the wiggle files.
             GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig.gz
    $ cd ../../../../
 
-If we check the wiggle files, we will find that the strain name (presented by "chrom") is not the same as fasta or annotation gff file. 
+If we check the wiggle files, we will find that the fasta filename (presented by "chrom") is not the same as fasta or annotation gff file.
+
+::
+
+   $ head ANNOgesic/input/wigs/tex_notex/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig 
+     track type=wiggle_0 name="Log_81116_R1_minus_TEX_in_NC_009839"
+     variableStep chrom=NC_009839 span=1
+     7	-1.0
+     8	-1.0
+     9	-1.0
+     10	-1.0
+     11	-1.0
+     12	-1.0
+     13	-1.0
+     14	-1.0
+
+Our genome fasta file is NC_009839.1.fa. Thus the fasta filename in wiggle file should be NC_009839.1 not NC_009839. 
 Thus, we need to change it. We can use `replace_seq_id.py <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ from our 
 Git repository. to replace the strain name properly. If the strain names in your fasta, annotation, 
-wiggle files are the same, you can skip this step.
+wiggle files are the same, you don't need to do this step.
 
 ::
 
