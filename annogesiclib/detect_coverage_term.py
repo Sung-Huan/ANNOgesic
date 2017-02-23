@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import os
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.coverage_detection import coverage_comparison, check_tex, get_repmatch
 from annogesiclib.lib_reader import read_libs, read_wig
@@ -483,8 +484,9 @@ def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
             gffs.append(entry)
     for entry in gff_parser.entries(open(tran_file)):
         tas.append(entry)
-    for entry in gff_parser.entries(open(tranterm_file)):
-        hps.append(entry)
+    if os.path.exists(tranterm_file):
+        for entry in gff_parser.entries(open(tranterm_file)):
+            hps.append(entry)
     with open(seq_file, "r") as s_f:
         for line in s_f:
             line = line.strip()

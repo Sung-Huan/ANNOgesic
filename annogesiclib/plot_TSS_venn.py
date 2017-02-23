@@ -60,7 +60,7 @@ def import_types(tsss):
             check_tss_class(total_types, strain, tss, "Internal")
             check_tss_class(total_types, strain, tss, "Antisense")
             check_tss_class(total_types, strain, tss, "Orphan")
-            sorted_types = sorted(tss.attributes["type"].split("&"))
+            sorted_types = sorted(tss.attributes["type"].split(","))
             ty = None
             for tss_type in sorted_types:
                 if ty is None:
