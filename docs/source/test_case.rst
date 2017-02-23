@@ -664,6 +664,11 @@ For running ``srna``, we can apply several filters to improve the detection. The
 ``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Normally, ``tss``, ``sec_str``,
 ``blast_nr``, ``blast_srna`` are recommaned to used.
 
+Please be aware, filters are strict. For example, if your filters are included ``term``, only the sRNAs whic are 
+associated with terminators will be included in best list. If you want to include terminator information 
+but not use terminator as a filter, you can remove ``term`` in filters and still assign the path of terminator gff file. 
+The results will include the sRNAs which are not associated with terminators and also store terminator information.
+
 Before running ``srna``, we have to get sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 
 We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 

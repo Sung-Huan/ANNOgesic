@@ -657,6 +657,10 @@ Here, we only use TEX +/- for testing.</p>
 <p>For running <code class="docutils literal"><span class="pre">srna</span></code>, we can apply several filters to improve the detection. These filters are <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
 <code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>, <code class="docutils literal"><span class="pre">sorf</span></code>. Normally, <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
 <code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code> are recommaned to used.</p>
+<p>Please be aware, filters are strict. For example, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs whic are
+associated with terminators will be included in best list. If you want to include terminator information
+but not use terminator as a filter, you can remove <code class="docutils literal"><span class="pre">term</span></code> in filters and still assign the path of terminator gff file.
+The results will include the sRNAs which are not associated with terminators and also store terminator information.</p>
 <p>Before running <code class="docutils literal"><span class="pre">srna</span></code>, we have to get sRNA database (we can use <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>) and
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (if you have not downloaded before).
 We can download fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
