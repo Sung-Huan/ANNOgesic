@@ -214,7 +214,7 @@ $ cd ../../../../
 </div>
 <p>Our genome fasta file is NC_009839.1.fa. Thus the fasta filename in wiggle file should be NC_009839.1 not NC_009839.
 Thus, we need to change it. We can use <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">replace_seq_id.py</a> from our
-Git repository. to replace the strain name properly. If the strain names in your fasta, annotation,
+Git repository to replace the strain name properly. If the strain names in your fasta, annotation,
 wiggle files are the same, you don&#8217;t need to do this step.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/replace_seq_id.py
 $ python3 replace_seq_id.py -i ANNOgesic/input/wigs/tex_notex -n NC_009839.1
@@ -296,10 +296,10 @@ fasta files automatically. For <code class="docutils literal"><span class="pre">
 </div>
 <div class="section" id="generating-annotation-files">
 <h2>Generating annotation files<a class="headerlink" href="#generating-annotation-files" title="Permalink to this headline">¶</a></h2>
-<p>We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotaion files
+<p>We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotation files
 retrieved from NCBI is exactly what you want, you can skip this step.</p>
 <p>Before we running this subcommand, we have to modify environment paths of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
-If you execute ANNOgesic by using docker container, the path is alread setted.
+If you execute ANNOgesic by using docker container, the path is already set.
 If you setup ANNOgesic by yourself, please check
 <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a> to set your environment paths properly.</p>
 <p>After setting the environment, we can try it.</p>
@@ -332,7 +332,7 @@ chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff
 we can find the output of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.</p>
 <p>We already saw how to update genome fasta and annotation files.
 Now, we can re-organize our data in order to run next subcommand.
-(Normally, you don&#8217;t need to do it. We re-organize the data becuase the data is only for showing the how to
+(Normally, you don&#8217;t need to do it. We re-organize the data because the data is only for showing the how to
 run <code class="docutils literal"><span class="pre">get_target_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>. All the data is useless now. The real test case is
 already downloaded via <code class="docutils literal"><span class="pre">get_input_files</span></code>. Therefore, we need to re-organize the data.)</p>
 <p>Since the data in <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code> is fake data, we can remove it.</p>
@@ -365,7 +365,7 @@ First, we set the path of wig file folder.</p>
 <p>Now, we can start to test other subcommands.
 Before running <code class="docutils literal"><span class="pre">tss_processing</span></code>, if we want to use the optimized parameters,
 we need to run <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> first. The optimization requires a gff file of the manual-detected TSSs.
-In our experience, we recommand you to detect at least 50 TSSs and check more than 200kb of genome.</p>
+In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of genome.</p>
 <p>For the test case, you can download the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">manual TSS file</a>
 from our git repository.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
@@ -386,7 +386,7 @@ means only first 200kb of NC_009839.1 is valid.).</p>
 </pre></div>
 </div>
 <p><code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> will compare manual checked TSSs with predicted TSSs to search the best parameters.
-Results of the different parameters will be printed in the screen. we only set 25 runs for testing.
+Results of the different parameters will be printed in the screen. We only set 25 runs for testing.
 Once the optimization is done, you can find several files.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSS/optimized_TSSpredator/
 best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
@@ -431,7 +431,7 @@ TSS_class_NC_009839.1.png  TSSstatistics.tsv               stat_TSS_libs_NC_0098
 TSS_venn_NC_009839.1.png   stat_TSS_class_NC_009839.1.csv  stat_compare_TSSpredator_manual_NC_009839.1.csv
 </pre></div>
 </div>
-<p>If we want to predict processing sites, the procedures are the same. we just need to change the program from TSS to
+<p>If we want to predict processing sites, the procedures are the same. We just need to change the program from TSS to
 processing_site (<code class="docutils literal"><span class="pre">-t</span></code>) and assign the proper parameter sets. We assume the best parameter sets are following:
 height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
 base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.</p>
@@ -470,9 +470,9 @@ TSSstatistics.tsv  processing_class_NC_009839.1.png  processing_venn_NC_009839.1
 </div>
 <div class="section" id="performing-transcript-detection">
 <h2>Performing transcript detection<a class="headerlink" href="#performing-transcript-detection" title="Permalink to this headline">¶</a></h2>
-<p>transcript detection is a basic precedure for detecting transcript boundary.
+<p>Transcript detection is a basic procedure for detecting transcript boundary.
 we can use subcommand <code class="docutils literal"><span class="pre">transcript</span></code> to do it. Normally, we strongly
-recommand that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information
+recommend that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information
 of 3&#8217;end. However, we only use TEX +/- for testing.</p>
 <p>The command is like following:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic transcript \
@@ -650,14 +650,14 @@ glam2.meme  logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  l
 </div>
 <div class="section" id="prediction-of-srna-and-sorf">
 <h2>Prediction of sRNA and sORF<a class="headerlink" href="#prediction-of-srna-and-sorf" title="Permalink to this headline">¶</a></h2>
-<p>Based on trascripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we
+<p>Based on transcripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we
 have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can
-get sRNAs by running subcommand <code class="docutils literal"><span class="pre">srna</span></code>. Normally, we recommand that the user inputs fragmented libraries as well.
+get sRNAs by running subcommand <code class="docutils literal"><span class="pre">srna</span></code>. Normally, we recommend that the user inputs fragmented libraries as well.
 Here, we only use TEX +/- for testing.</p>
 <p>For running <code class="docutils literal"><span class="pre">srna</span></code>, we can apply several filters to improve the detection. These filters are <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
 <code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>, <code class="docutils literal"><span class="pre">sorf</span></code>. Normally, <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
-<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code> are recommaned to used.</p>
-<p>Please be aware, filters are strict. For example, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs whic are
+<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code> are recommended to used.</p>
+<p>Please be aware, filters are strict. For example, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs which are
 associated with terminators will be included in best list. If you want to include terminator information
 but not use terminator as a filter, you can remove <code class="docutils literal"><span class="pre">term</span></code> in filters and still assign the path of terminator gff file.
 The results will include the sRNAs which are not associated with terminators and also store terminator information.</p>
@@ -669,8 +669,8 @@ We can download fasta file of <a class="reference external" href="http://www.bac
 </pre></div>
 </div>
 <p>If you already had sRNA database in other folders, please assign your path of databases to <code class="docutils literal"><span class="pre">-sd</span></code>.
-If your databse is formated before, you can remove <code class="docutils literal"><span class="pre">-sf</span></code>.
-In order to use the recommaned filters, we have to download
+If your database is formatted before, you can remove <code class="docutils literal"><span class="pre">-sf</span></code>.
+In order to use the recommended filters, we have to download
 <a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (takes a while). If you already had it,
 you can skip this step.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
@@ -679,8 +679,8 @@ $ mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
 </pre></div>
 </div>
 <p>If your nr database is in other folders, please assign your path <code class="docutils literal"><span class="pre">-nd</span></code>.
-You can also remove <code class="docutils literal"><span class="pre">-nf</span></code> if your database is already formated.
-Now, we can use the recommanded filters to run <code class="docutils literal"><span class="pre">srna</span></code>, but it may takes several hours.</p>
+You can also remove <code class="docutils literal"><span class="pre">-nf</span></code> if your database is already formatted.
+Now, we can use the recommended filters to run <code class="docutils literal"><span class="pre">srna</span></code>, but it may takes several hours.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic srna \
     -d tss blast_srna blast_nr sec_str \
     -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
@@ -893,7 +893,7 @@ stat_circRNA_NC_009839.1.csv
 </div>
 <p><code class="docutils literal"><span class="pre">NC_009839.1_circRNA_all.gff</span></code> and <code class="docutils literal"><span class="pre">NC_009839.1_circRNA_all.csv</span></code> store all circular RNAs without filtering.
 <code class="docutils literal"><span class="pre">NC_009839.1_circRNA_best.gff</span></code> and <code class="docutils literal"><span class="pre">NC_009839.1_circRNA_best.csv</span></code> store
-the circular RNAs after filering. In our case, there are some circular RNAs can be detected, but no circular RNAs
+the circular RNAs after filtering. In our case, there are some circular RNAs can be detected, but no circular RNAs
 can exist after filtering.</p>
 </div>
 <div class="section" id="snp-calling">
@@ -1055,7 +1055,7 @@ interaction networks with supported literatures.</p>
     -pj ANNOgesic
 </pre></div>
 </div>
-<p>We only detected for two proteins. If you want to detectc for all proteins in ptt files,
+<p>We only detected for two proteins. If you want to detect for all proteins in ptt files,
 you can easily assign <code class="docutils literal"><span class="pre">all</span></code> in <code class="docutils literal"><span class="pre">-q</span></code>.</p>
 <p>Three output folders will be generated.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/PPI/
@@ -1066,8 +1066,8 @@ all_results/  best_results/ figures/
 the high <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> score. <code class="docutils literal"><span class="pre">figures</span></code> is for
 figures of the protein-protein interaction networks. There are two subfolders - <code class="docutils literal"><span class="pre">with_strain</span></code> and <code class="docutils literal"><span class="pre">without_strain</span></code> in
 <code class="docutils literal"><span class="pre">figures</span></code>. These two folders store all information of the interactions and literature scores.
-<code class="docutils literal"><span class="pre">with_strain</span></code> is for results with assignning specific strain name for searching literatures.
-<code class="docutils literal"><span class="pre">without_strain</span></code> is for results without giving specific strain name for searching literatures.</p>
+<code class="docutils literal"><span class="pre">with_strain</span></code> is for results with assigning specific strain name for searching literature.
+<code class="docutils literal"><span class="pre">without_strain</span></code> is for results without giving specific strain name for searching literature.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/PPI/all_results/PPI_NC_009839.1/
 NC_009839.1_without_strain.csv  NC_009839.1_with_strain.csv     without_strain/               with_strain/
 $ ls ANNOgesic/output/PPI/best_results/PPI_NC_009839.1/
@@ -1150,7 +1150,7 @@ stat_NC_009839.1_RNA_thermometer.txt
 </div>
 <div class="section" id="detection-of-crispr">
 <h2>Detection of CRISPR<a class="headerlink" href="#detection-of-crispr" title="Permalink to this headline">¶</a></h2>
-<p>CRISPR is an unique features for research of immunology. <code class="docutils literal"><span class="pre">crispr</span></code> is a useful subcommand for CRISPR detectiion.
+<p>CRISPR is an unique features for research of immunology. <code class="docutils literal"><span class="pre">crispr</span></code> is a useful subcommand for CRISPR detection.
 <code class="docutils literal"><span class="pre">crispr</span></code> integrates <a class="reference external" href="http://www.room220.com/crt/">CRT</a> and compare genome
 annotation to remove false positive. Let&#8217;s try it.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic crispr \
@@ -1181,7 +1181,7 @@ NC_009839.1.csv
 <p>Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features into
 one gff file is useful. <code class="docutils literal"><span class="pre">merge_features</span></code> is the subcommand to achieve this purpose.
 Moreover, <code class="docutils literal"><span class="pre">merge_features</span></code> can search parent transcript to each feature that
-you assigned. the relationship between all features can be revealed.</p>
+you assigned. The relationship between all features can be revealed.</p>
 <p>Now let&#8217;s do it. We merge all features that we have.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ALL_FEATURES</span><span class="o">=</span><span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSS</span><span class="o">/</span><span class="n">gffs</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="n">_TSS</span><span class="o">.</span><span class="n">gff</span> \
 <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">annotation</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">gff</span> \
@@ -1241,7 +1241,7 @@ $ head -n 30 ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse.txt &gt; ANNOg
 Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">forward_6_cases.txt</span></code>. Once it is done, please do it again for reverse strand: Tools -&gt;
 Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">reverse_6_cases.txt</span></code>. If you just want to generate the screenshots for all candidates,
 you can run <code class="docutils literal"><span class="pre">forward.txt</span></code> and <code class="docutils literal"><span class="pre">reverse.txt</span></code>. Please be careful, if you use Docker container, the path may be not correct.</p>
-<p>As soon as the gneration of the screenshots is done,
+<p>As soon as the generation of the screenshots is done,
 we can see that there are several screenshots in <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSS/screenshots/NC_009839.1/forward
 NC_009839.1:1396-1396.png  NC_009839.1:14812-14812.png  NC_009839.1:6676-6676.png  NC_009839.1:6680-6680.png  NC_009839.1:8098-8098.png  NC_009839.1:9295-9295.png

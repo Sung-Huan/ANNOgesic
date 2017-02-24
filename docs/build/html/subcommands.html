@@ -177,8 +177,8 @@ please use following principle of filename designation:</p>
 <p><code class="docutils literal"><span class="pre">$CONDITION</span></code> is the index of conditions. Please use 1, 2, 3, ... to represent different conditions.</p>
 <p><code class="docutils literal"><span class="pre">$REPLICATE</span></code> is the index of replicates. Please use a, b, c, ... to represent different replicates.</p>
 <p><code class="docutils literal"><span class="pre">$STRAND</span></code> is the strand of wiggle file. Please use + or -.</p>
-<p>All libraries should be seperated by colons and listed in one line, like shown in the example above, i.e.</p>
-<p>for TEX +/- treated libraries:</p>
+<p>All libraries should be seperated by colons and listed in one line, like shown in the example above, i.e.
+for TEX +/- treated libraries:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">TSB_OD_0</span><span class="o">.</span><span class="mi">2</span><span class="n">_TEX_reverse</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-</span> \
 <span class="n">TSB_OD_0</span><span class="o">.</span><span class="mi">5</span><span class="n">_TEX_reverse</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-</span> \
 <span class="n">TSB_OD_0</span><span class="o">.</span><span class="mi">2</span><span class="n">_TEX_forward</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">tex</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span> \
@@ -193,9 +193,9 @@ please use following principle of filename designation:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fragmented_forward</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">frag</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span> <span class="n">fragmented_reverse</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">frag</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-</span>
 </pre></div>
 </div>
-<p>If only conventional RNA-seq data without fragementation or TEX treated can be provided,
+<p>If only conventional RNA-seq data without fragmentation or TEX treated can be provided,
 it can still be assigned to fragmented libraries and used by ANNOgesic.
-However, it may influnece the results.</p>
+However, it may influence the results.</p>
 </div>
 <div class="section" id="the-format-of-srna-database">
 <span id="id4"></span><h2>The format of sRNA database<a class="headerlink" href="#the-format-of-srna-database" title="Permalink to this headline">¶</a></h2>
@@ -403,10 +403,10 @@ basic arguments:
 </div>
 <div class="section" id="annotation-transfer">
 <span id="id10"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transfering the annotation from &#8220;reference strain&#8221;
+<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from &#8220;reference strain&#8221;
 to &#8220;target strain&#8221;. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
 is integrated in ANNOgesic. The higher similarity between &#8220;reference strain&#8221; and &#8220;target strain&#8221; are,
-the more precise the perfomance is. Before running <code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code>,
+the more precise the performance is. Before running <code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code>,
 please run <code class="docutils literal"><span class="pre">source</span> <span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> first. it will modify the path for executing RATT.
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.</p>
 <ul class="simple">
@@ -443,9 +443,9 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                         <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
                         <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
   <span class="o">--</span><span class="n">compare_pair</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">p</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">strain</span> <span class="n">pairs</span><span class="o">.</span> <span class="n">ex</span><span class="o">.</span>
+                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">strain</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span>
                         <span class="n">NC_007795</span><span class="p">:</span><span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span> <span class="n">reference</span> <span class="n">strain</span> <span class="ow">is</span>
-                        <span class="n">NC_007795</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">target</span> <span class="n">strain</span> <span class="ow">is</span> <span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">the</span>
+                        <span class="n">NC_007795</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">target</span> <span class="n">strain</span> <span class="ow">is</span> <span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span>
                         <span class="n">assigned</span> <span class="n">names</span> <span class="n">are</span> <span class="n">the</span> <span class="n">strain</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">fasta</span> <span class="n">file</span>
                         <span class="p">(</span><span class="n">start</span> <span class="k">with</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">),</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">filename</span> <span class="n">of</span> <span class="n">fasta</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span>
                         <span class="n">multiple</span> <span class="n">strains</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">assigned</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">space</span>
@@ -525,11 +525,11 @@ basic arguments:
                         Please assign the type of BAM. If the BAM files are
                         produced by mapping to the close strain (&quot;reference
                         strain&quot;) of the query strain (&quot;target strain&quot;), please
-                        keyin &quot;reference&quot;. This kind of BAM file can be used
+                        key in &quot;reference&quot;. This kind of BAM file can be used
                         for detecting the mutations between &quot;reference strain&quot;
                         and &quot;target strain&quot;. If the BAM files are produced by
                         mapping to exact query strain (&quot;target strain&quot;),
-                        please keyin &quot;target&quot;. This kind of BAM file can be
+                        please key in &quot;target&quot;. This kind of BAM file can be
                         used for detecting the exact mutations of target
                         genome sequence.
   --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
@@ -560,7 +560,7 @@ additional arguments:
                         is $MIN,$MAX. This value can be assigned by different
                         types: 1. real number (&quot;r&quot;), 2. times of the number of
                         samples (&quot;n&quot;) or 3. times of the average read depth
-                        (&quot;a&quot;). For example, n_10,a_2 is assinged, the average
+                        (&quot;a&quot;). For example, n_10,a_2 is assigned, the average
                         read depth is 70 and the number of samples
                         (--sample_number) is 4. Then, n_10 will be 40 (10 *
                         --sample_number) and a_2 will be 140 (average read
@@ -589,7 +589,7 @@ additional arguments:
                         times of the number of samples (&quot;n&quot;) or 3. times of
                         average read depth (&quot;a&quot;). The second value is for
                         (number 3 + number 4) / (number 1 + number 2 + number
-                        3 + number 4). These two values are splited by comma.
+                        3 + number 4). These two values are split by comma.
                         For example, n_10,0.8 is assigned and the average read
                         depth is 70 and the number of samples
                         (--sample_number) is 4. It means that the sum of
@@ -615,7 +615,7 @@ additional arguments:
   --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                         This function can set more filters to improve the
                         results. Please assign 1. the tag, 2. bigger (&quot;b&quot;) or
-                        samller (&quot;s&quot;) and 3. value for filters. For example,
+                        smaller (&quot;s&quot;) and 3. value for filters. For example,
                         &quot;RPB_b0.1,MQ0F_s0&quot; means that RPB should be bigger
                         than 0.1 and MQ0F should be smaller than 0. Default is
                         RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
@@ -643,7 +643,7 @@ The meaning of this file is like following example:</p>
 </pre></div>
 </div>
 <p>The example contains &#8220;position conflict&#8221; and &#8220;mutation conflict&#8221;.
-as a result, the conflicts will affect the other mutation&#8217;s positions.
+As a result, the conflicts will affect the other mutation&#8217;s positions.
 Therefore, it will generate four different fasta files. The first two lines are &#8220;position conflict&#8221;, and
 the last line is &#8220;mutation conflict&#8221;.
 <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> is the index for these four fasta files.</p>
@@ -746,12 +746,12 @@ basic arguments:
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value is the minimal number of replicates that a
                         TSS has to be detected. The format is
-                        $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
+                        $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use space to separate
                         them. For example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_tex is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
@@ -841,7 +841,7 @@ additional arguments:
   --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
                         If gff files of the manual checked TSS are provided,
                         this function will merge manual checked ones and
-                        TSSpredator predicted ones. please assign the path of
+                        TSSpredator predicted ones. Please assign the path of
                         manual-checked TSS gff files.
   --strain_length STRAIN_LENGTH [STRAIN_LENGTH ...], -le STRAIN_LENGTH [STRAIN_LENGTH ...]
                         If --manual_files is assigned, Please specify the
@@ -849,7 +849,7 @@ additional arguments:
                         whole genome, please type &quot;all&quot;. The input format is
                         $STRAINNAME:SLENGTH. Multiple genomes can be accepted,
                         please use space to separate them. For example,
-                        test.gff contrain two strains (s1 and s2). s1 was
+                        test.gff contain two strains (s1 and s2). s1 was
                         manual checked 100kb and s2 was checked whole genome.
                         The value of this argument will be s1:100000 s2:all.
                         Default setting will compute all strains in manual-
@@ -882,7 +882,7 @@ additional arguments:
                         site, please assign the file of manual-checked gff
                         file here. This function will remove the low expressed
                         ones based on comparison of manual-checked ones and
-                        predicted ones. BE CRAEFUL: This function may remove
+                        predicted ones. BE CAREFUL: This function may remove
                         some True positives as sell. Please make sure you want
                         to do it.
 </pre></div>
@@ -890,7 +890,7 @@ additional arguments:
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>The results of TSS are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/TSS</span></code>, and the rsults of processing site
+<p>The results of TSS are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/TSS</span></code>, and the results of processing site
 are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/processing_site</span></code>.</p>
 <p>The output folder is following:</p>
 <p><strong>MasterTables:</strong> MasterTable from <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.</p>
@@ -932,7 +932,7 @@ given gene annotations and several parameters that can be set by the user.</p>
 <li><strong>Optional input files</strong></li>
 </ul>
 <p><strong>TSS gff files:</strong> If the user wants to compare transcripts with TSSs, TSS gff file is required.</p>
-<p><strong>Genome anntation gff files:</strong> If the user wants to compare transcripts with genome anntation, genome annotation gff file is required.
+<p><strong>Genome anntation gff files:</strong> If the user wants to compare transcripts with genome annotation, genome annotation gff file is required.
 Based on the comparison, the performance of <code class="docutils literal"><span class="pre">transcript</span></code> can be improved.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
@@ -964,9 +964,9 @@ basic arguments:
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         If paths of the genome annotation gff files are
                         provided, this function can compare transcripts with
-                        genome annotations. If multiple transcipts overlap the
-                        same gene, this function will merge these transcript
-                        into a long one.
+                        genome annotations. If multiple transcripts overlap
+                        the same gene, this function will merge these
+                        transcript into a long one.
   --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                         If the TEX+/- libraries can be provided, please assign
                         the name of TEX+/- library. The format is:
@@ -988,12 +988,12 @@ basic arguments:
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a transcript has to be
                         detected. The format is
-                        $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
+                        $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use space to separate
                         them. For example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_tex is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
@@ -1035,7 +1035,7 @@ additional arguments:
   --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
                         If the coverage is lower than tolerance_coverage, even
                         the length is within --tolerance, the algorithm will
-                        still devide the current transcript to two parts.
+                        still divide the current transcript to two parts.
                         Default is 0.
   --tss_files TSS_FILES [TSS_FILES ...], -ct TSS_FILES [TSS_FILES ...]
                         If the paths of TSS files are assigned here, this
@@ -1048,7 +1048,7 @@ additional arguments:
                         just insert space between each feature, such as gene
                         CDS.
   --tss_fuzzy TSS_FUZZY, -fu TSS_FUZZY
-                        If --compare_TSS is assigned. please type the fuzzy
+                        If --compare_TSS is assigned, please type the fuzzy
                         for comparing TSS with transcript here. Default is 5.
   --table_best, -tb     The output table only includes the information of the
                         highest expressed library. Default is False.
@@ -1104,7 +1104,7 @@ Based on this information, we can know the details of the specific transcript. T
 (If &#8211;terminator_folder is assigned.)</p>
 <p><strong>associated_$FEATURE:</strong> Shows that the feature (&#8211;compare_feature_genome) are located on which transcripts.
 (If &#8211;compare_genome_annotation is assigned.)</p>
-<p><strong>detect_lib:</strong> This transcript is detected by tex-treated libraries or fragmented/conventional libraries.</p>
+<p><strong>detect_lib:</strong> This transcript is detected by Tex-treated libraries or fragmented/conventional libraries.</p>
 <p><strong>best_avg_coverage:</strong> The average coverage of the highest expressed library within this transcript.</p>
 </div></blockquote>
 </div>
@@ -1201,12 +1201,12 @@ basic arguments:
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a terminator has to be
                         detected. The format is
-                        $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
+                        $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use space to separate
                         them. For example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_tex is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
@@ -1345,17 +1345,16 @@ Based on this information, we can know the details of the specific terminator. T
 </div></blockquote>
 <p>The meanings of the columns are as following:</p>
 <blockquote>
-<div><p>strain  name    start   end     strand  detect  associated_gene associated_transcript   coverage_decrease       coverage_detail</p>
-<p><strong>strain:</strong> Strain name.</p>
+<div><p><strong>strain:</strong> Strain name.</p>
 <p><strong>name:</strong> Name of this terminator in the gff file.</p>
 <p><strong>start:</strong> Staring point of this terminator.</p>
 <p><strong>end:</strong> End point of this terminator.</p>
 <p><strong>strand:</strong> Strand of this terminator.</p>
 <p><strong>detect:</strong> This terminator is detected by which method.</p>
 <p><strong>associated_gene:</strong> Which genes are associated with this terminator.</p>
-<p><strong>associated_transcript:</strong> The parent transcript of this terinator.</p>
+<p><strong>associated_transcript:</strong> The parent transcript of this terminator.</p>
 <p><strong>coverage_decrease:</strong> This terminator shows dramatic decrease of its coverage or not.</p>
-<p><strong>coverage_detail:</strong> Shows the coverage information of the libraries about this terminator. &#8220;high&#8221; means the highest cooverage of the library,
+<p><strong>coverage_detail:</strong> Shows the coverage information of the libraries about this terminator. &#8220;high&#8221; means the highest coverage of the library,
 &#8220;low&#8221; means the lowest coverage of the library, and &#8220;diff&#8221; represents the difference between &#8220;high&#8221; and &#8220;low&#8221;. If &#8220;No_coverage_decreasing&#8221; is showed,
 it means this terminator reveal gene expression but no coverage decrease. If &#8220;NA&#8221; is showed, it means that this terminator has no gene expression.</p>
 </div></blockquote>
@@ -1402,7 +1401,7 @@ ANNOgesic, please use <code class="docutils literal"><span class="pre">--TSS_sou
   <span class="o">--</span><span class="n">tss_files</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">t</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">transcript_files</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">a</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">transcriptome</span> <span class="n">fils</span><span class="o">.</span>
+                        <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">transcript</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">terminator_files</span> <span class="n">TERMINATOR_FILES</span> <span class="p">[</span><span class="n">TERMINATOR_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">e</span> <span class="n">TERMINATOR_FILES</span> <span class="p">[</span><span class="n">TERMINATOR_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">If</span> <span class="n">the</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">terminator</span> <span class="n">files</span> <span class="n">are</span> <span class="n">assigned</span> <span class="n">here</span><span class="p">,</span>
                         <span class="n">this</span> <span class="n">function</span> <span class="n">will</span> <span class="n">also</span> <span class="n">apply</span> <span class="n">terminator</span> <span class="n">to</span> <span class="n">detect</span>
@@ -1477,12 +1476,12 @@ transcript and genome annotation.</p>
 <p><strong>Gff files of the TSSs:</strong> If you want to detect the UTR-derived sRNAs, it is necessary to input
 TSS information. It is for the detection of 5&#8217;UTR-derived sRNA and interCDS-derived sRNA.
 If you don&#8217;t want to detect UTR-derived sRNAs, TSS information still can be provided as a filter.
-We strongly recommand input this file.</p>
+We strongly recommend input this file.</p>
 <p><strong>Gff files of processing sites:</strong> For checking the sRNAs which reveal ends with processing sites. Moreover,
 Some 3&#8217;UTR-derived and interCDS-derived sRNA candidates start
 from processing sites not TSSs. If you don&#8217;t want to detect UTR-derived sRNAs,
 This information still can be provided to increase the accuracy, especially for some
-long non-coding regions. We strongly recommand input this file if you want to detect UTR-derived sRNAs.</p>
+long non-coding regions. We strongly recommend input this file if you want to detect UTR-derived sRNAs.</p>
 <p><strong>Promoter tables:</strong> Information of the promoter motifs can be used for prioritizing sRNA candidates via comparing promoters with
 sRNA and sRNA coverage. The format should be as following:</p>
 <table border="1" class="docutils">
@@ -1534,7 +1533,7 @@ Please refer to the section <a class="reference internal" href="#promoter"><span
 <blockquote>
 <div><strong>Gff files of TSSs</strong></div></blockquote>
 </div></blockquote>
-<p><strong>Searching sRNA candidate in sRNA database:</strong> If homologs of this sRNA candidates can be found in sRNA database,
+<p><strong>Searching sRNA candidate in sRNA database:</strong> If homology of this sRNA candidates can be found in sRNA database,
 this candidates will be included to the result without considering other filters.</p>
 <blockquote>
 <div><p><strong>Required tools:</strong></p>
@@ -1647,14 +1646,14 @@ basic arguments:
                         The function is for detecting UTR-derived sRNA.
                         Default is False.
   --filter_info FILTER_INFO [FILTER_INFO ...], -d FILTER_INFO [FILTER_INFO ...]
-                        There are several filters that you can use to imporve
+                        There are several filters that you can use to improve
                         sRNA detection: 1. tss (sRNA has to start with TSS),
                         2. sec_str (free energy change of secondary structure
                         (normalized by length) has to be smaller than
                         --cutoff_energy), 3. blast_nr (the number of the
-                        homologs can not be found more than --cutoff_nr_hit in
+                        homology can not be found more than --cutoff_nr_hit in
                         the non-redundant database), 4. blast_srna (as long as
-                        the homologs can be found in sRNA database, the
+                        the homology can be found in sRNA database, the
                         candidates will be included to best result without
                         considering other filters), 5. sorf (sRNA can not
                         overlap sORF), 6. term (sRNA has to be associated with
@@ -1668,7 +1667,7 @@ basic arguments:
                         detect sRNA. If you want to use blast_srna as a
                         filter, please follow the format:
                         $ID|$STRAIN|$SRNANAME. &quot;tss sec_str blast_nr
-                        blast_srna&quot; is recommanded to be assigned. Default is
+                        blast_srna&quot; is recommended to be assigned. Default is
                         tss sec_str blast_nr blast_srna.
   --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                         Paths of the transcript files.
@@ -1742,12 +1741,12 @@ basic arguments:
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a sRNA has to be detected.
-                        The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
+                        The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                         If different --replicate_tex values need to be
                         assigned to different conditions, please use space to
                         separate them. For example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_tex is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
@@ -1756,7 +1755,7 @@ basic arguments:
                         --replicates_tex. This value is for fragmented (or
                         conventional) libraries.
 
-annotational arguments:
+additional arguments:
   --rnafold_path RNAFOLD_PATH
                         Please assign RNAfold path.
   --relplot_path RELPLOT_PATH
@@ -1844,7 +1843,7 @@ annotational arguments:
                         (perhaps associated with ncRNA). In order to detect
                         the sRNA candidates in these transcripts, please
                         assign the minimum average coverage of the sRNA
-                        candidates. The format is $TEX,$NOTEX,$FRAG. ex:
+                        candidates. The format is $TEX,$NOTEX,$FRAG, ex:
                         200,100,100 is means that the minimum average coverage
                         is 200 for TEX+ libraries, 100 for TEX- and fragmented
                         (or conventional) libraries. Default is 30,20,30 and
@@ -1895,7 +1894,7 @@ annotational arguments:
                         coverage of UTR-derived sRNA should not only fit the
                         --run_utr_TEX_coverage, --run_utr_noTEX_coverage and
                         --run_utr_fragmented_coverage, but also this value.
-                        Defaul is 50.
+                        Default is 50.
   --cutoff_energy CUTOFF_ENERGY, -e CUTOFF_ENERGY
                         If &quot;sec_str&quot; is included in --filter_info, please
                         assign the maximum folding energy change (normalized
@@ -1943,7 +1942,7 @@ annotational arguments:
                         algorithm will search the coverage decrease within
                         270-430. Default is 10.
   --fuzzy_utr FUZZY_UTR, -fu FUZZY_UTR
-                        It is simliar with --fuzzy_intergenic_antisense. This
+                        It is similar with --fuzzy_intergenic_antisense. This
                         is for UTR-derived sRNAs. Default is 10.
   --cutoff_nr_hit CUTOFF_NR_HIT, -cn CUTOFF_NR_HIT
                         The maximum hits number in nr database. Default is 0.
@@ -1990,10 +1989,10 @@ annotational arguments:
 <p><strong>sRNA_blast_$STRAINNAME.txt:</strong> Blast output of the sRNA database.</p>
 </div></blockquote>
 <p><strong>mountain_plot:</strong> Stores mountain plots of the sRNA candidates. Filename is as <code class="docutils literal"><span class="pre">srna10_NC_009839.1_335339_335435_+_mountain.pdf</span></code>.
-&#8220;srna10&#8221;, &#8220;NC_009839.1&#8221;, &#8220;335339&#8221;, &#8220;335435&#8221;, &#8220;+&#8221; are ID of sRNA gff file, strain name, starting point, end point and strand respecitvely.</p>
+&#8220;srna10&#8221;, &#8220;NC_009839.1&#8221;, &#8220;335339&#8221;, &#8220;335435&#8221;, &#8220;+&#8221; are ID of sRNA gff file, strain name, starting point, end point and strand respectively.</p>
 <p><strong>sec_structure:</strong> Stores the dot plots and secondary structure plots of sRNA candidates.
 Filename of dot plot is as <code class="docutils literal"><span class="pre">srna10_NC_009839.1_335339_335435_+_dp.pdf</span></code>, and filename of secondary structure is as <code class="docutils literal"><span class="pre">srna10_NC_009839.1_335339_335435_+_rss.pdf</span></code>.
-&#8220;srna10&#8221;, &#8220;NC_009839.1&#8221;, &#8220;335339&#8221;, &#8220;335435&#8221;, &#8220;+&#8221; are ID of sRNA gff file, strain name, starting point, end point and strand respecitvely.</p>
+&#8220;srna10&#8221;, &#8220;NC_009839.1&#8221;, &#8220;335339&#8221;, &#8220;335435&#8221;, &#8220;+&#8221; are ID of sRNA gff file, strain name, starting point, end point and strand respectively.</p>
 <p><strong>statistics:</strong> Stores statistics files. <code class="docutils literal"><span class="pre">stat_$STRAIN_NAME_sRNA_blast.csv</span></code> is the analysis result of blast sRNA databases.
 <code class="docutils literal"><span class="pre">stat_sRNA_class_Staphylococcus_aureus_HG003.csv</span></code> is the classification of sRNA candidates.</p>
 <p><strong>TSS_class:</strong> If the TSSs are not computed by ANNOgesic, <code class="docutils literal"><span class="pre">TSS_class</span></code> will be generated for classification of TSS.
@@ -2019,7 +2018,7 @@ TSS gff files with TSS types will be stored here.</p>
 <p><strong>best_avg_coverage:</strong> Based on coverage of all libraries, The best average coverage of this sRNA will be showed here.</p>
 <p><strong>best_highest_coverage:</strong> Based on coverage of all libraries, The highest average coverage of this sRNA will be showed here.</p>
 <p><strong>best_lowest_coverage:</strong> Based on coverage of all libraries, The lowest average coverage of this sRNA will be showed here.</p>
-<p><strong>track/coverage:</strong> Shows the coverage information of the libraries about this sRNA. &#8220;high&#8221; means the highest cooverage of the library,
+<p><strong>track/coverage:</strong> Shows the coverage information of the libraries about this sRNA. &#8220;high&#8221; means the highest coverage of the library,
 &#8220;low&#8221; means the lowest coverage of the library, and &#8220;avg&#8221; represents the average coverage of this sRNA.</p>
 <p><strong>normalized_secondary_energy_change(by_length):</strong> Secondary folding change (normalized by length) of this sRNA.</p>
 <p><strong>sRNA_types:</strong> Shows the sRNA type.</p>
@@ -2027,7 +2026,7 @@ TSS gff files with TSS types will be stored here.</p>
 <p><strong>nr_hit_number:</strong> The hits number of this sRNA in nr database.</p>
 <p><strong>sRNA_hit_number:</strong> The hits number of this sRNA in sRNA database.</p>
 <p><strong>nr_hit_top3|ID|e-value:</strong> The top 3 hits of this sRNA in nr database will be showed here. The information includes protein name, ID and e-value.</p>
-<p><strong>sRNA_hit|e-value:</strong> If the homologs of this sRNA can be found in sRNA database, the information will be showed here.</p>
+<p><strong>sRNA_hit|e-value:</strong> If the homology of this sRNA can be found in sRNA database, the information will be showed here.</p>
 <p><strong>overlap_CDS:</strong> If the sRNA overlaps CDS, the information of CDS will be showed here.</p>
 <p><strong>overlap_percent:</strong> If the sRNA overlaps CDS, the percentage of overlap between sRNA and CDS will be showed here.</p>
 <p><strong>end_with_terminator:</strong> The terminator which is associated with this sRNA.</p>
@@ -2076,7 +2075,7 @@ Please be aware this point for using the results.</p>
 <ul class="simple">
 <li><strong>Optional input files</strong></li>
 </ul>
-<p><strong>Gff files of the TSSs:</strong> For checking the sORFs start from TSS or not. We strongly recommand to input this file.</p>
+<p><strong>Gff files of the TSSs:</strong> For checking the sORFs start from TSS or not. We strongly recommend to input this file.</p>
 <p><strong>Gff files of sRNAs:</strong> For checking the overlap of sRNAs and sORFs.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
@@ -2087,12 +2086,12 @@ Please be aware this point for using the results.</p>
                       [TRANSCRIPT_FILES ...] --annotation_files
                       ANNOTATION_FILES [ANNOTATION_FILES ...]
                       [--tss_files TSS_FILES [TSS_FILES ...]]
+                      [--srna_files SRNA_FILES [SRNA_FILES ...]]
                       [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                       [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                       [--tex_notex TEX_NOTEX]
                       [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                       [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                      [--srna_files SRNA_FILES [SRNA_FILES ...]]
                       [--utr_length UTR_LENGTH] [--min_length MIN_LENGTH]
                       [--max_length MAX_LENGTH]
                       [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
@@ -2123,13 +2122,17 @@ basic arguments:
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         The paths of genome fasta files.
   --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                        Paths of the transcriptome files.
+                        Paths of the transcript gff files.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         Paths of the genome annotation gff files.
   --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
                         If the paths of TSS gff files are assigned here, this
                         function will use the TSS information to detect sORF.
                         If running without TSS, the results may be influenced.
+  --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
+                        If the paths of sRNA gff files can be provided, this
+                        function will compare sORF and sRNA to detect the
+                        overlap.
   --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                         If the TEX+/- libraries can be provided, please assign
                         the name of TEX+/- library here. The format is:
@@ -2154,12 +2157,12 @@ basic arguments:
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value (for TEX+/- libraries) is the minimal
                         number of replicates that a sORF has to be detected.
-                        The format is $NUMBERofCONDITION_$NUMBERofREPLICATED.
+                        The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                         If different --replicate_tex values need to be
                         assigned to different conditions, please use space to
                         separate them. For example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_tex is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
@@ -2169,10 +2172,6 @@ basic arguments:
                         conventional) libraries.
 
 additional arguments:
-  --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
-                        If the paths of sRNA gff files can be provided, this
-                        function will compare sORF and sRNA to detect the
-                        overlap.
   --utr_length UTR_LENGTH, -ul UTR_LENGTH
                         If --tss_files is provided, please assign the utr
                         length for comparing TSS with sORF. The default number
@@ -2213,7 +2212,7 @@ additional arguments:
                         codon need to be assigned, please use space to
                         separate them. Default is ATG.
   --stop_codon STOP_CODON [STOP_CODON ...], -oc STOP_CODON [STOP_CODON ...]
-                        The types of stop coden. If multiple types of stop
+                        The types of stop codon. If multiple types of stop
                         codon need to be assigned, please use space to
                         separate them. Default is TTA TAG TGA.
   --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
@@ -2224,7 +2223,7 @@ additional arguments:
                         ribosome binding site and start codon. Default is 15.
   --rbs_not_after_tss, -at
                         For generating best results, if the ribosome binding
-                        site of sORF is not associted with TSS, this function
+                        site of sORF is not associated with TSS, this function
                         will include this candidate as well. Default is False.
   --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
                         The number of nucleotides of ribosome binding site can
@@ -2274,7 +2273,7 @@ The number won&#8217;t larger than 2 since frame shift three times, the amino ac
 <p><strong>best_avg_coverage:</strong> Based on coverage of all libraries, The best average coverage of this sORF will be showed here.</p>
 <p><strong>best_highest_coverage:</strong> Based on coverage of all libraries, The highest average coverage of this sORF will be showed here.</p>
 <p><strong>best_lowest_coverage:</strong> Based on coverage of all libraries, The lowest average coverage of this sORF will be showed here.</p>
-<p><strong>track_detail:</strong> Shows the coverage information of the libraries about this sORF. &#8220;high&#8221; means the highest cooverage of the library,
+<p><strong>track_detail:</strong> Shows the coverage information of the libraries about this sORF. &#8220;high&#8221; means the highest coverage of the library,
 &#8220;low&#8221; means the lowest coverage of the library, and &#8220;avg&#8221; represents the average coverage of this sORF.</p>
 <p><strong>seq:</strong> Sequence of this sORF.</p>
 </div></blockquote>
@@ -2297,7 +2296,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 <p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSSs to discover the promoter motifs.
 We integrated <a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a> (for ungapped motifs) and
 <a class="reference external" href="http://meme-suite.org/tools/glam2">GLAM2</a> (for gapped motifs) to compute the promoters.
-Based on the tool, visulization HTML files can be generated. If TSS gff file is not computed by
+Based on the tool, visualization HTML files can be generated. If TSS gff file is not computed by
 ANNOgesic, please use <code class="docutils literal"><span class="pre">--TSS_source</span></code> to classify TSSs for computing
 promoter motifs.</p>
 <ul class="simple">
@@ -2324,7 +2323,6 @@ Please refer to the <a class="reference internal" href="#the-input-format-of-lib
                           [--nt_before_tss NT_BEFORE_TSS]
                           [--meme_path MEME_PATH] [--glam2_path GLAM2_PATH]
                           [--e_value E_VALUE] [--end_run END_RUN]
-                          [--no_deletion_pseudocount NO_DELETION_PSEUDOCOUNT]
                           [--parallel PARALLEL] [--tss_source]
                           [--tex_libs TEX_LIBS [TEX_LIBS ...]]
                           [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
@@ -2348,7 +2346,7 @@ basic arguments:
                         The length for motif detection. For detecting a range
                         of length, please insert &quot;-&quot; between two values.
                         Moreover, if multiple motif length need to be
-                        assigned, please use space to separate them. for
+                        assigned, please use space to separate them. For
                         example, 50 2-10. It means that the length of motif
                         for detection is 50 and within 2 to 10. The number
                         should be less or equal than --nt_before_TSS. Default
@@ -2371,8 +2369,6 @@ additional arguments:
                         If the result of GLAM2 is not improved after running
                         this number of iteration, it will be ended. Default is
                         10000.
-  --no_deletion_pseudocount NO_DELETION_PSEUDOCOUNT, -E NO_DELETION_PSEUDOCOUNT
-                        Please check --deletion_pseudocount. Default is 2.0.
   --parallel PARALLEL, -pl PARALLEL
                         This function can run MEME by parallel. Please input
                         the number of parallel runs.
@@ -2408,16 +2404,16 @@ to generate promoter motifs. The results will be stored in this folder.</p>
 <div><p><strong>MEME</strong>: Stores the results of MEME.</p>
 <p><strong>GLAM2</strong>: Stores the results of GLAM2.</p>
 <p>The format of folders which under these two folders is <code class="docutils literal"><span class="pre">promoter_motifs_$FILENAME_$STRAINNAME_$TSSTYPE_$PROMOTERLEGNTH</span></code>.
-ex: <code class="docutils literal"><span class="pre">promoter_motifs_NC_000915.1_allstrain_internal_45_nt</span></code>.
-&#8220;NC_000915.1&#8221;, &#8220;allstrain&#8221;, &#8220;primary&#8221; and &#8220;45_nt&#8221; are gff filename, strain name, TSS type and upstream nucleotides of TSS resepectively.
+Ex: <code class="docutils literal"><span class="pre">promoter_motifs_NC_000915.1_allstrain_internal_45_nt</span></code>.
+&#8220;NC_000915.1&#8221;, &#8220;allstrain&#8221;, &#8220;primary&#8221; and &#8220;45_nt&#8221; are gff filename, strain name, TSS type and upstream nucleotides of TSS respectively.
 If strain name is &#8220;allstrain&#8221;, it means that if there are multiple strains in the gff file,
-the result is generateed by the information of all strains without considering the difference of strains.
+the result is generated by the information of all strains without considering the difference of strains.
 If there is only one strain in the gff file, the strain name will be assigned as &#8220;allstrain&#8221;. Several files are stored in the sub-folder:</p>
 <blockquote>
 <div><p><strong>Figures of the promoter motif:</strong> Contains EPS and PNG files.</p>
 <p><strong>Details of the promoter motif:</strong> Contains HTML file, XML file and TXT file. These files include the TSS information.</p>
 <p><strong>Promoter table:</strong> <code class="docutils literal"><span class="pre">meme.csv</span></code> or <code class="docutils literal"><span class="pre">glam2.csv</span></code> is the promoter table which also includes the TSS information.
-Moreover, it can used as an input for sRNA detectionn (<code class="docutils literal"><span class="pre">srna</span></code>). Please check the section <code class="docutils literal"><span class="pre">srna</span></code>.</p>
+Moreover, it can used as an input for sRNA detection (<code class="docutils literal"><span class="pre">srna</span></code>). Please check the section <code class="docutils literal"><span class="pre">srna</span></code>.</p>
 </div></blockquote>
 </div></blockquote>
 <p><strong>TSS_class:</strong> If the TSSs are not computed by ANNOgesic, <code class="docutils literal"><span class="pre">TSS_class</span></code> will be generated for classification of TSS.
@@ -2479,7 +2475,7 @@ sub-operons.</p>
                         <span class="n">The</span> <span class="n">fuzzy</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">between</span> <span class="n">TSS</span> <span class="ow">and</span> <span class="n">transcript</span><span class="o">.</span>
                         <span class="n">Default</span> <span class="ow">is</span> <span class="mf">5.</span>
   <span class="o">--</span><span class="n">term_fuzzy</span> <span class="n">TERM_FUZZY</span><span class="p">,</span> <span class="o">-</span><span class="n">ef</span> <span class="n">TERM_FUZZY</span>
-                        <span class="n">The</span> <span class="n">fuzzy</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">bewteen</span> <span class="n">terminator</span> <span class="ow">and</span>
+                        <span class="n">The</span> <span class="n">fuzzy</span> <span class="k">for</span> <span class="n">comparing</span> <span class="n">between</span> <span class="n">terminator</span> <span class="ow">and</span>
                         <span class="n">transcript</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">30.</span>
   <span class="o">--</span><span class="n">min_length</span> <span class="n">MIN_LENGTH</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span> <span class="n">MIN_LENGTH</span>
                         <span class="n">The</span> <span class="n">minimum</span> <span class="n">length</span> <span class="n">of</span> <span class="n">operon</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">20.</span>
@@ -2488,7 +2484,7 @@ sub-operons.</p>
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>Output files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/operon</span></code>. The output folders are as followinig:</p>
+<p>Output files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/operon</span></code>. The output folders are as following:</p>
 <p><strong>gffs:</strong> Stores gff files which are integrated the information of TSSs, annotations,
 transcripts, 5&#8217;UTRs, and 3&#8217;UTRs and assign parent transcript to all features (presented by
 <strong>Parent</strong> in attributes of gff files).</p>
@@ -2607,10 +2603,9 @@ mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/S
 <p><strong>segemehl_splice:</strong> The results of splicing detection. The information of the splicing tables, please
 refer to <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.</p>
 <p><strong>gffs:</strong> Stores gff files of the circular RNAs. <code class="docutils literal"><span class="pre">$STRAINNAME_best.gff</span></code> is gff files for the best result after checking
-genome annotation and quality of splicing. <code class="docutils literal"><span class="pre">$STRAINNAME_all.gff</span></code> is for all candidates without filering.
+genome annotation and quality of splicing. <code class="docutils literal"><span class="pre">$STRAINNAME_all.gff</span></code> is for all candidates without filtering.
 Some useful information can be found in the tags of the attributes within the circular RNA gff file.
 Based on this information, we can know the details of the specific circular RNA. The tags are as following:</p>
-<p>support_reads=41;read_at_start=1.0;read_at_end=1.0;confliction=NA;method=segemehl</p>
 <blockquote>
 <div><p><strong>support_reads:</strong> The number of reads which support the circular RNA.</p>
 <p><strong>read_at_start:</strong> (supported reads / total reads) at starting point of the circular RNA.</p>
@@ -2633,7 +2628,7 @@ Based on this information, we can know the details of the specific circular RNA.
 </div>
 <div class="section" id="go-term">
 <span id="id38"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">go_term</span></code> can retreive the information of Gene Ontology from Uniprot.
+<p><code class="docutils literal"><span class="pre">go_term</span></code> can retrieve the information of Gene Ontology from Uniprot.
 Some analysis of Go terms can be done as well.</p>
 <ul class="simple">
 <li><strong>Required files</strong></li>
@@ -2667,7 +2662,7 @@ Some analysis of Go terms can be done as well.</p>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">transcript_files</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">a</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">If</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">transcript</span> <span class="n">gff</span> <span class="n">files</span> <span class="n">are</span> <span class="n">provided</span><span class="p">,</span> <span class="n">GO</span>
-                        <span class="n">term</span> <span class="n">can</span> <span class="n">be</span> <span class="n">retreived</span> <span class="n">based</span> <span class="n">on</span> <span class="n">expressed</span> <span class="n">CDS</span> <span class="ow">and</span> <span class="nb">all</span>
+                        <span class="n">term</span> <span class="n">can</span> <span class="n">be</span> <span class="n">retrieved</span> <span class="n">based</span> <span class="n">on</span> <span class="n">expressed</span> <span class="n">CDS</span> <span class="ow">and</span> <span class="nb">all</span>
                         <span class="n">CDS</span><span class="o">.</span>
   <span class="o">--</span><span class="n">uniprot_id</span> <span class="n">UNIPROT_ID</span><span class="p">,</span> <span class="o">-</span><span class="n">u</span> <span class="n">UNIPROT_ID</span>
                         <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">UniProt</span> <span class="n">ID</span> <span class="n">mapping</span> <span class="n">database</span><span class="o">.</span>
@@ -2704,7 +2699,7 @@ biological process, cellular component, molecular_function and three roots of GO
 <div class="section" id="srna-target">
 <span id="id39"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> can search potential targets of the sRNA via different programs
-(RNAup or RNAplex or both). We recommand running with both
+(RNAup or RNAplex or both). We recommend running with both
 programs. <code class="docutils literal"><span class="pre">srna_target</span></code> can also compare the both results and provide the best ones.</p>
 <ul class="simple">
 <li><strong>Required tools</strong></li>
@@ -2882,7 +2877,7 @@ The meaning of each column is similar to the table of RNAplex.</p>
 <span id="id41"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> can retrieve the data from <a class="reference external" href="http://string-db.org/">STRING</a>.
 Then using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> to search
-the supported literatures of the protein-protein interaction networks.</p>
+the supported literature of the protein-protein interaction networks.</p>
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
@@ -2915,7 +2910,7 @@ basic arguments:
                         name, such as, locus_tag=dnaA.
   --species_string SPECIES_STRING, -d SPECIES_STRING
                         Please assign path of the species table of STRING
-                        (species.vXXX.txt).
+                        (species.$VERSION.txt).
   --proteinid_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
                         This is for query strain and filename. In order to
                         retrieve the data from STRING and Pubmed, The strain
@@ -2941,13 +2936,13 @@ basic arguments:
                         assigned here), and the fourth one is for searching
                         Pubmed. If you want to detect for multiple strains,
                         just put space between these strains. Before running
-                        it, please check the species table (species.vXXX.txt)
-                        which should be downloaded. If the file was not
-                        downloaded before, please download it. BE CAREFUL, if
-                        the assigned name is with spaces, please put &quot;&quot; at two
-                        ends. For searching Pubmen, if a specific name is
-                        assigned, it may not be able to find the related
-                        literatures.
+                        it, please check the species table
+                        (species.v$VERSION.txt) which should be downloaded. If
+                        the file was not downloaded before, please download
+                        it. BE CAREFUL, if the assigned name is with spaces,
+                        please put &quot;&quot; at two ends. For searching Pubmen, if a
+                        specific name is assigned, it may not be able to find
+                        the related literature.
   --query QUERY [QUERY ...], -q QUERY [QUERY ...]
                         Please assign the query protein here. The format is
                         $STRAINOFGFF:$START_POINT:$END_POINT:$STRAND. If
@@ -2957,13 +2952,13 @@ basic arguments:
                         Staphylococcus_aureus_HG003:2000:3211:-. For computing
                         all protein, just type &quot;all&quot;. Default is all.
   --without_strain_pubmed, -n
-                        Retrieving the literatures from Pubmed without
+                        Retrieving the literature from Pubmed without
                         assigning strains, Default is False.
 
 additional arguments:
   --score SCORE, -ps SCORE
                         Please assign minimum PIE score for searching
-                        literatures. The value is from -1 (worst) to 1 (best).
+                        literature. The value is from -1 (worst) to 1 (best).
                         Default is 0.
   --node_size NODE_SIZE, -ns NODE_SIZE
                         Please assign the size of nodes in figure, default is
@@ -2977,18 +2972,18 @@ additional arguments:
 <p><strong>best_results:</strong> Stores the results which the scores of <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>
 of supported literature are higher than <code class="docutils literal"><span class="pre">--score</span></code>.</p>
 <p><strong>all_results:</strong> Stores the results of all protein-protein interactions
-(including the low score(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>) literatures).</p>
-<p>Unter &#8220;best_results&#8221; and &#8220;all_results&#8221;, several files and folders are generated:</p>
+(including the low score(<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>) literature).</p>
+<p>Under &#8220;best_results&#8221; and &#8220;all_results&#8221;, several files and folders are generated:</p>
 <blockquote>
 <div><p><strong>Results of searching literatures without assigning a specific strain:</strong> <code class="docutils literal"><span class="pre">$STRAIN_without_strain.csv</span></code>.</p>
 <p><strong>Results of searching literatures with assigning a specific strain:</strong> <code class="docutils literal"><span class="pre">$STRAIN_with_strain.csv</span></code>.</p>
 <p><strong>without_strain:</strong> Stores all interaction information which is searched without assigning a specific strain.</p>
 <p><strong>with_strain:</strong> Stores all interaction information which is searched with assigning a specific strain.</p>
 </div></blockquote>
-<p><strong>figures:</strong> Stores the protein-protein networks of the query proteins. Thickness represents how many literatures can be found for the interactions.
+<p><strong>figures:</strong> Stores the protein-protein networks of the query proteins. Thickness represents how many literature can be found for the interactions.
 Solid line means that strong supported literature can be found. Dash-dot line
-means that the supported literatures are very weak. Dot line means that no supported literatures can be found.
-Color is the best score of the supported literatures of the interactions.</p>
+means that the supported literature are very weak. Dot line means that no supported literature can be found.
+Color is the best score of the supported literature of the interactions.</p>
 </div>
 <div class="section" id="subcellular-localization">
 <span id="id44"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
@@ -3049,7 +3044,7 @@ Some statistics and visualization files are provided as well.</p>
                         <span class="o">--</span><span class="n">difference_multi</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">printed</span> <span class="n">out</span> <span class="k">as</span> <span class="n">well</span><span class="o">.</span>
                         <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.5</span><span class="o">.</span> <span class="n">The</span> <span class="n">maximum</span> <span class="n">value</span> <span class="ow">is</span> <span class="mf">10.</span>
   <span class="o">--</span><span class="n">merge_to_gff</span><span class="p">,</span> <span class="o">-</span><span class="n">m</span>    <span class="n">Merging</span> <span class="n">the</span> <span class="n">information</span> <span class="n">to</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">file</span><span class="o">.</span>
-                        <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span>
+                        <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -3140,12 +3135,12 @@ Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).</p>
                         <span class="n">options</span> <span class="n">can</span> <span class="n">be</span> <span class="s2">&quot;riboswitch&quot;</span><span class="p">,</span> <span class="s2">&quot;thermometer&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="o">.</span>
                         <span class="n">Default</span> <span class="ow">is</span> <span class="n">both</span><span class="o">.</span>
   <span class="o">--</span><span class="n">riboswitch_id</span> <span class="n">RIBOSWITCH_ID</span><span class="p">,</span> <span class="o">-</span><span class="n">ri</span> <span class="n">RIBOSWITCH_ID</span>
-                        <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;riboswitch&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assigh</span>
+                        <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;riboswitch&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span>
                         <span class="n">the</span> <span class="n">file</span> <span class="n">path</span> <span class="n">of</span> <span class="n">riboswitch</span> <span class="n">ID</span> <span class="ow">in</span> <span class="n">Rfam</span><span class="o">.</span> <span class="n">The</span> <span class="n">file</span>
                         <span class="n">should</span> <span class="n">include</span> <span class="n">the</span> <span class="n">Accession</span><span class="p">,</span> <span class="n">ID</span> <span class="ow">and</span> <span class="n">Description</span> <span class="n">of</span>
                         <span class="n">riboswitch</span> <span class="ow">in</span> <span class="n">Rfam</span><span class="o">.</span>
   <span class="o">--</span><span class="n">rna_thermometer_id</span> <span class="n">RNA_THERMOMETER_ID</span><span class="p">,</span> <span class="o">-</span><span class="n">ti</span> <span class="n">RNA_THERMOMETER_ID</span>
-                        <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;thermometer&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assigh</span>
+                        <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;thermometer&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span>
                         <span class="n">the</span> <span class="n">file</span> <span class="n">path</span> <span class="n">of</span> <span class="n">RNA</span> <span class="n">thermometer</span> <span class="n">ID</span> <span class="n">of</span> <span class="n">Rfam</span><span class="o">.</span> <span class="n">The</span> <span class="n">file</span>
                         <span class="n">should</span> <span class="n">include</span> <span class="n">the</span> <span class="n">Accession</span><span class="p">,</span> <span class="n">ID</span> <span class="ow">and</span> <span class="n">Description</span> <span class="n">of</span>
                         <span class="n">RNA</span> <span class="n">thermometer</span> <span class="ow">in</span> <span class="n">Rfam</span><span class="o">.</span>
@@ -3181,7 +3176,7 @@ Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).</p>
                         <span class="n">The</span> <span class="n">number</span> <span class="n">of</span> <span class="n">nucleotides</span> <span class="n">of</span> <span class="n">ribosome</span> <span class="n">binding</span> <span class="n">site</span> <span class="n">can</span>
                         <span class="n">be</span> <span class="n">different</span> <span class="k">with</span> <span class="n">AGGAGG</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.</span>
   <span class="o">--</span><span class="n">start_codon</span> <span class="n">START_CODON</span> <span class="p">[</span><span class="n">START_CODON</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">ac</span> <span class="n">START_CODON</span> <span class="p">[</span><span class="n">START_CODON</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">The</span> <span class="n">types</span> <span class="n">of</span> <span class="n">start</span> <span class="n">coden</span><span class="o">.</span> <span class="n">If</span> <span class="n">multiple</span> <span class="n">types</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span>
+                        <span class="n">The</span> <span class="n">types</span> <span class="n">of</span> <span class="n">start</span> <span class="n">codon</span><span class="o">.</span> <span class="n">If</span> <span class="n">multiple</span> <span class="n">types</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span>
                         <span class="n">assigned</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">space</span> <span class="n">to</span> <span class="n">separate</span> <span class="n">them</span><span class="o">.</span> <span class="n">Default</span>
                         <span class="ow">is</span> <span class="n">ATG</span><span class="o">.</span>
   <span class="o">--</span><span class="n">max_dist_rbs</span> <span class="n">MAX_DIST_RBS</span><span class="p">,</span> <span class="o">-</span><span class="n">Mr</span> <span class="n">MAX_DIST_RBS</span>
@@ -3221,7 +3216,7 @@ The tags are as following:</p>
 <p><strong>start_align:</strong> Position of this riboswichs / RNA_thermometer can be aligned to the genome.</p>
 <p><strong>end_align:</strong> Position this riboswichs / RNA_thermometer can be aligned to the genome.</p>
 </div></blockquote>
-<p><strong>statistics:</strong> Stores the file which contains the riboswichs / RNA_thermometer with correspnding amount.</p>
+<p><strong>statistics:</strong> Stores the file which contains the riboswichs / RNA_thermometer with corresponding amount.</p>
 </div>
 <div class="section" id="crispr">
 <span id="id49"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
@@ -3356,14 +3351,14 @@ basic arguments:
                         current directory is used.
   --program PROGRAM, -t PROGRAM
                         The feature for optimization. Please assign &quot;TSS&quot; or
-                        &quot;Processint_site&quot;. Default is TSS.
+                        &quot;Processing_site&quot;. Default is TSS.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of the fasta file that you want to optimize.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         Paths of the target genome annotation gff file.
   --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
                         Path of the manual-checked gff file. It is the
-                        benchmark for trainning. Please detect the
+                        benchmark for training. Please detect the
                         TSSs/processing sites at least 200kb or 50 true
                         TSSs/processing sites.
   --strain_lengths STRAIN_LENGTHS [STRAIN_LENGTHS ...], -le STRAIN_LENGTHS [STRAIN_LENGTHS ...]
@@ -3372,7 +3367,7 @@ basic arguments:
                         manual detected for compare whole genome, please type
                         &quot;all&quot;. The input format is $STRAINNAME:SLENGTH.
                         Multiple genomes can be accepted, please use space to
-                        separate them. For example, test.gff contrain two
+                        separate them. For example, test.gff contain two
                         strains (s1 and s2). s1 was manual checked 100kb and
                         s2 was checked whole genome. The value of this
                         argument will be s1:100000 s2:all. Default setting
@@ -3388,17 +3383,17 @@ basic arguments:
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value is the minimal number of replicates that a
                         TSS has to be detected. The format is
-                        $NUMBERofCONDITION_$NUMBERofREPLICATED. If different
+                        $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use space to separate
                         them. For example, 1_2 2_ 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
-                        conditions. In number 3 condition, --replcate_match is
+                        conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
                         in all conditions). Default is all_1.
   --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -p CONDITION_NAMES [CONDITION_NAMES ...]
-                        The output prefixs of all conditions. If multiple
+                        The output prefixes of all conditions. If multiple
                         conditions need to be assigned, please use space to
                         separate them. For example, prefix_condition1
                         prefix_condition2.
@@ -3458,7 +3453,7 @@ additional arguments:
                         or equal to this value, only one of them will be
                         printed out. Default is 2.
   --parallels PARALLELS, -c PARALLELS
-                        Paralle runs for optimization. Default is 4.
+                        Parallel runs for optimization. Default is 4.
   --steps STEPS, -s STEPS
                         The total runs for optimization. Default is 4000 runs.
 </pre></div>

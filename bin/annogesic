@@ -41,7 +41,7 @@ def main():
     # Parameters for get input files
     get_input_parser = subparsers.add_parser(
         "get_input_files", help="Get required files. "
-        "(i.e. annotation files, fasta files)")
+        "(i.e. Annotation files, fasta files)")
     get_input_basic = get_input_parser.add_argument_group(
             'basic arguments')
     get_input_basic.add_argument(
@@ -115,9 +115,9 @@ def main():
         "the current directory is used.")
     RATT_basic.add_argument(
         "--compare_pair", "-p", required=True, nargs='+',
-        help="Please assign the name of strain pairs. ex. "
+        help="Please assign the name of strain pairs, ex. "
         "NC_007795:NEW_NC_007795. The reference strain is NC_007795 and "
-        "the target strain is NEW_NC_007795. the assigned names are the "
+        "the target strain is NEW_NC_007795. The assigned names are the "
         "strain names in the fasta file (start with \">\"), not the "
         "filename of fasta file. If multiple strains need to be assigned, "
         "please use space to separate the strains.")
@@ -184,11 +184,11 @@ def main():
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS "
         "has to be detected. "
-        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
         "conditions, please use space to separate them. For example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replcate_tex is 3. "
+        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, "
         "just use like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
@@ -281,14 +281,14 @@ def main():
         "--manual_files", "-m", default=None, nargs='+',
         help="If gff files of the manual checked TSS are provided, this "
         "function will merge manual checked ones and TSSpredator predicted "
-        "ones. please assign the path of manual-checked TSS gff files.")
+        "ones. Please assign the path of manual-checked TSS gff files.")
     TSSpredator_add.add_argument(
         "--strain_length", "-le", default=None, nargs='+',
         help="If --manual_files is assigned, Please specify the genome length "
         "of input strains. If you want to compare whole genome, please type "
         "\"all\". The input format is $STRAINNAME:SLENGTH. Multiple genomes "
         "can be accepted, please use space to separate them. For example, "
-        "test.gff contrain two strains (s1 and s2). s1 was manual checked "
+        "test.gff contain two strains (s1 and s2). s1 was manual checked "
         "100kb and s2 was checked whole genome. The value of this argument "
         "will be s1:100000 s2:all. Default setting will compute all strains "
         "in manual-detected TSS gff files with whole length of genome.")
@@ -323,10 +323,10 @@ def main():
         help="If you want to remove low expressed TSS/processing site, please "
         "assign the file of manual-checked gff file here. This function will "
         "remove the low expressed ones based on comparison of manual-checked "
-        "ones and predicted ones. BE CRAEFUL: This function may remove some "
+        "ones and predicted ones. BE CAREFUL: This function may remove some "
         "True positives as sell. Please make sure you want to do it.")
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
-    # Parameter of opimization of TSSpredator
+    # Parameter of optimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
         "optimize_tss_processing", help="Optimize TSSs or processing "
         "sites based on manual detected ones.")
@@ -339,7 +339,7 @@ def main():
     op_TSSpredator_basic.add_argument(
         "--program", "-t", default="TSS",
         help="The feature for optimization. Please assign \"TSS\" or "
-        "\"Processint_site\". Default is TSS.")
+        "\"Processing_site\". Default is TSS.")
     op_TSSpredator_basic.add_argument(
         "--fasta_files", "-f", nargs='+', required=True,
         help="Paths of the fasta file that you want to optimize.")
@@ -349,7 +349,7 @@ def main():
     op_TSSpredator_basic.add_argument(
         "--manual_files", "-m", nargs='+', required=True,
         help="Path of the manual-checked gff file. It is the benchmark for "
-        "trainning. Please detect the TSSs/processing sites at least "
+        "training. Please detect the TSSs/processing sites at least "
         "200kb or 50 true TSSs/processing sites.")
     op_TSSpredator_basic.add_argument(
         "--strain_lengths", "-le", default=None, nargs='+',
@@ -358,7 +358,7 @@ def main():
         "for compare whole genome, please type \"all\". The input format "
         "is $STRAINNAME:SLENGTH. Multiple genomes "
         "can be accepted, please use space to separate them. For example, "
-        "test.gff contrain two strains (s1 and s2). s1 was manual checked "
+        "test.gff contain two strains (s1 and s2). s1 was manual checked "
         "100kb and s2 was checked whole genome. The value of this argument "
         "will be s1:100000 s2:all. Default setting will compute all strains "
         "in manual-detected TSS gff files with whole length of genome.")
@@ -372,17 +372,17 @@ def main():
     op_TSSpredator_basic.add_argument(
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
-        "to be detected. The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "to be detected. The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
         "different conditions, please use space to separate them. For example, "
         "1_2 2_ 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replcate_match is 3. "
+        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, "
         "just use like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     op_TSSpredator_basic.add_argument(
         "--condition_names", "-p", required=True, nargs='+',
-        help="The output prefixs of all conditions. "
+        help="The output prefixes of all conditions. "
         "If multiple conditions need to be assigned, please use space to "
         "separate them. For example, prefix_condition1 prefix_condition2.")
     op_TSSpredator_add = op_TSSpredator_parser.add_argument_group(
@@ -447,14 +447,14 @@ def main():
         "only one of them will be printed out. Default is 2.")
     op_TSSpredator_add.add_argument(
         "--parallels", "-c", type=int, default=4,
-        help="Paralle runs for optimization. Default is 4.")
+        help="Parallel runs for optimization. Default is 4.")
     op_TSSpredator_add.add_argument(
         "--steps", "-s", default=4000, type=int,
         help="The total runs for optimization. Default is 4000 runs.")
     op_TSSpredator_parser.set_defaults(func=optimize_TSSpredator)
     # Parameter of Terminator
     Terminator_parser = subparsers.add_parser(
-        "terminator", help="Detect rho-independant terminators.")
+        "terminator", help="Detect rho-independent terminators.")
     Terminator_basic = Terminator_parser.add_argument_group(
         'basic arguments')
     Terminator_basic.add_argument(
@@ -497,11 +497,11 @@ def main():
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a terminator has to be detected. "
-        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
         "conditions, please use space to separate them. For example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replcate_tex is 3. "
+        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, "
         "just use ""like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
@@ -610,7 +610,7 @@ def main():
 
     # Parameter of Transcript
     Transcript_parser = subparsers.add_parser(
-        "transcript", help="Detect transripts based on "
+        "transcript", help="Detect transcripts based on "
         "coverage file.")
     Transcript_basic = Transcript_parser.add_argument_group(
         'basic arguments')
@@ -622,7 +622,7 @@ def main():
         "--annotation_files", "-g", default=None, nargs='+',
         help="If paths of the genome annotation gff files are provided, "
         "this function can compare transcripts with genome annotations. "
-        "If multiple transcipts overlap the same gene, this function will "
+        "If multiple transcripts overlap the same gene, this function will "
         "merge these transcript into a long one.")
     Transcript_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
@@ -645,11 +645,11 @@ def main():
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a transcript has to be detected. "
-        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
         "conditions, please use space to separate them. For example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replcate_tex is 3. "
+        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
@@ -693,7 +693,7 @@ def main():
     Transcript_add.add_argument(
         "--tolerance_coverage", "-tc", default=0, type=int,
         help="If the coverage is lower than tolerance_coverage, even the "
-        "length is within --tolerance, the algorithm will still devide the "
+        "length is within --tolerance, the algorithm will still divide the "
         "current transcript to two parts. Default is 0.")
     Transcript_add.add_argument(
         "--tss_files", "-ct", default=None, nargs='+',
@@ -707,7 +707,7 @@ def main():
         "between each feature, such as gene CDS.")
     Transcript_add.add_argument(
         "--tss_fuzzy", "-fu", default=5, type=int,
-        help="If --compare_TSS is assigned. please type the fuzzy for "
+        help="If --compare_TSS is assigned, please type the fuzzy for "
         "comparing TSS with transcript here. Default is 5.")
     Transcript_add.add_argument(
         "--table_best", "-tb", default=False, action="store_true",
@@ -746,7 +746,7 @@ def main():
         help="Paths of the TSS files.")
     UTR_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
-        help="Paths of the transcriptome fils.")
+        help="Paths of the transcript gff files.")
     UTR_basic.add_argument(
         "--terminator_files", "-e", default=None, nargs='+',
         help="If the paths of terminator files are assigned here, "
@@ -788,7 +788,7 @@ def main():
         "5'UTR. Default is 5 nucleotides.")
     UTR_parser.set_defaults(func=run_UTR_detection)
 
-    # Parameter of sRNA detectopn
+    # Parameter of sRNA detection
     sRNA_parser = subparsers.add_parser(
         "srna", help="Detect intergenic, antisense and UTR-derived sRNAs.")
     sRNA_basic = sRNA_parser.add_argument_group(
@@ -804,12 +804,12 @@ def main():
     sRNA_basic.add_argument(
         "--filter_info", "-d",
         default=["tss", "sec_str", "blast_nr", "blast_srna"], nargs='+',
-        help="There are several filters that you can use to imporve sRNA "
+        help="There are several filters that you can use to improve sRNA "
         "detection: 1. tss (sRNA has to start with TSS), 2. sec_str "
         "(free energy change of secondary structure (normalized by length) "
         "has to be smaller than --cutoff_energy), 3. blast_nr (the number "
-        "of the homologs can not be found more than --cutoff_nr_hit in the "
-        "non-redundant database), 4. blast_srna (as long as the homologs "
+        "of the homology can not be found more than --cutoff_nr_hit in the "
+        "non-redundant database), 4. blast_srna (as long as the homology "
         "can be found in sRNA database, the candidates will be included to "
         "best result without considering other filters), 5. sorf (sRNA can "
         "not overlap sORF), 6. term (sRNA has to be associated with a "
@@ -821,7 +821,7 @@ def main():
         "change of secondary structure and 3. blast to nr database to detect "
         "sRNA. If you want to use blast_srna as a filter, "
         "please follow the format: $ID|$STRAIN|$SRNANAME. \"tss sec_str "
-        "blast_nr blast_srna\" is recommanded to be assigned. "
+        "blast_nr blast_srna\" is recommended to be assigned. "
         "Default is tss sec_str blast_nr blast_srna.")
     sRNA_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
@@ -907,11 +907,11 @@ def main():
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a sRNA has to be detected. "
-        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATED. "
+        "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
         "conditions, please use space to separate them. For example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replcate_tex is 3. "
+        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
@@ -920,7 +920,7 @@ def main():
         help="The meaning and input type is the same as --replicates_tex. "
         "This value is for fragmented (or conventional) libraries.")
     sRNA_add = sRNA_parser.add_argument_group(
-        'annotational arguments')
+        'additional arguments')
     sRNA_add.add_argument(
         "--rnafold_path", default="RNAfold",
         help="Please assign RNAfold path.")
@@ -1017,7 +1017,7 @@ def main():
         "which has no CDSs/tRNA/rRNA inside (perhaps associated with ncRNA). "
         "In order to detect the sRNA candidates in these transcripts, please "
         "assign the minimum average coverage of the sRNA candidates. "
-        "The format is $TEX,$NOTEX,$FRAG. ex: 200,100,100 is means that "
+        "The format is $TEX,$NOTEX,$FRAG, ex: 200,100,100 is means that "
         "the minimum average coverage is 200 for TEX+ libraries, 100 for TEX- "
         "and fragmented (or conventional) libraries. Default is 30,20,30 "
         "and each number is separated by comma.")
@@ -1065,7 +1065,7 @@ def main():
         "The coverage of UTR-derived sRNA should not only fit the "
         "--run_utr_TEX_coverage, --run_utr_noTEX_coverage and "
         "--run_utr_fragmented_coverage, "
-        "but also this value. Defaul is 50.")
+        "but also this value. Default is 50.")
     sRNA_add.add_argument(
         "--cutoff_energy", "-e", default=-0.05, type=float,
         help="If \"sec_str\" is included in --filter_info, please assign the "
@@ -1119,7 +1119,7 @@ def main():
         "the coverage decrease within 270-430. Default is 10.")
     sRNA_add.add_argument(
         "--fuzzy_utr", "-fu", default=10, type=int,
-        help="It is simliar with --fuzzy_intergenic_antisense. "
+        help="It is similar with --fuzzy_intergenic_antisense. "
         "This is for UTR-derived sRNAs. Default is 10.")
     sRNA_add.add_argument(
         "--cutoff_nr_hit", "-cn", default=0, type=int,
@@ -1174,7 +1174,7 @@ def main():
         help="The paths of genome fasta files. ")
     sORF_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
-        help="Paths of the transcriptome files.")
+        help="Paths of the transcript gff files.")
     sORF_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files.")
@@ -1183,6 +1183,10 @@ def main():
         help="If the paths of TSS gff files are assigned here, "
         "this function will use the TSS information to detect sORF. "
         "If running without TSS, the results may be influenced.")
+    sORF_basic.add_argument(
+        "--srna_files", "-s", default=None, nargs='+',
+        help="If the paths of sRNA gff files can be provided, "
+        "this function will compare sORF and sRNA to detect the overlap.")
     sORF_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
         help="If the TEX+/- libraries can be provided, please assign the name "
@@ -1210,11 +1214,11 @@ def main():
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value (for TEX+/- libraries) is the minimal number of "
         "replicates that a sORF has to be detected. The format is "
-        "$NUMBERofCONDITION_$NUMBERofREPLICATED. If different --replicate_tex "
+        "$NUMBERofCONDITION_$NUMBERofREPLICATE. If different --replicate_tex "
         "values need to be assigned to different conditions, please use space "
         "to separate them. For example, 1_2 2_2 3_3. It means that "
         "--replicate_tex is 2 in number 1 and number 2 conditions. "
-        "In number 3 condition, --replcate_tex is 3. "
+        "In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
         "like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
@@ -1224,10 +1228,6 @@ def main():
         "This value is for fragmented (or conventional) libraries.")
     sORF_add = sORF_parser.add_argument_group(
         'additional arguments')
-    sORF_add.add_argument(
-        "--srna_files", "-s", default=None, nargs='+',
-        help="If the paths of sRNA gff files can be provided, "
-        "this function will compare sORF and sRNA to detect the overlap.")
     sORF_add.add_argument(
         "--utr_length", "-ul", default=300, type=int,
         help="If --tss_files is provided, please assign the utr length "
@@ -1276,7 +1276,7 @@ def main():
         "Default is ATG.")
     sORF_add.add_argument(
         "--stop_codon", "-oc", default=["TAA", "TAG", "TGA"], nargs='+',
-        help="The types of stop coden. If multiple types of stop codon need "
+        help="The types of stop codon. If multiple types of stop codon need "
         "to be assigned, please use space to separate them. "
         "Default is TTA TAG TGA.")
     sORF_add.add_argument(
@@ -1290,7 +1290,7 @@ def main():
     sORF_add.add_argument(
         "--rbs_not_after_tss", "-at", default=False, action="store_true",
         help="For generating best results, if the ribosome binding site of "
-        "sORF is not associted with TSS, this function will include this "
+        "sORF is not associated with TSS, this function will include this "
         "candidate as well. Default is False.")
     sORF_add.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
@@ -1337,7 +1337,7 @@ def main():
         help="The length for motif detection. "
         "For detecting a range of length, please insert \"-\" between "
         "two values. Moreover, if multiple motif length need to be assigned, "
-        "please use space to separate them. for example, 50 2-10. It means "
+        "please use space to separate them. For example, 50 2-10. It means "
         "that the length of motif for detection is 50 and within 2 to 10. "
         "The number should be less or equal than --nt_before_TSS. "
         "Default is 50.")
@@ -1363,9 +1363,6 @@ def main():
         "--end_run", "-er", default=10000,
         help="If the result of GLAM2 is not improved after running this "
         "number of iteration, it will be ended. Default is 10000.")
-    promoter_add.add_argument(
-        "--no_deletion_pseudocount", "-E", default=2.0, type=float,
-        help="Please check --deletion_pseudocount. Default is 2.0.")
     promoter_add.add_argument(
         "--parallel", "-pl", default=None,
         help="This function can run MEME by parallel. Please input the "
@@ -1428,7 +1425,7 @@ def main():
         "Default is 5.")
     operon_add.add_argument(
         "--term_fuzzy", "-ef", default=30, type=int,
-        help="The fuzzy for comparing bewteen terminator and "
+        help="The fuzzy for comparing between terminator and "
         "transcript. Default is 30.")
     operon_add.add_argument(
         "--min_length", "-l", default=20, type=int,
@@ -1509,7 +1506,7 @@ def main():
     goterm_basic.add_argument(
         "--transcript_files", "-a", default=None, nargs='+',
         help="If paths of the transcript gff files are provided, "
-        "GO term can be retreived based on expressed CDS and all CDS.")
+        "GO term can be retrieved based on expressed CDS and all CDS.")
     goterm_basic.add_argument(
         "--uniprot_id", "-u", required=True,
         help="Path of the UniProt ID mapping database.")
@@ -1656,10 +1653,10 @@ def main():
         help="Please assign the type of BAM. "
         "If the BAM files are produced by mapping to the close strain "
         "(\"reference strain\") of the query strain (\"target strain\"), "
-        "please keyin \"reference\". This kind of BAM file can be used for "
+        "please key in \"reference\". This kind of BAM file can be used for "
         "detecting the mutations between \"reference strain\" and "
         "\"target strain\". If the BAM files are produced by mapping to exact "
-        "query strain (\"target strain\"), please keyin \"target\". "
+        "query strain (\"target strain\"), please key in \"target\". "
         "This kind of BAM file can be used for detecting the exact mutations "
         "of target genome sequence.")
     snp_basic.add_argument(
@@ -1695,7 +1692,7 @@ def main():
         "$MIN,$MAX. This value can be assigned by different types: "
         "1. real number (\"r\"), 2. times of the number of samples (\"n\") "
         "or 3. times of the average read depth (\"a\"). For example, "
-        "n_10,a_2 is assinged, the average read depth is 70 and the number "
+        "n_10,a_2 is assigned, the average read depth is 70 and the number "
         "of samples (--sample_number) is 4. Then, n_10 will be 40 (10 * "
         "--sample_number) and a_2 will be 140 (average read depth * 2). "
         "Based on the same example, if this value is r_10,a_2, the minimum "
@@ -1723,7 +1720,7 @@ def main():
         "This value can be assigned based on 1. real number (\"r\"), 2. times "
         "of the number of samples (\"n\") or 3. times of average read depth "
         "(\"a\"). The second value is for (number 3 + number 4) / (number 1 + "
-        "number 2 + number 3 + number 4). These two values are splited by "
+        "number 2 + number 3 + number 4). These two values are split by "
         "comma. For example, n_10,0.8 is assigned and the average read depth "
         "is 70 and the number of samples (--sample_number) is 4. It means "
         "that the sum of number 3 and number 4 should be higher than 40 "
@@ -1748,7 +1745,7 @@ def main():
         "--filter_tag_info", "-ft",
         default=["RPB_b0.1", "MQSB_b0.1", "MQB_b0.1", "BQB_b0.1"], nargs='+',
         help="This function can set more filters to improve the results. "
-        "Please assign 1. the tag, 2. bigger (\"b\") or samller (\"s\") and "
+        "Please assign 1. the tag, 2. bigger (\"b\") or smaller (\"s\") and "
         "3. value for filters. For example, \"RPB_b0.1,MQ0F_s0\" "
         "means that RPB should be bigger than 0.1 and MQ0F should be smaller "
         "than 0. Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.")
@@ -1772,7 +1769,7 @@ def main():
     ppi_basic.add_argument(
         "--species_string", "-d", required=True,
         help="Please assign path of the species table of STRING "
-        "(species.vXXX.txt).")
+        "(species.$VERSION.txt).")
     ppi_basic.add_argument(
         "--proteinid_strains", "-s", nargs='+', required=True,
         help="This is for query strain and filename. "
@@ -1796,11 +1793,11 @@ def main():
         "official_name_NCBI can be assigned here), and the fourth one is for "
         "searching Pubmed. If you want to detect for multiple strains, just "
         "put space between these strains. Before running it, please check the "
-        "species table (species.vXXX.txt) which should be downloaded. "
+        "species table (species.v$VERSION.txt) which should be downloaded. "
         "If the file was not downloaded before, please download it. "
         "BE CAREFUL, if the assigned name is with spaces, please put "
         "\"\" at two ends. For searching Pubmen, if a specific name is "
-        "assigned, it may not be able to find the related literatures.")
+        "assigned, it may not be able to find the related literature.")
     ppi_basic.add_argument(
         "--query", "-q", default=["all"], nargs='+',
         help="Please assign the query protein here. The format is "
@@ -1811,13 +1808,13 @@ def main():
         "just type \"all\". Default is all.")
     ppi_basic.add_argument(
         "--without_strain_pubmed", "-n", default=False, action="store_true",
-        help="Retrieving the literatures from Pubmed without assigning "
+        help="Retrieving the literature from Pubmed without assigning "
         "strains, Default is False.")
     ppi_add = ppi_parser.add_argument_group(
         'additional arguments')
     ppi_add.add_argument(
         "--score", "-ps", default=0.0, type=float,
-        help="Please assign minimum PIE score for searching literatures. "
+        help="Please assign minimum PIE score for searching literature. "
         "The value is from -1 (worst) to 1 (best). Default is 0.")
     ppi_add.add_argument(
         "--node_size", "-ns", default=4000, type=int,
@@ -1880,12 +1877,12 @@ def main():
         "Default is both.")
     ribos_basic.add_argument(
         "--riboswitch_id", "-ri",
-        help="If --program is \"riboswitch\" or \"both\", please assigh the "
+        help="If --program is \"riboswitch\" or \"both\", please assign the "
         "file path of riboswitch ID in Rfam. The file should include the "
         "Accession, ID and Description of riboswitch in Rfam.")
     ribos_basic.add_argument(
         "--rna_thermometer_id", "-ti",
-        help="If --program is \"thermometer\" or \"both\", please assigh "
+        help="If --program is \"thermometer\" or \"both\", please assign "
         "the file path of RNA thermometer ID of Rfam. The file should "
         "include the Accession, ID and Description of RNA thermometer "
         "in Rfam.")
@@ -1934,7 +1931,7 @@ def main():
         "different with AGGAGG. Default is 2.")
     ribos_add.add_argument(
         "--start_codon", "-ac", default=["ATG"], nargs='+',
-        help="The types of start coden. If multiple types need to be "
+        help="The types of start codon. If multiple types need to be "
         "assigned, please use space to separate them. Default is ATG.")
     ribos_add.add_argument(
         "--max_dist_rbs", "-Mr", default=14, type=int,

@@ -137,7 +137,7 @@ If we check the wiggle files, we will find that the fasta filename (presented by
 
 Our genome fasta file is NC_009839.1.fa. Thus the fasta filename in wiggle file should be NC_009839.1 not NC_009839. 
 Thus, we need to change it. We can use `replace_seq_id.py <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ from our 
-Git repository. to replace the strain name properly. If the strain names in your fasta, annotation, 
+Git repository to replace the strain name properly. If the strain names in your fasta, annotation, 
 wiggle files are the same, you don't need to do this step.
 
 ::
@@ -237,11 +237,11 @@ fasta files automatically. For ``snp``, we will go through it later.
 Generating annotation files
 ---------------------------
 
-We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotaion files 
+We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotation files 
 retrieved from NCBI is exactly what you want, you can skip this step. 
 
 Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
-If you execute ANNOgesic by using docker container, the path is alread setted. 
+If you execute ANNOgesic by using docker container, the path is already set. 
 If you setup ANNOgesic by yourself, please check 
 `RATT <http://ratt.sourceforge.net/>`_ to set your environment paths properly.
 
@@ -281,7 +281,7 @@ we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
 
 We already saw how to update genome fasta and annotation files. 
 Now, we can re-organize our data in order to run next subcommand.
-(Normally, you don't need to do it. We re-organize the data becuase the data is only for showing the how to 
+(Normally, you don't need to do it. We re-organize the data because the data is only for showing the how to 
 run ``get_target_fasta`` and ``annotation_transfer``. All the data is useless now. The real test case is 
 already downloaded via ``get_input_files``. Therefore, we need to re-organize the data.)
 
@@ -324,7 +324,7 @@ Then, we can setup our libraries.
 Now, we can start to test other subcommands. 
 Before running ``tss_processing``, if we want to use the optimized parameters, 
 we need to run ``optimize_tss_processing`` first. The optimization requires a gff file of the manual-detected TSSs. 
-In our experience, we recommand you to detect at least 50 TSSs and check more than 200kb of genome. 
+In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of genome. 
 
 For the test case, you can download the `manual TSS file <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
 from our git repository. 
@@ -350,7 +350,7 @@ means only first 200kb of NC_009839.1 is valid.).
          -pj ANNOgesic
 
 ``optimize_tss_processing`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
-Results of the different parameters will be printed in the screen. we only set 25 runs for testing. 
+Results of the different parameters will be printed in the screen. We only set 25 runs for testing. 
 Once the optimization is done, you can find several files.
 
 ::
@@ -402,7 +402,7 @@ The output files are gff file, MasterTable and statistic files.
     TSS_class_NC_009839.1.png  TSSstatistics.tsv               stat_TSS_libs_NC_009839.1.csv                    stat_gene_vali_NC_009839.1.csv
     TSS_venn_NC_009839.1.png   stat_TSS_class_NC_009839.1.csv  stat_compare_TSSpredator_manual_NC_009839.1.csv 
 
-If we want to predict processing sites, the procedures are the same. we just need to change the program from TSS to 
+If we want to predict processing sites, the procedures are the same. We just need to change the program from TSS to 
 processing_site (``-t``) and assign the proper parameter sets. We assume the best parameter sets are following: 
 height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
 base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
@@ -446,9 +446,9 @@ Since we use TSSpredator to detect processing site, the files in
 Performing transcript detection
 -------------------------------
 
-transcript detection is a basic precedure for detecting transcript boundary. 
+Transcript detection is a basic procedure for detecting transcript boundary. 
 we can use subcommand ``transcript`` to do it. Normally, we strongly 
-recommand that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information 
+recommend that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information 
 of 3'end. However, we only use TEX +/- for testing.
 
 The command is like following: 
@@ -655,16 +655,16 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
 Prediction of sRNA and sORF
 ---------------------------
 
-Based on trascripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we 
+Based on transcripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we 
 have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can 
-get sRNAs by running subcommand ``srna``. Normally, we recommand that the user inputs fragmented libraries as well.
+get sRNAs by running subcommand ``srna``. Normally, we recommend that the user inputs fragmented libraries as well.
 Here, we only use TEX +/- for testing.
 
 For running ``srna``, we can apply several filters to improve the detection. These filters are ``tss``, ``sec_str``,
 ``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Normally, ``tss``, ``sec_str``,
-``blast_nr``, ``blast_srna`` are recommaned to used.
+``blast_nr``, ``blast_srna`` are recommended to used.
 
-Please be aware, filters are strict. For example, if your filters are included ``term``, only the sRNAs whic are 
+Please be aware, filters are strict. For example, if your filters are included ``term``, only the sRNAs which are 
 associated with terminators will be included in best list. If you want to include terminator information 
 but not use terminator as a filter, you can remove ``term`` in filters and still assign the path of terminator gff file. 
 The results will include the sRNAs which are not associated with terminators and also store terminator information.
@@ -681,8 +681,8 @@ We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ f
 
 
 If you already had sRNA database in other folders, please assign your path of databases to ``-sd``.
-If your databse is formated before, you can remove ``-sf``.
-In order to use the recommaned filters, we have to download 
+If your database is formatted before, you can remove ``-sf``.
+In order to use the recommended filters, we have to download 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (takes a while). If you already had it, 
 you can skip this step.
 
@@ -693,8 +693,8 @@ you can skip this step.
     $ mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
 
 If your nr database is in other folders, please assign your path ``-nd``.
-You can also remove ``-nf`` if your database is already formated.
-Now, we can use the recommanded filters to run ``srna``, but it may takes several hours.
+You can also remove ``-nf`` if your database is already formatted.
+Now, we can use the recommended filters to run ``srna``, but it may takes several hours.
 
 ::
 
@@ -943,7 +943,7 @@ Gff files, tables and statistic files are stored in ``gffs``, ``circRNA_tables``
 
 ``NC_009839.1_circRNA_all.gff`` and ``NC_009839.1_circRNA_all.csv`` store all circular RNAs without filtering. 
 ``NC_009839.1_circRNA_best.gff`` and ``NC_009839.1_circRNA_best.csv`` store
-the circular RNAs after filering. In our case, there are some circular RNAs can be detected, but no circular RNAs 
+the circular RNAs after filtering. In our case, there are some circular RNAs can be detected, but no circular RNAs 
 can exist after filtering.
 
 SNP calling
@@ -1139,7 +1139,7 @@ Now, we can try the subcommand.
         -n \
         -pj ANNOgesic
 
-We only detected for two proteins. If you want to detectc for all proteins in ptt files, 
+We only detected for two proteins. If you want to detect for all proteins in ptt files, 
 you can easily assign ``all`` in ``-q``.
 
 Three output folders will be generated.
@@ -1153,8 +1153,8 @@ Three output folders will be generated.
 the high `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ score. ``figures`` is for 
 figures of the protein-protein interaction networks. There are two subfolders - ``with_strain`` and ``without_strain`` in 
 ``figures``. These two folders store all information of the interactions and literature scores. 
-``with_strain`` is for results with assignning specific strain name for searching literatures. 
-``without_strain`` is for results without giving specific strain name for searching literatures.
+``with_strain`` is for results with assigning specific strain name for searching literature. 
+``without_strain`` is for results without giving specific strain name for searching literature.
 
 ::
 
@@ -1246,7 +1246,7 @@ Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_t
 
 Detection of CRISPR
 -------------------
-CRISPR is an unique features for research of immunology. ``crispr`` is a useful subcommand for CRISPR detectiion. 
+CRISPR is an unique features for research of immunology. ``crispr`` is a useful subcommand for CRISPR detection. 
 ``crispr`` integrates `CRT <http://www.room220.com/crt/>`_ and compare genome 
 annotation to remove false positive. Let's try it.
 
@@ -1281,7 +1281,7 @@ Merge all features to be one gff file
 Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features into 
 one gff file is useful. ``merge_features`` is the subcommand to achieve this purpose. 
 Moreover, ``merge_features`` can search parent transcript to each feature that 
-you assigned. the relationship between all features can be revealed.
+you assigned. The relationship between all features can be revealed.
 
 Now let's do it. We merge all features that we have.
 
@@ -1357,7 +1357,7 @@ Run Batch Script -> choose ``forward_6_cases.txt``. Once it is done, please do i
 Run Batch Script -> choose ``reverse_6_cases.txt``. If you just want to generate the screenshots for all candidates, 
 you can run ``forward.txt`` and ``reverse.txt``. Please be careful, if you use Docker container, the path may be not correct.
 
-As soon as the gneration of the screenshots is done, 
+As soon as the generation of the screenshots is done, 
 we can see that there are several screenshots in ``forward`` and ``reverse``.
 
 ::

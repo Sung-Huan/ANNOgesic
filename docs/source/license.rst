@@ -1,7 +1,7 @@
 License
 ==========
 
-READemption is open source software and available under the ISC license.
+ANNOgesic is open source software and available under the ISC license.
 
 Copyright (c) 2011-2015, Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 

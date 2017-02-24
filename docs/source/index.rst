@@ -27,12 +27,12 @@ untranslated regions (UTR) as well as small RNAs (sRNA), small open
 reading frames (sORF), circular RNAs, CRISPR related RNAs, riboswitches 
 and RNA-thermometers. It can also perform RNA-RNA
 and protein-protein interactions prediction. Furthermore, it groups
-genes into operons and sub-operons and reveal promotor motifs. It can
+genes into operons and sub-operons and reveal promoter motifs. It can
 also allocate GO term and subcellular localization to genes. Several
 of ANNOgesic features are new implementation while others are
 performed and improved by third-party tools and for some of them
 adaptive parameter-optimizations were included. Additionally, numerous
-visualization and statistitcs help the user quickly evaluated feature
+visualization and statistics help the user quickly evaluated feature
 predictions resulting from an ANNOgesic analysis. The pipeline is
 modular and was heavily tested with several RNA-Seq data set from
 bacterial as well as archaeal samples.

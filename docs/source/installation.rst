@@ -2,7 +2,7 @@ Installation
 ============
 
 There are three ways to install ANNOgesic. Please refer to the following 
-sections. Only via the requirments are also installed. If
+sections. Only via the requirements are also installed. If
 you install ANNOgesic through on of the other ways, 
 please install the pre-required 
 tools by yourself.
@@ -37,7 +37,7 @@ You can simply pull the Docker image as following
 
     $ docker pull silasysh/annogesic
 
-Althernatively, you can build the image via Dockerfile.
+Alternatively, you can build the image via Dockerfile.
 Please Download the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`_ from our Git repository.
 Then switch to the folder which Dockerfile are located. For the following commands, please 
 refer to `here <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/docker.rst>`_.
