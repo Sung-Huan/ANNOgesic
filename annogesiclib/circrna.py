@@ -212,13 +212,13 @@ class CircRNADetection(object):
         command = " ".join([
                   testrealign_path,
                   "-d", os.path.join(self.fasta_path, prefix + ".fa"),
-                  "-q", os.path.join(out_folder, self.bams["sort"] + ".sam"),
-                  "-n"])
+                  "-q", os.path.join(out_folder, self.bams["sort"] + ".sam"), "-n",
+                  "-U", os.path.join(sub_splice_path, "splicesites.bed"),
+                  "-T", os.path.join(sub_splice_path, "transrealigned.bed")])
         os.system(command + " 2>" + err_log)
-        self.helper.move_all_content(os.getcwd(), sub_splice_path, [".bed"])
         self.helper.remove_all_content(out_folder, self.bams["sort"], "file")
 
-    def _merge_bed(self, fastas, splice_path):
+    def _merge_bed(self, fastas, splice_path, output_folder):
         '''Merge the bed files for analysis'''
         tmp_prefixs = []
         for fasta in os.listdir(fastas):
@@ -232,42 +232,43 @@ class CircRNADetection(object):
                             headers.append(line[1:])
                 filename = fasta.split(".")
                 fasta_prefix = ".".join(filename[:-1])
+                bed_folder = os.path.join(
+                    output_folder, fasta_prefix)
                 tmp_prefixs.append(fasta_prefix)
-                self.helper.check_make_folder(os.path.join(
-                                              os.getcwd(), fasta_prefix))
+                self.helper.check_make_folder(bed_folder)
                 for header in headers:
                     shutil.copyfile(os.path.join(splice_path, header,
                                     self.splices["file"]),
-                                    os.path.join(fasta_prefix,
+                                    os.path.join(bed_folder,
                                     "_".join([self.splices["splice"],
                                               header + ".bed"])))
                     shutil.copyfile(os.path.join(splice_path, header,
                                     self.trans["file"]),
-                                    os.path.join(fasta_prefix,
+                                    os.path.join(bed_folder,
                                     "_".join([self.trans["trans"],
                                               header + ".bed"])))
-                out_splice = os.path.join(fasta_prefix,
+                out_splice = os.path.join(bed_folder,
                                           self.splices["all_file"])
-                out_trans = os.path.join(fasta_prefix,
+                out_trans = os.path.join(bed_folder,
                                          self.trans["all_file"])
                 if len(headers) > 1:
-                    for file_ in os.listdir(fasta_prefix):
+                    for file_ in os.listdir(bed_folder):
                         if (self.splices["splice"] in file_) and (
                                 self.splices["all"] not in file_):
                             self.helper.merge_file(os.path.join(
-                                    fasta_prefix, file_), out_splice)
+                                    bed_folder, file_), out_splice)
                         elif (self.trans["trans"] in file_) and (
                                 self.trans["all"] not in file_):
                             self.helper.merge_file(os.path.join(
-                                    fasta_prefix, file_), out_trans)
+                                    bed_folder, file_), out_trans)
                 else:
                     shutil.move(os.path.join(
-                                fasta_prefix,
+                                bed_folder,
                                 "_".join([self.splices["splice"],
                                          headers[0] + ".bed"])),
                                 out_splice)
                     shutil.move(os.path.join(
-                                fasta_prefix,
+                                bed_folder,
                                 "_".join([self.trans["trans"],
                                           headers[0] + ".bed"])),
                                 out_trans)
@@ -279,7 +280,8 @@ class CircRNADetection(object):
         for prefix in tmp_prefixs:
             self.helper.check_make_folder(os.path.join(self.gff_folder,
                                                        prefix))
-            shutil.copytree(prefix, os.path.join(self.splice_path, prefix))
+            shutil.copytree(os.path.join(args_circ.output_folder, prefix),
+                            os.path.join(self.splice_path, prefix))
             self.helper.check_make_folder(os.path.join(
                                           self.candidate_path, prefix))
             print("Comparing with annotation of {0}".format(prefix))
@@ -346,7 +348,8 @@ class CircRNADetection(object):
                 convert_ones, tmp_reads, remove_ones)
             self._run_testrealign(prefix, args_circ.testrealign_path,
                                   args_circ.output_folder)
-        tmp_prefixs = self._merge_bed(args_circ.fastas, self.splice_path)
+        tmp_prefixs = self._merge_bed(args_circ.fastas, self.splice_path,
+                                      args_circ.output_folder)
         self.multiparser.parser_gff(args_circ.gffs, None)
         self.multiparser.combine_gff(args_circ.fastas, self.gff_path,
                                      "fasta", None)
@@ -354,7 +357,4 @@ class CircRNADetection(object):
         self.helper.remove_tmp_dir(args_circ.fastas)
         self.helper.remove_tmp_dir(args_circ.gffs)
         for tmp_prefix in tmp_prefixs:
-            shutil.rmtree(tmp_prefix)
-#        if (not args_circ.align) and (len(remove_frag) != 0):
-#            for frag in remove_frag:
-#                os.remove(os.path.join(merge_folder, frag))
+            shutil.rmtree(os.path.join(args_circ.output_folder, tmp_prefix))

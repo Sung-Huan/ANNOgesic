@@ -41,6 +41,7 @@ class TestCircRNADetection(unittest.TestCase):
         self.gff_folder = os.path.join(self.test_folder, "gff")
         self.out_folder = os.path.join(self.test_folder, "output")
         self.read_folder = os.path.join(self.test_folder, "read")
+        self.splice_folder = os.path.join(self.test_folder, "splice")
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
         if (not os.path.exists(self.fasta_folder)):
@@ -52,6 +53,8 @@ class TestCircRNADetection(unittest.TestCase):
             os.mkdir(self.out_folder)
         if (not os.path.exists(self.read_folder)):
             os.mkdir(self.read_folder)
+        if (not os.path.exists(self.splice_folder)):
+            os.mkdir(self.splice_folder)
         args = self.mock_args.mock()
         args.output_folder = self.out_folder
         args.gffs = self.gff_folder
@@ -136,9 +139,9 @@ class TestCircRNADetection(unittest.TestCase):
     def test_merge_bed(self):
         fasta1 = os.path.join(self.fasta_folder, "test1.fa")
         fasta2 = os.path.join(self.fasta_folder, "test2.fa")
-        header1 = os.path.join(self.test_folder, "Staphylococcus_aureus_HG003")
-        header2 = os.path.join(self.test_folder, "aaa")
-        header3 = os.path.join(self.test_folder, "bbb")
+        header1 = os.path.join(self.splice_folder, "Staphylococcus_aureus_HG003")
+        header2 = os.path.join(self.splice_folder, "aaa")
+        header3 = os.path.join(self.splice_folder, "bbb")
         os.mkdir(header1)
         os.mkdir(header2)
         os.mkdir(header3)
@@ -156,16 +159,16 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(tran1, self.example.tran_file)
         gen_file(tran2, self.example.tran_file)
         gen_file(tran3, self.example.tran_file)
-        prefixs = self.circ._merge_bed(self.fasta_folder, self.test_folder)
+        prefixs = self.circ._merge_bed(self.fasta_folder, self.splice_folder, self.out_folder)
         self.assertEqual(set(prefixs), set(["test1", "test2"]))
-        self.assertTrue(os.path.exists(os.path.join("test1", "splicesites_all.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test1", "transrealigned_all.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "splicesites_all.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "transrealigned_all.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "splicesites_aaa.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "transrealigned_aaa.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "splicesites_bbb.bed")))
-        self.assertTrue(os.path.exists(os.path.join("test2", "transrealigned_bbb.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test1", "splicesites_all.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test1", "transrealigned_all.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "splicesites_all.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "transrealigned_all.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "splicesites_aaa.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "transrealigned_aaa.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "splicesites_bbb.bed")))
+        self.assertTrue(os.path.exists(os.path.join(self.out_folder, "test2", "transrealigned_bbb.bed")))
 
 class Example(object):
 

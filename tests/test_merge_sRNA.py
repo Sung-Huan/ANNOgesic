@@ -20,6 +20,8 @@ class Mock_func(object):
             return self.example.srnas_utr
         elif gff_file == "inter":
             return self.example.srnas_int
+        elif gff_file == "both":
+            return self.example.srnas_utr
         elif type_ == "CDS":
             return self.example.genes
 
@@ -51,14 +53,14 @@ class TestMergesRNA(unittest.TestCase):
         attributes_pre = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         tar1_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 33, "phase": ".", "strand": "+", "score": "."}
-        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "3utr"}
+        attributes_tar1 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "antisense"}
         tar2_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
                      "end": 33, "phase": ".", "strand": "+", "score": "."}
         attributes_tar2 = {"ID": "sRNA0", "Name": "srna_0", "sRNA_type": "5utr"}
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "pre")
-        self.assertEqual(pre.attributes["sRNA_type"], "3utr,5utr")
+        self.assertEqual(pre.attributes["sRNA_type"], "5utr")
         pre = Create_generator(pre_dict, attributes_pre, "gff")
         tar2 = Create_generator(tar2_dict, attributes_tar2, "gff")
         ms.modify_attributes(pre, tar2, "UTR", "pre")
@@ -67,7 +69,7 @@ class TestMergesRNA(unittest.TestCase):
         tar1 = Create_generator(tar1_dict, attributes_tar1, "gff")
         ms.modify_attributes(pre, tar1, "UTR", "current")
         self.assertEqual(pre.attributes["sRNA_type"], "5utr")
-        self.assertEqual(tar1.attributes["sRNA_type"], "3utr,5utr")
+        self.assertEqual(tar1.attributes["sRNA_type"], "5utr")
 
     def test_detect_overlap(self):
         pre_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 3,
@@ -127,15 +129,11 @@ class TestMergesRNA(unittest.TestCase):
         gffs = {"merge": out_file, "utr": "UTR", "normal": "inter"}
         ms.merge_srna_gff(gffs, False, 0.5, os.path.join(self.test_folder, "aaa.gff"))
         datas, attributes = extract_info(out_file, "file")
-        self.assertListEqual(datas, ['aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.',
-                                     'aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.'])
-        self.assertEqual(set(attributes[0]), set(['overlap_percent=NA', 'end_cleavage=cleavage_40',
-                                                  'start_cleavage=cleavage_4', 'Name=sRNA_00000',
-                                                  'with_TSS=TSS_3', 'ID=aaa_srna0', 'sRNA_type=interCDS',
-                                                  'overlap_cds=NA']))
-        self.assertEqual(set(attributes[1]), set(['overlap_percent=NA', 'end_cleavage=NA', 'Name=sRNA_00001',
-                                                  'with_TSS=NA', 'ID=aaa_srna1', 'sRNA_type=intergenic',
-                                                  'overlap_cds=NA']))
+        self.assertListEqual(datas, ['aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.'])
+        self.assertEqual(set(attributes[0]), set(['overlap_cds=NA', 'Name=sRNA_00000',
+                                                  'ID=aaa_srna0', 'sRNA_type=intergenic',
+                                                  'end_cleavage=cleavage_40', 'with_TSS=TSS_3',
+                                                  'overlap_percent=NA']))
 
     def test_compare_table(self):
         ms.replicate_comparison = Mock_func().mock_replicate_comparison

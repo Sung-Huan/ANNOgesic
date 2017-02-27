@@ -20,8 +20,8 @@ def filter_frag(srna_table, srna_gff):
     new_gffs = []
     for gff in gffs:
         if ("UTR_type" in gff.attributes.keys()):
-            if (gff.attributes["UTR_type"] == "5utr") or (
-                    gff.attributes["UTR_type"] == "interCDS"):
+            if ("5utr" in gff.attributes["UTR_type"]) or (
+                    "interCDS" in gff.attributes["UTR_type"]):
                 for table in tables:
                     if (gff.seq_id == table[0]) and (
                             gff.start == int(table[2])) and (
@@ -29,7 +29,7 @@ def filter_frag(srna_table, srna_gff):
                             gff.strand == table[4]):
                         if "frag" in table[5]:
                             new_gffs.append(gff)
-            elif gff.attributes["UTR_type"] == "3utr":
+            elif "3utr" in gff.attributes["UTR_type"]:
                 new_gffs.append(gff)
         else:
             new_gffs.append(gff)

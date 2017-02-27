@@ -10,19 +10,14 @@ from annogesiclib.lib_reader import read_wig, read_libs
 
 
 def modify_attributes(pre_srna, srna, srna_type, input_type):
-    if srna_type == "UTR":
+    if (srna_type == "UTR") or (srna_type == "both"):
         if pre_srna.attributes["sRNA_type"] != srna.attributes["sRNA_type"]:
             if input_type == "pre":
-                if "," not in pre_srna.attributes["sRNA_type"]:
+                if "antisense" in pre_srna.attributes["sRNA_type"]:
                     pre_srna.attributes["sRNA_type"] = (
-                        ",".join([srna.attributes["sRNA_type"],
-                                  pre_srna.attributes["sRNA_type"]]))
+                        srna.attributes["sRNA_type"])
             else:
-                if "," not in pre_srna.attributes["sRNA_type"]:
-                    srna.attributes["sRNA_type"] = (
-                        ",".join([srna.attributes["sRNA_type"],
-                                  pre_srna.attributes["sRNA_type"]]))
-                else:
+                if "antisense" not in pre_srna.attributes["sRNA_type"]:
                     srna.attributes["sRNA_type"] = (
                         pre_srna.attributes["sRNA_type"])
 
@@ -100,34 +95,47 @@ def merge_srna(srnas, srna_type):
     first = True
     pre_srna = ""
     for srna in srnas:
-        if srna_type == "UTR":
+        if srna.feature != "ncRNA":
             srna.feature = "ncRNA"
-        else:
-            if "with_TSS" in srna.attributes.keys():
-                if srna.attributes["with_TSS"] == "False":
-                    srna.attributes["with_TSS"] = "NA"
-            else:
+        if "with_TSS" in srna.attributes.keys():
+            if srna.attributes["with_TSS"] == "False":
                 srna.attributes["with_TSS"] = "NA"
-            if "end_cleavage" in srna.attributes.keys():
-                if srna.attributes["end_cleavage"] == "False":
-                    srna.attributes["end_cleavage"] = "NA"
-            else:
+        else:
+            srna.attributes["with_TSS"] = "NA"
+        if "end_cleavage" in srna.attributes.keys():
+            if srna.attributes["end_cleavage"] == "False":
                 srna.attributes["end_cleavage"] = "NA"
+        else:
+            srna.attributes["end_cleavage"] = "NA"
         overlap = False
         if first:
             first = False
             pre_srna = srna
         else:
+            if (srna.seq_id != pre_srna.seq_id):
+                if not overlap:
+                    if pre_srna not in final_srnas:
+                        final_srnas.append(pre_srna)
+                pre_srna = srna
+                continue
             overlap = detect_overlap(srna, pre_srna, srna_type, overlap)
             if overlap:
                 pre_srna = modify_overlap(pre_srna, srna)
-            if not overlap:
+                if (srna.attributes["sRNA_type"] != "antisense") and (
+                        pre_srna.attributes["sRNA_type"] == "antisense"):
+                    pre_srna = srna
+            else:
                 if pre_srna not in final_srnas:
                     final_srnas.append(pre_srna)
                 pre_srna = srna
         srna.source = "ANNOgesic"
-    if not overlap:
-        final_srnas.append(srna)
+    if overlap:
+        pre_srna = modify_overlap(pre_srna, srna)
+        if pre_srna not in final_srnas:
+            final_srnas.append(pre_srna)
+    else:
+        if srna not in final_srnas:
+            final_srnas.append(srna)
     return final_srnas
 
 
@@ -248,13 +256,15 @@ def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
     srnas = None
     if (in_cds) and (len(utrs) != 0) and (len(inters) != 0):
         inters = merge_incds_utr(utrs, inters)
-    if len(utrs) != 0:
+    if (len(utrs) != 0) and (len(inters) != 0):
+        pre_srnas = inters + utrs
+        pre_srnas = sorted(pre_srnas, key=lambda x: (
+                           x.seq_id, x.start, x.end, x.strand))
+        srnas = merge_srna(pre_srnas, "both")
+    elif len(utrs) != 0:
         srnas = merge_srna(utrs, "UTR")
-    if len(inters) != 0:
-        if srnas is not None:
-            srnas = srnas + merge_srna(inters, "inter")
-        else:
-            srnas = merge_srna(inters, "inter")
+    elif len(inters) != 0:
+        srnas = merge_srna(inters, "inter")
     sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start,
                                               x.end, x.strand))
     for srna in sort_srnas:
@@ -277,7 +287,7 @@ def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
                     new_srna.seq_id, new_srna.source, new_srna.feature,
                     new_srna.start, new_srna.end, new_srna.score,
                     new_srna.strand, new_srna.phase]]))
-            out.write(srna.info_without_attributes + "\t" +
+            out.write(new_srna.info_without_attributes + "\t" +
                       attribute_string + "\n")
             num_srna += 1
     out.close()
@@ -572,14 +582,14 @@ def merge_srna_table(srna_file, csvs, wigs_f, wigs_r,
     utrs = read_table(csvs["utr"], "utr")
     out = open(csvs["merge"], "w")
     for srna in srnas:
-        if (srna.attributes["sRNA_type"] == "5utr") or (
-                srna.attributes["sRNA_type"] == "3utr") or (
-                srna.attributes["sRNA_type"] == "interCDS"):
+        if ("5utr" in srna.attributes["sRNA_type"]) or (
+                "3utr" in srna.attributes["sRNA_type"]) or (
+                "interCDS" in srna.attributes["sRNA_type"]):
             compare_table(srna, utrs, "utr", wigs_f, wigs_r,
                           texs, out, tsss, args_srna)
-        elif (srna.attributes["sRNA_type"] == "intergenic") or (
-                srna.attributes["sRNA_type"] == "in_CDS") or (
-                srna.attributes["sRNA_type"] == "antisense"):
+        elif ("intergenic" in srna.attributes["sRNA_type"]) or (
+                "in_CDS" in srna.attributes["sRNA_type"]) or (
+                "antisense" in srna.attributes["sRNA_type"]):
             compare_table(srna, inters, "inter", wigs_f, wigs_r,
                           texs, out, tsss, args_srna)
     out.close()

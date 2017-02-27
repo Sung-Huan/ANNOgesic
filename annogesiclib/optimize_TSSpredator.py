@@ -17,6 +17,20 @@ def compute_stat(stat_value, best, best_para, cores,
         indexs["change"] = False
         best = stat_value
         best_para = copy.deepcopy(list_num[-1 * cores + indexs["count"]])
+        best_out = open(out_path + "/best_" + strain + ".csv", "w")
+        para_line = "_".join(["he", str(best_para["height"]),
+                              "rh", str(best_para["re_height"]),
+                              "fa", str(best_para["factor"]),
+                              "rf", str(best_para["re_factor"]),
+                              "bh", str(best_para["base_height"]),
+                              "ef", str(best_para["enrichment"]),
+                              "pf", str(best_para["processing"])])
+        best_out.write("{0}\t{1}\tTP={2}\tTP_rate={3}\tFP={4}\tFP_rate={5}\t"
+                       "FN={6}\tMissing_ratio={7}\t".format(
+                           (indexs["step"] - cores + 1 + indexs["count"]),
+                           para_line, best["tp"], best["tp_rate"], best["fp"],
+                           best["fp_rate"], best["fn"], best["missing_ratio"]))
+        best_out.close()
     print(", ".join(["Current strain={0}", "Current Parameter:step={1}",
                     "height={2}", "height_reduction={3}", "factor={4}",
                     "factor_reduction={5}", "base_height={6}",
@@ -49,19 +63,6 @@ def compute_stat(stat_value, best, best_para, cores,
           "\tFN={4}\tMissing_ratio={5}".format(
               best["tp"], best["tp_rate"], best["fp"], best["fp_rate"],
               best["fn"], best["missing_ratio"]))
-    best_out = open(out_path + "/best_" + strain + ".csv", "w")
-    para_line = "_".join(["he", str(best_para["height"]),
-                          "rh", str(best_para["re_height"]),
-                          "fa", str(best_para["factor"]),
-                          "rf", str(best_para["re_factor"]),
-                          "bh", str(best_para["base_height"]),
-                          "ef", str(best_para["enrichment"]),
-                          "pf", str(best_para["processing"])])
-    best_out.write("{0}\tTP={1}\tTP_rate={2}\tFP={3}\tFP_rate={4}\t"
-                   "FN={5}\tMissing_ratio={6}\t".format(
-                       para_line, best["tp"], best["tp_rate"], best["fp"],
-                       best["fp_rate"], best["fn"], best["missing_ratio"]))
-    best_out.close()
     indexs["count"] += 1
     return (best_para, best)
 
@@ -184,11 +185,11 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                              "pf", str(para_list[count]["processing"])])
             num_predict, predicts = read_predict_manual_gff(gff_file, length)
             comparison(manuals, predicts, nums, args_ops, length)
-            out.write("{0}\t{1}\tTP\t{2}\tTP_rate\t{3}\t".format(
+            out.write("{0}\t{1}\tTP={2}\tTP_rate={3}\t".format(
                       total_step, para, nums["overlap"],
                       float(nums["overlap"]) / float(num_manual)))
-            out.write("FP\t{0}\tFP_rate\t{1}\tFN\t{2}"
-                      "\tmissing_ratio\t{3}\n".format(
+            out.write("FP={0}\tFP_rate={1}\tFN={2}"
+                      "\tmissing_ratio={3}\n".format(
                           nums["predict"], float(nums["predict"]) / float(
                               int(length) - num_manual),
                           nums["manual"],
@@ -869,9 +870,11 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs,
     for row in csv.reader(f_h, delimiter="\t"):
         line_num += 1
         paras = row[1].split("_")
-        if len(row) == 14:
-            prev_stat = {"tp": int(row[3]), "tp_rate": float(row[5]),
-                         "fp": int(row[7]), "fp_rate": float(row[9])}
+        if len(row) == 8:
+            prev_stat = {"tp": int(row[2].split("=")[-1]),
+                         "tp_rate": float(row[3].split("=")[-1]),
+                         "fp": int(row[4].split("=")[-1]),
+                         "fp_rate": float(row[5].split("=")[-1])}
             list_num.append({"height": float(paras[1]),
                              "re_height": float(paras[3]),
                              "factor": float(paras[5]),
@@ -892,12 +895,12 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs,
                              "base_height": float(paras[9]),
                              "enrichment": float(paras[11]),
                              "processing": float(paras[13])}
-                best["tp"] = float(row[3])
-                best["tp_rate"] = float(row[5])
-                best["fp"] = float(row[7])
-                best["fp_rate"] = float(row[9])
-                best["fn"] = float(row[11])
-                best["missing_ratio"] = float(row[13])
+                best["tp"] = float(row[2].split("=")[-1])
+                best["tp_rate"] = float(row[3].split("=")[-1])
+                best["fp"] = float(row[4].split("=")[-1])
+                best["fp_rate"] = float(row[5].split("=")[-1])
+                best["fn"] = float(row[6].split("=")[-1])
+                best["missing_ratio"] = float(row[7].split("=")[-1])
             indexs["step"] = int(row[0]) + 1
     f_h.close()
     return (line_num, best, best_para)
@@ -916,7 +919,7 @@ def reload_data(out_path, list_num, best, best_para, indexs,
     if len(list_num) > 0:
         indexs["extend"] = True
     else:
-        print("Error: stat.csv may be empty or has something wrong, "
+        print("Error: stat_$STRAIN.csv may be empty or has something wrong, "
               "please check it or remove it!!!")
         sys.exit()
     new_line = 0

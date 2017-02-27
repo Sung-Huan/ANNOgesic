@@ -185,7 +185,7 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.cluster = 3
         ot.compare_manual_predict(1000, para_list, [predict], self.test_folder,
                                   out, args, self.example.mans, 3, 2000)
-        self.assertEqual(out.getvalue(), "1000\the_0.3_rh_0.2_fa_0.7_rf_0.3_bh_0.0_ef_2.5_pf_3.3\tTP\t0\tTP_rate\t0.0\tFP\t2\tFP_rate\t0.00100150225338007\tFN\t2\tmissing_ratio\t0.6666666666666666\n")
+        self.assertEqual(out.getvalue(), "1000\the_0.3_rh_0.2_fa_0.7_rf_0.3_bh_0.0_ef_2.5_pf_3.3\tTP=0\tTP_rate=0.0\tFP=2\tFP_rate=0.00100150225338007\tFN=2\tmissing_ratio=0.6666666666666666\n")
 
     def test_compute_stat(self):
         list_num = [self.example.best_para]
@@ -404,8 +404,8 @@ AGACTTCCTGATAGTTAAACACATGAGATGTTGGCGTACACACCCGGTGTTTACGTATACGTTACTATGATATTTAGAAA
 NC_000915.1	RefSeq	TSS	1105	1105	.	-	.	Name=ribH;gene=ribH;locus_tag=HP0002;ID=gene1;Dbxref=GeneID:898768;gbkey=Gene"""
     manual_file = """NC_000915.1	RefSeq	TSS	633	633	.	-	.	Name=nusB;gene=nusB;locus_tag=HP0001;ID=gene0;Dbxref=GeneID:898756;gbkey=Gene
 NC_000915.1	RefSeq	TSS	1125	1125	.	-	.	Name=ribH;gene=ribH;locus_tag=HP0002;ID=gene1;Dbxref=GeneID:898768;gbkey=Gene"""
-    stat = """0	he_2.4_rh_2.3_fa_7.6_rf_5.5_bh_0.086_ef_3.1_pf_5.2	TP	789	TP_rate	0.7000887311446318	FP	230	FP_rate	8.15542105020548e-05	FN	338	missing_ratio	0.29991126885536823
-1	he_1.4_rh_1.2_fa_7.5_rf_2.5_bh_0.149_ef_5.2_pf_5.0	TP	595	TP_rate	0.5279503105590062	FP	195	FP_rate	6.91437871647856e-05	FN	532	missing_ratio	0.4720496894409938"""
+    stat = """0	he_2.4_rh_2.3_fa_7.6_rf_5.5_bh_0.086_ef_3.1_pf_5.2	TP=789	TP_rate=0.7000887311446318	FP=230	FP_rate=8.15542105020548e-05	FN=338	missing_ratio=0.29991126885536823
+1	he_1.4_rh_1.2_fa_7.5_rf_2.5_bh_0.149_ef_5.2_pf_5.0	TP=595	TP_rate=0.5279503105590062	FP=195	FP_rate=6.91437871647856e-05	FN=532	missing_ratio=0.4720496894409938"""
     gffs_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 140,
                   "end": 140, "phase": ".", "strand": "+", "score": "."},
                  {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 30,

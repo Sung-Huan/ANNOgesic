@@ -275,6 +275,7 @@ def classify_srna(srna_file, out_folder, out_stat_file, args_srna):
     srna_datas, strains, checks = read_file(srna_file)
     out_stat = open(out_stat_file, "w")
     for strain in strains:
+        checks["first"] = True
         if checks["limit"] is True:
             break
         class_num = 0
