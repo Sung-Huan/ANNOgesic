@@ -287,16 +287,17 @@ class Terminator(object):
             tran_file = os.path.join(self.tran_path,
                                      "_".join([prefix, "transcript.gff"]))
             gff_file = os.path.join(merge_path, prefix + ".gff")
-            print("Extracting seq of {0}".format(prefix))
-            intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
-                           tran_file, gff_file, tmp_seq, tmp_index, args_term)
-            self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
-            extract_info_sec(tmp_sec, tmp_seq, tmp_index)
-            os.remove(tmp_index)
-            tmp_cand = os.path.join(args_term.out_folder,
-                                    "_".join(["term_candidates", prefix]))
-            poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)
-            print("Detecting terminator")
+            tmp_cand = tmp_cand = os.path.join(args_term.out_folder,
+                                     "_".join(["term_candidates", prefix]))
+            if os.path.exists(tran_file):
+                print("Extracting seq of {0}".format(prefix))
+                intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
+                               tran_file, gff_file, tmp_seq, tmp_index, args_term)
+                self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
+                extract_info_sec(tmp_sec, tmp_seq, tmp_index)
+                os.remove(tmp_index)
+                poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)
+            print("Detecting terminator for " + prefix)
             detect_coverage(
                 tmp_cand, os.path.join(merge_path, prefix + ".gff"),
                 os.path.join(self.tran_path, "_".join([

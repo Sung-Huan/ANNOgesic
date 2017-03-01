@@ -479,11 +479,13 @@ def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
     hps = []
     fr_terms = []
     seq = {}
+    new_terms = []
     for entry in gff_parser.entries(open(gff_file)):
         if (entry.feature == "gene"):
             gffs.append(entry)
-    for entry in gff_parser.entries(open(tran_file)):
-        tas.append(entry)
+    if os.path.exists(tran_file):
+        for entry in gff_parser.entries(open(tran_file)):
+            tas.append(entry)
     if os.path.exists(tranterm_file):
         for entry in gff_parser.entries(open(tranterm_file)):
             hps.append(entry)
@@ -495,10 +497,11 @@ def read_data(gff_file, tran_file, tranterm_file, seq_file, term_table):
                 seq[strain] = ""
             else:
                 seq[strain] = seq[strain] + line
-    term_f = open(term_table, "r")
-    for row in csv.reader(term_f, delimiter="\t"):
-        fr_terms.append(import_data(row))
-    new_terms = del_repeat_term(fr_terms)
+    if os.path.exists(term_table):
+        term_f = open(term_table, "r")
+        for row in csv.reader(term_f, delimiter="\t"):
+            fr_terms.append(import_data(row))
+        new_terms = del_repeat_term(fr_terms)
     tas = sorted(tas, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
     gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
     hps = sorted(hps, key=lambda x: (x.seq_id, x.start, x.end, x.strand))

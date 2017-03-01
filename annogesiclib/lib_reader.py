@@ -53,19 +53,18 @@ def read_wig(filename, strand, libs):
         wig_fh = open(filename)
         for entry in wig_parser.parser(wig_fh, strand):
             if entry.strain not in wigs.keys():
-                strain = entry.strain
-                wigs[strain] = {}
+                wigs[entry.strain] = {}
                 for lib in libs:
-                    if lib["cond"] not in wigs[strain]:
-                        wigs[strain][lib["cond"]] = {}
+                    if lib["cond"] not in wigs[entry.strain]:
+                        wigs[entry.strain][lib["cond"]] = {}
             for lib in libs:
                 if (lib["name"] == entry.track) and (
                         lib["strand"] == entry.strand):
                     lib_name = "|".join([
                         entry.track, entry.strand, lib["type"]])
-                    if lib_name not in wigs[strain][lib["cond"]].keys():
-                        wigs[strain][lib["cond"]][lib_name] = []
-                    wigs[strain][lib["cond"]][lib_name].append(entry.coverage)
+                    if lib_name not in wigs[entry.strain][lib["cond"]].keys():
+                        wigs[entry.strain][lib["cond"]][lib_name] = []
+                    wigs[entry.strain][lib["cond"]][lib_name].append(entry.coverage)
         wig_fh.close()
         for strain, conds in wigs.items():
             for cond, lib_names in conds.items():
