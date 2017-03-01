@@ -3,7 +3,7 @@ License
 
 ANNOgesic is open source software and available under the ISC license.
 
-Copyright (c) 2011-2015, Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
+Copyright (c) 2013-2017, Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 
 Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
 
