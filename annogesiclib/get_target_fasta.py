@@ -21,7 +21,7 @@ class TargetFasta(object):
             shutil.copy(file_, new_ref_folder)
         self.folders["tmp_ref"] = os.path.join(new_ref_folder, "tmp")
         self.multiparser.parser_fasta(new_ref_folder)
-        if "tmp_tar" in os.listdir(out_folder):
+        if os.path.exists(self.folders["tmp_tar"]):
             shutil.rmtree(self.folders["tmp_tar"])
         os.mkdir(self.folders["tmp_tar"])
         return new_ref_folder

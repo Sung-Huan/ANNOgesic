@@ -37,21 +37,21 @@ class TestGetFile(unittest.TestCase):
         f_h = open(os.path.join(self.test_folder, "test.fasta"), "w")
         f_h.write(self.example.fasta_file)
         f_h.close()
-        get_input.get_file(None, self.test_folder, "fna", False)
+        get_input.get_file(None, self.test_folder, "fna")
         self.assertTrue("aa.fa" in os.listdir(self.test_folder))
 
     def test_gff(self):
         g_h = open(os.path.join(self.test_folder, "test.gff"), "w")
         g_h.write(self.example.gff_file)
         g_h.close()
-        get_input.get_file(None, self.test_folder, "gff", False)
+        get_input.get_file(None, self.test_folder, "gff")
         self.assertTrue("ddd.gff" in os.listdir(self.test_folder))
 
     def test_gbk(self):
         g_h = open(os.path.join(self.test_folder, "test.gbk"), "w")
         g_h.write(self.example.gbk_file)
         g_h.close()
-        get_input.get_file(None, self.test_folder, "gbk", False)
+        get_input.get_file(None, self.test_folder, "gbk")
         self.assertTrue("NC_007795.1.gbk" in os.listdir(self.test_folder))
 
 class ExampleData(object):

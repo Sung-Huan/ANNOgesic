@@ -103,16 +103,6 @@ for example:
 You can download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
 `Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
 
-.. _Definition of reference strain and target strain:
-
-Definition of reference strain and target strain
-------------------------------------------------
-"target strain" represents the strain which the user want to annotate.
-"reference strain" represents the strain which is similar to the "target strain".
-If the user neither has fasta nor genome annotation file of "target strain", 
-ANNOgesic can generate them if "reference strain" and mutation information 
-are provided by the user.
-
 .. _Riboswitch and RNA thermometer dataset of Rfam:
 
 Riboswitch and RNA thermometer dataset of Rfam
@@ -141,41 +131,44 @@ into the corresponding folders.
 
 The folders are following:
 
-**BAMs:** For ``.bam`` files. ``BAMs_map_reference`` 
-is for the ``.bam`` files which mapped on "reference strain".
-``BAMs_map_target`` is for the ``.bam`` files which are mapped on "target strain".
+**input:** Stores all input files.
 
-**database:** For all databases.
+	**BAMs:** For ``.bam`` files. ``BAMs_map_closed_strain`` 
+	is for the ``.bam`` files which mapped on closed strain of our real query_strain.
+	``BAMs_map_query_strain`` is for the ``.bam`` files which are mapped on our query strain.
 
-**manual_TSS:** If the manual detected transcription starting sites (TSSs) can be provided,
-it can be stored here for running ``TSS_optimization`` or merging 
-the automatic predicted ones and manual detected ones. Please use gff3 format.
+	**database:** For all databases.
 
-**manual_processing_site:** It is similar to ``manual_TSS``, it is for 
-processing sites.
+	**manual_TSS:** If the manual detected transcription starting sites (TSSs) can be provided,
+	it can be stored here for running ``TSS_optimization`` or merging 
+	the automatic predicted ones and manual detected ones. Please use gff3 format.
 
-**mutation_table:** If the mutation table between "reference strain" and 
-"target strain" is provided, please put the file here. Please check 
-the section of ``get_target_fasta`` for the format of 
-mutation table.
+	**manual_processing_site:** It is similar to ``manual_TSS``, it is for 
+	processing sites.
 
-**reads:** For running ``circrna`` with mapping reads by ANNOgesic,
-please put the reads here. ``.bzip2`` and ``.gzip`` as input is accepted.
+	**mutation_table:** If the mutation table between the closed strain and 
+	query strain is provided, please put the file here. Please check 
+	the section of ``get_target_fasta`` for the format of 
+	mutation table.
+
+	**reads:** For running ``circrna`` with mapping reads by ANNOgesic,
+	please put the reads here. ``.bzip2`` and ``.gzip`` as input is accepted.
        
-**reference:** For annotation files and fasta files of "reference strain". 
-If they can be downloaded from NCBI, the files can also be obtained via running ``get_input_files``.
+	**reference:** For annotation files and fasta files. 
+	If they can be downloaded from NCBI, the files can also be obtained via running ``get_input_files``.
 
-**riboswitch_ID:** For storing the file which contains all the Rfam IDs of riboswitch.
-For format details, please check the section of 
-:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
+	**riboswitch_ID:** For storing the file which contains all the Rfam IDs of riboswitch.
+	For format details, please check the section of 
+	:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
 
-**RNA_thermometer_ID:** For storing the file which contains all the Rfam IDs of RNA thermometer.
-For format details, please check the section of
-:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
+	**RNA_thermometer_ID:** For storing the file which contains all the Rfam IDs of RNA thermometer.
+	For format details, please check the section of
+	:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
 
-**wigs:** For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in  
-``fragment`` (fragmented/conventional libraries) or ``tex_notex`` (TEX +/- treated libraries).
+	**wigs:** For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in  
+	``fragment`` (fragmented/conventional libraries) or ``tex_notex`` (TEX +/- treated libraries).
 
+**output:** Stores all output files.
 
 - **Arguments**
 
@@ -213,7 +206,7 @@ Then, the user can assign the file type for download.
     usage: annogesic get_input_files [-h] [--project_path [PROJECT_PATH]]
                                      [--ftp_path FTP_PATH] [--ref_fasta]
                                      [--ref_gff] [--ref_gbk] [--ref_ptt]
-                                     [--ref_rnt] [--convert_embl] [--for_target]
+                                     [--ref_rnt] [--convert_embl]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -236,15 +229,10 @@ Then, the user can assign the file type for download.
       --ref_rnt, -r         Download rnt files of the reference. Default is False.
       --convert_embl, -e    Convert gbk to embl files of the reference. Default is
                             False.
-      --for_target, -t      If the required files of the query strain can be
-                            downloaded from NCBI (you won't modify the genome),
-                            The files can be stored in target folder in stead of
-                            the reference folder.
 
 - **Output files**
 
-Output files will be stored in ``$ANNOgesic_folder/input/reference`` if ``--for_target`` is False.
-Output files will be stored in ``$ANNOgesic_folder/output/target`` if ``--for_target`` is True.
+Output files will be stored in ``$ANNOgesic_folder/input/reference``
 
 Output folder names are following:
 
@@ -257,8 +245,8 @@ Output folder names are following:
 get_target_fasta
 ----------------
 
-``get_target_fasta`` is the subcommand for generating fasta files of "target strain" from 
-"reference strain". For the format of the table, please check 
+``get_target_fasta`` is the subcommand for update fasta files from 
+closed strain of the real query strain. For the format of the table, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 The titles of columns is presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
@@ -273,15 +261,15 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
 
 **Fasta files of reference genome**
 
-**Mutation table:** Contains the information of mutations between reference and target strain.
+**Mutation table:** Contains the information of mutations between closed and query strain.
 
 - **Arguments**
 
 ::
 
     usage: annogesic get_target_fasta [-h] [--project_path [PROJECT_PATH]]
-                                      --ref_fasta_files REF_FASTA_FILES
-                                      [REF_FASTA_FILES ...] --mutation_table
+                                      --closed_fasta_files CLOSED_FASTA_FILES
+                                      [CLOSED_FASTA_FILES ...] --mutation_table
                                       MUTATION_TABLE --output_format OUTPUT_FORMAT
                                       [OUTPUT_FORMAT ...]
     
@@ -292,12 +280,12 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
       --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
                             Path of the project folder. If none is given, the
                             current directory is used.
-      --ref_fasta_files REF_FASTA_FILES [REF_FASTA_FILES ...], -r REF_FASTA_FILES [REF_FASTA_FILES ...]
-                            Path of the fasta files.
+      --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -r CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
+                            Path of the closed fasta files.
       --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                             Path of the mutation table which stores the mutation
-                            information between the target strain and reference
-                            strain.
+                            information between the query strain and closed strain
+                            of the query one.
       --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                             Please assign the filename and the strain name which
                             should be included in output files. For example:
@@ -310,16 +298,16 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
 
 - **Output files**
 
-**Fasta files of target genome**: This files are stored in ``$ANNOgesic_folder/output/target/fasta``.
+**Fasta files of updated genome**: This files are stored in ``$ANNOgesic_folder/output/updated_reference/fasta``.
 
 .. _annotation_transfer:
 
 annotation_transfer
 -------------------
 
-``annotation transfer`` is the subcommand for transferring the annotation from "reference strain" 
-to "target strain". To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
-is integrated in ANNOgesic. The higher similarity between "reference strain" and "target strain" are, 
+``annotation transfer`` is the subcommand for transferring the annotation from closed strain 
+to the real query strain. To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
+is integrated in ANNOgesic. The higher similarity between closed strain and query strain are, 
 the more precise the performance is. Before running ``annotation transfer``, 
 please run ``source $PAGIT_HOME/sourceme.pagit`` first. it will modify the path for executing RATT. 
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.
@@ -330,11 +318,11 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 
 - **Required files**
 
-**Annotation files of the reference strains**: Genbank/embl files of the reference genomes.
+**Annotation files of the closed strains**: Genbank/embl files of the closed genomes.
 
-**Fasta files of the reference strains**
+**Fasta files of the closed strains**
 
-**Fasta files of the target strains**
+**Fasta files of the updated strains**
 
 - **Arguments**
 
@@ -343,12 +331,12 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
     usage: annogesic annotation_transfer [-h] [--project_path [PROJECT_PATH]]
                                          --compare_pair COMPARE_PAIR
                                          [COMPARE_PAIR ...]
-                                         [--ref_embl_files REF_EMBL_FILES [REF_EMBL_FILES ...]]
-                                         [--ref_gbk_files REF_GBK_FILES [REF_GBK_FILES ...]]
-                                         --ref_fasta_files REF_FASTA_FILES
-                                         [REF_FASTA_FILES ...]
-                                         --target_fasta_files TARGET_FASTA_FILES
-                                         [TARGET_FASTA_FILES ...]
+                                         [--closed_embl_files CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...]]
+                                         [--closed_gbk_files CLOSED_GBK_FILES [CLOSED_GBK_FILES ...]]
+                                         --closed_fasta_files CLOSED_FASTA_FILES
+                                         [CLOSED_FASTA_FILES ...]
+                                         --updated_fasta_files UPDATED_FASTA_FILES
+                                         [UPDATED_FASTA_FILES ...]
                                          [--ratt_path RATT_PATH] --element ELEMENT
                                          [--transfer_type TRANSFER_TYPE]
                                          [--convert_to_gff_rnt_ptt]
@@ -362,21 +350,21 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             current directory is used.
       --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
                             Please assign the name of strain pairs, ex.
-                            NC_007795:NEW_NC_007795. The reference strain is
+                            NC_007795:NEW_NC_007795. The closed strain is
                             NC_007795 and the target strain is NEW_NC_007795. The
                             assigned names are the strain names in the fasta file
                             (start with ">"), not the filename of fasta file. If
                             multiple strains need to be assigned, please use space
                             to separate the strains.
-      --ref_embl_files REF_EMBL_FILES [REF_EMBL_FILES ...], -re REF_EMBL_FILES [REF_EMBL_FILES ...]
+      --closed_embl_files CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...], -ce CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...]
                             The paths of embl files.
-      --ref_gbk_files REF_GBK_FILES [REF_GBK_FILES ...], -rg REF_GBK_FILES [REF_GBK_FILES ...]
+      --closed_gbk_files CLOSED_GBK_FILES [CLOSED_GBK_FILES ...], -cg CLOSED_GBK_FILES [CLOSED_GBK_FILES ...]
                             If you have no embl file, you can assign genbank
                             files. The genbank can be ended by .gbk, .gbff or .gb
-      --ref_fasta_files REF_FASTA_FILES [REF_FASTA_FILES ...], -rf REF_FASTA_FILES [REF_FASTA_FILES ...]
-                            The paths of reference fasta files.
-      --target_fasta_files TARGET_FASTA_FILES [TARGET_FASTA_FILES ...], -tf TARGET_FASTA_FILES [TARGET_FASTA_FILES ...]
-                            The paths of target fasta files.
+      --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -cf CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
+                            The paths of closed fasta files.
+      --updated_fasta_files UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...], -uf UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...]
+                            The paths of updated fasta files.
     
     additional arguments:
       --ratt_path RATT_PATH
@@ -397,7 +385,7 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 Output files from `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_
 will be stored in ``$ANNOgesic_folder/output/annotation_transfer``.
 
-**Annotation files** (``.gff``, ``.ptt``, ``.rnt``) will be stored in ``$ANNOgesic_folder/output/target/annotation``.
+**Annotation files** (``.gff``, ``.ptt``, ``.rnt``) will be stored in ``$ANNOgesic_folder/output/updated_reference/annotation``.
 
 .. _snp:
 
@@ -421,7 +409,7 @@ There are multiple programs which can be applied to detect mutations
 
 **BAM files:** BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
 
-**Fasta files of the reference strains** or **Fasta files of the target strains**
+**Fasta files of the closed strains** or **Fasta files of the query strains**
 
 - **Arguments**
 
@@ -447,14 +435,13 @@ There are multiple programs which can be applied to detect mutations
                             current directory is used.
       --bam_type BAM_TYPE, -t BAM_TYPE
                             Please assign the type of BAM. If the BAM files are
-                            produced by mapping to the close strain ("reference
-                            strain") of the query strain ("target strain"), please
-                            key in "reference". This kind of BAM file can be used
-                            for detecting the mutations between "reference strain"
-                            and "target strain". If the BAM files are produced by
-                            mapping to exact query strain ("target strain"),
-                            please key in "target". This kind of BAM file can be
-                            used for detecting the exact mutations of target
+                            produced by mapping to the close strain of the query
+                            strain, please key in "closed_strain". This kind of
+                            BAM file can be used for detecting the mutations
+                            between the closed strain and query strain. If the BAM
+                            files are produced by mapping to exact query strain,
+                            please key in "query_strain". This kind of BAM file
+                            can be used for detecting the exact mutations of query
                             genome sequence.
       --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
                             Please assign the program for detecting SNP of
@@ -546,9 +533,9 @@ There are multiple programs which can be applied to detect mutations
 
 - **Output files**
 
-If ``bam_type`` is ``reference``, 
-the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_reference``. 
-If ``bam_type`` is ``target``, the results are stored in ``$ANNOgesic/output/SNP_calling/validate_target``.
+If ``bam_type`` is ``closed_strain``, 
+the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_closed_and_updated_references``. 
+If ``bam_type`` is ``query_strain``, the results are stored in ``$ANNOgesic/output/SNP_calling/mutations_of_query_strain``.
 
 The output folders and results are following:
 
@@ -597,16 +584,16 @@ will be generated based on the first line of ``$STRAIN_$PROGRAM_seq_reference.cs
 
 **statistics**: Stores the statistic files, ex: the distribution of SNPs based on QUAL.
 
-.. _tss_processing:
+.. _tss_ps:
 
-tss_processing (TSS and processing site prediction)
+tss_ps (TSS and processing site prediction)
 ---------------------------------------------------
 
-``tss_processing`` can generate the TSS and processing sites via running  
+``tss_ps`` can generate the TSS and processing sites via running  
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Since the parameters can affect the 
-results strongly, ``optimize_tss_processing`` can obtain the optimized parameters of 
+results strongly, ``optimize_tss_ps`` can obtain the optimized parameters of 
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. please check the section 
-:ref:`optimize_tss_processing` for details.
+:ref:`optimize_tss_ps` for details.
 
 - **Required tools**
 
@@ -622,7 +609,7 @@ results strongly, ``optimize_tss_processing`` can obtain the optimized parameter
 
 - **Optional input files**
 
-**Gff files of the manual detected TSSs:** If gff file of the manual detected TSSs can be provided, ``tss_processing`` can merge the manual detected TSSs
+**Gff files of the manual detected TSSs:** If gff file of the manual detected TSSs can be provided, ``tss_ps`` can merge the manual detected TSSs
 and TSSpredator predicted ones.
 
 **Gff files of transcripts:** If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
@@ -632,34 +619,33 @@ For the transcripts, please check the section :ref:`transcript`.
 
 ::
 
-    usage: annogesic tss_processing [-h] [--project_path [PROJECT_PATH]]
-                                    [--compute_program COMPUTE_PROGRAM]
-                                    --fasta_files FASTA_FILES [FASTA_FILES ...]
-                                    --annotation_files ANNOTATION_FILES
-                                    [ANNOTATION_FILES ...] --tex_notex_libs
-                                    TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                                    [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                    --condition_names CONDITION_NAMES
-                                    [CONDITION_NAMES ...]
-                                    [--tsspredator_path TSSPREDATOR_PATH]
-                                    [--specify_strains SPECIFY_STRAINS [SPECIFY_STRAINS ...]]
-                                    [--height HEIGHT [HEIGHT ...]]
-                                    [--height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]]
-                                    [--factor FACTOR [FACTOR ...]]
-                                    [--factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...]]
-                                    [--enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]]
-                                    [--processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...]]
-                                    [--base_height BASE_HEIGHT [BASE_HEIGHT ...]]
-                                    [--utr_length UTR_LENGTH] [--fuzzy FUZZY]
-                                    [--cluster CLUSTER]
-                                    [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
-                                    [--strain_length STRAIN_LENGTH [STRAIN_LENGTH ...]]
-                                    [--validate_gene]
-                                    [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
-                                    [--re_check_orphan]
-                                    [--overlap_feature OVERLAP_FEATURE]
-                                    [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
-                                    [--remove_low_expression REMOVE_LOW_EXPRESSION]
+    usage: annogesic tss_ps [-h] [--project_path [PROJECT_PATH]]
+                            [--compute_program COMPUTE_PROGRAM] --fasta_files
+                            FASTA_FILES [FASTA_FILES ...] --annotation_files
+                            ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                            [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                            --condition_names CONDITION_NAMES
+                            [CONDITION_NAMES ...]
+                            [--tsspredator_path TSSPREDATOR_PATH]
+                            [--specify_strains SPECIFY_STRAINS [SPECIFY_STRAINS ...]]
+                            [--height HEIGHT [HEIGHT ...]]
+                            [--height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]]
+                            [--factor FACTOR [FACTOR ...]]
+                            [--factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...]]
+                            [--enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]]
+                            [--processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...]]
+                            [--base_height BASE_HEIGHT [BASE_HEIGHT ...]]
+                            [--utr_length UTR_LENGTH] [--fuzzy FUZZY]
+                            [--cluster CLUSTER]
+                            [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
+                            [--strain_length STRAIN_LENGTH [STRAIN_LENGTH ...]]
+                            [--validate_gene]
+                            [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
+                            [--re_check_orphan]
+                            [--overlap_feature OVERLAP_FEATURE]
+                            [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
+                            [--remove_low_expression REMOVE_LOW_EXPRESSION]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -672,9 +658,9 @@ For the transcripts, please check the section :ref:`transcript`.
                             Which feature you want to predict, please assign "TSS"
                             or "processing_site". Default is TSS.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Paths of the target genome fasta files.
+                            Paths of the query genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the target genome gff files.
+                            Paths of the query genome gff files.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             The libraries of TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
@@ -3517,15 +3503,15 @@ Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are g
 
 **statistics:** Stores statistic files.
 
-.. _optimize_tss_processing:
+.. _optimize_tss_ps:
 
-optimize_tss_processing
+optimize_tss_ps
 -----------------------
 
-``optimize_tss_processing`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
+``optimize_tss_ps`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
-Then ``optimize_tss_processing`` can scan whole genome based on the principle of the manual detection to get optimized parameters.
+Then ``optimize_tss_ps`` can scan whole genome based on the principle of the manual detection to get optimized parameters.
 
 - **Required tools**
 
@@ -3545,30 +3531,28 @@ Then ``optimize_tss_processing`` can scan whole genome based on the principle of
 
 ::
 
-    usage: annogesic optimize_tss_processing [-h] [--project_path [PROJECT_PATH]]
-                                             [--program PROGRAM] --fasta_files
-                                             FASTA_FILES [FASTA_FILES ...]
-                                             --annotation_files ANNOTATION_FILES
-                                             [ANNOTATION_FILES ...] --manual_files
-                                             MANUAL_FILES [MANUAL_FILES ...]
-                                             [--strain_lengths STRAIN_LENGTHS [STRAIN_LENGTHS ...]]
-                                             --tex_notex_libs TEX_NOTEX_LIBS
-                                             [TEX_NOTEX_LIBS ...]
-                                             [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                             --condition_names CONDITION_NAMES
-                                             [CONDITION_NAMES ...]
-                                             [--tsspredator_path TSSPREDATOR_PATH]
-                                             [--max_height MAX_HEIGHT]
-                                             [--max_height_reduction MAX_HEIGHT_REDUCTION]
-                                             [--max_factor MAX_FACTOR]
-                                             [--max_factor_reduction MAX_FACTOR_REDUCTION]
-                                             [--max_base_height MAX_BASE_HEIGHT]
-                                             [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
-                                             [--max_processing_factor MAX_PROCESSING_FACTOR]
-                                             [--utr_length UTR_LENGTH]
-                                             [--cluster CLUSTER]
-                                             [--parallels PARALLELS]
-                                             [--steps STEPS]
+    usage: annogesic optimize_tss_ps [-h] [--project_path [PROJECT_PATH]]
+                                     [--program PROGRAM] --fasta_files FASTA_FILES
+                                     [FASTA_FILES ...] --annotation_files
+                                     ANNOTATION_FILES [ANNOTATION_FILES ...]
+                                     --manual_files MANUAL_FILES
+                                     [MANUAL_FILES ...]
+                                     [--strain_lengths STRAIN_LENGTHS [STRAIN_LENGTHS ...]]
+                                     --tex_notex_libs TEX_NOTEX_LIBS
+                                     [TEX_NOTEX_LIBS ...]
+                                     [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                     --condition_names CONDITION_NAMES
+                                     [CONDITION_NAMES ...]
+                                     [--tsspredator_path TSSPREDATOR_PATH]
+                                     [--max_height MAX_HEIGHT]
+                                     [--max_height_reduction MAX_HEIGHT_REDUCTION]
+                                     [--max_factor MAX_FACTOR]
+                                     [--max_factor_reduction MAX_FACTOR_REDUCTION]
+                                     [--max_base_height MAX_BASE_HEIGHT]
+                                     [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
+                                     [--max_processing_factor MAX_PROCESSING_FACTOR]
+                                     [--utr_length UTR_LENGTH] [--cluster CLUSTER]
+                                     [--parallels PARALLELS] [--steps STEPS]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -3583,7 +3567,7 @@ Then ``optimize_tss_processing`` can scan whole genome based on the principle of
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the fasta file that you want to optimize.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the target genome annotation gff file.
+                            Paths of the query genome annotation gff file.
       --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
                             Path of the manual-checked gff file. It is the
                             benchmark for training. Please detect the

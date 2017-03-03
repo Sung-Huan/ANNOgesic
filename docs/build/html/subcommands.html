@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.8 documentation</title>
+  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.9 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ANNOgesic 0.5.8 documentation" href="index.html"/>
+    <link rel="top" title="ANNOgesic 0.5.9 documentation" href="index.html"/>
         <link rel="next" title="Tutorial of ANNOgesic" href="test_case.html"/>
         <link rel="prev" title="Docker image" href="docker.html"/> 
 
@@ -93,14 +93,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#definition-of-reference-strain-and-target-strain">Definition of reference strain and target strain</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam">Riboswitch and RNA thermometer dataset of Rfam</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create">create</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#annotation-transfer">annotation_transfer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#snp">snp</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tss-processing-tss-and-processing-site-prediction">tss_processing (TSS and processing site prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#transcript">transcript</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#terminator">terminator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#utr">utr</a></li>
@@ -115,7 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#riboswitch-thermometer">riboswitch_thermometer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#crispr">crispr</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#optimize-tss-processing">optimize_tss_processing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optimize-tss-ps">optimize_tss_ps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#screenshot">screenshot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#color-png">color_png</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#merge-features">merge_features</a></li>
@@ -178,14 +177,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#definition-of-reference-strain-and-target-strain">Definition of reference strain and target strain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam">Riboswitch and RNA thermometer dataset of Rfam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create">create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#annotation-transfer">annotation_transfer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#snp">snp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tss-processing-tss-and-processing-site-prediction">tss_processing (TSS and processing site prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#transcript">transcript</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#terminator">terminator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#utr">utr</a></li>
@@ -200,7 +198,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#subcellular-localization">subcellular_localization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#riboswitch-thermometer">riboswitch_thermometer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#crispr">crispr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optimize-tss-processing">optimize_tss_processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optimize-tss-ps">optimize_tss_ps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#screenshot">screenshot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#color-png">color_png</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#merge-features">merge_features</a></li>
@@ -377,16 +375,8 @@ nonsense. The format is</p>
 <p>You can download sRNA database <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
 <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Git repository</a> easily.</p>
 </div>
-<div class="section" id="definition-of-reference-strain-and-target-strain">
-<span id="id5"></span><h2>Definition of reference strain and target strain<a class="headerlink" href="#definition-of-reference-strain-and-target-strain" title="Permalink to this headline">¶</a></h2>
-<p>&#8220;target strain&#8221; represents the strain which the user want to annotate.
-&#8220;reference strain&#8221; represents the strain which is similar to the &#8220;target strain&#8221;.
-If the user neither has fasta nor genome annotation file of &#8220;target strain&#8221;,
-ANNOgesic can generate them if &#8220;reference strain&#8221; and mutation information
-are provided by the user.</p>
-</div>
 <div class="section" id="riboswitch-and-rna-thermometer-dataset-of-rfam">
-<span id="id6"></span><h2>Riboswitch and RNA thermometer dataset of Rfam<a class="headerlink" href="#riboswitch-and-rna-thermometer-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>Riboswitch and RNA thermometer dataset of Rfam<a class="headerlink" href="#riboswitch-and-rna-thermometer-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
 <p>For riboswitch and RNA thermometer detection, the information of riboswitch and RNA thermometer in Rfam are required
 The input format is following.</p>
 <table border="1" class="docutils">
@@ -415,26 +405,28 @@ The input format is following.</p>
 from our Git repository.</p>
 </div>
 <div class="section" id="create">
-<span id="id7"></span><h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">create</span></code> generates the folders for analysis. Once created, please move the required files
 into the corresponding folders.</p>
 <p>The folders are following:</p>
-<p><strong>BAMs:</strong> For <code class="docutils literal"><span class="pre">.bam</span></code> files. <code class="docutils literal"><span class="pre">BAMs_map_reference</span></code>
-is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which mapped on &#8220;reference strain&#8221;.
-<code class="docutils literal"><span class="pre">BAMs_map_target</span></code> is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which are mapped on &#8220;target strain&#8221;.</p>
+<p><strong>input:</strong> Stores all input files.</p>
+<blockquote>
+<div><p><strong>BAMs:</strong> For <code class="docutils literal"><span class="pre">.bam</span></code> files. <code class="docutils literal"><span class="pre">BAMs_map_closed_strain</span></code>
+is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which mapped on closed strain of our real query_strain.
+<code class="docutils literal"><span class="pre">BAMs_map_query_strain</span></code> is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which are mapped on our query strain.</p>
 <p><strong>database:</strong> For all databases.</p>
 <p><strong>manual_TSS:</strong> If the manual detected transcription starting sites (TSSs) can be provided,
 it can be stored here for running <code class="docutils literal"><span class="pre">TSS_optimization</span></code> or merging
 the automatic predicted ones and manual detected ones. Please use gff3 format.</p>
 <p><strong>manual_processing_site:</strong> It is similar to <code class="docutils literal"><span class="pre">manual_TSS</span></code>, it is for
 processing sites.</p>
-<p><strong>mutation_table:</strong> If the mutation table between &#8220;reference strain&#8221; and
-&#8220;target strain&#8221; is provided, please put the file here. Please check
+<p><strong>mutation_table:</strong> If the mutation table between the closed strain and
+query strain is provided, please put the file here. Please check
 the section of <code class="docutils literal"><span class="pre">get_target_fasta</span></code> for the format of
 mutation table.</p>
 <p><strong>reads:</strong> For running <code class="docutils literal"><span class="pre">circrna</span></code> with mapping reads by ANNOgesic,
 please put the reads here. <code class="docutils literal"><span class="pre">.bzip2</span></code> and <code class="docutils literal"><span class="pre">.gzip</span></code> as input is accepted.</p>
-<p><strong>reference:</strong> For annotation files and fasta files of &#8220;reference strain&#8221;.
+<p><strong>reference:</strong> For annotation files and fasta files.
 If they can be downloaded from NCBI, the files can also be obtained via running <code class="docutils literal"><span class="pre">get_input_files</span></code>.</p>
 <p><strong>riboswitch_ID:</strong> For storing the file which contains all the Rfam IDs of riboswitch.
 For format details, please check the section of
@@ -444,6 +436,8 @@ For format details, please check the section of
 <a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam"><span class="std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span></a>.</p>
 <p><strong>wigs:</strong> For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in
 <code class="docutils literal"><span class="pre">fragment</span></code> (fragmented/conventional libraries) or <code class="docutils literal"><span class="pre">tex_notex</span></code> (TEX +/- treated libraries).</p>
+</div></blockquote>
+<p><strong>output:</strong> Stores all output files.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
@@ -459,7 +453,7 @@ For format details, please check the section of
 </div>
 </div>
 <div class="section" id="get-input-files">
-<span id="id8"></span><h2>get_input_files<a class="headerlink" href="#get-input-files" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>get_input_files<a class="headerlink" href="#get-input-files" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">get_input_files</span></code> is the subcommand for downloading required files (fasta, annotation files) from NCBI.
 Therefore, the web address of the reference genome in NCBI needs to be assigned. For example,
 <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1">ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1</a>
@@ -474,7 +468,7 @@ Then, the user can assign the file type for download.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">get_input_files</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
                                  <span class="p">[</span><span class="o">--</span><span class="n">ftp_path</span> <span class="n">FTP_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_fasta</span><span class="p">]</span>
                                  <span class="p">[</span><span class="o">--</span><span class="n">ref_gff</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_gbk</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_ptt</span><span class="p">]</span>
-                                 <span class="p">[</span><span class="o">--</span><span class="n">ref_rnt</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">convert_embl</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">for_target</span><span class="p">]</span>
+                                 <span class="p">[</span><span class="o">--</span><span class="n">ref_rnt</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">convert_embl</span><span class="p">]</span>
 
 <span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
@@ -497,25 +491,20 @@ Then, the user can assign the file type for download.</p>
   <span class="o">--</span><span class="n">ref_rnt</span><span class="p">,</span> <span class="o">-</span><span class="n">r</span>         <span class="n">Download</span> <span class="n">rnt</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reference</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
   <span class="o">--</span><span class="n">convert_embl</span><span class="p">,</span> <span class="o">-</span><span class="n">e</span>    <span class="n">Convert</span> <span class="n">gbk</span> <span class="n">to</span> <span class="n">embl</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reference</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
                         <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">for_target</span><span class="p">,</span> <span class="o">-</span><span class="n">t</span>      <span class="n">If</span> <span class="n">the</span> <span class="n">required</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">query</span> <span class="n">strain</span> <span class="n">can</span> <span class="n">be</span>
-                        <span class="n">downloaded</span> <span class="kn">from</span> <span class="nn">NCBI</span> <span class="p">(</span><span class="n">you</span> <span class="n">won</span><span class="s1">&#39;t modify the genome),</span>
-                        <span class="n">The</span> <span class="n">files</span> <span class="n">can</span> <span class="n">be</span> <span class="n">stored</span> <span class="ow">in</span> <span class="n">target</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">stead</span> <span class="n">of</span>
-                        <span class="n">the</span> <span class="n">reference</span> <span class="n">folder</span><span class="o">.</span>
 </pre></div>
 </div>
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>Output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/input/reference</span></code> if <code class="docutils literal"><span class="pre">--for_target</span></code> is False.
-Output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/target</span></code> if <code class="docutils literal"><span class="pre">--for_target</span></code> is True.</p>
+<p>Output files will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/input/reference</span></code></p>
 <p>Output folder names are following:</p>
 <p><strong>fasta:</strong> Fasta files.</p>
 <p><strong>annotation:</strong> Annotation files.</p>
 </div>
 <div class="section" id="get-target-fasta">
-<span id="id9"></span><h2>get_target_fasta<a class="headerlink" href="#get-target-fasta" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">get_target_fasta</span></code> is the subcommand for generating fasta files of &#8220;target strain&#8221; from
-&#8220;reference strain&#8221;. For the format of the table, please check
+<span id="id8"></span><h2>get_target_fasta<a class="headerlink" href="#get-target-fasta" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">get_target_fasta</span></code> is the subcommand for update fasta files from
+closed strain of the real query strain. For the format of the table, please check
 <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
 The titles of columns is presented on the top and they need to start with <code class="docutils literal"><span class="pre">#</span></code>.
 Each column is separated by <code class="docutils literal"><span class="pre">tab</span></code>. If the mutation type is deletion or insertion,
@@ -528,13 +517,13 @@ Please use <code class="docutils literal"><span class="pre">tab</span></code> to
 <li><strong>Required files</strong></li>
 </ul>
 <p><strong>Fasta files of reference genome</strong></p>
-<p><strong>Mutation table:</strong> Contains the information of mutations between reference and target strain.</p>
+<p><strong>Mutation table:</strong> Contains the information of mutations between closed and query strain.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
 <div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic get_target_fasta [-h] [--project_path [PROJECT_PATH]]
-                                  --ref_fasta_files REF_FASTA_FILES
-                                  [REF_FASTA_FILES ...] --mutation_table
+                                  --closed_fasta_files CLOSED_FASTA_FILES
+                                  [CLOSED_FASTA_FILES ...] --mutation_table
                                   MUTATION_TABLE --output_format OUTPUT_FORMAT
                                   [OUTPUT_FORMAT ...]
 
@@ -545,12 +534,12 @@ basic arguments:
   --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
                         Path of the project folder. If none is given, the
                         current directory is used.
-  --ref_fasta_files REF_FASTA_FILES [REF_FASTA_FILES ...], -r REF_FASTA_FILES [REF_FASTA_FILES ...]
-                        Path of the fasta files.
+  --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -r CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
+                        Path of the closed fasta files.
   --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                         Path of the mutation table which stores the mutation
-                        information between the target strain and reference
-                        strain.
+                        information between the query strain and closed strain
+                        of the query one.
   --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                         Please assign the filename and the strain name which
                         should be included in output files. For example:
@@ -565,13 +554,13 @@ basic arguments:
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p><strong>Fasta files of target genome</strong>: This files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/target/fasta</span></code>.</p>
+<p><strong>Fasta files of updated genome</strong>: This files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/fasta</span></code>.</p>
 </div>
 <div class="section" id="annotation-transfer">
-<span id="id10"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from &#8220;reference strain&#8221;
-to &#8220;target strain&#8221;. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
-is integrated in ANNOgesic. The higher similarity between &#8220;reference strain&#8221; and &#8220;target strain&#8221; are,
+<span id="id9"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from closed strain
+to the real query strain. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
+is integrated in ANNOgesic. The higher similarity between closed strain and query strain are,
 the more precise the performance is. Before running <code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code>,
 please run <code class="docutils literal"><span class="pre">source</span> <span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> first. it will modify the path for executing RATT.
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.</p>
@@ -582,21 +571,21 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
-<p><strong>Annotation files of the reference strains</strong>: Genbank/embl files of the reference genomes.</p>
-<p><strong>Fasta files of the reference strains</strong></p>
-<p><strong>Fasta files of the target strains</strong></p>
+<p><strong>Annotation files of the closed strains</strong>: Genbank/embl files of the closed genomes.</p>
+<p><strong>Fasta files of the closed strains</strong></p>
+<p><strong>Fasta files of the updated strains</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">annotation_transfer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
                                      <span class="o">--</span><span class="n">compare_pair</span> <span class="n">COMPARE_PAIR</span>
                                      <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">]</span>
-                                     <span class="p">[</span><span class="o">--</span><span class="n">ref_embl_files</span> <span class="n">REF_EMBL_FILES</span> <span class="p">[</span><span class="n">REF_EMBL_FILES</span> <span class="o">...</span><span class="p">]]</span>
-                                     <span class="p">[</span><span class="o">--</span><span class="n">ref_gbk_files</span> <span class="n">REF_GBK_FILES</span> <span class="p">[</span><span class="n">REF_GBK_FILES</span> <span class="o">...</span><span class="p">]]</span>
-                                     <span class="o">--</span><span class="n">ref_fasta_files</span> <span class="n">REF_FASTA_FILES</span>
-                                     <span class="p">[</span><span class="n">REF_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
-                                     <span class="o">--</span><span class="n">target_fasta_files</span> <span class="n">TARGET_FASTA_FILES</span>
-                                     <span class="p">[</span><span class="n">TARGET_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">]]</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">closed_gbk_files</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">]]</span>
+                                     <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">CLOSED_FASTA_FILES</span>
+                                     <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                                     <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">UPDATED_FASTA_FILES</span>
+                                     <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">ratt_path</span> <span class="n">RATT_PATH</span><span class="p">]</span> <span class="o">--</span><span class="n">element</span> <span class="n">ELEMENT</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">transfer_type</span> <span class="n">TRANSFER_TYPE</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">convert_to_gff_rnt_ptt</span><span class="p">]</span>
@@ -610,21 +599,21 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                         <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
   <span class="o">--</span><span class="n">compare_pair</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">p</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">strain</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span>
-                        <span class="n">NC_007795</span><span class="p">:</span><span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span> <span class="n">reference</span> <span class="n">strain</span> <span class="ow">is</span>
+                        <span class="n">NC_007795</span><span class="p">:</span><span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span> <span class="n">closed</span> <span class="n">strain</span> <span class="ow">is</span>
                         <span class="n">NC_007795</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">target</span> <span class="n">strain</span> <span class="ow">is</span> <span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span>
                         <span class="n">assigned</span> <span class="n">names</span> <span class="n">are</span> <span class="n">the</span> <span class="n">strain</span> <span class="n">names</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">fasta</span> <span class="n">file</span>
                         <span class="p">(</span><span class="n">start</span> <span class="k">with</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">),</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">filename</span> <span class="n">of</span> <span class="n">fasta</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span>
                         <span class="n">multiple</span> <span class="n">strains</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">assigned</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">space</span>
                         <span class="n">to</span> <span class="n">separate</span> <span class="n">the</span> <span class="n">strains</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">ref_embl_files</span> <span class="n">REF_EMBL_FILES</span> <span class="p">[</span><span class="n">REF_EMBL_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">re</span> <span class="n">REF_EMBL_FILES</span> <span class="p">[</span><span class="n">REF_EMBL_FILES</span> <span class="o">...</span><span class="p">]</span>
+  <span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">ce</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">embl</span> <span class="n">files</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">ref_gbk_files</span> <span class="n">REF_GBK_FILES</span> <span class="p">[</span><span class="n">REF_GBK_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">rg</span> <span class="n">REF_GBK_FILES</span> <span class="p">[</span><span class="n">REF_GBK_FILES</span> <span class="o">...</span><span class="p">]</span>
+  <span class="o">--</span><span class="n">closed_gbk_files</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cg</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">If</span> <span class="n">you</span> <span class="n">have</span> <span class="n">no</span> <span class="n">embl</span> <span class="n">file</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">assign</span> <span class="n">genbank</span>
                         <span class="n">files</span><span class="o">.</span> <span class="n">The</span> <span class="n">genbank</span> <span class="n">can</span> <span class="n">be</span> <span class="n">ended</span> <span class="n">by</span> <span class="o">.</span><span class="n">gbk</span><span class="p">,</span> <span class="o">.</span><span class="n">gbff</span> <span class="ow">or</span> <span class="o">.</span><span class="n">gb</span>
-  <span class="o">--</span><span class="n">ref_fasta_files</span> <span class="n">REF_FASTA_FILES</span> <span class="p">[</span><span class="n">REF_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">rf</span> <span class="n">REF_FASTA_FILES</span> <span class="p">[</span><span class="n">REF_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">reference</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">target_fasta_files</span> <span class="n">TARGET_FASTA_FILES</span> <span class="p">[</span><span class="n">TARGET_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">tf</span> <span class="n">TARGET_FASTA_FILES</span> <span class="p">[</span><span class="n">TARGET_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">target</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">CLOSED_FASTA_FILES</span> <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cf</span> <span class="n">CLOSED_FASTA_FILES</span> <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">closed</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">UPDATED_FASTA_FILES</span> <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">uf</span> <span class="n">UPDATED_FASTA_FILES</span> <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">updated</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
 
 <span class="n">additional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="o">--</span><span class="n">ratt_path</span> <span class="n">RATT_PATH</span>
@@ -646,10 +635,10 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 </ul>
 <p>Output files from <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
 will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/annotation_transfer</span></code>.</p>
-<p><strong>Annotation files</strong> (<code class="docutils literal"><span class="pre">.gff</span></code>, <code class="docutils literal"><span class="pre">.ptt</span></code>, <code class="docutils literal"><span class="pre">.rnt</span></code>) will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/target/annotation</span></code>.</p>
+<p><strong>Annotation files</strong> (<code class="docutils literal"><span class="pre">.gff</span></code>, <code class="docutils literal"><span class="pre">.ptt</span></code>, <code class="docutils literal"><span class="pre">.rnt</span></code>) will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/annotation</span></code>.</p>
 </div>
 <div class="section" id="snp">
-<span id="id13"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
+<span id="id12"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">snp</span></code> can analyze the alignment files and fasta files to detect mutations by running
 <a class="reference external" href="https://github.com/samtools">Samtools</a> and <a class="reference external" href="https://github.com/samtools">Bcftools</a>.
 There are multiple programs which can be applied to detect mutations
@@ -665,7 +654,7 @@ There are multiple programs which can be applied to detect mutations
 <li><strong>Required files</strong></li>
 </ul>
 <p><strong>BAM files:</strong> BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.</p>
-<p><strong>Fasta files of the reference strains</strong> or <strong>Fasta files of the target strains</strong></p>
+<p><strong>Fasta files of the closed strains</strong> or <strong>Fasta files of the query strains</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
@@ -689,14 +678,13 @@ basic arguments:
                         current directory is used.
   --bam_type BAM_TYPE, -t BAM_TYPE
                         Please assign the type of BAM. If the BAM files are
-                        produced by mapping to the close strain (&quot;reference
-                        strain&quot;) of the query strain (&quot;target strain&quot;), please
-                        key in &quot;reference&quot;. This kind of BAM file can be used
-                        for detecting the mutations between &quot;reference strain&quot;
-                        and &quot;target strain&quot;. If the BAM files are produced by
-                        mapping to exact query strain (&quot;target strain&quot;),
-                        please key in &quot;target&quot;. This kind of BAM file can be
-                        used for detecting the exact mutations of target
+                        produced by mapping to the close strain of the query
+                        strain, please key in &quot;closed_strain&quot;. This kind of
+                        BAM file can be used for detecting the mutations
+                        between the closed strain and query strain. If the BAM
+                        files are produced by mapping to exact query strain,
+                        please key in &quot;query_strain&quot;. This kind of BAM file
+                        can be used for detecting the exact mutations of query
                         genome sequence.
   --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
                         Please assign the program for detecting SNP of
@@ -790,9 +778,9 @@ additional arguments:
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">reference</span></code>,
-the results will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_reference</span></code>.
-If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">target</span></code>, the results are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/validate_target</span></code>.</p>
+<p>If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">closed_strain</span></code>,
+the results will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_closed_and_updated_references</span></code>.
+If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">query_strain</span></code>, the results are stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/mutations_of_query_strain</span></code>.</p>
 <p>The output folders and results are following:</p>
 <p><strong>SNP_raw_output:</strong> Stores output tables which be only considered read depth and QUAL.</p>
 <blockquote>
@@ -832,13 +820,13 @@ will be generated based on the first line of <code class="docutils literal"><spa
 <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> and so forth.</p>
 <p><strong>statistics</strong>: Stores the statistic files, ex: the distribution of SNPs based on QUAL.</p>
 </div>
-<div class="section" id="tss-processing-tss-and-processing-site-prediction">
-<span id="tss-processing"></span><h2>tss_processing (TSS and processing site prediction)<a class="headerlink" href="#tss-processing-tss-and-processing-site-prediction" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">tss_processing</span></code> can generate the TSS and processing sites via running
+<div class="section" id="tss-ps-tss-and-processing-site-prediction">
+<span id="tss-ps"></span><h2>tss_ps (TSS and processing site prediction)<a class="headerlink" href="#tss-ps-tss-and-processing-site-prediction" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">tss_ps</span></code> can generate the TSS and processing sites via running
 <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>. Since the parameters can affect the
-results strongly, <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> can obtain the optimized parameters of
+results strongly, <code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> can obtain the optimized parameters of
 <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>. please check the section
-<a class="reference internal" href="#optimize-tss-processing"><span class="std std-ref">optimize_tss_processing</span></a> for details.</p>
+<a class="reference internal" href="#optimize-tss-ps"><span class="std std-ref">optimize_tss_ps</span></a> for details.</p>
 <ul class="simple">
 <li><strong>Required tools</strong></li>
 </ul>
@@ -852,41 +840,40 @@ results strongly, <code class="docutils literal"><span class="pre">optimize_tss_
 <ul class="simple">
 <li><strong>Optional input files</strong></li>
 </ul>
-<p><strong>Gff files of the manual detected TSSs:</strong> If gff file of the manual detected TSSs can be provided, <code class="docutils literal"><span class="pre">tss_processing</span></code> can merge the manual detected TSSs
+<p><strong>Gff files of the manual detected TSSs:</strong> If gff file of the manual detected TSSs can be provided, <code class="docutils literal"><span class="pre">tss_ps</span></code> can merge the manual detected TSSs
 and TSSpredator predicted ones.</p>
 <p><strong>Gff files of transcripts:</strong> If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
 For the transcripts, please check the section <a class="reference internal" href="#transcript"><span class="std std-ref">transcript</span></a>.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic tss_processing [-h] [--project_path [PROJECT_PATH]]
-                                [--compute_program COMPUTE_PROGRAM]
-                                --fasta_files FASTA_FILES [FASTA_FILES ...]
-                                --annotation_files ANNOTATION_FILES
-                                [ANNOTATION_FILES ...] --tex_notex_libs
-                                TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                                [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                --condition_names CONDITION_NAMES
-                                [CONDITION_NAMES ...]
-                                [--tsspredator_path TSSPREDATOR_PATH]
-                                [--specify_strains SPECIFY_STRAINS [SPECIFY_STRAINS ...]]
-                                [--height HEIGHT [HEIGHT ...]]
-                                [--height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]]
-                                [--factor FACTOR [FACTOR ...]]
-                                [--factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...]]
-                                [--enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]]
-                                [--processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...]]
-                                [--base_height BASE_HEIGHT [BASE_HEIGHT ...]]
-                                [--utr_length UTR_LENGTH] [--fuzzy FUZZY]
-                                [--cluster CLUSTER]
-                                [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
-                                [--strain_length STRAIN_LENGTH [STRAIN_LENGTH ...]]
-                                [--validate_gene]
-                                [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
-                                [--re_check_orphan]
-                                [--overlap_feature OVERLAP_FEATURE]
-                                [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
-                                [--remove_low_expression REMOVE_LOW_EXPRESSION]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic tss_ps [-h] [--project_path [PROJECT_PATH]]
+                        [--compute_program COMPUTE_PROGRAM] --fasta_files
+                        FASTA_FILES [FASTA_FILES ...] --annotation_files
+                        ANNOTATION_FILES [ANNOTATION_FILES ...]
+                        --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                        [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                        --condition_names CONDITION_NAMES
+                        [CONDITION_NAMES ...]
+                        [--tsspredator_path TSSPREDATOR_PATH]
+                        [--specify_strains SPECIFY_STRAINS [SPECIFY_STRAINS ...]]
+                        [--height HEIGHT [HEIGHT ...]]
+                        [--height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]]
+                        [--factor FACTOR [FACTOR ...]]
+                        [--factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...]]
+                        [--enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]]
+                        [--processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...]]
+                        [--base_height BASE_HEIGHT [BASE_HEIGHT ...]]
+                        [--utr_length UTR_LENGTH] [--fuzzy FUZZY]
+                        [--cluster CLUSTER]
+                        [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
+                        [--strain_length STRAIN_LENGTH [STRAIN_LENGTH ...]]
+                        [--validate_gene]
+                        [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
+                        [--re_check_orphan]
+                        [--overlap_feature OVERLAP_FEATURE]
+                        [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
+                        [--remove_low_expression REMOVE_LOW_EXPRESSION]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -899,9 +886,9 @@ basic arguments:
                         Which feature you want to predict, please assign &quot;TSS&quot;
                         or &quot;processing_site&quot;. Default is TSS.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                        Paths of the target genome fasta files.
+                        Paths of the query genome fasta files.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                        Paths of the target genome gff files.
+                        Paths of the query genome gff files.
   --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                         The libraries of TEX+/- wig files. The format is:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
@@ -1083,7 +1070,7 @@ Based on this information, we can know the details of the specific TSS. The tags
 </div></blockquote>
 </div>
 <div class="section" id="transcript">
-<span id="id20"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
+<span id="id19"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">transcript</span></code> can detect transcripts based on the coverage. Most of the transcript assembly tools are
 focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data,
 given gene annotations and several parameters that can be set by the user.</p>
@@ -1275,7 +1262,7 @@ Based on this information, we can know the details of the specific transcript. T
 </div></blockquote>
 </div>
 <div class="section" id="terminator">
-<span id="id21"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
+<span id="id20"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">terminator</span></code> will predict the rho-independent terminators. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> combines the results of
 two methods in order to get more reliable candidates. The first method is using <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.
 The other one detects the specific secondary structure between converging pairs
@@ -1526,7 +1513,7 @@ it means this terminator reveal gene expression but no coverage decrease. If &#8
 </div></blockquote>
 </div>
 <div class="section" id="utr">
-<span id="id24"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
+<span id="id23"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">utr</span></code> can compare TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
 to generate proper UTRs. 5&#8217;UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs.
 3&#8217;UTRs are based on detecting the
@@ -1624,7 +1611,7 @@ Based on this information, we can know the details of the specific UTR. The tags
 <p><strong>statiatics:</strong> <code class="docutils literal"><span class="pre">$GFFNAME_$STRAINNAME_$UTRTYPE_length.png</span></code> is the distribution of the UTR length.</p>
 </div>
 <div class="section" id="srna">
-<span id="id25"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
+<span id="id24"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna</span></code> can predict different types of sRNAs. For intergenic and antisense sRNA, it
 is detected via comparison of the transcripts and annotation profile.
 For UTR-derived sRNA, the detection is based on the TSSs and processing sites,
@@ -2222,7 +2209,7 @@ Based on this information, we can know the details of the specific sRNA. The tag
 </div></blockquote>
 </div>
 <div class="section" id="sorf">
-<span id="id29"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
+<span id="id28"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">sorf</span></code> can detect sORF based on searching ribosome binding sites, start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand.
 If multiple sORFs are overlapped with each other, this subcommand will merge them to be one sORF. Therefore, one region may contain more than one sORF.
@@ -2458,7 +2445,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 <p><strong>frame_shift:</strong> The number of frame shifts in the regions.</p>
 </div>
 <div class="section" id="promoter">
-<span id="id30"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
+<span id="id29"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSSs to discover the promoter motifs.
 We integrated <a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a> (for ungapped motifs) and
 <a class="reference external" href="http://meme-suite.org/tools/glam2">GLAM2</a> (for gapped motifs) to compute the promoters.
@@ -2586,7 +2573,7 @@ Moreover, it can used as an input for sRNA detection (<code class="docutils lite
 TSS gff files with TSS types will be stored here.</p>
 </div>
 <div class="section" id="operon">
-<span id="id33"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
+<span id="id32"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">operon</span></code> will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and
 sub-operons.</p>
 <ul class="simple">
@@ -2675,7 +2662,7 @@ transcripts, 5&#8217;UTRs, and 3&#8217;UTRs and assign parent transcript to all 
 <p><strong>statistics:</strong> Stores statistics file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.</p>
 </div>
 <div class="section" id="circrna">
-<span id="id34"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
+<span id="id33"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNAs via <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection.
 The user can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
@@ -2793,7 +2780,7 @@ Based on this information, we can know the details of the specific circular RNA.
 </div></blockquote>
 </div>
 <div class="section" id="go-term">
-<span id="id38"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
+<span id="id37"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">go_term</span></code> can retrieve the information of Gene Ontology from Uniprot.
 Some analysis of Go terms can be done as well.</p>
 <ul class="simple">
@@ -2863,7 +2850,7 @@ biological process, cellular component, molecular_function and three roots of GO
 </div></blockquote>
 </div>
 <div class="section" id="srna-target">
-<span id="id39"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
+<span id="id38"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> can search potential targets of the sRNA via different programs
 (RNAup or RNAplex or both). We recommend running with both
 programs. <code class="docutils literal"><span class="pre">srna_target</span></code> can also compare the both results and provide the best ones.</p>
@@ -3040,7 +3027,7 @@ The meaning of each column is similar to the table of RNAplex.</p>
 <p><strong>target_seqs:</strong> Stores fasta sequences of the potential targets.</p>
 </div>
 <div class="section" id="ppi-network">
-<span id="id41"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
+<span id="id40"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> can retrieve the data from <a class="reference external" href="http://string-db.org/">STRING</a>.
 Then using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> to search
 the supported literature of the protein-protein interaction networks.</p>
@@ -3152,7 +3139,7 @@ means that the supported literature are very weak. Dot line means that no suppor
 Color is the best score of the supported literature of the interactions.</p>
 </div>
 <div class="section" id="subcellular-localization">
-<span id="id44"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
+<span id="id43"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">subcellular</span> <span class="pre">localization</span></code> can predict the subcellular localization of CDSs.
 Some statistics and visualization files are provided as well.</p>
 <ul class="simple">
@@ -3242,7 +3229,7 @@ The meaning of each column is as following:</p>
 </div></blockquote>
 </div>
 <div class="section" id="riboswitch-thermometer">
-<span id="id45"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
+<span id="id44"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> can search ribosome binding sites between
 TSSs（the starting point of transcript was assigned if no TSS was detected)
 and its downstream CDSs. Then using <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
@@ -3385,7 +3372,7 @@ The tags are as following:</p>
 <p><strong>statistics:</strong> Stores the file which contains the riboswichs / RNA_thermometer with corresponding amount.</p>
 </div>
 <div class="section" id="crispr">
-<span id="id49"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
+<span id="id48"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">crispr</span></code> integrates CRISPR Recognition Tool (<a class="reference external" href="http://www.room220.com/crt/">CRT</a>) which can detect the repeat
 units and spacer of CRISPR. Moreover, the false positives can be removed by comparing candidates with genome annotation.</p>
 <ul class="simple">
@@ -3463,12 +3450,12 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 </div></blockquote>
 <p><strong>statistics:</strong> Stores statistic files.</p>
 </div>
-<div class="section" id="optimize-tss-processing">
-<span id="id52"></span><h2>optimize_tss_processing<a class="headerlink" href="#optimize-tss-processing" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> can adapt the parameter set of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.
+<div class="section" id="optimize-tss-ps">
+<span id="id51"></span><h2>optimize_tss_ps<a class="headerlink" href="#optimize-tss-ps" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> can adapt the parameter set of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
-Then <code class="docutils literal"><span class="pre">optimize_tss_processing</span></code> can scan whole genome based on the principle of the manual detection to get optimized parameters.</p>
+Then <code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> can scan whole genome based on the principle of the manual detection to get optimized parameters.</p>
 <ul class="simple">
 <li><strong>Required tools</strong></li>
 </ul>
@@ -3483,30 +3470,28 @@ Then <code class="docutils literal"><span class="pre">optimize_tss_processing</s
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic optimize_tss_processing [-h] [--project_path [PROJECT_PATH]]
-                                         [--program PROGRAM] --fasta_files
-                                         FASTA_FILES [FASTA_FILES ...]
-                                         --annotation_files ANNOTATION_FILES
-                                         [ANNOTATION_FILES ...] --manual_files
-                                         MANUAL_FILES [MANUAL_FILES ...]
-                                         [--strain_lengths STRAIN_LENGTHS [STRAIN_LENGTHS ...]]
-                                         --tex_notex_libs TEX_NOTEX_LIBS
-                                         [TEX_NOTEX_LIBS ...]
-                                         [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                         --condition_names CONDITION_NAMES
-                                         [CONDITION_NAMES ...]
-                                         [--tsspredator_path TSSPREDATOR_PATH]
-                                         [--max_height MAX_HEIGHT]
-                                         [--max_height_reduction MAX_HEIGHT_REDUCTION]
-                                         [--max_factor MAX_FACTOR]
-                                         [--max_factor_reduction MAX_FACTOR_REDUCTION]
-                                         [--max_base_height MAX_BASE_HEIGHT]
-                                         [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
-                                         [--max_processing_factor MAX_PROCESSING_FACTOR]
-                                         [--utr_length UTR_LENGTH]
-                                         [--cluster CLUSTER]
-                                         [--parallels PARALLELS]
-                                         [--steps STEPS]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic optimize_tss_ps [-h] [--project_path [PROJECT_PATH]]
+                                 [--program PROGRAM] --fasta_files FASTA_FILES
+                                 [FASTA_FILES ...] --annotation_files
+                                 ANNOTATION_FILES [ANNOTATION_FILES ...]
+                                 --manual_files MANUAL_FILES
+                                 [MANUAL_FILES ...]
+                                 [--strain_lengths STRAIN_LENGTHS [STRAIN_LENGTHS ...]]
+                                 --tex_notex_libs TEX_NOTEX_LIBS
+                                 [TEX_NOTEX_LIBS ...]
+                                 [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                                 --condition_names CONDITION_NAMES
+                                 [CONDITION_NAMES ...]
+                                 [--tsspredator_path TSSPREDATOR_PATH]
+                                 [--max_height MAX_HEIGHT]
+                                 [--max_height_reduction MAX_HEIGHT_REDUCTION]
+                                 [--max_factor MAX_FACTOR]
+                                 [--max_factor_reduction MAX_FACTOR_REDUCTION]
+                                 [--max_base_height MAX_BASE_HEIGHT]
+                                 [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
+                                 [--max_processing_factor MAX_PROCESSING_FACTOR]
+                                 [--utr_length UTR_LENGTH] [--cluster CLUSTER]
+                                 [--parallels PARALLELS] [--steps STEPS]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -3521,7 +3506,7 @@ basic arguments:
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of the fasta file that you want to optimize.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                        Paths of the target genome annotation gff file.
+                        Paths of the query genome annotation gff file.
   --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
                         Path of the manual-checked gff file. It is the
                         benchmark for training. Please detect the
@@ -3645,7 +3630,7 @@ columns are missing rate.</p>
 <p><strong>best_$STRAIN.csv:</strong> Stores the best parameter set. The meanings of all columns are the same as <code class="docutils literal"><span class="pre">stat_$STRAIN.csv</span></code>.</p>
 </div>
 <div class="section" id="screenshot">
-<span id="id56"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
+<span id="id55"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">screenshot</span></code> can generate batch files for producing screenshot of <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>.
 Generating screenshots can reduce the time for checking the results in genome browser.
 When the batch files is produced, the user just needs to open <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>, then presses <code class="docutils literal"><span class="pre">tools</span></code>
@@ -3735,7 +3720,7 @@ means the strain is NC_007795, the feature&#8217;s start point is 1051529 and en
 1051696.</p>
 </div>
 <div class="section" id="color-png">
-<span id="id59"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
+<span id="id58"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">color_png</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If numerous samples are included in one figure,
 Tracks will be difficult to checked. <code class="docutils literal"><span class="pre">color_png</span></code> can color the tracks based on TEX +/- libraries
 for improving the checking process.</p>
@@ -3880,7 +3865,7 @@ gff file shows the parent transcript.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.8',
+            VERSION:'0.5.9',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

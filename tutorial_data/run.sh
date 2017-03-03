@@ -16,7 +16,6 @@ main(){
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
-    reorganize_data
 #    Optimize_TSSpredator
 #    TSS_prediction
 #    processing_site_prediction
@@ -29,8 +28,7 @@ main(){
 #    sORF_detection
 #    sRNA_target
 #    CircRNA_detection
-#    SNP_calling_reference
-#    SNP_calling_target
+#    SNP_calling
 #    Go_term
 #    Subcellular_localization
 #    PPI_network
@@ -108,8 +106,8 @@ get_target_fasta(){
     $ANNOGESIC_PATH \
         get_target_fasta \
 	-r $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
-	-o $ANNOGESIC_FOLDER/output/target/fasta/test_case1.fa:NC_test.1 \
-	   $ANNOGESIC_FOLDER/output/target/fasta/test_case2.fa:test_case2 \
+	-o $ANNOGESIC_FOLDER/output/updated_reference/fasta/test_case1.fa:NC_test.1 \
+	   $ANNOGESIC_FOLDER/output/updated_reference/fasta/test_case2.fa:test_case2 \
 	-m $ANNOGESIC_FOLDER/input/mutation_table/mutation.csv \
 	-pj $ANNOGESIC_FOLDER
 }
@@ -117,10 +115,10 @@ get_target_fasta(){
 annotation_transfer(){
     $ANNOGESIC_PATH \
         annotation_transfer \
-	-re $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.embl \
-	-rf $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
-	-tf $ANNOGESIC_FOLDER/output/target/fasta/test_case1.fa \
-	    $ANNOGESIC_FOLDER/output/target/fasta/test_case2.fa \
+	-ce $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.embl \
+	-cf $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
+	-uf $ANNOGESIC_FOLDER/output/updated_reference/fasta/test_case1.fa \
+	    $ANNOGESIC_FOLDER/output/updated_reference/fasta/test_case2.fa \
 	-e chromosome \
 	-t Strain \
 	-p NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
@@ -128,23 +126,11 @@ annotation_transfer(){
 	-pj $ANNOGESIC_FOLDER
 }
 
-reorganize_data(){
-    #### This step is only for tutorial, if you are running your own data, please skep it.
-    #### For performing the subcommands of get_target_fasta and annotation_transfer in tutorial,
-    #### some dummy fasta and annotation files are generated. For running following subcommands,
-    #### we need to replace the dummy data with the real data which downloaded via get_input_files.
-
-    rm ANNOgesic/output/target/annotation/*
-    rm ANNOgesic/output/target/fasta/*
-    cp ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-    cp ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
-}
-
 Optimize_TSSpredator(){
     $ANNOGESIC_PATH \
-        optimize_tss_processing \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        optimize_tss_ps \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -p TSS -s 25 \
         -m $ANNOGESIC_FOLDER/input/manual_TSS/NC_009839_manual_TSS.gff \
@@ -158,9 +144,9 @@ TSS_prediction(){
     wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
     $ANNOGESIC_PATH \
-        tss_processing \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        tss_ps \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -p test \
         -he 0.4 \
@@ -180,9 +166,9 @@ TSS_prediction(){
 processing_site_prediction()
 {
     $ANNOGESIC_PATH \
-        tss_processing \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        tss_ps \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -p test \
         -he 0.2 \
@@ -200,7 +186,7 @@ processing_site_prediction()
 Transcript_detection(){
     $ANNOGESIC_PATH \
         transcript \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -rt all_1 \
 	-cf gene CDS \
@@ -211,8 +197,8 @@ Transcript_detection(){
 Terminator_prediction(){
     $ANNOGESIC_PATH \
         terminator \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
@@ -222,7 +208,7 @@ Terminator_prediction(){
 utr_detection(){
     $ANNOGESIC_PATH \
         utr \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -e $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -232,7 +218,7 @@ utr_detection(){
 operon_detection(){
     $ANNOGESIC_PATH \
         operon \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -u5 $ANNOGESIC_FOLDER/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
@@ -245,7 +231,7 @@ promoter_detection(){
     $ANNOGESIC_PATH \
         promoter \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -w 45 2-10 \
         -pj $ANNOGESIC_FOLDER
 }
@@ -262,11 +248,11 @@ sRNA_detection(){
     $ANNOGESIC_PATH \
         srna \
         -d tss blast_srna sec_str blast_nr \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/oinput/reference/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p $ANNOGESIC_FOLDER/output/processing_site/gffs/NC_009839.1_processing.gff \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -tf $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pt $ANNOGESIC_FOLDER/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
         -pn MOTIF_1 \
@@ -282,10 +268,10 @@ sRNA_detection(){
 sORF_detection(){
     $ANNOGESIC_PATH \
         sorf \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
-	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -s $ANNOGESIC_FOLDER/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -tl $TEX_LIBS \
         -rt all_1 -u \
@@ -295,8 +281,8 @@ sORF_detection(){
 sRNA_target(){
     $ANNOGESIC_PATH \
         srna_target \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -r $ANNOGESIC_FOLDER/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -q NC_009839.1:36954:37044:- \
         -p both \
@@ -310,15 +296,15 @@ CircRNA_detection(){
     #### and put your read files to corresponding folder.
     for SRA in SRR515254 SRR515255 SRR515256 SRR515257
     do
-        head -n 50000 ANNOgesic/input/reads/$SRA.fasta > ANNOgesic/input/reads/$SRA_50000.fasta
+        head -n 50000 ANNOgesic/input/reads/$SRA.fasta > ANNOgesic/input/reads/${SRA}_50000.fasta
         rm ANNOgesic/input/reads/$SRA.fasta
     done
 
     $ANNOGESIC_PATH \
         circrna \
-	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -p 10 \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
 	-a \
         -rp $ANNOGESIC_FOLDER/input/reads/SRR515254_50000.fasta \
 	    $ANNOGESIC_FOLDER/input/reads/SRR515255_50000.fasta \
@@ -327,39 +313,21 @@ CircRNA_detection(){
         -pj $ANNOGESIC_FOLDER
 }
 
-SNP_calling_reference(){
+SNP_calling(){
     #### This is only for tutorial.
     #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
-    cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_reference/tex_notex
+    cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex
 
     $ANNOGESIC_PATH \
          snp \
-	-t reference \
+	-t closed_strain \
 	-p with_BAQ without_BAQ extend_BAQ \
         -ms 1 \
-	-b $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515254_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515255_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515256_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515257_50000_NC_009839.1.bam \
+	-b $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam \
+	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam \
+	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam \
+	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam \
 	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
-	-pj $ANNOGESIC_FOLDER
-}
-
-SNP_calling_target(){
-    #### This is only for tutorial.
-    #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
-    cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
-
-    $ANNOGESIC_PATH \
-        snp \
-	-t target \
-	-p with_BAQ without_BAQ extend_BAQ \
-        -ms 1 \
-	-b $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex/SRR515254_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex/SRR515255_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex/SRR515256_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_target/tex_notex/SRR515257_50000_NC_009839.1.bam \
-	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
 }
 
@@ -372,7 +340,7 @@ Go_term(){
 
     $ANNOGESIC_PATH \
         go_term \
-	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+	-g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
 	-a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -go $ANNOGESIC_FOLDER/input/database/go.obo \
         -gs $ANNOGESIC_FOLDER/input/database/goslim_generic.obo \
@@ -383,8 +351,8 @@ Go_term(){
 Subcellular_localization(){
     $ANNOGESIC_PATH \
         subcellular_localization \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -a $ANNOGESIC_FOLDER/output/transcript/gffs/NC_009839.1_transcript.gff \
         -m -b negative \
         -pj $ANNOGESIC_FOLDER
@@ -398,7 +366,7 @@ PPI_network(){
     $ANNOGESIC_PATH \
         ppi_network \
 	-s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
-	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+	-g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
 	-d $ANNOGESIC_FOLDER/input/database/species.v10.txt \
 	-q NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
 	-n \
@@ -419,8 +387,8 @@ riboswitch_and_RNA_thermometer(){
 
     $ANNOGESIC_PATH \
         riboswitch_thermometer \
-	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+	-g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
+	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
 	-ri $ANNOGESIC_FOLDER/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
 	-ti $ANNOGESIC_FOLDER/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
 	-R $ANNOGESIC_FOLDER/input/database/CMs/Rfam.cm \
@@ -432,14 +400,14 @@ riboswitch_and_RNA_thermometer(){
 crispr(){
     $ANNOGESIC_PATH \
         crispr \
-        -g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
-        -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+        -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
+        -f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -pj $ANNOGESIC_FOLDER
 }
 
 merge_features(){
     ALL_FEATURES="$ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-                  $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+                  $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
                   $ANNOGESIC_FOLDER/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
                   $ANNOGESIC_FOLDER/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
                   $ANNOGESIC_FOLDER/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -461,9 +429,9 @@ gen_screenshot(){
     $ANNOGESIC_PATH \
         screenshot \
 	-mg $ANNOGESIC_FOLDER/output/TSS/gffs/NC_009839.1_TSS.gff \
-	-sg $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
+	-sg $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
 	    $ANNOGESIC_FOLDER/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
-	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
+	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
 	-o $ANNOGESIC_FOLDER/output/TSS \
 	-tl $TEX_LIBS \
 	-pj $ANNOGESIC_FOLDER

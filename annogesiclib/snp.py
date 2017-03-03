@@ -17,10 +17,10 @@ class SNPCalling(object):
         self.multiparser = Multiparser()
         self.seq_editer = SeqEditer()
         self.helper = Helper()
-        if args_snp.types == "reference":
-            file_type = "compare_reference"
+        if args_snp.types == "closed_strain":
+            file_type = "compare_closed_and_updated_references"
         else:
-            file_type = "validate_target"
+            file_type = "mutations_of_query_strain"
         self.seq_path = os.path.join(args_snp.out_folder, file_type, "seqs")
         self.stat_path = os.path.join(args_snp.out_folder, file_type,
                                       "statistics")

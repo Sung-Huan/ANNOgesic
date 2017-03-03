@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.8"
+__version__ = "0.5.9"
 
 def main():
     print("""
@@ -70,11 +70,6 @@ def main():
     get_input_add.add_argument(
         "--convert_embl", "-e", default=False, action="store_true",
         help="Convert gbk to embl files of the reference. Default is False.")
-    get_input_add.add_argument(
-        "--for_target", "-t", default=False, action="store_true",
-        help="If the required files of the query strain can be downloaded "
-        "from NCBI (you won't modify the genome), The files can be stored in "
-        "target folder in stead of the reference folder.")
     get_input_parser.set_defaults(func=get_input)
     # get target fasta
     get_target_fasta_parser = subparsers.add_parser(
@@ -86,12 +81,13 @@ def main():
         help="Path of the project folder. If none is given, "
         "the current directory is used.")
     get_target_fasta_basic.add_argument(
-        "--ref_fasta_files", "-r", required=True, nargs='+',
-        help="Path of the fasta files.")
+        "--closed_fasta_files", "-r", required=True, nargs='+',
+        help="Path of the closed fasta files.")
     get_target_fasta_basic.add_argument(
         "--mutation_table", "-m", required=True,
         help="Path of the mutation table which stores the mutation "
-        "information between the target strain and reference strain.")
+        "information between the query strain and closed strain of "
+        "the query one.")
     get_target_fasta_basic.add_argument(
         "--output_format", "-o", default=None, required=True, nargs='+',
         help="Please assign the filename and the strain name which should be "
@@ -106,7 +102,7 @@ def main():
     # run RATT
     RATT_parser = subparsers.add_parser(
         "annotation_transfer", help="Transfer the annotations "
-        "from reference genome to target genome.")
+        "from closed genome to the target genome.")
     RATT_basic = RATT_parser.add_argument_group(
         'basic arguments')
     RATT_basic.add_argument(
@@ -116,24 +112,24 @@ def main():
     RATT_basic.add_argument(
         "--compare_pair", "-p", required=True, nargs='+',
         help="Please assign the name of strain pairs, ex. "
-        "NC_007795:NEW_NC_007795. The reference strain is NC_007795 and "
+        "NC_007795:NEW_NC_007795. The closed strain is NC_007795 and "
         "the target strain is NEW_NC_007795. The assigned names are the "
         "strain names in the fasta file (start with \">\"), not the "
         "filename of fasta file. If multiple strains need to be assigned, "
         "please use space to separate the strains.")
     RATT_basic.add_argument(
-        "--ref_embl_files", "-re", default=None, nargs='+',
+        "--closed_embl_files", "-ce", default=None, nargs='+',
         help="The paths of embl files.")
     RATT_basic.add_argument(
-        "--ref_gbk_files", "-rg", default=None, nargs='+',
+        "--closed_gbk_files", "-cg", default=None, nargs='+',
         help="If you have no embl file, you can assign genbank files. "
         "The genbank can be ended by .gbk, .gbff or .gb")
     RATT_basic.add_argument(
-        "--ref_fasta_files", "-rf", required=True, nargs='+',
-        help="The paths of reference fasta files.")
+        "--closed_fasta_files", "-cf", required=True, nargs='+',
+        help="The paths of closed fasta files.")
     RATT_basic.add_argument(
-        "--target_fasta_files", "-tf", required=True, nargs='+',
-        help="The paths of target fasta files.")
+        "--updated_fasta_files", "-uf", required=True, nargs='+',
+        help="The paths of updated fasta files.")
     RATT_add = RATT_parser.add_argument_group(
         'additional arguments')
     RATT_add.add_argument(
@@ -154,7 +150,7 @@ def main():
 
     # Parameters of TSSpredator
     TSSpredator_parser = subparsers.add_parser(
-        "tss_processing", help="Detect TSSs or "
+        "tss_ps", help="Detect TSSs or "
         "processing sites.")
     TSSpredator_basic = TSSpredator_parser.add_argument_group(
         'basic arguments')
@@ -168,10 +164,10 @@ def main():
         "\"processing_site\". Default is TSS.")
     TSSpredator_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
-        help="Paths of the target genome fasta files.")
+        help="Paths of the query genome fasta files.")
     TSSpredator_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the target genome gff files.")
+        help="Paths of the query genome gff files.")
     TSSpredator_basic.add_argument(
         "--tex_notex_libs", "-tl", required=True, nargs='+',
         help="The libraries of TEX+/- wig files. The format is: "
@@ -328,7 +324,7 @@ def main():
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
     # Parameter of optimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
-        "optimize_tss_processing", help="Optimize TSSs or processing "
+        "optimize_tss_ps", help="Optimize TSSs or processing "
         "sites based on manual detected ones.")
     op_TSSpredator_basic = op_TSSpredator_parser.add_argument_group(
         'basic arguments')
@@ -345,7 +341,7 @@ def main():
         help="Paths of the fasta file that you want to optimize.")
     op_TSSpredator_basic.add_argument(
         "--annotation_files", "-g", nargs='+', required=True,
-        help="Paths of the target genome annotation gff file.")
+        help="Paths of the query genome annotation gff file.")
     op_TSSpredator_basic.add_argument(
         "--manual_files", "-m", nargs='+', required=True,
         help="Path of the manual-checked gff file. It is the benchmark for "
@@ -1652,13 +1648,13 @@ def main():
         "--bam_type", "-t", required=True,
         help="Please assign the type of BAM. "
         "If the BAM files are produced by mapping to the close strain "
-        "(\"reference strain\") of the query strain (\"target strain\"), "
-        "please key in \"reference\". This kind of BAM file can be used for "
-        "detecting the mutations between \"reference strain\" and "
-        "\"target strain\". If the BAM files are produced by mapping to exact "
-        "query strain (\"target strain\"), please key in \"target\". "
+        "of the query strain, please key in \"closed_strain\". "
+        "This kind of BAM file can be used for "
+        "detecting the mutations between the closed strain and "
+        "query strain. If the BAM files are produced by mapping to exact "
+        "query strain, please key in \"query_strain\". "
         "This kind of BAM file can be used for detecting the exact mutations "
-        "of target genome sequence.")
+        "of query genome sequence.")
     snp_basic.add_argument(
         "--program", "-p", required=True, nargs='+',
         help="Please assign the program for detecting SNP of transcript: "

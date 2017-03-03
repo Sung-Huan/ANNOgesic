@@ -40,25 +40,24 @@ bacterial as well as archaeal samples.
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_ps,optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tss_processing,optimize_tss_processing,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,get_target_fasta,annotation_transfer,tss_ps,optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
-        get_input_files     Get required files. (i.e. annotation files, fasta
+        get_input_files     Get required files. (i.e. Annotation files, fasta
                             files)
         get_target_fasta    Get target fasta.
         annotation_transfer
-                            Transfer the annotations from reference genome to
+                            Transfer the annotations from closed genome to the
                             target genome.
-        tss_processing      Detect TSSs or processing sites.
-        optimize_tss_processing
-                            Optimize TSSs or processing sites based on manual
+        tss_ps              Detect TSSs or processing sites.
+        optimize_tss_ps     Optimize TSSs or processing sites based on manual
                             detected ones.
-        terminator          Detect rho-independant terminators.
-        transcript          Detect transripts based on coverage file.
+        terminator          Detect rho-independent terminators.
+        transcript          Detect transcripts based on coverage file.
         utr                 Detect 5'UTRs and 3'UTRs.
         srna                Detect intergenic, antisense and UTR-derived sRNAs.
         sorf                Detect expressed sORFs.

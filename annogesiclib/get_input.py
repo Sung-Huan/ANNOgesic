@@ -26,7 +26,7 @@ def deal_detect(input_file, file_path, change, input_folder):
     return change, seq_name
 
 
-def get_file(ftp, input_folder, files_type, target):
+def get_file(ftp, input_folder, files_type):
     checks = {"detect": False, "change": None}
     filename = None
     files = []

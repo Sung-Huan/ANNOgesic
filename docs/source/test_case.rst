@@ -69,13 +69,8 @@ Then we will get following results
     $ ls ANNOgesic/input/reference/annotation/
     NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 
-If the fasta files and annotation files from NCBI is exactly what you want,
-you can add ``-t`` for putting the files to ``ANNOgesic/output/target``. Then you can skip ``get_target_fasta`` 
-and ``annotation_transfer``.
-
 In fact, these fasta and gff files are exactly what we want to use for the test case.
-But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we used them as references first.
-After testing these subcommands, we will reorganize the data again.
+But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we used them as "reference strain".
 
 Putting wig, and reads to proper location
 ---------------------------------------------------
@@ -154,12 +149,11 @@ Improving the reference genome
 Again, if the data retrieved from NCBI is exactly what you want, you can skip this step and ``annotation_transfer``. 
 
 Although the data that we downloaded before is our real data (``ANNOgesic/input/reference``),
-we will generate some new fake files via this step and ``annotation_transfer`` in order to 
-show you the function of these subcommands. After testing these two subcommands, 
-we can re-organize the files again.
+we will generate some new dummy files via this step and ``annotation_transfer`` in order to 
+show you the function of these subcommands.
 
-Now, we assume that we need to generate fasta file of our target strain. 
-First of all, we need to find a close strain (fasta file and gff file can be found) of our target strain. 
+Now, we assume that we need to generate fasta file of our real query strain. 
+First of all, we need to find a close strain (fasta file and gff file can be found) of our query strain. 
 Then, we need to generate a mutation table between these two strains. When these files are produced, 
 we can run subcommand ``get_target_fasta`` for getting fasta file of the target strain. 
 For mutation table format, please check the section :ref:`ANNOgesic's subcommands`.
@@ -167,7 +161,7 @@ For mutation table format, please check the section :ref:`ANNOgesic's subcommand
 We use a simple example to modify our test case, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 Every column of the table is separated by tab. The new strain will be NC_test.1 and test_case2. Therefore, two fasta files 
-will be generated in ``ANNOgesic/output/target/fasta``.
+will be generated in ``ANNOgesic/output/updated_reference/fasta``.
 
 ::
 
@@ -179,8 +173,8 @@ Now, let's try it
 
      $ annogesic get_target_fasta \
         -r ANNOgesic/input/reference/fasta/NC_009839.1.fa \
-        -o ANNOgesic/output/target/fasta/test_case1.fa:NC_test.1 \
-           ANNOgesic/output/target/fasta/test_case2.fa:test_case2 \
+        -o ANNOgesic/output/updated_reference/test_case1.fa:NC_test.1 \
+           ANNOgesic/output/updated_reference/fasta/test_case2.fa:test_case2 \
         -m ANNOgesic/input/mutation_table/mutation.csv \
         -pj ANNOgesic
 
@@ -196,8 +190,8 @@ When the running process is done, the following information will appear.
     $ Transfering to target fasta
       Please use the new fasta file to remapping again.
 
-Since the data (``ANNOgesic/output/target/fasta``) that we generated is not real,
-we can ignore the information now. However, if the new fasta file is real target one,
+Since the data (``ANNOgesic/output/updated_reference/fasta``) that we generated is not real,
+we can ignore the information now. However, if the new fasta file is real query one,
 you have to remap again in order to get the correct alignment and coverage files.
 
 Now we can check the results.
@@ -215,7 +209,7 @@ Now we can check the results.
     TTGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTTCAAATTTAAAAAATGGCTC
     TTTAGATAAATTTCACGAAAAATATAGAAATTGTGATGTTTTACTCATAGATGATGTGCAGTTTTTAGGAAAAACCGATA
     AAATTCAAGAAGAATTTTTCTTTATATTTAATGAAATCAAAAATAACGATGGACAAATCATCATGACTTCAGACAATCCA
-    $ head ANNOgesic/output/target/fasta/test_case1.fa
+    $ head ANNOgesic/output/updated_reference/fasta/test_case1.fa
     >NC_test.1
     ATcAACCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAA
     ATTATATCGCTATCTTAAAATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTA
@@ -237,7 +231,7 @@ fasta files automatically. For ``snp``, we will go through it later.
 Generating annotation files
 ---------------------------
 
-We have fasta files of our target strain now. We can use them to generate our annotation files. If the annotation files 
+We have fasta files of our new dummy query strain now. We can use them to generate annotation files. If the annotation files 
 retrieved from NCBI is exactly what you want, you can skip this step. 
 
 Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
@@ -250,10 +244,10 @@ After setting the environment, we can try it.
 ::
 
     anngesic annotation_transfer \
-        -re ANNOgesic/input/reference/annotation/NC_009839.1.embl \
-        -rf ANNOgesic/input/reference/fasta/NC_009839.1.fa \
-        -tf ANNOgesic/output/target/fasta/test_case1.fa \
-            ANNOgesic/output/target/fasta/test_case2.fa \
+        -ce ANNOgesic/input/reference/annotation/NC_009839.1.embl \
+        -cf ANNOgesic/input/reference/fasta/NC_009839.1.fa \
+        -uf ANNOgesic/output/updated_reference/fasta/test_case1.fa \
+            ANNOgesic/output/updated_reference/fasta/test_case2.fa \
         -e chromosome \
         -t Strain \
         -p NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
@@ -265,42 +259,24 @@ We use ``Strain`` because the similarity is higher than 90%. For other situation
 `RATT <http://ratt.sourceforge.net/>`_. In ``-p``, we assign pairs of the target strains (NC_test.1 and test_case2) 
 and their close strains (NC_000915.1). Please be careful, the information that we assign to ``-p`` 
 is strain names not fasta filenames. ``-g`` means that we want to transfer the 
-output embl files to GFF3 files and store in ``ANNOgesic/output/target/annotation``.
+output embl files to GFF3 files and store in ``ANNOgesic/output/updated_reference/annotation``.
 
 Once the transfer is done, we can see
 
 ::
 
-    $ ls ANNOgesic/output/target/annotation/
+    $ ls ANNOgesic/output/updated_reference/annotation/
     test_case1.gff  test_case1.ptt  test_case1.rnt  test_case2.gff  test_case2.ptt  test_case2.rnt
     $ ls ANNOgesic/output/annotation_transfer/
     chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff  ratt_log.txt  test_case2.gff
 
-In ``ANNOgesic/output/target/annotation``, we can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
+In ``ANNOgesic/output/updated_reference/annotation``, we can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
 we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
 
 We already saw how to update genome fasta and annotation files. 
-Now, we can re-organize our data in order to run next subcommand.
-(Normally, you don't need to do it. We re-organize the data because the data is only for showing the how to 
-run ``get_target_fasta`` and ``annotation_transfer``. All the data is useless now. The real test case is 
-already downloaded via ``get_input_files``. Therefore, we need to re-organize the data.)
-
-Since the data in ``ANNOgesic/output/target`` is fake data, we can remove it.
-
-::
-
-    $ rm ANNOgesic/output/target/annotation/*
-    $ rm ANNOgesic/output/target/fasta/*
-
-The real data of our query strain is stored in ``ANNOgesic/input/reference`` before. Thus,
-we need to move/copy the data to ``ANNOgesic/output/target``
-
-::
-
-    $ cp ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-    $ cp ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
-
-Now files are re-organized, we can run following subcommands.
+We will use ``ANNOgesic/input/reference/annotation/NC_009839.1.gff`` and ``ANNOgesic/input/reference/fasta/NC_009839.1`` 
+for running the following subcommands. If the fasta files and annotation files of your strain need to be updated, 
+please replace the files with the fasta and annotation files in ``ANNOgesic/output/updated_reference``.
 
 TSS and processing site prediction and optimization
 ---------------------------------------------------
@@ -322,8 +298,8 @@ Then, we can setup our libraries.
               $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
 Now, we can start to test other subcommands. 
-Before running ``tss_processing``, if we want to use the optimized parameters, 
-we need to run ``optimize_tss_processing`` first. The optimization requires a gff file of the manual-detected TSSs. 
+Before running ``tss_ps``, if we want to use the optimized parameters, 
+we need to run ``optimize_tss_ps`` first. The optimization requires a gff file of the manual-detected TSSs. 
 In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of genome. 
 
 For the test case, you can download the `manual TSS file <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
@@ -334,14 +310,14 @@ from our git repository.
     $ wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
 Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSS``. 
-we can try ``optimize_tss_processing`` right now (since we only check first 200kb, we set ``-le`` as "NC_009839.1:200000" which 
+we can try ``optimize_tss_ps`` right now (since we only check first 200kb, we set ``-le`` as "NC_009839.1:200000" which 
 means only first 200kb of NC_009839.1 is valid.).
 
 ::
 
-    $ annogesic optimize_tss_processing \
-         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+    $ annogesic optimize_tss_ps \
+         -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
+         -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
          -tl $TEX_LIBS \
          -p TSS -s 25 \
          -m ANNOgesic/input/manual_TSS/NC_009839_manual_TSS.gff \
@@ -349,7 +325,7 @@ means only first 200kb of NC_009839.1 is valid.).
          -rt all_1 \
          -pj ANNOgesic
 
-``optimize_tss_processing`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
+``optimize_tss_ps`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
 Results of the different parameters will be printed in the screen. We only set 25 runs for testing. 
 Once the optimization is done, you can find several files.
 
@@ -366,9 +342,9 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
 
 ::
 
-    $ annogesic tss_processing \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+    $ annogesic tss_ps \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -p test \
         -he 0.4 \
@@ -409,9 +385,9 @@ base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
 
 ::
 
-    $ annogesic tss_processing \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+    $ annogesic tss_ps \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -p test \
         -he 0.2 \
@@ -456,7 +432,7 @@ The command is like following:
 ::
 
     $ annogesic transcript \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -tl $TEX_LIBS \
         -rt all_1 \
         -cf gene CDS \
@@ -483,8 +459,8 @@ for computing secondary structure of potential terminators. Therefore, this proc
 ::
 
     $ annogesic terminator \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
         -rt all_1 -tb \
@@ -546,7 +522,7 @@ subcommand ``utr``.
 ::
 
     $ annogesic utr \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -e ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -581,7 +557,7 @@ detect operons and suboperons by executing subcommand ``operon``.
 ::
 
     $ annogesic operon \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -u5 ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
@@ -615,7 +591,7 @@ MEME or GLAM2, please assign "meme" or "glam2" to ``-p``), the process may take 
 
     $ annogesic promoter \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -w 45 2-10 \
         -pj ANNOgesic
 
@@ -700,11 +676,11 @@ Now, we can use the recommended filters to run ``srna``, but it may takes severa
 
     $ annogesic srna \
         -d tss blast_srna blast_nr sec_str \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -p ANNOgesic/output/processing_site/gffs/NC_009839.1_processing.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -tf ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
         -pt ANNOgesic/output/promoter_analysis/NC_009839.1/promoter_motifs_NC_009839.1_allstrain_all_types_45_nt/meme.csv \
         -pn MOTIF_1 \
@@ -789,10 +765,10 @@ In order to get information of sORFs, we can use subcommand ``sorf``.
 ::
 
     $ annogesic sorf \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -t ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -s ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -tl $TEX_LIBS \
         -rt all_1 -u \
@@ -824,8 +800,8 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
 ::
 
     $ annogesic srna_target \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -r ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
         -q NC_009839.1:36954:37044:- \
         -p both \
@@ -900,9 +876,9 @@ Now, we can try ``circrna``
 ::
 
      $ annogesic circrna \
-         -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+         -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
          -p 10 \
-         -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+         -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
          -a \
          -rp ANNOgesic/input/reads/SRR515254_50000.fasta \
              ANNOgesic/input/reads/SRR515255_50000.fasta \
@@ -950,27 +926,27 @@ SNP calling
 --------------
 
 If we want to know SNPs or mutations of our RNA-seq data, we can use ``snp`` to achieve this purpose.
-``snp`` is compose of two parts. One part is for obtaining the differences between our query strain ("target strain") 
-and the close strain of our query strain ("reference strain"). If we have no fasta file of our "target strain", 
-this part will be very useful. We just need to map reads of the "target strain" on fasta file of the "reference strain". Then 
-using ``snp`` can automatically detect differences between the "target strain" and the "reference strain". 
-Furthermore, potential fasta files of the "target strain" can be generated automatically as well. 
-The other part is for detecting SNPs or mutations of the "target strain". In this part, 
-you can know real mutations of the "target strain".
+``snp`` is compose of two parts. One part is for obtaining the differences between our query strain 
+and the close strain of our query strain. If we have no fasta file of our query strain, 
+this part will be very useful. We just need to map reads of our query strain on the fasta file of the closed strain. Then 
+using ``snp`` can automatically detect differences between the closed strain" and our query strain. 
+Furthermore, potential fasta files of our query strain can be generated automatically as well. 
+The other part is for detecting SNPs or mutations of our query strain if the fasta file of our query strain can be provided.
+In this part, you can know real mutations of our query strain.
 
 Before running the subcommand, bam files are required. Since we already generated them through 
-running ``circrna``, we can just need to put them to right place. Please remember that the mapping function of 
+running ``circrna``, we can just put them to corresponding folder. Please remember that the mapping function of 
 ``circrna`` is very basic.
 
-Now, we can try to detect mutations of the "target strain". We only run the subcommand for "target strain", the 
-procedures of running "reference strain" are similar. Since the "reference strain" and "targe strain" of the toturial 
-are the same, the result will be the same.
+Now, we can try to detect mutations. Since we already got the Bam files of NC_009839.1 (our query strain) via ``circrna``, 
+we can set ``-t`` as ``query_strain``. The procedures of comparing closed strain and query strain are similar, 
+you just need to put Bam files, and fasta files to corresponding folders and set ``-t`` as ``closed_strain``.
 
-First, we copy the bam files to ``BAMs_map_target``.
+First, we copy the bam files to ``BAMs_map_query_strain``.
 
 ::
 
-    $ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
+    $ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex
 
 Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``, and sample number 
 for this test case is 1 (``-ms``).
@@ -978,46 +954,43 @@ for this test case is 1 (``-ms``).
 ::
 
     $ annogesic snp \
-        -t target \
+        -t query_strain \
         -p with_BAQ without_BAQ extend_BAQ \
         -ms 1 \
-        -b ANNOgesic/input/BAMs/BAMs_map_target/tex_notex/SRR515254_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_target/tex_notex/SRR515255_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_target/tex_notex/SRR515256_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_target/tex_notex/SRR515257_50000_NC_009839.1.bam \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -b ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam \
+           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam \
+           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam \
+           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -pj ANNOgesic
 
-If you want to compare between the "reference strain" and the "target strain", you just need to change 
-``-t`` to ``reference`` and assign correct bam files.
-
-Two output folders will be generated, ``compare_reference`` is for results of the comparison between the "reference strain" 
-and the "target strain", ``validate_target`` is for results of detecting mutations of the "target strain".
+Two output folders will be generated, ``compare_closed_and_updated_references`` is for results of the comparison between closed strain 
+and query strain, ``mutations_of_query_strain`` is for results of detecting mutations of the query strain.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/                                                                                                      
-    compare_reference  validate_target
+    compare_closed_and_updated_references    mutations_of_query_strain
 
-Since we run ``validate_target``,  the output folders are produced under ``validate_target``.
+Since we run ``query_strain``,  the output folders are produced under ``mutations_of_query_strain``.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/
     SNP_raw_outputs  SNP_table  seqs  statistics
 
 The output folders are compose of three parts - ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/seqs/
     extend_BAQ/  with_BAQ/    without_BAQ/
 
 In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/seqs/with_BAQ/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/seqs/with_BAQ/NC_009839.1/
     NC_009839.1_NC_009839.1_1_1.fa
 
 ``SNP_raw_outputs`` stores output of `Samtools and Bcftools <https://github.com/samtools>`_. 
@@ -1027,12 +1000,12 @@ In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_raw_outputs/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/SNP_raw_outputs/NC_009839.1/
     NC_009839.1_extend_BAQ.vcf  NC_009839.1_with_BAQ.vcf  NC_009839.1_without_BAQ.vcf
-    $ ls ANNOgesic/output/SNP_calling/validate_target/SNP_table/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/SNP_table/NC_009839.1/
     NC_009839.1_extend_BAQ_best.vcf     NC_009839.1_with_BAQ_best.vcf     NC_009839.1_without_BAQ_best.vcf
     NC_009839.1_extend_BAQ_seq_reference.csv  NC_009839.1_with_BAQ_seq_reference.csv  NC_009839.1_without_BAQ_seq_reference.csv
-    $ ls ANNOgesic/output/SNP_calling/validate_target/statistics/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/statistics/
     NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_raw.png      stat_NC_009839.1_extend_BAQ_SNP_best.csv  stat_NC_009839.1_with_BAQ_SNP_raw.csv
     NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_best.png  stat_NC_009839.1_extend_BAQ_SNP_raw.csv   stat_NC_009839.1_without_BAQ_SNP_best.csv
     NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_best.png    NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_raw.png   stat_NC_009839.1_with_BAQ_SNP_best.csv    stat_NC_009839.1_without_BAQ_SNP_raw.csv
@@ -1062,7 +1035,7 @@ Let's try it.
 ::
 
     $ annogesic go_term \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -pj ANNOgesic
 
@@ -1093,8 +1066,8 @@ information of the transcript to generate results which only included the expres
 ::
 
     $ annogesic subcellular_localization \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -a ANNOgesic/output/transcript/gffs/NC_009839.1_transcript.gff \
         -m -b negative \
         -pj ANNOgesic
@@ -1136,7 +1109,7 @@ Now, we can try the subcommand.
 
     $ annogesic ppi_network \
         -s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
         -d ANNOgesic/input/database/species.v10.txt \
         -q NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
         -n \
@@ -1211,8 +1184,8 @@ Now we can try the subcommand.
 ::
 
     $ annogesic riboswitch_thermometer \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -ri ANNOgesic/input/riboswitch_ID/Rfam_riboswitch_ID.csv \
         -ti ANNOgesic/input/RNA_thermometer_ID/Rfam_RNA_thermometer_ID.csv \
         -R ANNOgesic/input/database/Rfam/CMs/Rfam.cm \
@@ -1256,8 +1229,8 @@ annotation to remove false positive. Let's try it.
 ::
 
      $ annogesic crispr \
-        -g ANNOgesic/output/target/annotation/NC_009839.1.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -pj ANNOgesic
 
 Output are as following, ``CRT_output`` stores output of `CRT <http://www.room220.com/crt/>`_; 
@@ -1291,7 +1264,7 @@ Now let's do it. We merge all features that we have.
 ::
 
     ALL_FEATURES=ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-    ANNOgesic/output/target/annotation/NC_009839.1.gff \
+    ANNOgesic/input/reference/annotation/NC_009839.1.gff \
     ANNOgesic/output/UTR/5UTR/gffs/NC_009839.1_5UTR.gff \
     ANNOgesic/output/UTR/3UTR/gffs/NC_009839.1_3UTR.gff \
     ANNOgesic/output/terminator/gffs/best/NC_009839.1_term.gff \
@@ -1331,9 +1304,9 @@ For testing, we use TSSs as main feature, sRNAs and CDSs as side features.
 
     $ annogesic screenshot \
         -mg ANNOgesic/output/TSS/gffs/NC_009839.1_TSS.gff \
-        -sg ANNOgesic/output/target/annotation/NC_009839.1.gff \
+        -sg ANNOgesic/input/reference/annotation/NC_009839.1.gff \
             ANNOgesic/output/sRNA/gffs/best/NC_009839.1_sRNA.gff \
-        -f ANNOgesic/output/target/fasta/NC_009839.1.fa \
+        -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -o ANNOgesic/output/TSS \
         -tl $TEX_LIBS \
         -pj ANNOgesic

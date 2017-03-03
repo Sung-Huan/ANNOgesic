@@ -137,8 +137,6 @@ class Controller(object):
         """Create a new project."""
         project_creator.create_root_folder(self._args.project_path)
         project_creator.create_subfolders(self._paths.required_folders("root"))
-        project_creator.create_subfolders(
-            self._paths.required_folders("get_target_fasta"))
         project_creator.create_version_file(
             self._paths.version_path, version)
         sys.stdout.write("Created folder \"%s\" and required subfolders.\n" % (
@@ -150,48 +148,45 @@ class Controller(object):
         if self._args.ftp_path is None:
             print("Error: Please assign the path for downloading the data!")
             sys.exit()
-        if self._args.for_target:
-            annotation_folder = self._paths.tar_annotation_folder
-            fasta_folder = self._paths.tar_fasta_folder
-        else:
             annotation_folder = self._paths.ref_annotation_folder
             fasta_folder = self._paths.ref_fasta_folder
-        self.helper.check_make_folder(annotation_folder)
-        self.helper.check_make_folder(fasta_folder)
+        self.helper.check_make_folder(self._paths.ref_annotation_folder)
+        self.helper.check_make_folder(self._paths.ref_fasta_folder)
         if self._args.ref_gff is True:
-            get_file(self._args.ftp_path, annotation_folder,
-                     "gff", self._args.for_target)
-            get_file(self._args.ftp_path, annotation_folder,
-                     "_genomic.gff.gz", self._args.for_target)
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "gff")
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "_genomic.gff.gz")
         if self._args.ref_fasta is True:
-            get_file(self._args.ftp_path, fasta_folder,
-                     "fna", self._args.for_target)
-            get_file(self._args.ftp_path, fasta_folder,
-                     "_genomic.fna.gz", self._args.for_target)
+            get_file(self._args.ftp_path, self._paths.ref_fasta_folder,
+                     "fna")
+            get_file(self._args.ftp_path, self._paths.ref_fasta_folder,
+                     "_genomic.fna.gz")
         if self._args.ref_gbk is True:
-            get_file(self._args.ftp_path, annotation_folder,
-                     "gbk", self._args.for_target)
-            get_file(self._args.ftp_path, annotation_folder,
-                     "gbff", self._args.for_target)
-            get_file(self._args.ftp_path, annotation_folder,
-                     "_genomic.gbff.gz", self._args.for_target)
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "gbk")
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "gbff")
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "_genomic.gbff.gz")
         if self._args.ref_ptt is True:
-            get_file(self._args.ftp_path, annotation_folder,
-                     "ptt", self._args.for_target)
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "ptt")
         if self._args.ref_rnt is True:
-            get_file(self._args.ftp_path, annotation_folder,
-                     "rnt", self._args.for_target)
+            get_file(self._args.ftp_path, self._paths.ref_annotation_folder,
+                     "rnt")
         if self._args.convert_embl is True:
-            annotation_files = os.listdir(annotation_folder)
+            annotation_files = os.listdir(self._paths.ref_annotation_folder)
             if len(annotation_files) == 0:
                 sys.stdout.write("No gff files!!\n")
             else:
-                Converter().convert_gbk2embl(annotation_folder)
+                Converter().convert_gbk2embl(self._paths.ref_annotation_folder)
 
     def get_target_fasta(self):
         """Get target fasta"""
         print("Running get target fasta")
-        self.check_multi_files([self._args.ref_fasta_files], ["--ref_fasta_files"])
+        self.check_multi_files([self._args.closed_fasta_files],
+                               ["--closed_fasta_files"])
         self.check_parameter([self._args.output_format], ["--output_format"])
         self.check_file([self._args.mutation_table], "--mutation_table", True)
         project_creator.create_subfolders(
@@ -199,10 +194,10 @@ class Controller(object):
         for output in self._args.output_format:
             output = output.strip()
         target = TargetFasta(self._paths.tar_fasta_folder,
-                             self._args.ref_fasta_files)
+                             self._args.closed_fasta_files)
         target.get_target_fasta(
                 self._args.mutation_table, self._paths.tar_fasta_folder,
-                self._args.ref_fasta_files, self._args.output_format,
+                self._args.closed_fasta_files, self._args.output_format,
                 self._paths.target_base_folder)
 
     def ratt(self):
@@ -218,26 +213,26 @@ class Controller(object):
                 self._args.transfer_type != "Free"):
             print("Error: please assign correct --transfer_type!")
             sys.exit()
-        if (self._args.ref_embl_files is None) and (
-                self._args.ref_gbk_files is None):
+        if (self._args.closed_embl_files is None) and (
+                self._args.closed_gbk_files is None):
             print("Error: please assign proper embl or genbank folder")
             sys.exit()
-        elif (self._args.ref_embl_files is not None) and (
-                self._args.ref_gbk_files is not None):
+        elif (self._args.closed_embl_files is not None) and (
+                self._args.closed_gbk_files is not None):
             print("Error: please choose embl as input or genbank as input")
             sys.exit()
         self._args.ratt_path = self.check_execute_file(self._args.ratt_path)
         self.check_multi_files(
-                [self._args.target_fasta_files, self._args.ref_fasta_files],
-                ["--target_fasta_files", "--ref_fasta_files"])
+                [self._args.updated_fasta_files, self._args.closed_fasta_files],
+                ["--updated_fasta_files", "--closed_fasta_files"])
         self.check_parameter([self._args.element, self._args.compare_pair],
                              ["--element", "--compare_pair"])
         project_creator.create_subfolders(
             self._paths.required_folders("annotation_transfer"))
         args_ratt = self.args_container.container_ratt(
             self._args.ratt_path, self._args.element, self._args.transfer_type,
-            self._args.ref_embl_files, self._args.ref_gbk_files,
-            self._args.target_fasta_files, self._args.ref_fasta_files,
+            self._args.closed_embl_files, self._args.closed_gbk_files,
+            self._args.updated_fasta_files, self._args.closed_fasta_files,
             self._paths.ratt_folder, self._args.convert_to_gff_rnt_ptt,
             self._paths.tar_annotation_folder, self._args.compare_pair)
         ratt = RATT(args_ratt)
@@ -695,10 +690,10 @@ class Controller(object):
         self.check_multi_files(
                 [self._args.fasta_files, self._args.bam_files],
                 ["--fasta_files", "--bam_files"])
-        if (self._args.bam_type != "target") and (
-                self._args.bam_type != "reference"):
-            print("Error: Please assign \"target\" or"
-                  " \"reference\" to --bam_type!")
+        if (self._args.bam_type != "closed_strain") and (
+                self._args.bam_type != "query_strain"):
+            print("Error: Please assign \"closed_strain\" or"
+                  " \"query_strain\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
                 self._args.ploidy != "diploid"):

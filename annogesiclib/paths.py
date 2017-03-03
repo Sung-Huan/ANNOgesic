@@ -48,7 +48,7 @@ class Paths(object):
         self.thermorfam_folder = "%s/RNA_thermometer_ID" % self.input_folder
 
     def _set_output_folder_names(self):
-        self.target_folder = "%s/target" % self.output_folder
+        self.target_folder = "%s/updated_reference" % self.output_folder
         self.ratt_folder = "%s/annotation_transfer" % self.output_folder
         self.tsspredator_folder = "%s/TSS" % self.output_folder
         self.utr_folder = "%s/UTR" % self.output_folder
@@ -97,8 +97,8 @@ class Paths(object):
 
     def _set_bam_folder_names(self):
         self.bam_base_folder = "%s/BAMs" % self.input_folder
-        self.bam_ref_folder = "%s/BAMs_map_reference" % self.bam_base_folder
-        self.bam_tar_folder = "%s/BAMs_map_target" % self.bam_base_folder
+        self.bam_ref_folder = "%s/BAMs_map_closed_strain" % self.bam_base_folder
+        self.bam_tar_folder = "%s/BAMs_map_query_strain" % self.bam_base_folder
         self.bam_ref_frag_folder = "%s/fragment" % (
             self.bam_ref_folder)
         self.bam_tar_frag_folder = "%s/fragment" % (
@@ -109,7 +109,7 @@ class Paths(object):
             self.bam_tar_folder)
 
     def _set_target_folder_names(self):
-        self.target_base_folder = "%s/target" % self.output_folder
+        self.target_base_folder = "%s/updated_reference" % self.output_folder
         self.tar_fasta_folder = "%s/fasta" % (
             self.target_base_folder)
         self.tar_annotation_folder = "%s/annotation" % (
@@ -264,8 +264,8 @@ class Paths(object):
 
     def _set_snp_folder_names(self):
         self.snp_base_folder = "%s/SNP_calling" % self.output_folder
-        self.ref_snp_folder = "%s/compare_reference" % self.snp_base_folder
-        self.tar_snp_folder = "%s/validate_target" % self.snp_base_folder
+        self.ref_snp_folder = "%s/compare_closed_and_updated_references" % self.snp_base_folder
+        self.tar_snp_folder = "%s/mutations_of_query_strain" % self.snp_base_folder
         self.snp_ref_stat_folder = "%s/statistics" % (
              self.ref_snp_folder)
         self.snp_tar_stat_folder = "%s/statistics" % (
