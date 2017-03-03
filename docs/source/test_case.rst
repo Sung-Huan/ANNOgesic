@@ -77,7 +77,7 @@ In fact, these fasta and gff files are exactly what we want to use for the test 
 But, in order to testing ``get_target_fasta`` and ``annotation_transfer``, we used them as references first.
 After testing these subcommands, we will reorganize the data again.
 
-Putting wig, bam files and reads to proper location
+Putting wig, and reads to proper location
 ---------------------------------------------------
 For the test case, we can download reads from 
 `here <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
@@ -293,12 +293,12 @@ Since the data in ``ANNOgesic/output/target`` is fake data, we can remove it.
     $ rm ANNOgesic/output/target/fasta/*
 
 The real data of our query strain is stored in ``ANNOgesic/input/reference`` before. Thus,
-we need to move the data to ``ANNOgesic/output/target``
+we need to move/copy the data to ``ANNOgesic/output/target``
 
 ::
 
-    $ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-    $ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+    $ cp ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
+    $ cp ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 
 Now files are re-organized, we can run following subcommands.
 
@@ -962,8 +962,11 @@ Before running the subcommand, bam files are required. Since we already generate
 running ``circrna``, we can just need to put them to right place. Please remember that the mapping function of 
 ``circrna`` is very basic.
 
-Now, we can try to detect mutations of the "target strain" because our mapping is based on 
-fasta file of the "target strain" - NC_000915. Therefore, we copy the bam files to ``BAMs_map_target``.
+Now, we can try to detect mutations of the "target strain". We only run the subcommand for "target strain", the 
+procedures of running "reference strain" are similar. Since the "reference strain" and "targe strain" of the toturial 
+are the same, the result will be the same.
+
+First, we copy the bam files to ``BAMs_map_target``.
 
 ::
 

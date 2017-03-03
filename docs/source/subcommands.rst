@@ -74,15 +74,14 @@ for TEX +/- treated libraries:
   TSB_OD_0.2_forward.wig:notex:1:a:+ \
   TSB_OD_0.5_forward.wig:notex:2:a:+
 
-or for fragmented libraries(RNA-Seq generated after transcript fragmentation):
+or for fragmented libraries (RNA-Seq generated after transcript fragmentation):
 
 ::
 
   fragmented_forward.wig:frag:1:a:+ fragmented_reverse.wig:frag:1:a:-
 
 If only conventional RNA-seq data without fragmentation or TEX treated can be provided, 
-it can still be assigned to fragmented libraries and used by ANNOgesic.
-However, it may influence the results.
+it can still be assigned to fragmented libraries. However, it may influence the results.
 
 .. _The format of sRNA database:
 

@@ -124,7 +124,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#putting-wig-bam-files-and-reads-to-proper-location">Putting wig, bam files and reads to proper location</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -209,7 +209,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#putting-wig-bam-files-and-reads-to-proper-location">Putting wig, bam files and reads to proper location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -335,8 +335,8 @@ and <code class="docutils literal"><span class="pre">annotation_transfer</span><
 But, in order to testing <code class="docutils literal"><span class="pre">get_target_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>, we used them as references first.
 After testing these subcommands, we will reorganize the data again.</p>
 </div>
-<div class="section" id="putting-wig-bam-files-and-reads-to-proper-location">
-<h2>Putting wig, bam files and reads to proper location<a class="headerlink" href="#putting-wig-bam-files-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="putting-wig-and-reads-to-proper-location">
+<h2>Putting wig, and reads to proper location<a class="headerlink" href="#putting-wig-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
 <p>For the test case, we can download reads from
 <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">here</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515254/SRR515254.sra
@@ -514,9 +514,9 @@ $ rm ANNOgesic/output/target/fasta/*
 </pre></div>
 </div>
 <p>The real data of our query strain is stored in <code class="docutils literal"><span class="pre">ANNOgesic/input/reference</span></code> before. Thus,
-we need to move the data to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ mv ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
-$ mv ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+we need to move/copy the data to <code class="docutils literal"><span class="pre">ANNOgesic/output/target</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cp ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
+$ cp ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
 </pre></div>
 </div>
 <p>Now files are re-organized, we can run following subcommands.</p>
@@ -1082,8 +1082,10 @@ you can know real mutations of the &#8220;target strain&#8221;.</p>
 <p>Before running the subcommand, bam files are required. Since we already generated them through
 running <code class="docutils literal"><span class="pre">circrna</span></code>, we can just need to put them to right place. Please remember that the mapping function of
 <code class="docutils literal"><span class="pre">circrna</span></code> is very basic.</p>
-<p>Now, we can try to detect mutations of the &#8220;target strain&#8221; because our mapping is based on
-fasta file of the &#8220;target strain&#8221; - NC_000915. Therefore, we copy the bam files to <code class="docutils literal"><span class="pre">BAMs_map_target</span></code>.</p>
+<p>Now, we can try to detect mutations of the &#8220;target strain&#8221;. We only run the subcommand for &#8220;target strain&#8221;, the
+procedures of running &#8220;reference strain&#8221; are similar. Since the &#8220;reference strain&#8221; and &#8220;targe strain&#8221; of the toturial
+are the same, the result will be the same.</p>
+<p>First, we copy the bam files to <code class="docutils literal"><span class="pre">BAMs_map_target</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
 </pre></div>
 </div>

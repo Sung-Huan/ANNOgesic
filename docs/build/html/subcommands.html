@@ -124,7 +124,7 @@
 <li class="toctree-l3"><a class="reference internal" href="test_case.html">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="test_case.html#generating-a-project">Generating a project</a></li>
 <li class="toctree-l4"><a class="reference internal" href="test_case.html#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="test_case.html#putting-wig-bam-files-and-reads-to-proper-location">Putting wig, bam files and reads to proper location</a></li>
+<li class="toctree-l4"><a class="reference internal" href="test_case.html#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
 <li class="toctree-l4"><a class="reference internal" href="test_case.html#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l4"><a class="reference internal" href="test_case.html#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="test_case.html#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -209,7 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="test_case.html">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="test_case.html#generating-a-project">Generating a project</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test_case.html#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="test_case.html#putting-wig-bam-files-and-reads-to-proper-location">Putting wig, bam files and reads to proper location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_case.html#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test_case.html#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test_case.html#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="test_case.html#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -356,13 +356,12 @@ for TEX +/- treated libraries:</p>
 <span class="n">TSB_OD_0</span><span class="o">.</span><span class="mi">5</span><span class="n">_forward</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">notex</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span>
 </pre></div>
 </div>
-<p>or for fragmented libraries(RNA-Seq generated after transcript fragmentation):</p>
+<p>or for fragmented libraries (RNA-Seq generated after transcript fragmentation):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fragmented_forward</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">frag</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">+</span> <span class="n">fragmented_reverse</span><span class="o">.</span><span class="n">wig</span><span class="p">:</span><span class="n">frag</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="n">a</span><span class="p">:</span><span class="o">-</span>
 </pre></div>
 </div>
 <p>If only conventional RNA-seq data without fragmentation or TEX treated can be provided,
-it can still be assigned to fragmented libraries and used by ANNOgesic.
-However, it may influence the results.</p>
+it can still be assigned to fragmented libraries. However, it may influence the results.</p>
 </div>
 <div class="section" id="the-format-of-srna-database">
 <span id="id4"></span><h2>The format of sRNA database<a class="headerlink" href="#the-format-of-srna-database" title="Permalink to this headline">¶</a></h2>

@@ -11,10 +11,12 @@ main(){
 	      $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+"
 
 
-    set_up_analysis_folder
+#    set_up_analysis_folder
+#    get_wig_and_read_files
 #    get_input_files    
 #    get_target_fasta
 #    annotation_transfer
+    reorganize_data
 #    Optimize_TSSpredator
 #    TSS_prediction
 #    processing_site_prediction
@@ -27,7 +29,7 @@ main(){
 #    sORF_detection
 #    sRNA_target
 #    CircRNA_detection
-#    SNP_calling_reference (optional)
+#    SNP_calling_reference
 #    SNP_calling_target
 #    Go_term
 #    Subcellular_localization
@@ -48,6 +50,43 @@ set_up_analysis_folder(){
     fi
 }
 
+get_wig_and_read_files(){
+    #### This is for downloading tutorial data.
+    #### If you have your own data, please put your data in corresponding folders and skip this step.
+
+    #### Download sratoolkit
+    wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
+    tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
+    rm sratoolkit.2.5.2-ubuntu64.tar.gz
+
+    #### transfer SRA files to fasta files
+    for SRA in SRR515254 SRR515255 SRR515256 SRR515257
+    do
+        wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/$SRA/$SRA.sra
+        ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta $SRA.sra
+        rm $SRA.sra
+    done
+    mv *.fasta ANNOgesic/input/reads
+
+    #### Download and unzip wiggle files
+    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+    wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+    cd ANNOgesic/input/wigs/tex_notex
+    gunzip GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig.gz \
+           GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig.gz \
+           GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig.gz \
+           GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig.gz
+    cd ../../../../
+
+    #### Chromosome names of the wiggle files are not the same as fasta files.
+    #### We can use replace_seq_id.py to modify them.
+    wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/replace_seq_id.py
+    python3 replace_seq_id.py -i ANNOgesic/input/wigs/tex_notex -n NC_009839.1
+    rm replace_seq_id.py
+}
+
 get_input_files(){
     $ANNOGESIC_PATH \
 	get_input_files \
@@ -62,6 +101,10 @@ get_input_files(){
 }
 
 get_target_fasta(){
+    #### The mutation.csv is only for our tutorial.
+    wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+
+
     $ANNOGESIC_PATH \
         get_target_fasta \
 	-r $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
@@ -85,6 +128,18 @@ annotation_transfer(){
 	-pj $ANNOGESIC_FOLDER
 }
 
+reorganize_data(){
+    #### This step is only for tutorial, if you are running your own data, please skep it.
+    #### For performing the subcommands of get_target_fasta and annotation_transfer in tutorial,
+    #### some dummy fasta and annotation files are generated. For running following subcommands,
+    #### we need to replace the dummy data with the real data which downloaded via get_input_files.
+
+    rm ANNOgesic/output/target/annotation/*
+    rm ANNOgesic/output/target/fasta/*
+    cp ANNOgesic/input/reference/annotation/* ANNOgesic/output/target/annotation/
+    cp ANNOgesic/input/reference/fasta/* ANNOgesic/output/target/fasta/
+}
+
 Optimize_TSSpredator(){
     $ANNOGESIC_PATH \
         optimize_tss_processing \
@@ -99,6 +154,9 @@ Optimize_TSSpredator(){
 }
 
 TSS_prediction(){
+    #### The manual-detected TSS file is only for the tutorial
+    wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
+
     $ANNOGESIC_PATH \
         tss_processing \
         -f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
@@ -193,6 +251,14 @@ promoter_detection(){
 }
 
 sRNA_detection(){
+    #### If you have no sRNA database, you can use BSRD.
+    wget -cP ANNOgesic/input/database/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
+    #### If you have no nr databse, please download it.
+    wget -cP ANNOgesic/input/database/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
+    gunzip ANNOgesic/input/database/nr.gz
+    mv ANNOgesic/input/database/nr ANNOgesic/input/database/nr.fa
+
+
     $ANNOGESIC_PATH \
         srna \
         -d tss blast_srna sec_str blast_nr \
@@ -238,6 +304,16 @@ sRNA_target(){
 }
 
 CircRNA_detection(){
+    #### For tutorial, we just want to test the subcommand.
+    #### Thus, we can extract the subset of reads to reduce the running time.
+    #### If you are running your own data, please comment the following 5 lines 
+    #### and put your read files to corresponding folder.
+    for SRA in SRR515254 SRR515255 SRR515256 SRR515257
+    do
+        head -n 50000 ANNOgesic/input/reads/$SRA.fasta > ANNOgesic/input/reads/$SRA_50000.fasta
+        rm ANNOgesic/input/reads/$SRA.fasta
+    done
+
     $ANNOGESIC_PATH \
         circrna \
 	-f $ANNOGESIC_FOLDER/output/target/fasta/NC_009839.1.fa \
@@ -252,6 +328,10 @@ CircRNA_detection(){
 }
 
 SNP_calling_reference(){
+    #### This is only for tutorial.
+    #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
+    cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_reference/tex_notex
+
     $ANNOGESIC_PATH \
          snp \
 	-t reference \
@@ -261,11 +341,15 @@ SNP_calling_reference(){
 	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515255_50000_NC_009839.1.bam \
 	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515256_50000_NC_009839.1.bam \
 	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference/tex_notex/SRR515257_50000_NC_009839.1.bam \
-	-f $ANNOGESIC_FOLDER/output/reference/fasta/NC_009839.1.fa \
+	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
 }
 
 SNP_calling_target(){
+    #### This is only for tutorial.
+    #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
+    cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_target/tex_notex
+
     $ANNOGESIC_PATH \
         snp \
 	-t target \
@@ -280,6 +364,12 @@ SNP_calling_target(){
 }
 
 Go_term(){
+    #### If you have no goslim_generic.obo, go.obo, and idmapping_selected.tab, please download them.
+    wget -cP ANNOgesic/input/database http://www.geneontology.org/ontology/subsets/goslim_generic.obo
+    wget -cP ANNOgesic/input/database http://geneontology.org/ontology/go.obo
+    wget -cP ANNOgesic/input/database ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
+    gunzip ANNOgesic/input/database/idmapping_selected.tab.gz
+
     $ANNOGESIC_PATH \
         go_term \
 	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
@@ -301,6 +391,10 @@ Subcellular_localization(){
 }
 
 PPI_network(){
+    #### If you have no species.$Version.txt of STRING database, please download it.
+    wget -cP ANNOgesic/input/database http://string-db.org/newstring_download/species.v10.txt
+
+
     $ANNOGESIC_PATH \
         ppi_network \
 	-s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
@@ -312,6 +406,17 @@ PPI_network(){
 }
 
 riboswitch_and_RNA_thermometer(){
+    #### You can download the riboswitch and RNA thermometer ID list of Rfam from our Git repository.
+    wget -cP ANNOgesic/input/riboswitch_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
+    wget -cP ANNOgesic/input/RNA_thermometer_ID/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
+    #### If you have no Rfam database, please download it.
+    wget -cP ANNOgesic/input/database ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
+    cd ANNOgesic/input/database
+    tar -zxvf Rfam.tar.gz
+    rm Rfam.tar.gz
+    cd ../../../
+
+
     $ANNOGESIC_PATH \
         riboswitch_thermometer \
 	-g $ANNOGESIC_FOLDER/output/target/annotation/NC_009839.1.gff \
@@ -362,6 +467,14 @@ gen_screenshot(){
 	-o $ANNOGESIC_FOLDER/output/TSS \
 	-tl $TEX_LIBS \
 	-pj $ANNOGESIC_FOLDER
+
+    #### We only perform 6 screenshots for each strand in order to reduce the running time for tutorial.
+    #### If you are running your own data, please comment the following two lines.
+    head -n 30 ANNOgesic/output/TSS/screenshots/NC_009839.1/forward.txt > ANNOgesic/output/TSS/screenshots/NC_009839.1/forward_6_cases.txt
+    head -n 30 ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse.txt > ANNOgesic/output/TSS/screenshots/NC_009839.1/reverse_6_cases.txt
+
+    #### Now you can use IGV to produce screenshots.
+    #### Open IGV -> Tools -> Run Batch Script -> choose forward_6_cases.txt or reverse_6_cases.txt
 }
 
 color_png(){
