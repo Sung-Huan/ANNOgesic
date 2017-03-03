@@ -7,7 +7,7 @@ Table of content
    :maxdepth: 1
 
    index
-   prerequired
+   required
    installation
    docker
    subcommands
