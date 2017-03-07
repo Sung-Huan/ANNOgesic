@@ -2100,7 +2100,8 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 sorf
 ----------
-``sorf`` can detect sORF based on searching ribosome binding sites, start codons and stop codons within the non-annotated transcripts.
+``sorf`` can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence), 
+start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand. 
 If multiple sORFs are overlapped with each other, this subcommand will merge them to be one sORF. Therefore, one region may contain more than one sORF. 
 Position of the start codon which listed in output table is assigned by the first nucleotide. The position of stop codon is assigned by the last nucleotide. 
@@ -2265,17 +2266,20 @@ Please be aware this point for using the results.
                             separate them. Default is TTA TAG TGA.
       --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
                             The minimum distance (nucleotides) between the
-                            ribosome binding site and start codon. Default is 3.
+                            ribosome binding site (Shine-Dalgarno sequence) and
+                            start codon. Default is 3.
       --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
                             The maximum distance (nucleotides) between the
-                            ribosome binding site and start codon. Default is 15.
+                            ribosome binding site (Shine-Dalgarno sequence) and
+                            start codon. Default is 15.
       --rbs_not_after_tss, -at
                             For generating best results, if the ribosome binding
-                            site of sORF is not associated with TSS, this function
-                            will include this candidate as well. Default is False.
+                            site (Shine-Dalgarno sequence) of sORF is not
+                            associated with TSS, this function will include this
+                            candidate as well. Default is False.
       --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                            The number of nucleotides of ribosome binding site can
-                            be different with AGGAGG. Default is 2.
+                            The number of nucleotides of Shine-Dalgarno sequence
+                            allow be different with AGGAGG. Default is 2.
       --print_all_combination, -pa
                             Non-annotated transcript may has many start codons and
                             stop codons. This function can print all combinations
@@ -2317,7 +2321,7 @@ The meaning of each column is as following:
 
 	**TSS:** TSSs which are associated with this sORF.
 
-	**RBS:** Ribosome binding site of this sORF.
+	**RBS:** Ribosome binding site (Shine-Dalgarno sequence) of this sORF.
 
 	**all_start_points:** Positions of all start codons which can be found in the region of this sORF.
 
@@ -2360,7 +2364,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 
 **sRNA:** Which sRNAs are overlap with this sORFs.
 
-**rbs:** Ribosome binding sites of this sORFs.
+**rbs:** Ribosome binding sites (Shine-Dalgarno sequences) of this sORFs.
 
 **frame_shift:** The number of frame shifts in the regions.
 
@@ -3259,7 +3263,7 @@ results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all
 riboswitch_thermometer
 ----------------------
 
-``riboswitch_thermometer`` can search ribosome binding sites between 
+``riboswitch_thermometer`` can search ribosome binding sites (Shine-Dalgarno sequence) between 
 TSSs（the starting point of transcript was assigned if no TSS was detected) 
 and its downstream CDSs. Then using `Infernal <http://infernal.janelia.org/>`_ to scan 
 riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
@@ -3362,18 +3366,20 @@ Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
                             of potential riboswitches or RNA thermometers. Default
                             is 10.
       --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                            The number of nucleotides of ribosome binding site can
-                            be different with AGGAGG. Default is 2.
+                            The number of nucleotides of Shine-Dalgarno sequence
+                            allow to be different with AGGAGG. Default is 2.
       --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
                             The types of start codon. If multiple types need to be
                             assigned, please use space to separate them. Default
                             is ATG.
       --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
                             The maximum distance (nucleotides) between ribosome
-                            binding site and start codon. Default is 14.
+                            binding site (Shine-Dalgarno sequence) and start
+                            codon. Default is 14.
       --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
                             The minimum distance (nucleotides) between ribosome
-                            binding site and start codon. Default is 5.
+                            binding site (Shine-Dalgarno sequence) and start
+                            codon. Default is 5.
 
 - **Output files**
 

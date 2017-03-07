@@ -775,7 +775,7 @@ In order to get information of sORFs, we can use subcommand ``sorf``.
         -pj ANNOgesic
 
 For generating best candidates, some filters can be assigned 
-(ex: with ribosome binding site, with TSS, without overlap with sRNA, etc.).
+(ex: with ribosome binding site (Shine-Dalgarno sequence), with TSS, without overlap with sRNA, etc.).
 After running ``sorf``, gff files, statistic files and tables of the sORF will be generated. ``all_candidates`` 
 stores the gff files and tables without filtering; ``best`` stores the gff_files and tables with filtering.
 

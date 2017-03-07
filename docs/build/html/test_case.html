@@ -77,9 +77,9 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">ANNOgesic - Transcriptome annotation pipeline</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-content">Table of content</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="prerequired.html">Required tools or databases</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="prerequired.html#tools">Tools</a></li>
-<li class="toctree-l4"><a class="reference internal" href="prerequired.html#databases">Databases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="required.html#databases">Databases</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -161,9 +161,9 @@
 <li class="toctree-l2"><a class="reference internal" href="index.html#contact">Contact</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="prerequired.html">Required tools or databases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prerequired.html#tools">Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prerequired.html#databases">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="required.html#databases">Databases</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -284,7 +284,7 @@ For viewing GFF3 file, you can use a genome browser, for example <a class="refer
 <p>Before we start, please check <a class="reference internal" href="subcommands.html#the-format-of-filename"><span class="std std-ref">The format of filename</span></a> and
 <a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in
 the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>. All the details are also in <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>.
-Moreover, all the requirements are listed in the section <a class="reference internal" href="prerequired.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+Moreover, all the requirements are listed in the section <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
 For command lines which we will present later, please check the
 <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a> in our Git repository.</p>
 <p>If the subcommand integrates third-party software, ex: TSSpredator,
@@ -926,7 +926,7 @@ In order to get information of sORFs, we can use subcommand <code class="docutil
 </pre></div>
 </div>
 <p>For generating best candidates, some filters can be assigned
-(ex: with ribosome binding site, with TSS, without overlap with sRNA, etc.).
+(ex: with ribosome binding site (Shine-Dalgarno sequence), with TSS, without overlap with sRNA, etc.).
 After running <code class="docutils literal"><span class="pre">sorf</span></code>, gff files, statistic files and tables of the sORF will be generated. <code class="docutils literal"><span class="pre">all_candidates</span></code>
 stores the gff files and tables without filtering; <code class="docutils literal"><span class="pre">best</span></code> stores the gff_files and tables with filtering.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sORF/gffs/all_candidates/
@@ -1019,7 +1019,7 @@ $ rm ANNOgesic/input/reads/SRR515257.fasta
     -pj ANNOgesic
 </pre></div>
 </div>
-<p>If you can&#8217;t find testrealign.x, please refer to <a class="reference internal" href="prerequired.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+<p>If you can&#8217;t find testrealign.x, please refer to <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
 Several output folders will be generated.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/circRNA/
 circRNA_tables  gffs  segemehl_align  segemehl_splice statistics

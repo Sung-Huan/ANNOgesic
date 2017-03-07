@@ -1278,19 +1278,20 @@ def main():
     sORF_add.add_argument(
         "--min_rbs_distance", "-mr", default=3, type=int,
         help="The minimum distance (nucleotides) between the ribosome binding "
-        "site and start codon. Default is 3.")
+        "site (Shine-Dalgarno sequence) and start codon. Default is 3.")
     sORF_add.add_argument(
         "--max_rbs_distance", "-Mr", default=15, type=int,
         help="The maximum distance (nucleotides) between the ribosome binding "
-        "site and start codon. Default is 15.")
+        "site (Shine-Dalgarno sequence) and start codon. Default is 15.")
     sORF_add.add_argument(
         "--rbs_not_after_tss", "-at", default=False, action="store_true",
-        help="For generating best results, if the ribosome binding site of "
+        help="For generating best results, if the ribosome binding site "
+        "(Shine-Dalgarno sequence) of "
         "sORF is not associated with TSS, this function will include this "
         "candidate as well. Default is False.")
     sORF_add.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
-        help="The number of nucleotides of ribosome binding site can be "
+        help="The number of nucleotides of Shine-Dalgarno sequence allow be "
         "different with AGGAGG. Default is 2.")
     sORF_add.add_argument(
         "--print_all_combination", "-pa", default=False, action="store_true",
@@ -1923,8 +1924,8 @@ def main():
         "potential riboswitches or RNA thermometers. Default is 10.")
     ribos_add.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
-        help="The number of nucleotides of ribosome binding site can be "
-        "different with AGGAGG. Default is 2.")
+        help="The number of nucleotides of Shine-Dalgarno sequence "
+        "allow to be different with AGGAGG. Default is 2.")
     ribos_add.add_argument(
         "--start_codon", "-ac", default=["ATG"], nargs='+',
         help="The types of start codon. If multiple types need to be "
@@ -1932,11 +1933,11 @@ def main():
     ribos_add.add_argument(
         "--max_dist_rbs", "-Mr", default=14, type=int,
         help="The maximum distance (nucleotides) between ribosome binding "
-        "site and start codon. Default is 14.")
+        "site (Shine-Dalgarno sequence) and start codon. Default is 14.")
     ribos_add.add_argument(
         "--min_dist_rbs", "-mr", default=5, type=int,
         help="The minimum distance (nucleotides) between ribosome binding "
-        "site and start codon. Default is 5.")
+        "site (Shine-Dalgarno sequence) and start codon. Default is 5.")
     ribos_parser.set_defaults(func=Ribos)
     # Parameters of CRISPR finder
     crispr_parser = subparsers.add_parser(

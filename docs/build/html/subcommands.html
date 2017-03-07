@@ -77,9 +77,9 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">ANNOgesic - Transcriptome annotation pipeline</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-content">Table of content</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="prerequired.html">Required tools or databases</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="prerequired.html#tools">Tools</a></li>
-<li class="toctree-l4"><a class="reference internal" href="prerequired.html#databases">Databases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="required.html#databases">Databases</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -161,9 +161,9 @@
 <li class="toctree-l2"><a class="reference internal" href="index.html#contact">Contact</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="prerequired.html">Required tools or databases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prerequired.html#tools">Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prerequired.html#databases">Databases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="required.html#databases">Databases</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -2210,7 +2210,8 @@ Based on this information, we can know the details of the specific sRNA. The tag
 </div>
 <div class="section" id="sorf">
 <span id="id28"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">sorf</span></code> can detect sORF based on searching ribosome binding sites, start codons and stop codons within the non-annotated transcripts.
+<p><code class="docutils literal"><span class="pre">sorf</span></code> can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence),
+start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand.
 If multiple sORFs are overlapped with each other, this subcommand will merge them to be one sORF. Therefore, one region may contain more than one sORF.
 Position of the start codon which listed in output table is assigned by the first nucleotide. The position of stop codon is assigned by the last nucleotide.
@@ -2370,17 +2371,20 @@ additional arguments:
                         separate them. Default is TTA TAG TGA.
   --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
                         The minimum distance (nucleotides) between the
-                        ribosome binding site and start codon. Default is 3.
+                        ribosome binding site (Shine-Dalgarno sequence) and
+                        start codon. Default is 3.
   --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
                         The maximum distance (nucleotides) between the
-                        ribosome binding site and start codon. Default is 15.
+                        ribosome binding site (Shine-Dalgarno sequence) and
+                        start codon. Default is 15.
   --rbs_not_after_tss, -at
                         For generating best results, if the ribosome binding
-                        site of sORF is not associated with TSS, this function
-                        will include this candidate as well. Default is False.
+                        site (Shine-Dalgarno sequence) of sORF is not
+                        associated with TSS, this function will include this
+                        candidate as well. Default is False.
   --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                        The number of nucleotides of ribosome binding site can
-                        be different with AGGAGG. Default is 2.
+                        The number of nucleotides of Shine-Dalgarno sequence
+                        allow be different with AGGAGG. Default is 2.
   --print_all_combination, -pa
                         Non-annotated transcript may has many start codons and
                         stop codons. This function can print all combinations
@@ -2414,7 +2418,7 @@ additional arguments:
 <p><strong>strand:</strong> Strand of this sORF.</p>
 <p><strong>type:</strong> sORF type.</p>
 <p><strong>TSS:</strong> TSSs which are associated with this sORF.</p>
-<p><strong>RBS:</strong> Ribosome binding site of this sORF.</p>
+<p><strong>RBS:</strong> Ribosome binding site (Shine-Dalgarno sequence) of this sORF.</p>
 <p><strong>all_start_points:</strong> Positions of all start codons which can be found in the region of this sORF.</p>
 <p><strong>all_stop_points:</strong> Positions of all stop codons which can be found in the region of this sORF.</p>
 <p><strong>sRNA_conflict:</strong> If this sORF overlaps sRNA, the overlapped sRNA will be showed here.</p>
@@ -2441,7 +2445,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 <p><strong>with_TSS:</strong> Which TSSs are associated with this sORFs.</p>
 <p><strong>sORF_type:</strong> Type of the sORF (5&#8217;UTR, 3&#8217;UTR, interCDS, intergenic, antisense or within CDS).</p>
 <p><strong>sRNA:</strong> Which sRNAs are overlap with this sORFs.</p>
-<p><strong>rbs:</strong> Ribosome binding sites of this sORFs.</p>
+<p><strong>rbs:</strong> Ribosome binding sites (Shine-Dalgarno sequences) of this sORFs.</p>
 <p><strong>frame_shift:</strong> The number of frame shifts in the regions.</p>
 </div>
 <div class="section" id="promoter">
@@ -2672,7 +2676,7 @@ with <code class="docutils literal"><span class="pre">-S</span></code> or <code 
 <li><strong>Required tools</strong></li>
 </ul>
 <p><a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">segemehl.x and testrealign.x in Segemehl</a>.
-For generating testrealign.x, please refer to <a class="reference internal" href="prerequired.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.</p>
+For generating testrealign.x, please refer to <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.</p>
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
@@ -3230,7 +3234,7 @@ The meaning of each column is as following:</p>
 </div>
 <div class="section" id="riboswitch-thermometer">
 <span id="id44"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> can search ribosome binding sites between
+<p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> can search ribosome binding sites (Shine-Dalgarno sequence) between
 TSSs（the starting point of transcript was assigned if no TSS was detected)
 and its downstream CDSs. Then using <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
 riboswitch or RNA thermometer in <a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
@@ -3326,18 +3330,20 @@ Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).</p>
                         <span class="n">of</span> <span class="n">potential</span> <span class="n">riboswitches</span> <span class="ow">or</span> <span class="n">RNA</span> <span class="n">thermometers</span><span class="o">.</span> <span class="n">Default</span>
                         <span class="ow">is</span> <span class="mf">10.</span>
   <span class="o">--</span><span class="n">fuzzy_rbs</span> <span class="n">FUZZY_RBS</span><span class="p">,</span> <span class="o">-</span><span class="n">zr</span> <span class="n">FUZZY_RBS</span>
-                        <span class="n">The</span> <span class="n">number</span> <span class="n">of</span> <span class="n">nucleotides</span> <span class="n">of</span> <span class="n">ribosome</span> <span class="n">binding</span> <span class="n">site</span> <span class="n">can</span>
-                        <span class="n">be</span> <span class="n">different</span> <span class="k">with</span> <span class="n">AGGAGG</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.</span>
+                        <span class="n">The</span> <span class="n">number</span> <span class="n">of</span> <span class="n">nucleotides</span> <span class="n">of</span> <span class="n">Shine</span><span class="o">-</span><span class="n">Dalgarno</span> <span class="n">sequence</span>
+                        <span class="n">allow</span> <span class="n">to</span> <span class="n">be</span> <span class="n">different</span> <span class="k">with</span> <span class="n">AGGAGG</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">2.</span>
   <span class="o">--</span><span class="n">start_codon</span> <span class="n">START_CODON</span> <span class="p">[</span><span class="n">START_CODON</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">ac</span> <span class="n">START_CODON</span> <span class="p">[</span><span class="n">START_CODON</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">The</span> <span class="n">types</span> <span class="n">of</span> <span class="n">start</span> <span class="n">codon</span><span class="o">.</span> <span class="n">If</span> <span class="n">multiple</span> <span class="n">types</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span>
                         <span class="n">assigned</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span> <span class="n">space</span> <span class="n">to</span> <span class="n">separate</span> <span class="n">them</span><span class="o">.</span> <span class="n">Default</span>
                         <span class="ow">is</span> <span class="n">ATG</span><span class="o">.</span>
   <span class="o">--</span><span class="n">max_dist_rbs</span> <span class="n">MAX_DIST_RBS</span><span class="p">,</span> <span class="o">-</span><span class="n">Mr</span> <span class="n">MAX_DIST_RBS</span>
                         <span class="n">The</span> <span class="n">maximum</span> <span class="n">distance</span> <span class="p">(</span><span class="n">nucleotides</span><span class="p">)</span> <span class="n">between</span> <span class="n">ribosome</span>
-                        <span class="n">binding</span> <span class="n">site</span> <span class="ow">and</span> <span class="n">start</span> <span class="n">codon</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">14.</span>
+                        <span class="n">binding</span> <span class="n">site</span> <span class="p">(</span><span class="n">Shine</span><span class="o">-</span><span class="n">Dalgarno</span> <span class="n">sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="n">start</span>
+                        <span class="n">codon</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">14.</span>
   <span class="o">--</span><span class="n">min_dist_rbs</span> <span class="n">MIN_DIST_RBS</span><span class="p">,</span> <span class="o">-</span><span class="n">mr</span> <span class="n">MIN_DIST_RBS</span>
                         <span class="n">The</span> <span class="n">minimum</span> <span class="n">distance</span> <span class="p">(</span><span class="n">nucleotides</span><span class="p">)</span> <span class="n">between</span> <span class="n">ribosome</span>
-                        <span class="n">binding</span> <span class="n">site</span> <span class="ow">and</span> <span class="n">start</span> <span class="n">codon</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">5.</span>
+                        <span class="n">binding</span> <span class="n">site</span> <span class="p">(</span><span class="n">Shine</span><span class="o">-</span><span class="n">Dalgarno</span> <span class="n">sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="n">start</span>
+                        <span class="n">codon</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">5.</span>
 </pre></div>
 </div>
 <ul class="simple">
