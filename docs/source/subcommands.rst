@@ -289,7 +289,7 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
       --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                             Please assign the filename and the strain name which
                             should be included in output files. For example:
-                            $FILE_PATH1:strain1_and_strain2 $FILE_PATH2:strain3.
+                            $FILE_PATH1:strain1,strain2 $FILE_PATH2:strain3.
                             FILE_PATH1 is a output fasta file which include the
                             information of strain1 and strain2 (import multi-
                             strains to one file should be separated by ",".) And
