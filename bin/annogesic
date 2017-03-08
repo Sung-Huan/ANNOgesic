@@ -91,6 +91,7 @@ def main():
     get_target_fasta_basic.add_argument(
         "--output_format", "-o", default=None, required=True, nargs='+',
         help="Please assign the filename of output file and the strain names "
+        "(listed in target_id of mutation table) "
         "which should be included in the specific output file. For example: "
         "$FILE_PATH1:strain1,strain2 $FILE_PATH2:strain3. "
         "FILE_PATH1 is a output fasta file which includes the information of "
