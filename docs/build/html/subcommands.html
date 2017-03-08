@@ -508,8 +508,10 @@ closed strain of the real query strain. For the format of the table, please chec
 <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
 The titles of columns is presented on the top and they need to start with <code class="docutils literal"><span class="pre">#</span></code>.
 Each column is separated by <code class="docutils literal"><span class="pre">tab</span></code>. If the mutation type is deletion or insertion,
-the user can type <code class="docutils literal"><span class="pre">-</span></code> to represent them. The information of <code class="docutils literal"><span class="pre">target_id</span></code>, <code class="docutils literal"><span class="pre">reference_id</span></code>,
-<code class="docutils literal"><span class="pre">reference_nt</span></code>, <code class="docutils literal"><span class="pre">position</span></code>, <code class="docutils literal"><span class="pre">target_nt</span></code> is required. The other columns can be blank.
+the user can type <code class="docutils literal"><span class="pre">-</span></code> to represent them. The information of <code class="docutils literal"><span class="pre">target_id</span></code>
+(strain name of the query strain), <code class="docutils literal"><span class="pre">reference_id</span></code>, (strain name of the closed strain of the query strain)
+<code class="docutils literal"><span class="pre">reference_nt</span></code> (the nucleotide of the closed strain), <code class="docutils literal"><span class="pre">position</span></code>, <code class="docutils literal"><span class="pre">target_nt</span></code>
+(the nucleotide of the query strain) is required. The other columns can be blank.
 Please use <code class="docutils literal"><span class="pre">tab</span></code> to separate all columns including blank ones.</p>
 <p>If no mutation information is provided, <code class="docutils literal"><span class="pre">snp</span></code> can be used for detecting mutations.
 (one module of <code class="docutils literal"><span class="pre">ANNOgesic</span></code>). Please check the section of <a class="reference internal" href="#snp"><span class="std std-ref">snp</span></a>.</p>

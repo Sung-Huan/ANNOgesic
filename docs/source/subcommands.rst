@@ -250,8 +250,10 @@ closed strain of the real query strain. For the format of the table, please chec
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 The titles of columns is presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
-the user can type ``-`` to represent them. The information of ``target_id``, ``reference_id``,
-``reference_nt``, ``position``, ``target_nt`` is required. The other columns can be blank. 
+the user can type ``-`` to represent them. The information of ``target_id`` 
+(strain name of the query strain), ``reference_id``, (strain name of the closed strain of the query strain) 
+``reference_nt`` (the nucleotide of the closed strain), ``position``, ``target_nt`` 
+(the nucleotide of the query strain) is required. The other columns can be blank. 
 Please use ``tab`` to separate all columns including blank ones.
 
 If no mutation information is provided, ``snp`` can be used for detecting mutations. 
