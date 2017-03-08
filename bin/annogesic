@@ -90,10 +90,10 @@ def main():
         "the query one.")
     get_target_fasta_basic.add_argument(
         "--output_format", "-o", default=None, required=True, nargs='+',
-        help="Please assign the filename and the strain name which should be "
-        "included in output files. For example: "
+        help="Please assign the filename of output file and the strain names "
+        "which should be included in the specific output file. For example: "
         "$FILE_PATH1:strain1,strain2 $FILE_PATH2:strain3. "
-        "FILE_PATH1 is a output fasta file which include the information of "
+        "FILE_PATH1 is a output fasta file which includes the information of "
         "strain1 and strain2 (import multi-strains to one file should be "
         "separated by \",\".) And FILE_PATH2 is for strain3. "
         "The multiple output files are splitted by space.")
