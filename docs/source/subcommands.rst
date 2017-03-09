@@ -121,11 +121,11 @@ The folders are following:
 
 	**riboswitch_ID:** For storing the file which contains all the Rfam IDs of riboswitch.
 	For format details, please check the section of 
-	:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
+	:ref:`riboswitch_thermometer`.
 
 	**RNA_thermometer_ID:** For storing the file which contains all the Rfam IDs of RNA thermometer.
 	For format details, please check the section of
-	:ref:`Riboswitch and RNA thermometer dataset of Rfam`.
+	:ref:`riboswitch_thermometer`.
 
 	**wigs:** For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in  
 	``fragment`` (fragmented/conventional libraries) or ``tex_notex`` (TEX +/- treated libraries).
