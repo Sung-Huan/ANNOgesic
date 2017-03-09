@@ -87,7 +87,9 @@ def main():
         "--mutation_table", "-m", required=True,
         help="Path of the mutation table which stores the mutation "
         "information between the query strain and closed strain of "
-        "the query one.")
+        "the query one. For example, please check "
+        "https://github.com/Sung-Huan/ANNOgesic/"
+        "blob/master/tutorial_data/mutation.csv")
     get_target_fasta_basic.add_argument(
         "--output_format", "-o", default=None, required=True, nargs='+',
         help="Please assign the filename of output file and the strain names "
@@ -870,7 +872,11 @@ def main():
         "--srna_database_path", "-sd", default=None,
         help="If sRNA database can be provided, please assign here. "
         "If \"blast_srna\" is included in --filter_info, "
-        "please assign the path of sRNA database.")
+        "please assign the path of sRNA database with proper header. "
+        "Format of the header should be $ID|$STRAIN|$NAME "
+        "For example of the proper header, please check "
+        "https://github.com/Sung-Huan/ANNOgesic/blob/"
+        "master/database/sRNA_database_BSRD.fa")
     sRNA_basic.add_argument(
         "--nr_database_path", "-nd", default=None,
         help="If nr database can be provided, please assign here. "
@@ -1877,13 +1883,18 @@ def main():
         "--riboswitch_id", "-ri",
         help="If --program is \"riboswitch\" or \"both\", please assign the "
         "file path of riboswitch ID in Rfam. The file should include the "
-        "Accession, ID and Description of riboswitch in Rfam.")
+        "Rfam ID, riboswitch name, and Description of the riboswitch. "
+        "For example, please check "
+        "https://github.com/Sung-Huan/ANNOgesic/blob/master/"
+        "database/Rfam_riboswitch_ID.csv")
     ribos_basic.add_argument(
         "--rna_thermometer_id", "-ti",
         help="If --program is \"thermometer\" or \"both\", please assign "
         "the file path of RNA thermometer ID of Rfam. The file should "
-        "include the Accession, ID and Description of RNA thermometer "
-        "in Rfam.")
+        "include the Rfam ID, RNA thermometer name and Description of "
+        "the RNA thermometer. For example, please check "
+        "https://github.com/Sung-Huan/ANNOgesic/blob/master/"
+        "database/Rfam_RNA_thermometer_ID.csv")
     ribos_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the annotation gff files.")

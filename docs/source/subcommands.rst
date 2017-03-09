@@ -83,44 +83,6 @@ or for fragmented libraries (RNA-Seq generated after transcript fragmentation):
 If only conventional RNA-seq data without fragmentation or TEX treated can be provided, 
 it can still be assigned to fragmented libraries. However, it may influence the results.
 
-.. _The format of sRNA database:
-
-The format of sRNA database
----------------------------
-If a sRNA database is provided for running ``srna``, please follow the format otherwise the output will become
-nonsense. The format is 
-
-::
-
-  $ID|$STRAIN|$SRNANAME
-
-for example:
-
-::
-
-  srn_4840|S._aureus_NCTC8325|RsaOV
-
-You can download sRNA database `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our
-`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
-
-.. _Riboswitch and RNA thermometer dataset of Rfam:
-
-Riboswitch and RNA thermometer dataset of Rfam
-----------------------------------------------
-For riboswitch and RNA thermometer detection, the information of riboswitch and RNA thermometer in Rfam are required
-The input format is following.
-
-======== ==== ==========================
-#Rfam_ID Name Description
--------- ---- --------------------------
-RF00162  SAM  SAM riboswitch box leader
-RF00059  TPP  TPP riboswitch THI element
-======== ==== ==========================
-
-All columns are separated by ``tab``. You can download the 
-`riboswitch and RNA thermometer data <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ 
-from our Git repository.
-
 .. _create:
 
 create
@@ -287,7 +249,9 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
       --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                             Path of the mutation table which stores the mutation
                             information between the query strain and closed strain
-                            of the query one.
+                            of the query one. For example, please check
+                            https://github.com/Sung-
+                            Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
       --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                             Please assign the filename of output file and the
                             strain names (listed in target_id of mutation table)
@@ -297,7 +261,7 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
                             which includes the information of strain1 and strain2
                             (import multi-strains to one file should be separated
                             by ",".) And FILE_PATH2 is for strain3. The multiple
-                            output files are splitted by space.
+                            output files are splitted by space
 
 - **Output files**
 
@@ -1539,10 +1503,14 @@ this candidates will be included to the result without considering other filters
 	**Required files:**
 
 		**sRNA database:** Such as `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_. 
-		The format of header should be ``$ID|$STRAIN|$SRNANAME``. The ID is saci403.1; 
-		the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar.
-		If the format of the header is not correct, an error will occur when the user runs this subcommand with 
-		``--sRNA_blast_stat, -sb``.
+		Format of the header should be ``$ID|$STRAIN|$SRNANAME``. For example, 
+		``srn_4840|S._aureus_NCTC8325|RsaOV`` The ID is srn_4840, 
+		the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
+		If the format of the header is not correct, an error or non-sense result will occur when 
+		the user runs this subcommand with ``--sRNA_blast_stat, -sb``.
+		If you want to use BSRD with proper header, you can download it from our
+		`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
+
 
 **Searching sRNA candidate in nr database:** If homologs of this sRNA candidates can be found in nr database and the hits numbers are more than ``--cutoff_nr_hit``,
 this candidates will be removed.
@@ -1711,7 +1679,11 @@ this candidates will be removed.
       --srna_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
                             If sRNA database can be provided, please assign here.
                             If "blast_srna" is included in --filter_info, please
-                            assign the path of sRNA database.
+                            assign the path of sRNA database with proper header.
+                            Format of the header should be $ID|$STRAIN|$NAME For
+                            example of the proper header, please check
+                            https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
+                            abase/sRNA_database_BSRD.fa
       --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
                             If nr database can be provided, please assign here. If
                             "blast_nr" is included in --filter_info, please assign
@@ -3287,12 +3259,20 @@ riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
 
 **Fasta files of the genome sequences**
 
-**Rfam database and Rfam ID files of the riboswitch or RNA thermometer:** 
+**Rfam ID files of the riboswitch or RNA thermometer:** 
 The file should contain Rfam ID, 
-Name and Description of riboswitchs or RNA thermometer (refer to 
-:ref:`Riboswitch and RNA thermometer dataset of Rfam`). You can download 
-`the file <https://github.com/Sung-Huan/ANNOgesic>`_ from our 
-Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).
+name and description of riboswitchs or RNA thermometer like following. 
+
+======== ==== ==========================
+#Rfam_ID Name Description
+-------- ---- --------------------------
+RF00162  SAM  SAM riboswitch box leader
+RF00059  TPP  TPP riboswitch THI element
+======== ==== ==========================
+
+All columns are separated by ``tab``. You can also download the
+`riboswitch and RNA thermometer data <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_
+from our Git repository.
 
 - **Arguments**
 

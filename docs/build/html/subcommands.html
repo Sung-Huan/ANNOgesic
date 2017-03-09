@@ -92,8 +92,6 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ANNOgesic&#8217;s subcommands</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam">Riboswitch and RNA thermometer dataset of Rfam</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#create">create</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
@@ -176,8 +174,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ANNOgesic&#8217;s subcommands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-format-of-srna-database">The format of sRNA database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam">Riboswitch and RNA thermometer dataset of Rfam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create">create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-input-files">get_input_files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-target-fasta">get_target_fasta</a></li>
@@ -361,51 +357,8 @@ for TEX +/- treated libraries:</p>
 <p>If only conventional RNA-seq data without fragmentation or TEX treated can be provided,
 it can still be assigned to fragmented libraries. However, it may influence the results.</p>
 </div>
-<div class="section" id="the-format-of-srna-database">
-<span id="id4"></span><h2>The format of sRNA database<a class="headerlink" href="#the-format-of-srna-database" title="Permalink to this headline">¶</a></h2>
-<p>If a sRNA database is provided for running <code class="docutils literal"><span class="pre">srna</span></code>, please follow the format otherwise the output will become
-nonsense. The format is</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ID|$STRAIN|$SRNANAME
-</pre></div>
-</div>
-<p>for example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">srn_4840</span><span class="o">|</span><span class="n">S</span><span class="o">.</span><span class="n">_aureus_NCTC8325</span><span class="o">|</span><span class="n">RsaOV</span>
-</pre></div>
-</div>
-<p>You can download sRNA database <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Git repository</a> easily.</p>
-</div>
-<div class="section" id="riboswitch-and-rna-thermometer-dataset-of-rfam">
-<span id="id5"></span><h2>Riboswitch and RNA thermometer dataset of Rfam<a class="headerlink" href="#riboswitch-and-rna-thermometer-dataset-of-rfam" title="Permalink to this headline">¶</a></h2>
-<p>For riboswitch and RNA thermometer detection, the information of riboswitch and RNA thermometer in Rfam are required
-The input format is following.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="11%" />
-<col width="68%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>#Rfam_ID</td>
-<td>Name</td>
-<td>Description</td>
-</tr>
-<tr class="row-even"><td>RF00162</td>
-<td>SAM</td>
-<td>SAM riboswitch box leader</td>
-</tr>
-<tr class="row-odd"><td>RF00059</td>
-<td>TPP</td>
-<td>TPP riboswitch THI element</td>
-</tr>
-</tbody>
-</table>
-<p>All columns are separated by <code class="docutils literal"><span class="pre">tab</span></code>. You can download the
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">riboswitch and RNA thermometer data</a>
-from our Git repository.</p>
-</div>
 <div class="section" id="create">
-<span id="id6"></span><h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2>create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">create</span></code> generates the folders for analysis. Once created, please move the required files
 into the corresponding folders.</p>
 <p>The folders are following:</p>
@@ -430,10 +383,10 @@ please put the reads here. <code class="docutils literal"><span class="pre">.bzi
 If they can be downloaded from NCBI, the files can also be obtained via running <code class="docutils literal"><span class="pre">get_input_files</span></code>.</p>
 <p><strong>riboswitch_ID:</strong> For storing the file which contains all the Rfam IDs of riboswitch.
 For format details, please check the section of
-<a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam"><span class="std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span></a>.</p>
+<span class="xref std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span>.</p>
 <p><strong>RNA_thermometer_ID:</strong> For storing the file which contains all the Rfam IDs of RNA thermometer.
 For format details, please check the section of
-<a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam"><span class="std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span></a>.</p>
+<span class="xref std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span>.</p>
 <p><strong>wigs:</strong> For wiggle files. Based on the methods of RNA-Seq, wiggle files can be stored in
 <code class="docutils literal"><span class="pre">fragment</span></code> (fragmented/conventional libraries) or <code class="docutils literal"><span class="pre">tex_notex</span></code> (TEX +/- treated libraries).</p>
 </div></blockquote>
@@ -453,7 +406,7 @@ For format details, please check the section of
 </div>
 </div>
 <div class="section" id="get-input-files">
-<span id="id7"></span><h2>get_input_files<a class="headerlink" href="#get-input-files" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2>get_input_files<a class="headerlink" href="#get-input-files" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">get_input_files</span></code> is the subcommand for downloading required files (fasta, annotation files) from NCBI.
 Therefore, the web address of the reference genome in NCBI needs to be assigned. For example,
 <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1">ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1</a>
@@ -502,7 +455,7 @@ Then, the user can assign the file type for download.</p>
 <p><strong>annotation:</strong> Annotation files.</p>
 </div>
 <div class="section" id="get-target-fasta">
-<span id="id8"></span><h2>get_target_fasta<a class="headerlink" href="#get-target-fasta" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>get_target_fasta<a class="headerlink" href="#get-target-fasta" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">get_target_fasta</span></code> is the subcommand for update fasta files from
 closed strain of the real query strain. For the format of the table, please check
 <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
@@ -541,7 +494,9 @@ basic arguments:
   --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                         Path of the mutation table which stores the mutation
                         information between the query strain and closed strain
-                        of the query one.
+                        of the query one. For example, please check
+                        https://github.com/Sung-
+                        Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
   --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
                         Please assign the filename of output file and the
                         strain names (listed in target_id of mutation table)
@@ -551,7 +506,7 @@ basic arguments:
                         which includes the information of strain1 and strain2
                         (import multi-strains to one file should be separated
                         by &quot;,&quot;.) And FILE_PATH2 is for strain3. The multiple
-                        output files are splitted by space.
+                        output files are splitted by space
 </pre></div>
 </div>
 <ul class="simple">
@@ -560,7 +515,7 @@ basic arguments:
 <p><strong>Fasta files of updated genome</strong>: This files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/fasta</span></code>.</p>
 </div>
 <div class="section" id="annotation-transfer">
-<span id="id9"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
+<span id="id7"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from closed strain
 to the real query strain. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
 is integrated in ANNOgesic. The higher similarity between closed strain and query strain are,
@@ -641,7 +596,7 @@ will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_fo
 <p><strong>Annotation files</strong> (<code class="docutils literal"><span class="pre">.gff</span></code>, <code class="docutils literal"><span class="pre">.ptt</span></code>, <code class="docutils literal"><span class="pre">.rnt</span></code>) will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/annotation</span></code>.</p>
 </div>
 <div class="section" id="snp">
-<span id="id12"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">snp</span></code> can analyze the alignment files and fasta files to detect mutations by running
 <a class="reference external" href="https://github.com/samtools">Samtools</a> and <a class="reference external" href="https://github.com/samtools">Bcftools</a>.
 There are multiple programs which can be applied to detect mutations
@@ -1073,7 +1028,7 @@ Based on this information, we can know the details of the specific TSS. The tags
 </div></blockquote>
 </div>
 <div class="section" id="transcript">
-<span id="id19"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
+<span id="id17"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">transcript</span></code> can detect transcripts based on the coverage. Most of the transcript assembly tools are
 focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data,
 given gene annotations and several parameters that can be set by the user.</p>
@@ -1265,7 +1220,7 @@ Based on this information, we can know the details of the specific transcript. T
 </div></blockquote>
 </div>
 <div class="section" id="terminator">
-<span id="id20"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
+<span id="id18"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">terminator</span></code> will predict the rho-independent terminators. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> combines the results of
 two methods in order to get more reliable candidates. The first method is using <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.
 The other one detects the specific secondary structure between converging pairs
@@ -1516,7 +1471,7 @@ it means this terminator reveal gene expression but no coverage decrease. If &#8
 </div></blockquote>
 </div>
 <div class="section" id="utr">
-<span id="id23"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
+<span id="id21"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">utr</span></code> can compare TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
 to generate proper UTRs. 5&#8217;UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs.
 3&#8217;UTRs are based on detecting the
@@ -1614,7 +1569,7 @@ Based on this information, we can know the details of the specific UTR. The tags
 <p><strong>statiatics:</strong> <code class="docutils literal"><span class="pre">$GFFNAME_$STRAINNAME_$UTRTYPE_length.png</span></code> is the distribution of the UTR length.</p>
 </div>
 <div class="section" id="srna">
-<span id="id24"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
+<span id="id22"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna</span></code> can predict different types of sRNAs. For intergenic and antisense sRNA, it
 is detected via comparison of the transcripts and annotation profile.
 For UTR-derived sRNA, the detection is based on the TSSs and processing sites,
@@ -1698,10 +1653,13 @@ this candidates will be included to the result without considering other filters
 <p><strong>Required files:</strong></p>
 <blockquote>
 <div><strong>sRNA database:</strong> Such as <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>.
-The format of header should be <code class="docutils literal"><span class="pre">$ID|$STRAIN|$SRNANAME</span></code>. The ID is saci403.1;
-the strain of this sRNA is Acinetobacter sp. ADP1 and the name of sRNA is Aar.
-If the format of the header is not correct, an error will occur when the user runs this subcommand with
-<code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.</div></blockquote>
+Format of the header should be <code class="docutils literal"><span class="pre">$ID|$STRAIN|$SRNANAME</span></code>. For example,
+<code class="docutils literal"><span class="pre">srn_4840|S._aureus_NCTC8325|RsaOV</span></code> The ID is srn_4840,
+the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
+If the format of the header is not correct, an error or non-sense result will occur when
+the user runs this subcommand with <code class="docutils literal"><span class="pre">--sRNA_blast_stat,</span> <span class="pre">-sb</span></code>.
+If you want to use BSRD with proper header, you can download it from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Git repository</a> easily.</div></blockquote>
 </div></blockquote>
 <p><strong>Searching sRNA candidate in nr database:</strong> If homologs of this sRNA candidates can be found in nr database and the hits numbers are more than <code class="docutils literal"><span class="pre">--cutoff_nr_hit</span></code>,
 this candidates will be removed.</p>
@@ -1867,7 +1825,11 @@ basic arguments:
   --srna_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
                         If sRNA database can be provided, please assign here.
                         If &quot;blast_srna&quot; is included in --filter_info, please
-                        assign the path of sRNA database.
+                        assign the path of sRNA database with proper header.
+                        Format of the header should be $ID|$STRAIN|$NAME For
+                        example of the proper header, please check
+                        https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
+                        abase/sRNA_database_BSRD.fa
   --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
                         If nr database can be provided, please assign here. If
                         &quot;blast_nr&quot; is included in --filter_info, please assign
@@ -2212,7 +2174,7 @@ Based on this information, we can know the details of the specific sRNA. The tag
 </div></blockquote>
 </div>
 <div class="section" id="sorf">
-<span id="id28"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
+<span id="id25"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">sorf</span></code> can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence),
 start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand.
@@ -2452,7 +2414,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 <p><strong>frame_shift:</strong> The number of frame shifts in the regions.</p>
 </div>
 <div class="section" id="promoter">
-<span id="id29"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
+<span id="id26"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSSs to discover the promoter motifs.
 We integrated <a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a> (for ungapped motifs) and
 <a class="reference external" href="http://meme-suite.org/tools/glam2">GLAM2</a> (for gapped motifs) to compute the promoters.
@@ -2580,7 +2542,7 @@ Moreover, it can used as an input for sRNA detection (<code class="docutils lite
 TSS gff files with TSS types will be stored here.</p>
 </div>
 <div class="section" id="operon">
-<span id="id32"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
+<span id="id29"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">operon</span></code> will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and
 sub-operons.</p>
 <ul class="simple">
@@ -2669,7 +2631,7 @@ transcripts, 5&#8217;UTRs, and 3&#8217;UTRs and assign parent transcript to all 
 <p><strong>statistics:</strong> Stores statistics file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.</p>
 </div>
 <div class="section" id="circrna">
-<span id="id33"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
+<span id="id30"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNAs via <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection.
 The user can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
@@ -2787,7 +2749,7 @@ Based on this information, we can know the details of the specific circular RNA.
 </div></blockquote>
 </div>
 <div class="section" id="go-term">
-<span id="id37"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
+<span id="id34"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">go_term</span></code> can retrieve the information of Gene Ontology from Uniprot.
 Some analysis of Go terms can be done as well.</p>
 <ul class="simple">
@@ -2857,7 +2819,7 @@ biological process, cellular component, molecular_function and three roots of GO
 </div></blockquote>
 </div>
 <div class="section" id="srna-target">
-<span id="id38"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
+<span id="id35"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> can search potential targets of the sRNA via different programs
 (RNAup or RNAplex or both). We recommend running with both
 programs. <code class="docutils literal"><span class="pre">srna_target</span></code> can also compare the both results and provide the best ones.</p>
@@ -3034,7 +2996,7 @@ The meaning of each column is similar to the table of RNAplex.</p>
 <p><strong>target_seqs:</strong> Stores fasta sequences of the potential targets.</p>
 </div>
 <div class="section" id="ppi-network">
-<span id="id40"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
+<span id="id37"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> can retrieve the data from <a class="reference external" href="http://string-db.org/">STRING</a>.
 Then using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> to search
 the supported literature of the protein-protein interaction networks.</p>
@@ -3146,7 +3108,7 @@ means that the supported literature are very weak. Dot line means that no suppor
 Color is the best score of the supported literature of the interactions.</p>
 </div>
 <div class="section" id="subcellular-localization">
-<span id="id43"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
+<span id="id40"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">subcellular</span> <span class="pre">localization</span></code> can predict the subcellular localization of CDSs.
 Some statistics and visualization files are provided as well.</p>
 <ul class="simple">
@@ -3236,7 +3198,7 @@ The meaning of each column is as following:</p>
 </div></blockquote>
 </div>
 <div class="section" id="riboswitch-thermometer">
-<span id="id44"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
+<span id="id41"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> can search ribosome binding sites (Shine-Dalgarno sequence) between
 TSSs（the starting point of transcript was assigned if no TSS was detected)
 and its downstream CDSs. Then using <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
@@ -3253,12 +3215,33 @@ riboswitch or RNA thermometer in <a class="reference external" href="http://rfam
 <p><strong>Gff files of the transcripts</strong></p>
 <p><strong>Gff files of the TSSs</strong></p>
 <p><strong>Fasta files of the genome sequences</strong></p>
-<p><strong>Rfam database and Rfam ID files of the riboswitch or RNA thermometer:</strong>
+<p><strong>Rfam ID files of the riboswitch or RNA thermometer:</strong>
 The file should contain Rfam ID,
-Name and Description of riboswitchs or RNA thermometer (refer to
-<a class="reference internal" href="#riboswitch-and-rna-thermometer-dataset-of-rfam"><span class="std std-ref">Riboswitch and RNA thermometer dataset of Rfam</span></a>). You can download
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic">the file</a> from our
-Git repository (Rfam_riboswitch_ID.csv or Rfam_RNA_thermometer_ID.csv).</p>
+name and description of riboswitchs or RNA thermometer like following.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="11%" />
+<col width="68%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>#Rfam_ID</td>
+<td>Name</td>
+<td>Description</td>
+</tr>
+<tr class="row-even"><td>RF00162</td>
+<td>SAM</td>
+<td>SAM riboswitch box leader</td>
+</tr>
+<tr class="row-odd"><td>RF00059</td>
+<td>TPP</td>
+<td>TPP riboswitch THI element</td>
+</tr>
+</tbody>
+</table>
+<p>All columns are separated by <code class="docutils literal"><span class="pre">tab</span></code>. You can also download the
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">riboswitch and RNA thermometer data</a>
+from our Git repository.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
@@ -3381,7 +3364,7 @@ The tags are as following:</p>
 <p><strong>statistics:</strong> Stores the file which contains the riboswichs / RNA_thermometer with corresponding amount.</p>
 </div>
 <div class="section" id="crispr">
-<span id="id48"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
+<span id="id45"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">crispr</span></code> integrates CRISPR Recognition Tool (<a class="reference external" href="http://www.room220.com/crt/">CRT</a>) which can detect the repeat
 units and spacer of CRISPR. Moreover, the false positives can be removed by comparing candidates with genome annotation.</p>
 <ul class="simple">
@@ -3460,7 +3443,7 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 <p><strong>statistics:</strong> Stores statistic files.</p>
 </div>
 <div class="section" id="optimize-tss-ps">
-<span id="id51"></span><h2>optimize_tss_ps<a class="headerlink" href="#optimize-tss-ps" title="Permalink to this headline">¶</a></h2>
+<span id="id48"></span><h2>optimize_tss_ps<a class="headerlink" href="#optimize-tss-ps" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> can adapt the parameter set of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
@@ -3639,7 +3622,7 @@ columns are missing rate.</p>
 <p><strong>best_$STRAIN.csv:</strong> Stores the best parameter set. The meanings of all columns are the same as <code class="docutils literal"><span class="pre">stat_$STRAIN.csv</span></code>.</p>
 </div>
 <div class="section" id="screenshot">
-<span id="id55"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
+<span id="id52"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">screenshot</span></code> can generate batch files for producing screenshot of <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>.
 Generating screenshots can reduce the time for checking the results in genome browser.
 When the batch files is produced, the user just needs to open <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>, then presses <code class="docutils literal"><span class="pre">tools</span></code>
@@ -3729,7 +3712,7 @@ means the strain is NC_007795, the feature&#8217;s start point is 1051529 and en
 1051696.</p>
 </div>
 <div class="section" id="color-png">
-<span id="id58"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
+<span id="id55"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">color_png</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If numerous samples are included in one figure,
 Tracks will be difficult to checked. <code class="docutils literal"><span class="pre">color_png</span></code> can color the tracks based on TEX +/- libraries
 for improving the checking process.</p>
