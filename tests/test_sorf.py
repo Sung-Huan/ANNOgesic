@@ -95,10 +95,14 @@ class TestsORFDetection(unittest.TestCase):
         os.mkdir(os.path.join(table_path, "all_candidates"))
         os.mkdir(os.path.join(gff_path, "best"))
         os.mkdir(os.path.join(table_path, "best"))
-        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.gff"), "test")
-        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.csv"), "test")
-        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_best.gff"), "test")
-        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_best.csv"), "test")
+        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.gff"),
+                 "test")
+        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.csv"),
+                 "test")
+        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_best.gff"),
+                 "test")
+        gen_file(os.path.join(gff_path, "all_candidates/test_sORF_best.csv"),
+                 "test")
         so.sorf_detection = self.mock.mock_sorf_detection
         args = self.mock_args.mock()
         args.libs = "libs"
@@ -110,10 +114,14 @@ class TestsORFDetection(unittest.TestCase):
         args.wig_path = "wig_path"
         args.merge_wigs = "merge_wigs"
         self.sorf._start_stop_codon(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(gff_path, "best/test_sORF.gff")))
-        self.assertTrue(os.path.exists(os.path.join(gff_path, "all_candidates/test_sORF.gff")))
-        self.assertTrue(os.path.exists(os.path.join(table_path, "best/test_sORF.csv")))
-        self.assertTrue(os.path.exists(os.path.join(table_path, "all_candidates/test_sORF.csv")))        
+        self.assertTrue(os.path.exists(os.path.join(
+            gff_path, "best/test_sORF.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            gff_path, "all_candidates/test_sORF.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            table_path, "best/test_sORF.csv")))
+        self.assertTrue(os.path.exists(os.path.join(
+            table_path, "all_candidates/test_sORF.csv")))        
 
     def test_compare_tran_cds(self):
         so.get_intergenic = self.mock.mock_get_intergenic
@@ -156,14 +164,6 @@ class TestsORFDetection(unittest.TestCase):
         args.merge_wigs = "merge_wigs"
         args.fuzzy_rbs = 2
         self.sorf.run_sorf_detection(args)
-
-#        self.sorf.run_sorf_detection(self.out, True, self.trans, self.gffs, self.tsss,
-#                                     300, 30, 300, self.tex, self.frag, 10,
-#                                     10, 10, 10, self.fastas, "tlibs", "flibs",
-#                                     "tex_notex", 2, 3, True, self.srnas,
-#                                     ["ATG"], ["TTA"], "background",
-#                                     2, True, False, True, True, False, 0, 20, 16)
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -152,8 +152,10 @@ class TestConverter(unittest.TestCase):
         out_r = StringIO()
         self.converter._print_rntptt_file(out_p, cdss, genes)
         self.converter._print_rntptt_file(out_r, rnas, genes)
-        self.assertEqual(out_p.getvalue().split("\n")[:-1], self.ptt_out.split("\n"))
-        self.assertEqual(out_r.getvalue().split("\n")[:-1], self.rnt_out.split("\n"))
+        self.assertEqual(out_p.getvalue().split("\n")[:-1],
+                         self.ptt_out.split("\n"))
+        self.assertEqual(out_r.getvalue().split("\n")[:-1],
+                         self.rnt_out.split("\n"))
         out_p.close()
         out_r.close()
 
@@ -163,7 +165,8 @@ class TestConverter(unittest.TestCase):
         with open(srna_input_file, "w") as fh:
             fh.write(self.gff_file)
         srnas = []
-        self.converter._srna2rntptt(srna_input_file, srna_output_file, srnas, 1234567)
+        self.converter._srna2rntptt(srna_input_file, srna_output_file,
+                                    srnas, 1234567)
         datas = import_data(srna_output_file)
         self.assertEqual(set(datas), set(self.srna_out.split("\n")))
 
@@ -176,7 +179,8 @@ class TestConverter(unittest.TestCase):
         for index in range(0, 7):
             self.assertDictEqual(embls[index], self.embl_out[index])
         for index in range(0, 2):
-            self.assertDictEqual(embls[-1]["pos"][index], self.multi_embl[index])
+            self.assertDictEqual(embls[-1]["pos"][index],
+                                 self.multi_embl[index])
         
     def test_parser_embl_data(self):
         embl_file = os.path.join(self.test_folder, "test.embl")
@@ -201,7 +205,8 @@ class TestConverter(unittest.TestCase):
         master_file = os.path.join(self.test_folder, "test.tsv")
         fh = StringIO(self.mastertable)
         for tss in self.converter.tsspredator.entries(fh):
-            self.converter._multi_tss_class(tss, tss_index, tss_features, nums, utrs)
+            self.converter._multi_tss_class(
+                tss, tss_index, tss_features, nums, utrs)
         fh.close()
         self.assertDictEqual(nums, {'tss_uni': 0, 'class': 5, 'tss': 2})
 
@@ -228,12 +233,12 @@ class TestConverter(unittest.TestCase):
             fh.write(self.gff_file)
         with open(fasta_file, "w") as fh:
             fh.write(self.fasta_file)
-        self.converter.convert_gff2rntptt(gff_file, fasta_file, ptt_file, rnt_file,
-                                          srna_input_file, srna_output_file)
+        self.converter.convert_gff2rntptt(
+             gff_file, fasta_file, ptt_file, rnt_file,
+             srna_input_file, srna_output_file)
         self.assertTrue(srna_output_file)
         self.assertTrue(rnt_file)
         self.assertTrue(ptt_file)
-
 
     def test_convert_embl2gff(self):
         embl_file = os.path.join(self.test_folder, "test.embl")
@@ -246,7 +251,8 @@ class TestConverter(unittest.TestCase):
         self.assertEqual(set(datas[1:-2]), set(self.gff_out.split("\n")))
 
     def test_convert_transtermhp2gff(self):
-        transterm_file = os.path.join(self.test_folder, "test_best_terminator_after_gene.bag")
+        transterm_file = os.path.join(
+            self.test_folder, "test_best_terminator_after_gene.bag")
         gff_file = os.path.join(self.test_folder, "transterm.gff")
         with open(transterm_file, "w") as th:
             th.write(self.transterm)
@@ -272,30 +278,48 @@ class TestConverter(unittest.TestCase):
 
 class Example(object):
 
-    gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 517, "end": 1878,
-                 "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "dnaA", "locus_tag": "AAA_00001",
-                 "gene": "dnaA", "ID": "gene0", "dbxref": "GeneID:3919798"}},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 517, "end": 1878,
-                 "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "YP_498609.1",
-                 "ID": "cds0", "Parent": "gene0", "product": "chromosomal replication initiation protein",
-                 "protein_id": "YP_498609.1"}},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 2156, "end": 3289,
-                 "phase": ".", "strand": "-", "score": ".", "attributes": {"Name": "AAA_00002", "locus_tag": "AAA_00002",
-                 "ID": "gene1", "dbxref": "GeneID:3919799"}},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 2156, "end": 3289,
-                 "phase": ".", "strand": "-", "score": ".", "attributes": {"Name": "YP_498610.1",
-                 "ID": "cds1", "locus_tag": "AAA_00002", "protein_id": "YP_498610.1"}},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 4444, "end": 5444,
-                 "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "AAA_T00004", "locus_tag": "AAA_T00004",
-                 "ID": "gene2"}},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "tRNA", "start": 4444, "end": 5444,
-                 "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "AAA_T00004",
-                 "ID": "rna0", "locus_tag": "AAA_T00004"}}]
+    gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "gene",
+                 "start": 517, "end": 1878, "phase": ".", "strand": "+",
+                 "score": ".", "attributes": {
+                     "Name": "dnaA", "locus_tag": "AAA_00001",
+                     "gene": "dnaA", "ID": "gene0",
+                     "dbxref": "GeneID:3919798"}},
+                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS",
+                 "start": 517, "end": 1878, "phase": ".", "strand": "+",
+                 "score": ".", "attributes": {
+                     "Name": "YP_498609.1", "ID": "cds0",
+                     "Parent": "gene0",
+                     "product": "chromosomal replication initiation protein",
+                     "protein_id": "YP_498609.1"}},
+                {"seq_id": "aaa", "source": "Refseq", "feature": "gene",
+                 "start": 2156, "end": 3289, "phase": ".", "strand": "-",
+                 "score": ".", "attributes": {
+                     "Name": "AAA_00002", "locus_tag": "AAA_00002",
+                     "ID": "gene1", "dbxref": "GeneID:3919799"}},
+                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS",
+                 "start": 2156, "end": 3289, "phase": ".", "strand": "-",
+                 "score": ".", "attributes": {
+                 "Name": "YP_498610.1", "ID": "cds1",
+                 "locus_tag": "AAA_00002", "protein_id": "YP_498610.1"}},
+                {"seq_id": "aaa", "source": "Refseq", "feature": "gene",
+                 "start": 4444, "end": 5444, "phase": ".", "strand": "+",
+                 "score": ".", "attributes": {
+                     "Name": "AAA_T00004", "locus_tag": "AAA_T00004",
+                     "ID": "gene2"}},
+                {"seq_id": "aaa", "source": "Refseq", "feature": "tRNA",
+                 "start": 4444, "end": 5444, "phase": ".", "strand": "+",
+                 "score": ".", "attributes": {
+                     "Name": "AAA_T00004",
+                     "ID": "rna0", "locus_tag": "AAA_T00004"}}]
 
-    srna_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 12, "end": 331,
-                 "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "sRNA_candidate_0001", "ID": "srna0"}},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "tRNA", "start": 100, "end": 244,
-                  "phase": ".", "strand": "+", "score": ".", "attributes": {"Name": "sRNA_candidate_0002", "ID": "rna0"}}]
+    srna_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sRNA",
+                  "start": 12, "end": 331, "phase": ".", "strand": "+",
+                  "score": ".", "attributes": {
+                      "Name": "sRNA_candidate_0001", "ID": "srna0"}},
+                 {"seq_id": "aaa", "source": "Refseq", "feature": "tRNA",
+                  "start": 100, "end": 244, "phase": ".", "strand": "+",
+                  "score": ".", "attributes": {
+                      "Name": "sRNA_candidate_0002", "ID": "rna0"}}]
 
     ptt_out = """517..1878	+	1362	YP_498609.1	dnaA	AAA_00001	-	-	chromosomal replication initiation protein
 2156..3289	-	1134	YP_498610.1	-	AAA_00002	-	-	-"""
@@ -317,15 +341,24 @@ aaa	Refseq	tRNA	4444	5444	.	+	.	Name=AAA_T00018;locus_tag=AAA_T00004;ID=rna0"""
 4444..5444\t+\t1001\tncRNA_00006\t-\tncRNA_00006\t-\t-\tsRNA
 2156..3289\t-\t1134\tncRNA_00004\t-\tncRNA_00004\t-\t-\tsRNA"""
 
-    embl_out = [{'pos': [{'end': '2821361', 'start': '1'}], 'source': 'source', 'strand': '+'},
-{'pos': [{'end': '1878', 'start': '517'}], 'source': 'gene', 'strand': '+'},
-{'pos': [{'end': '1878', 'start': '517'}], 'source': 'CDS', 'strand': '+'},
-{'pos': [{'end': '1872', 'start': '520'}], 'source': 'misc_feature', 'strand': '+'},
-{'pos': [{'end': '10456', 'start': '9755'}], 'source': 'gene', 'strand': '-'},
-{'pos': [{'end': '10456', 'start': '9755'}], 'source': 'CDS', 'strand': '-'},
-{'pos': [{'end': '1491304', 'start': '1491014'}], 'source': 'gene', 'strand': '-'}]
+    embl_out = [
+        {'pos': [{'end': '2821361', 'start': '1'}],
+         'source': 'source', 'strand': '+'},
+        {'pos': [{'end': '1878', 'start': '517'}],
+         'source': 'gene', 'strand': '+'},
+        {'pos': [{'end': '1878', 'start': '517'}],
+         'source': 'CDS', 'strand': '+'},
+        {'pos': [{'end': '1872', 'start': '520'}],
+         'source': 'misc_feature', 'strand': '+'},
+        {'pos': [{'end': '10456', 'start': '9755'}],
+         'source': 'gene', 'strand': '-'},
+        {'pos': [{'end': '10456', 'start': '9755'}],
+         'source': 'CDS', 'strand': '-'},
+        {'pos': [{'end': '1491304', 'start': '1491014'}],
+         'source': 'gene', 'strand': '-'}]
 
-    multi_embl = [{'end': '1491245', 'start': '1491015'}, {'end': '1491304', 'start': '1491251'}]
+    multi_embl = [{'end': '1491245', 'start': '1491015'},
+                  {'end': '1491304', 'start': '1491251'}]
 
     srna_file = """Staphylococcus_aureus_HG003	intergenic	sRNA	313	417	.	+	.	ID=Staphylococcus_aureus_HG003_srna0;Name=sRNA_candidate_00001"""
 

@@ -27,8 +27,9 @@ class Mock_func(object):
                        out_folder, out_rnaup, out_log):
         pass
 
-    def mock_merge_srna_target(self, rnaplex_file, rnaup_file, top, out_rnaplex,
-                               out_rnaup, merge, overlap, srna, gff, fasta):
+    def mock_merge_srna_target(self, rnaplex_file, rnaup_file, top,
+                               out_rnaplex, out_rnaup, merge, overlap,
+                               srna, gff, fasta):
         gen_file("test_folder/out", rnaplex_file + rnaup_file)
 
 
@@ -74,7 +75,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         gen_file(fasta, ">aaa\nAAAAAAAA\n>bbb\nCCCC\n>ccc\nGGGGGGGGGGGG")
         self.star._sort_srna_fasta(fasta, "test", self.test_folder)
         datas = import_data(os.path.join(self.test_folder, "tmp_test_sRNA.fa"))
-        self.assertListEqual(datas, ['>bbb', 'CCCC', '>aaa', 'AAAAAAAA', '>ccc', 'GGGGGGGGGGGG'])
+        self.assertListEqual(datas, ['>bbb', 'CCCC', '>aaa', 'AAAAAAAA',
+                                     '>ccc', 'GGGGGGGGGGGG'])
 
     def test_read_fasta(self):
         fasta = os.path.join(self.fastas, "test.fa")
@@ -88,7 +90,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         srna_out = os.path.join(self.test_folder, "out")
         gen_file(srna_file, self.example.srna_file)
         gen_file(seq_file, self.example.seq_file)
-        self.star._get_specific_seq(srna_file, seq_file, srna_out, ["aaa:5:8:+"])
+        self.star._get_specific_seq(srna_file, seq_file, srna_out,
+                                    ["aaa:5:8:+"])
         datas = import_data(srna_out)
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
 
@@ -99,9 +102,12 @@ class TestsRNATargetPrediction(unittest.TestCase):
         os.mkdir(os.path.join(self.fastas, "tmp"))
         os.mkdir(os.path.join(self.gffs, "tmp"))
         os.mkdir(tar_seq)
-        gen_file(os.path.join(self.srnas, "tmp", "aaa_sRNA.gff"), self.example.srna_file)
-        gen_file(os.path.join(self.fastas, "tmp", "aaa.fa"), self.example.seq_file)
-        gen_file(os.path.join(self.gffs, "tmp", "aaa.gff"), self.example.gff_file)
+        gen_file(os.path.join(self.srnas, "tmp", "aaa_sRNA.gff"),
+                 self.example.srna_file)
+        gen_file(os.path.join(self.fastas, "tmp", "aaa.fa"),
+                 self.example.seq_file)
+        gen_file(os.path.join(self.gffs, "tmp", "aaa.gff"),
+                 self.example.gff_file)
         args = self.mock_args.mock()
         args.query = ["aaa:5:8:+"]
         args.features = ["CDS"]
@@ -111,14 +117,16 @@ class TestsRNATargetPrediction(unittest.TestCase):
         datas = import_data(os.path.join(srna_seq, "aaa_sRNA.fa"))
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
         datas = import_data(os.path.join(tar_seq, "aaa_target_1.fa"))
-        self.assertEqual("\n".join(datas), '>AAA_000001|cds0|12-16_+\nTAAATTCC')
+        self.assertEqual("\n".join(datas),
+                         '>AAA_000001|cds0|12-16_+\nTAAATTCC')
 
     def test_rna_plex(self):
         self.star._run_rnaplex = self.mock.mock_run_rnaplex
         self.star._run_rnaplfold = self.mock.mock_run_rnaplfold
         os.mkdir("test_folder/test")
         gen_file("test_folder/test/test_RNAplex.txt", "test")
-        gen_file(os.path.join(self.test_folder, "aaa_RNAplex.txt"), self.example.rnaplex)
+        gen_file(os.path.join(self.test_folder, "aaa_RNAplex.txt"),
+                 self.example.rnaplex)
         args = self.mock_args.mock()
         args.vienna_path = "test"
         args.win_size_s = 5
@@ -140,8 +148,10 @@ class TestsRNATargetPrediction(unittest.TestCase):
 
     def test_rnaup(self):
         self.star._run_rnaup = self.mock.mock_run_rnaup
-        gen_file(os.path.join(self.out, "sRNA_seqs/tmp_test_sRNA.fa"), ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
-        gen_file(os.path.join(self.gffs, "test_target.fa"), ">AAA_000001|CDS_00000\nAAATTAATTAAATTCCGGCCGGCCGG")
+        gen_file(os.path.join(self.out, "sRNA_seqs/tmp_test_sRNA.fa"),
+                 ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
+        gen_file(os.path.join(self.gffs, "test_target.fa"),
+                 ">AAA_000001|CDS_00000\nAAATTAATTAAATTCCGGCCGGCCGG")
         args = self.mock_args.mock()
         args.srnas = self.srnas
         args.fastas = self.fastas
@@ -151,7 +161,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.core_up = 4
         self.star._rnaup(["test"], args)
         datas = import_data(os.path.join(self.out, "tmp1.fa"))
-        self.assertEqual("\n".join(datas), ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
+        self.assertEqual("\n".join(datas),
+                         ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
 
     def test_merge_rnaplex_rnaup(self):
         st.merge_srna_target = self.mock.mock_merge_srna_target
@@ -164,7 +175,9 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.top = "top"
         self.star._merge_rnaplex_rnaup(["test"], args)
         datas = import_data(os.path.join(self.test_folder, "out"))
-        self.assertEqual("\n".join(datas), "test_folder/output/RNAplex/test/test_RNAplex.txttest_folder/output/RNAup/test/test_RNAup.txt")
+        self.assertEqual("\n".join(datas),
+                         ("test_folder/output/RNAplex/test/test_RNAplex"
+                          ".txttest_folder/output/RNAup/test/test_RNAup.txt"))
 
 
 class Example(object):

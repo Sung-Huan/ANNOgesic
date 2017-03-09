@@ -55,12 +55,16 @@ class TestHelper(unittest.TestCase):
 
     def test_get_correct_file(self):
         gff_file = os.path.join(self.test_folder, "test.gff")
-        wig_f_file = os.path.join(self.test_folder, "test_forward.wig_STRAIN_aaa.wig")
-        wig_r_file = os.path.join(self.test_folder, "test_reverse.wig_STRAIN_aaa.wig")
+        wig_f_file = os.path.join(self.test_folder,
+                                  "test_forward.wig_STRAIN_aaa.wig")
+        wig_r_file = os.path.join(self.test_folder,
+                                  "test_reverse.wig_STRAIN_aaa.wig")
         shutil.copyfile(gff_file, wig_f_file)
         shutil.copyfile(gff_file, wig_r_file)
-        libs = ["test_forward.wig_STRAIN_aaa.wig:frag:1:a:+", "test_reverse.wig_STRAIN_aaa.wig:frag:1:a:-"]
-        filename = self.helper.get_correct_file(self.test_folder, ".gff", "test", None, libs)
+        libs = ["test_forward.wig_STRAIN_aaa.wig:frag:1:a:+",
+                "test_reverse.wig_STRAIN_aaa.wig:frag:1:a:-"]
+        filename = self.helper.get_correct_file(
+            self.test_folder, ".gff", "test", None, libs)
         self.assertEqual(filename, gff_file)
         
     def test_sorf_gff(self):

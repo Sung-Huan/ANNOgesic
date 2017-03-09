@@ -43,7 +43,8 @@ class Mock_multiparser(object):
 
 class Mock_func(object):
 
-    def mock_optimization(self, wig_path, fasta_file, gff_file, args, strain, manual, length):
+    def mock_optimization(self, wig_path, fasta_file, gff_file,
+                          args, strain, manual, length):
         gen_file(os.path.join(args.output_folder, "test.csv"), "test")
 
 class TestOptimizeTSS(unittest.TestCase):
@@ -102,7 +103,8 @@ class TestOptimizeTSS(unittest.TestCase):
         args.replicate = 2
         args.steps = 2000
         opt.optimize_tss(args)
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test.csv")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "test.csv")))
 
 if __name__ == "__main__":
     unittest.main()

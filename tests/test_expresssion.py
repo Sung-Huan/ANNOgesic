@@ -11,8 +11,9 @@ from annogesiclib.expression import Expression
 
 class Mock_func(object):
 
-    def mock_expression(self, input_libs, gffs, percent_tex, percent_frag, wig_f_file,
-                        wig_r_file, features, merge_wigs, cutoff_coverage,
+    def mock_expression(self, input_libs, gffs, percent_tex,
+                        percent_frag, wig_f_file, wig_r_file,
+                        features, merge_wigs, cutoff_coverage,
                         tex_notex, replicates, stat, gff_folder,
                         cover_type, max_color, min_color):
         pass
@@ -56,11 +57,12 @@ class TestExpression(unittest.TestCase):
                                 1, self.tex_path, self.frag_path, "all",
                                 "all", 5, self.test_folder, "CDS",
                                 "high", 100, 0)
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "for_libs")))
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "for_libs", "statistics")))
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "for_libs", "gffs")))
-
-
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "for_libs")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "for_libs", "statistics")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "for_libs", "gffs")))
 if __name__ == "__main__":
     unittest.main()
 

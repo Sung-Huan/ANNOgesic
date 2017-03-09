@@ -42,8 +42,9 @@ class TestStatOpern(unittest.TestCase):
         num_total = {"total": {"total": 2, "mono": 0, "multi": 2},
                      "aaa": {"mono": 0, "multi": 2, "total": 2}}
         so.plus_num(num_total, "aaa", "mono")
-        self.assertDictEqual(num_total, {'aaa': {'mono': 1, 'multi': 2, 'total': 3},
-                                         'total': {'mono': 1, 'multi': 2, 'total': 3}})
+        self.assertDictEqual(num_total, {
+            'aaa': {'mono': 1, 'multi': 2, 'total': 3},
+            'total': {'mono': 1, 'multi': 2, 'total': 3}})
 
     def test_print_stat(self):
         out = StringIO()
@@ -53,7 +54,8 @@ class TestStatOpern(unittest.TestCase):
                     'have sub-operons': True,
                     'have no sub-operons': False}]
         so.print_stat(operons, 100, class_operon, out)
-        na = out.getvalue().split("no associated with genes/CDSs: ")[-1].split(" (0.2)")[0]
+        na = out.getvalue().split(
+            "no associated with genes/CDSs: ")[-1].split(" (0.2)")[0]
         self.assertEqual(na, "20")
         na = out.getvalue().split("monocistronic: ")[-1].split(" (0.7)")[0]
         self.assertEqual(na, "70")
@@ -68,11 +70,17 @@ class TestStatOpern(unittest.TestCase):
         datas = import_data(output_file)
         for data in datas:
             if "the number of operons which have sub-operons and " in data:
-                self.assertEqual(data, "\tthe number of operons which have sub-operons and start with tss = 1 (1.0)")
+                self.assertEqual(data,
+                                 ("\tthe number of operons which have "
+                                  "sub-operons and start with tss = 1 (1.0)"))
             if "the number of operons which have sub-operons = " in data:
-                self.assertEqual(data, "\tthe number of operons which have sub-operons = 1 (1.0)")
+                self.assertEqual(data,
+                                 ("\tthe number of operons which have "
+                                  "sub-operons = 1 (1.0)"))
             if "the number of operons which start with tss = " in data:
-                self.assertEqual(data, "\tthe number of operons which start with tss = 1 (1.0)")
+                self.assertEqual(data,
+                                 ("\tthe number of operons which start "
+                                  "with tss = 1 (1.0)"))
             if "no associated with CDS: " in data:
                 self.assertEqual(data, "\tno associated with CDS: 0 (0.0)")
             if "monocistronic: " in data:

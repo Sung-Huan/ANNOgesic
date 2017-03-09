@@ -62,8 +62,10 @@ class TestLibReader(unittest.TestCase):
 
     def test_read_libs(self):
         libs, texs = self.lib_reader.read_libs(self.libs, self.test_folder)
-        self.assertDictEqual(texs,
-        {'TSB_OD_0.2_TEX_reverse@AND@TSB_OD_0.2_reverse': 0, 'TSB_OD_0.2_TEX_forward@AND@TSB_OD_0.2_forward': 0})
+        self.assertDictEqual(
+            texs,
+            {'TSB_OD_0.2_TEX_reverse@AND@TSB_OD_0.2_reverse': 0,
+             'TSB_OD_0.2_TEX_forward@AND@TSB_OD_0.2_forward': 0})
         for index in range(0, 6):
             self.assertDictEqual(libs[index], self.lib_dict[index])
 
@@ -71,11 +73,13 @@ class TestLibReader(unittest.TestCase):
         merge_wig = os.path.join(self.test_folder, "merge.wig")
         for wig in os.listdir(self.test_folder):
             if wig.endswith(".wig"):
-                os.system("cat " + os.path.join(self.test_folder, wig) + ">>" + merge_wig)
+                os.system("cat " + os.path.join(
+                    self.test_folder, wig) + ">>" + merge_wig)
         wigs = self.lib_reader.read_wig(merge_wig, "+", self.lib_dict)
         for strain in wigs.keys():
             self.assertEqual(strain, "aaa")
-        self.assertEqual(set(wigs["aaa"].keys()), set(['1_frag', '1_texnotex']))
+        self.assertEqual(set(wigs["aaa"].keys()),
+                         set(['1_frag', '1_texnotex']))
 
 class Example(object):
     
@@ -130,24 +134,36 @@ variableStep chrom=aaa span=1
 315 56.867067474648174
 """}
 
-    lib_dict = [{'cond': '1_texnotex', 'strand': '-', 'type': 'tex', 'name': 'TSB_OD_0.2_TEX_reverse', 'rep': 'a'},
-                {'cond': '1_texnotex', 'strand': '+', 'type': 'tex', 'name': 'TSB_OD_0.2_TEX_forward', 'rep': 'a'},
-                {'cond': '1_texnotex', 'strand': '-', 'type': 'notex', 'name': 'TSB_OD_0.2_reverse', 'rep': 'a'},
-                {'cond': '1_texnotex', 'strand': '+', 'type': 'notex', 'name': 'TSB_OD_0.2_forward', 'rep': 'a'},
-                {'cond': '1_frag', 'strand': '+', 'type': 'frag', 'name': 'frag_forward', 'rep': 'a'},
-                {'cond': '1_frag', 'strand': '-', 'type': 'frag', 'name': 'frag_reverse', 'rep': 'a'}]
+    lib_dict = [{'cond': '1_texnotex', 'strand': '-', 'type': 'tex',
+                 'name': 'TSB_OD_0.2_TEX_reverse', 'rep': 'a'},
+                {'cond': '1_texnotex', 'strand': '+', 'type': 'tex',
+                 'name': 'TSB_OD_0.2_TEX_forward', 'rep': 'a'},
+                {'cond': '1_texnotex', 'strand': '-', 'type': 'notex',
+                 'name': 'TSB_OD_0.2_reverse', 'rep': 'a'},
+                {'cond': '1_texnotex', 'strand': '+', 'type': 'notex',
+                 'name': 'TSB_OD_0.2_forward', 'rep': 'a'},
+                {'cond': '1_frag', 'strand': '+', 'type': 'frag',
+                 'name': 'frag_forward', 'rep': 'a'},
+                {'cond': '1_frag', 'strand': '-', 'type': 'frag',
+                 'name': 'frag_reverse', 'rep': 'a'}]
 
-    wig_file = [{"strain": "aaa", "strand": "+", "track": "TSB_OD_0.2_TEX_forward",
+    wig_file = [{"strain": "aaa", "strand": "+",
+                 "track": "TSB_OD_0.2_TEX_forward",
                 "pos": "312", "coverage": "1.4041251228308191"},
-                {"strain": "aaa", "strand": "+", "track": "TSB_OD_0.2_TEX_forward",
+                {"strain": "aaa", "strand": "+",
+                 "track": "TSB_OD_0.2_TEX_forward",
                 "pos": "313", "coverage": "1.4041251228308191"},
-                {"strain": "aaa", "strand": "+", "track": "TSB_OD_0.2_TEX_forward",
+                {"strain": "aaa", "strand": "+",
+                 "track": "TSB_OD_0.2_TEX_forward",
                 "pos": "313", "coverage": "1.4041251228308191"},
-                {"strain": "aaa", "strand": "-", "track": "TSB_OD_0.5_reverse",
+                {"strain": "aaa", "strand": "-",
+                 "track": "TSB_OD_0.5_reverse",
                 "pos": "312", "coverage": "1.4041251228308191"},
-                {"strain": "aaa", "strand": "-", "track": "TSB_OD_0.5_reverse",
+                {"strain": "aaa", "strand": "-",
+                 "track": "TSB_OD_0.5_reverse",
                 "pos": "313", "coverage": "1.4041251228308191"},
-                {"strain": "aaa", "strand": "-", "track": "TSB_OD_0.5_reverse",
+                {"strain": "aaa", "strand": "-",
+                 "track": "TSB_OD_0.5_reverse",
                 "pos": "313", "coverage": "1.4041251228308191"}]
 
     libs_for_wig = [{"name": "TSB_OD_0.2_TEX_forward", "type": "tex",

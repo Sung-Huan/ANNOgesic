@@ -26,13 +26,16 @@ class TestStatSubLocal(unittest.TestCase):
         psortb_file = os.path.join(self.test_folder, "test.csv")
         gen_file(psortb_file, self.example.table)
         subs, total_nums, unknown_nums = ss.read_table(psortb_file)
-        self.assertDictEqual(subs, {'Staphylococcus_aureus_HG002': {'Unknown': 1},
-                                    'Staphylococcus_aureus_HG003': {'CellWall': 1, 'Cytoplasmic': 2},
-                                    'all_strain': {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}})
-        self.assertDictEqual(total_nums, {'Staphylococcus_aureus_HG002': 1,
-                                          'Staphylococcus_aureus_HG003': 3, 'all_strain': 4})
-        self.assertDictEqual(unknown_nums, {'Staphylococcus_aureus_HG002': 1,
-                                            'Staphylococcus_aureus_HG003': 0, 'all_strain': 1})
+        self.assertDictEqual(subs, {
+            'Staphylococcus_aureus_HG002': {'Unknown': 1},
+            'Staphylococcus_aureus_HG003': {'CellWall': 1, 'Cytoplasmic': 2},
+            'all_strain': {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}})
+        self.assertDictEqual(total_nums, {
+            'Staphylococcus_aureus_HG002': 1,
+            'Staphylococcus_aureus_HG003': 3, 'all_strain': 4})
+        self.assertDictEqual(unknown_nums, {
+            'Staphylococcus_aureus_HG002': 1,
+            'Staphylococcus_aureus_HG003': 0, 'all_strain': 1})
 
     def test_print_file_and_plot(self):
         out_stat = StringIO()
@@ -46,19 +49,27 @@ class TestStatSubLocal(unittest.TestCase):
         datas = out_stat.getvalue().split("\n")
         for data in datas:
             if "Total with Unknown" in data:
-                self.assertEqual(data, "Total including Unknown is 4; Total excluding Unknown is 3")
+                self.assertEqual(data,
+                                 ("Total including Unknown is 4; "
+                                  "Total excluding Unknown is 3"))
             elif "CellWall" in data:
-                self.assertEqual(data, "\tCellWall\t1(including Unknown 0.25; excluding Unknonwn 0.3333333333333333)")
+                self.assertEqual(data,
+                                 ("\tCellWall\t1(including Unknown 0.25; "
+                                  "excluding Unknonwn 0.3333333333333333)"))
             elif "Cytoplasmic" in data:
-                self.assertEqual(data, "\tCytoplasmic\t2(including Unknown 0.5; excluding Unknonwn 0.6666666666666666)")
+                self.assertEqual(data,
+                                 ("\tCytoplasmic\t2(including Unknown 0.5; "
+                                  "excluding Unknonwn 0.6666666666666666)"))
             else:
                 if "include Unknown" in data:
-                    self.assertEqual(data, "\tUnknown\t1(including Unknown 0.25)")
+                    self.assertEqual(data,
+                                     ("\tUnknown\t1(including Unknown 0.25)"))
 
     def test_plot(self):
         subs = {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}
         ss.plot(subs, 4, 1, "test", self.test_folder + "/")
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "_test_sublocal.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "_test_sublocal.png")))
 
 
 class Example(object):

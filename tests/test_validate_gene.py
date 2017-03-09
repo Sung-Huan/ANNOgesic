@@ -17,7 +17,6 @@ class TestTranscriptAssembly(unittest.TestCase):
 
     def setUp(self):
         self.example = Example()
-#        self.mock = Mock_func()
         self.test_folder = "test_folder"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
@@ -41,18 +40,23 @@ class TestTranscriptAssembly(unittest.TestCase):
         num_strain = {"test": {"all_cds": 0, "all_tRNA": 0,
                                "all_rRNA": 0, "cds": 0,
                                "tRNA": 0, "rRNA": 0}}
-        vg.compare_tss(self.example.tsss, self.example.gffs[0], 300, num_all, num_strain, "tss")
-        self.assertDictEqual(num_all, {'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
-                                       'cds': 1, 'all_cds': 0, 'all_rRNA': 0})
-        self.assertDictEqual(num_strain, {'test': {'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
-                                                   'cds': 1, 'all_cds': 0, 'all_rRNA': 0}})
+        vg.compare_tss(self.example.tsss, self.example.gffs[0], 300,
+                       num_all, num_strain, "tss")
+        self.assertDictEqual(num_all, {
+            'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
+            'cds': 1, 'all_cds': 0, 'all_rRNA': 0})
+        self.assertDictEqual(num_strain, {'test': {
+            'tRNA': 0, 'rRNA': 0, 'all_tRNA': 0,
+            'cds': 1, 'all_cds': 0, 'all_rRNA': 0}})
 
     def test_print_stat(self):
         num = {"all_cds": 300, "all_tRNA": 30, "all_rRNA": 20,
                "cds": 100, "tRNA": 10, "rRNA": 10}
         out = StringIO()
         vg.print_stat("cds", num, out)
-        self.assertEqual(out.getvalue(), "The number of cds which is start from TSS: 100 (0.3333333333333333)\n")
+        self.assertEqual(out.getvalue(),
+                         ("The number of cds which is start from TSS: "
+                          "100 (0.3333333333333333)\n"))
 
     def test_print_file(self):
         num_all = {"all_cds": 600, "all_tRNA": 30, "all_rRNA": 30,
@@ -62,9 +66,11 @@ class TestTranscriptAssembly(unittest.TestCase):
                                "tRNA": 10, "rRNA": 10}}
         out_cds_file = os.path.join(self.test_folder, "cds_file")
         stat_file = os.path.join(self.test_folder, "stat_file")
-        vg.print_file(self.example.gffs, out_cds_file, stat_file, num_all, num_strain)
+        vg.print_file(self.example.gffs, out_cds_file, stat_file,
+                      num_all, num_strain)
         datas, attribute = extract_info(out_cds_file, "file")
-        self.assertEqual("\n".join(datas), "test\tRefSeq\tCDS\t200\t270\t.\t+\t.")
+        self.assertEqual("\n".join(datas),
+                         "test\tRefSeq\tCDS\t200\t270\t.\t+\t.")
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas), self.example.out_stat_test)
 
@@ -75,9 +81,11 @@ class TestTranscriptAssembly(unittest.TestCase):
         gen_file(tss_file, self.example.tss_file)
         out_cds_file = os.path.join(self.test_folder, "cds_file")
         stat_file = os.path.join(self.test_folder, "stat_file")
-        vg.validate_gff(tss_file, gff_file, stat_file, out_cds_file, 300, "tss")
+        vg.validate_gff(tss_file, gff_file, stat_file,
+                        out_cds_file, 300, "tss")
         datas, attribute = extract_info(out_cds_file, "file")
-        self.assertEqual("\n".join(datas), "test\tRefSeq\tCDS\t5\t10\t.\t+\t.")
+        self.assertEqual("\n".join(datas),
+                         "test\tRefSeq\tCDS\t5\t10\t.\t+\t.")
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas), self.example.out_stat)
 
@@ -87,12 +95,14 @@ class Example(object):
 
     gff_file = """test	RefSeq	CDS	5	10	.	+	.	ID=cds0;Name=CDS_0"""
     tss_file = """test	RefSeq	TSS	3	3	.	+	.	ID=tss0;Name=TSS_0"""
-    tss_dict = [{"seq_id": "test", "source": "intergenic", "feature": "TSS", "start": 170,
+    tss_dict = [{"seq_id": "test", "source": "intergenic",
+                 "feature": "TSS", "start": 170,
                 "end": 170, "phase": ".", "strand": "+", "score": "."}]
     attributes_tsss = [{"ID": "tss0", "Name": "TSS_0"}]
     tsss = []
     tsss.append(Create_generator(tss_dict[0], attributes_tsss[0], "gff"))
-    gff_dict = [{"seq_id": "test", "source": "RefSeq", "feature": "CDS", "start": 200,
+    gff_dict = [{"seq_id": "test", "source": "RefSeq",
+                 "feature": "CDS", "start": 200,
                 "end": 270, "phase": ".", "strand": "+", "score": "."}]
     attributes_gff = [{"ID": "cds0", "Name": "CDS_0"}]
     gffs = []

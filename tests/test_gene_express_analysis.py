@@ -25,9 +25,11 @@ class MockFunc(object):
     def mock_read_data(self, gff, features):
         stats = {"CDS": {}}
         outs = {"CDS": {"all": [], "least_one": [], "none": []}}
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 5, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         gff_list = {"CDS": [gff]}
         return gff_list, stats, outs
@@ -48,48 +50,64 @@ class TestGeneExpress(unittest.TestCase):
     def test_set_cutoff(self):
         detects = {}
         detects["express"] = 100
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 102, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
-        diff, cutoff_percent = gea.set_cutoff("tex", "all", "all", detects, gff)
+        diff, cutoff_percent = gea.set_cutoff(
+            "tex", "all", "all", detects, gff)
         self.assertEqual(diff, 100)
         self.assertEqual(cutoff_percent, 0)
-        diff, cutoff_percent = gea.set_cutoff("frag", "all", "n_50", detects, gff)
+        diff, cutoff_percent = gea.set_cutoff(
+            "frag", "all", "n_50", detects, gff)
         self.assertEqual(diff, 100)
         self.assertEqual(cutoff_percent, 50)
-        diff, cutoff_percent = gea.set_cutoff("tex", "p_0.5", "n_50", detects, gff)
+        diff, cutoff_percent = gea.set_cutoff(
+            "tex", "p_0.5", "n_50", detects, gff)
         self.assertEqual(diff, 1.0)
         self.assertEqual(cutoff_percent, 0.5)
 
     def test_detect_express(self):
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 5, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         texs = {"tex1_tex2": 0}
         plots = {"frag": {}}
         detects = {"cond": 0, "track": 0, "import": False, "express": 0}
-        gea.detect_express(self.example.wig_frags["aaa"]["frag"]["track_1"], gff, 5,
-                           detects, "all", "all", texs, "frag", 2, "track_1",
-                           plots, "high", "frag")
-        self.assertDictEqual({'track': 1, 'import': False, 'cond': 0, 'express': 2}, detects)
+        gea.detect_express(
+            self.example.wig_frags["aaa"]["frag"]["track_1"], gff, 5,
+            detects, "all", "all", texs, "frag", 2, "track_1",
+            plots, "high", "frag")
+        self.assertDictEqual({'track': 1, 'import': False,
+                              'cond': 0, 'express': 2}, detects)
 
     def test_compare_wigs(self):
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 5, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         texs = {"tex1_tex2": 0}
         replicates = {"tex": 1, "frag": 1}
-        stats = {"CDS": {"total": {"total": 0, "least_one": 0, "all": 0, "none": 0},
-                         "aaa": {"total": 0, "least_one": 0, "all": 0, "none": 0}}}
+        stats = {"CDS": {"total": {"total": 0, "least_one": 0,
+                                   "all": 0, "none": 0},
+                         "aaa": {"total": 0, "least_one": 0,
+                                 "all": 0, "none": 0}}}
         outs = {"CDS": {"least_one": [], "all": [], "none": []}}
         plots = {}
-        gea.compare_wigs(self.example.wig_texs, gff, 2, texs, replicates, stats["CDS"], outs["CDS"],
+        gea.compare_wigs(self.example.wig_texs, gff, 2, texs,
+                         replicates, stats["CDS"], outs["CDS"],
                          plots, "high", 5, "all", "all")
-        self.assertDictEqual(stats, {'CDS': {'total': {'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1},
-                                     'aaa': {'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1}}})
+        self.assertDictEqual(stats, {'CDS': {'total': {
+            'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1},
+                                             'aaa': {
+            'tex': 1, 'none': 0, 'total': 0, 'all': 1, 'least_one': 1}}})
 
     def test_gene_expression(self):
         gea.read_wig = MockFunc().mock_read_wig
@@ -107,9 +125,11 @@ class TestGeneExpress(unittest.TestCase):
         out_gff_folder = os.path.join(self.test_folder, "out_gff")
         if not os.path.exists(out_gff_folder):
             os.mkdir(out_gff_folder)
-        gea.gene_expression(None, gff_folder, "all", "all", "test_wig", "test_wig", ["CDS"],
-                           "test_wig_folder", 5, 2, replicates, stat_folder, out_gff_folder,
-                           "high", 100, 0)
+        gea.gene_expression(None, gff_folder, "all", "all",
+                            "test_wig", "test_wig", ["CDS"],
+                            "test_wig_folder", 5, 2, replicates,
+                            stat_folder, out_gff_folder,
+                            "high", 100, 0)
         datas = import_data(os.path.join(stat_folder, "aaa_CDS.csv"))
         dicts = {}
         for data in datas:
@@ -138,13 +158,11 @@ class Example(object):
                                          {"coverage": 0, "pos": 4},
                                          {"coverage": 230, "pos": 5},
                                          {"coverage": 230, "pos": 6}]}}}
-
     out_stat = """aaa:
 total input:	1
 expression at all conditions:	1 (1.0)
 expression at lease one condition:	1 (1.0)
 no expression:	0 (0.0)
 condition tex:	1 (1.0)"""
-
 if __name__ == "__main__":
     unittest.main()

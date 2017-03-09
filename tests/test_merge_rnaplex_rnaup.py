@@ -40,7 +40,9 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         args_tar.top = 2
         args_tar.tar_start = 20
         args_tar.tar_end = 15
-        mrr.print_rank_one(self.example.srnas, out, "RNAplex", self.example.gffs, self.example.srna_gffs, args_tar, 50)
+        mrr.print_rank_one(self.example.srnas, out, "RNAplex",
+                           self.example.gffs, self.example.srna_gffs,
+                           args_tar, 50)
         datas = convert_dict(out.getvalue().split("\n"))
         news = {}
         for key, value in datas.items():
@@ -54,15 +56,23 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         rnaup = os.path.join(self.test_folder, "rnaup")
         gen_file(rnaplex, self.example.rnaplex)
         gen_file(rnaup, self.example.rnaup)
-        srnas = mrr.read_table(self.example.srna_gffs, rnaplex, rnaup, self.example.genes, self.example.gffs, ["CDS"])
-        self.assertDictEqual(srnas, {'RNAup': {'srna0': [{'srna_pos': '20,25', 'energy': -4.87, 'tar_pos': '571,576',
-                                    'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001', 'detail': '100-150_+'},
-                                   {'srna_pos': '11,26', 'energy': -5.91, 'tar_pos': '14,30', 'gene_id': 'NA', 'target_id': 'cds1',
-                                    'target_locus': 'AAA_00003', 'detail': '2348-2934_+'}]},
-                                    'RNAplex': {'srna0': [{'srna_pos': '20,25', 'energy': -5.3, 'tar_pos': '571,576',
-                                    'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001', 'detail': '100-150_+'}],
-                                    'srna1': [{'srna_pos': '24,31', 'energy': -1.91, 'tar_pos': '163,170', 'gene_id': 'gene0',
-                                    'target_id': 'cds0', 'target_locus': 'AAA_00001', 'detail': '100-150_+'}]}})
+        srnas = mrr.read_table(self.example.srna_gffs, rnaplex, rnaup,
+                               self.example.genes, self.example.gffs, ["CDS"])
+        self.assertDictEqual(srnas, {'RNAup': {'srna0': [
+            {'srna_pos': '20,25', 'energy': -4.87, 'tar_pos': '571,576',
+             'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001',
+             'detail': '100-150_+'},
+            {'srna_pos': '11,26', 'energy': -5.91, 'tar_pos': '14,30',
+             'gene_id': 'NA', 'target_id': 'cds1',
+             'target_locus': 'AAA_00003', 'detail': '2348-2934_+'}]},
+                                     'RNAplex': {'srna0': [
+            {'srna_pos': '20,25', 'energy': -5.3, 'tar_pos': '571,576',
+             'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001',
+             'detail': '100-150_+'}],
+                                                 'srna1': [
+            {'srna_pos': '24,31', 'energy': -1.91, 'tar_pos': '163,170',
+             'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001',
+             'detail': '100-150_+'}]}})
 
     def test_get_srna_name(self):
         output = mrr.get_srna_name(self.example.srna_gffs, "srna0")
@@ -70,7 +80,8 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         self.assertEqual(output[1].start, 6)
 
     def test_get_target_info(self):
-        target = {"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -6.5}
+        target = {"gene_id": "gene0","detail": "100-150_+","target_id": "cds0",
+                  "target_locus": "AAA_00001", "energy": -6.5}
         output = mrr.get_target_info(self.example.gffs, target)
         self.assertEqual(output.start, 100)
 
@@ -80,11 +91,18 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         args_tar.tar_start = 20
         args_tar.tar_end = 15
         merges = []
-        overlap = mrr.merge_base_rnaplex(self.example.srnas, self.example.srna_gffs, args_tar,
-                                         self.example.gffs, merges, 50)
-        output = [['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0', 'cds0', 'AAA_00001|CDS_0', '100-150', '89-50', '89-50', '+', '-6.5', '1', '-6.5', '1'],
-                  ['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267', '+', 'gene2', 'cds2', 'AAA_00003|CDS_2', '2348-2934', '2337-50', '2337-50', '+', '-10.5', '1', '-10.5', '1'],
-                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516', '-', 'gene0', 'cds0', 'AAA_00001|CDS_0', '100-150', '89-50', '89-50', '+', '-23.5', '1', '-23.5', '1']]
+        overlap = mrr.merge_base_rnaplex(
+            self.example.srnas, self.example.srna_gffs, args_tar,
+            self.example.gffs, merges, 50)
+        output = [['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0',
+                   'cds0', 'AAA_00001|CDS_0', '100-150', '89-50',
+                   '89-50', '+', '-6.5', '1', '-6.5', '1'],
+                  ['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267',
+                   '+', 'gene2', 'cds2', 'AAA_00003|CDS_2', '2348-2934',
+                   '2337-50', '2337-50', '+', '-10.5', '1', '-10.5', '1'],
+                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516',
+                   '-', 'gene0', 'cds0', 'AAA_00001|CDS_0', '100-150',
+                   '89-50', '89-50', '+', '-23.5', '1', '-23.5', '1']]
         count = 0
         for out in output:
             for data in overlap:
@@ -103,18 +121,45 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         args_tar.top = 2
         args_tar.tar_start = 20
         args_tar.tar_end = 15
-        srnas = {"RNAplex": {"srna0": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                             "srna1": [{"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                             "srna2": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
-                                       {"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -6.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}]},
-                 "RNAup": {"srna0": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                           "srna1": [{"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                           "srna2": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}]}}
+        srnas = {"RNAplex": {"srna0": [
+            {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+             "target_locus": "AAA_00001", "energy": -6.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"}],
+                             "srna1": [
+            {"gene_id": "gene2","detail": "2348-2934_+", "target_id": "cds2",
+             "target_locus": "AAA_00003", "energy": -10.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"}],
+                             "srna2": [
+            {"gene_id": "gene0", "detail": "100-150_+", "target_id": "cds0",
+             "target_locus": "AAA_00001", "energy": -23.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"},
+            {"gene_id": "gene2","detail": "2348-2934_+", "target_id": "cds2",
+             "target_locus": "AAA_00003", "energy": -6.5, "rank": 2,
+             "srna_pos": "2,10", "tar_pos": "10,15"}]},
+                 "RNAup": {"srna0": [
+            {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+             "target_locus": "AAA_00001", "energy": -6.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"}],
+                           "srna1": [
+            {"gene_id": "gene2","detail": "2348-2934_+", "target_id": "cds2",
+             "target_locus": "AAA_00003", "energy": -10.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"}],
+                           "srna2": [
+            {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+             "target_locus": "AAA_00001", "energy": -23.5, "rank": 1,
+             "srna_pos": "2,10", "tar_pos": "10,15"}]}}
         merges = []
-        mrr.merge_base_rnaup(srnas, self.example.srna_gffs, args_tar, self.example.gffs, merges, 50)
-        output = [['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267', '+', 'gene2', 'cds2', 'AAA_00003', '2348-2934', '2337-50', '2337-50', '+', '-10.5', '1', '-10.5', '1'],
-                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516', '-', 'gene0', 'cds0', 'AAA_00001', '100-150', '89-50', '89-50', '+', '-23.5', '1', '-23.5', '1'],
-                  ['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0', 'cds0', 'AAA_00001', '100-150', '89-50', '89-50', '+', '-6.5', '1', '-6.5', '1']]
+        mrr.merge_base_rnaup(srnas, self.example.srna_gffs,
+                             args_tar, self.example.gffs, merges, 50)
+        output = [['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267',
+                   '+', 'gene2', 'cds2', 'AAA_00003', '2348-2934', '2337-50',
+                   '2337-50', '+', '-10.5', '1', '-10.5', '1'],
+                  ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516',
+                   '-', 'gene0', 'cds0', 'AAA_00001', '100-150', '89-50',
+                   '89-50', '+', '-23.5', '1', '-23.5', '1'],
+                  ['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0',
+                   'cds0', 'AAA_00001', '100-150', '89-50', '89-50', '+',
+                   '-6.5', '1', '-6.5', '1']]
         count = 0
         for out in output:
             for data in merges:
@@ -123,13 +168,33 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         self.assertEqual(count, 3)
 
 class Example(object):
-    srnas = {"RNAplex": {"srna0": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                         "srna1": [{"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                         "srna2": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"},
-                                   {"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -6.5, "rank": 2, "srna_pos": "2,10", "tar_pos": "10,15"}]},
-             "RNAup": {"srna0": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -6.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                       "srna1": [{"gene_id": "gene2","detail": "2348-2934_+","target_id": "cds2","target_locus": "AAA_00003", "energy": -10.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}],
-                       "srna2": [{"gene_id": "gene0","detail": "100-150_+","target_id": "cds0","target_locus": "AAA_00001", "energy": -23.5, "rank": 1, "srna_pos": "2,10", "tar_pos": "10,15"}]}}
+    srnas = {"RNAplex": {"srna0": [
+        {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+         "target_locus": "AAA_00001", "energy": -6.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"}],
+                         "srna1": [
+        {"gene_id": "gene2","detail": "2348-2934_+", "target_id": "cds2",
+         "target_locus": "AAA_00003", "energy": -10.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"}],
+                         "srna2": [
+        {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+         "target_locus": "AAA_00001", "energy": -23.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"},
+        {"gene_id": "gene2","detail": "2348-2934_+", "target_id": "cds2",
+         "target_locus": "AAA_00003", "energy": -6.5, "rank": 2,
+         "srna_pos": "2,10", "tar_pos": "10,15"}]},
+             "RNAup": {"srna0": [
+        {"gene_id": "gene0","detail": "100-150_+", "target_id": "cds0",
+         "target_locus": "AAA_00001", "energy": -6.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"}],
+                       "srna1": [
+        {"gene_id": "gene2", "detail": "2348-2934_+", "target_id": "cds2",
+         "target_locus": "AAA_00003", "energy": -10.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"}],
+                       "srna2": [
+        {"gene_id": "gene0", "detail": "100-150_+", "target_id": "cds0",
+         "target_locus": "AAA_00001", "energy": -23.5, "rank": 1,
+         "srna_pos": "2,10", "tar_pos": "10,15"}]}}
     srna_dict = [{"start": 6, "end": 15, "phase": ".",
                   "strand": "+", "seq_id": "aaa", "score": ".",
                   "source": "Refseq", "feature": "sRNA"},
@@ -154,27 +219,33 @@ class Example(object):
                 {"start": 2348, "end": 2934, "phase": ".",
                  "strand": "-", "seq_id": "aaa", "score": ".",
                  "source": "Refseq", "feature": "gene"}]
-    attributes_gff = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
-                      {"ID": "gene0", "Name": "gene_1", "locus_tag": "AAA_00001"},
-                      {"ID": "cds1", "Name": "CDS_2", "locus_tag": "AAA_00003"},
-                      {"ID": "gene1", "Name": "gene_2", "locus_tag": "AAA_00003"}]
+    attributes_gff = [
+        {"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
+        {"ID": "gene0", "Name": "gene_1", "locus_tag": "AAA_00001"},
+        {"ID": "cds1", "Name": "CDS_2", "locus_tag": "AAA_00003"},
+        {"ID": "gene1", "Name": "gene_2", "locus_tag": "AAA_00003"}]
     gene_dict = [{"start": 100, "end": 150, "phase": ".",
                    "strand": "+", "seq_id": "aaa", "score": ".",
                    "source": "Refseq", "feature": "gene"},
                   {"start": 2348, "end": 2934, "phase": ".",
                    "strand": "-", "seq_id": "aaa", "score": ".",
                    "source": "Refseq", "feature": "gene"}]
-    attributes_gene = [{"ID": "gene0", "Name": "gene_1", "locus_tag": "AAA_00001"},
-                       {"ID": "gene1", "Name": "gene_2", "locus_tag": "AAA_00003"}]
+    attributes_gene = [{"ID": "gene0", "Name": "gene_1",
+                        "locus_tag": "AAA_00001"},
+                       {"ID": "gene1", "Name": "gene_2",
+                        "locus_tag": "AAA_00003"}]
     srna_gffs = []
     gffs = []
     genes = []
     for index in range(0, 3):
-        srna_gffs.append(Create_generator(srna_dict[index], attributes_srna[index], "gff"))
+        srna_gffs.append(Create_generator(
+            srna_dict[index], attributes_srna[index], "gff"))
     for index in range(0, 4):
-        gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))    
+        gffs.append(Create_generator(
+            gff_dict[index], attributes_gff[index], "gff"))    
     for index in range(0, 2):
-        genes.append(Create_generator(gene_dict[index], attributes_gene[index], "gff"))
+        genes.append(Create_generator(
+            gene_dict[index], attributes_gene[index], "gff"))
     out_rna_txt = """>AAA_00001|cds0|100-150_+
 >srna1023
 ((((((&)))))) 571,576 :  20,25  (-5.30 = -7.89 +  0.18 +  2.41)"""
@@ -198,6 +269,5 @@ GAAGAUCCUAUUUUUAA&UUAAAAAUGGGGGUUC
 >srna1
 ((((((((&)))))))) 163,170 :  24,31  (-1.91 = -8.31 +  0.60 +  5.80)
 """    
-
 if __name__ == "__main__":
     unittest.main()

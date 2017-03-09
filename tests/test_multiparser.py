@@ -69,10 +69,13 @@ class TestMultiparser(unittest.TestCase):
         for index in range(0, 4):
             with open(wig_files[index], "w") as fh:
                 fh.write(example_wigs[index])
-        libs = ["test_forward.wig_STRAIN_aaa.wig:frag:1:a:+", "test_reverse.wig_STRAIN_aaa.wig:frag:1:a:-"]
+        libs = ["test_forward.wig_STRAIN_aaa.wig:frag:1:a:+",
+                "test_reverse.wig_STRAIN_aaa.wig:frag:1:a:-"]
         self.multiparser.combine_wig(self.ref_folder, tmp_tar, "fasta", libs)
-        self.assertTrue(os.path.exists(os.path.join(tmp_tar, "test_forward.wig")))
-        self.assertTrue(os.path.exists(os.path.join(tmp_tar, "test_reverse.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            tmp_tar, "test_forward.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            tmp_tar, "test_reverse.wig")))
 
     def test_combine_gff(self):
         tmp_tar = os.path.join(self.tar_folder, "tmp")
@@ -99,30 +102,42 @@ class TestMultiparser(unittest.TestCase):
         with open(fasta_file, "w") as rh:
             rh.write(self.example.fasta_file)
         self.multiparser.parser_fasta(self.ref_folder)
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/aaa.fa")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/bbb.fa")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test.fa_folder/aaa.fa")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test.fa_folder/bbb.fa")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "tmp/aaa.fa")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "tmp/bbb.fa")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "test.fa_folder/aaa.fa")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "test.fa_folder/bbb.fa")))
 
     def test_parser_gff(self):
         gff_file = os.path.join(self.ref_folder, "test.gff")
         with open(gff_file, "w") as rh:
             rh.write(self.example.gff_file)
         self.multiparser.parser_gff(self.ref_folder, None)
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/aaa.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/bbb.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test.gff_folder/aaa.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test.gff_folder/bbb.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "tmp/aaa.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "tmp/bbb.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "test.gff_folder/aaa.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.ref_folder, "test.gff_folder/bbb.gff")))
         tss_file = os.path.join(self.ref_folder, "test_TSS.gff")
         os.rename(gff_file, tss_file)
         tss_file = os.path.join(self.ref_folder, "test_TSS.gff")
         with open(tss_file, "w") as rh:
             rh.write(self.example.gff_file)
         self.multiparser.parser_gff(self.ref_folder, "TSS")
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/aaa_TSS.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/bbb_TSS.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test_TSS.gff_folder/aaa_TSS.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "test_TSS.gff_folder/bbb_TSS.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder, "tmp/aaa_TSS.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder, "tmp/bbb_TSS.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder, "test_TSS.gff_folder/aaa_TSS.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder, "test_TSS.gff_folder/bbb_TSS.gff")))
 
     def test_parser_wig(self):
         wig_f_file = os.path.join(self.ref_folder, "test_forward.wig")
@@ -132,18 +147,26 @@ class TestMultiparser(unittest.TestCase):
         with open(wig_r_file, "w") as rh:
             rh.write(self.example.wig_r_file)
         self.multiparser.parser_wig(self.ref_folder)
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/test_forward_STRAIN_aaa.wig")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/test_forward_STRAIN_bbb.wig")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/test_reverse_STRAIN_aaa.wig")))
-        self.assertTrue(os.path.exists(os.path.join(self.ref_folder, "tmp/test_reverse_STRAIN_bbb.wig")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.ref_folder, "test_forward.wig_folder/test_forward_STRAIN_aaa.wig")))
+            os.path.join(self.ref_folder, "tmp/test_forward_STRAIN_aaa.wig")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.ref_folder, "test_forward.wig_folder/test_forward_STRAIN_bbb.wig")))
+            os.path.join(self.ref_folder, "tmp/test_forward_STRAIN_bbb.wig")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.ref_folder, "test_reverse.wig_folder/test_reverse_STRAIN_aaa.wig")))
+            os.path.join(self.ref_folder, "tmp/test_reverse_STRAIN_aaa.wig")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.ref_folder, "test_reverse.wig_folder/test_reverse_STRAIN_bbb.wig")))
+            os.path.join(self.ref_folder, "tmp/test_reverse_STRAIN_bbb.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder,
+            "test_forward.wig_folder/test_forward_STRAIN_aaa.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder,
+            "test_forward.wig_folder/test_forward_STRAIN_bbb.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder,
+            "test_reverse.wig_folder/test_reverse_STRAIN_aaa.wig")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.ref_folder,
+            "test_reverse.wig_folder/test_reverse_STRAIN_bbb.wig")))
 
 class Example(object):
 

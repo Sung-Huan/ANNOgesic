@@ -56,9 +56,11 @@ class TestRATT(unittest.TestCase):
 
     def test_convert_to_pttrnt(self):
         files = ["aaa.gff"]
-        gen_file(os.path.join(self.test_folder, "aaa.gff"), self.example.gff_file)
+        gen_file(os.path.join(self.test_folder, "aaa.gff"),
+                 self.example.gff_file)
         os.mkdir(os.path.join(self.tar_fastas, "tmp"))
-        gen_file(os.path.join(self.tar_fastas, "tmp/aaa.fa"), self.example.fasta_file)
+        gen_file(os.path.join(self.tar_fastas, "tmp/aaa.fa"),
+                 self.example.fasta_file)
         self.ratt._convert_to_pttrnt(self.test_folder, files)
         data = import_data(os.path.join(self.test_folder, "aaa.rnt"))
         self.assertEqual("\n".join(data), self.example.rnt_file)
@@ -68,12 +70,12 @@ class TestRATT(unittest.TestCase):
     def test_convert_to_gff(self):
         files = ["aaa.gff"]
         ratt_result = "chromosome.aaa.final.embl"
-        gen_file(os.path.join(self.output_path, ratt_result), self.example.embl_file)
+        gen_file(os.path.join(self.output_path, ratt_result),
+                 self.example.embl_file)
         args = self.mock_args.mock()
         args.output_path = self.output_path
         args.gff_outfolder = self.gff_outfolder
         self.ratt._convert_to_gff(ratt_result, args, files)
-#        self.ratt._convert_to_gff(ratt_result, self.output_path, self.gff_outfolder, files)
         data = import_data(os.path.join(self.output_path, "aaa.gff"))
         self.assertEqual("\n".join(data), self.example.embl_gff)
         data = import_data(os.path.join(self.gff_outfolder, "aaa.gff"))
@@ -81,15 +83,23 @@ class TestRATT(unittest.TestCase):
 
     def test_parser_embl_gbk(self):
         files = [os.path.join(self.test_folder, "aaa.gbk")]
-        gen_file(os.path.join(self.test_folder, "aaa.gbk"), self.example.gbk_file)
+        gen_file(os.path.join(self.test_folder, "aaa.gbk"),
+                 self.example.gbk_file)
         self.ratt._parser_embl_gbk(files)
-        data = import_data(os.path.join(self.ref_gbk, "gbk_tmp/NC_007795.1.gbk"))
-        self.assertEqual("\n".join(data), self.example.gbk_file.split("//")[0] + "//")
-        data = import_data(os.path.join(self.ref_gbk, "gbk_tmp/NC_007799.1.gbk"))
-        self.assertEqual("\n".join(data), self.example.gbk_file.split("//")[1].strip() + "\n//")
+        data = import_data(os.path.join(self.ref_gbk,
+                           "gbk_tmp/NC_007795.1.gbk"))
+        self.assertEqual(
+            "\n".join(data),
+            self.example.gbk_file.split("//")[0] + "//")
+        data = import_data(os.path.join(
+            self.ref_gbk, "gbk_tmp/NC_007799.1.gbk"))
+        self.assertEqual(
+            "\n".join(data),
+            self.example.gbk_file.split("//")[1].strip() + "\n//")
 
     def test_convert_embl(self):
-        gen_file(os.path.join(self.test_folder, "aaa.gbk"), self.example.gbk_file.split("//")[0])
+        gen_file(os.path.join(self.test_folder, "aaa.gbk"),
+                 self.example.gbk_file.split("//")[0])
         out = self.ratt._convert_embl(self.test_folder)
         self.assertEqual(out, "test_folder/gbk/gbk_tmp")
         self.assertTrue(os.path.exists("test_folder/gbk/gbk_tmp"))
@@ -103,9 +113,12 @@ class TestRATT(unittest.TestCase):
         self.ratt._format_and_run(args)
 
     def test_annotation_transfer(self):    
-        gen_file(os.path.join(self.ref_fastas, "aaa.fa"), self.example.fasta_file)
-        gen_file(os.path.join(self.tar_fastas, "bbb.fa"), self.example.fasta_file)
-        gen_file(os.path.join(self.ref_embls, "aaa.gbk"), self.example.gbk_file.split("//")[0])
+        gen_file(os.path.join(self.ref_fastas, "aaa.fa"),
+                 self.example.fasta_file)
+        gen_file(os.path.join(self.tar_fastas, "bbb.fa"),
+                 self.example.fasta_file)
+        gen_file(os.path.join(self.ref_embls, "aaa.gbk"),
+                 self.example.gbk_file.split("//")[0])
         self.ratt._run_ratt = Mock_func().mock_run_ratt
         args = self.mock_args.mock()
         args.element = "element"
@@ -117,13 +130,12 @@ class TestRATT(unittest.TestCase):
         args.pairs = ["aaa:bbb"]
         args.convert = True
         self.ratt.annotation_transfer(args)
-#        self.ratt.annotation_transfer("test", "element", "test_type",
-#                                      self.ref_embls, self.tar_fastas,
-#                                      self.ref_fastas, self.output_path,
-#                                      True, self.gff_outfolder, pairs)
-        self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.gff")))
-        self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.rnt")))
-        self.assertTrue(os.path.exists(os.path.join(self.gff_outfolder, "bbb.ptt")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.gff_outfolder, "bbb.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.gff_outfolder, "bbb.rnt")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.gff_outfolder, "bbb.ptt")))
 
 
 class Example(object):

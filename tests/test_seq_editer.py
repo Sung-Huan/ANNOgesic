@@ -27,16 +27,20 @@ class TestSeqEditer(unittest.TestCase):
         mod_table = os.path.join(self.test_folder, "mod")
         gen_file(mod_table, self.example.mutation)
         datas = self.seq._import_data(mod_table)
-        self.assertListEqual(datas, [{'ref_id': 'NC_000915.1', 'datas': [{'tar_nt': 'c', 'ref_nt': 'a', 'position': '3'},
-                                                                         {'tar_nt': '-', 'ref_nt': 'a', 'position': '6'}],
-                                                'target_id': 'NC_test.1'},
-                                     {'ref_id': 'NC_000915.1', 'datas': [{'tar_nt': 'g', 'ref_nt': '-', 'position': '6'}],
-                                                'target_id': 'test_case2'}])
+        self.assertListEqual(datas, [
+            {'ref_id': 'NC_000915.1',
+             'datas': [{'tar_nt': 'c', 'ref_nt': 'a', 'position': '3'},
+                       {'tar_nt': '-', 'ref_nt': 'a', 'position': '6'}],
+             'target_id': 'NC_test.1'},
+            {'ref_id': 'NC_000915.1',
+             'datas': [{'tar_nt': 'g', 'ref_nt': '-', 'position': '6'}],
+             'target_id': 'test_case2'}])
 
     def test_modify_seq(self):
         mod_table = os.path.join(self.test_folder, "mod")
         gen_file(mod_table, self.example.mutation)
-        gen_file(os.path.join(self.fasta, "NC_000915.1.fa"), self.example.fasta)
+        gen_file(os.path.join(self.fasta, "NC_000915.1.fa"),
+                 self.example.fasta)
         self.seq.modify_seq(self.fasta, mod_table, self.test_folder)
         datas = import_data(os.path.join(self.test_folder, "NC_test.1.fa"))
         self.assertEqual("\n".join(datas), self.example.out_1)

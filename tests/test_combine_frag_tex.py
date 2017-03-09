@@ -36,14 +36,18 @@ class TestCombineFragTex(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_compare(self):
-        data1_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 140,
-                      "end": 367, "phase": ".", "strand": "+", "score": "."}
-        data2_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 180,
-                      "end": 400, "phase": ".", "strand": "+", "score": "."}
-        data3_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 50,
-                      "end": 138, "phase": ".", "strand": "+", "score": "."}
-        data4_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 5650,
-                      "end": 7100, "phase": ".", "strand": "+", "score": "."}
+        data1_dict = {
+            "seq_id": "aaa", "source": "Refseq", "feature": "transcript",
+            "start": 140, "end": 367, "phase": ".", "strand": "+", "score": "."}
+        data2_dict = {
+            "seq_id": "aaa", "source": "Refseq", "feature": "transcript",
+            "start": 180, "end": 400, "phase": ".", "strand": "+", "score": "."}
+        data3_dict = {
+            "seq_id": "aaa", "source": "Refseq", "feature": "transcript",
+            "start": 50, "end": 138, "phase": ".", "strand": "+", "score": "."}
+        data4_dict = {
+            "seq_id": "aaa", "source": "Refseq", "feature": "transcript",
+            "start": 5650, "end": 7100, "phase": ".", "strand": "+", "score": "."}
         attributes = {"ID": "tran0", "Name": "Tran_0", "locus_tag": "AAA_00001"}
         overlap = False
         data1 = Create_generator(data1_dict, attributes, "gff")
@@ -80,17 +84,23 @@ class TestCombineFragTex(unittest.TestCase):
 
 class Example(object):
 
-    frag_dict = [{"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 140,
+    frag_dict = [{"seq_id": "aaa", "source": "ANNOgesic",
+                  "feature": "Transcript", "start": 140,
                   "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 30,
+                 {"seq_id": "aaa", "source": "ANNOgesic",
+                  "feature": "Transcript", "start": 30,
                   "end": 40, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "ANNOgesic", "feature": "Transcript", "start": 430,
+                 {"seq_id": "bbb", "source": "ANNOgesic",
+                  "feature": "Transcript", "start": 430,
                   "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    tex_dict = [{"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 120,
+    tex_dict = [{"seq_id": "aaa", "source": "ANNOgesic",
+                 "feature": "Transcript", "start": 120,
                  "end": 367, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "ANNOgesic", "feature": "Transcript", "start": 3,
+                {"seq_id": "aaa", "source": "ANNOgesic",
+                 "feature": "Transcript", "start": 3,
                  "end": 38, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "bbb", "source": "ANNOgesic", "feature": "Transcript", "start": 1430,
+                {"seq_id": "bbb", "source": "ANNOgesic",
+                 "feature": "Transcript", "start": 1430,
                  "end": 1667, "phase": ".", "strand": "-", "score": "."}]
     attributes_gffs = [{"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
                        {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002"},

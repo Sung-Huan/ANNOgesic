@@ -40,7 +40,8 @@ class TestStatTSSpredator(unittest.TestCase):
     def test_plot(self):
         st.plot(20, 23, 10, 13, 5, 100, 200, "name",
                 "TSS", os.path.join(self.test_folder, "test"))
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test_class_name.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "test_class_name.png")))
 
     def test_stat_tsspredator(self):
         detect = False
@@ -66,11 +67,13 @@ class TestStatTSSpredator(unittest.TestCase):
 class Example(object):
 
     tss = """aaa	TSSpredator	TSS	2131	2131	.	+	.	UTR_length=Primary_25;type=Primary;ID=tss3;libs=TSB_OD_0.2&pMEM_OD_0.5&pMEM_t2;associated_gene=SAOUHSC_00002;Name=TSS:2131_f"""
-    tss_dict = [{"seq_id": "aaa", "source": "TSSpredator", "feature": "TSS", "start": 2131,
+    tss_dict = [{"seq_id": "aaa", "source": "TSSpredator",
+                 "feature": "TSS", "start": 2131,
                  "end": 2131, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tss = [{"ID": "tss3", "Name": "TSS:2131_f", "UTR_length": "Primary_25",
-                       "type": "Primary", "associated_gene": "SAOUHSC_00002",
-                       "libs": "TSB_OD_0.2&pMEM_OD_0.5&pMEM_t2"}]
+    attributes_tss = [{
+        "ID": "tss3", "Name": "TSS:2131_f", "UTR_length": "Primary_25",
+        "type": "Primary", "associated_gene": "SAOUHSC_00002",
+        "libs": "TSB_OD_0.2&pMEM_OD_0.5&pMEM_t2"}]
     tsss = []
     tsss.append(Create_generator(tss_dict[0], attributes_tss[0], "gff"))
 

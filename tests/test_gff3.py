@@ -38,12 +38,15 @@ class TestGff3Parser(unittest.TestCase):
             ends.append(entry.end)
             strands.append(entry.strand)
             IDs.append(entry.attributes["ID"])
-        self.assertListEqual(strains, ["aaa", "aaa", "aaa", "aaa", "bbb", "bbb"])
-        self.assertListEqual(features, ["gene", "CDS", "gene", "CDS", "gene", "tRNA"])
+        self.assertListEqual(strains, ["aaa", "aaa", "aaa",
+                                       "aaa", "bbb", "bbb"])
+        self.assertListEqual(features, ["gene", "CDS", "gene",
+                                        "CDS", "gene", "tRNA"])
         self.assertListEqual(starts, [517, 517, 2156, 2156, 4444, 4444])
         self.assertListEqual(ends, [1878, 1878, 3289, 3289, 5444, 5444])
         self.assertListEqual(strands, ["+", "+", "-", "-", "+", "+"])
-        self.assertListEqual(IDs, ["gene0", "cds0", "gene1", "cds1", "gene2", "rna0"])
+        self.assertListEqual(IDs, ["gene0", "cds0", "gene1",
+                                   "cds1", "gene2", "rna0"])
 
 class Example(object):
 

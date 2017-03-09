@@ -36,21 +36,24 @@ class Mock_func(object):
     def mock_check_gff(self, gffs):
         pass
 
-    def mock_run_normal(self, import_info, tss_path, pro_path, prefix, gff_path):
+    def mock_run_normal(self, import_info, tss_path,
+                        pro_path, prefix, gff_path):
         return None, [None, None, 1, 2], [None, None, 1, 2]
 
-    def mock_run_utrsrna(self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
-                     prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
-                     tex_notex, flibs, tlibs, replicates, table_best,
-                     decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
-                     out_folder, hypo, tex_path, frag_path, notex, min_utr):
+    def mock_run_utrsrna(
+            self, gff_path, gff, tran, fuzzy_tss, max_len, min_len,
+            prefix, tex_wigs, frag_wigs, tss, pro, fasta_path,
+            tex_notex, flibs, tlibs, replicates, table_best,
+            decrease_utr, fuzzy_utr, utr_tex_cover, utr_frag_cover,
+            out_folder, hypo, tex_path, frag_path, notex, min_utr):
         pass
 
     def mock_merge_tex_frag_datas(self, tex_datas, frag_datas):
         return [None, None, 1, 2]
 
     def mock_merge_srna_gff(self, utr_gff, normal_gff, in_cds, merge_gff):
-        shutil.copy("test_folder/gffs/test.gff", "test_folder/output/tmp_merge_test")
+        shutil.copy("test_folder/gffs/test.gff",
+                    "test_folder/output/tmp_merge_test")
 
     def mock_merge_srna_table(self, merge_gff, normal_table, utr_table,
                               forward, reverse, merge_wig):
@@ -66,7 +69,8 @@ class Mock_func(object):
     def mock_run_RNAfold(self, seq_file, vienna_path, sec_file):
         pass
 
-    def mock_run_replot(self, vienna_util, tmp_paths, file_, dot_file, rel_file):
+    def mock_run_replot(self, vienna_util, tmp_paths, file_,
+                        dot_file, rel_file):
         pass
 
     def mock_convert_pdf(self, ps2pdf14_path, tmp_paths, file_, pdf_file):
@@ -75,16 +79,19 @@ class Mock_func(object):
     def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out):
         pass
 
-    def mock_run_blast(self, program, database, e, seq_file, blast_file, strand, para, test):
+    def mock_run_blast(self, program, database, e, seq_file, blast_file,
+                       strand, para, test):
         gen_file('tmp_blast.txt', "test")
 
-    def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file, database_type):
+    def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file,
+                           database_type):
         pass
 
     def mock_classify_srna(self, gff_file, out_stat, in_cds, import_info):
         pass
 
-    def mock_gen_srna_table(self, class_gff, merge, nr, srna, max_len, min_len, out_table):
+    def mock_gen_srna_table(self, class_gff, merge, nr, srna,
+                            max_len, min_len, out_table):
         pass
     
     def mock_blast_class(self, srna, out_srna_blast):
@@ -215,9 +222,12 @@ class TestsRNADetection(unittest.TestCase):
         sr.merge_srna_gff = self.mock.mock_merge_srna_gff
         sr.merge_srna_table = self.mock.mock_merge_srna_table
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.sorf_file)
-        gen_file(os.path.join(self.trans, "test_transcript.gff"), self.example.sorf_file)
-        gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.sorf_file)
-        gen_file(os.path.join(self.tsss, "test_processing.gff"), self.example.sorf_file)
+        gen_file(os.path.join(self.trans, "test_transcript.gff"),
+                 self.example.sorf_file)
+        gen_file(os.path.join(self.tsss, "test_TSS.gff"),
+                 self.example.sorf_file)
+        gen_file(os.path.join(self.tsss, "test_processing.gff"),
+                 self.example.sorf_file)
         fuzzy_tsss = {"inter": 3}
         args = self.mock_args.mock()
         args.import_info = ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"]
@@ -246,11 +256,13 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._run_RNAfold = self.mock.mock_run_RNAfold
         os.mkdir(os.path.join(self.out, "tmp_srna"))
         gen_file(os.path.join(self.fastas, "test.fa"), ">test\nAAATTTGGGCCC")
-        datas = self.srna._get_seq_sec(self.fastas, self.out, "test", self.test_folder,
-                                       self.test_folder, "vienna_path")
+        datas = self.srna._get_seq_sec(
+            self.fastas, self.out, "test", self.test_folder,
+            self.test_folder, "vienna_path")
         self.assertEqual(datas["sec"].split("/")[-1], "test_folder")
         self.assertEqual(datas["dot"].split("/")[-1], "test_folder")
-        self.assertEqual(datas["main"].split("/")[-1], datas["tmp"].split("/")[-4])
+        self.assertEqual(datas["main"].split("/")[-1],
+                         datas["tmp"].split("/")[-4])
         self.assertEqual(datas["tmp"].split("/")[-1], "tmp_srna")
 
     def test_replot_sec_to_pdf(self):
@@ -259,9 +271,12 @@ class TestsRNADetection(unittest.TestCase):
         gen_file(os.path.join(self.tsss, "test.rss.pdf"), "test")
         gen_file(os.path.join(self.tsss, "test.dp.pdf"), "test")
         tmp_paths = {"dot": self.out, "sec": self.fastas, "tmp": self.tsss}
-        self.srna._replot_sec_to_pdf("vienna_util", tmp_paths, "ps2pdf14_path", "test")
-        self.assertTrue(os.path.exists(os.path.join(tmp_paths["dot"], "test/test.dp.pdf")))
-        self.assertTrue(os.path.exists(os.path.join(tmp_paths["sec"], "test/test.rss.pdf")))
+        self.srna._replot_sec_to_pdf("vienna_util", tmp_paths,
+                                     "ps2pdf14_path", "test")
+        self.assertTrue(os.path.exists(os.path.join(
+            tmp_paths["dot"], "test/test.dp.pdf")))
+        self.assertTrue(os.path.exists(os.path.join(
+            tmp_paths["sec"], "test/test.rss.pdf")))
 
     def test_plot_mountain(self):
         self.srna._run_mountain = self.mock.mock_run_mountain
@@ -283,9 +298,12 @@ class TestsRNADetection(unittest.TestCase):
         os.mkdir(sec_path)
         os.mkdir(os.path.join(sec_path, "sec_plot"))
         os.mkdir(os.path.join(sec_path, "dot_plot"))
-        tmp_paths = {"dot": self.out, "sec": self.fastas, "tmp": self.tsss, "main": self.test_folder}
-        gen_file(os.path.join(self.fastas, "tmp/test.fa"), ">test\nAAATTTGGGCCC")
-        gen_file(os.path.join(self.out, "tmp_basic_test"), self.example.srna_file)
+        tmp_paths = {"dot": self.out, "sec": self.fastas,
+                     "tmp": self.tsss, "main": self.test_folder}
+        gen_file(os.path.join(self.fastas, "tmp/test.fa"),
+                 ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.out, "tmp_basic_test"),
+                 self.example.srna_file)
         gen_file(os.path.join(self.out, "tmp_energy_test"), "test")
         args = self.mock_args.mock()
         args.out_folder = self.out
@@ -304,9 +322,11 @@ class TestsRNADetection(unittest.TestCase):
         sr.extract_blast = self.mock.mock_extract_blast
         self.srna._run_blast = self.mock.mock_run_blast
         self.srna._run_format = self.mock.mock_run_format
-        gen_file(os.path.join(self.out, "tmp_basic_test"), self.example.srna_file)
+        gen_file(os.path.join(self.out, "tmp_basic_test"),
+                 self.example.srna_file)
         gen_file(os.path.join(self.out, "tmp_nr_test"), "test")
-        gen_file(os.path.join(self.fastas, "tmp/test.fa"), ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.fastas, "tmp/test.fa"),
+                 ">test\nAAATTTGGGCCC")
         args = self.mock_args.mock()
         args.blast_path = "test"
         args.para_blast = 1
@@ -333,8 +353,10 @@ class TestsRNADetection(unittest.TestCase):
         args.min_len = 30
         args.import_info = ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"]
         self.srna._class_srna(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(gff_out, "for_class/test")))
-        self.assertTrue(os.path.exists(os.path.join(table_out, "for_class/test")))
+        self.assertTrue(os.path.exists(os.path.join(
+            gff_out, "for_class/test")))
+        self.assertTrue(os.path.exists(os.path.join(
+            table_out, "for_class/test")))
 
     def test_filter_srna(self):
         self.srna.helper.merge_blast_out = self.mock.mock_merge_blast_out
@@ -365,10 +387,14 @@ class TestsRNADetection(unittest.TestCase):
             os.mkdir(sec_path)
             os.mkdir(os.path.join(sec_path, "sec_plot"))
             os.mkdir(os.path.join(sec_path, "dot_plot"))
-        gen_file(os.path.join(self.fastas, "tmp/test.fa"), ">test\nAAATTTGGGCCC")
-        gen_file(os.path.join(self.out, "sRNA_seq_test"), ">test\nAAATTTGGGCCC")
-        gen_file(os.path.join(self.out, "sRNA_index_test"), ">test\nAAATTTGGGCCC")
-        gen_file(os.path.join(self.out, "tmp_basic_test"), self.example.srna_file)
+        gen_file(os.path.join(self.fastas, "tmp/test.fa"),
+                 ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.out, "sRNA_seq_test"),
+                 ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.out, "sRNA_index_test"),
+                 ">test\nAAATTTGGGCCC")
+        gen_file(os.path.join(self.out, "tmp_basic_test"),
+                 self.example.srna_file)
         gen_file(os.path.join(self.out, "tmp_energy_test"), "test")
         gen_file(os.path.join(self.out, "tmp_nr_test"), "test")
         gen_file(os.path.join(self.out, "tmp_sRNA_test"), "test")

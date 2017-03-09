@@ -54,7 +54,8 @@ class TestExtractsRNAInfo(unittest.TestCase):
             for line in blast_f.readlines():
                 esi.detect_nr(line, blast_f.readlines(), out_t, blasts, "test")
         self.assertEqual(out_t.getvalue(), "")
-        self.assertDictEqual(blasts, {'name': '', 'hit_num': 0, 'blast': False})
+        self.assertDictEqual(blasts, {'name': '', 'hit_num': 0,
+                                      'blast': False})
         out_t.close()
         blast_f.close()
 
@@ -67,7 +68,8 @@ class TestExtractsRNAInfo(unittest.TestCase):
         with open(nr_file) as blast_f:
             for line in blast_f:
                 esi.detect_srna(line, blast_f, out_t, blasts, "test")
-        self.assertEqual(out_t.getvalue(), "test	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89\n")
+        self.assertEqual(out_t.getvalue(),
+                         "test	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89\n")
         out_t.close()
         blast_f.close()
 
@@ -79,31 +81,34 @@ class TestExtractsRNAInfo(unittest.TestCase):
         gen_file(srna_blast, self.example.blast_srna_all)
         output_file = os.path.join(self.test_folder, "out.gff")
         output_table = os.path.join(self.test_folder, "out.csv")
-        esi.extract_blast(nr_blast, "test.srna", output_file, output_table, "nr")
+        esi.extract_blast(nr_blast, "test.srna", output_file,
+                          output_table, "nr")
         datas, attributes = extract_info(output_file, "file")
         refs, ref_attributes = extract_info(self.example.out_nr_gff, "string")
         self.assertEqual(set(datas), set(refs[1:]))
         self.assertEqual(set(attributes[0]), set(attributes[0]))
         self.assertEqual(set(attributes[1]), set(attributes[1]))
         datas = import_data(output_table)
-#        self.assertEqual(set(datas), set(self.example.out_nr_csv.split("\n")))
-        esi.extract_blast(srna_blast, "test.srna", output_file, output_table, "sRNA")
+        esi.extract_blast(srna_blast, "test.srna", output_file,
+                          output_table, "sRNA")
         datas, attributes = extract_info(output_file, "file")
-        refs, ref_attributes = extract_info(self.example.out_srna_gff, "string")
+        refs, ref_attributes = extract_info(
+            self.example.out_srna_gff, "string")
         self.assertEqual(set(datas), set(refs[1:]))
         self.assertEqual(set(attributes[0]), set(attributes[0]))
         self.assertEqual(set(attributes[1]), set(attributes[1]))
         datas = import_data(output_table)
-        self.assertEqual(set(datas), set(self.example.out_srna_csv.split("\n")))
+        self.assertEqual(set(datas),
+                         set(self.example.out_srna_csv.split("\n")))
 
 class Example(object):
 
     srna_dict = [{"start": 313, "end": 417, "phase": ".",
-                  "strand": "+", "seq_id": "Staphylococcus_aureus_HG003", "score": ".",
-                  "source": "Refseq", "feature": "sRNA"},
+                  "strand": "+", "seq_id": "Staphylococcus_aureus_HG003",
+                  "score": ".", "source": "Refseq", "feature": "sRNA"},
                  {"start": 4045, "end": 4159, "phase": ".",
-                  "strand": "-", "seq_id": "Staphylococcus_aureus_HG003", "score": ".",
-                  "source": "Refseq", "feature": "sRNA"}]
+                  "strand": "-", "seq_id": "Staphylococcus_aureus_HG003",
+                  "score": ".", "source": "Refseq", "feature": "sRNA"}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_candidate_0000"},
                        {"ID": "srna1", "Name": "sRNA_candidate_0001"}]
     blast_nr_protein = """> gi|375036980|gb|EHS30036.1| DNA replication and repair protein
@@ -313,7 +318,5 @@ Staphylococcus_aureus_HG003	Refseq	sRNA	313	417	.	+	.	Name=sRNA_candidate_0000;I
 Staphylococcus_aureus_HG003	Refseq	sRNA	4045	4159	.	-	.	Name=sRNA_candidate_0001;ID=srna1;sRNA_hit=1"""
     out_srna_csv = """Staphylococcus_aureus_HG003	srna0	+	313	417	NA
 Staphylococcus_aureus_HG003	srna1	-	4045	4159	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89"""
-
 if __name__ == "__main__":
     unittest.main()
-

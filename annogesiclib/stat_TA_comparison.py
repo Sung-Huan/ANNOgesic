@@ -399,7 +399,7 @@ def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
         express_gene = detect_express_gene(gffs, feature, "all")
         out_stat.write("For {0}:\n".format(feature))
         out_stat.write("\tAll strains:\n")
-        out_stat.write("\tThe transcriptome assembly information "
+        out_stat.write("\tThe transcript information "
                        "compares with {0}:\n".format(feature))
         print_tag_stat(stats["All"], out_stat, express_gene, feature)
         if len(stats) > 2:
@@ -407,7 +407,7 @@ def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
                 if strain != "All":
                     express_gene = detect_express_gene(gffs, feature, strain)
                     out_stat.write("\t" + strain + ":\n")
-                    out_stat.write("\tThe transcriptome assembly information "
+                    out_stat.write("\tThe transcript information "
                                    "compares with {0}:\n".format(feature))
                     print_tag_stat(stats[strain], out_stat,
                                    express_gene, feature)

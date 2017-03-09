@@ -92,17 +92,22 @@ class TestsTSSpredator(unittest.TestCase):
         os.mkdir(utr5_stat_path)
         os.mkdir(utr3_stat_path)
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.trans, "test_transcript.gff"), self.example.tran_file)
-        gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
-        gen_file(os.path.join(term_path, "test_term.gff"), self.example.term_file)
+        gen_file(os.path.join(self.trans, "test_transcript.gff"),
+                 self.example.tran_file)
+        gen_file(os.path.join(self.tsss, "test_TSS.gff"),
+                 self.example.tss_file)
+        gen_file(os.path.join(term_path, "test_term.gff"),
+                 self.example.term_file)
         args = self.mock_args.mock()
         args.gffs = self.gffs
         args.tsss = self.tsss
         args.trans = self.trans
         args.terms = self.terms
         self.utr._compute_utr(args)
-        self.assertTrue(os.path.exists(os.path.join(utr5_stat_path, "test_5utr_length.png")))
-        self.assertTrue(os.path.exists(os.path.join(utr3_stat_path, "test_3utr_length.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            utr5_stat_path, "test_5utr_length.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            utr3_stat_path, "test_3utr_length.png")))
 
     def test_run_utr_detection(self):
         self.utr._check_gff = self.mock.mock_check_gff
@@ -117,9 +122,12 @@ class TestsTSSpredator(unittest.TestCase):
         os.mkdir(utr5_stat_path)
         os.mkdir(utr3_stat_path)
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.trans, "test_transcript.gff"), self.example.tran_file)
-        gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
-        gen_file(os.path.join(self.terms, "test_term.gff"), self.example.term_file)
+        gen_file(os.path.join(self.trans, "test_transcript.gff"),
+                 self.example.tran_file)
+        gen_file(os.path.join(self.tsss, "test_TSS.gff"),
+                 self.example.tss_file)
+        gen_file(os.path.join(self.terms, "test_term.gff"),
+                 self.example.term_file)
         args = self.mock_args.mock()
         args.tsss = self.tsss
         args.gffs = self.gffs
@@ -127,8 +135,10 @@ class TestsTSSpredator(unittest.TestCase):
         args.terms = self.terms
         args.out_folder = self.out
         self.utr.run_utr_detection(args)
-        self.assertTrue(os.path.exists(os.path.join(utr5_stat_path, "test_5utr_length.png")))
-        self.assertTrue(os.path.exists(os.path.join(utr3_stat_path, "test_3utr_length.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            utr5_stat_path, "test_5utr_length.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            utr3_stat_path, "test_3utr_length.png")))
 
 
 class Example(object):

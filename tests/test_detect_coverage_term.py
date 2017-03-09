@@ -15,7 +15,8 @@ class Mock_coverage(object):
     def __init__(self):
         self.example = Example()
 
-    def coverage_comparison(self, cover, cover_sets, poss, first, strand, cover_pos):
+    def coverage_comparison(self, cover, cover_sets, poss, first,
+                            strand, cover_pos):
         cover_sets["low"] = 30
         cover_sets["high"] = 100
         poss["low"] = 21 
@@ -71,7 +72,8 @@ class TestCoverageTerminator(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_compare_ta(self):
-        trans = read_dict(3, self.example.tran_dict, self.example.attributes_tran)
+        trans = read_dict(3, self.example.tran_dict,
+                          self.example.attributes_tran)
         dct.compare_ta(self.example.term_dict, trans, 5)
         express = []
         for term in self.example.term_dict:
@@ -87,9 +89,11 @@ class TestCoverageTerminator(unittest.TestCase):
         for term in terms:
             poss.append("_".join([str(term["start"]), str(term["end"])]))
             methods.append(term["method"])
-        self.assertListEqual(poss, ['30_40', '350_367', '420_432', '1420_2429'])
-        self.assertListEqual(methods, ['TransTermHP', 'forward_reverse,TransTermHP',
-                                   'forward_reverse,TransTermHP', 'forward_reverse'])
+        self.assertListEqual(poss, [
+            '30_40', '350_367', '420_432', '1420_2429'])
+        self.assertListEqual(methods, [
+            'TransTermHP', 'forward_reverse,TransTermHP',
+            'forward_reverse,TransTermHP', 'forward_reverse'])
 
     def test_compare_replicates(self):
         texs = {"track_tex_track_notex": 0}
@@ -107,9 +111,12 @@ class TestCoverageTerminator(unittest.TestCase):
             dct.compare_replicates(term_covers, texs, cond, args)
         self.assertEqual(diff_cover, 250)
         self.assertDictEqual(diff, {'track': 'track_tex', 'detect': 'True',
-                                    'high': 300, 'low': 50, 'type': 'tex', 'diff': 250})
-        ref_datas = [{'track': 'track_notex', 'detect': 'True', 'high': 200, 'low': 50, 'type': 'notex', 'diff': 150},
-                     {'track': 'track_tex', 'detect': 'True', 'high': 300, 'low': 50, 'type': 'tex', 'diff': 250}]
+                                    'high': 300, 'low': 50,
+                                    'type': 'tex', 'diff': 250})
+        ref_datas = [{'track': 'track_notex', 'detect': 'True', 'high': 200,
+                      'low': 50, 'type': 'notex', 'diff': 150},
+                     {'track': 'track_tex', 'detect': 'True', 'high': 300,
+                      'low': 50, 'type': 'tex', 'diff': 250}]
         for index in range(0, 2):
             self.assertDictEqual(ref_datas[index], term_datas[index])
         self.assertEqual(detect_num, 1)
@@ -121,8 +128,12 @@ class TestCoverageTerminator(unittest.TestCase):
         diff_cover, diff, term_datas, detect_num = \
             dct.compare_replicates(term_covers, texs, cond, args)
         self.assertEqual(diff_cover, 10)
-        self.assertDictEqual(diff, {'detect': 'False', 'type': 'frag', 'low': 0, 'diff': 10, 'track': 'frag', 'high': 10})
-        self.assertDictEqual(term_datas[0], {'detect': 'False', 'type': 'frag', 'low': 0, 'diff': 10, 'track': 'frag', 'high': 10})
+        self.assertDictEqual(diff, {'detect': 'False', 'type': 'frag',
+                                    'low': 0, 'diff': 10,
+                                    'track': 'frag', 'high': 10})
+        self.assertDictEqual(term_datas[0], {
+            'detect': 'False', 'type': 'frag', 'low': 0,
+            'diff': 10, 'track': 'frag', 'high': 10})
         self.assertEqual(detect_num, 1)
 
     def test_coverage2term(self):
@@ -137,7 +148,9 @@ class TestCoverageTerminator(unittest.TestCase):
         args.decrease = 0.5
         dct.coverage2term(covers, term, hl_covers, hl_poss, "+",
                           term_covers, "track_1", args, 0, 4, "frag")
-        self.assertDictEqual(term_covers[0], {'diff': 70, 'track': 'track_1', 'type': 'frag', 'high': 100, 'low': 30, 'detect': 'True'})
+        self.assertDictEqual(term_covers[0], {
+            'diff': 70, 'track': 'track_1', 'type': 'frag',
+            'high': 100, 'low': 30, 'detect': 'True'})
 
     def test_get_coverage(self):
         term = {"start": 2, "end": 4, "strain": "aaa", "strand": "+"}
@@ -149,11 +162,14 @@ class TestCoverageTerminator(unittest.TestCase):
         args.replicates = {"tex": ["all_1"], "frag": ["all_1"]}
         args.tex_notex = 2
         diff_cover, diff, term_datas, detect_nums = dct.get_coverage(
-                                                    term, wigs, "+", texs, args)
+            term, wigs, "+", texs, args)
         self.assertEqual(diff_cover, 70)
-        self.assertDictEqual(diff, {'track': 'track_1', 'high': 100, 'type': 'frag', 'detect': 'True', 'diff': 70, 'low': 30})
+        self.assertDictEqual(diff, {
+            'track': 'track_1', 'high': 100, 'type': 'frag',
+            'detect': 'True', 'diff': 70, 'low': 30})
         self.assertDictEqual(term_datas["frag_1"][0],
-                             {'track': 'track_1', 'high': 100, 'type': 'frag', 'detect': 'True', 'diff': 70, 'low': 30})
+                             {'track': 'track_1', 'high': 100, 'type': 'frag',
+                              'detect': 'True', 'diff': 70, 'low': 30})
         self.assertDictEqual(detect_nums, {'frag_1': 1})
 
     def test_compare_term(self):
@@ -194,30 +210,40 @@ class TestCoverageTerminator(unittest.TestCase):
         args.cutoff_coverage = 5
         args.table_best = True
         out_t = StringIO()
-        term = {"express": "True", "diff_cover": 70, "diff": {"high": 100, "low": 30, "track": "track_1"},
-                "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
-                                   {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
+        term = {"express": "True", "diff_cover": 70,
+                "diff": {"high": 100, "low": 30, "track": "track_1"},
+                "datas": {"data": [
+                    {"track": "track_1", "diff": 70, "high": 100, "low": 30},
+                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         dct.print_table(term, out_t, args)
-        self.assertEqual(set(out_t.getvalue().split("\n")), set(["	True	track_1(diff=70;high=100;low=30)"]))
+        self.assertEqual(set(out_t.getvalue().split("\n")), set([
+            "	True	track_1(diff=70;high=100;low=30)"]))
         out_t.close()
         out_t = StringIO()
         args.table_best = False
         dct.print_table(term, out_t, args)
-        self.assertEqual(set(out_t.getvalue().split("\n")), set(["	True	track_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)"]))
-        term = {"express": "False", "diff_cover": 70, "diff": {"high": 100, "low": 30, "track": "track_1"},
-                "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
-                                   {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
+        self.assertEqual(set(out_t.getvalue().split("\n")), set([
+            "	True	track_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)"]))
+        term = {"express": "False", "diff_cover": 70,
+                "diff": {"high": 100, "low": 30, "track": "track_1"},
+                "datas": {"data": [
+                    {"track": "track_1", "diff": 70, "high": 100, "low": 30},
+                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         out_t.close()
         out_t = StringIO()
         dct.print_table(term, out_t, args)
-        self.assertEqual(set(out_t.getvalue().split("\n")), set(["	False	NA"]))
-        term = {"express": "True", "diff_cover": -1, "diff": {"high": 100, "low": 30, "track": "track_1"},
-                "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
-                                   {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
+        self.assertEqual(set(out_t.getvalue().split("\n")), set([
+            "	False	NA"]))
+        term = {"express": "True", "diff_cover": -1,
+                "diff": {"high": 100, "low": 30, "track": "track_1"},
+                "datas": {"data": [
+                    {"track": "track_1", "diff": 70, "high": 100, "low": 30},
+                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         out_t.close()
         out_t = StringIO()
         dct.print_table(term, out_t, args)
-        self.assertEqual(set(out_t.getvalue().split("\n")), set(["	False	No_coverage_decreasing"]))
+        self.assertEqual(set(out_t.getvalue().split("\n")), set([
+            "	False	No_coverage_decreasing"]))
         out_t.close()
 
     def test_print2file(self):
@@ -226,14 +252,17 @@ class TestCoverageTerminator(unittest.TestCase):
         term = {"strain": "aaa", "express": "True", "diff_cover": 70,
                 "strand": "+", "start": 2, "end": 4, "method": "TransTermHP",
                 "diff": {"high": 100, "low": 30, "track": "track_1"},
-                "datas": {"data": [{"track": "track_1", "diff": 70, "high": 100, "low": 30},
-                                   {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
+                "datas": {"data": [
+                    {"track": "track_1", "diff": 70, "high": 100, "low": 30},
+                    {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         args = self.mock_args.mock()
         args.cutoff_coverage = 5
         args.table_best = True
         dct.print2file(0, term, "70", "test", out, out_t, "test_method", args)
-        self.assertEqual(set(out.getvalue().split("\n")[:-1]), set([self.example.gff_file]))
-        self.assertEqual(set(out_t.getvalue().split("\n")[:-1]), set([self.example.table]))
+        self.assertEqual(set(out.getvalue().split("\n")[:-1]),
+                         set([self.example.gff_file]))
+        self.assertEqual(set(out_t.getvalue().split("\n")[:-1]),
+                         set([self.example.table]))
         out.close()
         out_t.close()
 
@@ -245,21 +274,30 @@ class Example(object):
                   "method": "forward_reverse", "express": "False"},
                  {"strain": "bbb", "start": 1420, "end": 2429, "strand": "-",
                   "method": "forward_reverse", "express": "False"}]
-    tran_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 140,
+    tran_dict = [{"seq_id": "aaa", "source": "Refseq",
+                  "feature": "Transcript", "start": 140,
                   "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 30,
+                 {"seq_id": "aaa", "source": "Refseq",
+                  "feature": "Transcript", "start": 30,
                   "end": 40, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "Transcript", "start": 430,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "Transcript", "start": 430,
                   "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    hp_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Terminator", "start": 360,
+    hp_dict = [{"seq_id": "aaa", "source": "Refseq",
+                "feature": "Terminator", "start": 360,
                 "end": 367, "phase": ".", "strand": "+", "score": "."},
-               {"seq_id": "aaa", "source": "Refseq", "feature": "Terminator", "start": 30,
+               {"seq_id": "aaa", "source": "Refseq",
+                "feature": "Terminator", "start": 30,
                 "end": 40, "phase": ".", "strand": "+", "score": "."},
-               {"seq_id": "bbb", "source": "Refseq", "feature": "Terminator", "start": 429,
+               {"seq_id": "bbb", "source": "Refseq",
+                "feature": "Terminator", "start": 429,
                 "end": 432, "phase": ".", "strand": "-", "score": "."}]
-    attributes_term = [{"ID": "term0", "Name": "Term_0", "associated_gene": "AAA_00001"},
-                       {"ID": "term1", "Name": "Term_1", "associated_gene": "AAA_00002"},
-                       {"ID": "term2", "Name": "Term_2", "associated_gene": "AAA_00003"}]
+    attributes_term = [{"ID": "term0", "Name": "Term_0",
+                        "associated_gene": "AAA_00001"},
+                       {"ID": "term1", "Name": "Term_1",
+                        "associated_gene": "AAA_00002"},
+                       {"ID": "term2", "Name": "Term_2",
+                        "associated_gene": "AAA_00003"}]
     attributes_tran = [{"ID": "tran0", "Name": "Tran_0"},
                        {"ID": "tran1", "Name": "Tran_1"},
                        {"ID": "tran2", "Name": "Tran_2"}]

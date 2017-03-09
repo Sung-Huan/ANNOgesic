@@ -33,15 +33,17 @@ class TestTranscriptAssembly(unittest.TestCase):
         gen_file(filename, self.example.wig_f)
         wigs = ta.read_wig(filename, "+", libs)
         for i in range(len(wigs["aaa"]['frag_1']["test1|+|frag"])):
-            self.assertEqual(wigs["aaa"]['frag_1']["test1|+|frag"][i],
-                             self.example.wigs_nf["aaa"]['frag_1']["test1|+|frag"][i])
+            self.assertEqual(
+                wigs["aaa"]['frag_1']["test1|+|frag"][i],
+                self.example.wigs_nf["aaa"]['frag_1']["test1|+|frag"][i])
 
     def test_detect_hight_toler(self):
         cover = 100
         height = 5
         tmp_covers = {"best": 10, "toler": 2}
         tracks = []
-        ta.detect_hight_toler(cover, height, tmp_covers, tracks, "test_1|+|frag")
+        ta.detect_hight_toler(cover, height, tmp_covers,
+                              tracks, "test_1|+|frag")
         self.assertDictEqual(tmp_covers, {'best': 100, 'toler': 2})
 
     def test_check_tex_conds(self):
@@ -57,8 +59,9 @@ class TestTranscriptAssembly(unittest.TestCase):
         self.assertDictEqual(conds, {'1': 1, '2': 1})
 
     def test_elongation(self):
-        covers = {"texnotex_1": {"test1|+|texnotex_1": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20],
-                                 "test2|+|texnotex_1": [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 100]}}
+        covers = {"texnotex_1": {
+            "test1|+|texnotex_1": [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20],
+            "test2|+|texnotex_1": [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 100]}}
         libs = [{"name": "test1", "type": "tex",
                  "cond": "texnotex_1", "strand": "+", "rep": "a"},
                 {"name": "test2", "type": "notex",
@@ -72,7 +75,8 @@ class TestTranscriptAssembly(unittest.TestCase):
         args.height = 5
         args.tex = 2
         ta.elongation(covers, tmp_texs, libs, "+", trans, args, "aaa", [])
-        self.assertDictEqual(trans, {'aaa': [-1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 100]})
+        self.assertDictEqual(trans, {
+            'aaa': [-1, -1, -1, -1, -1, -1, -1, -1, -1, 10, 100]})
 
     def test_transfer_to_tran(self):
         reps = {"tex": ["all_1"], "frag": ["all_1"]}
@@ -83,9 +87,12 @@ class TestTranscriptAssembly(unittest.TestCase):
         args.height = 10
         args.tex = 1
         args.replicates = reps
-        tolers, trans = ta.transfer_to_tran(self.example.wigs_f, libs, tmp_texs, "+", args)
-        self.assertDictEqual(tolers, {'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 7.0, 20]})
-        self.assertDictEqual(trans, {'aaa': [-1, -1, 41.0, 47.0, -1, 47.0, -1, 47.0]})
+        tolers, trans = ta.transfer_to_tran(
+            self.example.wigs_f, libs, tmp_texs, "+", args)
+        self.assertDictEqual(tolers, {
+            'aaa': [0.0, 2.0, 20, 20, 4.0, 20, 7.0, 20]})
+        self.assertDictEqual(trans, {
+            'aaa': [-1, -1, 41.0, 47.0, -1, 47.0, -1, 47.0]})
 
     def test_fill_gap_and_print(self):
         trans = {'aaa': [-1, -1, 41.0, 47.0, -1, 47.0, -1, 47.0]}
@@ -96,16 +103,21 @@ class TestTranscriptAssembly(unittest.TestCase):
         args.width = 1
         finals = {}
         ta.fill_gap_and_print(trans, "+", finals, tolers, "TEX", args)
-        self.assertDictEqual(finals, {'aaa': [{
-            'strand': '+', 'high': 47.0, 'end': 4, 'wig': 'TEX', 'low': 41.0, 'start': 3},
-            {'strand': '+', 'high': 47.0, 'end': 8, 'wig': 'TEX', 'low': 47.0, 'start': 6}]})
+        self.assertDictEqual(finals, {'aaa': [
+            {'strand': '+', 'high': 47.0, 'end': 4, 'wig': 'TEX',
+             'low': 41.0, 'start': 3},
+            {'strand': '+', 'high': 47.0, 'end': 8, 'wig': 'TEX',
+             'low': 47.0, 'start': 6}]})
 
     def test_print_transctipt(self):
         out = StringIO()
         tas = {"aaa": [{"start": 100, "end": 200, "strand": "+", "high": 40,
                         "low": 20, "wig": "TEX"}]}
         ta.print_transcript(tas, out)
-        self.assertEqual(out.getvalue(), "aaa\tANNOgesic\ttranscript\t100\t200\t.\t+\t.\tID=aaa_transcript0;Name=transcript_00000;high_coverage=40;low_coverage=20;detect_lib=TEX\n")
+        self.assertEqual(out.getvalue(),
+                         ("aaa\tANNOgesic\ttranscript\t100\t200\t.\t+\t.\t"
+                          "ID=aaa_transcript0;Name=transcript_00000;"
+                          "high_coverage=40;low_coverage=20;detect_lib=TEX\n"))
 
 
     def test_assembly(self):
@@ -130,10 +142,11 @@ class TestTranscriptAssembly(unittest.TestCase):
         args.tolerance = 3
         args.tex = 2
         args.low_cutoff = 5
-        ta.detect_transcript(wig_f_file, wig_r_file, self.test_folder, input_lib,
-                             out_file, "TEX", args)
+        ta.detect_transcript(wig_f_file, wig_r_file, self.test_folder,
+                             input_lib, out_file, "TEX", args)
         datas = import_data(out_file)
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.out_tran)
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.out_tran)
 
 
 class Example(object):
@@ -174,7 +187,8 @@ variableStep chrom=aaa span=1
 6 -7.0
 7 -7.0
 8 -7.0"""
-    wigs_f = {"aaa": {"1": {"test1|+|frag": [0.0, 2.0, 41.0, 47.0, 4.0, 47.0, 7.0, 47.0]}}}
+    wigs_f = {"aaa": {"1": {"test1|+|frag": [
+        0.0, 2.0, 41.0, 47.0, 4.0, 47.0, 7.0, 47.0]}}}
     cover = np.array([0.0,2.0,41.0,47.0,4.0,47.0,7.0,47.0])
     wigs_nf = {"aaa": {"frag_1": {"test1|+|frag": cover}}}
     out_tran = """aaa	ANNOgesic	transcript	3	4	.	+	.	ID=aaa_transcript0;Name=transcript_00000;high_coverage=47.0;low_coverage=41.0;detect_lib=TEX

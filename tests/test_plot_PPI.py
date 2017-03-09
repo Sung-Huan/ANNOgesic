@@ -78,8 +78,10 @@ class TestPlotPPI(unittest.TestCase):
         pp.add_node = self.mock.mock_add_node
         check_na = {"best": False, "same_best": False}
         pre_ppi = {"score": 20, "below": 20, "best": 0.21}
-        ppis = [{"item_a": "test_1", "item_b": "test_2", "score": 30, "below": 10, "best": 0.22},
-                {"item_a": "test_3", "item_b": "test_4", "score": 20, "below": 10, "best": -0.21}]
+        ppis = [{"item_a": "test_1", "item_b": "test_2",
+                 "score": 30, "below": 10, "best": 0.22},
+                {"item_a": "test_3", "item_b": "test_4",
+                 "score": 20, "below": 10, "best": -0.21}]
         labels1 = {}
         labels2= {}
         nodes = []
@@ -87,17 +89,19 @@ class TestPlotPPI(unittest.TestCase):
         scores = []
         edges = []
         center = {"locus_tag": "test", "gene_name": "test_1"}
-        pp.create_node(ppis, scores, nodes, center, colors, labels1, labels2, edges,
-                       None, 0, check_na, pre_ppi)
+        pp.create_node(ppis, scores, nodes, center, colors, labels1, labels2,
+                       edges, None, 0, check_na, pre_ppi)
         self.assertListEqual(nodes, ['test_1', 'test_2', 'test_3', 'test_4'])
         self.assertListEqual(scores, [30, 20])
-        self.assertDictEqual(colors, {'test_1': '#FFFF66', 'test_4': '#CCFFCC',
-                                      'test_2': '#CCFFCC', 'test_3': '#CCFFCC'})
+        self.assertDictEqual(colors, {
+            'test_1': '#FFFF66', 'test_4': '#CCFFCC',
+            'test_2': '#CCFFCC', 'test_3': '#CCFFCC'})
         self.assertDictEqual(labels1, {'test_1': '', 'test_4': '',
                                        'test_2': '', 'test_3': ''})
         self.assertDictEqual(labels2, {'test_1': 'test_1', 'test_4': 'test_4',
                                        'test_2': 'test_2', 'test_3': 'test_3'})
-        self.assertListEqual(edges, [('test_1', 'test_2'), ('test_3', 'test_4')])
+        self.assertListEqual(edges, [('test_1', 'test_2'),
+                                     ('test_3', 'test_4')])
         self.assertDictEqual(check_na, {'same_best': True, 'best': True})
 
     def test_modify_label(self):
@@ -106,8 +110,9 @@ class TestPlotPPI(unittest.TestCase):
         new_labels = {'test_1': "", 'test_4': "",
                       'test_2': "", 'test_3': ""}
         pp.modify_label(labels2, new_labels)
-        self.assertDictEqual(new_labels, {'test_2': 'test\n2', 'test_4': 'test4',
-                                          'test_1': 'test1', 'test_3': 'test\n3'})
+        self.assertDictEqual(new_labels, {
+            'test_2': 'test\n2', 'test_4': 'test4',
+            'test_1': 'test1', 'test_3': 'test\n3'})
 
     def test_plot(self):
         pp.plot_text = self.mock.mock_plot_text
@@ -117,11 +122,14 @@ class TestPlotPPI(unittest.TestCase):
         pp.add_edge = self.mock.mock_add_edge
         pp.add_node = self.mock.mock_add_node
         pp.nx_color_style = self.mock.mock_nx_color_style
-        ppis = [{"item_a": "test_1", "item_b": "test_2", "score": 30, "below": 10, "best": 0.22},
-                {"item_a": "test_3", "item_b": "test_4", "score": 20, "below": 10, "best": -0.21}]
+        ppis = [{"item_a": "test_1", "item_b": "test_2", "score": 30,
+                 "below": 10, "best": 0.22},
+                {"item_a": "test_3", "item_b": "test_4", "score": 20,
+                 "below": 10, "best": -0.21}]
         center = {"locus_tag": "test", "gene_name": "test_1"} 
         pp.plot(ppis, center, "test", 0, 1000, self.test_folder)
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test", "test_test_1.png")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder, "test", "test_test_1.png")))
 
     def test_score_compare(self):
         scores = {"score": 0, "below": 0}
@@ -172,7 +180,8 @@ class TestPlotPPI(unittest.TestCase):
         gen_file(ppi_file, self.example.ppi_file)
         pp.plot_ppi(ppi_file, 0, self.test_folder, 1000)
         strain = "Helicobacter pylori 26695 chromosome"
-        self.assertTrue(os.path.exists("test_folder/" + strain + "/HP0001_nusB.png"))
+        self.assertTrue(os.path.exists(
+            "test_folder/" + strain + "/HP0001_nusB.png"))
 
 class Example(object):
 

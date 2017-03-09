@@ -31,9 +31,11 @@ class TestGenScreenshots(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_set_data_range(self):
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 6, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         out = StringIO()
         gs.set_data_range(out, gff, self.example.wigs_low, "+")
@@ -66,25 +68,31 @@ class TestGenScreenshots(unittest.TestCase):
         lib_t = "wig1 wig2"
         lib_n = "wig3 wig4"
         lib_f = "wig5"
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+        gff_dict = {"seq_id": "aaa", "source": "Refseq",
+                    "feature": "CDS", "start": 3,
                     "end": 6, "phase": ".", "strand": "+", "score": "."}
-        attributes_gff = {"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"}
+        attributes_gff = {"ID": "CDS0", "Name": "CDS_0",
+                          "locus_tag": "AAA_00001"}
         gff = Create_generator(gff_dict, attributes_gff, "gff")
         seq = {"aaa": "ATATGGCCGACGAGTTCGACGATACAACCCGTGGGG"}
         gs.gen_batch(lib_t, lib_n, lib_f, "+", [gff], out, seq)
         self.assertEqual(out.getvalue(), self.example.out_print_wig)
 
 class Example(object):
-    cover_low = [{"coverage": 1.342}, {"coverage": 2.341}, {"coverage": 2.3544},
-                 {"coverage": 5.342}, {"coverage": 10.2341}, {"coverage": 6.231},
-                 {"coverage": 1.432}, {"coverage": 1.342}, {"coverage": 1.342}]
+    cover_low = [{"coverage": 1.342}, {"coverage": 2.341},
+                 {"coverage": 2.3544}, {"coverage": 5.342},
+                 {"coverage": 10.2341}, {"coverage": 6.231},
+                 {"coverage": 1.432}, {"coverage": 1.342},
+                 {"coverage": 1.342}]
     covers_low = []
     for cover in cover_low:
         covers_low.append(Create_generator(cover, {}, "wig"))
     wigs_low = {"test.wig": {"aaa": covers_low, "bbb": covers_low}}
-    cover_high = [{"coverage": 100.342}, {"coverage": 20.341}, {"coverage": 20.3544},
-                 {"coverage": 500.342}, {"coverage": 10.2341}, {"coverage": 60.231},
-                 {"coverage": 100.432}, {"coverage": 100.342}, {"coverage": 10.342}]
+    cover_high = [{"coverage": 100.342}, {"coverage": 20.341},
+                  {"coverage": 20.3544}, {"coverage": 500.342},
+                  {"coverage": 10.2341}, {"coverage": 60.231},
+                  {"coverage": 100.432}, {"coverage": 100.342},
+                  {"coverage": 10.342}]
     covers_high = []
     for cover in cover_high:
         covers_high.append(Create_generator(cover, {}, "wig"))

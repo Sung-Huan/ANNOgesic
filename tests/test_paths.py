@@ -56,11 +56,13 @@ class TestPaths(unittest.TestCase):
 
     def test_required_folders(self):
         self.assertEqual(len(self.paths.required_folders("root")), 22)
-        self.assertEqual(len(self.paths.required_folders("get_target_fasta")), 25)
+        self.assertEqual(len(
+            self.paths.required_folders("get_target_fasta")), 25)
         self.assertEqual(len(self.paths.required_folders("TSS")), 27)
         self.assertEqual(len(self.paths.required_folders("transcript")), 26)
         self.assertEqual(len(self.paths.required_folders("terminator")), 27)
-        self.assertEqual(len(self.paths.required_folders("annotation_transfer")), 25)
+        self.assertEqual(len(
+            self.paths.required_folders("annotation_transfer")), 25)
         self.assertEqual(len(self.paths.required_folders("utr")), 29)
         self.assertEqual(len(self.paths.required_folders("promoter")), 23)
         self.assertEqual(len(self.paths.required_folders("operon")), 26)
@@ -74,7 +76,8 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(len(self.paths.required_folders("crispr")), 26)
         self.assertEqual(len(self.paths.required_folders("thermometer")), 27)
         self.assertEqual(len(self.paths.required_folders("snp")), 39)
-        self.assertEqual(len(self.paths.required_folders("subcellular_localization")), 29)
+        self.assertEqual(len(
+            self.paths.required_folders("subcellular_localization")), 29)
         self.assertEqual(len(self.paths.required_folders("srna_target")), 28)
 
 if __name__ == "__main__":

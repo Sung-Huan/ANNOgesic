@@ -12,10 +12,13 @@ class Mock_func(object):
     def __init__(self):
         self.color = ColorPNG()
 
-    def mock_convert_svg(self, imagemagick_path, out_path, screenshot, svg_file):
-        gen_file(os.path.join(out_path, svg_file), "<svg width=1111 hight=2222")
+    def mock_convert_svg(self, imagemagick_path, out_path,
+                         screenshot, svg_file):
+        gen_file(os.path.join(out_path, svg_file),
+                 "<svg width=1111 hight=2222")
 
-    def mock_convert_png(self, imagemagick_path, out_path, screenshot, png_file):
+    def mock_convert_png(self, imagemagick_path, out_path,
+                         screenshot, png_file):
         gen_file(os.path.join(out_path, png_file), "test")
         pass
 
@@ -31,8 +34,10 @@ class TestColorPng(unittest.TestCase):
             os.mkdir(self.test_folder)
             os.mkdir(os.path.join(self.test_folder, "screenshots"))
             os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa"))
-            os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa", "forward"))
-            os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa", "reverse"))
+            os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa",
+                                  "forward"))
+            os.mkdir(os.path.join(self.test_folder, "screenshots", "aaa",
+                                  "reverse"))
         gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "forward",
                               "test_f.png"), "None")
         gen_file(os.path.join(self.test_folder, "screenshots", "aaa", "reverse",
@@ -48,8 +53,8 @@ class TestColorPng(unittest.TestCase):
         self.color._convert_png = self.mock.mock_convert_png
         self.color.gen_svg = self.mock.mock_gen_svg
         self.color.generate_color_png(4, self.test_folder, "test")
-        data = import_data(os.path.join(self.test_folder, "screenshots", "aaa",
-                                        "forward", "test_f.png"))
+        data = import_data(os.path.join(self.test_folder, "screenshots",
+                                        "aaa", "forward", "test_f.png"))
         self.assertListEqual(data, ["test"])
 
 if __name__ == "__main__":

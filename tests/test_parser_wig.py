@@ -53,7 +53,5 @@ variableStep chrom=aaa span=1
 3 -1.4041251228308191
 4 -56.867067474648174
 5 -56.867067474648174"""
-
 if __name__ == "__main__":
     unittest.main()
-

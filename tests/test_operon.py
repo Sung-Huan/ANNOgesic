@@ -68,7 +68,8 @@ class TestOperonDetection(unittest.TestCase):
     def test_detect_operon(self):
         op.operon = self.mock.mock_operon
         gen_file(os.path.join(self.tsss, "tmp", "test_TSS.gff"), "test")
-        gen_file(os.path.join(self.trans, "tmp", "test_transcript.gff"), "test")
+        gen_file(os.path.join(self.trans, "tmp",
+                              "test_transcript.gff"), "test")
         gen_file(os.path.join(self.gffs, "test.gff"), "test")
         args = self.mock_args.mock()
         args.gffs = self.out_gff
@@ -85,7 +86,8 @@ class TestOperonDetection(unittest.TestCase):
         if not os.path.exists(table_file):
             gen_file(table_file, "test")
         self.operon._stat(os.path.join(self.output, "tables"), self.stat)
-        self.assertTrue(os.path.exists(os.path.join(self.stat, "stat_test_operon.csv")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.stat, "stat_test_operon.csv")))
 
     def test_combine_gff(self):
         op.combine_gff = self.mock.mock_combine_gff
@@ -99,7 +101,8 @@ class TestOperonDetection(unittest.TestCase):
         args.term_fuzzy = 3
         args.tss_fuzzy = 3
         self.operon._combine_gff(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_operon.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.out_gff, "test_operon.gff")))
 
 if __name__ == "__main__":
     unittest.main()

@@ -55,15 +55,19 @@ class TestCombineGff(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_del_attributes(self):
-        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 140,
-                   "end": 367, "phase": ".", "strand": "+", "score": "."}
-        attributes = {"ID": "gene0", "Name": "gene_0", "locus_tag": "AAA_00001", "Parent": "tran0"}
+        gff_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "gene",
+                    "start": 140, "end": 367, "phase": ".",
+                    "strand": "+", "score": "."}
+        attributes = {"ID": "gene0", "Name": "gene_0",
+                      "locus_tag": "AAA_00001", "Parent": "tran0"}
         gff = Create_generator(gff_dict, attributes, "gff")
         c_gff.del_attributes(gff)
-        self.assertDictEqual(gff.attributes, {'ID': 'gene0', 'Name': 'gene_0', 'locus_tag': 'AAA_00001'})
+        self.assertDictEqual(gff.attributes, {
+            'ID': 'gene0', 'Name': 'gene_0', 'locus_tag': 'AAA_00001'})
         
     def test_compare_tran(self):
-        tran_dict = {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 100,
+        tran_dict = {"seq_id": "aaa", "source": "Refseq",
+                     "feature": "Transcript", "start": 100,
                      "end": 500, "phase": ".", "strand": "+", "score": "."}
         attributes_tran = {"ID": "tran0", "Name": "Tran_0"}
         out = StringIO()
@@ -76,13 +80,16 @@ class TestCombineGff(unittest.TestCase):
             for element in attribute:
                 if "Parent" in element:
                     parents.append(element)
-        self.assertEqual(set(datas), set(["aaa\tRefseq\tCDS\t160\t300\t.\t+\t."]))
+        self.assertEqual(set(datas), set(
+            ["aaa\tRefseq\tCDS\t160\t300\t.\t+\t."]))
         self.assertEqual(set(parents), set(["Parent=tran0"]))
         out.close()
 
     def test_compare_tran_term(self):
-        trans = read_dict(3, self.example.tran_dict, self.example.attributes_tran)
-        terms = read_dict(3, self.example.term_dict, self.example.attributes_term)
+        trans = read_dict(3, self.example.tran_dict,
+                          self.example.attributes_tran)
+        terms = read_dict(3, self.example.term_dict,
+                          self.example.attributes_term)
         out = StringIO()
         for tran in trans:
             for term in terms:
@@ -93,8 +100,9 @@ class TestCombineGff(unittest.TestCase):
             for element in attribute:
                 if "Parent" in element:
                     parents.append(element)
-        self.assertEqual(set(datas), set(["aaa\tRefseq\tTerminator\t350\t367\t.\t+\t.",
-                                          "bbb\tRefseq\tTerminator\t420\t429\t.\t-\t."]))
+        self.assertEqual(set(datas), set([
+            "aaa\tRefseq\tTerminator\t350\t367\t.\t+\t.",                              
+            "bbb\tRefseq\tTerminator\t420\t429\t.\t-\t."]))
         self.assertEqual(set(parents), set(["Parent=tran0", "Parent=tran2"]))
         out.close()
 
@@ -123,38 +131,48 @@ class TestCombineGff(unittest.TestCase):
 
 class Example(object):
 
-    tran_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 140,
+    tran_dict = [{"seq_id": "aaa", "source": "Refseq",
+                  "feature": "Transcript", "start": 140,
                   "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "Transcript", "start": 30,
+                 {"seq_id": "aaa", "source": "Refseq",
+                  "feature": "Transcript", "start": 30,
                   "end": 40, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "Transcript", "start": 430,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "Transcript", "start": 430,
                   "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 160,
-                 "end": 300, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
-                 "end": 38, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "bbb", "source": "Refseq", "feature": "CDS", "start": 420,
-                 "end": 577, "phase": ".", "strand": "-", "score": "."}]
-    term_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "Terminator", "start": 350,
+    gff_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 160,
+         "end": 300, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 3,
+         "end": 38, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "bbb", "source": "Refseq", "feature": "CDS", "start": 420,
+         "end": 577, "phase": ".", "strand": "-", "score": "."}]
+    term_dict = [{"seq_id": "aaa", "source": "Refseq",
+                  "feature": "Terminator", "start": 350,
                   "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "Terminator", "start": 420,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "Terminator", "start": 420,
                   "end": 429, "phase": ".", "strand": "-", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "Terminator", "start": 1420,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "Terminator", "start": 1420,
                   "end": 2429, "phase": ".", "strand": "-", "score": "."}]
-    tss_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 138,
-                 "end": 138, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 330,
-                 "end": 330, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "bbb", "source": "Refseq", "feature": "TSS", "start": 568,
-                 "end": 568, "phase": ".", "strand": "-", "score": "."}]
-    utr5_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "5UTR", "start": 140,
-                  "end": 160, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "5UTR", "start": 500,
-                  "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    utr3_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "3UTR", "start": 300,
-                  "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "3UTR", "start": 38,
-                  "end": 40, "phase": ".", "strand": "+", "score": "."}]
+    tss_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 138,
+         "end": 138, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "TSS", "start": 330,
+         "end": 330, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "bbb", "source": "Refseq", "feature": "TSS", "start": 568,
+         "end": 568, "phase": ".", "strand": "-", "score": "."}]
+    utr5_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "5UTR", "start": 140,
+         "end": 160, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "bbb", "source": "Refseq", "feature": "5UTR", "start": 500,
+         "end": 567, "phase": ".", "strand": "-", "score": "."}]
+    utr3_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "3UTR", "start": 300,
+         "end": 367, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "3UTR", "start": 38,
+         "end": 40, "phase": ".", "strand": "+", "score": "."}]
     attributes_gff = [{"ID": "CDS0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
                       {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
                       {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]

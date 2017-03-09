@@ -24,11 +24,12 @@ class Mock_func(object):
     def mock_read_wig(self, wig_file, strand, libs):
         return self.example.wigs
 
-    def mock_get_coverage(self, start, end, strain, wigs, strand, ta, nums, tss, output,
-                 template_texs):
+    def mock_get_coverage(self, start, end, strain, wigs, strand,
+                          ta, nums, tss, output, template_texs):
         pass
 
-    def mock_coverage_comparison(self, cover, cover_sets, poss, check, strand, cover_pos):
+    def mock_coverage_comparison(self, cover, cover_sets, poss,
+                                 check, strand, cover_pos):
         pass
 
     def mock_replicate_comparison(self, srna_covers, template_texs,
@@ -41,7 +42,8 @@ class Mock_func(object):
                               break_tran, type_):
         return 10, False
 
-    def mock_get_tss_type(self, tss, cutoff_coverage, ta, cdss, file_type, break_tran):
+    def mock_get_tss_type(self, tss, cutoff_coverage, ta, cdss,
+                          file_type, break_tran):
         return 10
 
 
@@ -119,8 +121,13 @@ class TestsRNAIntergenic(unittest.TestCase):
         tsss = copy.deepcopy(self.example.tsss)
         si.compare_ta_tss(10, 2, 15, tas[0], tsss[0], 50, "cutoff",
                           20, "", args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t10\t15\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tANNOgesic\tncRNA\t10\t15\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS:170_+\n"))
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t10\t15\t+\tNA\tNA\t"
+                          "NA\tNA\tNA\tTSS:170_+\n"))
         si.get_coverage = get_coverage
 
     def test_print_file(self):
@@ -128,17 +135,28 @@ class TestsRNAIntergenic(unittest.TestCase):
         nums = {'pro': 3, 'tss': 3, 'uni': 0, 'cds': 3, 'ta': 3}
         out_table = StringIO()
         output = StringIO()
-        srna_datas = {"high": 20, "low": 5, "best": 13, "conds": {"cond1": "test1"},
-                      "detail": [{"track": "test1", "high": 30, "low": 10, "avg": 15},
-                                 {"track": "test2", "high": 25, "low": 13, "avg": 20}]}
+        srna_datas = {"high": 20, "low": 5, "best": 13,
+                      "conds": {"cond1": "test1"},
+                      "detail": [{"track": "test1", "high": 30,
+                                  "low": 10, "avg": 15},
+                                 {"track": "test2", "high": 25,
+                                  "low": 13, "avg": 20}]}
         args = self.mock_args.mock()
         args.nums = nums
         args.out_table = out_table
         args.output = output
         args.table_best = False
-        si.print_file(string, "TSS_160+", srna_datas, "intergenic", args, "aaa")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t10\t15\t+\tcond1\ttest1\t13\t20\t5\tTSS_160+\ttest1(avg=15;high=30;low=10);test2(avg=20;high=25;low=13)\n")
-        self.assertEqual(output.getvalue(), "aaa\tintergenic\tsRNA\t10\t15\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;best_avg_coverage=13;best_high_coverage=20;best_low_coverage=5\n")
+        si.print_file(string, "TSS_160+", srna_datas, "intergenic",
+                      args, "aaa")
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t10\t15\t+\tcond1\ttest1\t13\t20\t5\t"
+                          "TSS_160+\ttest1(avg=15;high=30;low=10);"
+                          "test2(avg=20;high=25;low=13)\n"))
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tintergenic\tsRNA\t10\t15\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS_160+;best_avg_coverage=13;"
+                          "best_high_coverage=20;best_low_coverage=5\n"))
 
     def test_detect_include_tss(self):
         si.get_coverage = self.mock.mock_get_coverage
@@ -146,7 +164,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
-        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0,
+                    "antisense": 50, "orphan": 10}
         args = self.mock_args.mock()
         args.tex_notex = "tex_notex"
         args.min_len = 30
@@ -172,8 +191,13 @@ class TestsRNAIntergenic(unittest.TestCase):
         tas = copy.deepcopy(self.example.tas)
         si.detect_include_tss(tas[0], args, None, args.wigs_f, args.wigs_r)
         si.get_coverage = get_coverage
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS:170_+\n"))
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t170\t230\t+\tNA\tNA\tNA"
+                          "\tNA\tNA\tTSS:170_+\n"))
 
     def test_get_differential_cover(self):
         checks = {"detect_diff": True, "first": True}
@@ -189,7 +213,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         poss = {"stop_point": 100}
         num = 20
         args.fuzzy_inter = 20
-        si.get_differential_cover(num, checks, cover_sets, poss, cover, args, 80)
+        si.get_differential_cover(num, checks, cover_sets, poss,
+                                  cover, args, 80)
         self.assertDictEqual(poss, {"stop_point": 80})
 
     def test_check_coverage_pos(self):
@@ -209,13 +234,21 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.tolerance = 5
         args.fuzzy_inter = 5
         args.decrease_inter = 50
-        datas = si.get_best(self.example.wigs, "aaa", "+", 2, 20, "normal", args, 10)
-        self.assertDictEqual(datas, {'frag_1': [{'low': -1, 'high': -1, 'avg': 30.7, 'pos': 21, 'type': 'frag', 'track': 'track_1'}]})
+        datas = si.get_best(self.example.wigs, "aaa", "+", 2, 20,
+                            "normal", args, 10)
+        self.assertDictEqual(datas, {'frag_1': [
+            {'low': -1, 'high': -1, 'avg': 30.7, 'pos': 21,
+             'type': 'frag', 'track': 'track_1'}]})
 
     def test_get_attribute_string(self):
         srna_datas = {'best': 23, 'low': 20, 'high': 35}
-        data = si.get_attribute_string(srna_datas, "TSS_100+;Cleavage_150+", 1, "sRNA_00001", "3utr", "aaa")
-        self.assertEqual(data, "ID=aaa_srna1;Name=sRNA_sRNA_00001;sRNA_type=3utr;with_TSS=TSS_100+;end_cleavage=Cleavage_150+;best_avg_coverage=23;best_high_coverage=35;best_low_coverage=20")
+        data = si.get_attribute_string(srna_datas, "TSS_100+;Cleavage_150+",
+                                       1, "sRNA_00001", "3utr", "aaa")
+        self.assertEqual(data,
+                         ("ID=aaa_srna1;Name=sRNA_sRNA_00001;sRNA_type=3utr;"
+                          "with_TSS=TSS_100+;end_cleavage=Cleavage_150+;"
+                          "best_avg_coverage=23;best_high_coverage=35;"
+                          "best_low_coverage=20"))
 
     def test_check_pro(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
@@ -234,12 +267,12 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.pros = copy.deepcopy(self.example.pros)
         tas = copy.deepcopy(self.example.tas)
         pro_pos, new_srna_datas, detect_pro = si.check_pro(
-                                              tas[0], 20, 70,
-                                              srna_datas, "within", 5,
-                                              self.example.wigs, 20, args)
+            tas[0], 20, 70, srna_datas, "within", 5,
+            self.example.wigs, 20, args)
         self.assertEqual(pro_pos, 190)
-        self.assertDictEqual(new_srna_datas, {'best': 40, 'high': 50, 'low': 10, "pos": 5,
-                                              "conds": {"cond1": "test1"}, "detail": None})
+        self.assertDictEqual(new_srna_datas, {
+            'best': 40, 'high': 50, 'low': 10, "pos": 5,
+            "conds": {"cond1": "test1"}, "detail": None})
         self.assertEqual(detect_pro, "Cleavage:190_+")
 
     def test_exchange_to_pro(self):
@@ -260,16 +293,20 @@ class TestsRNAIntergenic(unittest.TestCase):
         tas = copy.deepcopy(self.example.tas)
         args.tolerance = 5
         si.replicate_comparison = self.mock.mock_replicate_comparison
-        detect, srna_datas, pro = si.exchange_to_pro(args, srna_datas, tas[0], 20, 70, 10, self.example.wigs, 20)
+        detect, srna_datas, pro = si.exchange_to_pro(
+            args, srna_datas, tas[0], 20, 70, 10, self.example.wigs, 20)
         self.assertTrue(detect)
-        self.assertDictEqual(srna_datas, {'best': 40, 'high': 50, 'low': 10, 'pos': 190,
-                                          "conds": {"cond1": "test1"}, "detail": None})
+        self.assertDictEqual(srna_datas, {
+            'best': 40, 'high': 50, 'low': 10, 'pos': 190,
+            "conds": {"cond1": "test1"}, "detail": None})
         self.assertEqual(pro, "Cleavage:190_+")
 
     def test_get_tss_type(self):
-        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0,
+                    "antisense": 50, "orphan": 10}
         si.check_break_tran = self.mock.mock_check_break_tran
-        cover = si.get_tss_type(self.example.tsss[0], coverage, None, None, None, False)
+        cover = si.get_tss_type(self.example.tsss[0], coverage,
+                                None, None, None, False)
         self.assertEqual(cover, 10)
 
     def test_detect_wig_pos(self):
@@ -292,9 +329,17 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.out_table = out_table
         args.output = output
         args.tolerance = 5
-        si.detect_wig_pos(self.example.wigs, tas[0], 20, 70, "TSS_160+", 10, 20, args)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t20\t190\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;best_avg_coverage=40;best_high_coverage=50;best_low_coverage=10\n")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t20\t190\t+\tcond1\ttest1\t40\t50\t10\t\n")
+        si.detect_wig_pos(self.example.wigs, tas[0], 20, 70, "TSS_160+",
+                          10, 20, args)
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tANNOgesic\tncRNA\t20\t190\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS_160+;end_cleavage=Cleavage:190_+;"
+                          "best_avg_coverage=40;best_high_coverage=50;"
+                          "best_low_coverage=10\n"))
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t20\t190\t+\tcond1\t"
+                          "test1\t40\t50\t10\t\n"))
 
     def test_detect_longer(self):
         si.replicate_comparison = self.mock.mock_replicate_comparison
@@ -303,7 +348,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
-        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0,
+                    "antisense": 50, "orphan": 10}
         args = self.mock_args.mock()
         args.tex_notex = "tex_notex"
         args.min_len = 30
@@ -330,13 +376,19 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.out_table = out_table
         si.get_tss_type = self.mock.mock_get_tss_type
         si.detect_longer(tas[0], args, None, args.wigs_f, args.wigs_r)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS:170_+\n"))
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t170\t230\t+\tNA\tNA\tNA"
+                          "\tNA\tNA\tTSS:170_+\n"))
 
     def test_get_proper_tss(self):
         tss_file = os.path.join(self.test_folder, "tss.gff")
         gen_file(tss_file, self.example.gff_file)
-        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0,
+                    "antisense": 50, "orphan": 10}
         tsss, num_tss = si.get_proper_tss(tss_file, coverage)
         self.assertEqual(tsss[0].start, 140)
 
@@ -347,8 +399,10 @@ class TestsRNAIntergenic(unittest.TestCase):
         out_table = StringIO()
         output = StringIO()
         detects = {"overlap": False, "uni_with_tss": False}
-        notex = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 30, "orphan": 10}
-        coverage = {"primary": 0, "secondary": 0, "internal": 0, "antisense": 50, "orphan": 10}
+        notex = {"primary": 0, "secondary": 0, "internal": 0,
+                 "antisense": 30, "orphan": 10}
+        coverage = {"primary": 0, "secondary": 0, "internal": 0,
+                    "antisense": 50, "orphan": 10}
         args = self.mock_args.mock()
         args.tex_notex = "tex_notex"
         args.min_len = 30
@@ -374,8 +428,13 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.cutoff_coverage = coverage
         args.out_table = out_table
         si.check_srna_condition(tas[0], args, None, args.wigs_f, args.wigs_r)
-        self.assertEqual(output.getvalue(), "aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\tID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;with_TSS=TSS:170_+\n")
-        self.assertEqual(out_table.getvalue(), "aaa\t00000\t170\t230\t+\tNA\tNA\tNA\tNA\tNA\tTSS:170_+\n")
+        self.assertEqual(output.getvalue(),
+                         ("aaa\tANNOgesic\tncRNA\t170\t230\t.\t+\t.\t"
+                          "ID=aaa_srna0;Name=sRNA_00000;sRNA_type=intergenic;"
+                          "with_TSS=TSS:170_+\n"))
+        self.assertEqual(out_table.getvalue(),
+                         ("aaa\t00000\t170\t230\t+\tNA\tNA\t"
+                          "NA\tNA\tNA\tTSS:170_+\n"))
 
     def test_intergenic_srna(self):
         si.read_libs = self.mock.mock_read_libs
@@ -415,7 +474,8 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.in_cds = False
         args.wigs_f = None
         args.wigs_r = None
-        si.intergenic_srna(args, args.input_libs, None, args.wigs_f, args.wigs_r)
+        si.intergenic_srna(args, args.input_libs, None,
+                           args.wigs_f, args.wigs_r)
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists(output_table))
        
@@ -423,36 +483,45 @@ class TestsRNAIntergenic(unittest.TestCase):
 
 class Example(object):
 
-    wigs = {"aaa": {"frag_1": {"track_1|+|frag": [100, 30, 23, 21, 21, 2, 100, 30, 23, 
-                                                  21, 21, 2, 100, 30, 23, 21, 21, 2, 100,
-                                                  30, 23, 21, 21, 2]}}}
-    ta_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "Transcript", "start": 180,
+    wigs = {"aaa": {"frag_1": {"track_1|+|frag": [
+        100, 30, 23, 21, 21, 2, 100, 30, 23, 
+        21, 21, 2, 100, 30, 23, 21, 21, 2, 100,
+        30, 23, 21, 21, 2]}}}
+    ta_dict = [{"seq_id": "aaa", "source": "intergenic",
+                "feature": "Transcript", "start": 180,
                 "end": 230, "phase": ".", "strand": "+", "score": "."}]
-    attributes_tas = [{"ID": "tran0", "Name": "Transcript_0", "sRNA_type": "intergenic"}]
+    attributes_tas = [{"ID": "tran0", "Name": "Transcript_0",
+                       "sRNA_type": "intergenic"}]
     tas = []
     tas.append(Create_generator(ta_dict[0], attributes_tas[0], "gff"))
-    tss_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "TSS", "start": 170,
-                "end": 170, "phase": ".", "strand": "+", "score": "."}]
+    tss_dict = [{"seq_id": "aaa", "source": "intergenic",
+                 "feature": "TSS", "start": 170,
+                 "end": 170, "phase": ".", "strand": "+", "score": "."}]
     attributes_tsss = [{"ID": "tss0", "Name": "TSS_0", "type": "Orphan"}]
     tsss = []
     tsss.append(Create_generator(tss_dict[0], attributes_tsss[0], "gff"))
-    pro_dict = [{"seq_id": "aaa", "source": "intergenic", "feature": "TSS", "start": 190,
+    pro_dict = [{"seq_id": "aaa", "source": "intergenic",
+                 "feature": "TSS", "start": 190,
                 "end": 190, "phase": ".", "strand": "+", "score": "."}]
     attributes_pros = [{"ID": "tss0", "Name": "TSS_0"}]
     pros = []
     pros.append(Create_generator(pro_dict[0], attributes_pros[0], "gff"))
-    gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 150,
-                 "end": 200, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 1230,
-                 "end": 1240, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 7100,
-                 "end": 9167, "phase": ".", "strand": "-", "score": "."}]
-    attributes_gff = [{"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
-                      {"ID": "cds1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
-                      {"ID": "cds4", "Name": "CDS_4", "locus_tag": "BBB_00003", "product": "hypothetical protein"}]
+    gff_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 150,
+         "end": 200, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 1230,
+         "end": 1240, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 7100,
+         "end": 9167, "phase": ".", "strand": "-", "score": "."}]
+    attributes_gff = [
+        {"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
+        {"ID": "cds1", "Name": "CDS_1", "locus_tag": "AAA_00002"},
+        {"ID": "cds4", "Name": "CDS_4", "locus_tag": "BBB_00003",
+         "product": "hypothetical protein"}]
     gffs = []
     for index in range(0, 3):
-        gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
+        gffs.append(Create_generator(
+            gff_dict[index], attributes_gff[index], "gff"))
     gff_file = """aaa	RefSeq	CDS	140	160	.	+	.	ID=aaa_srna0;Name=sRNA_0
 aaa	RefSeq	CDS	230	280	.	+	.	ID=aaa_srna1;Name=sRNA_1
 aaa	RefSeq	CDS	5166	5266	.	-	.	ID=aaa_srna2;Name=sRNA_2"""

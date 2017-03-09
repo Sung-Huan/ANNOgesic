@@ -36,10 +36,12 @@ class TestScreen(unittest.TestCase):
 
     def test_screenshot(self):
         gen_file(os.path.join(self.tex_wig, "tex_1_f.wig"), self.example.wig_f)
-        gen_file(os.path.join(self.tex_wig, "notex_1_f.wig"), self.example.wig_f)
+        gen_file(os.path.join(self.tex_wig, "notex_1_f.wig"),
+                 self.example.wig_f)
         gen_file(os.path.join(self.frag_wig, "frag_f.wig"), self.example.wig_f)
         gen_file(os.path.join(self.tex_wig, "tex_1_r.wig"), self.example.wig_r)
-        gen_file(os.path.join(self.tex_wig, "notex_1_r.wig"), self.example.wig_r)
+        gen_file(os.path.join(self.tex_wig, "notex_1_r.wig"),
+                 self.example.wig_r)
         gen_file(os.path.join(self.frag_wig, "frag_r.wig"), self.example.wig_r)
         args = self.mock_args.mock()
         args.fasta = self.fasta
@@ -51,25 +53,37 @@ class TestScreen(unittest.TestCase):
         args.frag_wigs = self.frag_wig
         args.tex_wigs = self.tex_wig
         args.height = 1000
-        args.tlibs = ["test_folder/tex/tex_1_f.wig:tex:1:a:+", "test_folder/tex/tex_1_r.wig:tex:1:a:-",
-                      "test_folder/tex/notex_1_f.wig:notex:1:a:+", "test_folder/tex/notex_1_r.wig:notex:1:a:-"]
-        args.flibs = ["test_folder/frag/frag_f.wig:frag:1:a:+", "test_folder/frag/frag_r.wig:frag:1:a:-"]
+        args.tlibs = ["test_folder/tex/tex_1_f.wig:tex:1:a:+",
+                      "test_folder/tex/tex_1_r.wig:tex:1:a:-",
+                      "test_folder/tex/notex_1_f.wig:notex:1:a:+",
+                      "test_folder/tex/notex_1_r.wig:notex:1:a:-"]
+        args.flibs = ["test_folder/frag/frag_f.wig:frag:1:a:+",
+                      "test_folder/frag/frag_r.wig:frag:1:a:-"]
         args.present = "expand"
         args.output_folder = self.output
         self.screen.screenshot(args)
-        self.assertTrue(os.path.exists(os.path.join(self.output, "screenshots", "aaa", "forward")))
-        self.assertTrue(os.path.exists(os.path.join(self.output, "screenshots", "aaa", "reverse")))
-        datas = import_data(os.path.join(self.output, "screenshots", "aaa", "forward.txt"))
-        datas = import_data(os.path.join(self.output, "screenshots", "aaa", "reverse.txt"))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.output, "screenshots", "aaa", "forward")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.output, "screenshots", "aaa", "reverse")))
+        datas = import_data(os.path.join(
+            self.output, "screenshots", "aaa", "forward.txt"))
+        datas = import_data(os.path.join(
+            self.output, "screenshots", "aaa", "reverse.txt"))
         self.assertEqual("\n".join(datas), self.example.out_r)
 
     def test_import_libs(self):
-        texs = [[os.path.join(self.tex_wig, "tex_1.wig"), "tex", "1", "a", "+"],
-                [os.path.join(self.tex_wig, "notex_1.wig"), "notex", "1", "a", "+"]]
-        lib_dict = {"ft": [], "fn": [], "rt": [], "rn": [], "ff": [], "rf": []}
+        texs = [[os.path.join(self.tex_wig, "tex_1.wig"),
+                 "tex", "1", "a", "+"],
+                [os.path.join(self.tex_wig, "notex_1.wig"),
+                 "notex", "1", "a", "+"]]
+        lib_dict = {"ft": [], "fn": [], "rt": [],
+                    "rn": [], "ff": [], "rf": []}
         self.screen._import_libs(texs, "+", lib_dict)
-        self.assertDictEqual(lib_dict, {'fn': ['test_folder/tex/notex_1.wig'], 'rn': [],
-                             'rt': [], 'ft': ['test_folder/tex/tex_1.wig'], 'rf': [], 'ff': []})
+        self.assertDictEqual(lib_dict, {
+            'fn': ['test_folder/tex/notex_1.wig'], 'rn': [],
+            'rt': [], 'ft': ['test_folder/tex/tex_1.wig'],
+            'rf': [], 'ff': []})
 
 
 class Example(object):

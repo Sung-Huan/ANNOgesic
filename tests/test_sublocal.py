@@ -74,11 +74,15 @@ class TestSubLocal(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_get_protein_seq(self):
-        gen_file(os.path.join(self.fastas, "tmp/aaa.fa"), self.example.fasta_file)
+        gen_file(os.path.join(self.fastas, "tmp/aaa.fa"),
+                 self.example.fasta_file)
         gff = "aaa.gff"
-        gen_file(os.path.join(self.gffs, "tmp", gff), self.example.gff_file)
-        gen_file(os.path.join(self.trans, "aaa_transcript.gff"), self.example.tran_file)
-        prefix = self.sub._get_protein_seq(gff, self.test_folder, self.trans)
+        gen_file(os.path.join(self.gffs, "tmp", gff),
+                 self.example.gff_file)
+        gen_file(os.path.join(self.trans, "aaa_transcript.gff"),
+                 self.example.tran_file)
+        prefix = self.sub._get_protein_seq(
+            gff, self.test_folder, self.trans)
         self.assertEqual(prefix, "aaa")
 
     def test_run_psortb(self):
@@ -88,7 +92,8 @@ class TestSubLocal(unittest.TestCase):
         args = self.mock_args.mock()
         args.psortb_path = "psortb_path"
         args.gram = "positive"
-        self.sub._run_psortb(args, "aaa", self.out, self.test_folder, tmp_result)
+        self.sub._run_psortb(args, "aaa", self.out,
+                             self.test_folder, tmp_result)
         self.assertTrue(os.path.exists(os.path.join(self.out, "tmp_log")))
         self.assertTrue(os.path.exists(os.path.join(tmp_result,
                        "_".join(["aaa", "raw.txt"]))))
@@ -100,7 +105,8 @@ class TestSubLocal(unittest.TestCase):
         os.mkdir(os.path.join(self.out, "psortb_results"))
         gen_file(os.path.join(self.out, "aaa_raw.txt"), "test")
         gen_file(os.path.join(self.out, "aaa_table.csv"), "test")
-        self.sub._merge_and_stat(self.gffs, self.out, self.test_folder, self.stat)
+        self.sub._merge_and_stat(self.gffs, self.out,
+                                 self.test_folder, self.stat)
         self.assertTrue(os.path.exists(os.path.join(self.stat, "aaa")))
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "aaa")))
 
@@ -110,8 +116,10 @@ class TestSubLocal(unittest.TestCase):
         gen_file(gff_file, self.example.gff_file)
         gen_file(tran_file, self.example.tran_file)
         self.sub._compare_cds_tran(gff_file, tran_file)
-        datas, string = extract_info("test_folder/output/all_CDS/tmp_cds.gff", "file")
-        self.assertEqual("\n".join(datas), 'aaa\tRefSeq\tCDS\t3\t17\t.\t+\t.')
+        datas, string = extract_info(
+            "test_folder/output/all_CDS/tmp_cds.gff", "file")
+        self.assertEqual(
+            "\n".join(datas), 'aaa\tRefSeq\tCDS\t3\t17\t.\t+\t.')
 
 class Example(object):
 

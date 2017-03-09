@@ -57,18 +57,20 @@ class TestComparesRNAsORF(unittest.TestCase):
 
 class Example(object):
 
-    srna_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 140,
-                  "end": 367, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 30,
-                  "end": 40, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "sRNA", "start": 430,
-                  "end": 567, "phase": ".", "strand": "-", "score": "."}]
-    sorf_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 160,
-                  "end": 300, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 3,
-                  "end": 38, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "sORF", "start": 420,
-                  "end": 577, "phase": ".", "strand": "-", "score": "."}]
+    srna_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 140,
+         "end": 367, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "sRNA", "start": 30,
+         "end": 40, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "bbb", "source": "Refseq", "feature": "sRNA", "start": 430,
+         "end": 567, "phase": ".", "strand": "-", "score": "."}]
+    sorf_dict = [
+        {"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 160,
+         "end": 300, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "aaa", "source": "Refseq", "feature": "sORF", "start": 3,
+         "end": 38, "phase": ".", "strand": "+", "score": "."},
+        {"seq_id": "bbb", "source": "Refseq", "feature": "sORF", "start": 420,
+         "end": 577, "phase": ".", "strand": "-", "score": "."}]
     attributes_srna = [{"ID": "srna0", "Name": "sRNA_0"},
                        {"ID": "srna1", "Name": "sRNA_1"},
                        {"ID": "srna2", "Name": "sRNA_2"}]

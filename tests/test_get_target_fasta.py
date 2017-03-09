@@ -41,8 +41,10 @@ class Mock_seq_editer(object):
 
     def modify_seq(ref, mut_table, tar):
         Mock_multiparser().parser_fasta()
-        shutil.copyfile("a_test_project/ref/tmp/aaa.fa", os.path.join(tar, "aaa.fa"))
-        shutil.copyfile("a_test_project/ref/tmp/bbb.fa", os.path.join(tar, "bbb.fa"))
+        shutil.copyfile("a_test_project/ref/tmp/aaa.fa",
+                        os.path.join(tar, "aaa.fa"))
+        shutil.copyfile("a_test_project/ref/tmp/bbb.fa",
+                        os.path.join(tar, "bbb.fa"))
 
 class Mock_helper(object):
 
@@ -85,7 +87,8 @@ class TestTargetFasta(unittest.TestCase):
                                            ["a_test_project/ref/ddd.fa"],
                                            ["a_test_project/tar/ccc.fa:aaa"],
                                            self.root_folder)
-        self.assertTrue(os.path.exists(os.path.join(self.tar_folder, "ccc.fa")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.tar_folder, "ccc.fa")))
 
 class ExampleData(object):
 

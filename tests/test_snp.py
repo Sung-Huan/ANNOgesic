@@ -47,10 +47,18 @@ class TestSNPCalling(unittest.TestCase):
             os.mkdir(self.fasta)
             os.mkdir(self.snp_folder)
             os.mkdir(self.table)
-            os.mkdir(os.path.join(self.test_folder, "compare_closed_and_updated_references"))
-            os.mkdir(os.path.join(self.test_folder, "compare_closed_and_updated_references/seqs"))
-            os.mkdir(os.path.join(self.test_folder, "compare_closed_and_updated_references/seqs/with_BAQ"))
-            os.mkdir(os.path.join(self.test_folder, "compare_closed_and_updated_references/statistics"))
+            os.mkdir(os.path.join(
+                self.test_folder,
+                "compare_closed_and_updated_references"))
+            os.mkdir(os.path.join(
+                self.test_folder,
+                "compare_closed_and_updated_references/seqs"))
+            os.mkdir(os.path.join(
+                self.test_folder,
+                "compare_closed_and_updated_references/seqs/with_BAQ"))
+            os.mkdir(os.path.join(
+                self.test_folder,
+                "compare_closed_and_updated_references/statistics"))
         args = self.mock_args.mock()
         args.types = "closed_strain"
         args.out_folder = self.test_folder
@@ -79,15 +87,22 @@ class TestSNPCalling(unittest.TestCase):
         args.imf = 0.5
         args.filters = ["VDB_s0.1"]
         args.min_sample = 2
-        os.mkdir(os.path.join(self.test_folder, "compare_closed_and_updated_references/seqs/with_BAQ/test"))
+        os.mkdir(os.path.join(
+            self.test_folder,
+            "compare_closed_and_updated_references/seqs/with_BAQ/test"))
         depth_file = os.path.join(self.test_folder, "tmp_depth")
         gen_file(depth_file, self.example.depth_file)
         self.snp._transcript_snp(fasta, snp, "test", "with",
                                  "test", 10, self.table, args)
-        datas = import_data(os.path.join(self.test_folder, "compare_closed_and_updated_references/statistics/stat_test_with_BAQ_SNP_best.csv"))
+        datas = import_data(os.path.join(
+            self.test_folder,
+            "compare_closed_and_updated_references/statistics/stat_test_with_BAQ_SNP_best.csv"))
         self.assertEqual("\n".join(datas), self.example.out_stat)
-        datas = import_data(os.path.join(self.test_folder, "compare_closed_and_updated_references/seqs/with_BAQ/test/test_NC_007795.1_1_1.fa"))
-        self.assertEqual("\n".join(datas), ">NC_007795.1\nAaTTGaaTCCCGAACGACAGTTAT")
+        datas = import_data(os.path.join(
+            self.test_folder,
+            "compare_closed_and_updated_references/seqs/with_BAQ/test/test_NC_007795.1_1_1.fa"))
+        self.assertEqual("\n".join(datas),
+                         ">NC_007795.1\nAaTTGaaTCCCGAACGACAGTTAT")
         os.remove("test_seq_reference.csv")
         os.remove("test_best.vcf")
         os.remove("test_NC_007795.1_SNP_QUAL_best.png")
@@ -101,7 +116,9 @@ class TestSNPCalling(unittest.TestCase):
         args = self.mock_args.mock()
         self.snp._run_sub(args, "fasta", "with", file_prefixs, "test",
                           self.test_folder, 10)
-        self.assertTrue(os.path.exists(os.path.join(self.test_folder, "compare_closed_and_updated_references/seqs/with_BAQ/test")))
+        self.assertTrue(os.path.exists(os.path.join(
+            self.test_folder,
+            "compare_closed_and_updated_references/seqs/with_BAQ/test")))
 
     def test_run_program(self):
         self.snp._run_sub = self.mock.mock_run_sub
@@ -131,7 +148,8 @@ class TestSNPCalling(unittest.TestCase):
         self.assertEqual(num, 2)
 
     def test_modify_header(self):
-        gen_file(os.path.join(self.fasta, "test.fa"), ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
+        gen_file(os.path.join(self.fasta, "test.fa"),
+                 ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
         self.snp._modify_header(self.fasta)
         datas = import_data(os.path.join(self.fasta, "test.fa"))
         self.assertEqual("\n".join(datas), ">DDD\nAATTAATTGGCC")
@@ -149,10 +167,12 @@ class TestSNPCalling(unittest.TestCase):
         self.snp._run_sub = self.mock.mock_run_sub
         self.snp._run_tools = self.mock.mock_run_tools
         self.snp._transcript_snp = self.mock.mock_transcript_snp
-        gen_file(os.path.join(self.fasta, "test.fa"), ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
+        gen_file(os.path.join(self.fasta, "test.fa"),
+                              ">AAA|BBB|CCC|DDD|EEE\nAATTAATTGGCC")
         gen_file(os.path.join(self.test_folder, "header"), self.example.bam)
         gen_file(os.path.join(self.test_folder, "whole_reads.bam"), "test")
-        gen_file(os.path.join(self.test_folder, "whole_reads_sorted.bam"), "test")
+        gen_file(os.path.join(self.test_folder, "whole_reads_sorted.bam"),
+                 "test")
         args = self.mock_args.mock()
         args.types = "reference"
         args.program = ["with_BAQ"]

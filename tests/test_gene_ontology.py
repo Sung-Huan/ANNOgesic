@@ -48,9 +48,11 @@ class TestGeneOntology(unittest.TestCase):
         out_file = os.path.join(self.test_folder, "out.gff")
         tran_file = os.path.join(self.test_folder, "test_transcript.gff")
         gen_file(tran_file, "test")
-        go.retrieve_uniprot(database_file, gff_file, out_file, tran_file, "express")
+        go.retrieve_uniprot(database_file, gff_file,
+                            out_file, tran_file, "express")
         datas = import_data(out_file)
-        self.assertEqual(set(datas), set(self.example.out_retrieve.split("\n")))
+        self.assertEqual(set(datas),
+                         set(self.example.out_retrieve.split("\n")))
 
     def test_compare_cds_tran(self):
         gffs = self.example.gffs
@@ -66,20 +68,33 @@ class TestGeneOntology(unittest.TestCase):
         self.assertListEqual(obos, self.example.out_obo)
 
     def test_compare_go_slim(self):
-        classes = {'All_strain': {'cellular_component': {}, 'biological_process': {}, 'molecular_function': {}},
-                   'aaa': {'cellular_component': {}, 'biological_process': {}, 'molecular_function': {}}}
-        total_nums = {'All_strain': {'cellular_component': 0, 'total': 0, 'biological_process': 0, 'molecular_function': 0},
-                      'aaa': {'cellular_component': 0, 'total': 0, 'biological_process': 0, 'molecular_function': 0}}
+        classes = {'All_strain': {'cellular_component': {},
+                                  'biological_process': {},
+                                  'molecular_function': {}},
+                   'aaa': {'cellular_component': {},
+                           'biological_process': {},
+                           'molecular_function': {}}}
+        total_nums = {'All_strain': {'cellular_component': 0,
+                                     'total': 0, 'biological_process': 0,
+                                     'molecular_function': 0},
+                      'aaa': {'cellular_component': 0, 'total': 0,
+                              'biological_process': 0,
+                              'molecular_function': 0}}
         gos = {'aaa': {"pro": ['GO:0000003']}}
-        go.compare_go_slim(gos, self.example.out_obo, self.example.slim_obos, classes, total_nums)
-        self.assertDictEqual(classes, {'All_strain': {'molecular_function': {}, 'cellular_component': {},
-                                                      'biological_process': {'reproduction': 1}},
-                                       'aaa': {'molecular_function': {}, 'cellular_component': {},
-                                               'biological_process': {'reproduction': 1}}})
-        self.assertDictEqual(total_nums, {'All_strain': {'molecular_function': 0, 'cellular_component': 0,
-                                                         'biological_process': 1, 'total': 1},
-                                          'aaa': {'molecular_function': 0, 'cellular_component': 0,
-                                                  'biological_process': 1, 'total': 1}})
+        go.compare_go_slim(gos, self.example.out_obo,
+                           self.example.slim_obos, classes, total_nums)
+        self.assertDictEqual(classes, {'All_strain': {
+            'molecular_function': {}, 'cellular_component': {},
+            'biological_process': {'reproduction': 1}},
+                                       'aaa': {
+            'molecular_function': {}, 'cellular_component': {},
+            'biological_process': {'reproduction': 1}}})
+        self.assertDictEqual(total_nums, {'All_strain': {
+            'molecular_function': 0, 'cellular_component': 0,
+            'biological_process': 1, 'total': 1},
+                                          'aaa': {
+            'molecular_function': 0, 'cellular_component': 0,
+            'biological_process': 1, 'total': 1}})
 
     def test_map2goslim(self):
         go.plot = Mock_func().mock_plot
@@ -90,7 +105,8 @@ class TestGeneOntology(unittest.TestCase):
         gen_file(term_file, self.example.obo)
         gen_file(slim_file, self.example.slim)
         gen_file(go_table, "aaa\t+\t150\t200\tYP_031579.1\tGO:0000003")
-        go.map2goslim(slim_file, term_file, go_table, stat_file, self.test_folder)
+        go.map2goslim(slim_file, term_file, go_table, stat_file,
+                      self.test_folder)
         datas = import_data(stat_file)
         self.assertEqual(set(datas), set(self.example.out_stat.split("\n")))
 
@@ -98,25 +114,37 @@ class Example(object):
     idmapping = """Q6GZX4	001R_FRG3G	2947773	YP_031579.1	81941549; 47060116; 49237298		GO:0006355; GO:0046782; GO:0006351	UniRef100_Q6GZX4	UniRef90_Q6GZX4 UniRef50_Q6GZX4	UPI00003B0FD4		654924			15165820	AY548484	AAT09660.1
 Q6GZX3	002L_FRG3G	2947774	YP_031580.1	49237299; 47060117; 81941548		GO:0033644; GO:0016021	UniRef100_Q6GZX3	UniRef90_Q6GZX3 UniRef50_Q6GZX3 UPI00003B0FD5		654924			15165820	AY548484	AAT09661.1
 Q197F8	002R_IIV3	4156251	YP_654574.1	106073503; 109287880; 123808694			UniRef100_Q197F8	UniRef90_Q197F8 UniRef50_Q197F8	UPI0000D83464		345201			16912294	DQ643392	ABF82032.1"""
-    gff_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 150,
+    gff_dict = [{"seq_id": "aaa", "source": "Refseq",
+                 "feature": "CDS", "start": 150,
                  "end": 200, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "aaa", "source": "Refseq", "feature": "CDS", "start": 1230,
+                {"seq_id": "aaa", "source": "Refseq",
+                 "feature": "CDS", "start": 1230,
                  "end": 1240, "phase": ".", "strand": "+", "score": "."},
-                {"seq_id": "bbb", "source": "Refseq", "feature": "CDS", "start": 7100,
+                {"seq_id": "bbb", "source": "Refseq",
+                 "feature": "CDS", "start": 7100,
                  "end": 9167, "phase": ".", "strand": "-", "score": "."},
-                {"seq_id": "bbb", "source": "Refseq", "feature": "CDS", "start": 100,
+                {"seq_id": "bbb", "source": "Refseq",
+                 "feature": "CDS", "start": 100,
                  "end": 167, "phase": ".", "strand": "-", "score": "."}]
-    attributes_gff = [{"ID": "cds0", "Name": "YP_031579.1", "locus_tag": "AAA_00001", "protein_id": "YP_031579.1"},
-                      {"ID": "cds1", "Name": "CDS_1", "locus_tag": "AAA_00002", "protein_id": "YP_031580.1"},
-                      {"ID": "cds2", "Name": "YP_654574.1", "locus_tag": "BBB_00001"},
-                      {"ID": "cds3", "Name": "YP_031579.1", "locus_tag": "BBB_00002"}]
-    tran_dict = [{"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 100,
+    attributes_gff = [{"ID": "cds0", "Name": "YP_031579.1",
+                       "locus_tag": "AAA_00001", "protein_id": "YP_031579.1"},
+                      {"ID": "cds1", "Name": "CDS_1",
+                       "locus_tag": "AAA_00002", "protein_id": "YP_031580.1"},
+                      {"ID": "cds2", "Name": "YP_654574.1",
+                       "locus_tag": "BBB_00001"},
+                      {"ID": "cds3", "Name": "YP_031579.1",
+                       "locus_tag": "BBB_00002"}]
+    tran_dict = [{"seq_id": "aaa", "source": "Refseq",
+                  "feature": "transcript", "start": 100,
                   "end": 212, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "aaa", "source": "Refseq", "feature": "transcript", "start": 530,
+                 {"seq_id": "aaa", "source": "Refseq",
+                  "feature": "transcript", "start": 530,
                   "end": 540, "phase": ".", "strand": "+", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "transcript", "start": 700,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "transcript", "start": 700,
                   "end": 867, "phase": ".", "strand": "-", "score": "."},
-                 {"seq_id": "bbb", "source": "Refseq", "feature": "transcript", "start": 80,
+                 {"seq_id": "bbb", "source": "Refseq",
+                  "feature": "transcript", "start": 80,
                   "end": 130, "phase": ".", "strand": "-", "score": "."}]
     attributes_tran = [{"ID": "tran0", "Name": "Tran0"},
                        {"ID": "tran1", "Name": "Tran1"},
@@ -125,8 +153,10 @@ Q197F8	002R_IIV3	4156251	YP_654574.1	106073503; 109287880; 123808694			UniRef100
     gffs = []
     trans = []
     for index in range(0, 4):
-        gffs.append(Create_generator(gff_dict[index], attributes_gff[index], "gff"))
-        trans.append(Create_generator(tran_dict[index], attributes_tran[index], "gff"))
+        gffs.append(Create_generator(gff_dict[index],
+                                     attributes_gff[index], "gff"))
+        trans.append(Create_generator(tran_dict[index],
+                                      attributes_tran[index], "gff"))
     out_retrieve = """strain	strand	start	end	protein_id	Go_term
 aaa	+	150	200	YP_031579.1	GO:0006355; GO:0046782; GO:0006351
 aaa	+	1230	1240	YP_031580.1	GO:0033644; GO:0016021
@@ -259,4 +289,3 @@ relationship: part_of GO:0005634 ! nucleus
 
 if __name__ == "__main__":
     unittest.main()
-

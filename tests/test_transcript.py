@@ -12,7 +12,8 @@ from mock_args_container import MockClass
 
 class Mock_func(object):
 
-    def mock_assembly(self, wig_f, wig_r, wig_folder, libs, out, wig_type, args):
+    def mock_assembly(self, wig_f, wig_r, wig_folder, libs,
+                      out, wig_type, args):
         pass
 
     def mock_combine(self, frag, tex, tolerance, out):
@@ -29,7 +30,8 @@ class Mock_func(object):
                          tmp_ta, tmp_gff, c_feature):
         pass
 
-    def mock_stat_ta_tss(self, ta_file, tss_file, stat_tss_out, ta, tss, fuzzy):
+    def mock_stat_ta_tss(self, ta_file, tss_file, stat_tss_out,
+                         ta, tss, fuzzy):
         pass
 
     def mock_gen_table_tran(self, gff_outfolder, args):
@@ -97,7 +99,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
     def test_compute(self):
         pre_assembly = tr.detect_transcript
         tr.detect_transcript = self.mock.mock_assembly
-        gen_file(os.path.join(self.frag, "tmp/test_forward.wig"), "test")
+        gen_file(os.path.join(
+            self.frag, "tmp/test_forward.wig"), "test")
         args = self.mock_args.mock()
         args.replicates = "rep"
         args.out_foler = self.out
@@ -120,22 +123,27 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.flibs = "flibs"
         strains = self.tran._for_one_wig("frag", args)
         self.assertListEqual(strains, ['test'])
-        datas = import_data(os.path.join(self.out_gff, "test_transcript_frag.gff"))
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
+        datas = import_data(os.path.join(
+            self.out_gff, "test_transcript_frag.gff"))
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.tran_file)
         tr.assembly = pre_assembly
 
     def test_for_two_wigs(self):
         pre_combine = tr.combine
         tr.combine = self.mock.mock_combine
-        gen_file(os.path.join(self.out_gff, "test_transcript_fragment.gff"), "test")
-        gen_file(os.path.join(self.out_gff, "test_transcript_tex_notex.gff"), "test")
+        gen_file(os.path.join(
+            self.out_gff, "test_transcript_fragment.gff"), "test")
+        gen_file(os.path.join(
+            self.out_gff, "test_transcript_tex_notex.gff"), "test")
         args = self.mock_args.mock()
         args.frag_wigs = self.frag
         args.tex_wigs = self.tex
         args.gffs = self.gffs
         args.tolerance = 5
         self.tran._for_two_wigs(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(self.out_gff, "test_transcript.gff")))
+        self.assertTrue(os.path.exists(
+            os.path.join(self.out_gff, "test_transcript.gff")))
         tr.combine = pre_combine
 
     def test_post_modify(self):
@@ -154,7 +162,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.out_folder = self.out
         args.length = 20
         self.tran._post_modify(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(gff_out, "test_transcript.gff")))
+        self.assertTrue(os.path.exists(os.path.join(
+            gff_out, "test_transcript.gff")))
         tr.longer_ta = pre_longer
         tr.fill_gap = pre_fill
 
@@ -162,8 +171,10 @@ class TestsTranscriptAssembly(unittest.TestCase):
         tr.stat_ta_gff = self.mock.mock_stat_ta_gff
         self.tran.multiparser = self.mock_parser
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.gffs, "tmp/test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.out_gff, "test_transcript.gff"), self.example.tran_file)
+        gen_file(os.path.join(self.gffs, "tmp/test.gff"),
+                 self.example.gff_file)
+        gen_file(os.path.join(self.out_gff, "test_transcript.gff"),
+                 self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
         gen_file(os.path.join(gff_out, "tmp_ta_gff"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_gff_ta"), self.example.gff_file)
@@ -174,16 +185,21 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.c_feature = ["CDS"]
         self.tran._compare_cds(["test"], args)
         datas = import_data(os.path.join(self.gffs, "test.gff"))
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.gff_file)
         datas = import_data(os.path.join(self.out_gff, "test_transcript.gff"))
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.tran_file)
 
     def test_compare_tss(self):
         tr.stat_ta_tss = self.mock.mock_stat_ta_tss
         self.tran.multiparser = self.mock_parser
-        gen_file(os.path.join(self.gffs, "test_TSS.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.gffs, "tmp/test_TSS.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.out_gff, "test_transcript.gff"), self.example.tran_file)
+        gen_file(os.path.join(self.gffs, "test_TSS.gff"),
+                 self.example.gff_file)
+        gen_file(os.path.join(self.gffs, "tmp/test_TSS.gff"),
+                 self.example.gff_file)
+        gen_file(os.path.join(self.out_gff, "test_transcript.gff"),
+                 self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
         gen_file(os.path.join(gff_out, "tmp_ta_tss"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_tss_ta"), self.example.gff_file)
@@ -194,9 +210,11 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.fuzzy = 2
         self.tran._compare_tss(["test"], args)
         datas = import_data(os.path.join(self.gffs, "test_TSS.gff"))
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.gff_file)
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.gff_file)
         datas = import_data(os.path.join(self.out_gff, "test_transcript.gff"))
-        self.assertEqual("\n".join(datas), "##gff-version 3\n" + self.example.tran_file)
+        self.assertEqual("\n".join(datas),
+                         "##gff-version 3\n" + self.example.tran_file)
 
     def test_run_transcript_assembly(self):
         tr.stat_ta_tss = self.mock.mock_stat_ta_tss
@@ -207,14 +225,20 @@ class TestsTranscriptAssembly(unittest.TestCase):
         pre_assembly = tr.detect_transcript
         tr.assembly = self.mock.mock_assembly
         tr.gen_table_transcript = self.mock.mock_gen_table_tran
-        gen_file(os.path.join(self.frag, "tmp/test1_forward.wig"), self.example.wig_f)
-        gen_file(os.path.join(self.frag, "tmp/test1_reverse.wig"), self.example.wig_r)
+        gen_file(os.path.join(self.frag, "tmp/test1_forward.wig"),
+                 self.example.wig_f)
+        gen_file(os.path.join(self.frag, "tmp/test1_reverse.wig"),
+                 self.example.wig_r)
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.tsss, "test_TSS.gff"), self.example.tss_file)
-        gen_file(os.path.join(self.terms, "test_term.gff"), self.example.term_file)
+        gen_file(os.path.join(self.tsss, "test_TSS.gff"),
+                 self.example.tss_file)
+        gen_file(os.path.join(self.terms, "test_term.gff"),
+                 self.example.term_file)
         gen_file("test_folder/output/test1_fragment", self.example.tran_file)
         gff_out = os.path.join(self.out, "gffs")
-        gen_file(os.path.join(gff_out, "test_transcript_assembly_fragment.gff"), self.example.tran_file)
+        gen_file(os.path.join(
+            gff_out, "test_transcript_assembly_fragment.gff"),
+            self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_uni"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "tmp_overlap"), self.example.tran_file)
         gen_file(os.path.join(gff_out, "final_test"), self.example.tran_file)
@@ -281,7 +305,6 @@ variableStep chrom=test span=1
 8 -47.0
 9 -2.0
 10 -41.0"""
-
 
 if __name__ == "__main__":
     unittest.main()

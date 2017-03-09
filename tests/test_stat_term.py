@@ -25,28 +25,35 @@ class TestStatTerm(unittest.TestCase):
     def test_plus_num(self):
         nums = {"aaa": {"test_1": 0}, "total": {"test_1": 2}}
         st.plus_num(nums, "aaa", "test_1")
-        self.assertDictEqual(nums, {'total': {'test_1': 3}, 'aaa': {'test_1': 1}})
+        self.assertDictEqual(nums, {'total': {'test_1': 3},
+                                    'aaa': {'test_1': 1}})
 
     def test_print_percent(self):
         out = StringIO()
         st.print_percent(out, 10, 2, "test")
-        self.assertEqual(out.getvalue(), "\t\t(percentage of total testterminators = 0.2)\n")
+        self.assertEqual(out.getvalue(),
+                         "\t\t(percentage of total testterminators = 0.2)\n")
 
     def test_print_express(self):
         out = StringIO()
         st.print_express(out, 10, 2, "test")
-        self.assertEqual(out.getvalue(), "\t\t(percentage of total testterminators which have gene expression = 0.2)\n")
+        self.assertEqual(out.getvalue(),
+                         ("\t\t(percentage of total testterminators which "
+                          "have gene expression = 0.2)\n"))
 
     def test_print_decrease(self):
         out = StringIO()
         st.print_decrease(out, 10, 2, "test")
-        self.assertEqual(out.getvalue(), "\t\t(percentage of total testterminators which have dramatic coverage decreasing = 0.2)\n")
+        self.assertEqual(out.getvalue(),
+                         ("\t\t(percentage of total testterminators which "
+                          "have dramatic coverage decreasing = 0.2)\n"))
 
     def test_print_method(self):
         out = StringIO()
         nums = {"method": 2, "express": 3, "detect": 4, "only": 5,
                 "total": 20, "total_ex": 15, "total_de": 10, "frhp": 1}
-        st.print_method(nums, "method_1", "method", "express", "detect", "only", out)
+        st.print_method(nums, "method_1", "method", "express",
+                        "detect", "only", out)
         self.assertEqual(out.getvalue(), self.example.print_method + "\n")
 
     def test_print_intersection_number(self):
@@ -63,12 +70,14 @@ class TestStatTerm(unittest.TestCase):
 
     def test_print_file(self):
         out = StringIO()
-        nums = {"fr": 2, "hp": 3, "frhp": 4, "ex_fr": 3, "ex_hp": 2, "ex_frhp": 1,
-                "de_fr": 2, "de_hp": 3, "de_frhp": 4, "total": 20,
-                "total_de": 10, "total_ex": 10, "only_de_fr": 6, "only_de_hp": 4,
-                "only_ex_fr": 2, "only_ex_hp": 1, "de_frhp": 2, "ex_frhp": 3}
+        nums = {"fr": 2, "hp": 3, "frhp": 4, "ex_fr": 3, "ex_hp": 2,
+                "ex_frhp": 1, "de_fr": 2, "de_hp": 3, "de_frhp": 4,
+                "total": 20, "total_de": 10, "total_ex": 10, "only_de_fr": 6,
+                "only_de_hp": 4, "only_ex_fr": 2, "only_ex_hp": 1,
+                "de_frhp": 2, "ex_frhp": 3}
         st.print_file(nums, out, "aaa")
-        self.assertEqual(out.getvalue().split("\n\n")[0], self.example.print_file)
+        self.assertEqual(out.getvalue().split("\n\n")[0],
+                         self.example.print_file)
 
     def test_stat_term(self):
         term_gff = os.path.join(self.test_folder, "aaa_term.gff")
@@ -79,7 +88,8 @@ class TestStatTerm(unittest.TestCase):
         output_non = os.path.join(self.test_folder, "non_expressed")
         gen_file(term_gff, self.example.gff)
         gen_file(term_table, self.example.table)
-        st.stat_term(term_gff, term_table, stat, output_decrease, output_expression, output_non)
+        st.stat_term(term_gff, term_table, stat, output_decrease,
+                     output_expression, output_non)
         self.assertTrue(stat)
         datas = import_data(output_decrease + ".csv")
         self.assertEqual("\n".join(datas), self.example.table)

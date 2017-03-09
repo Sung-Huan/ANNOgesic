@@ -42,22 +42,26 @@ class TestPPI(unittest.TestCase):
         self.ppi._run_wget = self.mock.mock_run_wget
         strain = "test_strain"
         locus = "test_locus"
-        strain_id = {"ptt": "test_strain", "string": "string_test", "file": "file_test"}
+        strain_id = {"ptt": "test_strain", "string": "string_test",
+                     "file": "file_test"}
         files = {"id_list": "test", "id_log": "test"}
         detect = self.ppi._wget_id(strain, locus, strain_id, files)
         self.assertTrue(detect)
 
     def test_retrieve_id(self):
         self.ppi._run_wget = self.mock.mock_run_wget
-        strain_id = {"ptt": "test_strain", "string": "string_test", "file": "file_test"}
+        strain_id = {"ptt": "test_strain", "string": "string_test",
+                     "file": "file_test"}
         files = {"id_list": "test", "id_log": "test"}
-        genes = [{"strain": "test_strain", "locus_tag": "test_locus", "gene": "dnaA"}]
+        genes = [{"strain": "test_strain", "locus_tag": "test_locus",
+                  "gene": "dnaA"}]
         self.ppi._retrieve_id(strain_id, genes, files)
 
     def test_get_prefer_name(self):
         row_a = "999.aaa"
         files = {"id_list": self.test_folder}
-        gen_file(os.path.join(self.test_folder, "aaa"), "999.aaa\t222\t333\ttest_aaa")
+        gen_file(os.path.join(self.test_folder, "aaa"),
+                 "999.aaa\t222\t333\ttest_aaa")
         name = self.ppi._get_prefer_name(row_a, "test", files, "test")
         self.assertEqual(name, "test_aaa")
 
@@ -67,19 +71,24 @@ class TestPPI(unittest.TestCase):
         out_noall = StringIO()
         out_nobest = StringIO()
         self.ppi._run_wget = self.mock.mock_run_wget
-        files = {"id_list": self.test_folder, "id_log": "test", "pubmed_log": "test",
+        files = {"id_list": self.test_folder, "id_log": "test",
+                 "pubmed_log": "test",
                  "all_specific": out_all, "best_specific": out_best,
                  "all_nospecific": out_noall, "best_nospecific": out_nobest}
         row = self.example.ppi_line.split("\t")
-        strain_id = {"file": "test_file","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
+        strain_id = {"file": "test_file","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
         mode = "interaction"
         actor = "test_A"
         score = 11241
         id_file = "SAOUHSC_01684"
         ptt = "test_ptt"
-        gen_file(os.path.join(self.test_folder, "SAOUHSC_01684"), "93061.SAOUHSC_01684\t93061.SAOUHSC_01683\t333\ttest_aaa")
-        gen_file(os.path.join(self.test_folder, "SAOUHSC_01683"), "93061.SAOUHSC_01683\t93061.SAOUHSC_01684\t333\ttest_bbb")
-        paths = {"all": self.test_folder, "fig": self.test_folder, "best": self.test_folder}
+        gen_file(os.path.join(self.test_folder, "SAOUHSC_01684"),
+                 "93061.SAOUHSC_01684\t93061.SAOUHSC_01683\t333\ttest_aaa")
+        gen_file(os.path.join(self.test_folder, "SAOUHSC_01683"),
+                 "93061.SAOUHSC_01683\t93061.SAOUHSC_01684\t333\ttest_bbb")
+        paths = {"all": self.test_folder, "fig": self.test_folder,
+                 "best": self.test_folder}
         querys = "all"
         first_output = {"specific_all": True, "specific_best": True,
                         "nospecific_all": True, "nospecific_best": True}
@@ -90,9 +99,11 @@ class TestPPI(unittest.TestCase):
         args.score = 19
         self.ppi._get_pubmed(row, strain_id, mode, actor, id_file, first_output,
                              ptt, files, paths, args)
-        data = import_data("test_folder/without_strain/test_ptt/test_aaa_test_bbb.csv")
+        data = import_data(
+            "test_folder/without_strain/test_ptt/test_aaa_test_bbb.csv")
         self.assertEqual("\n".join(data), self.example.with_out)
-        data = import_data("test_folder/with_strain/test_ptt/test_aaa_test_bbb.csv")
+        data = import_data(
+            "test_folder/with_strain/test_ptt/test_aaa_test_bbb.csv")
         self.assertEqual("\n".join(data), self.example.with_out)
 
     def test_merge_information(self):
@@ -118,14 +129,19 @@ class TestPPI(unittest.TestCase):
 
     def test_detect_protein(self):
         gen_file(os.path.join(self.test_folder, "test"), self.example.ptt_file)
-        strain_id = {"file": "test","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
+        strain_id = {"file": "test","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
         args = self.mock_args.mock()
         args.ptts = self.test_folder
         args.querys = "all"
         genes = self.ppi._detect_protein(strain_id, args)
-        self.assertListEqual(genes, [{'locus_tag': 'SAOUHSC_00001', 'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003'},
-                                     {'locus_tag': 'SAOUHSC_00002', 'gene': '-', 'strain': 'Staphylococcus_aureus_HG003'},
-                                     {'locus_tag': 'SAOUHSC_00003', 'gene': '-', 'strain': 'Staphylococcus_aureus_HG003'}])
+        self.assertListEqual(genes, [
+            {'locus_tag': 'SAOUHSC_00001', 'gene': 'dnaA',
+             'strain': 'Staphylococcus_aureus_HG003'},
+            {'locus_tag': 'SAOUHSC_00002', 'gene': '-',
+             'strain': 'Staphylococcus_aureus_HG003'},
+            {'locus_tag': 'SAOUHSC_00003', 'gene': '-',
+             'strain': 'Staphylococcus_aureus_HG003'}])
 
     def test_setup_nospecific(self):
         out_all = StringIO()
@@ -135,26 +151,34 @@ class TestPPI(unittest.TestCase):
         paths = {"all": os.path.join(self.test_folder, "all_results"),
                  "fig": os.path.join(self.test_folder, "figures"),
                  "best": os.path.join(self.test_folder, "best_results")}
-        strain_id = {"file": "test","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
-        files = {"id_list": self.test_folder, "id_log": "test", "pubmed_log": "test",
+        strain_id = {"file": "test","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
+        files = {"id_list": self.test_folder, "id_log": "test",
+                 "pubmed_log": "test",
                  "all_specific": out_all, "best_specific": out_best,
-                 "all_nospecific": out_noall, "best_nospecific": out_nobest}
+                 "all_nospecific": out_noall,
+                 "best_nospecific": out_nobest}
         self.ppi._setup_nospecific(paths, strain_id, files)
         files["all_nospecific"].close()
         files["best_nospecific"].close()
-        self.assertTrue(os.path.exists("test_folder/all_results/without_strain/test_ptt"))
-        self.assertTrue(os.path.exists("test_folder/best_results/without_strain/test_ptt"))
-        self.assertTrue(os.path.exists("test_folder/figures/without_strain/test_ptt"))
+        self.assertTrue(os.path.exists(
+            "test_folder/all_results/without_strain/test_ptt"))
+        self.assertTrue(os.path.exists(
+            "test_folder/best_results/without_strain/test_ptt"))
+        self.assertTrue(os.path.exists(
+            "test_folder/figures/without_strain/test_ptt"))
 
     def test_setup_folder_and_read_file(self):
         paths = {"all": os.path.join(self.test_folder, "all_results"),
                  "fig": os.path.join(self.test_folder, "figures"),
                  "best": os.path.join(self.test_folder, "best_results")}
-        strain_id = {"file": "test.ptt","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
+        strain_id = {"file": "test.ptt","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
         files = {"id_list": self.test_folder, "id_log": "", "pubmed_log": "",
                  "all_specific": "", "best_specific": "",
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
-        gen_file(os.path.join(self.test_folder, "test.ptt"), self.example.ptt_file)
+        gen_file(os.path.join(self.test_folder, "test.ptt"),
+                 self.example.ptt_file)
         args = self.mock_args.mock()
         args.querys = "all"
         args.no_specific = True
@@ -162,14 +186,19 @@ class TestPPI(unittest.TestCase):
         args.ptts = self.test_folder
         genes = self.ppi._setup_folder_and_read_file(strain_id, "",
                                                      files, paths, args)
-        for index in ("all_specific", "all_nospecific", "best_specific", "best_nospecific",
+        for index in ("all_specific", "all_nospecific",
+                      "best_specific", "best_nospecific",
                       "id_log", "action_log", "pubmed_log"):
             files[index].close()
         self.assertTrue(os.path.exists("test_folder/best_results/test"))
         self.assertTrue(os.path.exists("test_folder/all_results/test"))
-        self.assertListEqual(genes, [{'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00001'},
-                                     {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00002'},
-                                     {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'SAOUHSC_00003'}])
+        self.assertListEqual(genes, [
+            {'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003',
+             'locus_tag': 'SAOUHSC_00001'},
+            {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003',
+             'locus_tag': 'SAOUHSC_00002'},
+            {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003',
+             'locus_tag': 'SAOUHSC_00003'}])
 
     def test_wget_actions(self):
         gen_file(os.path.join(self.test_folder, "test.txt"), "93061\ttest")
@@ -177,21 +206,26 @@ class TestPPI(unittest.TestCase):
         files = {"id_list": self.test_folder, "id_log": "", "pubmed_log": "",
                  "all_specific": "", "best_specific": "",
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
-        strain_id = {"file": "test.ptt","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
+        strain_id = {"file": "test.ptt","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
         id_file = "test.txt"
         self.ppi._wget_actions(files, id_file, strain_id, self.test_folder)
 
     def test_retrieve_actions(self):
         self.ppi._run_wget = self.mock.mock_run_wget
-        files = {"id_list": os.path.join(self.test_folder, "tmp_specific"), "id_log": "", "pubmed_log": "",
+        files = {"id_list": os.path.join(self.test_folder, "tmp_specific"),
+                 "id_log": "", "pubmed_log": "",
                  "all_specific": "", "best_specific": "",
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
-        strain_id = {"file": "test.ptt","ptt": "test_ptt", "string": "test_string", "pie": "test_pie"}
+        strain_id = {"file": "test.ptt","ptt": "test_ptt",
+                     "string": "test_string", "pie": "test_pie"}
         paths = {"all": os.path.join(self.test_folder, "all_results"),
                  "fig": os.path.join(self.test_folder, "figures"),
                  "best": os.path.join(self.test_folder, "best_results")}
-        gen_file(os.path.join(self.test_folder, "tmp_specific/test.txt"), "93061\ttest")
-        gen_file(os.path.join(self.test_folder, "tmp_action"), self.example.ppi_line)
+        gen_file(os.path.join(self.test_folder, "tmp_specific/test.txt"),
+                 "93061\ttest")
+        gen_file(os.path.join(self.test_folder, "tmp_action"),
+                 self.example.ppi_line)
         args = self.mock_args.mock()
         args.no_specific = True
         args.querys = "all"

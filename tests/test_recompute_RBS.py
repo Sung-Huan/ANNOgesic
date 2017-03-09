@@ -26,19 +26,27 @@ class TestRecomputeRBS(unittest.TestCase):
         ribos = []    
         seq_name = "test"
         rr.import_ribo(line, ribos, seq_name)
-        self.assertListEqual(ribos, [{'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
-                                      'detect': '!', 'seq_name': 'test', 'end': 304}])
+        self.assertListEqual(ribos, [
+            {'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
+             'detect': '!', 'seq_name': 'test', 'end': 304}])
 
     def test_print_file(self):
         out_t = StringIO()
         out_s = StringIO()
         ribos = [{'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
-                  'detect': '!', 'seq_name': 'test_1|test_strain|+|AAA_0001|206|304', 'end': 304}]
-        seqs = [{"name": "test_1|test_strain|+|AAA_0001|206|304", "seq": "ATATAGCGTAGCCGACGTCGCAT"}]
+                  'detect': '!',
+                  'seq_name': 'test_1|test_strain|+|AAA_0001|206|304',
+                  'end': 304}]
+        seqs = [{"name": "test_1|test_strain|+|AAA_0001|206|304",
+                 "seq": "ATATAGCGTAGCCGACGTCGCAT"}]
         seq_name = "test_1|test_strain|+|AAA_0001|206|304"
         rr.print_file(ribos, out_t, out_s, seq_name, seqs)
-        self.assertEqual(out_t.getvalue(), "test_1\ttest_strain\t+\tAAA_0001\t206\t304\tRF00162\t6.2e-18\t206\t304\n")
-        self.assertEqual(out_s.getvalue(), ">test_1|test_strain|+|AAA_0001|411|509\n\n")
+        self.assertEqual(
+            out_t.getvalue(),
+            "test_1\ttest_strain\t+\tAAA_0001\t206\t304\tRF00162\t6.2e-18\t206\t304\n")
+        self.assertEqual(
+            out_s.getvalue(),
+            ">test_1|test_strain|+|AAA_0001|411|509\n\n")
 
     def test_regenerate_seq(self):
         out_table = os.path.join(self.test_folder, "table")
@@ -49,24 +57,34 @@ class TestRecomputeRBS(unittest.TestCase):
         gen_file(seq_file, self.example.seq_file)
         rr.regenerate_seq(align_file, seq_file, out_table, out_seq)
         data = import_data(out_table)
-        self.assertEqual("\n".join(data), "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t5\t12")
+        self.assertEqual(
+            "\n".join(data),
+            "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t5\t12")
         data = import_data(out_seq)
-        self.assertEqual("\n".join(data), ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC")
+        self.assertEqual(
+            "\n".join(data),
+            ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC")
 
     def test_compare_first_result(self):
         out = StringIO()
-        ribos = [{'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
-                  'detect': '!', 'seq_name': 'test_1|test_strain|+|AAA_0001|206|304', 'end': 304}]
-        firsts = [{'e': 6.2e-10, 'start': 100, 'name': 'RF00160',
-                  'detect': '!', 'seq_name': 'test_2|test_strain|+|AAA_0002|100|150', 'end': 150}]
+        ribos = [{
+            'e': 6.2e-18, 'start': 206, 'name': 'RF00162', 'detect': '!',
+            'seq_name': 'test_1|test_strain|+|AAA_0001|206|304', 'end': 304}]
+        firsts = [{
+            'e': 6.2e-10, 'start': 100, 'name': 'RF00160', 'detect': '!',
+            'seq_name': 'test_2|test_strain|+|AAA_0002|100|150', 'end': 150}]
         seq_name = "test_strain"
-        extras = [{'e': 6.2e-10, 'start': 100, 'name': 'RF00160',
-                  'detect': '!', 'seq_name': 'test_2|test_strain|+|AAA_0002|100|150', 'end': 150}]
+        extras = [{
+            'e': 6.2e-10, 'start': 100, 'name': 'RF00160', 'detect': '!',
+            'seq_name': 'test_2|test_strain|+|AAA_0002|100|150', 'end': 150}]
         rr.compare_first_result(ribos, firsts, seq_name, out, extras)
-        self.assertListEqual(extras, [{'start': 100, 'name': 'RF00160', 'detect': '!', 'end': 150,
-                                       'e': 6.2e-10, 'seq_name': 'test_2|test_strain|+|AAA_0002|100|150'},
-                                      {'start': 206, 'name': 'RF00162', 'detect': '!', 'end': 304,
-                                       'e': 6.2e-18, 'seq_name': 'test_1|test_strain|+|AAA_0001|206|304'}])
+        self.assertListEqual(extras, [
+            {'start': 100, 'name': 'RF00160', 'detect': '!', 'end': 150,
+             'e': 6.2e-10,
+             'seq_name': 'test_2|test_strain|+|AAA_0002|100|150'},
+            {'start': 206, 'name': 'RF00162', 'detect': '!', 'end': 304,
+             'e': 6.2e-18,
+             'seq_name': 'test_1|test_strain|+|AAA_0001|206|304'}])
 
     def test_reextract_rbs(self):
         align_file = os.path.join(self.test_folder, "align")
