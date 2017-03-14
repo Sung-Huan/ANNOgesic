@@ -299,17 +299,18 @@ CircRNA_detection(){
         head -n 50000 ANNOgesic/input/reads/$SRA.fasta > ANNOgesic/input/reads/${SRA}_50000.fasta
         rm ANNOgesic/input/reads/$SRA.fasta
     done
+    
+    READ_FILE=$ANNOGESIC_FOLDER/input/reads/SRR515254_50000.fasta,\
+$ANNOGESIC_FOLDER/input/reads/SRR515255_50000.fasta,\
+$ANNOGESIC_FOLDER/input/reads/SRR515256_50000.fasta,\
+$ANNOGESIC_FOLDER/input/reads/SRR515257_50000.fasta
 
     $ANNOGESIC_PATH \
         circrna \
 	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
         -p 10 \
         -g $ANNOGESIC_FOLDER/input/reference/annotation/NC_009839.1.gff \
-	-a \
-        -rp $ANNOGESIC_FOLDER/input/reads/SRR515254_50000.fasta \
-	    $ANNOGESIC_FOLDER/input/reads/SRR515255_50000.fasta \
-	    $ANNOGESIC_FOLDER/input/reads/SRR515256_50000.fasta \
-	    $ANNOGESIC_FOLDER/input/reads/SRR515257_50000.fasta \
+        -rp all_samples:$READ_FILE \
         -pj $ANNOGESIC_FOLDER
 }
 
@@ -317,16 +318,17 @@ SNP_calling(){
     #### This is only for tutorial.
     #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
     cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex
+    BAM_FILE=$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam
 
     $ANNOGESIC_PATH \
          snp \
 	-t closed_strain \
 	-p with_BAQ without_BAQ extend_BAQ \
         -ms 1 \
-	-b $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam \
-	   $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam \
+	-b all_samples:2:$BAM_FILE \
 	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
 }

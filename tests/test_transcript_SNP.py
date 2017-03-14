@@ -40,7 +40,7 @@ class TestTranscripSNP(unittest.TestCase):
         args.filters = ["VDB_s0.1"]
         args.min_sample = 2
         max_quals, snps, dess, raw_snps = ts.import_data(
-            snp_file, args, 2, depth_file)
+            snp_file, args, 2, depth_file, 2)
         self.assertDictEqual(max_quals, {
             'NC_007795.1': 98.0, 'All_strain': 98.0})
         self.assertListEqual(snps, [
@@ -252,10 +252,10 @@ class TestTranscripSNP(unittest.TestCase):
         out_ref = StringIO()
         out_seq = os.path.join(self.test_folder, "seq")
         ts.print_file(refs, out_ref, conflicts, 1, values, mod_seq_init,
-                      mod_seqs, out_seq)
+                      mod_seqs, out_seq, "NC_007795.1")
         self.assertEqual(
             out_ref.getvalue(),
-            "1\t1\t1\t1:A\tNC_007795.1\n1\t1\t2\t1:GT\tNC_007795.1\n")
+            "1\t1\t1\tNC_007795.1\tNC_007795.1\n")
         self.assertTrue(os.path.exists(os.path.join(
             self.test_folder, "seq_NC_007795.1_1_1.fa")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -312,8 +312,9 @@ class TestTranscripSNP(unittest.TestCase):
                                     "55:40")}]]
         ts.gen_new_fasta(nooverlap, seqs, out_ref, conflicts, out_seq)
         self.assertEqual(out_ref.getvalue(),
-                         ("1\t1\t1\t1:A\tNC_007795.1\n1\t1\t"
-                          "2\t1:GT\tNC_007795.1\n"))
+                         ("1\t1\t1\t1:A\tNC_007795.1\n"
+                          "1\t1\t2\t1:GT\tNC_007795.1\n"
+                          "2\t2\t1\tAll\tNC_007795.1\n"))
         self.assertTrue(os.path.exists(os.path.join(
             self.test_folder, "seq_NC_007795.1_1_1.fa")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -344,7 +345,7 @@ class TestTranscripSNP(unittest.TestCase):
         args.filters = ["VDB_s0.1"]
         args.min_sample = 2
         ts.snp_detect(fasta_file, snp_file, depth_file, out_snp, out_seq,
-                      2, stat_file, args)
+                      2, stat_file, args, 2)
         self.assertTrue(os.path.exists(os.path.join(
             self.test_folder, "seq_NC_007795.1_1_1.fa")))
         self.assertTrue(os.path.exists(os.path.join(

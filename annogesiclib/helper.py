@@ -190,10 +190,10 @@ class Helper(object):
         '''make new folder (if the folder exists, 
         it will remove it and create new one)'''
         path = "/".join(folder.split("/")[:-1])
-        folder = folder.split("/")[-1]
-        if folder in os.listdir(path):
-            shutil.rmtree(os.path.join(path, folder))
-        os.mkdir(os.path.join(path, folder))
+        gen_folder = folder.split("/")[-1]
+        if gen_folder in os.listdir(path):
+            shutil.rmtree(os.path.join(path, gen_folder))
+        os.mkdir(os.path.join(path, gen_folder))
 
     def sort_gff(self, gff_file, out_file):
         gffs = []
