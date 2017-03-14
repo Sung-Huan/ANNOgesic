@@ -85,8 +85,8 @@ it can still be assigned to fragmented libraries. However, it may influence the 
 
 .. _create:
 
-create
-------
+create (create analysis folder)
+-------------------------------
 
 ``create`` generates the folders for analysis. Once created, please move the required files 
 into the corresponding folders.
@@ -147,8 +147,8 @@ The folders are following:
 
 .. _get_input_files:
 
-get_input_files
----------------
+get_input_files (download required files)
+-----------------------------------------
 
 ``get_input_files`` is the subcommand for downloading required files (fasta, annotation files) from NCBI. 
 Therefore, the web address of the reference genome in NCBI needs to be assigned. For example,
@@ -204,8 +204,8 @@ Output folder names are following:
 
 .. _get_target_fasta:
 
-get_target_fasta
-----------------
+get_target_fasta (update reference genome)
+------------------------------------------
 
 ``get_target_fasta`` is the subcommand for update fasta files from 
 closed strain of the real query strain. For the format of the table, please check 
@@ -270,8 +270,8 @@ For example, please check `mutation table <https://raw.githubusercontent.com/Sun
 
 .. _annotation_transfer:
 
-annotation_transfer
--------------------
+annotation_transfer (annotation transfer)
+-----------------------------------------
 
 ``annotation transfer`` is the subcommand for transferring the annotation from closed strain 
 to the real query strain. To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
@@ -357,8 +357,8 @@ will be stored in ``$ANNOgesic_folder/output/annotation_transfer``.
 
 .. _snp:
 
-snp
--------
+snp (SNP calling)
+-----------------
 
 ``snp`` can analyze the alignment files and fasta files to detect mutations by running 
 `Samtools <https://github.com/samtools>`_ and `Bcftools <https://github.com/samtools>`_. 
@@ -570,7 +570,7 @@ will be generated based on the first line of ``$STRAIN_$PROGRAM_seq_reference.cs
 .. _tss_ps:
 
 tss_ps (TSS and processing site prediction)
----------------------------------------------------
+-------------------------------------------
 
 ``tss_ps`` can generate the TSS and processing sites via running  
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Since the parameters can affect the 
@@ -836,8 +836,8 @@ Based on this information, we can know the details of the specific TSS. The tags
 
 .. _transcript:
 
-transcript
-----------
+transcript (transcript detection)
+---------------------------------
 
 ``transcript`` can detect transcripts based on the coverage. Most of the transcript assembly tools are
 focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data, 
@@ -1049,8 +1049,8 @@ Based on this information, we can know the details of the specific transcript. T
 
 .. _terminator:
 
-terminator
-----------
+terminator (terminator detection)
+---------------------------------
 
 ``terminator`` will predict the rho-independent terminators. ``ANNOgesic`` combines the results of 
 two methods in order to get more reliable candidates. The first method is using `TranstermHP <http://transterm.cbcb.umd.edu/>`_.
@@ -1332,8 +1332,8 @@ The meanings of the columns are as following:
 
 .. _utr:
 
-utr
------
+utr (UTR detection)
+-------------------
 
 ``utr`` can compare TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
 to generate proper UTRs. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
@@ -1444,8 +1444,8 @@ Based on this information, we can know the details of the specific UTR. The tags
 
 .. _srna:
 
-srna
------
+srna (sRNA detection)
+---------------------
 ``srna`` can predict different types of sRNAs. For intergenic and antisense sRNA, it 
 is detected via comparison of the transcripts and annotation profile. 
 For UTR-derived sRNA, the detection is based on the TSSs and processing sites, 
@@ -2089,8 +2089,8 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 .. _sorf:
 
-sorf
-----------
+sorf (sORF detection)
+---------------------
 ``sorf`` can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence), 
 start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand. 
@@ -2361,8 +2361,8 @@ Based on this information, we can know the details of the specific sORF. The tag
 
 .. _promoter:
 
-promoter
------------
+promoter (Promoter motif detection)
+-----------------------------------
 
 ``promoter`` can scan the upstream of TSSs to discover the promoter motifs.
 We integrated `MEME <http://meme-suite.org/tools/meme>`_ (for ungapped motifs) and 
@@ -2501,8 +2501,8 @@ TSS gff files with TSS types will be stored here.
 
 .. _operon:
 
-operon
-----------
+operon (Operon detection)
+-------------------------
 
 ``operon`` will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and 
 sub-operons.
@@ -2613,8 +2613,8 @@ The meanings of each column is following:
 
 .. _circrna:
 
-circrna
---------------
+circrna (circular RNA detection)
+--------------------------------
 
 ``circrna`` can detect the potential circular RNAs via `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. 
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection. 
@@ -2757,8 +2757,8 @@ Based on this information, we can know the details of the specific circular RNA.
 
 .. _go_term:
 
-go_term
-----------
+go_term (GO term retrieving)
+----------------------------
 
 ``go_term`` can retrieve the information of Gene Ontology from Uniprot.
 Some analysis of Go terms can be done as well.
@@ -2839,8 +2839,8 @@ results of all CDS are stored in ``ANNOgesic/output/Go_term/all_CDS``.
 
 .. _srna_target:
 
-srna_target
----------------
+srna_target (sRNA target prediction)
+------------------------------------
 
 ``srna_target`` can search potential targets of the sRNA via different programs 
 (RNAup or RNAplex or both). We recommend running with both 
@@ -3035,8 +3035,8 @@ The meaning of each column is similar to the table of RNAplex.
 
 .. _ppi_network:
 
-ppi_network
--------------
+ppi_network (protein-protein interaction network detection)
+-----------------------------------------------------------
 
 ``ppi_network`` can retrieve the data from `STRING <http://string-db.org/>`_. 
 Then using `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ to search 
@@ -3157,8 +3157,8 @@ Color is the best score of the supported literature of the interactions.
 
 .. _subcellular_localization:
 
-subcellular_localization
-------------------------
+subcellular_localization (subcellular localization prediction)
+--------------------------------------------------------------
 
 ``subcellular localization`` can predict the subcellular localization of CDSs. 
 Some statistics and visualization files are provided as well.
@@ -3258,8 +3258,8 @@ results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all
 
 .. _riboswitch_thermometer:
 
-riboswitch_thermometer
-----------------------
+riboswitch_thermometer (riboswitch and RNA thermometer detection)
+-----------------------------------------------------------------
 
 ``riboswitch_thermometer`` can search ribosome binding sites (Shine-Dalgarno sequence) between 
 TSSs（the starting point of transcript was assigned if no TSS was detected) 
@@ -3433,8 +3433,8 @@ The tags are as following:
 
 .. _crispr:
 
-crispr
----------------
+crispr (CRISPR detection)
+-------------------------
 ``crispr`` integrates CRISPR Recognition Tool (`CRT <http://www.room220.com/crt/>`_) which can detect the repeat 
 units and spacer of CRISPR. Moreover, the false positives can be removed by comparing candidates with genome annotation.
 
@@ -3517,8 +3517,8 @@ Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are g
 
 .. _optimize_tss_ps:
 
-optimize_tss_ps
------------------------
+optimize_tss_ps (optimization of TSS and processing site detection)
+-------------------------------------------------------------------
 
 ``optimize_tss_ps`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
@@ -3704,8 +3704,8 @@ columns are missing rate.
 
 .. _screenshot:
 
-screenshot
------------
+screenshot (screenshot generation)
+----------------------------------
 
 ``screenshot`` can generate batch files for producing screenshot of `IGV <https://www.broadinstitute.org/igv>`_. 
 Generating screenshots can reduce the time for checking the results in genome browser.
@@ -3804,8 +3804,8 @@ means the strain is NC_007795, the feature's start point is 1051529 and end poin
 
 .. _color_png:
 
-color_png
-----------
+color_png (color screenshot)
+----------------------------
 
 ``color_png`` is a following procedure of ``screenshot``. If numerous samples are included in one figure, 
 Tracks will be difficult to checked. ``color_png`` can color the tracks based on TEX +/- libraries 
@@ -3853,8 +3853,8 @@ The new screenshots will replace the previous ones automatically.
 
 .. _merge_feature:
 
-merge_features
---------------
+merge_features (merge all annotation features)
+----------------------------------------------
 If storing multiple features of the annotation to one gff file is needed, ``merge_features`` can achieve this purpose. 
 ``merge_features`` can merge all features that the user assigned to one gff file, and search the parent transcript to each feature.
 
