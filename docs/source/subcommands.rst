@@ -226,6 +226,7 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
 **Fasta files of reference genome**
 
 **Mutation table:** Contains the information of mutations between closed and query strain.
+For example, please check `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 
 - **Arguments**
 
@@ -375,6 +376,12 @@ There are multiple programs which can be applied to detect mutations
 - **Required files**
 
 **BAM files:** BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
+For assigning the files, please follow the format -- ``$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...``. 
+For example, the user has four bam files and these files are for two different conditions. Then the input will be 
+``set1:2:sample1.bam,sample2.bam set2:2:sample3.bam,sample4.bam``. ``$SAMPLE_NUM`` in 
+this example is 2 which means there are two samples in set1 and set2. 
+``$SAMPLE_NUM`` will influence ``--dp4_cutoff``, ``--indel_fraction``, and 
+``--read_depth_range`` which will be used to filter the mutations.
 
 **Fasta files of the closed strains** or **Fasta files of the query strains**
 
@@ -385,7 +392,6 @@ There are multiple programs which can be applied to detect mutations
     usage: annogesic snp [-h] [--project_path [PROJECT_PATH]] --bam_type BAM_TYPE
                          --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
                          [FASTA_FILES ...] --bam_files BAM_FILES [BAM_FILES ...]
-                         --sample_number SAMPLE_NUMBER
                          [--samtools_path SAMTOOLS_PATH]
                          [--bcftools_path BCFTOOLS_PATH] [--quality QUALITY]
                          [--read_depth_range READ_DEPTH_RANGE] [--ploidy PLOIDY]
@@ -419,10 +425,20 @@ There are multiple programs which can be applied to detect mutations
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
-                            Paths of the bam files.
-      --sample_number SAMPLE_NUMBER, -ms SAMPLE_NUMBER
-                            This value is the number of samples. It will affect
-                            --read_depth_range, --dp4_cutoff and --indel_fraction.
+                            The input format is
+                            $SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...
+                            $SAMPLE_NUM means the input bam files
+                            (samples/replicates) should be considered as the given
+                            number of samples. $SAMPLE_NUM also influences
+                            --dp4_cutoff, --indel_fraction, and
+                            --read_depth_range.For example, if sample1.bam,
+                            sample2.bam, and sample3.bam are three
+                            samples/replicates of one condition. You can assign
+                            set1:2:sample1.bam,sample2.bam,sample3.bam. This means
+                            these three bam files should be computed together. And
+                            these bam files (samples/replicates) should be
+                            considered as 2 samples. If multiple samples need to
+                            be assigned, please use space to separate the input.
     
     additional arguments:
       --samtools_path SAMTOOLS_PATH
@@ -436,15 +452,15 @@ There are multiple programs which can be applied to detect mutations
       --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
                             Range of the read depth of a real mutation. The format
                             is $MIN,$MAX. This value can be assigned by different
-                            types: 1. real number ("r"), 2. times of the number of
-                            samples ("n") or 3. times of the average read depth
-                            ("a"). For example, n_10,a_2 is assigned, the average
-                            read depth is 70 and the number of samples
-                            (--sample_number) is 4. Then, n_10 will be 40 (10 *
-                            --sample_number) and a_2 will be 140 (average read
-                            depth * 2). Based on the same example, if this value
-                            is r_10,a_2, the minimum read depth will become exact
-                            10 reads. Default is n_10,a_2.
+                            types: 1. real number ("r"), 2. times of $SAMPLE_NUM
+                            (assigned by --bam_files) ("n") or 3. times of the
+                            average read depth ("a"). For example, n_10,a_3 is
+                            assigned, the average read depth is 70 and the
+                            $SAMPLE_NUM is 4. Then, n_10 will be 40 (10 *
+                            $SAMPLE_NUM) and a_3 will be 140 (average read depth *
+                            3). Based on the same example, if this value is
+                            r_10,a_3, the minimum read depth will become exact 10
+                            reads. Default is n_10,a_3.
       --ploidy PLOIDY, -pl PLOIDY
                             The query bacteria is haploid or diploid. Default is
                             haploid.
@@ -464,32 +480,32 @@ There are multiple programs which can be applied to detect mutations
                             4). Two values need to be assigned, ex: n_10,0.8. The
                             first value is for (number 3 + number 4). This value
                             can be assigned based on 1. real number ("r"), 2.
-                            times of the number of samples ("n") or 3. times of
-                            average read depth ("a"). The second value is for
+                            times of $SAMPLE_NUM (assigned by --bam_files) ("n")
+                            or 3. times of average read depth ("a"). The second
+                            value is for (number 3 + number 4) / (number 1 +
+                            number 2 + number 3 + number 4). These two values are
+                            split by comma. For example, n_10,0.8 is assigned and
+                            the average read depth is 70 and $SAMPLE_NUM is 4. It
+                            means that the sum of number 3 and number 4 should be
+                            higher than 40 (10 * $SAMPLE_NUM), and the fraction --
                             (number 3 + number 4) / (number 1 + number 2 + number
-                            3 + number 4). These two values are split by comma.
-                            For example, n_10,0.8 is assigned and the average read
-                            depth is 70 and the number of samples
-                            (--sample_number) is 4. It means that the sum of
-                            number 3 and number 4 should be higher than 40 (10 *
-                            --sample_number), and the fraction -- (number 3 +
-                            number 4) / (number 1 + number 2 + number 3 + number
-                            4) should be higher than 0.8. Based on the same
-                            example, if r_10,0.8 is assigned, the sum of read
+                            3 + number 4) should be higher than 0.8. Based on the
+                            same example, if r_10,0.8 is assigned, the sum of read
                             depth of number 3 and number 4 will become exact 10
                             reads. Default is n_10,0.8.
       --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
                             This value is the minimum IDV and IMF which supports
                             insertion of deletion. The minimum IDV can be assigned
                             by different types: 1. real number ("r"), 2. times of
-                            the number of samples ("n") or 3. times of the average
-                            read depth ("a"). For example, n_10,0.8 is assigned,
-                            the average read depth is 70 and the number of sample
-                            is 4. It means that IDV should be higher than 40 (10 *
-                            --sample_number), and IMF should be higher than 0.8.
-                            Based on the same example, if r_10,0.8 is assigned,
-                            the minimum IDV will become exact 10 reads. Default is
-                            n_10,0.8 and the two numbers are separated by comma.
+                            $SAMPLE_NUM (assigned by --bam_files) ("n") or 3.
+                            times of the average read depth ("a"). For example,
+                            n_10,0.8 is assigned, the average read depth is 70 and
+                            $SAMPLE_NUM is 4. It means that IDV should be higher
+                            than 40 (10 * $SAMPLE_NUM), and IMF should be higher
+                            than 0.8. Based on the same example, if r_10,0.8 is
+                            assigned, the minimum IDV will become exact 10 reads.
+                            Default is n_10,0.8 and the two numbers are separated
+                            by comma.
       --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                             This function can set more filters to improve the
                             results. Please assign 1. the tag, 2. bigger ("b") or
@@ -508,13 +524,13 @@ The output folders and results are following:
 
 **SNP_raw_output:** Stores output tables which be only considered read depth and QUAL.
 
-	**VCF Table (only consider read depth and QUAL):** Filename is ``$STRAIN_$PROGRAM.vcf``.
+	**VCF Table (only consider read depth and QUAL):** Filename is ``$STRAIN_$PROGRAM_$SAMPLE.vcf``.
 
 **SNP_table:** Stores two types of output tables
 
-        **VCF Table (consider all filters):** Filename is ``$STRAIN_$PROGRAM_best.vcf``.
+        **VCF Table (consider all filters):** Filename is ``$STRAIN_$PROGRAM_$SAMPLE_best.vcf``.
 
-        **Index of fasta files:**: Filename is ``$STRAIN_$PROGRAM_seq_reference.csv``.
+        **Index of fasta files:**: Filename is ``$STRAIN_$PROGRAM_$SAMPLE_seq_reference.csv``.
         The meaning of this file is like following example:
 
 ::
@@ -527,7 +543,7 @@ The example contains "position conflict" and "mutation conflict".
 As a result, the conflicts will affect the other mutation's positions.
 Therefore, it will generate four different fasta files. The first two lines are "position conflict", and 
 the last line is "mutation conflict".
-``$STRAIN_$PROGRAM_seq_reference.csv`` is the index for these four fasta files.
+``$STRAIN_$PROGRAM_$SAMPLE_seq_reference.csv`` is the index for these four fasta files.
 
 ::
 
@@ -542,14 +558,14 @@ The third one is the index of the "mutations conflict".
 The fourth one is the selected position and nucleotides. 
 The last column is the strain name.
 
-**Potential fasta files**: Filename is ``$FILENAME_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa``, 
+**Potential fasta files**: Filename is ``$FASTANAME_$SAMPLE_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa``, 
 and it is stored in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/seqs``.
-Based on the example in **Index of fasta files**, ``Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_1.fa``
+Based on the example in **Index of fasta files**, ``Staphylococcus_aureus_HG003_set1_Staphylococcus_aureus_HG003_1_1.fa``
 will be generated based on the first line of ``$STRAIN_$PROGRAM_seq_reference.csv``.
-``Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_2.fa`` and ll be generated based on the first line of 
+``Staphylococcus_aureus_HG003_set1_Staphylococcus_aureus_HG003_1_2.fa`` and will be generated based on the second line of 
 ``$STRAIN_$PROGRAM_seq_reference.csv`` and so forth.
 
-**statistics**: Stores the statistic files, ex: the distribution of SNPs based on QUAL.
+**statistics**: Stores the statistic files and figures, ex: the distribution of SNPs based on QUAL.
 
 .. _tss_ps:
 
@@ -2615,6 +2631,11 @@ For generating testrealign.x, please refer to :ref:`Required tools or databases`
 
 **Fasta files of reads or BAM file:** If you want to use alignment files directly, they should be 
 mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``.
+The input format is ``$SET_NAME:$READ1,$READ2,...`` or ``$SET_NAME:$BAM1,$BAM2,...``. 
+For example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be compute together.
+If your BAM files are generated by mapping reads on multiple reference genomes, 
+`testrealign.x <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ may not be able to 
+handle them.
 
 **Fasta files of the genome annotations**
 
@@ -2624,7 +2645,7 @@ mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with
 
 ::
 
-    usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]] [--align]
+    usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]]
                              [--read_files READ_FILES [READ_FILES ...]]
                              [--bam_files BAM_FILES [BAM_FILES ...]] --fasta_files
                              FASTA_FILES [FASTA_FILES ...] --annotation_files
@@ -2643,21 +2664,23 @@ mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with
       --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
                             Path of the project folder. If none is given, the
                             current directory is used.
-      --align, -a           This function will map the reads (included splice
-                            detection) by segemehl. If you already used segemehl
-                            with -S to map the reads, you can skip this step. BE
-                            CAREFUL, this function only use default parameters of
-                            segemehl to map the reads. Moreover, all read files in
-                            ANNOgesic/input/reads will be mapped. If some specific
-                            functions of segemehl need to be implemented, please
-                            directly run segemehl (MUST run with -S). Default is
-                            False.
       --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
-                            If --align is True, please assign the paths of read
-                            fasta files.
+                            If this argument is given, ANNOgesic will map the
+                            reads via segemehl (with -S). BE CAREFUL, this
+                            function only use default parameters of segemehl to
+                            map the reads. If some specific functions of segemehl
+                            need to be implemented, please directly run segemehl
+                            (MUST run with -S). please assign the fasta files. The
+                            input format is $SET_NAME:$READ1,$READ2,... For
+                            example, set1:read1.fa,read2.fa means these two fasta
+                            files need to be compute together. .bz2 and .gz
+                            compressed fasta files can be accepted as well.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
                             You can want assign the paths of Bam files to skip
-                            --align.
+                            mapping. The input format is $SET_NAME:$BAM1,$BAM2,...
+                            For example, set1:bam1.bam,bam2.bam means these two
+                            bam files need to be compute together. BE CAREFUL, the
+                            bam files must be generated via segemehl with -S.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -2697,8 +2720,8 @@ Output files are stored in ``$ANNOgesic/output/circRNA``. The output folders are
 **segemehl_splice:** The results of splicing detection. The information of the splicing tables, please 
 refer to `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_.
 
-**gffs:** Stores gff files of the circular RNAs. ``$STRAINNAME_best.gff`` is gff files for the best result after checking 
-genome annotation and quality of splicing. ``$STRAINNAME_all.gff`` is for all candidates without filtering.
+**gffs:** Stores gff files of the circular RNAs. ``$STRAINNAME_$SET_circRNA_best.gff`` is gff files for the best result after checking 
+genome annotation and quality of splicing. ``$STRAINNAME_$SET_circRNA_all.gff`` is for all candidates without filtering.
 Some useful information can be found in the tags of the attributes within the circular RNA gff file.
 Based on this information, we can know the details of the specific circular RNA. The tags are as following:
 

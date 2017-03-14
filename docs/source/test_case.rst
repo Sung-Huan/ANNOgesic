@@ -871,7 +871,17 @@ subcommand. Thus, we can reduce the running time by selecting the subset of read
      $ rm ANNOgesic/input/reads/SRR515256.fasta
      $ rm ANNOgesic/input/reads/SRR515257.fasta
 
-Now, we can try ``circrna``
+Then we setup the read files.
+
+::
+    $ READ_FILE=$ANNOGESIC_FOLDER/input/reads/SRR515254_50000.fasta,\
+    ANNOgesic/input/reads/SRR515255_50000.fasta,\
+    ANNOgesic/input/reads/SRR515256_50000.fasta,\
+    ANNOgesic/input/reads/SRR515257_50000.fasta
+
+
+After that, we assign ``all_samples:$READ_FILE`` to ``-rp``. ``all_sample`` is the name of the set of read files. 
+The all four read files will be compute together. Now, we can try ``circrna``
 
 ::
 
@@ -879,11 +889,7 @@ Now, we can try ``circrna``
          -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
          -p 10 \
          -g ANNOgesic/input/reference/annotation/NC_009839.1.gff \
-         -a \
-         -rp ANNOgesic/input/reads/SRR515254_50000.fasta \
-             ANNOgesic/input/reads/SRR515255_50000.fasta \
-             ANNOgesic/input/reads/SRR515256_50000.fasta \
-             ANNOgesic/input/reads/SRR515257_50000.fasta \
+         -rp all_samples:$READ_FILE \
          -pj ANNOgesic
 
 If you can't find testrealign.x, please refer to :ref:`Required tools or databases`.
@@ -904,21 +910,21 @@ the alignment and ``segemehl_splice`` stores results of the splice detection.
     SRR515254_50000_NC_009839.1.bam  SRR515256_50000_NC_009839.1.bam
     SRR515255_50000_NC_009839.1.bam  SRR515257_50000_NC_009839.1.bam
     $ ls ANNOgesic/output/circRNA/segemehl_splice/NC_009839.1/
-    splicesites_all.bed  transrealigned_all.bed    
+    NC_009839.1_all_samples_splicesites.bed  NC_009839.1_all_samples_transrealigned.bed
 
 Gff files, tables and statistic files are stored in ``gffs``, ``circRNA_tables`` and ``statistics``.
 
 ::
 
     $ ls ANNOgesic/output/circRNA/gffs/NC_009839.1/
-    NC_009839.1_circRNA_all.gff  NC_009839.1_circRNA_best.gff
+    NC_009839.1_all_samples_circRNA_all.gff  NC_009839.1_all_samples_circRNA_best.gff
     $ ls ANNOgesic/output/circRNA/circRNA_tables/NC_009839.1/
-    NC_009839.1_circRNA_all.csv  NC_009839.1_circRNA_best.csv
+    NC_009839.1_all_samples_circRNA_all.csv  NC_009839.1_all_samples_circRNA_best.csv
     $ ls ANNOgesic/output/circRNA/statistics/
-    stat_circRNA_NC_009839.1.csv
+    stat_NC_009839.1_all_samples_circRNA.csv
 
-``NC_009839.1_circRNA_all.gff`` and ``NC_009839.1_circRNA_all.csv`` store all circular RNAs without filtering. 
-``NC_009839.1_circRNA_best.gff`` and ``NC_009839.1_circRNA_best.csv`` store
+``NC_009839.1_all_samples_circRNA_all.gff`` and ``NC_009839.1_all_samples_circRNA_all.csv`` store all circular RNAs without filtering. 
+``NC_009839.1_all_samples_circRNA_best.gff`` and ``NC_009839.1_all_samples_circRNA_best.csv`` store
 the circular RNAs after filtering. In our case, there are some circular RNAs can be detected, but no circular RNAs 
 can exist after filtering.
 
@@ -948,19 +954,24 @@ First, we copy the bam files to ``BAMs_map_query_strain``.
 
     $ cp ANNOgesic/output/circRNA/segemehl_align/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex
 
-Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``, and sample number 
-for this test case is 1 (``-ms``).
+Now, we can set our bam files
+
+::
+    $ BAM_FILES=ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam
+
+Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``. 
+``all_sample:2:$BAM_FILES`` for ``-b`` means the name of the set of bam files is all_sample, there are two 
+samples in this set, and all four bam files need to be compute together.
 
 ::
 
     $ annogesic snp \
         -t query_strain \
         -p with_BAQ without_BAQ extend_BAQ \
-        -ms 1 \
-        -b ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515254_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515255_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515256_50000_NC_009839.1.bam \
-           ANNOgesic/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_009839.1.bam \
+        -b all_sample:2:$BAM_FILES \
         -f ANNOgesic/input/reference/fasta/NC_009839.1.fa \
         -pj ANNOgesic
 
@@ -991,7 +1002,7 @@ In ``seqs``, the potential sequences can be found.
 ::
 
     $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/seqs/with_BAQ/NC_009839.1/
-    NC_009839.1_NC_009839.1_1_1.fa
+    NC_009839.1_all_samples_NC_009839.1_1_1.fa
 
 ``SNP_raw_outputs`` stores output of `Samtools and Bcftools <https://github.com/samtools>`_. 
 ``SNP_table`` stores results after filtering and the indices of potential sequence 
@@ -1001,14 +1012,17 @@ In ``seqs``, the potential sequences can be found.
 ::
 
     $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/SNP_raw_outputs/NC_009839.1/
-    NC_009839.1_extend_BAQ.vcf  NC_009839.1_with_BAQ.vcf  NC_009839.1_without_BAQ.vcf
+    NC_009839.1_extend_BAQ_all_samples.vcf  NC_009839.1_with_BAQ_all_samples.vcf  NC_009839.1_without_BAQ_all_samples.vcf
     $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/SNP_table/NC_009839.1/
-    NC_009839.1_extend_BAQ_best.vcf     NC_009839.1_with_BAQ_best.vcf     NC_009839.1_without_BAQ_best.vcf
-    NC_009839.1_extend_BAQ_seq_reference.csv  NC_009839.1_with_BAQ_seq_reference.csv  NC_009839.1_without_BAQ_seq_reference.csv
+    NC_009839.1_extend_BAQ_all_samples_best.vcf           NC_009839.1_with_BAQ_all_samples_best.vcf           NC_009839.1_without_BAQ_all_samples_best.vcf
+    NC_009839.1_extend_BAQ_all_samples_seq_reference.csv  NC_009839.1_with_BAQ_all_samples_seq_reference.csv  NC_009839.1_without_BAQ_all_samples_seq_reference.csv
     $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/statistics/
-    NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_raw.png      stat_NC_009839.1_extend_BAQ_SNP_best.csv  stat_NC_009839.1_with_BAQ_SNP_raw.csv
-    NC_009839.1_extend_BAQ_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_best.png  stat_NC_009839.1_extend_BAQ_SNP_raw.csv   stat_NC_009839.1_without_BAQ_SNP_best.csv
-    NC_009839.1_with_BAQ_NC_009839.1_SNP_QUAL_best.png    NC_009839.1_without_BAQ_NC_009839.1_SNP_QUAL_raw.png   stat_NC_009839.1_with_BAQ_SNP_best.csv    stat_NC_009839.1_without_BAQ_SNP_raw.csv
+    figs                                                  stat_NC_009839.1_with_BAQ_all_samples_SNP_best.csv     stat_NC_009839.1_without_BAQ_all_samples_SNP_raw.csv
+    stat_NC_009839.1_extend_BAQ_all_samples_SNP_best.csv  stat_NC_009839.1_with_BAQ_all_samples_SNP_raw.csv
+    stat_NC_009839.1_extend_BAQ_all_samples_SNP_raw.csv   stat_NC_009839.1_without_BAQ_all_samples_SNP_best.csv
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_strain/statistics/figs
+    NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png
+    NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png
 
 Mapping Gene ontology
 ---------------------

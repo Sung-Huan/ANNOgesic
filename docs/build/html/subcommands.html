@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.9 documentation</title>
+  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.10 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ANNOgesic 0.5.9 documentation" href="index.html"/>
+    <link rel="top" title="ANNOgesic 0.5.10 documentation" href="index.html"/>
         <link rel="next" title="Tutorial of ANNOgesic" href="test_case.html"/>
         <link rel="prev" title="Docker image" href="docker.html"/> 
 
@@ -472,7 +472,8 @@ Please use <code class="docutils literal"><span class="pre">tab</span></code> to
 <li><strong>Required files</strong></li>
 </ul>
 <p><strong>Fasta files of reference genome</strong></p>
-<p><strong>Mutation table:</strong> Contains the information of mutations between closed and query strain.</p>
+<p><strong>Mutation table:</strong> Contains the information of mutations between closed and query strain.
+For example, please check <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
@@ -515,7 +516,7 @@ basic arguments:
 <p><strong>Fasta files of updated genome</strong>: This files are stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/fasta</span></code>.</p>
 </div>
 <div class="section" id="annotation-transfer">
-<span id="id7"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
+<span id="id8"></span><h2>annotation_transfer<a class="headerlink" href="#annotation-transfer" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from closed strain
 to the real query strain. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
 is integrated in ANNOgesic. The higher similarity between closed strain and query strain are,
@@ -596,7 +597,7 @@ will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_fo
 <p><strong>Annotation files</strong> (<code class="docutils literal"><span class="pre">.gff</span></code>, <code class="docutils literal"><span class="pre">.ptt</span></code>, <code class="docutils literal"><span class="pre">.rnt</span></code>) will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic_folder/output/updated_reference/annotation</span></code>.</p>
 </div>
 <div class="section" id="snp">
-<span id="id10"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
+<span id="id11"></span><h2>snp<a class="headerlink" href="#snp" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">snp</span></code> can analyze the alignment files and fasta files to detect mutations by running
 <a class="reference external" href="https://github.com/samtools">Samtools</a> and <a class="reference external" href="https://github.com/samtools">Bcftools</a>.
 There are multiple programs which can be applied to detect mutations
@@ -611,7 +612,13 @@ There are multiple programs which can be applied to detect mutations
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
-<p><strong>BAM files:</strong> BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.</p>
+<p><strong>BAM files:</strong> BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
+For assigning the files, please follow the format &#8211; <code class="docutils literal"><span class="pre">$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...</span></code>.
+For example, the user has four bam files and these files are for two different conditions. Then the input will be
+<code class="docutils literal"><span class="pre">set1:2:sample1.bam,sample2.bam</span> <span class="pre">set2:2:sample3.bam,sample4.bam</span></code>. <code class="docutils literal"><span class="pre">$SAMPLE_NUM</span></code> in
+this example is 2 which means there are two samples in set1 and set2.
+<code class="docutils literal"><span class="pre">$SAMPLE_NUM</span></code> will influence <code class="docutils literal"><span class="pre">--dp4_cutoff</span></code>, <code class="docutils literal"><span class="pre">--indel_fraction</span></code>, and
+<code class="docutils literal"><span class="pre">--read_depth_range</span></code> which will be used to filter the mutations.</p>
 <p><strong>Fasta files of the closed strains</strong> or <strong>Fasta files of the query strains</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
@@ -619,7 +626,6 @@ There are multiple programs which can be applied to detect mutations
 <div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic snp [-h] [--project_path [PROJECT_PATH]] --bam_type BAM_TYPE
                      --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
                      [FASTA_FILES ...] --bam_files BAM_FILES [BAM_FILES ...]
-                     --sample_number SAMPLE_NUMBER
                      [--samtools_path SAMTOOLS_PATH]
                      [--bcftools_path BCFTOOLS_PATH] [--quality QUALITY]
                      [--read_depth_range READ_DEPTH_RANGE] [--ploidy PLOIDY]
@@ -653,10 +659,20 @@ basic arguments:
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of the genome fasta files.
   --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
-                        Paths of the bam files.
-  --sample_number SAMPLE_NUMBER, -ms SAMPLE_NUMBER
-                        This value is the number of samples. It will affect
-                        --read_depth_range, --dp4_cutoff and --indel_fraction.
+                        The input format is
+                        $SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...
+                        $SAMPLE_NUM means the input bam files
+                        (samples/replicates) should be considered as the given
+                        number of samples. $SAMPLE_NUM also influences
+                        --dp4_cutoff, --indel_fraction, and
+                        --read_depth_range.For example, if sample1.bam,
+                        sample2.bam, and sample3.bam are three
+                        samples/replicates of one condition. You can assign
+                        set1:2:sample1.bam,sample2.bam,sample3.bam. This means
+                        these three bam files should be computed together. And
+                        these bam files (samples/replicates) should be
+                        considered as 2 samples. If multiple samples need to
+                        be assigned, please use space to separate the input.
 
 additional arguments:
   --samtools_path SAMTOOLS_PATH
@@ -670,15 +686,15 @@ additional arguments:
   --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
                         Range of the read depth of a real mutation. The format
                         is $MIN,$MAX. This value can be assigned by different
-                        types: 1. real number (&quot;r&quot;), 2. times of the number of
-                        samples (&quot;n&quot;) or 3. times of the average read depth
-                        (&quot;a&quot;). For example, n_10,a_2 is assigned, the average
-                        read depth is 70 and the number of samples
-                        (--sample_number) is 4. Then, n_10 will be 40 (10 *
-                        --sample_number) and a_2 will be 140 (average read
-                        depth * 2). Based on the same example, if this value
-                        is r_10,a_2, the minimum read depth will become exact
-                        10 reads. Default is n_10,a_2.
+                        types: 1. real number (&quot;r&quot;), 2. times of $SAMPLE_NUM
+                        (assigned by --bam_files) (&quot;n&quot;) or 3. times of the
+                        average read depth (&quot;a&quot;). For example, n_10,a_3 is
+                        assigned, the average read depth is 70 and the
+                        $SAMPLE_NUM is 4. Then, n_10 will be 40 (10 *
+                        $SAMPLE_NUM) and a_3 will be 140 (average read depth *
+                        3). Based on the same example, if this value is
+                        r_10,a_3, the minimum read depth will become exact 10
+                        reads. Default is n_10,a_3.
   --ploidy PLOIDY, -pl PLOIDY
                         The query bacteria is haploid or diploid. Default is
                         haploid.
@@ -698,32 +714,32 @@ additional arguments:
                         4). Two values need to be assigned, ex: n_10,0.8. The
                         first value is for (number 3 + number 4). This value
                         can be assigned based on 1. real number (&quot;r&quot;), 2.
-                        times of the number of samples (&quot;n&quot;) or 3. times of
-                        average read depth (&quot;a&quot;). The second value is for
+                        times of $SAMPLE_NUM (assigned by --bam_files) (&quot;n&quot;)
+                        or 3. times of average read depth (&quot;a&quot;). The second
+                        value is for (number 3 + number 4) / (number 1 +
+                        number 2 + number 3 + number 4). These two values are
+                        split by comma. For example, n_10,0.8 is assigned and
+                        the average read depth is 70 and $SAMPLE_NUM is 4. It
+                        means that the sum of number 3 and number 4 should be
+                        higher than 40 (10 * $SAMPLE_NUM), and the fraction --
                         (number 3 + number 4) / (number 1 + number 2 + number
-                        3 + number 4). These two values are split by comma.
-                        For example, n_10,0.8 is assigned and the average read
-                        depth is 70 and the number of samples
-                        (--sample_number) is 4. It means that the sum of
-                        number 3 and number 4 should be higher than 40 (10 *
-                        --sample_number), and the fraction -- (number 3 +
-                        number 4) / (number 1 + number 2 + number 3 + number
-                        4) should be higher than 0.8. Based on the same
-                        example, if r_10,0.8 is assigned, the sum of read
+                        3 + number 4) should be higher than 0.8. Based on the
+                        same example, if r_10,0.8 is assigned, the sum of read
                         depth of number 3 and number 4 will become exact 10
                         reads. Default is n_10,0.8.
   --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
                         This value is the minimum IDV and IMF which supports
                         insertion of deletion. The minimum IDV can be assigned
                         by different types: 1. real number (&quot;r&quot;), 2. times of
-                        the number of samples (&quot;n&quot;) or 3. times of the average
-                        read depth (&quot;a&quot;). For example, n_10,0.8 is assigned,
-                        the average read depth is 70 and the number of sample
-                        is 4. It means that IDV should be higher than 40 (10 *
-                        --sample_number), and IMF should be higher than 0.8.
-                        Based on the same example, if r_10,0.8 is assigned,
-                        the minimum IDV will become exact 10 reads. Default is
-                        n_10,0.8 and the two numbers are separated by comma.
+                        $SAMPLE_NUM (assigned by --bam_files) (&quot;n&quot;) or 3.
+                        times of the average read depth (&quot;a&quot;). For example,
+                        n_10,0.8 is assigned, the average read depth is 70 and
+                        $SAMPLE_NUM is 4. It means that IDV should be higher
+                        than 40 (10 * $SAMPLE_NUM), and IMF should be higher
+                        than 0.8. Based on the same example, if r_10,0.8 is
+                        assigned, the minimum IDV will become exact 10 reads.
+                        Default is n_10,0.8 and the two numbers are separated
+                        by comma.
   --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                         This function can set more filters to improve the
                         results. Please assign 1. the tag, 2. bigger (&quot;b&quot;) or
@@ -742,11 +758,11 @@ If <code class="docutils literal"><span class="pre">bam_type</span></code> is <c
 <p>The output folders and results are following:</p>
 <p><strong>SNP_raw_output:</strong> Stores output tables which be only considered read depth and QUAL.</p>
 <blockquote>
-<div><strong>VCF Table (only consider read depth and QUAL):</strong> Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM.vcf</span></code>.</div></blockquote>
+<div><strong>VCF Table (only consider read depth and QUAL):</strong> Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_$SAMPLE.vcf</span></code>.</div></blockquote>
 <p><strong>SNP_table:</strong> Stores two types of output tables</p>
 <blockquote>
-<div><p><strong>VCF Table (consider all filters):</strong> Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_best.vcf</span></code>.</p>
-<p><strong>Index of fasta files:</strong>: Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code>.
+<div><p><strong>VCF Table (consider all filters):</strong> Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_$SAMPLE_best.vcf</span></code>.</p>
+<p><strong>Index of fasta files:</strong>: Filename is <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_$SAMPLE_seq_reference.csv</span></code>.
 The meaning of this file is like following example:</p>
 </div></blockquote>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Staphylococcus_aureus_HG003</span>     <span class="mi">1632629</span> <span class="o">.</span>       <span class="n">AaA</span>     <span class="n">AA</span>      <span class="mi">57</span>      <span class="o">.</span>
@@ -758,7 +774,7 @@ The meaning of this file is like following example:</p>
 As a result, the conflicts will affect the other mutation&#8217;s positions.
 Therefore, it will generate four different fasta files. The first two lines are &#8220;position conflict&#8221;, and
 the last line is &#8220;mutation conflict&#8221;.
-<code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> is the index for these four fasta files.</p>
+<code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_$SAMPLE_seq_reference.csv</span></code> is the index for these four fasta files.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="mi">1</span>       <span class="mi">1632629</span> <span class="mi">1</span>       <span class="mi">1499572</span><span class="p">:</span><span class="n">TT</span>      <span class="n">Staphylococcus_aureus_HG003</span>
 <span class="mi">1</span>       <span class="mi">1632629</span> <span class="mi">2</span>       <span class="mi">1499572</span><span class="p">:</span><span class="n">TTTTT</span>   <span class="n">Staphylococcus_aureus_HG003</span>
 <span class="mi">2</span>       <span class="mi">1632630</span> <span class="mi">1</span>       <span class="mi">1499572</span><span class="p">:</span><span class="n">TT</span>      <span class="n">Staphylococcus_aureus_HG003</span>
@@ -770,13 +786,13 @@ The second column is the selected position.
 The third one is the index of the &#8220;mutations conflict&#8221;.
 The fourth one is the selected position and nucleotides.
 The last column is the strain name.</p>
-<p><strong>Potential fasta files</strong>: Filename is <code class="docutils literal"><span class="pre">$FILENAME_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa</span></code>,
+<p><strong>Potential fasta files</strong>: Filename is <code class="docutils literal"><span class="pre">$FASTANAME_$SAMPLE_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa</span></code>,
 and it is stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/$BAM_TYPE/seqs</span></code>.
-Based on the example in <strong>Index of fasta files</strong>, <code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_1.fa</span></code>
+Based on the example in <strong>Index of fasta files</strong>, <code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_set1_Staphylococcus_aureus_HG003_1_1.fa</span></code>
 will be generated based on the first line of <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code>.
-<code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_Staphylococcus_aureus_HG003_1_2.fa</span></code> and ll be generated based on the first line of
+<code class="docutils literal"><span class="pre">Staphylococcus_aureus_HG003_set1_Staphylococcus_aureus_HG003_1_2.fa</span></code> and will be generated based on the second line of
 <code class="docutils literal"><span class="pre">$STRAIN_$PROGRAM_seq_reference.csv</span></code> and so forth.</p>
-<p><strong>statistics</strong>: Stores the statistic files, ex: the distribution of SNPs based on QUAL.</p>
+<p><strong>statistics</strong>: Stores the statistic files and figures, ex: the distribution of SNPs based on QUAL.</p>
 </div>
 <div class="section" id="tss-ps-tss-and-processing-site-prediction">
 <span id="tss-ps"></span><h2>tss_ps (TSS and processing site prediction)<a class="headerlink" href="#tss-ps-tss-and-processing-site-prediction" title="Permalink to this headline">¶</a></h2>
@@ -1028,7 +1044,7 @@ Based on this information, we can know the details of the specific TSS. The tags
 </div></blockquote>
 </div>
 <div class="section" id="transcript">
-<span id="id17"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
+<span id="id18"></span><h2>transcript<a class="headerlink" href="#transcript" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">transcript</span></code> can detect transcripts based on the coverage. Most of the transcript assembly tools are
 focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data,
 given gene annotations and several parameters that can be set by the user.</p>
@@ -1220,7 +1236,7 @@ Based on this information, we can know the details of the specific transcript. T
 </div></blockquote>
 </div>
 <div class="section" id="terminator">
-<span id="id18"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
+<span id="id19"></span><h2>terminator<a class="headerlink" href="#terminator" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">terminator</span></code> will predict the rho-independent terminators. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> combines the results of
 two methods in order to get more reliable candidates. The first method is using <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a>.
 The other one detects the specific secondary structure between converging pairs
@@ -1471,7 +1487,7 @@ it means this terminator reveal gene expression but no coverage decrease. If &#8
 </div></blockquote>
 </div>
 <div class="section" id="utr">
-<span id="id21"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
+<span id="id22"></span><h2>utr<a class="headerlink" href="#utr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">utr</span></code> can compare TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
 to generate proper UTRs. 5&#8217;UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs.
 3&#8217;UTRs are based on detecting the
@@ -1569,7 +1585,7 @@ Based on this information, we can know the details of the specific UTR. The tags
 <p><strong>statiatics:</strong> <code class="docutils literal"><span class="pre">$GFFNAME_$STRAINNAME_$UTRTYPE_length.png</span></code> is the distribution of the UTR length.</p>
 </div>
 <div class="section" id="srna">
-<span id="id22"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
+<span id="id23"></span><h2>srna<a class="headerlink" href="#srna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna</span></code> can predict different types of sRNAs. For intergenic and antisense sRNA, it
 is detected via comparison of the transcripts and annotation profile.
 For UTR-derived sRNA, the detection is based on the TSSs and processing sites,
@@ -2174,7 +2190,7 @@ Based on this information, we can know the details of the specific sRNA. The tag
 </div></blockquote>
 </div>
 <div class="section" id="sorf">
-<span id="id25"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
+<span id="id26"></span><h2>sorf<a class="headerlink" href="#sorf" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">sorf</span></code> can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence),
 start codons and stop codons within the non-annotated transcripts.
 Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand.
@@ -2414,7 +2430,7 @@ Based on this information, we can know the details of the specific sORF. The tag
 <p><strong>frame_shift:</strong> The number of frame shifts in the regions.</p>
 </div>
 <div class="section" id="promoter">
-<span id="id26"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
+<span id="id27"></span><h2>promoter<a class="headerlink" href="#promoter" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">promoter</span></code> can scan the upstream of TSSs to discover the promoter motifs.
 We integrated <a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a> (for ungapped motifs) and
 <a class="reference external" href="http://meme-suite.org/tools/glam2">GLAM2</a> (for gapped motifs) to compute the promoters.
@@ -2542,7 +2558,7 @@ Moreover, it can used as an input for sRNA detection (<code class="docutils lite
 TSS gff files with TSS types will be stored here.</p>
 </div>
 <div class="section" id="operon">
-<span id="id29"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
+<span id="id30"></span><h2>operon<a class="headerlink" href="#operon" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">operon</span></code> will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and
 sub-operons.</p>
 <ul class="simple">
@@ -2631,7 +2647,7 @@ transcripts, 5&#8217;UTRs, and 3&#8217;UTRs and assign parent transcript to all 
 <p><strong>statistics:</strong> Stores statistics file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.</p>
 </div>
 <div class="section" id="circrna">
-<span id="id30"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
+<span id="id31"></span><h2>circrna<a class="headerlink" href="#circrna" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">circrna</span></code> can detect the potential circular RNAs via <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection.
 The user can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
@@ -2646,75 +2662,82 @@ For generating testrealign.x, please refer to <a class="reference internal" href
 <li><strong>Required files</strong></li>
 </ul>
 <p><strong>Fasta files of reads or BAM file:</strong> If you want to use alignment files directly, they should be
-mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> with <code class="docutils literal"><span class="pre">-S</span></code>.</p>
+mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> with <code class="docutils literal"><span class="pre">-S</span></code>.
+The input format is <code class="docutils literal"><span class="pre">$SET_NAME:$READ1,$READ2,...</span></code> or <code class="docutils literal"><span class="pre">$SET_NAME:$BAM1,$BAM2,...</span></code>.
+For example, <code class="docutils literal"><span class="pre">set1:read1.fa,read2.fa</span></code> means these two fasta files need to be compute together.
+If your BAM files are generated by mapping reads on multiple reference genomes,
+<a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">testrealign.x</a> may not be able to
+handle them.</p>
 <p><strong>Fasta files of the genome annotations</strong></p>
 <p><strong>Gff files of the genome annotations</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">circrna</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">align</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">read_files</span> <span class="n">READ_FILES</span> <span class="p">[</span><span class="n">READ_FILES</span> <span class="o">...</span><span class="p">]]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">bam_files</span> <span class="n">BAM_FILES</span> <span class="p">[</span><span class="n">BAM_FILES</span> <span class="o">...</span><span class="p">]]</span> <span class="o">--</span><span class="n">fasta_files</span>
-                         <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">annotation_files</span>
-                         <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">segemehl_path</span> <span class="n">SEGEMEHL_PATH</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">testrealign_path</span> <span class="n">TESTREALIGN_PATH</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">samtools_path</span> <span class="n">SAMTOOLS_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">process</span> <span class="n">PROCESS</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">support_reads</span> <span class="n">SUPPORT_READS</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">start_ratio</span> <span class="n">START_RATIO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">end_ratio</span> <span class="n">END_RATIO</span><span class="p">]</span>
-                         <span class="p">[</span><span class="o">--</span><span class="n">ignore_hypothetical_protein</span> <span class="n">IGNORE_HYPOTHETICAL_PROTEIN</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]]
+                         [--read_files READ_FILES [READ_FILES ...]]
+                         [--bam_files BAM_FILES [BAM_FILES ...]] --fasta_files
+                         FASTA_FILES [FASTA_FILES ...] --annotation_files
+                         ANNOTATION_FILES [ANNOTATION_FILES ...]
+                         [--segemehl_path SEGEMEHL_PATH]
+                         [--testrealign_path TESTREALIGN_PATH]
+                         [--samtools_path SAMTOOLS_PATH] [--process PROCESS]
+                         [--support_reads SUPPORT_READS]
+                         [--start_ratio START_RATIO] [--end_ratio END_RATIO]
+                         [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
 
-<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+optional arguments:
+  -h, --help            show this help message and exit
 
-<span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">align</span><span class="p">,</span> <span class="o">-</span><span class="n">a</span>           <span class="n">This</span> <span class="n">function</span> <span class="n">will</span> <span class="nb">map</span> <span class="n">the</span> <span class="n">reads</span> <span class="p">(</span><span class="n">included</span> <span class="n">splice</span>
-                        <span class="n">detection</span><span class="p">)</span> <span class="n">by</span> <span class="n">segemehl</span><span class="o">.</span> <span class="n">If</span> <span class="n">you</span> <span class="n">already</span> <span class="n">used</span> <span class="n">segemehl</span>
-                        <span class="k">with</span> <span class="o">-</span><span class="n">S</span> <span class="n">to</span> <span class="nb">map</span> <span class="n">the</span> <span class="n">reads</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">skip</span> <span class="n">this</span> <span class="n">step</span><span class="o">.</span> <span class="n">BE</span>
-                        <span class="n">CAREFUL</span><span class="p">,</span> <span class="n">this</span> <span class="n">function</span> <span class="n">only</span> <span class="n">use</span> <span class="n">default</span> <span class="n">parameters</span> <span class="n">of</span>
-                        <span class="n">segemehl</span> <span class="n">to</span> <span class="nb">map</span> <span class="n">the</span> <span class="n">reads</span><span class="o">.</span> <span class="n">Moreover</span><span class="p">,</span> <span class="nb">all</span> <span class="n">read</span> <span class="n">files</span> <span class="ow">in</span>
-                        <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">reads</span> <span class="n">will</span> <span class="n">be</span> <span class="n">mapped</span><span class="o">.</span> <span class="n">If</span> <span class="n">some</span> <span class="n">specific</span>
-                        <span class="n">functions</span> <span class="n">of</span> <span class="n">segemehl</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">implemented</span><span class="p">,</span> <span class="n">please</span>
-                        <span class="n">directly</span> <span class="n">run</span> <span class="n">segemehl</span> <span class="p">(</span><span class="n">MUST</span> <span class="n">run</span> <span class="k">with</span> <span class="o">-</span><span class="n">S</span><span class="p">)</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
-                        <span class="kc">False</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">read_files</span> <span class="n">READ_FILES</span> <span class="p">[</span><span class="n">READ_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">rp</span> <span class="n">READ_FILES</span> <span class="p">[</span><span class="n">READ_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">If</span> <span class="o">--</span><span class="n">align</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">read</span>
-                        <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">bam_files</span> <span class="n">BAM_FILES</span> <span class="p">[</span><span class="n">BAM_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">b</span> <span class="n">BAM_FILES</span> <span class="p">[</span><span class="n">BAM_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">You</span> <span class="n">can</span> <span class="n">want</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">Bam</span> <span class="n">files</span> <span class="n">to</span> <span class="n">skip</span>
-                        <span class="o">--</span><span class="n">align</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">fasta_files</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">f</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
+basic arguments:
+  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
+                        Path of the project folder. If none is given, the
+                        current directory is used.
+  --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
+                        If this argument is given, ANNOgesic will map the
+                        reads via segemehl (with -S). BE CAREFUL, this
+                        function only use default parameters of segemehl to
+                        map the reads. If some specific functions of segemehl
+                        need to be implemented, please directly run segemehl
+                        (MUST run with -S). please assign the fasta files. The
+                        input format is $SET_NAME:$READ1,$READ2,... For
+                        example, set1:read1.fa,read2.fa means these two fasta
+                        files need to be compute together. .bz2 and .gz
+                        compressed fasta files can be accepted as well.
+  --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
+                        You can want assign the paths of Bam files to skip
+                        mapping. The input format is $SET_NAME:$BAM1,$BAM2,...
+                        For example, set1:bam1.bam,bam2.bam means these two
+                        bam files need to be compute together. BE CAREFUL, the
+                        bam files must be generated via segemehl with -S.
+  --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                        Paths of the genome fasta files.
+  --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                        Paths of the genome annotation gff files.
 
-<span class="n">additional</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">segemehl_path</span> <span class="n">SEGEMEHL_PATH</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">segemehl</span><span class="o">.</span><span class="n">x</span> <span class="ow">in</span> <span class="n">segemehl</span>
-                        <span class="n">package</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">testrealign_path</span> <span class="n">TESTREALIGN_PATH</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">testrealign</span><span class="o">.</span><span class="n">x</span> <span class="ow">in</span> <span class="n">segemehl</span>
-                        <span class="n">package</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">samtools_path</span> <span class="n">SAMTOOLS_PATH</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">path</span> <span class="n">of</span> <span class="n">samtools</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">process</span> <span class="n">PROCESS</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span> <span class="n">PROCESS</span>
-                        <span class="n">The</span> <span class="n">number</span> <span class="n">of</span> <span class="n">parallels</span> <span class="n">processes</span> <span class="k">for</span> <span class="o">--</span><span class="n">align</span><span class="o">.</span> <span class="n">Default</span>
-                        <span class="ow">is</span> <span class="mf">10.</span>
-  <span class="o">--</span><span class="n">support_reads</span> <span class="n">SUPPORT_READS</span><span class="p">,</span> <span class="o">-</span><span class="n">s</span> <span class="n">SUPPORT_READS</span>
-                        <span class="n">The</span> <span class="n">minimum</span> <span class="n">supported</span> <span class="n">reads</span> <span class="n">of</span> <span class="n">circular</span> <span class="n">RNA</span><span class="o">.</span> <span class="n">Default</span>
-                        <span class="ow">is</span> <span class="mf">10.</span>
-  <span class="o">--</span><span class="n">start_ratio</span> <span class="n">START_RATIO</span><span class="p">,</span> <span class="o">-</span><span class="n">sr</span> <span class="n">START_RATIO</span>
-                        <span class="n">The</span> <span class="n">minimum</span> <span class="n">ratio</span> <span class="o">--</span> <span class="p">(</span><span class="n">supported</span> <span class="n">reads</span> <span class="n">of</span> <span class="n">circRNA</span> <span class="o">/</span> <span class="nb">all</span>
-                        <span class="n">reads</span><span class="p">)</span> <span class="n">at</span> <span class="n">starting</span> <span class="n">point</span> <span class="n">of</span> <span class="n">candidate</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.5</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">end_ratio</span> <span class="n">END_RATIO</span><span class="p">,</span> <span class="o">-</span><span class="n">er</span> <span class="n">END_RATIO</span>
-                        <span class="n">The</span> <span class="n">meaning</span> <span class="ow">is</span> <span class="n">similar</span> <span class="n">to</span> <span class="o">--</span><span class="n">start_ratio</span><span class="o">.</span> <span class="n">This</span> <span class="n">value</span> <span class="ow">is</span>
-                        <span class="k">for</span> <span class="n">end</span> <span class="n">point</span> <span class="n">of</span> <span class="n">candidate</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="mf">0.5</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">ignore_hypothetical_protein</span> <span class="n">IGNORE_HYPOTHETICAL_PROTEIN</span><span class="p">,</span> <span class="o">-</span><span class="n">ih</span> <span class="n">IGNORE_HYPOTHETICAL_PROTEIN</span>
-                        <span class="n">This</span> <span class="n">function</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">ignoring</span> <span class="n">hypothetical</span> <span class="n">protein</span> <span class="ow">in</span>
-                        <span class="n">genome</span> <span class="n">annotation</span> <span class="n">file</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
+additional arguments:
+  --segemehl_path SEGEMEHL_PATH
+                        Please assign the path of segemehl.x in segemehl
+                        package.
+  --testrealign_path TESTREALIGN_PATH
+                        Please assign the path of testrealign.x in segemehl
+                        package.
+  --samtools_path SAMTOOLS_PATH
+                        Please assign the path of samtools.
+  --process PROCESS, -p PROCESS
+                        The number of parallels processes for --align. Default
+                        is 10.
+  --support_reads SUPPORT_READS, -s SUPPORT_READS
+                        The minimum supported reads of circular RNA. Default
+                        is 10.
+  --start_ratio START_RATIO, -sr START_RATIO
+                        The minimum ratio -- (supported reads of circRNA / all
+                        reads) at starting point of candidate. Default is 0.5.
+  --end_ratio END_RATIO, -er END_RATIO
+                        The meaning is similar to --start_ratio. This value is
+                        for end point of candidate. Default is 0.5.
+  --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
+                        This function is for ignoring hypothetical protein in
+                        genome annotation file. Default is False.
 </pre></div>
 </div>
 <ul class="simple">
@@ -2724,8 +2747,8 @@ mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/S
 <p><strong>segemehl_align:</strong> If <code class="docutils literal"><span class="pre">circrna</span></code> starts from read mapping, the folder is for results of mapping.</p>
 <p><strong>segemehl_splice:</strong> The results of splicing detection. The information of the splicing tables, please
 refer to <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>.</p>
-<p><strong>gffs:</strong> Stores gff files of the circular RNAs. <code class="docutils literal"><span class="pre">$STRAINNAME_best.gff</span></code> is gff files for the best result after checking
-genome annotation and quality of splicing. <code class="docutils literal"><span class="pre">$STRAINNAME_all.gff</span></code> is for all candidates without filtering.
+<p><strong>gffs:</strong> Stores gff files of the circular RNAs. <code class="docutils literal"><span class="pre">$STRAINNAME_$SET_circRNA_best.gff</span></code> is gff files for the best result after checking
+genome annotation and quality of splicing. <code class="docutils literal"><span class="pre">$STRAINNAME_$SET_circRNA_all.gff</span></code> is for all candidates without filtering.
 Some useful information can be found in the tags of the attributes within the circular RNA gff file.
 Based on this information, we can know the details of the specific circular RNA. The tags are as following:</p>
 <blockquote>
@@ -2749,7 +2772,7 @@ Based on this information, we can know the details of the specific circular RNA.
 </div></blockquote>
 </div>
 <div class="section" id="go-term">
-<span id="id34"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
+<span id="id35"></span><h2>go_term<a class="headerlink" href="#go-term" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">go_term</span></code> can retrieve the information of Gene Ontology from Uniprot.
 Some analysis of Go terms can be done as well.</p>
 <ul class="simple">
@@ -2819,7 +2842,7 @@ biological process, cellular component, molecular_function and three roots of GO
 </div></blockquote>
 </div>
 <div class="section" id="srna-target">
-<span id="id35"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
+<span id="id36"></span><h2>srna_target<a class="headerlink" href="#srna-target" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">srna_target</span></code> can search potential targets of the sRNA via different programs
 (RNAup or RNAplex or both). We recommend running with both
 programs. <code class="docutils literal"><span class="pre">srna_target</span></code> can also compare the both results and provide the best ones.</p>
@@ -2996,7 +3019,7 @@ The meaning of each column is similar to the table of RNAplex.</p>
 <p><strong>target_seqs:</strong> Stores fasta sequences of the potential targets.</p>
 </div>
 <div class="section" id="ppi-network">
-<span id="id37"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
+<span id="id38"></span><h2>ppi_network<a class="headerlink" href="#ppi-network" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">ppi_network</span></code> can retrieve the data from <a class="reference external" href="http://string-db.org/">STRING</a>.
 Then using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> to search
 the supported literature of the protein-protein interaction networks.</p>
@@ -3108,7 +3131,7 @@ means that the supported literature are very weak. Dot line means that no suppor
 Color is the best score of the supported literature of the interactions.</p>
 </div>
 <div class="section" id="subcellular-localization">
-<span id="id40"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
+<span id="id41"></span><h2>subcellular_localization<a class="headerlink" href="#subcellular-localization" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">subcellular</span> <span class="pre">localization</span></code> can predict the subcellular localization of CDSs.
 Some statistics and visualization files are provided as well.</p>
 <ul class="simple">
@@ -3198,7 +3221,7 @@ The meaning of each column is as following:</p>
 </div></blockquote>
 </div>
 <div class="section" id="riboswitch-thermometer">
-<span id="id41"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
+<span id="id42"></span><h2>riboswitch_thermometer<a class="headerlink" href="#riboswitch-thermometer" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code> can search ribosome binding sites (Shine-Dalgarno sequence) between
 TSSs（the starting point of transcript was assigned if no TSS was detected)
 and its downstream CDSs. Then using <a class="reference external" href="http://infernal.janelia.org/">Infernal</a> to scan
@@ -3364,7 +3387,7 @@ The tags are as following:</p>
 <p><strong>statistics:</strong> Stores the file which contains the riboswichs / RNA_thermometer with corresponding amount.</p>
 </div>
 <div class="section" id="crispr">
-<span id="id45"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
+<span id="id46"></span><h2>crispr<a class="headerlink" href="#crispr" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">crispr</span></code> integrates CRISPR Recognition Tool (<a class="reference external" href="http://www.room220.com/crt/">CRT</a>) which can detect the repeat
 units and spacer of CRISPR. Moreover, the false positives can be removed by comparing candidates with genome annotation.</p>
 <ul class="simple">
@@ -3443,7 +3466,7 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 <p><strong>statistics:</strong> Stores statistic files.</p>
 </div>
 <div class="section" id="optimize-tss-ps">
-<span id="id48"></span><h2>optimize_tss_ps<a class="headerlink" href="#optimize-tss-ps" title="Permalink to this headline">¶</a></h2>
+<span id="id49"></span><h2>optimize_tss_ps<a class="headerlink" href="#optimize-tss-ps" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> can adapt the parameter set of <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
@@ -3622,7 +3645,7 @@ columns are missing rate.</p>
 <p><strong>best_$STRAIN.csv:</strong> Stores the best parameter set. The meanings of all columns are the same as <code class="docutils literal"><span class="pre">stat_$STRAIN.csv</span></code>.</p>
 </div>
 <div class="section" id="screenshot">
-<span id="id52"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
+<span id="id53"></span><h2>screenshot<a class="headerlink" href="#screenshot" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">screenshot</span></code> can generate batch files for producing screenshot of <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>.
 Generating screenshots can reduce the time for checking the results in genome browser.
 When the batch files is produced, the user just needs to open <a class="reference external" href="https://www.broadinstitute.org/igv">IGV</a>, then presses <code class="docutils literal"><span class="pre">tools</span></code>
@@ -3712,7 +3735,7 @@ means the strain is NC_007795, the feature&#8217;s start point is 1051529 and en
 1051696.</p>
 </div>
 <div class="section" id="color-png">
-<span id="id55"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
+<span id="id56"></span><h2>color_png<a class="headerlink" href="#color-png" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">color_png</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If numerous samples are included in one figure,
 Tracks will be difficult to checked. <code class="docutils literal"><span class="pre">color_png</span></code> can color the tracks based on TEX +/- libraries
 for improving the checking process.</p>
@@ -3857,7 +3880,7 @@ gff file shows the parent transcript.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.9',
+            VERSION:'0.5.10',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
