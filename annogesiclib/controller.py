@@ -597,25 +597,19 @@ class Controller(object):
     def circrna(self):
         """circRNA detection"""
         print("Running circular RNA prediction")
-        if self._args.align:
+        if self._args.read_files:
             self._args.segemehl_path = self.check_execute_file(
                     self._args.segemehl_path)
-            if self._args.read_files is None:
-                print("Error: The read files are needed for --align.")
-                sys.exit()
-            self.check_multi_files([self._args.read_files], ["--read_files"])
         for prop in ("testrealign_path", "samtools_path"):
             setattr(self._args, prop,
                     self.check_execute_file(getattr(self._args, prop)))
         self.check_multi_files(
-                [self._args.fasta_files, self._args.annotation_files,
-                 self._args.bam_files],
-                ["--fasta_files", "--annotation_files",
-                 "--bam_files"])
+                [self._args.fasta_files, self._args.annotation_files],
+                ["--fasta_files", "--annotation_files"])
         project_creator.create_subfolders(
             self._paths.required_folders("circrna"))
         args_circ = self.args_container.container_circrna(
-            self._args.align, self._args.process, self._args.fasta_files,
+            self._args.process, self._args.fasta_files,
             self._args.annotation_files, self._args.bam_files,
             self._args.read_files, self._paths.circrna_stat_folder,
             self._args.support_reads, self._args.segemehl_path,
@@ -688,8 +682,8 @@ class Controller(object):
         """SNP transcript detection"""
         print("Running SNP/mutations calling")
         self.check_multi_files(
-                [self._args.fasta_files, self._args.bam_files],
-                ["--fasta_files", "--bam_files"])
+                [self._args.fasta_files],
+                ["--fasta_files"])
         if (self._args.bam_type != "closed_strain") and (
                 self._args.bam_type != "query_strain"):
             print("Error: Please assign \"closed_strain\" or"
@@ -703,15 +697,13 @@ class Controller(object):
                 self._args.caller != "m"):
             print("Error: Please assign \"c\" or"
                   " \"m\" to --caller!")
-        self.check_parameter([self._args.sample_number],
-                             ["--sample_number"])
         for prop in ("bcftools_path", "samtools_path"):
             setattr(self._args, prop,
                     self.check_execute_file(getattr(self._args, prop)))
         project_creator.create_subfolders(self._paths.required_folders("snp"))
         args_snp = self.args_container.container_snp(
             self._args.samtools_path, self._args.bcftools_path,
-            self._args.bam_type, self._args.sample_number,
+            self._args.bam_type,
             self._args.program, self._args.fasta_files,
             self._args.bam_files,
             self._args.quality, self._args.read_depth_range,

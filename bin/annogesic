@@ -1445,20 +1445,24 @@ def main():
         help="Path of the project folder. If none is given, "
         "the current directory is used.")
     circrna_basic.add_argument(
-        "--align", "-a", default=False, action="store_true",
-        help="This function will map the reads (included splice detection) "
-        "by segemehl. If you already used segemehl with -S to map the reads, "
-        "you can skip this step. BE CAREFUL, this function only use default "
-        "parameters of segemehl to map the reads. Moreover, all read files "
-        "in ANNOgesic/input/reads will be mapped. If some specific functions "
-        "of segemehl need to be implemented, "
-        "please directly run segemehl (MUST run with -S). Default is False.")
-    circrna_basic.add_argument(
         "--read_files", "-rp", default=None, nargs='+',
-        help="If --align is True, please assign the paths of read fasta files.")
+        help="If this argument is given, ANNOgesic will map the reads via "
+        "segemehl (with -S). BE CAREFUL, this function only use default "
+        "parameters of segemehl to map the reads. If some specific functions "
+        "of segemehl need to be implemented, "
+        "please directly run segemehl (MUST run with -S). "
+        "please assign the fasta files. "
+        "The input format is $SET_NAME:$READ1,$READ2,... "
+        "For example, set1:read1.fa,read2.fa means these two fasta files need "
+        "to be compute together. .bz2 and .gz compressed fasta files can be "
+        "accepted as well.")
     circrna_basic.add_argument(
         "--bam_files", "-b", default=None, nargs='+',
-        help="You can want assign the paths of Bam files to skip --align.")
+        help="You can want assign the paths of Bam files to skip mapping. "
+        "The input format is $SET_NAME:$BAM1,$BAM2,... "
+        "For example, set1:bam1.bam,bam2.bam means these two bam files need "
+        "to be compute together. BE CAREFUL, the bam files must be generated "
+        "via segemehl with -S.")
     circrna_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files. ")
@@ -1674,11 +1678,19 @@ def main():
         help="Paths of the genome fasta files.")
     snp_basic.add_argument(
         "--bam_files", "-b", required=True, nargs='+',
-        help="Paths of the bam files.")
-    snp_basic.add_argument(
-        "--sample_number", "-ms", type=int, required=True,
-        help="This value is the number of samples. It will affect "
-        "--read_depth_range, --dp4_cutoff and --indel_fraction.")
+        help="The input format is "
+        "$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,... "
+        "$SAMPLE_NUM means the input bam files (samples/replicates) should be "
+        "considered as the given number of samples. "
+        "$SAMPLE_NUM also influences --dp4_cutoff, "
+        "--indel_fraction, and --read_depth_range."
+        "For example, if sample1.bam, sample2.bam, and "
+        "sample3.bam are three samples/replicates of one condition. "
+        "You can assign set1:2:sample1.bam,sample2.bam,sample3.bam. "
+        "This means these three bam files should be computed together. "
+        "And these bam files (samples/replicates) should be considered as "
+        "2 samples. If multiple samples need to be assigned, please use "
+        "space to separate the input.")
     snp_add = snp_parser.add_argument_group(
         'additional arguments')
     snp_add.add_argument(
@@ -1691,16 +1703,17 @@ def main():
         "--quality", "-q", default=40, type=int,
         help="The minimum quality of a real mutation. Default is 40.")
     snp_add.add_argument(
-        "--read_depth_range", "-d", default="n_10,a_2",
+        "--read_depth_range", "-d", default="n_10,a_3",
         help="Range of the read depth of a real mutation. The format is "
         "$MIN,$MAX. This value can be assigned by different types: "
-        "1. real number (\"r\"), 2. times of the number of samples (\"n\") "
+        "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
+        "(assigned by --bam_files) (\"n\") "
         "or 3. times of the average read depth (\"a\"). For example, "
-        "n_10,a_2 is assigned, the average read depth is 70 and the number "
-        "of samples (--sample_number) is 4. Then, n_10 will be 40 (10 * "
-        "--sample_number) and a_2 will be 140 (average read depth * 2). "
-        "Based on the same example, if this value is r_10,a_2, the minimum "
-        "read depth will become exact 10 reads. Default is n_10,a_2.")
+        "n_10,a_3 is assigned, the average read depth is 70 and the "
+        "$SAMPLE_NUM is 4. Then, n_10 will be 40 (10 * "
+        "$SAMPLE_NUM) and a_3 will be 140 (average read depth * 3). "
+        "Based on the same example, if this value is r_10,a_3, the minimum "
+        "read depth will become exact 10 reads. Default is n_10,a_3.")
     snp_add.add_argument(
         "--ploidy", "-pl", default="haploid",
         help="The query bacteria is haploid or diploid. Default is haploid.")
@@ -1722,13 +1735,15 @@ def main():
         "reverse bases (number 4). Two values need to be assigned, "
         "ex: n_10,0.8. The first value is for (number 3 + number 4). "
         "This value can be assigned based on 1. real number (\"r\"), 2. times "
-        "of the number of samples (\"n\") or 3. times of average read depth "
+        "of $SAMPLE_NUM (assigned by --bam_files) (\"n\") or "
+        "3. times of average read depth "
         "(\"a\"). The second value is for (number 3 + number 4) / (number 1 + "
         "number 2 + number 3 + number 4). These two values are split by "
         "comma. For example, n_10,0.8 is assigned and the average read depth "
-        "is 70 and the number of samples (--sample_number) is 4. It means "
+        "is 70 and $SAMPLE_NUM is 4. It means "
         "that the sum of number 3 and number 4 should be higher than 40 "
-        "(10 * --sample_number), and the fraction -- (number 3 + number 4) / "
+        "(10 * $SAMPLE_NUM), and the fraction "
+        "-- (number 3 + number 4) / "
         "(number 1 + number 2 + number 3 + number 4) should be higher than "
         "0.8. Based on the same example, if r_10,0.8 is assigned, the sum of "
         "read depth of number 3 and number 4 will become exact 10 reads. "
@@ -1737,12 +1752,14 @@ def main():
         "--indel_fraction", "-if", default="n_10,0.8",
         help="This value is the minimum IDV and IMF which supports insertion "
         "of deletion. The minimum IDV can be assigned by different types: "
-        "1. real number (\"r\"), 2. times of the number of samples (\"n\") or "
+        "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
+        "(assigned by --bam_files) (\"n\") or "
         "3. times of the average read depth (\"a\"). For example, n_10,0.8 "
-        "is assigned, the average read depth is 70 and the number of sample "
+        "is assigned, the average read depth is 70 and $SAMPLE_NUM "
         "is 4. It means that IDV should be higher than 40 (10 * "
-        "--sample_number), and IMF should be higher than 0.8. Based on the "
-        "same example, if r_10,0.8 is assigned, the minimum IDV will become "
+        "$SAMPLE_NUM), and IMF should be higher than 0.8. "
+        "Based on the same example, if r_10,0.8 is assigned, "
+        "the minimum IDV will become "
         "exact 10 reads. Default is n_10,0.8 and the two numbers are "
         "separated by comma.")
     snp_add.add_argument(

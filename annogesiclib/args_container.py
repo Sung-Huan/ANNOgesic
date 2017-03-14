@@ -1141,7 +1141,7 @@ class ArgsContainer(object):
         self.stat_folder = operon_statistics_folder
         return self
 
-    def container_snp(self, samtools_path, bcftools_path, bam_type, min_sample,
+    def container_snp(self, samtools_path, bcftools_path, bam_type,
                       program, fasta_files, bam_files,
                       quality, read_depth_range, snp_output_folder,
                       indel_fraction, chrom, rg, caller, filters, DP4_cutoff):
@@ -1169,15 +1169,13 @@ class ArgsContainer(object):
         self.filters = filters
         self.dp4_sum = DP4_cutoff.split(",")[0]
         self.dp4_frac = DP4_cutoff.split(",")[-1]
-        self.min_sample = min_sample
         return self
 
-    def container_circrna(self, align, process, fasta_files, annotation_files,
+    def container_circrna(self, process, fasta_files, annotation_files,
                           bam_files, read_files,
                           circrna_stat_folder, support_reads, segemehl_path,
                           testrealign, samtools_path, start_ratio,
                           end_ratio, ignore_hypothetical_protein, out_folder):
-        self.align = align
         self.cores = process
         self.fastas = self._gen_copy_new_folder(
                 [".fa", ".fna", ".fasta"], out_folder, "tmp_fa", fasta_files,
