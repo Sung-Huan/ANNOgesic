@@ -327,7 +327,6 @@ $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_strain/tex_notex/SRR515257_50000_NC_
          snp \
 	-t closed_strain \
 	-p with_BAQ without_BAQ extend_BAQ \
-        -ms 1 \
 	-b all_samples:2:$BAM_FILE \
 	-f $ANNOGESIC_FOLDER/input/reference/fasta/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
