@@ -130,7 +130,7 @@ def apply_filter(filters, snp, snps):
     if not exclude:
         snps.append(snp)
 
-def import_data(snp_file, args_snp, bam_number, depth_file):
+def import_data(snp_file, args_snp, bam_number, depth_file, min_sample):
     snps = []
     raw_snps = []
     dess = []
@@ -138,14 +138,14 @@ def import_data(snp_file, args_snp, bam_number, depth_file):
     max_quals["All_strain"] = 0
     pre_strain = ""
     cutoff_sum = get_n_a_value(args_snp.dp4_sum, depth_file,
-                               args_snp.min_sample)
+                               min_sample)
     cutoff_frac = float(args_snp.dp4_frac)
     depth_s = get_n_a_value(args_snp.depth_s, depth_file,
-                            args_snp.min_sample)
+                            min_sample)
     depth_b = get_n_a_value(args_snp.depth_b, depth_file,
-                            args_snp.min_sample)
+                            min_sample)
     idv = get_n_a_value(args_snp.idv, depth_file,
-                        args_snp.min_sample)
+                        min_sample)
     imf = float(args_snp.imf)
     fh = open(snp_file, "r")
     for row in csv.reader(fh, delimiter="\t"):
@@ -263,7 +263,7 @@ def overlap_position(qual_snps):
 
 
 def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
-               mod_seqs, out_seq):
+               mod_seqs, out_seq, strain):
     num_seq = 1
     num_nt = 0
     paths = []
@@ -276,12 +276,11 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
                     if path == value:
                         paths.append(str(path["pos"]))
     if len(refs) != 0:
-        for seq_name, ref_datas in refs.items():
-            num_ref = 1
-            for ref in ref_datas:
-                out_ref.write("\t".join([str(key), "_".join(paths),
-                              str(num_ref), ref, seq_name]) + "\n")
-                num_ref += 1
+        num_ref = 1
+        for ref in refs:
+            out_ref.write("\t".join([str(key), "_".join(paths),
+                          str(num_ref), ref, strain]) + "\n")
+            num_ref += 1
     else:
         out_ref.write("\t".join([str(key), "_".join(paths), "1", "All",
                       mod_seq_init["genome"]]) + "\n")
@@ -372,56 +371,54 @@ def gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq):
     refs = {}
     for key, values in qual_nooverlap_snps.items():
         for seq in seqs:
-            for name in seq.keys():
-                break
-            refs[name] = []
-            num_var = 0
             for strain, fasta in seq.items():
+                refs[strain] = []
+                num_var = 0
                 mod_seq_init = {"genome": strain, "seq": fasta, "num_mod": 0}
                 mod_seqs = []
-            for snp in values:
-                if snp["strain"] in seq.keys():
-                    if "," in snp["alt"]:
-                        num_var += 1
-                        tmps = []
-                        tmp_snps = []
-                        alts = snp["alt"].split(",")
-                        for alt in alts:
-                            tmp_snp = snp.copy()
-                            tmp_snp["alt"] = alt
-                            tmp_snps.append(tmp_snp)
-                            if len(mod_seqs) == 0:
-                                num_mod_seqs = len(mod_seqs)
-                                tmps.append(mod_seq_init.copy())
-                            else:
-                                num_mod_seqs = len(mod_seqs)
-                                for mod_seq in mod_seqs:
-                                    tmps.append(mod_seq.copy())
-                        mod_seqs = list(tmps)
-                        num_mod = 0
-                        num = 1
-                        refs[name] = gen_ref(tmp_snps, snp["pos"],
-                                             refs[name], num_var)
-                        for mod_seq in mod_seqs:
-                            change(tmp_snps[num_mod], mod_seq)
-                            if num >= num_mod_seqs:
-                                num_mod += 1
-                                num = 0
-                            num += 1
-                    else:
-                        if len(mod_seqs) == 0:
-                            change(snp, mod_seq_init)
-                        else:
+                for snp in values:
+                    if snp["strain"] == strain:
+                        if "," in snp["alt"]:
+                            num_var += 1
+                            tmps = []
+                            tmp_snps = []
+                            alts = snp["alt"].split(",")
+                            for alt in alts:
+                                tmp_snp = snp.copy()
+                                tmp_snp["alt"] = alt
+                                tmp_snps.append(tmp_snp)
+                                if len(mod_seqs) == 0:
+                                    num_mod_seqs = len(mod_seqs)
+                                    tmps.append(mod_seq_init.copy())
+                                else:
+                                    num_mod_seqs = len(mod_seqs)
+                                    for mod_seq in mod_seqs:
+                                        tmps.append(mod_seq.copy())
+                            mod_seqs = list(tmps)
+                            num_mod = 0
+                            num = 1
+                            refs[strain] = gen_ref(tmp_snps, snp["pos"],
+                                                   refs[strain], num_var)
                             for mod_seq in mod_seqs:
-                                change(snp, mod_seq)
-        print_file(refs, out_ref, conflicts, key, values,
-                   mod_seq_init, mod_seqs, out_seq)
+                                change(tmp_snps[num_mod], mod_seq)
+                                if num >= num_mod_seqs:
+                                    num_mod += 1
+                                    num = 0
+                                num += 1
+                        else:
+                            if len(mod_seqs) == 0:
+                                change(snp, mod_seq_init)
+                            else:
+                                for mod_seq in mod_seqs:
+                                    change(snp, mod_seq)
+                print_file(refs[strain], out_ref, conflicts, key, values,
+                           mod_seq_init, mod_seqs, out_seq, strain)
 
 
 def snp_detect(fasta_file, snp_file, depth_file, out_snp, out_seq,
-               bam_number, stat_prefix, args_snp):
+               bam_number, stat_prefix, args_snp, min_sample):
     max_quals, snps, dess, raw_snps = import_data(
-            snp_file, args_snp, bam_number, depth_file)
+            snp_file, args_snp, bam_number, depth_file, min_sample)
     out_best = open(out_snp + "_best.vcf", "w")
     out_ref = open(out_snp + "_seq_reference.csv", "w")
     out_best.write("\n".join(dess) + "\n")
