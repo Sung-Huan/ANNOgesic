@@ -42,6 +42,8 @@ class TestCircRNADetection(unittest.TestCase):
         self.out_folder = os.path.join(self.test_folder, "output")
         self.read_folder = os.path.join(self.test_folder, "read")
         self.splice_folder = os.path.join(self.test_folder, "splice")
+        self.alignment_path = os.path.join(self.out_folder,
+                                  "segemehl_align")
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
         if (not os.path.exists(self.fasta_folder)):
@@ -109,7 +111,8 @@ class TestCircRNADetection(unittest.TestCase):
         args.segemehl_path = None
         args.read_files = [read1, read2]
         args.cores = 2
-        align_results, prefixs = self.circ._align(args)
+        read_datas = [{"sample": "test", "files": [read1, read2]}]
+        align_results, prefixs = self.circ._align(args, read_datas)
         self.assertEqual(set(align_results), set(['read1_test1', 'read2_test1',
                                                   'read1_test2', 'read2_test2']))
         self.assertEqual(set(prefixs), set(['test1', 'test2']))
@@ -146,12 +149,12 @@ class TestCircRNADetection(unittest.TestCase):
         os.mkdir(header1)
         os.mkdir(header2)
         os.mkdir(header3)
-        splice1 = os.path.join(header1, "splicesites.bed")
-        splice2 = os.path.join(header2, "splicesites.bed")
-        splice3 = os.path.join(header3, "splicesites.bed")
-        tran1 = os.path.join(header1, "transrealigned.bed")
-        tran2 = os.path.join(header2, "transrealigned.bed")
-        tran3 = os.path.join(header3, "transrealigned.bed")
+        splice1 = os.path.join(header1, "Staphylococcus_aureus_HG003_a1_splicesites.bed")
+        splice2 = os.path.join(header2, "aaa_a1_splicesites.bed")
+        splice3 = os.path.join(header3, "bbb_a1_splicesites.bed")
+        tran1 = os.path.join(header1, "Staphylococcus_aureus_HG003_a1_transrealigned.bed")
+        tran2 = os.path.join(header2, "aaa_a1_transrealigned.bed")
+        tran3 = os.path.join(header3, "bbb_a1_transrealigned.bed")
         gen_file(fasta1, self.example.fasta_file)
         gen_file(fasta2, self.example.multi_fasta_file)
         gen_file(splice1, self.example.splice_file)
@@ -162,23 +165,40 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(tran3, self.example.tran_file)
         prefixs = self.circ._merge_bed(
             self.fasta_folder, self.splice_folder, self.out_folder)
-        self.assertEqual(set(prefixs), set(["test1", "test2"]))
+        self.assertEqual(set(prefixs[1]), set(["test1", "test2"]))
+        self.assertEqual(prefixs[0][0], "_a1_")
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test1", "splicesites_all.bed")))
+            self.out_folder, "test1", "test1_a1_splicesites.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test1", "transrealigned_all.bed")))
+            self.out_folder, "test1", "test1_a1_transrealigned.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "splicesites_all.bed")))
+            self.out_folder, "test2", "test2_a1_splicesites.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "transrealigned_all.bed")))
+            self.out_folder, "test2", "test2_a1_transrealigned.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "splicesites_aaa.bed")))
+            self.out_folder, "test2", "tmp_bbb_a1_splicesites.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "transrealigned_aaa.bed")))
+            self.out_folder, "test2", "tmp_aaa_a1_splicesites.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "splicesites_bbb.bed")))
+            self.out_folder, "test2", "tmp_aaa_a1_transrealigned.bed")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.out_folder, "test2", "transrealigned_bbb.bed")))
+            self.out_folder, "test2", "tmp_bbb_a1_transrealigned.bed")))
+
+    def test_combine_read_bam(self):
+        bam_datas = [{"sample": "aaa", "files": [
+            os.path.join(self.out_folder, "segemehl_align", "aaa1.bam"),
+            "aaa2.bam"]},
+                     {"sample": "bbb", "files": ["bbb1.bam", "bbb2.bam"]}]
+        read_datas = [{"sample": "aaa", "files": [
+            "aaa1.fa", "aaa3.fa", "aaa4.fa"]}]
+        bam_files = [os.path.join(self.out_folder,
+                                  "segemehl_align", "aaa1.bam"),
+                     os.path.join(self.out_folder,
+                                  "segemehl_align", "aaa3.bam")]
+        self.circ._combine_read_bam(bam_files, bam_datas, read_datas)
+        self.assertDictEqual(bam_datas[0], {'files': [
+            'test_folder/output/segemehl_align/aaa1.bam', 'aaa2.bam',
+            'test_folder/output/segemehl_align/aaa3.bam'], 'sample': 'aaa'})
 
 class Example(object):
 
