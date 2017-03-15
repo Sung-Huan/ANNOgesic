@@ -96,7 +96,7 @@ The folders are following:
 **input:** Stores all input files.
 
 	**BAMs:** For ``.bam`` files. ``BAMs_map_closed_strain`` 
-	is for the ``.bam`` files which mapped on closed strain of our real query_strain.
+	is for the ``.bam`` files which are mapped on closed strain of our real query strain.
 	``BAMs_map_query_strain`` is for the ``.bam`` files which are mapped on our query strain.
 
 	**database:** For all databases.
@@ -105,19 +105,19 @@ The folders are following:
 	it can be stored here for running ``TSS_optimization`` or merging 
 	the automatic predicted ones and manual detected ones. Please use gff3 format.
 
-	**manual_processing_site:** It is similar to ``manual_TSS``, it is for 
+	**manual_processing_site:** It is similar to ``manual_TSS``, but for 
 	processing sites.
 
 	**mutation_table:** If the mutation table between the closed strain and 
 	query strain is provided, please put the file here. Please check 
-	the section of ``get_target_fasta`` for the format of 
+	the section of :ref:`get_target_fasta` for the format of 
 	mutation table.
 
 	**reads:** For running ``circrna`` with mapping reads by ANNOgesic,
 	please put the reads here. ``.bzip2`` and ``.gzip`` as input is accepted.
        
 	**reference:** For annotation files and fasta files. 
-	If they can be downloaded from NCBI, the files can also be obtained via running ``get_input_files``.
+	If they can be downloaded from NCBI, the files can also be obtained via running :ref:`get_input_files`.
 
 	**riboswitch_ID:** For storing the file which contains all the Rfam IDs of riboswitch.
 	For format details, please check the section of 
@@ -208,9 +208,10 @@ get_target_fasta (update reference genome)
 ------------------------------------------
 
 ``get_target_fasta`` is the subcommand for update fasta files from 
-closed strain of the real query strain. For the format of the table, please check 
+closed strain of the real query strain to our real query one via searching the mutations. 
+Therefore, a table of mutation information is required. For the format of the table, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
-The titles of columns is presented on the top and they need to start with ``#``. 
+The titles of columns are presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
 the user can type ``-`` to represent them. The information of ``target_id`` 
 (strain name of the query strain), ``reference_id``, (strain name of the closed strain of the query strain) 
@@ -266,7 +267,7 @@ For example, please check `mutation table <https://raw.githubusercontent.com/Sun
 
 - **Output files**
 
-**Fasta files of updated genome**: This files are stored in ``$ANNOgesic_folder/output/updated_reference/fasta``.
+**Fasta files of updated genome**: The updated fasta files are stored in ``$ANNOgesic_folder/output/updated_reference/fasta``.
 
 .. _annotation_transfer:
 
@@ -365,7 +366,7 @@ snp (SNP calling)
 There are multiple programs which can be applied to detect mutations 
 (with BAQ, without BAQ and extend BAQ) and there are multiple flag options to set filters
 (QUAL, DP, DP4, etc.). Moreover, ``snp`` can also be used for generating the fasta file of 
-"target strain".
+query strain if it is necessary.
 
 - **Required tools**
 
@@ -518,7 +519,7 @@ this example is 2 which means there are two samples in set1 and set2.
 
 If ``bam_type`` is ``closed_strain``, 
 the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_closed_and_updated_references``. 
-If ``bam_type`` is ``query_strain``, the results are stored in ``$ANNOgesic/output/SNP_calling/mutations_of_query_strain``.
+If ``bam_type`` is ``query_strain``, the results will be stored in ``$ANNOgesic/output/SNP_calling/mutations_of_query_strain``.
 
 The output folders and results are following:
 
@@ -575,7 +576,7 @@ tss_ps (TSS and processing site prediction)
 ``tss_ps`` can generate the TSS and processing sites via running  
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Since the parameters can affect the 
 results strongly, ``optimize_tss_ps`` can obtain the optimized parameters of 
-`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. please check the section 
+`TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. Please check the section 
 :ref:`optimize_tss_ps` for details.
 
 - **Required tools**
@@ -799,7 +800,7 @@ For the transcripts, please check the section :ref:`transcript`.
 The results of TSS are stored in ``$ANNOgesic/output/TSS``, and the results of processing site 
 are stored in ``$ANNOgesic/output/processing_site``.
 
-The output folder is following:
+The output folders are following:
 
 **MasterTables:** MasterTable from `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_.
 
@@ -809,7 +810,7 @@ The output folder is following:
 
 	**TSS types with corresponding amounts:** Table is ``stat_TSS_class_$STRAINNAME.csv``, and Figure is ``TSS_class_$STRAINNAME.png``.
 
-	**Conditions with corresponding amounts:** ``stat_TSS_libs_$STRAINNAME.csv`` stores all combination of Conditions with corresponding amounts.
+	**Conditions with corresponding amounts:** ``stat_TSS_libs_$STRAINNAME.csv`` stores all combination of conditions with corresponding amounts.
 	``TSSstatistics.tsv`` stores the number of TSS which can be detected or missing in each condition.
 
 	**Comparing TSS with other features:** ``stat_compare_TSS_transcript_$STRAINNAME.csv`` is for comparing TSSs with transcripts.
@@ -842,9 +843,6 @@ transcript (transcript detection)
 ``transcript`` can detect transcripts based on the coverage. Most of the transcript assembly tools are
 focus on eukaryotic transcript. Due to this, we constructed a subcommand which is based on the nucleotide coverage data, 
 given gene annotations and several parameters that can be set by the user.
-
-For importing the information about libraries, please refer to section of 
-:ref:`The input format of libraries for running ANNOgesic`.
 
 - **Required files**
 
@@ -996,11 +994,11 @@ Output files are stored in ``$ANNOgesic/output/transcript``.
 
 The generated output folders are as following:
 
-**tables:** Table of transcript with more details. The meaning of the columns in the table is following:
+**tables:** Table of transcript with more details. The meanings of the columns in the table are following:
 
 	**strain:** Strain name.
 
-	**Name:** Name of this transcript in the gff file.
+	**Name:** Transcript name in the gff file.
 
 	**start:** Starting point of this transcript.
 
@@ -1028,19 +1026,19 @@ The generated output folders are as following:
 	**Figure of the distribution of transcript length:** ``$STRAINNAME_length_all.png`` is for analyzing of all transcript length. 
 	``$STRAINNAME_length_less_$LENGTH.png`` is for the analyzing of the assigned length.
 
-**gffs:** Stores gff files of transcript. Some useful information can be found in the tags of the attributes within the transcript gff file.
+**gffs:** Stores gff files of transcripts. Some useful information can be found in the tags of the attributes within the transcript gff file.
 Based on this information, we can know the details of the specific transcript. The tags are as following:
 
-	**compare_$FEATURE:** State of overlap between transcripts and features (--compare_feature_genome).
+	**compare_$FEATURE:** State of overlap between transcripts and features
 	(If --compare_genome_annotation is assigned.) The value may be "cover", "right_shift", "left_shift", "within" or "no_related".
 
-	**associated_tss:** Shows which TSSs are located on which transcripts. 
+	**associated_tss:** Shows which TSSs are located on this transcript. 
 	(If --compare_TSS is assigned.)
 
-	**associated_term:** Shows which terminators are located on which transcripts.
+	**associated_term:** Shows which terminators are located on this transcript.
 	(If --terminator_folder is assigned.)
 
-	**associated_$FEATURE:** Shows that the feature (--compare_feature_genome) are located on which transcripts.
+	**associated_$FEATURE:** Shows that the feature (--compare_feature_genome) are located on this transcript.
 	(If --compare_genome_annotation is assigned.) 
 
 	**detect_lib:** This transcript is detected by Tex-treated libraries or fragmented/conventional libraries.
@@ -1267,9 +1265,9 @@ The output folders are as following:
 
 **transtermhp:** Store any output of `TranstermHP <http://transterm.cbcb.umd.edu/>`_.
 
-**gffs:** Store gff files of the terminator.
+**gffs:** Store gff files of terminators.
 
-There are four different sub-folders to store terminators.
+There are four different sub-folders for storing different gff files.
 
 	**all_candidate:** Stores all terminators which ``ANNOgesic`` can detect.
 
@@ -1296,7 +1294,7 @@ Based on this information, we can know the details of the specific terminator. T
 
 **tables:** Stores tables of terminators with more details.
 
-There are four different sub-folders to store terminators.
+There are four different sub-folders for storing different tables.
 
 	**all_candidate:** Stores all terminators which ``ANNOgesic`` can detect.
 
@@ -1326,8 +1324,8 @@ The meanings of the columns are as following:
 
 	**coverage_decrease:** This terminator shows dramatic decrease of its coverage or not.
 
-	**coverage_detail:** Shows the coverage information of the libraries about this terminator. "high" means the highest coverage of the library, 
-	"low" means the lowest coverage of the library, and "diff" represents the difference between "high" and "low". If "No_coverage_decreasing" is showed, 
+	**coverage_detail:** Shows the coverage information of the libraries about this terminator. "high" means the highest coverage of the libraries, 
+	"low" means the lowest coverage of the libraries, and "diff" represents the difference between "high" and "low". If "No_coverage_decreasing" is showed, 
 	it means this terminator reveal gene expression but no coverage decrease. If "NA" is showed, it means that this terminator has no gene expression.
 
 .. _utr:
@@ -1336,9 +1334,9 @@ utr (UTR detection)
 -------------------
 
 ``utr`` can compare TSSs, CDSs/tRNAs/sRNAs, transcripts and terminators
-to generate proper UTRs. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
+to generate 5'UTR and 3'UTR. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
 3'UTRs are based on detecting the 
-regions between the end of the transcripts and CDSs/tRNAs/sRNAs. If the gff files of TSSs are not computed by 
+regions between the end of the transcripts and CDSs/tRNAs/sRNAs. If the input gff files of TSSs are not computed by 
 ANNOgesic, please use ``--TSS_source`` to classify TSSs for the analysis.
 
 - **Required files**
@@ -1416,9 +1414,9 @@ ANNOgesic, please use ``--TSS_source`` to classify TSSs for the analysis.
 
 - **Output files**
 
-Output of 5'UTRs are stored in ``$ANNOgesic/output/UTR/5UTR``.
+Output files of 5'UTRs are stored in ``$ANNOgesic/output/UTR/5UTR``.
 
-Output of 3'UTRs are stored in ``$ANNOgesic/output/UTR/3UTR``.
+Output files of 3'UTRs are stored in ``$ANNOgesic/output/UTR/3UTR``.
 
 The output folders are as following:
 
@@ -1447,9 +1445,10 @@ Based on this information, we can know the details of the specific UTR. The tags
 srna (sRNA detection)
 ---------------------
 ``srna`` can predict different types of sRNAs. For intergenic and antisense sRNA, it 
-is detected via comparison of the transcripts and annotation profile. 
-For UTR-derived sRNA, the detection is based on the TSSs and processing sites, 
-transcript and genome annotation.
+is detected via comparison of the transcripts and annotation profiles, as well as coverage files. 
+For UTR-derived sRNA, the detection is based on the TSSs, processing sites, 
+transcripts, genome annotations and coverage files. Further filters like folding free energy change, 
+BLAST to nr database and sRNA database can be set as well.
 
 - **Required files**
 
@@ -1463,35 +1462,40 @@ transcript and genome annotation.
 - **Optional input files**
 
 **Gff files of the TSSs:** If you want to detect the UTR-derived sRNAs, it is necessary to input
-TSS information. It is for the detection of 5'UTR-derived sRNA and interCDS-derived sRNA. 
-If you don't want to detect UTR-derived sRNAs, TSS information still can be provided as a filter.
+TSS information. If you don't want to detect UTR-derived sRNAs, TSS information still can be provided as a filter.
 We strongly recommend input this file.
 
-**Gff files of processing sites:** For checking the sRNAs which reveal ends with processing sites. Moreover,
+**Gff files of processing sites:** For checking the sRNAs which end with processing sites. Moreover,
 Some 3'UTR-derived and interCDS-derived sRNA candidates start
 from processing sites not TSSs. If you don't want to detect UTR-derived sRNAs,
 This information still can be provided to increase the accuracy, especially for some
 long non-coding regions. We strongly recommend input this file if you want to detect UTR-derived sRNAs.
 
-**Promoter tables:** Information of the promoter motifs can be used for prioritizing sRNA candidates via comparing promoters with
-sRNA and sRNA coverage. The format should be as following:
+.. _promoter_table:
+**Promoter tables:** Information of the promoter motifs can be used for prioritizing sRNA candidates via 
+promoters and sRNA coverage. The format should be as following:
 
 ===========  ============  ==========  =======
-strain       TSS_position  TSS_strand  Motif
+Strain       TSS_position  TSS_strand  Motif
 -----------  ------------  ----------  -------
 NC_000915.1  237118        \-          MOTIF_1
 NC_000915.1  729009        \-          MOTIF_1
 ===========  ============  ==========  =======
 
 First row is header of the table, the last column is the name of motif/promoter.
-If subcommand ``promoter`` was used for detecting promoter, the table will be generated automatically.
+If subcommand ``promoter`` was implemented before, the table will be generated automatically.
 Please refer to the section :ref:`promoter`.
 
 - **Filers with the corresponding input files and tools**
 
-There are some filters which can improve the prediction. Following is the filter name with the required files and tools.
+There are some filters which can improve the prediction. The user can assign the information to remove false positive. 
+If the information is not assigned to be a filter, it still can input to the module. Then, the information will 
+be shown in the output files, but this information is not considered as a filter. For example, if terminator association 
+is not assigned to be a filter, the user still can specify the path of terminator gff files. The associated terminators 
+will be shown in output gff files and tables, but the sRNA candidates which are not associated with terminators will 
+still be included. Following is the filter names with the required files and tools.
 
-**Secondary structure:** Remove the false positives by checking the folding energy change of secondary structure.
+**Secondary structure:** Remove the false positive by checking the folding energy change of secondary structure.
 
 	**Required tools:**
 
@@ -1509,8 +1513,8 @@ There are some filters which can improve the prediction. Following is the filter
 
 		**Gff files of TSSs**
 
-**Searching sRNA candidate in sRNA database:** If homology of this sRNA candidates can be found in sRNA database, 
-this candidates will be included to the result without considering other filters.
+**Searching sRNA candidate in sRNA database:** If homology of this sRNA candidate can be found in sRNA database, 
+this candidate will be included to the result without considering other filters.
 
 	**Required tools:**
 
@@ -1522,9 +1526,9 @@ this candidates will be included to the result without considering other filters
 		Format of the header should be ``$ID|$STRAIN|$SRNANAME``. For example, 
 		``srn_4840|S._aureus_NCTC8325|RsaOV`` The ID is srn_4840, 
 		the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
-		If the format of the header is not correct, an error or non-sense result will occur when 
+		If the format of the header is not correct, an error or non-sense results will occur when 
 		the user runs this subcommand with ``--sRNA_blast_stat, -sb``.
-		If you want to use BSRD with proper header, you can download it from our
+		If you want to use BSRD with proper headers, you can download it from our
 		`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
 
 
@@ -1551,12 +1555,11 @@ this candidates will be removed.
 
 		**Gff files of the sORFs**
 
-
 **Promoter:** Remove the candidates which are not associated with promoter motif.
 
 	**Required files:**
 
-		**Tables of the promoters:** Please check the "Optional input files" of this section.
+		**Tables of the promoters:** Please check the :ref:`promter_table` of this section.
 
 - **Arguments**
 
@@ -1966,26 +1969,26 @@ this candidates will be removed.
 
 - **Output files**
 
-Output files are stored in ``$ANNOgesic/output/sRNA``.Name of the output folders and files are following:
+Output files are stored in ``$ANNOgesic/output/sRNA``. the output folders and files are following:
 
-**sRNA_2d_$STRAINNAME:** The secondary structure of all sRNA candidates.
+**sRNA_2d_$STRAINNAME:** The secondary structures of all sRNA candidates.
 
-**sRNA_seq_$STRAINNAME:** The sequence of all sRNA candidates.
+**sRNA_seq_$STRAINNAME:** The sequences of all sRNA candidates.
 
 **blast_result_and_misc:** Stores the results of blast.
 
-	**nr_blast_$STRAINNAME.txt:** Blast output of the nr database.
+	**nr_blast_$STRAINNAME.txt:** output of BLAST for the nr database.
 
-	**sRNA_blast_$STRAINNAME.txt:** Blast output of the sRNA database.
+	**sRNA_blast_$STRAINNAME.txt:** output of BLAST for the sRNA database.
 
 **mountain_plot:** Stores mountain plots of the sRNA candidates. Filename is as ``srna10_NC_009839.1_335339_335435_+_mountain.pdf``.
-"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, strain name, starting point, end point and strand respectively.
+"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, strain name, starting point, end point and strand, respectively.
 
 **sec_structure:** Stores the dot plots and secondary structure plots of sRNA candidates. 
 Filename of dot plot is as ``srna10_NC_009839.1_335339_335435_+_dp.pdf``, and filename of secondary structure is as ``srna10_NC_009839.1_335339_335435_+_rss.pdf``.
-"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, strain name, starting point, end point and strand respectively.
+"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, strain name, starting point, end point and strand, respectively.
 
-**statistics:** Stores statistics files. ``stat_$STRAIN_NAME_sRNA_blast.csv`` is the analysis result of blast sRNA databases.
+**statistics:** Stores statistics files. ``stat_$STRAIN_NAME_sRNA_blast.csv`` is the analysis result of BLAST for sRNA databases.
 ``stat_sRNA_class_Staphylococcus_aureus_HG003.csv`` is the classification of sRNA candidates.
 
 **TSS_class:** If the TSSs are not computed by ANNOgesic, ``TSS_class`` will be generated for classification of TSS.
@@ -1993,7 +1996,7 @@ TSS gff files with TSS types will be stored here.
 
 **tables:** Stores sRNA tables with more details. There are also some sub-folders:
 
-	**for class:** Stores the results of different sRNA classes.
+	**for class:** Stores the results based on different sRNA classes.
 
 	**best:** Stores the best results of sRNAs after filtering.
 
@@ -2005,7 +2008,7 @@ The meanings of the columns are as following:
 
 	**strain:** Strain name.
 
-	**name:** sRNA Name which are used in gff file.
+	**name:** sRNA Name which is shown in gff file.
 
 	**start:** Starting point of this sRNA.
 
@@ -2013,7 +2016,7 @@ The meanings of the columns are as following:
 
 	**strand:** Strand of this sRNA.
 
-	**start_with_TSS/Cleavage_site:** This sRNA starts with Which TSS or cleavage site.
+	**start_with_TSS/Cleavage_site:** This sRNA starts with which TSS or cleavage site.
 
 	**end_with_cleavage:** If the sRNA ends with a cleavage site, the information of this cleavage site will be showed here.
 
@@ -2027,36 +2030,36 @@ The meanings of the columns are as following:
 
 	**best_lowest_coverage:** Based on coverage of all libraries, The lowest average coverage of this sRNA will be showed here.
 
-	**track/coverage:** Shows the coverage information of the libraries about this sRNA. "high" means the highest coverage of the library,
-        "low" means the lowest coverage of the library, and "avg" represents the average coverage of this sRNA.
+	**track/coverage:** Shows the coverage information of the libraries about this sRNA. "high" means the highest coverage of the libraries,
+        "low" means the lowest coverage of the libraries, and "avg" represents the average coverage of this sRNA.
 
-	**normalized_secondary_energy_change(by_length):** Secondary folding change (normalized by length) of this sRNA.
+	**normalized_secondary_energy_change(by_length):** Secondary folding energy change (normalized by length) of this sRNA.
 
 	**sRNA_types:** Shows the sRNA type.
 
 	**conflict_sORF:** If this sRNA overlaps sORF, the overlapped sORF will be showed here.
 
-	**nr_hit_number:** The hits number of this sRNA in nr database.
+	**nr_hit_number:** The hit numbers of this sRNA in nr database.
 
-	**sRNA_hit_number:** The hits number of this sRNA in sRNA database.
+	**sRNA_hit_number:** The hit numbers of this sRNA in sRNA database.
 
 	**nr_hit_top3|ID|e-value:** The top 3 hits of this sRNA in nr database will be showed here. The information includes protein name, ID and e-value.
 
 	**sRNA_hit|e-value:** If the homology of this sRNA can be found in sRNA database, the information will be showed here.
 
-	**overlap_CDS:** If the sRNA overlaps CDS, the information of CDS will be showed here.
+	**overlap_CDS:** If the sRNA overlaps CDS, the information of the overlapped CDS will be showed here.
 
 	**overlap_percent:** If the sRNA overlaps CDS, the percentage of overlap between sRNA and CDS will be showed here.
 
 	**end_with_terminator:** The terminator which is associated with this sRNA.
 
-	**associated_promoter:** The promoter which is associated with this sRNA. Each promoter (separated by comma) corresponds with the related TSSs.
+	**associated_promoter:** The promoter which is associated with this sRNA.
 
 	**sRNA_length:** sRNA length.
 
 **gffs:** Stores gff files of the sRNA. There are also some sub-folders:
 
-	**for class:** Stores the results of different sRNA classes.
+	**for class:** Stores the results based on different sRNA classes.
 
 	**best:** Stores the best results of sRNAs after filtering.
 
@@ -2069,13 +2072,13 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 	**with_TSS:** Which TSSs are related to this sRNA.
 
-	**sORF:** Which sORFs are overlap with this sRNA.
+	**sORF:** Which sORFs overlap this sRNA.
 
-	**sRNA_hit:** Blast hits number of the sRNA database.
+	**sRNA_hit:** Blast hit numbers of this sRNA in sRNA database.
 
-	**nr_hit:** Blast hits number of the nr database.
+	**nr_hit:** Blast hit numbers of this sRNA in nr database.
 
-	**2d_energy**: Normalized (by the length of sRNA) free energy change of the sRNA secondary structure.
+	**2d_energy**: Normalized (by the length of sRNA) folding energy change of the sRNA secondary structure.
 
 	**with_term:** Terminators which are associated with the sRNA candidate.
 
@@ -2085,21 +2088,20 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 	**overlap_percentage:** If this sRNA overlap CDS. The percentage of the overlap between CDS and sRNA will be showed here.
 
-	**promoter:** Promoters which are associated with the sRNA. Each promoter (separated by comma) corresponds with the related TSSs.
+	**promoter:** Promoters which are associated with the sRNA.
 
 .. _sorf:
 
 sorf (sORF detection)
 ---------------------
 ``sorf`` can detect sORF based on searching ribosome binding sites (Shine-Dalgarno sequence), 
-start codons and stop codons within the non-annotated transcripts.
-Since non-annotated region may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand. 
-If multiple sORFs are overlapped with each other, this subcommand will merge them to be one sORF. Therefore, one region may contain more than one sORF. 
+start codons and stop codons within the non-coding expressed regions.
+Since these regions may be sRNAs or sORFs, Comparison between sORFs and sRNAs can be done by this subcommand as well. 
+If multiple sORFs overlap with each other, this subcommand will merge them to be one sORF. Therefore, one region may contain more than one sORF. 
 Position of the start codon which listed in output table is assigned by the first nucleotide. The position of stop codon is assigned by the last nucleotide. 
 Moreover, one region may contain different frame shifts. 
 Ex: (200, 202, 203) are the positions of three start codons and (241, 243) are two stop codons in 
-a small transcript. Therefore, there are three possible ORFs(200-241, 203-241 and 202-243).
-Please be aware this point for using the results.
+a small transcript. There are three sORF candidates (200-241, 203-241 and 202-243).
 
 - **Required files**
 
@@ -2300,7 +2302,7 @@ The meaning of each column is as following:
 
 	**strain:** Strain name.
 
-	**Name:** Name of this sORF which is also used in gff file.
+	**Name:** the sORF name which is also shown in gff file.
 
 	**start:** Starting point of this sORF.
 
@@ -2320,10 +2322,9 @@ The meaning of each column is as following:
 
 	**sRNA_conflict:** If this sORF overlaps sRNA, the overlapped sRNA will be showed here.
 
-	**frame_shift:** One residue is formed by three nucleotides. Therefore, there may be three different ORFs in one region. 
-	If there are sORF candidates which can be found by frame shift, the number of frame shift will be showed here. "1" means there 
-	are some candidates can be found by frame shift once. "2" means there are some candidates can be found by frame shift twice. 
-	The number won't larger than 2 since frame shift three times, the amino acid codon will be the same.
+	**frame_shift:** If there are sORF candidates which can be found by frame shift, 
+	the number of frame shift will be showed here. "1" means there 
+	are some candidates can be found by frame shift once. "2" means there are some candidates can be found by frame shift twice.
 
 	**lib_type:** This sORF can be detected in TEX+/- or fragmented/conventional libraries.
 
@@ -2333,8 +2334,8 @@ The meaning of each column is as following:
 
         **best_lowest_coverage:** Based on coverage of all libraries, The lowest average coverage of this sORF will be showed here.
 
-        **track_detail:** Shows the coverage information of the libraries about this sORF. "high" means the highest coverage of the library,
-        "low" means the lowest coverage of the library, and "avg" represents the average coverage of this sORF.
+        **track_detail:** Shows the coverage information of the libraries about this sORF. "high" means the highest coverage of the libraries,
+        "low" means the lowest coverage of the libraries, and "avg" represents the average coverage of this sORF.
 
 	**seq:** Sequence of this sORF.
 
@@ -2347,17 +2348,17 @@ The meaning of each column is as following:
 Some useful information can be found in the tags of the attributes within the sORF gff file.
 Based on this information, we can know the details of the specific sORF. The tags are as following:
 
-**start_TSS:** Shows this sORF starts with which TSS.
+	**start_TSS:** Shows this sORF starts with which TSS.
 
-**with_TSS:** Which TSSs are associated with this sORFs.
+	**with_TSS:** Which TSSs are associated with this sORF.
 
-**sORF_type:** Type of the sORF (5'UTR, 3'UTR, interCDS, intergenic, antisense or within CDS).
+	**sORF_type:** Type of the sORF (5'UTR, 3'UTR, interCDS, intergenic, antisense or within CDS).
 
-**sRNA:** Which sRNAs are overlap with this sORFs.
+	**sRNA:** Which sRNAs are overlap with this sORF.
 
-**rbs:** Ribosome binding sites (Shine-Dalgarno sequences) of this sORFs.
+	**rbs:** Ribosome binding sites (Shine-Dalgarno sequences) of this sORF.
 
-**frame_shift:** The number of frame shifts in the regions.
+	**frame_shift:** The number of frame shifts in the regions.
 
 .. _promoter:
 
@@ -2366,9 +2367,9 @@ promoter (Promoter motif detection)
 
 ``promoter`` can scan the upstream of TSSs to discover the promoter motifs.
 We integrated `MEME <http://meme-suite.org/tools/meme>`_ (for ungapped motifs) and 
-`GLAM2 <http://meme-suite.org/tools/glam2>`_ (for gapped motifs) to compute the promoters.
-Based on the tool, visualization HTML files can be generated. If TSS gff file is not computed by 
-ANNOgesic, please use ``--TSS_source`` to classify TSSs for computing 
+`GLAM2 <http://meme-suite.org/tools/glam2>`_ (for gapped motifs) to predict the promoters.
+Based on the tool, HTML files can be generated for visualization. If the input TSS gff file 
+is not computed by ANNOgesic, please use ``--TSS_source`` to classify TSSs for predicting  
 promoter motifs.
 
 - **Required tools**
@@ -2383,8 +2384,10 @@ promoter motifs.
 
 **Fasta files of the genome sequences**
 
-**Gff files of the TSSs:** If the TSS gff file is not computed by ANNOgesic, the libraries and wiggle files are necessary.
-Please refer to the :ref:`The input format of libraries for running ANNOgesic` in order to assign the correct format.
+**Gff files of the TSSs:** If the input TSS gff file is not generated by ANNOgesic, 
+the libraries and wiggle files are necessary.
+Please refer to the :ref:`The input format of libraries for running ANNOgesic` 
+in order to assign the correct format.
 
 - **Arguments**
 
@@ -2469,25 +2472,24 @@ Please refer to the :ref:`The input format of libraries for running ANNOgesic` i
 
 - **Output files**
 
-Output files are stored in ``$ANNOgesic/output/promoter_analysis``. The output folder is following:
+Output files are stored in ``$ANNOgesic/output/promoter_analysis``. The output folders are following:
 
-**allfasta:** If ``--combine_all`` is True, it will combine all TSS files in ``--TSS_folder`` 
+**allfasta:** If ``--combine_all`` is True, it will combine all TSS files in ``--tss_files`` 
 to generate promoter motifs. The results will be stored in this folder.
 
 **fasta_class:** The fasta files of different TSS types.
 
-**$STRAINNAME:** Stores output of MEME based on different TSS types. Two sub-folders are under this folder.
+**$STRAINNAME:** Stores output of MEME and GLAM2 based on different TSS types. Two sub-folders are under this folder.
 
 	**MEME**: Stores the results of MEME.
 
 	**GLAM2**: Stores the results of GLAM2.
 
-	The format of folders which under these two folders is ``promoter_motifs_$FILENAME_$STRAINNAME_$TSSTYPE_$PROMOTERLEGNTH``.
-	Ex: ``promoter_motifs_NC_000915.1_allstrain_internal_45_nt``.
-	"NC_000915.1", "allstrain", "primary" and "45_nt" are gff filename, strain name, TSS type and upstream nucleotides of TSS respectively.
-	If strain name is "allstrain", it means that if there are multiple strains in the gff file, 
-	the result is generated by the information of all strains without considering the difference of strains. 
-	If there is only one strain in the gff file, the strain name will be assigned as "allstrain". Several files are stored in the sub-folder:
+	The format of folders which under these two folders is ``promoter_motifs_$FILENAME_$STRAINNAME_$TSSTYPE_$PROMOTERLEGNTH``,
+	ex: ``promoter_motifs_NC_000915.1_allstrain_internal_45_nt``.
+	"NC_000915.1", "allstrain", "primary" and "45_nt" are gff filename, strain name, TSS type and upstream nucleotides of TSS, respectively.
+	If strain name is "allstrain", this means that the result is generated by the information of all genomes. 
+	If there is only one genome in the gff file, the strain name will be assigned as "allstrain". Several files are stored in the sub-folder:
 	
 		**Figures of the promoter motif:** Contains EPS and PNG files.
 	
@@ -2579,7 +2581,7 @@ transcripts, 5'UTRs, and 3'UTRs and assign parent transcript to all features (pr
 
 **tables:** The tables of operons which store all information of operons and sub-operons.
 
-The meanings of each column is following:
+The meaning of each column is as following:
 
 	**Operon_ID:** Operon ID.
 
@@ -2609,7 +2611,7 @@ The meanings of each column is following:
 
 	**Associated_genes_with_whole_operon:** Locus tag of the genes which are associated with the operon.
 
-**statistics:** Stores statistics file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.
+**statistics:** Stores statistic file which includes the number of sub-operons, monocistronic operon, polycistronic operon, etc.
 
 .. _circrna:
 
@@ -2618,8 +2620,8 @@ circrna (circular RNA detection)
 
 ``circrna`` can detect the potential circular RNAs via `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. 
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection. 
-The user can assign reads for mapping and detecting circular RNAs or assign alignment files to skip mapping.
-BE CAREFUL, the alignment files must be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
+The user can assign reads for detecting circular RNAs or assign BAM files to skip mapping.
+BE CAREFUL, BAM files must be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
 with ``-S`` or ``circrna`` can't find the proper candidates.
 
 - **Required tools**
@@ -2629,10 +2631,10 @@ For generating testrealign.x, please refer to :ref:`Required tools or databases`
 
 - **Required files**
 
-**Fasta files of reads or BAM file:** If you want to use alignment files directly, they should be 
+**Fasta files of reads or BAM file:** If you want to use BAM files directly, they should be 
 mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``.
 The input format is ``$SET_NAME:$READ1,$READ2,...`` or ``$SET_NAME:$BAM1,$BAM2,...``. 
-For example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be compute together.
+For example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be computed together.
 If your BAM files are generated by mapping reads on multiple reference genomes, 
 `testrealign.x <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ may not be able to 
 handle them.
@@ -2715,12 +2717,12 @@ handle them.
 
 Output files are stored in ``$ANNOgesic/output/circRNA``. The output folders are following:
 
-**segemehl_align:** If ``circrna`` starts from read mapping, the folder is for results of mapping.
+**segemehl_align:** If read files are assigned, the folder is for results of mapping.
 
-**segemehl_splice:** The results of splicing detection. The information of the splicing tables, please 
+**segemehl_splice:** The results of splicing detection. For understanding the splicing tables, please 
 refer to `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_.
 
-**gffs:** Stores gff files of the circular RNAs. ``$STRAINNAME_$SET_circRNA_best.gff`` is gff files for the best result after checking 
+**gffs:** Stores gff files of the circular RNAs. ``$STRAINNAME_$SET_circRNA_best.gff`` is gff files for the best results after checking 
 genome annotation and quality of splicing. ``$STRAINNAME_$SET_circRNA_all.gff`` is for all candidates without filtering.
 Some useful information can be found in the tags of the attributes within the circular RNA gff file.
 Based on this information, we can know the details of the specific circular RNA. The tags are as following:
@@ -2761,7 +2763,7 @@ go_term (GO term retrieving)
 ----------------------------
 
 ``go_term`` can retrieve the information of Gene Ontology from Uniprot.
-Some analysis of Go terms can be done as well.
+Some analyses of Go terms can be done as well.
 
 - **Required files**
 
@@ -2810,9 +2812,9 @@ Some analysis of Go terms can be done as well.
 
 - **Output files**
 
-Output files are stored in ``ANNOgesic/output/Go_term``. If gff files of the transcript is assigned, 
+Output files are stored in ``ANNOgesic/output/Go_term``. If gff files of the transcript are assigned, 
 two sub-folders will be generated. Results of the expressed CDSs are stored in ``ANNOgesic/output/Go_term/expressed_CDS`` and 
-results of all CDS are stored in ``ANNOgesic/output/Go_term/all_CDS``.
+results of all CDSs are stored in ``ANNOgesic/output/Go_term/all_CDS``.
 
 **Go_term_results:** Stores tables of the Go terms information. The meaning of each column is as following:
 
@@ -2835,7 +2837,7 @@ results of all CDS are stored in ``ANNOgesic/output/Go_term/all_CDS``.
 	**Figures of the three GO term classes:** All figures are stored in the sub-folder - ``figs``. 
 	``$STRAINNAME_biological_process.png``, ``$STRAINNAME_cellular_component.png``, 
 	``$STRAINNAME_molecular_function.png`` and ``$STRAINNAME_three_roots.png`` are the figures of 
-	biological process, cellular component, molecular_function and three roots of GO term classes respectively.
+	biological process, cellular component, molecular_function and three roots of GO term classes, respectively.
 
 .. _srna_target:
 
@@ -2844,7 +2846,7 @@ srna_target (sRNA target prediction)
 
 ``srna_target`` can search potential targets of the sRNA via different programs 
 (RNAup or RNAplex or both). We recommend running with both 
-programs. ``srna_target`` can also compare the both results and provide the best ones.
+programs. ``srna_target`` can also compare the results of both programs and provide the best ones.
 
 - **Required tools**
 
@@ -2996,16 +2998,16 @@ programs. ``srna_target`` can also compare the both results and provide the best
 Output files are stored in ``$ANNOgesic/output/sRNA_targets``.
 
 **RNAplex:** Stores all results of RNAplex. ``$STRAIN_RNAplex.txt`` is raw results of RNAplex.
-It includes the information of binding situations. ``$STRAIN_RNAplex_rank.csv`` is the results 
-that sorted by binding energy. The meaning of each column in ``$STRAIN_RNAplex_rank.csv`` is following:
+``$STRAIN_RNAplex_rank.csv`` is the tables with details, and the targets are sorted by binding energy. 
+The meaning of each column in ``$STRAIN_RNAplex_rank.csv`` is as following:
 
-	**sRNA:** sRNA name which is used in sRNA gff file.
+	**sRNA:** sRNA name which is shown in sRNA gff file.
 
 	**strain:** Strain name.
 
 	**sRNA_position:** Starting point and end point of this sRNA.
 
-	**sRNA_interacted_position_RNAplex:** The interacted region of this sRNA.
+	**sRNA_interacted_position_RNAplex:** The interaction region of this sRNA.
 
 	**sRNA_strand:** Strand of this sRNA.
 
@@ -3013,7 +3015,7 @@ that sorted by binding energy. The meaning of each column in ``$STRAIN_RNAplex_r
 
 	**target_position:** Starting point and end point of this mRNA.
 
-	**target_interacted_position_RNAplex:** The interacted region of this mRNA.
+	**target_interacted_position_RNAplex:** The interaction region of this mRNA.
 
 	**target_strand:** Strand of this target mRNA.
 
@@ -3022,10 +3024,11 @@ that sorted by binding energy. The meaning of each column in ``$STRAIN_RNAplex_r
 	**rank_RNAplex:** Ranking of the interaction (the ranking is based on the binding energy).
 
 **RNAup:** Stored all results of RNAup. ``$STRAIN_RNAup.txt`` is raw results of RNAup.
-It includes the information of binding situations. ``$STRAIN_RNAup_rank.csv`` is the results
-that sorted by binding energy. The meaning of each column is similar to the table of RNAplex.
+``$STRAIN_RNAup_rank.csv`` is the tables with details, and the targets are 
+sorted by binding energy. The meaning of each column is similar to the table of RNAplex.
 
-**merge:** Store the results which merged ``RNAplex`` and ``RNAup``. ``$STRAIN_merge.csv`` contains all candidates of the both programs. 
+**merge:** Store the results which are merged by the results of ``RNAplex`` and ``RNAup``. 
+``$STRAIN_merge.csv`` contains all candidates of the both programs. 
 ``$STRAIN_overlap.csv`` contains the results which are top 20 (default) in the both methods. 
 The meaning of each column is similar to the table of RNAplex.
 
@@ -3038,7 +3041,7 @@ The meaning of each column is similar to the table of RNAplex.
 ppi_network (protein-protein interaction network detection)
 -----------------------------------------------------------
 
-``ppi_network`` can retrieve the data from `STRING <http://string-db.org/>`_. 
+``ppi_network`` can retrieve the PPI data from `STRING <http://string-db.org/>`_. 
 Then using `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ to search 
 the supported literature of the protein-protein interaction networks. 
 
@@ -3135,7 +3138,7 @@ the supported literature of the protein-protein interaction networks.
 Output files are stored in ``$ANNOgesic/output/PPI``. The output folders are as following:
 
 **best_results:** Stores the results which the scores of `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_
-of supported literature are higher than ``--score``.
+for supported literature are higher than ``--score``.
 
 **all_results:** Stores the results of all protein-protein interactions
 (including the low score(`PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_) literature).
@@ -3150,7 +3153,8 @@ Under "best_results" and "all_results", several files and folders are generated:
 
 	**with_strain:** Stores all interaction information which is searched with assigning a specific strain. 
 
-**figures:** Stores the protein-protein networks of the query proteins. Thickness represents how many literature can be found for the interactions. 
+**figures:** Stores the protein-protein networks of the query proteins. 
+Thickness represents how many literature can be found for the interactions. 
 Solid line means that strong supported literature can be found. Dash-dot line 
 means that the supported literature are very weak. Dot line means that no supported literature can be found. 
 Color is the best score of the supported literature of the interactions.
@@ -3224,7 +3228,7 @@ Some statistics and visualization files are provided as well.
 
 - **Output files**
 
-Output files are stored in ``$ANNOgesic/output/subcellular_localization``. If gff files of the transcript is assigned,
+Output files are stored in ``$ANNOgesic/output/subcellular_localization``. If gff files of the transcripts are assigned,
 two sub-folders will be generated. Results of the expressed CDSs are stored in 
 ``ANNOgesic/output/subcellular_localization/expressed_CDS`` and
 results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all_CDS``.
@@ -3261,10 +3265,11 @@ results of all CDS are stored in ``ANNOgesic/output/subcellular_localization/all
 riboswitch_thermometer (riboswitch and RNA thermometer detection)
 -----------------------------------------------------------------
 
-``riboswitch_thermometer`` can search ribosome binding sites (Shine-Dalgarno sequence) between 
+``riboswitch_thermometer`` can search riboswitches and RNA thermometers between 
 TSSs（the starting point of transcript was assigned if no TSS was detected) 
-and its downstream CDSs. Then using `Infernal <http://infernal.janelia.org/>`_ to scan 
-riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
+and its downstream CDSs, as well as associated ribosome binding sites 
+(Shine-Dalgarno sequence). Then using `Infernal <http://infernal.janelia.org/>`_ to scan 
+the region in `Rfam <http://rfam.xfam.org/>`_.
 
 - **Required tools**
 
@@ -3284,7 +3289,7 @@ riboswitch or RNA thermometer in `Rfam <http://rfam.xfam.org/>`_.
 
 **Rfam ID files of the riboswitch or RNA thermometer:** 
 The file should contain Rfam ID, 
-name and description of riboswitchs or RNA thermometer like following. 
+name and description of riboswitches or RNA thermometers as following. 
 
 ======== ==== ==========================
 #Rfam_ID Name Description
@@ -3293,7 +3298,7 @@ RF00162  SAM  SAM riboswitch box leader
 RF00059  TPP  TPP riboswitch THI element
 ======== ==== ==========================
 
-All columns are separated by ``tab``. You can also download the
+All columns are separated by ``tab``. You can also download 
 `riboswitch and RNA thermometer data <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_
 from our Git repository.
 
@@ -3392,51 +3397,51 @@ from our Git repository.
 Output files of the riboswitch are stored in ``$ANNOgesic/output/riboswitch`` and 
 output files of the RNA thermometer are stored in ``$ANNOgesic/output/RNA_thermometer``.
 
-Names of the output folders are following:
+Names of the output folders are as following:
 
 **scan_Rfam:** Stores the results of searching to Rfam with ``cmscan`` (`Infernal <http://infernal.janelia.org/>`_). 
 
-**gffs:** Stores gff files of riboswitchs / RNA_thermometer. 
+**gffs:** Stores gff files of riboswitches/RNA_thermometers. 
 Some useful information can be found in the tags of the attributes within the gff file.
-Based on this information, we can know the details of the specific riboswitchs / RNA_thermometer. 
+Based on this information, we can know the details of the specific riboswitches/RNA_thermometers. 
 The tags are as following:
 
-	**rfam_id:** Rfam ID of this riboswitchs / RNA_thermometer.
+	**rfam_id:** Rfam ID of this riboswitch/RNA_thermometer.
 
-	**e-value:** E-value of searching this riboswitchs / RNA_thermometer to Rfam.
+	**e-value:** E-value of searching this riboswitch/RNA_thermometer to Rfam.
 
-	**method:** This riboswitchs / RNA_thermometer is detected by which method.
+	**method:** This riboswitch/RNA_thermometer is detected by which method.
 
-**tables:** Stores tables of riboswichs / RNA_thermometer with more details. The meaning of each column in this table is as following:
+**tables:** Stores tables of riboswiches/RNA_thermometers with more details. The meaning of each column in this table is as following:
 
-	**ID:** Riboswichs / RNA_thermometer ID.
+	**ID:** Riboswich/RNA_thermometer ID.
 
 	**strain:** Strain name.
 
-	**strand:** Strand of the riboswichs / RNA_thermometer.
+	**strand:** Strand of the riboswich/RNA_thermometer.
 
-	**associated_CDS:** Downstream CDS of the riboswichs / RNA_thermometer.
+	**associated_CDS:** Downstream CDS of the riboswich/RNA_thermometer.
 
-	**start_genome:** This riboswichs / RNA_thermometer starts from which position of the genome.
+	**start_genome:** This riboswich/RNA_thermometer starts from which position of the genome.
 
-	**end_genome:** This riboswichs / RNA_thermometer ends to which position of the genome.
+	**end_genome:** This riboswich/RNA_thermometer ends to which position of the genome.
 
-	**Rfam:** Rfam ID of this riboswichs / RNA_thermometer.
+	**Rfam:** Rfam ID of this riboswich/RNA_thermometer.
 
-	**e_value:** E-value of searching this riboswitchs / RNA_thermometer to Rfam.
+	**e_value:** E-value of searching this riboswitch/RNA_thermometer to Rfam.
 
-	**start_align:** Position of this riboswichs / RNA_thermometer can be aligned to the genome.
+	**start_align:** Position of this riboswich/RNA_thermometer can be aligned to the genome.
 
-	**end_align:** Position this riboswichs / RNA_thermometer can be aligned to the genome.
+	**end_align:** Position this riboswich/RNA_thermometer can be aligned to the genome.
 
-**statistics:** Stores the file which contains the riboswichs / RNA_thermometer with corresponding amount.
+**statistics:** Stores the file which contains the riboswich/RNA_thermometer with corresponding amount.
 
 .. _crispr:
 
 crispr (CRISPR detection)
 -------------------------
 ``crispr`` integrates CRISPR Recognition Tool (`CRT <http://www.room220.com/crt/>`_) which can detect the repeat 
-units and spacer of CRISPR. Moreover, the false positives can be removed by comparing candidates with genome annotation.
+units and spacers of CRISPR. Moreover, the false positive can be removed by comparing candidates with genome annotation.
 
 - **Required tools**
 
@@ -3448,7 +3453,7 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 
 - **Optional input files**
 
-**Gff files of the genome annotations:** This file can be used for removing false positives.
+**Gff files of the genome annotations:** This file can be used for removing false positive.
 
 - **Arguments**
 
@@ -3503,15 +3508,15 @@ units and spacer of CRISPR. Moreover, the false positives can be removed by comp
 
 - **Output files**
 
-Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are generated by the subcommand are following:
+Output files are stored in ``$ANNOgesic/output/crispr``. The folders which are generated by the subcommand are as following:
 
 **CRT_output:** Stores the output of `CRT <http://www.room220.com/crt/>`_.
 
 **gffs:** Stores CRSIPR gff files. Two sub-folders are under this folder:
 
-	**all_candidates:** Stores gff file which contains all CRISPRs.
+	**all_candidates:** Stores gff files which contains all CRISPRs.
  
-	**best:** Stores gff file which contains the CRISPRs without overlapping genome annotation.
+	**best:** Stores gff files which contains the CRISPRs without overlapping genome annotation.
 
 **statistics:** Stores statistic files.
 
@@ -3523,7 +3528,7 @@ optimize_tss_ps (optimization of TSS and processing site detection)
 ``optimize_tss_ps`` can adapt the parameter set of `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_. 
 For running it, please manual detect TSSs around 200kb and find at least 50 TSSs (using gff format).
 If there are less than 50 TSSs within 200kb, please continue checking until 50 TSSs are detected.
-Then ``optimize_tss_ps`` can scan whole genome based on the principle of the manual detection to get optimized parameters.
+Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set to get optimized parameters.
 
 - **Required tools**
 
@@ -3685,7 +3690,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the principle of the man
 
 Based on the programs (TSS/processing site), Output files are stored in 
 ``$ANNOgesic/output/TSS/optimized_TSSpredator`` or ``$ANNOgesic/output/processing_site/optimized_TSSpredator``. 
-Two output files are following:
+Two output files are as following:
 
 **stat_$STRAIN.csv:** Stores the information of every run. The first column is the number of run.
 The second column is the parameter set. ``he`` represents height; ``rh`` represents 
@@ -3694,11 +3699,11 @@ base height; ``ef`` indicates enrichment factor; ``pf`` means processing factor.
 of parameters, please refer to `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_.
 For example, ``he_2.0_rh_1.8_fa_4.4_rf_2.8_bh_0.08_ef_3.0_pf_2.6`` means that height is 2.0, 
 height reduction is 1.8, factor is 4.4, factor reduction is 2.8, base height is 0.08, 
-enrichment factor is 3.0 and processing factor is 2.6. The third and fourth columns are 
-the number of true positives. The fifth and sixth columns are true positive rate. The seventh 
-and eighth columns are the number of false positives. The ninth and tenth false positive rate. 
-The eleventh and twelfth columns are the number of false negatives. The thirteenth and fourteenth 
-columns are missing rate.
+enrichment factor is 3.0 and processing factor is 2.6. The third column is 
+the number of true positive. The fourth column is true positive rate. The fifth 
+columns is the number of false positive. The sixth is false positive rate. 
+The seventh column is the number of false negatives. The eighth 
+column is missing rate.
 
 **best_$STRAIN.csv:** Stores the best parameter set. The meanings of all columns are the same as ``stat_$STRAIN.csv``.
 
@@ -3785,8 +3790,8 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
 
 - **Output files**
 
-Based on the paths of ``main_gff``, ``screenshot`` will generate a folder - ``screenshots`` under the 
-folder of ``main_gff``. Output files will stored in this folder. Names of the output file and folder are 
+Based on the paths of ``--main_gff``, ``screenshot`` will generate a folder - ``screenshots`` under the 
+folder of ``--main_gff``. Output files will be stored in this folder. the output files and folderss are 
 as following:
 
 **forward.txt:** Batch file of the forward strand for running on IGV.
@@ -3797,7 +3802,7 @@ as following:
 
 **reverse:** Folder for storing screenshots of the reverse strand.
 
-When batch files are executed on IGV, the screenshots will be automatically stored in ``forward`` and ``reverse``. 
+When batch files are executed on IGV, the screenshots will be automatically stored in the folder called ``forward`` and ``reverse``. 
 Format of the filenames will be ``$STRAIN:$START-$END.png``. For example, ``NC_007795:1051529-1051696.png`` 
 means the strain is NC_007795, the feature's start point is 1051529 and end point is 
 1051696.
@@ -3808,7 +3813,7 @@ color_png (color screenshot)
 ----------------------------
 
 ``color_png`` is a following procedure of ``screenshot``. If numerous samples are included in one figure, 
-Tracks will be difficult to checked. ``color_png`` can color the tracks based on TEX +/- libraries 
+Tracks will be difficult to check. ``color_png`` can color the tracks based on TEX +/- libraries 
 for improving the checking process.
 
 - **Required tools**
@@ -3855,8 +3860,8 @@ The new screenshots will replace the previous ones automatically.
 
 merge_features (merge all annotation features)
 ----------------------------------------------
-If storing multiple features of the annotation to one gff file is needed, ``merge_features`` can achieve this purpose. 
-``merge_features`` can merge all features that the user assigned to one gff file, and search the parent transcript to each feature.
+If merging multiple features of the annotation to one gff file is needed, ``merge_features`` can achieve this purpose. 
+``merge_features`` can merge all features (the user assigned) to one gff file, and search the parent transcript to each feature.
 
 - **Required files**
 
