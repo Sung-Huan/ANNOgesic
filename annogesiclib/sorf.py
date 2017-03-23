@@ -27,7 +27,7 @@ class sORFDetection(object):
         self.tran_path = os.path.join(args_sorf.trans, "tmp")
         self.fasta_path = os.path.join(args_sorf.fastas, "tmp")
         self.all_cand = "all_candidates"
-        self.best = "best"
+        self.best = "best_candidates"
 
     def _check_gff(self, gffs):
         for gff in os.listdir(gffs):
@@ -120,7 +120,7 @@ class sORFDetection(object):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
                 prefixs.append(prefix)
-                print("Comparing transcript and CDS of {0}".format(prefix))
+                print("Comparing transcripts and CDSs of {0}".format(prefix))
                 get_intergenic(os.path.join(args_sorf.gffs, gff),
                                os.path.join(self.tran_path,
                                "_".join([prefix, "transcript.gff"])),

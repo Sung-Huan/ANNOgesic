@@ -4,7 +4,7 @@ import csv
 def read_file(srna_file, nums):
     srna_f = open(srna_file, "r")
     for row in csv.reader(srna_f, delimiter="\t"):
-        if (row[-6] != "NA") and (row[0] != "rank"):
+        if (row[-6] != "NA") and (row[0] != "Rank"):
             if row[1] not in nums.keys():
                 nums[row[1]] = {}
             if row[2] not in nums[row[1]].keys():
@@ -26,7 +26,7 @@ def blast_class(srna_file, out_file):
     out = open(out_file, "w")
     if len(nums) > 1:
         if len(nums) > 2:
-            out.write("All strain:\n")
+            out.write("All genomes:\n")
             out.write("sRNA_name\tamount\n")
             for blast, num in nums["total"].items():
                 out.write("{0}\t{1}\n".format(blast, num))

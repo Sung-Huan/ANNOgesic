@@ -239,11 +239,11 @@ class Example(object):
 93061.SAOUHSC_01684	93061.SAOUHSC_01683	catalysis		1	861
 93061.SAOUHSC_01684	93061.SAOUHSC_01683	binding		0	965"""
     with_out = """Interaction of SAOUHSC_01684 | test_aaa
-strain	item_id_a	item_id_b	mode	action	a_is_acting	STRING_action_score	pubmed_id	pubmed_score
+Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score
 test_ptt	test_aaa	test_bbb	interaction		test_A	861	NA	NA"""
 
     merge_out = """Interaction of SAOUHSC_01684 | test_aaa
-strain	item_id_a	item_id_b	mode	action	a_is_acting	STRING_action_score	pubmed_id	pubmed_score
+Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score
 test_ptt	93061.SAOUHSC_01684	93061.SAOUHSC_01683	catalysis		0	861	93061.SAOUHSC_01684	1000	333	test_aaa"""
     ptt_file = """Staphylococcus_aureus_HG003 - 1..2821337
 2772 proteins

@@ -38,7 +38,7 @@ class TranscriptDetection(object):
 
     def _compute_transcript(self, wig_f, wig_r, wig_folder, wig_type, strain,
                             libs, args_tran):
-        print("Computing transcript for {0}".format(strain))
+        print("Computing transcripts for {0}".format(strain))
         out = os.path.join(args_tran.out_folder, "_".join([strain, wig_type]))
         detect_transcript(wig_f, wig_r, wig_folder, libs, out, wig_type, args_tran)
 
@@ -63,7 +63,7 @@ class TranscriptDetection(object):
                 self.gff_outfolder,
                 os.path.join(args_tran.compare_tss, "tmp"),
                 "transcript", "TSS")
-        print("Comaring of Transcript and TSS file")
+        print("Comaring of transcripts and TSSs")
         tss_folder = os.path.join(args_tran.compare_tss, "tmp")
         for ta in tas:
             ta_file = os.path.join(self.gff_outfolder,
@@ -92,7 +92,7 @@ class TranscriptDetection(object):
         self.multiparser.combine_gff(
             self.gff_outfolder, os.path.join(args_tran.gffs, "tmp"),
             "transcript", None)
-        print("Comaring of Transcript and genome annotation")
+        print("Comaring of transcripts and genome annotations")
         cds_folder = os.path.join(args_tran.gffs, "tmp")
         for ta in tas:
             ta_file = os.path.join(self.gff_outfolder,
@@ -137,7 +137,7 @@ class TranscriptDetection(object):
         else:
             libs = args_tran.flibs
             wigs = args_tran.frag_wigs
-        print("Computing {0} wig files".format(type_))
+        print("Importing {0} wig files".format(type_))
         strains = self._compute(type_, wigs, libs, args_tran)
         for strain in strains:
             out = os.path.join(self.gff_outfolder, "_".join([
@@ -152,7 +152,7 @@ class TranscriptDetection(object):
         '''merge the results of fragemented and tex treated libs'''
         if (args_tran.frag_wigs is not None) and (
                 args_tran.tex_wigs is not None):
-            print("Merging fragment and tex treat one")
+            print("Merging fragmented and tex treated ones")
             for strain in strains:
                 frag_gff = os.path.join(self.gff_outfolder,
                                         "_".join([strain, self.frag]))
@@ -200,15 +200,15 @@ class TranscriptDetection(object):
             for gff in os.listdir(args_tran.gffs):
                 if (".gff" in gff) and (gff[:-4] == ta):
                     break
-            print("Modifying {0} refering to {1}".format(ta, gff))
+            print("Modifying {0} by refering to {1}".format(ta, gff))
             fill_gap(os.path.join(args_tran.gffs, gff),
                      os.path.join(self.tran_path,
                      "_".join([ta, self.endfix_tran])),
-                     "overlap", self.tmps["overlap"])
+                     "overlap", self.tmps["overlap"], args_tran.modify)
             fill_gap(os.path.join(args_tran.gffs, gff),
                      os.path.join(self.tran_path,
                      "_".join([ta, self.endfix_tran])),
-                     "uni", self.tmps["uni"])
+                     "uni", self.tmps["uni"], args_tran.modify)
             tmp_merge = os.path.join(self.gff_outfolder, self.tmps["merge"])
             if self.tmps["merge"] in self.gff_outfolder:
                 os.remove(tmp_merge)
@@ -255,7 +255,7 @@ class TranscriptDetection(object):
 
     def run_transcript(self, args_tran):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
-            print("Error: There is no wigs files!!!!\n")
+            print("Error: There is no wigs file!\n")
             sys.exit()
         if args_tran.frag_wigs is not None:
             strains = self._for_one_wig("fragment", args_tran)
@@ -263,7 +263,7 @@ class TranscriptDetection(object):
             strains = self._for_one_wig("tex_notex", args_tran)
         self._for_two_wigs(strains, args_tran)
         tas = []
-        if args_tran.gffs is not None:
+        if "none" not in args_tran.modify:
             for gff in os.listdir(args_tran.gffs):
                 if gff.endswith(".gff"):
                     self.helper.sort_gff(os.path.join(args_tran.gffs, gff),
@@ -283,7 +283,7 @@ class TranscriptDetection(object):
             self._post_modify(tas, args_tran)
         self._compare_tss_cds(tas, args_tran)
         self._compare_term_tran(args_tran)
-        print("Generating table for the details")
+        print("Generating tables for the details")
         gen_table_transcript(self.gff_outfolder, args_tran)
         plot_tran(self.gff_outfolder, self.stat_path, args_tran.max_dist)
         self._remove_file(args_tran)

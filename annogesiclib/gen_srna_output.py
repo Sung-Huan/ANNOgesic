@@ -281,15 +281,15 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
     out_gff = open(tmp_gff, "w")
     out_gff.write("##gff-version 3\n")
     out.write("\t".join([
-        "rank", "strain", "name", "start", "end", "strand",
-        "start_with_TSS/Cleavage_site", "end_with_cleavage", "candidates",
-        "lib_type", "best_avg_coverage", "best_highest_coverage",
-        "best_lowest_coverage", "track/coverage",
-        "normalized_secondary_energy_change(by_length)", "sRNA_types",
-        "conflict_sORF", "nr_hit_number", "sRNA_hit_number",
-        "nr_hit_top3|ID|e-value", "sRNA_hit|e-value", "overlap_CDS",
-        "overlap_percent", "end_with_terminator",
-        "associated_promoter", "sRNA_length"]) + "\n")
+        "Rank", "Genome", "Name", "Start", "End", "Strand",
+        "Start_with_TSS/Cleavage_site", "End_with_cleavage", "Candidates",
+        "Lib_type", "Best_avg_coverage", "Best_highest_coverage",
+        "Best_lowest_coverage", "Track/Coverage",
+        "Normalized_secondary_energy_change(by_length)", "sRNA_types",
+        "Conflict_sORF", "nr_hit_number", "sRNA_hit_number",
+        "nr_hit_top3|ID|e-value", "sRNA_hit|e-value", "Overlap_CDS",
+        "Overlap_percent", "End_with_terminator",
+        "Associated_promoter", "sRNA_length"]) + "\n")
     nr_blasts = merge_info(nr_blasts)
     srna_blasts = merge_info(srna_blasts)
     finals = compare(srnas, srna_tables, nr_blasts,
@@ -309,10 +309,14 @@ def print_best(detect, out, srna):
         out.write(srna.info + "\n")
 
 
-def check_energy(srna, energy, detect):
+def check_energy(srna, import_info, energy, detect):
     '''check the folding energy of sRNA'''
-    if "2d_energy" in srna.attributes.keys():
-        if float(srna.attributes["2d_energy"]) < energy:
+    if import_info is not None:
+        if ("sec_str" in import_info) and (
+                "2d_energy" in srna.attributes.keys()):
+            if float(srna.attributes["2d_energy"]) < energy:
+                detect["energy"] = True
+        else:
             detect["energy"] = True
     else:
         detect["energy"] = True
@@ -424,7 +428,8 @@ def gen_best_srna(srna_file, out_file, args_srna):
         detect = {"energy": False, "TSS": False, "nr_hit": False,
                   "sRNA_hit": False, "sORF": False, "term": False,
                   "promoter": False}
-        check_energy(srna, args_srna.energy, detect)
+        check_energy(srna, args_srna.import_info,
+                     args_srna.energy, detect)
         check_tss(args_srna.import_info, srna, detect)
         check_nr_hit(srna, args_srna.nr_hits_num, detect,
                      args_srna.import_info)

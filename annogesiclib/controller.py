@@ -55,7 +55,7 @@ class Controller(object):
             else:
                 if os.path.exists(folder):
                     if len(os.listdir(folder)) == 0:
-                        print("Error: {0} is empty folder!".format(flag))
+                        print("Error: {0} is a empty folder!".format(flag))
                         sys.exit()
                 else:
                     print("Error: {0} is wrong. Please check it!".format(
@@ -69,7 +69,7 @@ class Controller(object):
                     for file_ in files:
                         if not os.path.exists(file_):
                             print("Error: Some files in {0} do "
-                                  "not existed!".format(flag))
+                                  "not exist!".format(flag))
                             sys.exit()
 
     def check_parameter(self, paras, names):
@@ -87,11 +87,11 @@ class Controller(object):
             if folder is not None:
                 if os.path.exists(folder):
                     if len(os.listdir(folder)) == 0:
-                        print("Error: There is empty folder. "
+                        print("Error: There is a empty folder. "
                               "Please check it!")
                         sys.exit()
                 else:
-                    print("Error: There is wrong folder. "
+                    print("Error: There is a wrong folder. "
                           "Please check it!")
                     sys.exit()
 
@@ -123,13 +123,13 @@ class Controller(object):
                     sys.exit()
                 else:
                     if not os.path.isfile(files[i]):
-                        print("Error: There is wrong path of {0}. "
+                        print("Error: There is a wrong path of {0}. "
                               "Please check it!".format(names[i]))
                         sys.exit()
             else:
                 if files[i] is not None:
                     if not os.path.isfile(files[i]):
-                        print("Error: There is wrong path of {0}. "
+                        print("Error: There is a wrong path of {0}. "
                               "Please check it!".format(names[i]))
                         sys.exit()
 
@@ -184,7 +184,7 @@ class Controller(object):
 
     def get_target_fasta(self):
         """Get target fasta"""
-        print("Running get target fasta")
+        print("Running update genome fasta")
         self.check_multi_files([self._args.closed_fasta_files],
                                ["--closed_fasta_files"])
         self.check_parameter([self._args.output_format], ["--output_format"])
@@ -192,7 +192,10 @@ class Controller(object):
         project_creator.create_subfolders(
             self._paths.required_folders("get_target_fasta"))
         for output in self._args.output_format:
-            output = output.strip()
+            output = output.split(":")[0]
+            if not os.path.exists("/".join(output.split("/")[:-1])):
+                print("Error: Some folders in --output_format don't exist!")
+                sys.exit()
         target = TargetFasta(self._paths.tar_fasta_folder,
                              self._args.closed_fasta_files)
         target.get_target_fasta(
@@ -215,7 +218,7 @@ class Controller(object):
             sys.exit()
         if (self._args.closed_embl_files is None) and (
                 self._args.closed_gbk_files is None):
-            print("Error: please assign proper embl or genbank folder")
+            print("Error: please assign proper embl or genbank files")
             sys.exit()
         elif (self._args.closed_embl_files is not None) and (
                 self._args.closed_gbk_files is not None):
@@ -272,10 +275,10 @@ class Controller(object):
             self._args.base_height, self._args.enrichment_factor,
             self._args.processing_factor, self._args.replicate_tex,
             out_folder, self._args.validate_gene,
-            self._args.manual_files, self._args.strain_length,
+            self._args.manual_files, self._args.genome_lengths,
             self._args.compare_transcript_files, self._args.fuzzy,
             self._args.utr_length, self._args.cluster,
-            self._args.re_check_orphan, self._args.specify_strains,
+            self._args.re_check_orphan, self._args.specify_genomes,
             self._args.overlap_feature, self._args.reference_gff_files,
             self._args.remove_low_expression)
         tsspredator = TSSpredator(args_tss)
@@ -315,7 +318,7 @@ class Controller(object):
             self._args.max_enrichment_factor, self._args.max_processing_factor,
             self._args.utr_length, self._args.tex_notex_libs,
             self._args.condition_names, self._args.cluster,
-            self._args.strain_lengths, self._args.parallels,
+            self._args.genome_lengths, self._args.parallels,
             self._args.program, self._args.replicate_tex,
             self._args.steps)
         optimize_tss(args_ops)
@@ -379,7 +382,7 @@ class Controller(object):
         project_creator.create_subfolders(
             self._paths.required_folders("transcript"))
         args_tran = self.args_container.container_transcript(
-            self._args.tex_notex,
+            self._args.tex_notex, self._args.modify_transcript,
             self._args.length, self._args.annotation_files,
             self._args.height, self._args.width,
             self._args.tolerance, self._args.tolerance_coverage,
@@ -399,8 +402,8 @@ class Controller(object):
         self.check_multi_files(
             [self._args.annotation_files, self._args.terminator_files,
              self._args.transcript_files, self._args.tss_files],
-            ["--annotation_folder", "--terminator_files",
-             "--transcript_folder", "--tss_files"])
+            ["--annotation_files", "--terminator_files",
+             "--transcript_files", "--tss_files"])
         project_creator.create_subfolders(self._paths.required_folders("utr"))
         args_utr = self.args_container.container_utr(
                 self._args.tss_files, self._args.annotation_files,
@@ -427,11 +430,15 @@ class Controller(object):
                  self._args.fasta_files, self._args.sorf_files,
                  self._args.terminator_files, self._args.promoter_tables,
                  self._args.processing_site_files],
-                ["--annotation_folder", "--transcript_folder",
+                ["--annotation_files", "--transcript_files",
                  "--fasta_files", "--sorf_files", "--terminator_files",
                  "--promoter_tables", "--processing_site_files"])
         for info in self._args.filter_info:
             if "sec_str" == info:
+                if not self._args.compute_sec_structures:
+                    print("Error: --compute_sec_structures is not switch on, "
+                          "but sec_str is still in --filter_info.")
+                    sys.exit()
                 self._check_filter_input(
                         self._args.fasta_files, "fasta", "fasta")
                 for prop in ("rnafold_path", "relplot_path",
@@ -497,14 +504,14 @@ class Controller(object):
                 self._args.table_best, self._args.decrease_intergenic_antisense,
                 self._args.decrease_utr, self._args.fuzzy_intergenic_antisense,
                 self._args.fuzzy_utr, self._args.cutoff_nr_hit,
-                self._args.sorf_files,
-                self._args.overlap_percent_cds,
+                self._args.sorf_files, self._args.overlap_percent_cds,
                 self._args.terminator_files,
                 self._args.terminator_fuzzy_in_srna,
                 self._args.terminator_fuzzy_out_srna,
                 self._args.ignore_hypothetical_protein, self._args.tss_source,
                 self._args.min_utr_coverage, self._args.promoter_tables,
-                self._args.ranking_time_promoter, self._args.promoter_name)
+                self._args.ranking_time_promoter, self._args.promoter_names,
+                self._args.compute_sec_structures)
         srna = sRNADetection(args_srna)
         srna.run_srna_detection(args_srna)
 
@@ -564,11 +571,11 @@ class Controller(object):
             self._args.meme_path, self._args.glam2_path,
             self._paths.promoter_output_folder, self._args.tex_libs,
             self._args.tss_files, self._args.fasta_files,
-            self._args.num_motif, self._args.nt_before_tss,
+            self._args.num_motifs, self._args.nt_before_tss,
             self._args.motif_width, self._args.tss_source,
             self._args.annotation_files, self._args.end_run,
             self._args.combine_all, self._args.e_value,
-            self._args.parallel, self._args.program)
+            self._args.parallels, self._args.program)
         meme = MEME(args_pro)
         meme.run_meme(args_pro)
 
@@ -609,13 +616,13 @@ class Controller(object):
         project_creator.create_subfolders(
             self._paths.required_folders("circrna"))
         args_circ = self.args_container.container_circrna(
-            self._args.process, self._args.fasta_files,
+            self._args.parallels, self._args.fasta_files,
             self._args.annotation_files, self._args.bam_files,
             self._args.read_files, self._paths.circrna_stat_folder,
             self._args.support_reads, self._args.segemehl_path,
             self._args.testrealign_path, self._args.samtools_path,
             self._args.start_ratio, self._args.end_ratio,
-            self._args.ignore_hypothetical_protein,
+            self._args.ignore_hypothetical_proteins,
             self._paths.circrna_output_folder)
         circ = CircRNADetection(args_circ)
         circ.run_circrna(args_circ)
@@ -663,7 +670,7 @@ class Controller(object):
             self._args.rnaplfold_path, self._args.rnaplex_path,
             self._args.rnaup_path, self._args.annotation_files,
             self._args.fasta_files, self._args.srna_files,
-            self._args.query_srna, self._args.program,
+            self._args.query_srnas, self._args.program,
             self._args.interaction_length, self._args.window_size_target,
             self._args.span_target, self._args.window_size_srna,
             self._args.span_srna,
@@ -671,8 +678,8 @@ class Controller(object):
             self._args.unstructured_region_rnaplex_srna,
             self._args.unstructured_region_rnaup, self._args.energy_threshold,
             self._args.duplex_distance, self._args.top,
-            self._paths.starget_output_folder, self._args.process_rnaplex,
-            self._args.process_rnaup, self._args.continue_rnaup,
+            self._paths.starget_output_folder, self._args.parallels_rnaplex,
+            self._args.parallels_rnaup, self._args.continue_rnaup,
             self._args.potential_target_start, self._args.potential_target_end,
             self._args.target_feature)
         srnatarget = sRNATargetPrediction(args_tar)
@@ -684,10 +691,10 @@ class Controller(object):
         self.check_multi_files(
                 [self._args.fasta_files],
                 ["--fasta_files"])
-        if (self._args.bam_type != "closed_strain") and (
-                self._args.bam_type != "query_strain"):
-            print("Error: Please assign \"closed_strain\" or"
-                  " \"query_strain\" to --bam_type!")
+        if (self._args.bam_type != "closed_genome") and (
+                self._args.bam_type != "query_genome"):
+            print("Error: Please assign \"closed_genome\" or"
+                  " \"query_genome\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
                 self._args.ploidy != "diploid"):
@@ -764,10 +771,11 @@ class Controller(object):
                 ["--annotation_files", "--fasta_files", "--tss_files",
                  "--transcript_files"])
         if (self._args.program == "both"):
-            self.check_file([self._args.riboswitch_id, self._args.rfam_path],
-                            ["--riboswitch_id", "--rfam_path"], True)
-            self.check_file([self._args.rna_thermometer_id, self._args.rfam_path],
-                            ["--rna_thermometer_id", "--rfam_path"], True)
+            self.check_file([self._args.riboswitch_id_file, self._args.rfam_path],
+                            ["--riboswitch_id_file", "--rfam_path"], True)
+            self.check_file([self._args.rna_thermometer_id_file,
+                             self._args.rfam_path],
+                            ["--rna_thermometer_id_file", "--rfam_path"], True)
             project_creator.create_subfolders(
                     self._paths.required_folders("riboswitch"))
             project_creator.create_subfolders(
@@ -775,15 +783,16 @@ class Controller(object):
             ribos_path = self._paths.ribos_output_folder
             thermo_path = self._paths.thermo_output_folder
         elif (self._args.program == "thermometer"):
-            self.check_file([self._args.rna_thermometer_id, self._args.rfam_path],
-                            ["--thermometer_id", "--rfam_path"], True)
+            self.check_file([self._args.rna_thermometer_id_file,
+                             self._args.rfam_path],
+                            ["--thermometer_id_file", "--rfam_path"], True)
             project_creator.create_subfolders(
                     self._paths.required_folders("thermometer"))
             ribos_path = None
             thermo_path = self._paths.thermo_output_folder
         elif (self._args.program == "riboswitch"):
-            self.check_file([self._args.riboswitch_id, self._args.rfam_path],
-                            ["--riboswitch_id", "--rfam_path"], True)
+            self.check_file([self._args.riboswitch_id_file, self._args.rfam_path],
+                            ["--riboswitch_id_file", "--rfam_path"], True)
             project_creator.create_subfolders(
                     self._paths.required_folders("riboswitch"))
             ribos_path = self._paths.ribos_output_folder
@@ -795,9 +804,9 @@ class Controller(object):
         self._args.cmscan_path = self.check_execute_file(self._args.cmscan_path)
         self._args.cmpress_path = self.check_execute_file(self._args.cmpress_path)
         args_ribo = self.args_container.container_ribos(
-            self._args.program, self._args.rna_thermometer_id,
+            self._args.program, self._args.rna_thermometer_id_file,
             self._args.cmscan_path, self._args.cmpress_path,
-            self._args.riboswitch_id,
+            self._args.riboswitch_id_file,
             self._args.annotation_files, self._args.fasta_files,
             self._args.tss_files, self._args.transcript_files,
             self._args.rfam_path, ribos_path,
@@ -821,7 +830,7 @@ class Controller(object):
         args_cris = self.args_container.container_cris(
             self._args.fasta_files, self._args.annotation_files,
             self._args.crt_path, self._args.window_size,
-            self._args.min_number_repeat, self._args.min_length_repeat,
+            self._args.min_number_repeats, self._args.min_length_repeat,
             self._args.Max_length_repeat, self._args.min_length_spacer,
             self._args.Max_length_spacer, self._paths.crispr_output_folder,
             self._args.ignore_hypothetical_protein)
@@ -838,22 +847,22 @@ class Controller(object):
         self.check_file([self._args.transcript_file_path] + other_features,
                         ["--transcript_path", "--other_features_path"],
                         False)
-        self.check_parameter([self._args.strain_name], ["--strain_name"])
+        self.check_parameter([self._args.output_prefix], ["--output_prefix"])
         run_merge(merge_folder, self._args.transcript_file_path,
                   self._args.other_features_files_path, self._args.fuzzy_term,
                   self._args.fuzzy_tss,
-                  os.path.join(merge_folder, self._args.strain_name))
+                  os.path.join(merge_folder, self._args.output_prefix))
 
     def screen(self):
         """generate screenshot"""
         print("Running screenshot generation")
-        self.check_file([self._args.main_gff, self._args.fasta],
-                        ["--main_gff", "--fasta"], True)
+        self.check_file([self._args.main_gff, self._args.fasta_file],
+                        ["--main_gff", "--fasta_file"], True)
         if self._args.side_gffs is not None:
             for gff in (self._args.side_gffs):
                 gff = gff.strip()
                 if not os.path.isfile(gff):
-                    print("Error: The --side_gffs no exist!")
+                    print("Error: The --side_gffs do not exist!")
                     sys.exit()
         if self._args.output_folder is None:
             print("Error: Please assign --output_folder!")
@@ -866,7 +875,7 @@ class Controller(object):
             sys.exit()
         args_sc = self.args_container.container_screen(
             self._args.main_gff, self._args.side_gffs,
-            self._args.fasta, self._args.height,
+            self._args.fasta_file, self._args.height,
             self._args.tex_notex_libs, self._args.frag_libs,
             self._args.present, self._args.output_folder)
         screen = Screen(args_sc)

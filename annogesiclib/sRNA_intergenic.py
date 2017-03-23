@@ -720,7 +720,7 @@ def get_cutoff(cutoffs, out_folder, file_type):
             elif cover < float(low):
                 low = cover
     if low is None:
-        print("Error:The cutoff of coverage can not be all 0...")
+        print("Error: The cutoff of coverage can not be all 0...")
         sys.exit()
     coverages["no_tss"] = float(low)
     for tss, cover in coverages.items():
@@ -731,9 +731,9 @@ def get_cutoff(cutoffs, out_folder, file_type):
 
 def compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r):
     tsss, num_tss = read_tss(args_srna.tss_file)
-    if "TSS_class" not in os.listdir(args_srna.out_folder):
-        os.mkdir(os.path.join(args_srna.out_folder, "TSS_class"))
-    new_tss_file = os.path.join(args_srna.out_folder, "TSS_class",
+    if "TSS_classes" not in os.listdir(args_srna.out_folder):
+        os.mkdir(os.path.join(args_srna.out_folder, "TSS_classes"))
+    new_tss_file = os.path.join(args_srna.out_folder, "TSS_classse",
                                 "_".join([args_srna.prefix, "TSS.gff"]))
     new_tss_fh = open(new_tss_file, "w")
     num_tss = 0
@@ -794,9 +794,9 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                                        args_srna)
     nums, cdss, tas, pros, genes, ncs = read_data(args_srna)
     if not args_srna.tss_source:
-        print("Classifying TSS...")
+        print("Classifying TSSs...")
         compute_tss_type(args_srna, cdss, genes, wigs_f, wigs_r)
-        print("Classification of TSS has done...")
+        print("Classification of TSSs has done...")
     tsss, num_tss = read_tss(args_srna.tss_file)
     detects = {"overlap": False, "uni_with_tss": False, "anti": False}
     output = open(args_srna.output_file, "w")

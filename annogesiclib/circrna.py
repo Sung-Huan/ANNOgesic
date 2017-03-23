@@ -19,9 +19,9 @@ class CircRNADetection(object):
         self.helper = Helper()
         self.converter = Converter()
         self.alignment_path = os.path.join(args_circ.output_folder,
-                                           "segemehl_align")
+                                           "segemehl_alignment_files")
         self.splice_path = os.path.join(args_circ.output_folder,
-                                        "segemehl_splice")
+                                        "segemehl_splice_results")
         self.candidate_path = os.path.join(args_circ.output_folder,
                                            "circRNA_tables")
         self.gff_folder = os.path.join(args_circ.output_folder, "gffs")
@@ -177,7 +177,7 @@ class CircRNADetection(object):
                   "_".join([prefix, bam_data["sample"] + "_sort.bam"]))
             call([samtools_path, "sort", "-o", sort_sample, sample_bam])
             os.remove(sample_bam)
-            print("Converting bam file to sam file for " + bam_data["sample"])
+            print("Converting bam files to sam files for " + bam_data["sample"])
             call([samtools_path, "view", "-h", "-o",
                   sort_sample.replace(".bam", ".sam"), sort_sample])
 
@@ -311,7 +311,8 @@ class CircRNADetection(object):
                         os.path.join(self.splice_path, prefix))
             self.helper.check_make_folder(os.path.join(
                                           self.candidate_path, prefix))
-            print("Comparing with annotation of {0}".format(prefix))
+            print("Comparing circular RNAs with annotations of {0}".format(
+                prefix))
             for sample in samples:
                 splice_file = os.path.join(
                     self.splice_path, prefix,
@@ -343,7 +344,7 @@ class CircRNADetection(object):
             for file_ in datas[-1].split(","):
                 if not os.path.exists(file_):
                     print("Error: some files in -bam_files or "
-                          "--read_files are not exist!")
+                          "--read_files do not exist!")
                     sys.exit()
             input_datas.append({"sample": datas[0],
                                 "files": datas[-1].split(",")})
@@ -399,7 +400,7 @@ class CircRNADetection(object):
                 self.helper.check_uni_attributes(os.path.join(
                                                  args_circ.gffs, gff))
         if args_circ.segemehl_path is None:
-            print("Error: please assign segemehl folder!!")
+            print("Error: please assign segemehl path!!")
             sys.exit()
         self.multiparser.parser_fasta(args_circ.fastas)
         self.multiparser.parser_gff(args_circ.gffs, None)

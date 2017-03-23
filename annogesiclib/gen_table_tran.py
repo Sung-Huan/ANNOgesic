@@ -112,10 +112,10 @@ def gen_table_transcript(gff_folder, args_tran):
                        gff.replace(".gff", ".csv")), "w")
             out_gff = open(os.path.join(args_tran.out_folder, "tmp_gff"), "w")
             out_gff.write("##gff-version 3\n")
-            out.write("\t".join(["strain", "Name", "start", "end", "strand",
-                                 "detect_lib_type", "associated_gene",
-                                 "associated_tss", "associated_term",
-                                 "coverage_details"]) + "\n")
+            out.write("\t".join(["Genome", "Name", "Start", "End", "Strand",
+                                 "Detect_lib_type", "Associated_gene",
+                                 "Associated_tss", "Associated_term",
+                                 "Coverage_details"]) + "\n")
             gff_parser = Gff3Parser()
             for entry in gff_parser.entries(th):
                 trans.append(entry)

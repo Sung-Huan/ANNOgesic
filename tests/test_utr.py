@@ -74,17 +74,17 @@ class TestsTSSpredator(unittest.TestCase):
         args.out_folder = self.out
         self.utr = UTRDetection(args)
 
-    def tearDown(self):
-        if os.path.exists(self.test_folder):
-            shutil.rmtree(self.test_folder)
+#    def tearDown(self):
+#        if os.path.exists(self.test_folder):
+#            shutil.rmtree(self.test_folder)
 
     def test_compute_utr(self):
         ut.detect_5utr = self.mock.mock_detect_5utr
         ut.detect_3utr = self.mock.mock_detect_3utr
         term_path = os.path.join(self.terms, "tmp")
         os.mkdir(term_path)
-        utr5_path = os.path.join(self.out, "5UTR")
-        utr3_path = os.path.join(self.out, "3UTR")
+        utr5_path = os.path.join(self.out, "5UTRs")
+        utr3_path = os.path.join(self.out, "3UTRs")
         os.mkdir(utr5_path)
         os.mkdir(utr3_path)
         utr5_stat_path = os.path.join(utr5_path, "statistics")
@@ -108,13 +108,15 @@ class TestsTSSpredator(unittest.TestCase):
             utr5_stat_path, "test_5utr_length.png")))
         self.assertTrue(os.path.exists(os.path.join(
             utr3_stat_path, "test_3utr_length.png")))
+        shutil.rmtree(utr5_path)
+        shutil.rmtree(utr3_path)
 
     def test_run_utr_detection(self):
         self.utr._check_gff = self.mock.mock_check_gff
         ut.detect_5utr = self.mock.mock_detect_5utr
         ut.detect_3utr = self.mock.mock_detect_3utr
-        utr5_path = os.path.join(self.out, "5UTR")
-        utr3_path = os.path.join(self.out, "3UTR")
+        utr5_path = os.path.join(self.out, "5UTRs")
+        utr3_path = os.path.join(self.out, "3UTRs")
         os.mkdir(utr5_path)
         os.mkdir(utr3_path)
         utr5_stat_path = os.path.join(utr5_path, "statistics")

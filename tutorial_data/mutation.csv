@@ -1,4 +1,4 @@
-#reference_id	target_id	reference_nt	position	target_nt	impact_of_correction	locus_tag	gene	Description
+#Reference_ids	Target_ids	Reference_nts	Positions	Target_nts	Impact_of_corrections	Locus_tags	Genes	Description
 NC_009839.1	NC_test.1	g	3	c		SAOUHSC_00002	dnaA	XXXXXX
 NC_009839.1	NC_test.1	t	6	-	deletion			YYYYYY
 NC_009839.1	test_case2	-	600	g	insertion	SAOUHSC_00132		

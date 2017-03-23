@@ -93,8 +93,8 @@ class TestsORFDetection(unittest.TestCase):
         os.mkdir(table_path)
         os.mkdir(os.path.join(gff_path, "all_candidates"))
         os.mkdir(os.path.join(table_path, "all_candidates"))
-        os.mkdir(os.path.join(gff_path, "best"))
-        os.mkdir(os.path.join(table_path, "best"))
+        os.mkdir(os.path.join(gff_path, "best_candidates"))
+        os.mkdir(os.path.join(table_path, "best_candidates"))
         gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.gff"),
                  "test")
         gen_file(os.path.join(gff_path, "all_candidates/test_sORF_all.csv"),
@@ -115,11 +115,11 @@ class TestsORFDetection(unittest.TestCase):
         args.merge_wigs = "merge_wigs"
         self.sorf._start_stop_codon(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(
-            gff_path, "best/test_sORF.gff")))
+            gff_path, "best_candidates/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(
             gff_path, "all_candidates/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(
-            table_path, "best/test_sORF.csv")))
+            table_path, "best_candidates/test_sORF.csv")))
         self.assertTrue(os.path.exists(os.path.join(
             table_path, "all_candidates/test_sORF.csv")))        
 

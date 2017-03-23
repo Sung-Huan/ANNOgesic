@@ -29,13 +29,13 @@ class TestStatSubLocal(unittest.TestCase):
         self.assertDictEqual(subs, {
             'Staphylococcus_aureus_HG002': {'Unknown': 1},
             'Staphylococcus_aureus_HG003': {'CellWall': 1, 'Cytoplasmic': 2},
-            'all_strain': {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}})
+            'all_genome': {'Unknown': 1, 'CellWall': 1, 'Cytoplasmic': 2}})
         self.assertDictEqual(total_nums, {
             'Staphylococcus_aureus_HG002': 1,
-            'Staphylococcus_aureus_HG003': 3, 'all_strain': 4})
+            'Staphylococcus_aureus_HG003': 3, 'all_genome': 4})
         self.assertDictEqual(unknown_nums, {
             'Staphylococcus_aureus_HG002': 1,
-            'Staphylococcus_aureus_HG003': 0, 'all_strain': 1})
+            'Staphylococcus_aureus_HG003': 0, 'all_genome': 1})
 
     def test_print_file_and_plot(self):
         out_stat = StringIO()

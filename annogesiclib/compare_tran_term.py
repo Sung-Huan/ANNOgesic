@@ -77,13 +77,13 @@ def output_term(ters, term_file, type_, term_outfolder):
         table_file = term_file.replace("/gffs/", "/tables/")
         table_file = table_file.replace(".gff", ".csv")
         out_t = open(table_file + "tmp", "w")
-        out_t.write("\t".join(["strain", "name", "start", "end", "strand",
-                               "detect", "associated_gene",
-                               "associated_transcript",
-                               "coverage_decrease", "coverage_detail"]) + "\n")
+        out_t.write("\t".join(["Genome", "Name", "Start", "End", "Strand",
+                               "Detect", "Associated_gene",
+                               "Associated_transcript",
+                               "Coverage_decrease", "Coverage_detail"]) + "\n")
         fh = open(table_file, "r")
         for row in csv.reader(fh, delimiter='\t'):
-            if row[0] != "strain":
+            if row[0] != "genome":
                 for ter in ters:
                     if (row[0] == ter.seq_id) and (
                             row[2] == str(ter.start)) and (

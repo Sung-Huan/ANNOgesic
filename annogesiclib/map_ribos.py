@@ -18,8 +18,8 @@ def mapping_ribos(table_folder, id_file, feature):
             out = open(tmp_table, "w")
             tables = []
             fh = open(table_file, "r")
-            out.write("#ID\tstrain\tstrand\tassociated_CDS\tstart_genome\t"
-                      "end_genome\tRfam\te_value\tstart_align\tend_align\n")
+            out.write("#ID\tGenome\tStrand\tAssociated_CDS\tStart_genome\t"
+                      "End_genome\tRfam\tE_value\tStart_align\tEnd_align\n")
             for row in csv.reader(fh, delimiter='\t'):
                 if not row[0].startswith("#"):
                     tables.append({"input": row[0:6], "Rfam": row[6],

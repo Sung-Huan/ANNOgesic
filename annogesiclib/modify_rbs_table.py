@@ -14,8 +14,8 @@ def modify_table(table, output_all):
     first = True
     rbss = []
     out = open("tmp.csv", "w")
-    out.write("#ID\tstrain\tstrand\tassociated_CDS\tstart_genome\t"
-              "end_genome\tRfam\te_value\tstart_align\tend_align\n")
+    out.write("#ID\tGenome\tStrand\tAssociated_CDS\tStart_genome\t"
+              "End_genome\tRfam\tE_value\tStart_align\tEnd_align\n")
     if output_all:
         with open(table) as fh:
             for line in fh:

@@ -22,10 +22,10 @@ class Crispr(object):
         self.all_out = os.path.join(args_cris.out_folder,
                                     "gffs", "all_candidates")
         self.best_out = os.path.join(args_cris.out_folder,
-                                     "gffs", "best")
+                                     "gffs", "best_candidates")
         self.helper.check_make_folder(self.all_out)
         self.helper.check_make_folder(self.best_out)
-        self.data_folder = os.path.join(args_cris.out_folder, "CRT_output")
+        self.data_folder = os.path.join(args_cris.out_folder, "CRT_results")
         self.helper.check_make_folder(self.data_folder)
         self.helper.check_make_folder(self.stat_folder)
 

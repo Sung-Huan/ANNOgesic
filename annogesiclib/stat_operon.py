@@ -99,7 +99,7 @@ def stat(input_file, out_file):
                     plus_num(class_operon, row[1], "poly")
                 tmp_id = row[0]
     if len(operons) > 1:
-        out.write("All strains:\n")
+        out.write("All genomes:\n")
         print_stat(operons_all, total_num_all, class_operon["total"], out)
     for strain in operons.keys():
         out.write("\n" + strain + ":\n")

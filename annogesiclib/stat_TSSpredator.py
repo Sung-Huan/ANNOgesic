@@ -110,7 +110,7 @@ def stat_tsspredator(tss_file, file_type, stat_file, lib_file):
         tsss.append(entry)
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     if len(tsss_strain) > 1:
-        stat(tsss, "All_strains", feature_name, out_stat, file_type, out_lib)
+        stat(tsss, "All_genomes", feature_name, out_stat, file_type, out_lib)
     for strain in tsss_strain.keys():
         stat(tsss_strain[strain], strain, feature_name,
              out_stat, file_type, out_lib)

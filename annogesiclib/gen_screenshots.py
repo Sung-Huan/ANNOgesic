@@ -96,7 +96,7 @@ def gen_batch(lib_t, lib_n, lib_f, strand, gffs, out, seq):
         print("Printing the reverse batch files...")
     for gff in gffs:
         if gff.seq_id not in seq.keys():
-            print("Error: The strain names in fasta file "
+            print("Error: The genome names in fasta file "
                   "and gff file are different!!")
             sys.exit()
         if (gff.start - 200) <= 0:

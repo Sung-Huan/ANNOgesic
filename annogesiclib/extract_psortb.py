@@ -142,7 +142,7 @@ def extract_psortb(psortb_table, out_psortb, merge_gff, out_merge, fuzzy):
     else:
         out_m = None
     out_p = open(out_psortb, "w")
-    out_p.write("#strain\tprotein\tstrand\tstart\tend\tlocation\tscore\n")
+    out_p.write("#Genome\tProtein\tStrand\tStart\tEnd\tLocation\tScore\n")
     psortbs = get_information(psortb_table, out_p, fuzzy)
     if merge_gff:
         print_gff(gffs, psortbs, out_m)

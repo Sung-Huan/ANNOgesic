@@ -61,7 +61,7 @@ class TestStatsORF(unittest.TestCase):
                         "all": {"all": 20}}}
         ss.print_num(out, 2, nums, "aaa", "5utr")
         self.assertEqual(out.getvalue(),
-                         "(for strain 0.1; for 5utr - 0.2)\n")
+                         "(for genome 0.1; for 5utr - 0.2)\n")
 
     def test_print_stat(self):
         out = StringIO()
@@ -74,20 +74,20 @@ class TestStatsORF(unittest.TestCase):
         ss.print_stat(nums, nums_best, "aaa", out, True)
         datas = out.getvalue().split("\n")
         for data in datas:
-            if "total sORF in this strain are " in data:
-                self.assertEqual(data, "\ttotal sORF in this strain are 40")
+            if "total sORF in this genome are " in data:
+                self.assertEqual(data, "\ttotal sORF in this genome are 40")
             if "total sORF of test2 sORF candidates are " in data:
                 self.assertEqual(data,
                                  ("\ttotal sORF of test2 sORF candidates are "
-                                  "10(for this strain - 0.25)"))
+                                  "10(for this genome - 0.25)"))
             if "total sORF of all sORF candidates are " in data:
                 self.assertEqual(data,
                                  ("\ttotal sORF of all sORF candidates are "
-                                  "40(for this strain - 1.0)"))
+                                  "40(for this genome - 1.0)"))
             if "total sORF of test1 sORF candidates are " in data:
                 self.assertEqual(data,
                                  ("\ttotal sORF of test1 sORF candidates are "
-                                  "30(for this strain - 0.75)"))
+                                  "30(for this genome - 0.75)"))
 
     def test_get_stat_num(self):
         nums = ss.get_stat_num(self.example.sorfs, True)
@@ -149,7 +149,7 @@ class TestStatsORF(unittest.TestCase):
             if "total sORF of intergenic sORF candidates are " in data:
                 self.assertEqual(data,
                                  ("\ttotal sORF of intergenic sORF candidates "
-                                  "are 1(for this strain - "
+                                  "are 1(for this genome - "
                                   "0.3333333333333333)"))
 
 

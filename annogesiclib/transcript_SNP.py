@@ -135,7 +135,7 @@ def import_data(snp_file, args_snp, bam_number, depth_file, min_sample):
     raw_snps = []
     dess = []
     max_quals = {}
-    max_quals["All_strain"] = 0
+    max_quals["All_genome"] = 0
     pre_strain = ""
     cutoff_sum = get_n_a_value(args_snp.dp4_sum, depth_file,
                                min_sample)
@@ -162,8 +162,8 @@ def import_data(snp_file, args_snp, bam_number, depth_file, min_sample):
                     max_quals[snp["strain"]] = 0
                 if snp["qual"] > max_quals[snp["strain"]]:
                     max_quals[snp["strain"]] = snp["qual"]
-                if snp["qual"] > max_quals["All_strain"]:
-                    max_quals["All_strain"] = snp["qual"]
+                if snp["qual"] > max_quals["All_genome"]:
+                    max_quals["All_genome"] = snp["qual"]
                 if (snp["depth"] >= depth_s) and (
                         snp["depth"] <= depth_b) and (
                         snp["dp4_sum"] >= cutoff_sum) and (
@@ -316,31 +316,37 @@ def stat(max_quals, trans_snps, bam_number, stat_prefix,
     for strain, max_qual in max_quals.items():
         max_qual = int(((max_qual / 10) + 1) * 10)
         cutoffs = []
-        if (strain == "All_strain") and (len(max_quals) > 2):
+        if (strain == "All_genome") and (len(max_quals) > 2):
             printed = True
-        elif (strain != "All_strain"):
+        elif (strain != "All_genome"):
             printed = True
         if printed:
             for cutoff in range(0, max_qual, 10):
                 cutoffs.append(0)
             for snp in trans_snps:
-                if (snp["strain"] == strain) or (strain == "All_strain"):
+                if (snp["strain"] == strain) or (strain == "All_genome"):
                     index = int(snp["qual"] / 10)
                     cutoffs[index] += 1
             num_cutoff = 10
             num_quality = 0
             out_stat.write(strain + ":\n")
+            best_cutoffs = []
+            cutoffs = sorted(cutoffs)
             for cutoff in cutoffs:
                 if args_snp.quality <= (num_cutoff - 10):
                     num_quality = num_quality + cutoff
+                if num_cutoff < args_snp.quality:
+                    num_quality = 0
+                else:
+                    best_cutoffs.append(cutoff)
                 out_stat.write("the number of QUAL which is between "
                                "{0} and {1} = {2}\n".format(
                                    num_cutoff - 10, num_cutoff, cutoff))
                 num_cutoff = num_cutoff + 10
-            out_stat.write("the total numbers of QUAL which is "
+            out_stat.write("the total numbers of QUAL which are "
                            "higher than {0} = {1}\n".format(
                                args_snp.quality, num_quality))
-            plot_bar(cutoffs, strain, out_snp,
+            plot_bar(best_cutoffs, strain, out_snp,
                      type_.replace(".csv", ".png"))
             printed = False
     out_stat.close()

@@ -27,7 +27,7 @@ class ColorPNG(object):
                     # convert original png to svg and give color on it.
                     for screenshot in os.listdir(out_path):
                         if screenshot.endswith(".png"):
-                            print("Converting {0} to svg and "
+                            print("Converting {0} to svg files and "
                                   "Painting tracks now".format(
                                       screenshot))
                             svg_file = screenshot.replace(".png", ".svg")
@@ -47,7 +47,7 @@ class ColorPNG(object):
                     # convert to png file again
                     for screenshot in os.listdir(out_path):
                         if screenshot.endswith(".svg"):
-                            print("Converting {0} to png now...".format(
+                            print("Converting {0} to png files now...".format(
                                   screenshot))
                             png_file = screenshot.replace(".svg", ".png")
                             print(os.path.join(out_path, png_file))

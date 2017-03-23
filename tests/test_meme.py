@@ -59,22 +59,22 @@ class TestMEME(unittest.TestCase):
         gen_file("tmp/orphan.fa", "orphan")
         self.meme._move_and_merge_fasta(self.test_folder, "test")
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_all_types.fa")))
+            self.test_folder, "test_allgenome_all_types.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_primary.fa")))
+            self.test_folder, "test_allgenome_primary.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_secondary.fa")))
+            self.test_folder, "test_allgenome_secondary.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_internal.fa")))
+            self.test_folder, "test_allgenome_internal.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_antisense.fa")))
+            self.test_folder, "test_allgenome_antisense.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_orphan.fa")))
+            self.test_folder, "test_allgenome_orphan.fa")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.test_folder, "test_allstrain_without_orphan.fa")))
+            self.test_folder, "test_allgenome_without_orphan.fa")))
 
     def test_split_fasta_by_strain(self):
-        with open(os.path.join(self.fa_folder, "allstrain.fa"), "w") as fh:
+        with open(os.path.join(self.fa_folder, "allgenome.fa"), "w") as fh:
             fh.write(""">aaa_aaa_aaa
 ATTATATATA
 >bbb_bbb_bbb

@@ -327,8 +327,8 @@ class Converter(object):
              (srna_output_file is None):
             pass
         else:
-            print("Error: Lack sRNA input gff file or "
-                  "the name sRNA output rnt file\n")
+            print("Error: Lack sRNA input gff files or "
+                  "the name sRNA output rnt files\n")
 
     def convert_embl2gff(self, embl_file, gff_file):
         '''Convert embl format to gff format'''
@@ -511,7 +511,7 @@ class Converter(object):
 
     def convert_gbk2embl(self, input_folder):
         """Convert gbk to embl."""
-        print("Converting gbk to embl")
+        print("Converting gbk files to embl files")
         for annotation_file in os.listdir(input_folder):
             if annotation_file[-3:] == "gbk":
                 gbk_file = annotation_file

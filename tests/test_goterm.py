@@ -21,7 +21,7 @@ class TestGetPolyT(unittest.TestCase):
         self.go_folder = os.path.join(self.test_folder, "go_folder")
         if (not os.path.exists(self.go_folder)):
             os.mkdir(self.go_folder)
-        self.all_strain = "all_strains_uniprot.csv"
+        self.all_strain = "all_genomes_uniprot.csv"
         self.trans = os.path.join(self.test_folder, "tran_folder")
         if (not os.path.exists(self.trans)):
             os.mkdir(self.trans)

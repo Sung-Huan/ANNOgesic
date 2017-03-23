@@ -32,16 +32,50 @@ def uni(tas, genes, out):
         detect = False
 
 
-def overlap(tas, genes, print_list, out):
+def check_modify(start_tmp, stop_tmp, gene, ta, modify):
+    if (ta.start >= gene.start) and (
+            ta.end <= gene.end):
+        if "within_extend_ends" in modify:
+            start_tmp = gene.start
+            stop_tmp = gene.end
+        else:
+            start_tmp = ta.start
+            stop_tmp = ta.end
+    elif ((ta.start <= gene.start) and (
+            ta.end >= gene.start) and (
+            ta.end <= gene.end)):
+        if (ta.strand == "+") and ("extend_3end" in modify):
+            start_tmp = ta.start
+            stop_tmp = gene.end
+        elif (ta.strand == "-") and ("extend_5end" in modify):
+            start_tmp = ta.start
+            stop_tmp = gene.end
+        else:
+            start_tmp = ta.start
+            stop_tmp = ta.end
+    elif ((ta.start >= gene.start) and (
+            ta.start <= gene.end) and (
+            ta.end >= gene.end)):
+        if (ta.strand == "+") and ("extend_5end" in modify):
+            start_tmp = gene.start
+            stop_tmp = ta.end
+        elif (ta.strand == "-") and ("extend_3end" in modify):
+            start_tmp = gene.start
+            stop_tmp = ta.end
+        else:
+            start_tmp = ta.start
+            stop_tmp = ta.end
+    return start_tmp, stop_tmp
+
+
+def overlap(tas, genes, out, modify):
     '''Check the overlap of annotation and transcript'''
-    start_tmp = 0
-    stop_tmp = 0
-    printed = False
     check = False
-    combine = False
     for gene in genes:
         start_tmp = 0
         stop_tmp = 0
+        start = 0
+        stop = 0
         for ta in tas:
             if (ta.strand == gene.strand) and (
                     ta.seq_id == gene.seq_id):
@@ -54,43 +88,47 @@ def overlap(tas, genes, print_list, out):
                          ta.start <= gene.end) and (
                          ta.end >= gene.end)):
                     check = True
-                    if ta in print_list:
-                        printed = True
-                    else:
-                        print_list.append(ta)
+                    tmp_ta = ta
                     if start_tmp == 0:
-                        start_tmp = ta.start
-                        stop_tmp = ta.end
+                        start_tmp, stop_tmp = check_modify(
+                            start_tmp, stop_tmp, gene, ta, modify)
+                        start = start_tmp
+                        stop = stop_tmp
                     else:
-                        combine = True
-                        if stop_tmp < ta.end:
-                            stop_tmp = ta.end
-                if (ta.start > gene.end) and (start_tmp != 0):
+                        start_tmp, stop_tmp = check_modify(
+                            start_tmp, stop_tmp, gene, ta, modify)
+                        if "merge_overlap" in modify:
+                            if stop < stop_tmp:
+                                stop = stop_tmp
+                        else:
+                            if (start_tmp != 0):
+                                out.write("\t".join([str(field) for field in [
+                                    tmp_ta.seq_id, tmp_ta.source,
+                                    tmp_ta.feature,
+                                    start, stop, tmp_ta.score,
+                                    tmp_ta.strand, tmp_ta.phase,
+                                    tmp_ta.attribute_string]]) + "\n")
+                                start = start_tmp
+                                stop = stop_tmp
+                if (ta.start > gene.end) and (start != 0) and (check):
                     check = False
-                    if combine or (not printed):
-                        tmp_ta = print_list[-1]
-                        out.write("\t".join([str(field) for field in [
-                                  tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
-                                  start_tmp, stop_tmp, tmp_ta.score,
-                                  tmp_ta.strand, tmp_ta.phase,
-                                  tmp_ta.attribute_string]]) + "\n")
-                    combine = False
-                    printed = False
+                    out.write("\t".join([str(field) for field in [
+                              tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
+                              start, stop, tmp_ta.score,
+                              tmp_ta.strand, tmp_ta.phase,
+                              tmp_ta.attribute_string]]) + "\n")
                     break
-        if (start_tmp != 0) and (check):
-            if combine or (not printed):
-                tmp_ta = print_list[-1]
-                out.write('\t'.join([str(field) for field in [
-                          tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
-                          start_tmp, stop_tmp, tmp_ta.score, tmp_ta.strand,
-                          tmp_ta.phase, tmp_ta.attribute_string]]) + "\n")
+        if (start != 0) and (check):
+            out.write('\t'.join([str(field) for field in [
+                      tmp_ta.seq_id, tmp_ta.source, tmp_ta.feature,
+                      start, stop, tmp_ta.score, tmp_ta.strand,
+                      tmp_ta.phase, tmp_ta.attribute_string]]) + "\n")
 
 
-def fill_gap(gff_file, ta_file, type_, output):
+def fill_gap(gff_file, ta_file, type_, output, modify):
     '''compare transcript with genome annotation to modify the transcript'''
     tas = []
     genes = []
-    print_list = []
     ta_f = open(ta_file, "r")
     gff_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(ta_f):
@@ -108,7 +146,7 @@ def fill_gap(gff_file, ta_file, type_, output):
     out = open(output, "w")
     out.write("##gff-version 3\n")
     if type_ == "overlap":
-        overlap(tas, genes, print_list, out)
+        overlap(tas, genes, out, modify)
     elif type_ == "uni":
         uni(tas, genes, out)
 

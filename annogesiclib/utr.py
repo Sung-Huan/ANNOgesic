@@ -13,14 +13,14 @@ class UTRDetection(object):
         self.multiparser = Multiparser()
         self.tss_path = os.path.join(args_utr.tsss, "tmp")
         self.tran_path = os.path.join(args_utr.trans, "tmp")
-        self.utr5_path = os.path.join(args_utr.out_folder, "5UTR")
-        self.utr3_path = os.path.join(args_utr.out_folder, "3UTR")
+        self.utr5_path = os.path.join(args_utr.out_folder, "5UTRs")
+        self.utr3_path = os.path.join(args_utr.out_folder, "3UTRs")
         self.utr5_stat_path = os.path.join(self.utr5_path, "statistics")
         self.utr3_stat_path = os.path.join(self.utr3_path, "statistics")
 
     def _check_folder(self, folder):
         if folder is None:
-            print("Error: Lack required files!!!")
+            print("Error: Lack required files!")
             sys.exit()
 
     def _check_gff(self, folder):
@@ -42,11 +42,11 @@ class UTRDetection(object):
                                 "_term.gff", prefix, None, None)
                 else:
                     term = None
-                print("Computing 5'UTR of {0}".format(prefix))
+                print("Computing 5'UTRs of {0}".format(prefix))
                 detect_5utr(tss, os.path.join(args_utr.gffs, gff),
                             tran, os.path.join(self.utr5_path, "gffs",
                             "_".join([prefix, "5UTR.gff"])), args_utr)
-                print("Computing 3'UTR of {0}".format(prefix))
+                print("Computing 3'UTRs of {0}".format(prefix))
                 detect_3utr(tran, os.path.join(args_utr.gffs, gff),
                             term, os.path.join(self.utr3_path, "gffs",
                             "_".join([prefix, "3UTR.gff"])), args_utr)

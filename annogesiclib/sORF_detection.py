@@ -913,18 +913,18 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
     out_g.write("##gff-version 3\n")
     if args_sorf.print_all:
         out_t.write("\t".join([
-            "strain", "Name", "start", "end", "strand", "type", "TSS", "RBS",
-            "all_start_points", "all_stop_pointss", "sRNA_conflict",
-            "frame_shift", "lib_type", "best_avg_coverage",
-            "best_highest_coverage", "best_lowest_coverage", "track_detail",
-            "seq", "combinations"]) + "\n")
+            "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
+            "Ribosome_binding_site", "All_start_points", "All_stop_points",
+            "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+            "Best_highest_coverage", "Best_lowest_coverage", "Track_detail",
+            "Seq", "Combinations"]) + "\n")
     else:
         out_t.write("\t".join([
-            "strain", "Name", "start", "end", "strand", "type", "TSS", "RBS",
-            "all_start_points", "all_stop_points", "sRNA_conflict",
-            "frame_shift", "lib_type", "best_avg_coverage",
-            "best_highest_coverage", "best_lowest_coverage",
-            "track_detail", "seq"]) + "\n")
+            "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
+            "Ribosome_binding_site", "All_start_points", "All_stop_points",
+            "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+            "Best_highest_coverage", "Best_lowest_coverage",
+            "Track_detail", "Seq"]) + "\n")
     num = 0
     for sorf in sorfs:
         if ((compare_rbs_start(sorf, args_sorf.min_rbs,

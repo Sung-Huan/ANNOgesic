@@ -96,7 +96,7 @@ class TestStatTaComparison(unittest.TestCase):
                         out_ta_file, out_tss_file, 5)
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas),
-                         "All strains:\n" + self.example.print_tas)
+                         "All genomes:\n" + self.example.print_tas)
         datas, attributes = extract_info(out_ta_file, "file")
         self.assertListEqual(
             datas,
@@ -191,7 +191,7 @@ class TestStatTaComparison(unittest.TestCase):
                         out_ta_file, out_gff_file, ["gene"])
         datas = import_data(stat_file)
         self.assertEqual("\n".join(datas),
-                         ("For gene:\n\tAll strains:\n\tThe transcript "
+                         ("For gene:\n\tAll genomes:\n\tThe transcript "
                           "information compares with gene:\n" + \
                           self.example.print_tag))
         datas, attributes = extract_info(out_ta_file, "file")

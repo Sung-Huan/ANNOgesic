@@ -11,8 +11,8 @@ class GoTermFinding(object):
     def __init__(self, args_go):
         self.multiparser = Multiparser()
         self.helper = Helper()
-        self.out_all = os.path.join(args_go.out_folder, "all_CDS")
-        self.out_express = os.path.join(args_go.out_folder, "expressed_CDS")
+        self.out_all = os.path.join(args_go.out_folder, "all_CDSs")
+        self.out_express = os.path.join(args_go.out_folder, "expressed_CDSs")
         self.result_all_path = os.path.join(self.out_all, "GO_term_results")
         self.result_express_path = os.path.join(self.out_express,
                                                 "GO_term_results")
@@ -24,7 +24,7 @@ class GoTermFinding(object):
         self.stat_all_path = os.path.join(self.out_all, "statistics")
         self.stat_express_path = os.path.join(self.out_express,
                                               "statistics")
-        self.all_strain = "all_strains_uniprot.csv"
+        self.all_strain = "all_genomes_uniprot.csv"
 
     def _retrieve_go(self, uniprot, out_path, type_):
         prefixs = []
@@ -106,13 +106,13 @@ class GoTermFinding(object):
         self.multiparser.parser_gff(args_go.gffs, None)
         if args_go.trans is not None:
             self.multiparser.parser_gff(args_go.trans, "transcript")
-        print("Computing all CDS")
+        print("Computing all CDSs")
         self._retrieve_go(args_go.uniprot, self.result_all_path, "all")
         self._merge_files(args_go.gffs, self.result_all_path, self.out_all)
         self._stat(self.result_all_path, self.stat_all_path, args_go.go,
                    args_go.goslim, self.out_all)
         if args_go.trans is not None:
-            print("Computing express CDS")
+            print("Computing express CDSs")
             self._retrieve_go(args_go.uniprot, self.result_express_path,
                               "express")
             self._merge_files(args_go.gffs, self.result_express_path,

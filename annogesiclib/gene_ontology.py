@@ -97,8 +97,8 @@ def retrieve_uniprot(database_file, gff_file, out_file, tran_file, type_):
     name_list = set()
     gffs = []
     out = open(out_file, "w")
-    out.write("\t".join(["strain", "strand", "start", "end",
-                         "protein_id", "Go_term"]) + "\n")
+    out.write("\t".join(["Genome", "Strand", "Start", "End",
+                         "Protein_id", "Go_term"]) + "\n")
     for entry in Gff3Parser().entries(open(gff_file)):
         if entry.feature == "CDS":
             if ("Name" in entry.attributes.keys()) and (
@@ -214,7 +214,7 @@ def print_file(classes, total_nums, out_folder, stat):
     out_stat = open(stat, "w")
     printed = True
     for strain, datas in classes.items():
-        if (strain == "All_strain") and len(classes) <= 2:
+        if (strain == "All_genome") and len(classes) <= 2:
             printed = False
         if printed:
             plot(total_nums[strain], strain, "three_roots",
@@ -275,11 +275,11 @@ def compare_go_slim(gos, term_obos, slim_obos, classes, total_nums):
                                         detect = True
                                         import_class(slim_obo, classes, strain)
                                         import_class(slim_obo, classes,
-                                                     "All_strain")
+                                                     "All_genome")
                                         import_total(slim_obo, total_nums,
                                                      strain)
                                         import_total(slim_obo, total_nums,
-                                                     "All_strain")
+                                                     "All_genome")
                                         pro_list.append(target_term)
                             break
                     if detect:
@@ -292,12 +292,12 @@ def map2goslim(slim_file, term_file, go_table, stat, out_folder):
     gos = {}
     classes = {}
     total_nums = {}
-    initiate_dict(classes, total_nums, "All_strain")
+    initiate_dict(classes, total_nums, "All_genome")
     pre_strain = ""
     g_h = open(go_table, "r")
     print("Loading go table")
     for row in csv.reader(g_h, delimiter="\t"):
-        if row[0] != "strain":
+        if row[0] != "Genome":
             if row[0] != pre_strain:
                 gos[row[0]] = {}
                 initiate_dict(classes, total_nums, row[0])

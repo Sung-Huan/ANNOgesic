@@ -186,7 +186,7 @@ class TestPlotPPI(unittest.TestCase):
 class Example(object):
 
     ppi_file = """Interaction of HP0001 | nusB
-strain	item_id_a	item_id_b	mode	action	a_is_acting	STRING_action_score	pubmed_id	pubmed_score
+Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score
 Helicobacter pylori 26695 chromosome	nusG	rpoB	reaction;reaction;catalysis;catalysis;binding		1;0;0;1;0	977	NA	NA
 Helicobacter pylori 26695 chromosome	ribD	ribH	binding		0	608	NA	NA
 Helicobacter pylori 26695 chromosome	rpsJ	nusB	binding		0	810	NA	NA"""

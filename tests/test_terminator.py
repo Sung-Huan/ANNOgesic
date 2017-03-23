@@ -217,22 +217,22 @@ class TestTerminator(unittest.TestCase):
             term_outfolder, "all_candidates/aaa_term_all.gff"),
             self.example.term_file)
         gen_file(os.path.join(
-            term_outfolder, "best/aaa_term.csv"), self.example.term_file)
+            term_outfolder, "best_candidates/aaa_term.csv"), self.example.term_file)
         gen_file(os.path.join(
-            term_outfolder, "express/aaa_term.csv"), self.example.term_file)
+            term_outfolder, "expressed_candidates/aaa_term.csv"), self.example.term_file)
         gen_file(os.path.join(
-            term_outfolder, "non_express/aaa_term.csv"),
+            term_outfolder, "non_expressed_candidates/aaa_term.csv"),
             self.example.term_file)
         args = self.mock_args.mock()
         args.stat = True
         args.out_folder = self.out
         self.term._compute_stat(args)
         self.assertTrue(os.path.exists(os.path.join(
-            csv_outfolder, "express/aaa_term.csv")))
+            csv_outfolder, "expressed_candidates/aaa_term.csv")))
         self.assertTrue(os.path.exists(os.path.join(
-            csv_outfolder, "best/aaa_term.csv")))
+            csv_outfolder, "best_candidates/aaa_term.csv")))
         self.assertTrue(os.path.exists(os.path.join(
-            csv_outfolder, "non_express/aaa_term.csv")))
+            csv_outfolder, "non_expressed_candidates/aaa_term.csv")))
 
     def test_run_terminator(self):
         te.stat_term = self.mock.mock_stat_term
@@ -281,15 +281,15 @@ class TestTerminator(unittest.TestCase):
         self.assertTrue(os.path.exists(
             os.path.join(self.out, "tables/all_candidates")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.out, "tables/express")))
+            os.path.join(self.out, "tables/expressed_candidates")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.out, "tables/best")))
+            os.path.join(self.out, "tables/best_candidates")))
         self.assertTrue(os.path.exists(
             os.path.join(self.out, "gffs/all_candidates")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.out, "gffs/express")))
+            os.path.join(self.out, "gffs/expressed_candidates")))
         self.assertTrue(os.path.exists(
-            os.path.join(self.out, "gffs/best")))
+            os.path.join(self.out, "gffs/best_candidates")))
 
 class Example(object):
 

@@ -146,17 +146,17 @@ def detect_circrna(input_file, gff_file, output_file, args_circ, statistics):
     circs, gffs, high = read_file(input_file, gff_file, args_circ.hypo)
     out = open(output_file, "w")
     out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-               "ID", "strain", "strand", "start", "end", "annotation_overlap",
-               "supported_reads", "supported_reads/reads_at_start",
-               "supported_reads/reads_at_end"))
+               "ID", "Genome", "Strand", "Start", "End", "Annotation_overlap",
+               "Supported_reads", "Supported_reads/Reads_at_start",
+               "Supported_reads/Reads_at_end"))
     out_best = open(output_file.replace("_all.csv", "_best.csv"), "w")
     out_best.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-               "ID", "strain", "strand", "start", "end", "annotation_overlap",
-               "supported_reads", "supported_reads/reads_at_start",
-               "supported_reads/reads_at_end"))
+               "ID", "Genome", "Strand", "Start", "End", "Annotation_overlap",
+               "Supported_reads", "Supported_reads/Reads_at_start",
+               "Supported_reads/Reads_at_end"))
     nums = get_circrna(circs, gffs, high, out, out_best, args_circ)
     stat = open(statistics, "w")
-    stat.write("All strains:\n")
+    stat.write("All genomes:\n")
     stat.write("\tBefore filtering:\n")
     stat.write("\tthe number of all circular RNAs = {0}\n".format(
                nums["circular"]["all"]))

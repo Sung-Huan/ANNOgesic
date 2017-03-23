@@ -208,11 +208,11 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
     else:
         out_stat.write("\n")
     if num_strain <= 2:
-        out_stat.write("All strains:\n")
+        out_stat.write("All genomes:\n")
         checks["limit"] = True
     else:
         if strain == "all":
-            out_stat.write("All strains:\n")
+            out_stat.write("All genomes:\n")
         else:
             out_stat.write(strain + ":\n")
     return class_num, index

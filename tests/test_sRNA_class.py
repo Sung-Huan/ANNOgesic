@@ -51,7 +51,7 @@ class TestsRNAClass(unittest.TestCase):
 3 - blast can not find the homology from nr database (the cutoff is 0).
 4 - blast can not find the homology from sRNA database.
 5 - blast can find the homology from sRNA database.
-All strains:
+All genomes:
 """)
 
         self.assertEqual(class_num, 5)

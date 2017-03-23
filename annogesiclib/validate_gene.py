@@ -92,7 +92,7 @@ def print_file(gffs, out_cds_file, stat_file, num_all, num_strain):
                         gff.end, gff.score, gff.strand, gff.phase,
                         attribute_string]]) + "\n")
     out = open(stat_file, "w")
-    out.write("All strains:\n")
+    out.write("All genomes:\n")
     print_stat("cds", num_all, out)
     print_stat("tRNA", num_all, out)
     print_stat("rRNA", num_all, out)

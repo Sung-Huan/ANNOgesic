@@ -297,7 +297,7 @@ class TestsTSSpredator(unittest.TestCase):
         datas = import_data(os.path.join(
             self.out, "statistics/test/stat_test_low_expression_cutoff.csv"))
         self.assertEqual("\n".join(datas),
-                         "strain\tcutoff_coverage\ntest\t100")
+                         "Genome\tCutoff_coverage\ntest\t100")
 
     def test_merge_manual(self):
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.tss_file)

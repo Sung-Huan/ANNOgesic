@@ -266,7 +266,7 @@ class Helper(object):
                                         str(gff.end), "_", gff.strand])
                         print("Error: The end point of " + name +
                               " is longer than the length of whole genome.")
-                        print("Please check the gff file.")
+                        print("Please check the gff files.")
                         sys.exit()
             if first:
                 first = False

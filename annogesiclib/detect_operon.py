@@ -285,7 +285,7 @@ def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
            term_fuzzy, min_length, out_file):
     '''main part for detection of operon'''
     out = open(out_file, "w")
-    out.write("Operon_ID\tstrain\tOperon_position\tstrand\t")
+    out.write("Operon_ID\tGenome\tOperon_position\tStrand\t")
     out.write("Number_of_suboperon\tPosition_of_suboperon\tStart_with_TSS\t")
     out.write("Number_of_TSS\tTerminated_with_terminator\t")
     out.write("Number_of_terminator\tNumber_of_gene_associated_suboperon\t")

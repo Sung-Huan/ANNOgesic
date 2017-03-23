@@ -119,7 +119,7 @@ class RATT(object):
                 detect_gbk = True
                 gbks.append(os.path.join(ref_embls, embl))
         if not detect_gbk:
-            print("Error: Please assign proper folder for Genebank file!!!")
+            print("Error: Please assign proper Genebank files!")
             sys.exit()
         elif detect_gbk:
             out_gbk = self._parser_embl_gbk(gbks)
@@ -202,8 +202,8 @@ class RATT(object):
                                     self.tmp_files["out_gff"], prefix + ".rnt"))
                     else:
                         print("Error: Please check your output fasta or "
-                              "annotation folder, they should only contain "
-                              "the query strain. And make sure your RATT can "
+                              "annotation files, they should only contain "
+                              "the query genome. And make sure your RATT can "
                               "work properly (check $ANNOgesic/output/"
                               "annotation_transfer/ratt_log.txt).")
         self._remove_files(args_ratt, out_gbk)

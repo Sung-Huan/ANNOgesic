@@ -155,7 +155,7 @@ def stat_ta_tss(ta_file, tss_file, stat_file, out_ta_file,
     '''statistics for comparison of transcript and TSS'''
     tsss_uni, tsss, tas_uni, tas = read_tas_file(tss_file, ta_file)
     out_stat = open(stat_file, "w")
-    out_stat.write("All strains:\n")
+    out_stat.write("All genomes:\n")
     out_ta = open(out_ta_file, "w")
     out_tss = open(out_tss_file, "w")
     out_ta.write("##gff-version 3\n")
@@ -398,7 +398,7 @@ def stat_ta_gff(ta_file, gff_file, stat_file, out_ta_file, out_gff_file,
         detect_tag_region(gffs, tas, stats, o_f, og_f, feature, region)
         express_gene = detect_express_gene(gffs, feature, "all")
         out_stat.write("For {0}:\n".format(feature))
-        out_stat.write("\tAll strains:\n")
+        out_stat.write("\tAll genomes:\n")
         out_stat.write("\tThe transcript information "
                        "compares with {0}:\n".format(feature))
         print_tag_stat(stats["All"], out_stat, express_gene, feature)

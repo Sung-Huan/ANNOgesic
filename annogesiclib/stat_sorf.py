@@ -28,7 +28,7 @@ def plus_data(nums, strain, sorf_types, features, utr_detect):
 
 
 def print_num(out, num, nums, strain, type_):
-    out.write("(for strain {0}; ".format(
+    out.write("(for genome {0}; ".format(
               float(num) / float(nums[strain]["all"]["all"])))
     if nums[strain][type_]["all"] == 0:
         out.write("for {0} - {1})\n".format(
@@ -41,12 +41,12 @@ def print_num(out, num, nums, strain, type_):
 def print_stat(nums, nums_best, strain, out, utr_detect):
     out.write(strain + ":\n")
     if utr_detect:
-        out.write("\ttotal sORF in this strain are {0}\n".format(
+        out.write("\ttotal sORF in this genome are {0}\n".format(
                   nums[strain]["all"]["all"]))
     for type_, features in nums[strain].items():
         out.write("\ttotal sORF of {0} sORF candidates are {1}".format(
                   type_, nums[strain][type_]["all"]))
-        out.write("(for this strain - {0})\n".format(
+        out.write("(for this genome - {0})\n".format(
                   float(nums[strain][type_]["all"]) /
                   float(nums[strain]["all"]["all"])))
         for feature, num in features.items():

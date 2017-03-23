@@ -40,7 +40,7 @@ class TestFillGap(unittest.TestCase):
     def test_overlap(self):
         out = StringIO()
         print_list = []
-        fg.overlap(self.example.tas, self.example.gffs, print_list, out)
+        fg.overlap(self.example.tas, self.example.gffs, out, "merge_overlap")
         datas, attributes = extract_info(out.getvalue(), "string")
         refs, attributes_ref = extract_info(self.example.out_overlap, "string")
         self.assertEqual(set(datas), set(refs))

@@ -46,7 +46,7 @@ class Ribos(object):
         stat_folder = os.path.join(out_folder, "statistics")
         gff_outfolder = os.path.join(out_folder, "gffs")
         table_folder = os.path.join(out_folder, "tables")
-        scan_folder = os.path.join(out_folder, "scan_Rfam")
+        scan_folder = os.path.join(out_folder, "scan_Rfam_results")
         tmp_files = {"fasta": os.path.join(
                               out_folder, "tmp_fasta"),
                      "scan": os.path.join(
@@ -80,7 +80,7 @@ class Ribos(object):
                 first_seq = os.path.join(tmp_files["fasta"],
                                          prefix + ".fa")
                 prefixs.append(prefix)
-                print("Extracting seq of candidates of {0}".format(
+                print("Extracting sequences of candidates for {0}".format(
                       prefix))
                 extract_potential_rbs(
                       os.path.join(self.fasta_path, prefix + ".fa"),
@@ -209,7 +209,7 @@ class Ribos(object):
                                                  args_ribo.gffs, gff))
         if (args_ribo.program.lower() == "both") or (
                 args_ribo.program.lower() == "riboswitch"):
-            print("Detecting riboswtich now")
+            print("Detecting riboswtiches now")
             self._core_prediction(
                     args_ribo, args_ribo.ribos_id, self.ribos_rfam,
                     self.ribos_tmp_files, self.ribos_table_folder,
@@ -218,7 +218,7 @@ class Ribos(object):
                     args_ribo.ribos_out_folder)
         if (args_ribo.program.lower() == "both") or (
                 args_ribo.program.lower() == "thermometer"):
-            print("Detecting RNA thermometer now")
+            print("Detecting RNA thermometers now")
             self._core_prediction(
                     args_ribo, args_ribo.thermo_id, self.thermo_rfam,
                     self.thermo_tmp_files, self.thermo_table_folder,

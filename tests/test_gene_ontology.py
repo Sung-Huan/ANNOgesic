@@ -68,13 +68,13 @@ class TestGeneOntology(unittest.TestCase):
         self.assertListEqual(obos, self.example.out_obo)
 
     def test_compare_go_slim(self):
-        classes = {'All_strain': {'cellular_component': {},
+        classes = {'All_genome': {'cellular_component': {},
                                   'biological_process': {},
                                   'molecular_function': {}},
                    'aaa': {'cellular_component': {},
                            'biological_process': {},
                            'molecular_function': {}}}
-        total_nums = {'All_strain': {'cellular_component': 0,
+        total_nums = {'All_genome': {'cellular_component': 0,
                                      'total': 0, 'biological_process': 0,
                                      'molecular_function': 0},
                       'aaa': {'cellular_component': 0, 'total': 0,
@@ -83,13 +83,13 @@ class TestGeneOntology(unittest.TestCase):
         gos = {'aaa': {"pro": ['GO:0000003']}}
         go.compare_go_slim(gos, self.example.out_obo,
                            self.example.slim_obos, classes, total_nums)
-        self.assertDictEqual(classes, {'All_strain': {
+        self.assertDictEqual(classes, {'All_genome': {
             'molecular_function': {}, 'cellular_component': {},
             'biological_process': {'reproduction': 1}},
                                        'aaa': {
             'molecular_function': {}, 'cellular_component': {},
             'biological_process': {'reproduction': 1}}})
-        self.assertDictEqual(total_nums, {'All_strain': {
+        self.assertDictEqual(total_nums, {'All_genome': {
             'molecular_function': 0, 'cellular_component': 0,
             'biological_process': 1, 'total': 1},
                                           'aaa': {
@@ -157,7 +157,7 @@ Q197F8	002R_IIV3	4156251	YP_654574.1	106073503; 109287880; 123808694			UniRef100
                                      attributes_gff[index], "gff"))
         trans.append(Create_generator(tran_dict[index],
                                       attributes_tran[index], "gff"))
-    out_retrieve = """strain	strand	start	end	protein_id	Go_term
+    out_retrieve = """Genome	Strand	Start	End	Protein_id	Go_term
 aaa	+	150	200	YP_031579.1	GO:0006355; GO:0046782; GO:0006351
 aaa	+	1230	1240	YP_031580.1	GO:0033644; GO:0016021
 bbb	-	100	167	YP_031579.1	GO:0006355; GO:0046782; GO:0006351

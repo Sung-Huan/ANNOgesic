@@ -50,11 +50,11 @@ def plot(subs, total, unknown, strain, prefix_name):
 
 def read_table(psortb_file):
     subs = {}
-    subs["all_strain"] = {}
+    subs["all_genome"] = {}
     total_nums = {}
-    total_nums["all_strain"] = 0
+    total_nums["all_genome"] = 0
     unknown_nums = {}
-    unknown_nums["all_strain"] = 0
+    unknown_nums["all_genome"] = 0
     pre_strain = ""
     f_h = open(psortb_file, "r")
     for row in csv.reader(f_h, delimiter="\t"):
@@ -74,16 +74,16 @@ def read_table(psortb_file):
                     unknown_nums[row[0]] += 1
                 subs[row[0]][row[5]] += 1
                 total_nums[row[0]] += 1
-            if row[5] not in subs["all_strain"].keys():
+            if row[5] not in subs["all_genome"].keys():
                 if row[5] == "Unknown":
-                    unknown_nums["all_strain"] += 1
-                subs["all_strain"][row[5]] = 1
-                total_nums["all_strain"] += 1
+                    unknown_nums["all_genome"] += 1
+                subs["all_genome"][row[5]] = 1
+                total_nums["all_genome"] += 1
             else:
                 if row[5] == "Unknown":
-                    unknown_nums["all_strain"] += 1
-                subs["all_strain"][row[5]] += 1
-                total_nums["all_strain"] += 1
+                    unknown_nums["all_genome"] += 1
+                subs["all_genome"][row[5]] += 1
+                total_nums["all_genome"] += 1
     f_h.close()
     return subs, total_nums, unknown_nums
 
@@ -113,9 +113,9 @@ def stat_sublocal(psortb_file, prefix_name, stat_file):
     subs, total_nums, unknown_nums = read_table(psortb_file)
     out_stat = open(stat_file, "w")
     if len(subs) > 2:
-        print_file_and_plot(subs["all_strain"], total_nums, unknown_nums,
-                            "all_strain", out_stat, prefix_name)
+        print_file_and_plot(subs["all_genome"], total_nums, unknown_nums,
+                            "all_genome", out_stat, prefix_name)
     for strain, sub in subs.items():
-        if strain != "all_strain":
+        if strain != "all_genome":
             print_file_and_plot(sub, total_nums, unknown_nums, strain,
                                 out_stat, prefix_name)

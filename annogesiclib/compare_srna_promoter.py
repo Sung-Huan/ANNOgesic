@@ -17,7 +17,7 @@ def read_file(gff_file, args_srna):
     fh = open(args_srna.promoter_table, "r")
     pros = []
     for row in csv.reader(fh, delimiter='\t'):
-        if (row[0] != "strain") and (
+        if (row[0] != "Genome") and (
                 row[3] in args_srna.promoter_name):
             pros.append({"strain": row[0], "pos": row[1],
                          "strand": row[2], "name": row[3]})

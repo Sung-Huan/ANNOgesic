@@ -17,17 +17,17 @@ class SNPCalling(object):
         self.multiparser = Multiparser()
         self.seq_editer = SeqEditer()
         self.helper = Helper()
-        if args_snp.types == "closed_strain":
+        if args_snp.types == "closed_genome":
             file_type = "compare_closed_and_updated_references"
         else:
-            file_type = "mutations_of_query_strain"
+            file_type = "mutations_of_query_genomes"
         self.seq_path = os.path.join(args_snp.out_folder, file_type, "seqs")
         self.stat_path = os.path.join(args_snp.out_folder, file_type,
                                       "statistics")
         self.fig_path = os.path.join(self.stat_path, "figs")
         self.helper.check_make_folder(self.fig_path)
         self.outputs = {"table": os.path.join(
-                        args_snp.out_folder, file_type, "SNP_table"),
+                        args_snp.out_folder, file_type, "SNP_tables"),
                         "raw": os.path.join(
                         args_snp.out_folder, file_type, "SNP_raw_outputs"),
                         "tmp": os.path.join(args_snp.out_folder, "tmp_bcf"),
@@ -183,7 +183,7 @@ class SNPCalling(object):
             bam["bam_number"] = 0
             out_bam = os.path.join(args_snp.out_folder, bam["sample"] + ".bam")
             if len(bam["bams"]) == 1:
-                print("Sorting BAM file of " + bam["sample"])
+                print("Sorting BAM files of " + bam["sample"])
                 self._run_bam(
                     args_snp.samtools_path, "sort",
                     out_bam, bam["bams"][0])
@@ -261,7 +261,7 @@ class SNPCalling(object):
             for file_ in datas[-1].split(","):
                 if not os.path.exists(file_):
                     print("Error: there are some Bam files "
-                          "which are not exist!")
+                          "which do not exist!")
                     sys.exit()
             bam_datas.append({"sample": datas[0], "rep": int(datas[1]),
                               "bams": datas[-1].split(",")})

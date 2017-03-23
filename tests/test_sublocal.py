@@ -117,7 +117,7 @@ class TestSubLocal(unittest.TestCase):
         gen_file(tran_file, self.example.tran_file)
         self.sub._compare_cds_tran(gff_file, tran_file)
         datas, string = extract_info(
-            "test_folder/output/all_CDS/tmp_cds.gff", "file")
+            "test_folder/output/all_CDSs/tmp_cds.gff", "file")
         self.assertEqual(
             "\n".join(datas), 'aaa\tRefSeq\tCDS\t3\t17\t.\t+\t.')
 

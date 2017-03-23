@@ -42,7 +42,7 @@ class Multiparser(object):
                     datas = datas[0][:-4]
                     datas = datas.split(ref_feature)
                     prefix = datas[0]
-                print("Merging fasta file of " + prefix)
+                print("Merging fasta files of " + prefix)
                 for file_ in os.listdir("/".join([ref_folder, folder])):
                     if ref_feature == "":
                         files.append(file_[:-4])
@@ -101,7 +101,7 @@ class Multiparser(object):
             files = []
             if "_folder" in folder:
                 prefix = self.get_prefix(folder, ref_feature)
-                print("Merging wig file of " + prefix)
+                print("Merging wig files of " + prefix)
                 for file_ in os.listdir(os.path.join(ref_folder, folder)):
                     if ref_feature == "":
                         files.append(file_[:-4])
@@ -175,7 +175,7 @@ class Multiparser(object):
                     datas = datas[0][:-4]
                     datas = datas.split(ref_feature)
                     prefix = datas[0]
-                print("Merging gff file of " + prefix + tar_feature)
+                print("Merging gff files of " + prefix + tar_feature)
                 for file_ in os.listdir(os.path.join(ref_folder, folder)):
                     if ref_feature == "":
                         files.append(file_[:-4])

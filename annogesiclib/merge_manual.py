@@ -364,7 +364,7 @@ def print_stat(num_strain, stat_file, overlap_num, nums):
         if len(num_strain.keys()) == 1:
             print_all_unique(out, overlap_num, nums)
         else:
-            out.write("All strains: \n")
+            out.write("All genomes: \n")
             print_all_unique(out, overlap_num, nums)
             for strain in num_strain.keys():
                 if (num_strain[strain]["tsspredator"] == 0) and \

@@ -102,7 +102,7 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(fasta2, self.example.fasta_file)
         gen_file(read1, self.example.fasta_file)
         gen_file(read2, self.example.fasta_file)
-        os.mkdir(os.path.join(self.out_folder, "segemehl_align"))
+        os.mkdir(os.path.join(self.out_folder, "segemehl_alignment_files"))
         args = self.mock_args.mock()
         args.output_folder = self.out_folder
         args.gffs = self.gff_folder
@@ -186,19 +186,20 @@ class TestCircRNADetection(unittest.TestCase):
 
     def test_combine_read_bam(self):
         bam_datas = [{"sample": "aaa", "files": [
-            os.path.join(self.out_folder, "segemehl_align", "aaa1.bam"),
+            os.path.join(self.out_folder, "segemehl_alignment_files", "aaa1.bam"),
             "aaa2.bam"]},
                      {"sample": "bbb", "files": ["bbb1.bam", "bbb2.bam"]}]
         read_datas = [{"sample": "aaa", "files": [
             "aaa1.fa", "aaa3.fa", "aaa4.fa"]}]
         bam_files = [os.path.join(self.out_folder,
-                                  "segemehl_align", "aaa1.bam"),
+                                  "segemehl_alignment_files", "aaa1.bam"),
                      os.path.join(self.out_folder,
-                                  "segemehl_align", "aaa3.bam")]
+                                  "segemehl_alignment_files", "aaa3.bam")]
         self.circ._combine_read_bam(bam_files, bam_datas, read_datas)
+        print(bam_datas[0])
         self.assertDictEqual(bam_datas[0], {'files': [
-            'test_folder/output/segemehl_align/aaa1.bam', 'aaa2.bam',
-            'test_folder/output/segemehl_align/aaa3.bam'], 'sample': 'aaa'})
+            'test_folder/output/segemehl_alignment_files/aaa1.bam', 'aaa2.bam',
+            'test_folder/output/segemehl_alignment_files/aaa3.bam'], 'sample': 'aaa'})
 
 class Example(object):
 

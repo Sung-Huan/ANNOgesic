@@ -31,7 +31,7 @@ class TargetFasta(object):
         new_ref_folder = self.gen_folder(out_folder, ref_files)
         self.seq_editer.modify_seq(self.folders["tmp_ref"], mut_table,
                                    self.folders["tmp_tar"])
-        print("Transfering to target fasta")
+        print("Transfering to query sequences")
         for file_ in output:
             first = True
             datas = file_.split(":")
@@ -57,4 +57,4 @@ class TargetFasta(object):
         shutil.rmtree(self.folders["tmp_ref"])
         if "tmp_reference" in os.listdir(out_folder):
             shutil.rmtree(new_ref_folder)
-        print("Please use the new fasta file to remapping again.")
+        print("Please use the new fasta files to remapping again.")

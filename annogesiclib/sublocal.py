@@ -23,8 +23,8 @@ class SubLocal(object):
             self.tran_path = os.path.join(args_sub.trans, "tmp")
         else:
             self.tran_path = None
-        self.out_all = os.path.join(args_sub.out_folder, "all_CDS")
-        self.out_express = os.path.join(args_sub.out_folder, "expressed_CDS")
+        self.out_all = os.path.join(args_sub.out_folder, "all_CDSs")
+        self.out_express = os.path.join(args_sub.out_folder, "expressed_CDSs")
         self.all_tmp_path = os.path.join(self.out_all, "tmp")
         self.express_tmp_path = os.path.join(self.out_express, "tmp")
         self.all_stat_path = os.path.join(self.out_all, "statistics")
@@ -93,7 +93,8 @@ class SubLocal(object):
         else:
             self.helper.get_cds_seq(os.path.join(self.gff_path, gff),
                                     fasta, dna_seq_file)
-        print("Transfering DNA seq to protein seq of {0}".format(prefix))
+        print("Transfering DNA sequences to protein sequence of {0}".format(
+            prefix))
         self.helper.translation(dna_seq_file, "tmp")
         prot_seq_file = os.path.join(
                 tmp_path, "_".join([prefix, "protein.fa"]))
@@ -120,7 +121,8 @@ class SubLocal(object):
             self._psortb(args_sub.psortb_path, "-n", prot_seq_file,
                          out_raw, out_err)
         else:
-            print("Error: It is not a proper bacteria type - {0}!!".format(
+            print("Error: {0} is not a proper bacteria type! "
+                  "Please assign positive or negative.".format(
                   args_sub.gram))
             sys.exit()
         out_err.close()
@@ -129,7 +131,7 @@ class SubLocal(object):
     def _extract_result(self, args_sub, tmp_psortb_path, prefix, gff_file):
         '''extract the result of psortb'''
         if args_sub.merge:
-            print("Merging gff")
+            print("Merging gff files")
             extract_psortb(os.path.join(
                 tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
                 os.path.join(tmp_psortb_path, "_".join([
@@ -196,7 +198,7 @@ class SubLocal(object):
         self.helper.check_make_folder(self.all_tmp_result)
         for gff in os.listdir(self.gff_path):
             if args_sub.trans is not None:
-                print("Running expressed gene now")
+                print("Running expressed genes now")
                 prefix = self._get_protein_seq(gff, self.express_tmp_path,
                                                self.tran_path)
                 self._run_psortb(args_sub, prefix, self.out_express,
@@ -204,7 +206,7 @@ class SubLocal(object):
                                  self.express_tmp_result)
                 self._extract_result(args_sub, self.express_tmp_result, prefix,
                                      os.path.join(self.gff_path, gff))
-            print("Running all gene now")
+            print("Running all genes now")
             prefix = self._get_protein_seq(gff, self.all_tmp_path, None)
             self._run_psortb(args_sub, prefix, self.out_all,
                              self.all_tmp_path, self.all_tmp_result)

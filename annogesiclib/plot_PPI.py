@@ -247,7 +247,7 @@ def interaction(first, pre_ppi, scores, ppis, match, center, cutoff_score,
                  node_size, out_folder)
             match = False
         else:
-            print("No interacted partners with {0} | {1}".format(
+            print("No interacted partner with {0} | {1}".format(
                   center["locus_tag"], center["gene_name"]))
         scores = {"score": 0, "below": 0}
         ppis = []
@@ -276,8 +276,8 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
                 datas = row[0].split(" | ")
                 center["locus_tag"] = datas[0].split(" ")[-1]
                 center["gene_name"] = datas[-1]
-                print("plotting {0}".format(center["gene_name"]))
-            elif row[0] == "strain":
+                print("Plotting {0}".format(center["gene_name"]))
+            elif row[0] == "Genome":
                 pass
             else:
                 ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2],
@@ -310,5 +310,5 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
     elif not start:
         print("No proper result can be retrieved in " + PPI_file)
     elif not match:
-        print("No interacted partners with {0} | {1}".format(
+        print("No interacted partner with {0} | {1}".format(
                center["locus_tag"], center["gene_name"]))

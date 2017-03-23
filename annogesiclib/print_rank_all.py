@@ -9,7 +9,7 @@ def print_rank_all(all_table, best_table):
     rank = 0
     bests = []
     for row in csv.reader(fh, delimiter='\t'):
-        if row[0] != "rank":
+        if row[0] != "Rank":
             bests.append(row)
             rank = int(row[0])
         out.write("\t".join(row) + "\n")

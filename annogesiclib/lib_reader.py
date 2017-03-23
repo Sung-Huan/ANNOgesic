@@ -19,7 +19,7 @@ def read_libs(input_libs, wig_folder):
                             name = line.split("=")[-1][1:-1]
                             break
         if name is None:
-            print("Error: The {0} can not be found in lib name!!!".format(wig)) 
+            print("Error: The {0} can not be found in lib names!!!".format(wig)) 
         if (datas[1] == "tex") or (datas[1] == "notex"):
             cond = "texnotex"
         else:
@@ -41,7 +41,8 @@ def read_libs(input_libs, wig_folder):
                    (lib1["strand"] == lib2["strand"]):
                     texs[lib1["name"] + "@AND@" + lib2["name"]] = 0
         else:
-            print("Error:library type (fragmented or Tex treated??)")
+            print("Error: Wrong library types are detected, "
+                  "please assign frag, tex or notex.")
             sys.exit()
     return libs, texs
 

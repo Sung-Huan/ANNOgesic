@@ -20,13 +20,14 @@ class sRNATargetPrediction(object):
         self.gff_parser = Gff3Parser()
         self.target_seq_path = os.path.join(args_tar.out_folder, "target_seqs")
         self.srna_seq_path = os.path.join(args_tar.out_folder, "sRNA_seqs")
-        self.rnaplex_path = os.path.join(args_tar.out_folder, "RNAplex")
-        self.rnaup_path = os.path.join(args_tar.out_folder, "RNAup")
-        self.merge_path = os.path.join(args_tar.out_folder, "merge")
+        self.rnaplex_path = os.path.join(args_tar.out_folder, "RNAplex_results")
+        self.rnaup_path = os.path.join(args_tar.out_folder, "RNAup_results")
+        self.merge_path = os.path.join(args_tar.out_folder, "merged_results")
         self.srna_path = os.path.join(args_tar.srnas, "tmp")
         self.fasta_path = os.path.join(args_tar.fastas, "tmp")
         self.gff_path = os.path.join(args_tar.gffs, "tmp")
-        self.tmps = {"tmp": "tmp", "rnaup": "tmp_rnaup", "log": "tmp_log",
+        self.tmps = {"tmp": "tmp_srna_target", "rnaup": "tmp_rnaup",
+                     "log": "tmp_log",
                      "all_fa": "tmp*.fa", "all_txt": "tmp*.txt"}
 
     def _check_gff(self, gffs):
@@ -392,8 +393,8 @@ class sRNATargetPrediction(object):
         if (args_tar.program == "RNAplex") or (
                 args_tar.program == "both"):
             for strain in os.listdir(os.path.join(
-                          args_tar.out_folder, "RNAplex")):
-                shutil.rmtree(os.path.join(args_tar.out_folder, "RNAplex",
+                          args_tar.out_folder, "RNAplex_results")):
+                shutil.rmtree(os.path.join(args_tar.out_folder, "RNAplex_results",
                                            strain, "RNAplfold"))
         self.helper.remove_all_content(args_tar.out_folder,
                                        self.tmps["tmp"], "dir")

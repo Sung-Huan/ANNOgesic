@@ -99,8 +99,8 @@ class PPINetwork(object):
             locus = self.ref_tags[prefername]
         out.write("Interaction of {0} | {1}\n".format(
             locus, prefername))
-        out.write("strain\titem_id_a\titem_id_b\tmode\taction\ta_is_acting\t"
-                  "STRING_action_score\tpubmed_id\tpubmed_score\n")
+        out.write("Genome\tItem_id_a\tItem_id_b\tMode\tAction\ta_is_acting\t"
+                  "STRING_action_score\tPubmed_id\tPubmed_score\n")
 
     def _get_pubmed(self, row, strain_id, mode, actor, id_file, first_output,
                     ptt, files, paths, args_ppi):
@@ -292,7 +292,7 @@ class PPINetwork(object):
                         os.path.join(paths["best"], self.without_strain),
                         strain_id["ptt"])
         else:
-            print("Error: Wrong .ptt file!!")
+            print("Error: Wrong .ptt file!")
             sys.exit()
         return genes
 
@@ -334,7 +334,7 @@ class PPINetwork(object):
                                     "specific_best": True,
                                     "nospecific_all": True,
                                     "nospecific_best": True}
-                    print("Retrieving Pubmed for {0} of {1} -- {2}".format(
+                    print("Retrieving Pubmed IDs for {0} of {1} -- {2}".format(
                            id_file, strain_id["string"], strain_id["file"]))
                     for row_a in csv.reader(a_h, delimiter="\t"):
                         if row_a == []:
@@ -399,6 +399,8 @@ class PPINetwork(object):
         for file_ in os.listdir(args_ppi.ptts):
             if file_.startswith("PPI_"):
                 os.remove(os.path.join(args_ppi.ptts, file_))
+        self.helper.remove_all_content(os.path.join(args_ppi.out_folder),
+                                       "temp", "dir")
 
     def retrieve_ppi_network(self, args_ppi):
         '''retrieve PPI from STRING with PIE and draw network'''

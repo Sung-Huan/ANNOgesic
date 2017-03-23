@@ -42,7 +42,7 @@ class TestTranscripSNP(unittest.TestCase):
         max_quals, snps, dess, raw_snps = ts.import_data(
             snp_file, args, 2, depth_file, 2)
         self.assertDictEqual(max_quals, {
-            'NC_007795.1': 98.0, 'All_strain': 98.0})
+            'NC_007795.1': 98.0, 'All_genome': 98.0})
         self.assertListEqual(snps, [
             {'dp4_frac': 1.0, 'strain': 'NC_007795.1', 'filter': '.',
              'indel': -1, 'pos': 1, 'id': '.',
@@ -140,7 +140,7 @@ class TestTranscripSNP(unittest.TestCase):
 
     def test_stat(self):
         stat_file = os.path.join(self.test_folder, "stat")
-        max_quals = {'NC_007795.1': 98.0, 'All_strain': 98.0}
+        max_quals = {'NC_007795.1': 98.0, 'All_genome': 98.0}
         trans_snps = [{'filter': '.', 'pos': 22181, 'alt': 'A',
                        'frac': -1, 'depth': 89, 'indel': -1,
                        'info': 'MQ=20', 'id': '.', 'qual': 98.0,
@@ -155,6 +155,7 @@ class TestTranscripSNP(unittest.TestCase):
         ts.stat(max_quals, trans_snps, 2, stat_file,
                 self.test_folder + "/test", args, "best.csv")
         datas = import_data(stat_file + "_best.csv")
+        print("\n".join(datas))
         self.assertEqual("\n".join(datas), self.example.stat)
 
     def test_plot_bar(self):
@@ -385,9 +386,10 @@ the number of QUAL which is between 50 and 60 = 0
 the number of QUAL which is between 60 and 70 = 0
 the number of QUAL which is between 70 and 80 = 0
 the number of QUAL which is between 80 and 90 = 0
-the number of QUAL which is between 90 and 100 = 1
-the number of QUAL which is between 100 and 110 = 0
-the total numbers of QUAL which is higher than 20 = 1"""
+the number of QUAL which is between 90 and 100 = 0
+the number of QUAL which is between 100 and 110 = 1
+the total numbers of QUAL which are higher than 20 = 1"""
+
     depth_file = """aaa	1	100
 aaa	2	100
 aaa	3	50

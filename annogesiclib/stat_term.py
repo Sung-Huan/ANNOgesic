@@ -181,9 +181,9 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out_td = open(output_decrease + ".csv", "w")
     out_tn = open(output_non + ".csv", "w")
     fh = open(term_table, "r")
-    out_tn.write("\t".join(["strain", "name", "start", "end", "strand",
-                            "detect", "associated_gene", "associated_transcript",
-                            "coverage_decrease", "coverage_detail"]) + "\n")
+    out_tn.write("\t".join(["Genome", "Name", "Start", "End", "Strand",
+                            "Detect", "Associated_gene", "Associated_transcript",
+                            "Coverage_decrease", "Coverage_detail"]) + "\n")
     for row in csv.reader(fh, delimiter="\t"):
         if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
             out_td.write("\t".join(row) + "\n")
@@ -206,7 +206,7 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out.write("method_1 is searching the gene converged region.\n")
     out.write("method_2 is TransTermHP.\n")
     if len(nums) > 2:
-        print_file(nums["total"], out, "All strain")
+        print_file(nums["total"], out, "All genome")
     else:
         for strain, datas in nums.items():
             if strain != "total":

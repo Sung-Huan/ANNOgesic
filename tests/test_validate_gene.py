@@ -107,11 +107,11 @@ class Example(object):
     attributes_gff = [{"ID": "cds0", "Name": "CDS_0"}]
     gffs = []
     gffs.append(Create_generator(gff_dict[0], attributes_gff[0], "gff"))
-    out_stat_test = """All strains:
+    out_stat_test = """All genomes:
 The number of cds which is start from TSS: 250 (0.4166666666666667)
 The number of tRNA which is start from TSS: 20 (0.6666666666666666)
 The number of rRNA which is start from TSS: 20 (0.6666666666666666)"""
-    out_stat = """All strains:
+    out_stat = """All genomes:
 The number of cds which is start from TSS: 1 (1.0)
 The number of tRNA which is start from TSS: 0 (NA)
 The number of rRNA which is start from TSS: 0 (NA)"""

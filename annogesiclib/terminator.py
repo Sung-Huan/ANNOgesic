@@ -30,15 +30,19 @@ class Terminator(object):
         self.terms = {"all": os.path.join(self.outfolder["term"],
                                           "all_candidates"),
                       "express": os.path.join(self.outfolder["term"],
-                                              "express"),
-                      "best": os.path.join(self.outfolder["term"], "best"),
+                                              "expressed_candidates"),
+                      "best": os.path.join(self.outfolder["term"],
+                                           "best_candidates"),
                       "non": os.path.join(self.outfolder["term"],
-                                          "non_express")}
+                                          "non_expressed_candidates")}
         self.csvs = {"all": os.path.join(self.outfolder["csv"],
                                          "all_candidates"),
-                     "express": os.path.join(self.outfolder["csv"], "express"),
-                     "best": os.path.join(self.outfolder["csv"], "best"),
-                     "non": os.path.join(self.outfolder["csv"], "non_express")}
+                     "express": os.path.join(self.outfolder["csv"],
+                                             "expressed_candidates"),
+                     "best": os.path.join(self.outfolder["csv"],
+                                          "best_candidates"),
+                     "non": os.path.join(self.outfolder["csv"],
+                                         "non_expressed_candidates")}
         self.combine_path = os.path.join(self.gff_path, "combine")
         self.tmps = {"transterm": os.path.join(os.getcwd(), "tmp_transterm"),
                      "hp": "transtermhp", "hp_gff": "transtermhp.gff",
@@ -93,7 +97,7 @@ class Terminator(object):
                 fasta = self.helper.get_correct_file(
                              fasta_path, ".fa", prefix, None, None)
                 if not fasta:
-                    print("Error: No proper file - {0}.fa".format(prefix))
+                    print("Error: {0}.fa can not be found!".format(prefix))
                     sys.exit()
                 if sRNAs:
                     self.multiparser.parser_gff(sRNAs, "sRNA")
@@ -147,7 +151,7 @@ class Terminator(object):
                 fasta = self.helper.get_correct_file(
                              self.fasta_path, ".fa", prefix, None, None)
                 if not fasta:
-                    print("Error: No proper file - {0}.fa".format(prefix))
+                    print("Error: {0}.fa can not be found!".format(prefix))
                     sys.exit()
                 out_path = os.path.join(args_term.hp_folder, prefix)
                 self.helper.check_make_folder(out_path)
@@ -197,7 +201,7 @@ class Terminator(object):
         elif (args_term.frag_wigs is not None):
             merge_wigs = args_term.frag_wigs
         else:
-            print("Error: No proper wig files!!!")
+            print("Error: Wiggle files are not assigned!")
             sys.exit()
         return merge_wigs
 
@@ -249,9 +253,9 @@ class Terminator(object):
                         os.listdir(self.csvs["all"])):
                     os.remove(csv_file)
                 out_csv = open(csv_file, "w")
-                out_csv.write("\t".join(["strain", "name", "start", "end",
-                              "strand", "detect", "coverage_decrease",
-                              "coverage_detail"]) + "\n")
+                out_csv.write("\t".join(["Genome", "Name", "Start", "End",
+                              "Strand", "Detect", "Coverage_decrease",
+                              "Coverage_detail"]) + "\n")
                 out_csv.close()
                 fh = open(new_gff)
                 for entry in self.gff_parser.entries(fh):
@@ -265,7 +269,7 @@ class Terminator(object):
                 fh.close()
 
     def _run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix):
-        print("Computing secondray structure of {0}".format(prefix))
+        print("Computing secondray structures of {0}".format(prefix))
         self.helper.check_make_folder(self.tmps["folder"])
         pre_cwd = os.getcwd()
         os.chdir(self.tmps["folder"])
@@ -290,14 +294,14 @@ class Terminator(object):
             tmp_cand = tmp_cand = os.path.join(args_term.out_folder,
                                      "_".join(["term_candidates", prefix]))
             if os.path.exists(tran_file):
-                print("Extracting seq of {0}".format(prefix))
+                print("Extracting sequences of {0}".format(prefix))
                 intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
                                tran_file, gff_file, tmp_seq, tmp_index, args_term)
                 self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
                 extract_info_sec(tmp_sec, tmp_seq, tmp_index)
                 os.remove(tmp_index)
                 poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)
-            print("Detecting terminator for " + prefix)
+            print("Detecting terminators for " + prefix)
             detect_coverage(
                 tmp_cand, os.path.join(merge_path, prefix + ".gff"),
                 os.path.join(self.tran_path, "_".join([
@@ -402,11 +406,12 @@ class Terminator(object):
         self.multiparser.combine_gff(args_term.gffs, self.tran_path,
                                      None, "transcript")
         prefixs = []
-        print("Comparing terminator with transcript now")
+        print("Comparing terminators with transcripts now")
         for file_ in os.listdir(self.tran_path):
             if file_.endswith("_transcript.gff"):
                 prefixs.append(file_.replace("_transcript.gff", ""))
-        for type_ in ("best", "express", "all_candidates"):
+        for type_ in ("best_candidates", "expressed_candidates",
+                      "all_candidates"):
             compare_term_tran(self.tran_path,
                               os.path.join(self.outfolder["term"], type_),
                               args_term.fuzzy_up_ta, args_term.fuzzy_down_ta,
@@ -427,8 +432,8 @@ class Terminator(object):
         self._check_gff_file(args_term.trans)
         self.multiparser.parser_fasta(args_term.fastas)
         if (not args_term.gffs) or (not args_term.fastas):
-            print("Error: Please assign gff annotation folder "
-                  "and fasta folder!!!")
+            print("Error: Please assign gff files "
+                  "and fasta files!")
             sys.exit()
         file_types, prefixs = self._convert_gff2rntptt(
                 self.gff_path, self.fasta_path, args_term.srnas)

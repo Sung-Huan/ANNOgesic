@@ -8,7 +8,7 @@ def gen_promoter_table(input_file, output_file, tss_file, type_):
     for entry in Gff3Parser().entries(gff_f):
         tsss.append(entry)
     out = open(output_file, "w")
-    out.write("\t".join(["strain", "TSS_position",
+    out.write("\t".join(["Genome", "TSS_position",
                          "TSS_strand", "Motif"]) + "\n")
     detect = False
     num = 1

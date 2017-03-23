@@ -50,16 +50,26 @@ Arguments
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,get_target_fasta,annotation_transfer,tss_ps,optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+                     {create,get_input_files,update_genome_fasta,
+                      annotation_transfer,tss_ps,optimize_tss_ps,
+                      terminator,transcript,utr,srna,sorf,promoter,operon,
+                      circrna,go_term,srna_target,snp,ppi_network,
+                      localization,riboswitch_thermometer,crispr,
+                      merge_features,screenshot,color_png}
                      ...
     
     positional arguments:
-      {create,get_input_files,get_target_fasta,annotation_transfer,tss_ps,optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,ppi_network,subcellular_localization,riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,update_genome_fasta,annotation_transfer,tss_ps,
+       optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,
+       circrna,go_term,srna_target,snp,ppi_network,localization,
+       riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
                             commands
         create              Create a project
         get_input_files     Get required files. (i.e. Annotation files, fasta
                             files)
-        get_target_fasta    Get target fasta.
+        update_genome_fasta
+                            Get fasta files of query genomes if the query
+                            sequences do not exist.
         annotation_transfer
                             Transfer the annotations from closed genome to the
                             target genome.
@@ -79,8 +89,7 @@ Arguments
         snp                 Detect SNP/mutation and generate potential fasta file.
         ppi_network         Detect protein-protein interactions with literature
                             supported.
-        subcellular_localization
-                            Predict subcellular localization of CDSs.
+        localization        Predict subcellular localization of CDSs.
         riboswitch_thermometer
                             Predict riboswitches and RNA thermometers.
         crispr              Predict CRISPR related RNAs.

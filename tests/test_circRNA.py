@@ -163,12 +163,12 @@ class Example(object):
         {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002",
          "product": "hypothetical protein"},
         {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]
-    out_file = """ID	strain	strand	start	end	annotation_overlap	supported_reads	supported_reads/reads_at_start	supported_reads/reads_at_end
+    out_file = """ID	Genome	Strand	Start	End	Annotation_overlap	Supported_reads	Supported_reads/Reads_at_start	Supported_reads/Reads_at_end
 circRNA_0	aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571
 circRNA_1	aaa	+	1330	1564	NA	10	0.3333333333333333	0.25
 circRNA_2	bbb	-	30	167	NA	5	1.0	0.8333333333333334"""
 
-    stat_file = """All strains:
+    stat_file = """All genomes:
 	Before filtering:
 	the number of all circular RNAs = 3
 	the number of potential circular RNAs, more than 0 supported it = 3

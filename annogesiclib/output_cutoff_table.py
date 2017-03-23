@@ -7,14 +7,14 @@ def output_coverage(table_file, gff_file, cutoff_cover, stat_file, out_folder):
     out = open(os.path.join(out_folder, "tmp_srna_table"), "w")
     out_g = open(os.path.join(out_folder, "tmp_srna_gff"), "w")
     out.write("\t".join([
-        "rank", "strain", "name", "start", "end", "strand",
-        "start_with_TSS/Cleavage_site", "end_with_cleavage", "candidates",
-        "lib_type", "best_avg_coverage", "best_highest_coverage",
-        "best_lower_coverage", "track/coverage",
-        "normalized_secondary_energy_change(by_length)",
-        "UTR_derived/Intergenic", "confliction_of_sORF", "nr_hit_number",
+        "Rank", "Genome", "Name", "Start", "End", "Strand",
+        "Start_with_TSS/Cleavage_site", "End_with_cleavage", "Candidates",
+        "Lib_type", "Best_avg_coverage", "Best_highest_coverage",
+        "Best_lower_coverage", "Track/Coverage",
+        "Normalized_secondary_energy_change(by_length)",
+        "UTR_derived/Intergenic", "Confliction_of_sORF", "nr_hit_number",
         "sRNA_hit_number", "nr_hit_top3|ID|e-value", "sRNA_hit|e-value",
-        "overlap_CDS", "overlap_percent", "end_with_terminator"]) + "\n")
+        "Overlap_CDS", "Overlap_percent", "End_with_terminator"]) + "\n")
     out_g.write("##gff-version 3\n")
     stat_out = open(stat_file, "w")
     nums = {5: 0}

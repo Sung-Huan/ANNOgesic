@@ -20,7 +20,7 @@ class Mock_func(object):
         gen_file(out, "test")
         pass
 
-    def mock_fill_gap(self, gff, tran, overlap, tmp_overlap):
+    def mock_fill_gap(self, gff, tran, overlap, tmp_overlap, mod):
         pass
 
     def mock_longer_ta(self, tmp_out, length, final_out):
@@ -161,6 +161,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.gffs = self.gffs
         args.out_folder = self.out
         args.length = 20
+        args.modify = "merge_overlap"
         self.tran._post_modify(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(
             gff_out, "test_transcript.gff")))
@@ -254,6 +255,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.c_feature = None
         args.fuzzy_term = 1
         args.max_dist = 2000
+        args.modify = "merge_overlap"
         self.tran.run_transcript(args)
         tr.assembly = pre_assembly
 

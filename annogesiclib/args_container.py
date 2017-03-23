@@ -17,7 +17,7 @@ class ArgsContainer(object):
         for m_l in strain_lens:
             if ":" not in m_l:
                 print("Error: The assignment of {0} needs to contain "
-                      "strain names and their length "
+                      "genome names and their length "
                       "of checked region!".format(flag))
                 sys.exit()
             else:
@@ -119,7 +119,7 @@ class ArgsContainer(object):
         for lib in libs:
             datas = lib.split(":")
             if not datas[0].endswith(".wig"):
-                print("Error: The input wiggle file should end with .wig!")
+                print("Error: The input wiggle files should end with .wig!")
                 sys.exit()
             if (datas[1] != "notex") and (
                     datas[1] != "tex") and (
@@ -379,11 +379,11 @@ class ArgsContainer(object):
         if s_strains is None:
             if len(paras) > 1:
                 print("Error: The assignments of parameters should be single "
-                      "number. Otherwise, please use --specify_strains.")
+                      "number. Otherwise, please use --specify_genomes.")
                 sys.exit()
         else:
             if len(s_strains) != len(paras):
-                print("Error: The number of --specify_strains "
+                print("Error: The number of --specify_genomes "
                       "and the paramter set are different!")
                 sys.exit()
 
@@ -427,7 +427,7 @@ class ArgsContainer(object):
                               reference_gff_files, remove_low_expression):
         if strain_lengths is not None:
             nt_lengths = self._check_strain_length(
-                    strain_lengths, "--strain_lengths")
+                    strain_lengths, "--genome_lengths")
             self.strain_lengths = nt_lengths
         else:
             self.strain_lengths = strain_lengths
@@ -483,7 +483,7 @@ class ArgsContainer(object):
         self.tsspredator_path = TSSpredator_path
         if strain_lengths is not None:
             nt_lengths = self._check_strain_length(
-                    strain_lengths, "--strain_lengths")
+                    strain_lengths, "--genome_lengths")
             self.strain_lengths = nt_lengths
         else:
             self.strain_lengths = strain_lengths
@@ -591,8 +591,8 @@ class ArgsContainer(object):
         self = self._parser_combine_wigs("terminator")
         return self
 
-    def container_transcript(self, tex_notex, length, annotation_files, height,
-                             width, tolerance, tolerance_coverage,
+    def container_transcript(self, tex_notex, modifys, length, annotation_files,
+                             height, width, tolerance, tolerance_coverage,
                              replicates_tex, replicates_frag, out_folder,
                              tss_files, TSS_fuzzy, tex_treated_libs,
                              fragmented_libs, compare_feature_genome,
@@ -601,6 +601,18 @@ class ArgsContainer(object):
             print("Error: --annotation_files needs to be assigned if "
                   "--compare_feature_genome is assigned.")
             sys.exit()
+        for modify in modifys:
+            if (modify != "merge_overlap") and (
+                    modify != "extend_5end") and (
+                    modify != "extend_3end") and (
+                    modify != "within_extend_ends") and (
+                    modify != "none"):
+                print("Error: --modify_transcript need to be assign as "
+                      "\"merge_overlap\", \"extend_5end\", \"extend_3end\", "
+                      "\"within_extend_ends\" or \"none\". "
+                      "The assignment is wrong!")
+                sys.exit()
+        self.modify = modifys
         self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
         self.tex_wigs = self._create_wig_folder(
                 os.path.join(out_folder, "tmp_wig", "tex_notex"),
@@ -687,8 +699,9 @@ class ArgsContainer(object):
                        terminator_files, terminator_fuzzy_in_sRNA,
                        terminator_fuzzy_out_sRNA, ignore_hypothetical_protein,
                        TSS_source, min_utr_coverage, promoter_tables,
-                       ranking_promoter, promoter_name):
+                       ranking_promoter, promoter_name, compute_sec_str):
         self.rnafold = rnafold
+        self.compute_sec_str = compute_sec_str
         self.para_blast = para_blast
         self.relplot_pl = relplot_pl
         self.mountain_pl = mountain_pl

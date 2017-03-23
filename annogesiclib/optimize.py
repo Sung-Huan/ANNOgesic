@@ -17,13 +17,13 @@ def get_length(fasta_file):
 
 def optimize_tss(args_ops):
     if len(os.listdir(args_ops.gffs)) == 0:
-        print("Error: There is no gff files!!!")
+        print("Error: There is no gff file!")
         sys.exit()
     if len(os.listdir(args_ops.fastas)) == 0:
-        print("Error: There is no fasta files!!!")
+        print("Error: There is no fasta file!")
         sys.exit()
     if len(os.listdir(args_ops.wigs)) == 0:
-        print("Error: There is no wiggle files!!!")
+        print("Error: There is no wiggle file!")
         sys.exit()
     Multiparser().parser_wig(args_ops.wigs)
     Multiparser().parser_gff(args_ops.gffs, None)
@@ -40,7 +40,7 @@ def optimize_tss(args_ops):
                 if strain == man.replace(".gff", ""):
                     detect = True
             if not detect:
-                print("Error: There are strains in --strain_lengths "
+                print("Error: There are genomes in --genome_lengths "
                       "which is not contained in manual-detected "
                       "TSS gff files!")
                 sys.exit()

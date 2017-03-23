@@ -87,7 +87,7 @@ def print_stat(stats, out_stat, overlaps, feature):
     print_file = False
     repeat = 0
     if len(stats) > 2:
-        out.write("All strains:\n")
+        out.write("All genomes:\n")
         print_file = True
         for strain, overs in overlaps.items():
             for over in overs:

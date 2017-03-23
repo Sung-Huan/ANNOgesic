@@ -319,24 +319,7 @@ def get_seq_sec(s_h, sec_seq):
 
 
 def print_term(terms, out):
-#    First = True
     for term in terms:
-#        if First:
-#            Fisrt = False
-#            pre_term = term
-#        else:
-#            if (term["strain"] == pre_term["strain"]) and (
-#                    term["strand"] == pre_term["strand"]):
-#                if ((term["start"] >= pre_term["start"]) and (
-#                        term["end"] <= pre_term["end"])) or (
-#                        (term["start"] <= pre_term["start"]) and (
-#                        term["end"] >= pre_term["end"])) or (
-#                        (term["start"] >= pre_term["start"]) and (
-#                        term["start"] <= pre_term["end"]) and (
-#                        term["end"] >= pre_term["end"])) or (
-#                        (term["start"] <= pre_term["start"]) and (
-#                        term["end"] >= pre_term["start"]) and (
-#                        term["end"] <= pre_term["end"])):
         print_ = False
         if (term["strand"] == "+") and (len(term["parent_p"]) != 0):
             print_ = True

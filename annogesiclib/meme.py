@@ -19,7 +19,7 @@ class MEME(object):
             self.gff_path = os.path.join(args_pro.gffs, "tmp")
         else:
             self.gff_path = None
-        self.out_fasta = os.path.join(args_pro.output_folder, "fasta_class")
+        self.out_fasta = os.path.join(args_pro.output_folder, "fasta_classes")
         self.tmp_folder = os.path.join(os.getcwd(), "tmp")
         self.fastas = {"pri": os.path.join(self.tmp_folder, "primary.fa"),
                        "sec": os.path.join(self.tmp_folder, "secondary.fa"),
@@ -88,7 +88,7 @@ class MEME(object):
                 command = command + ["-p", args_pro.para]
             call(command + ["-oc", os.path.join(meme_folder, folder),
                             os.path.join(input_path, fasta)])
-        elif (args_pro.program.lower() == "glam2") or (
+        if (args_pro.program.lower() == "glam2") or (
                 args_pro.program.lower() == "both"):
             glam_folder = self._gen_and_check_folder(
                             out_path, folder, "GLAM2")
@@ -135,23 +135,23 @@ class MEME(object):
         os.remove(self.fastas["tmp_all"])
         out_prefix = os.path.join(input_path, prefix)
         shutil.move(self.fastas["pri"], "_".join([
-            out_prefix, "allstrain_primary.fa"]))
+            out_prefix, "allgenome_primary.fa"]))
         shutil.move(self.fastas["sec"], "_".join([
-            out_prefix, "allstrain_secondary.fa"]))
+            out_prefix, "allgenome_secondary.fa"]))
         shutil.move(self.fastas["inter"], "_".join([
-            out_prefix, "allstrain_internal.fa"]))
+            out_prefix, "allgenome_internal.fa"]))
         shutil.move(self.fastas["anti"], "_".join([
-            out_prefix, "allstrain_antisense.fa"]))
+            out_prefix, "allgenome_antisense.fa"]))
         shutil.move(self.fastas["orph"], "_".join([
-            out_prefix, "allstrain_orphan.fa"]))
+            out_prefix, "allgenome_orphan.fa"]))
         shutil.move(all_type, "_".join([
-            out_prefix, "allstrain_all_types.fa"]))
+            out_prefix, "allgenome_all_types.fa"]))
         shutil.move(all_no_orph, "_".join([
-            out_prefix, "allstrain_without_orphan.fa"]))
+            out_prefix, "allgenome_without_orphan.fa"]))
 
     def _split_fasta_by_strain(self, input_path):
         for fasta in os.listdir(input_path):
-            if "allstrain" not in fasta:
+            if "allgenome" not in fasta:
                 os.remove(os.path.join(input_path, fasta))
         out = None
         for fasta in os.listdir(input_path):
@@ -166,7 +166,7 @@ class MEME(object):
                             strain = "_".join(datas[2:])
                             if pre_strain != strain:
                                 num_strain += 1
-                                filename = fasta.split("allstrain")
+                                filename = fasta.split("allgenome")
                                 if out is not None:
                                     out.close()
                                 out = open(os.path.join(
@@ -221,7 +221,7 @@ class MEME(object):
                          args_pro.fastas, fasta), self.all_fasta)
         else:
             for tss in os.listdir(os.path.join(
-                                  args_pro.output_folder, "TSS_class")):
+                                  args_pro.output_folder, "TSS_classes")):
                 if tss.endswith("_TSS.gff"):
                     self.helper.merge_file(os.path.join(
                          self.tss_path, tss), self.all_tss)
@@ -231,7 +231,7 @@ class MEME(object):
                         fasta.endswith(".fasta")):
                     self.helper.merge_file(os.path.join(
                          args_pro.fastas, fasta), self.all_fasta)
-        print("Generating fasta file of all fasta files")
+        print("Generating fasta file of all sequences")
         prefixs.append("allfasta")
         input_path = os.path.join(self.out_fasta, "allfasta")
         self.helper.check_make_folder(os.path.join(
@@ -292,16 +292,16 @@ class MEME(object):
                     args_pro.tex_wigs is None) or (
                     args_pro.input_libs is None):
                 print("Error: Please assign proper annotation, tex +/- "
-                      "wig folder and tex treated libs!!!")
+                      "wig files and tex treated libs!!!")
                 sys.exit()
-            if "TSS_class" not in os.listdir(args_pro.output_folder):
-                os.mkdir(os.path.join(args_pro.output_folder, "TSS_class"))
+            if "TSS_classes" not in os.listdir(args_pro.output_folder):
+                os.mkdir(os.path.join(args_pro.output_folder, "TSS_classes"))
             
-            print("Classifying TSS and extracting fasta {0}".format(prefix))
+            print("Classifying TSSs and extracting sequence of {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
                      os.path.join(self.gff_path, prefix + ".gff"),
-                     os.path.join(args_pro.output_folder, "TSS_class",
+                     os.path.join(args_pro.output_folder, "TSS_classes",
                      "_".join([prefix, "TSS.gff"])), args_pro, prefix)
 
     def run_meme(self, args_pro):
@@ -340,7 +340,7 @@ class MEME(object):
         if args_pro.combine:
             self._combine_file(prefixs, args_pro)
         self._run_program(prefixs, args_pro)
-        print("Generating the table")
+        print("Generating the tables")
         self._gen_table(args_pro.output_folder, prefixs,
                         args_pro.combine, args_pro.program)
         self._remove_files(args_pro)

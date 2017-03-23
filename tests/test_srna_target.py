@@ -45,9 +45,9 @@ class TestsRNATargetPrediction(unittest.TestCase):
         self.out = "test_folder/output"
         self.fastas = "test_folder/fastas"
         self.seq = "test_folder/output/sRNA_seqs"
-        self.rnaup = "test_folder/output/RNAup"
-        self.rnaplex = "test_folder/output/RNAplex"
-        self.merge = "test_folder/output/merge"
+        self.rnaup = "test_folder/output/RNAup_results"
+        self.rnaplex = "test_folder/output/RNAplex_results"
+        self.merge = "test_folder/output/merged_results"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.gffs)
@@ -74,7 +74,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         fasta = os.path.join(self.fastas, "test.fa")
         gen_file(fasta, ">aaa\nAAAAAAAA\n>bbb\nCCCC\n>ccc\nGGGGGGGGGGGG")
         self.star._sort_srna_fasta(fasta, "test", self.test_folder)
-        datas = import_data(os.path.join(self.test_folder, "tmp_test_sRNA.fa"))
+        datas = import_data(os.path.join(self.test_folder, "tmp_srna_target_test_sRNA.fa"))
         self.assertListEqual(datas, ['>bbb', 'CCCC', '>aaa', 'AAAAAAAA',
                                      '>ccc', 'GGGGGGGGGGGG'])
 
@@ -148,7 +148,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
 
     def test_rnaup(self):
         self.star._run_rnaup = self.mock.mock_run_rnaup
-        gen_file(os.path.join(self.out, "sRNA_seqs/tmp_test_sRNA.fa"),
+        gen_file(os.path.join(self.out, "sRNA_seqs/tmp_srna_target_test_sRNA.fa"),
                  ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
         gen_file(os.path.join(self.gffs, "test_target.fa"),
                  ">AAA_000001|CDS_00000\nAAATTAATTAAATTCCGGCCGGCCGG")
@@ -160,7 +160,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.out_folder = self.out
         args.core_up = 4
         self.star._rnaup(["test"], args)
-        datas = import_data(os.path.join(self.out, "tmp1.fa"))
+        datas = import_data(os.path.join(self.out, "tmp_srna_target1.fa"))
         self.assertEqual("\n".join(datas),
                          ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
 
@@ -176,8 +176,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         self.star._merge_rnaplex_rnaup(["test"], args)
         datas = import_data(os.path.join(self.test_folder, "out"))
         self.assertEqual("\n".join(datas),
-                         ("test_folder/output/RNAplex/test/test_RNAplex"
-                          ".txttest_folder/output/RNAup/test/test_RNAup.txt"))
+                         ("test_folder/output/RNAplex_results/test/test_RNAplex"
+                          ".txttest_folder/output/RNAup_results/test/test_RNAup.txt"))
 
 
 class Example(object):

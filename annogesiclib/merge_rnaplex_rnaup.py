@@ -42,13 +42,13 @@ def mod_srna_tar_pos(gff, pos, type_, pre_target, suf_target, length):
     return g_start, g_end
 
 def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar, length):
-    out.write("\t".join(["sRNA", "strain", "sRNA_position",
+    out.write("\t".join(["sRNA", "Genome", "sRNA_position",
                          "sRNA_interacted_position_" + feature,
-                         "sRNA_strand", "target_gene_ID", "target_ID",
-                         "target_locus_tag", "target_position",
-                         "target_interacted_position_" + feature,
-                         "target_strand", "energy_" + feature,
-                         "rank_" + feature]) + "\n")
+                         "sRNA_strand", "Target_gene_ID", "Target_ID",
+                         "Target_locus_tag", "Target_position",
+                         "Target_interacted_position_" + feature,
+                         "Target_strand", "Energy_" + feature,
+                         "Rank_" + feature]) + "\n")
     for method, srna_datas in srnas.items():
         for srna_id, targets in srna_datas.items():
             rank = 0
@@ -285,14 +285,14 @@ def read_gff(filename):
 
 
 def print_title(out):
-    out.write("\t".join(["sRNA", "strain", "sRNA_position",
+    out.write("\t".join(["sRNA", "Genome", "sRNA_position",
                          "sRNA_interacted_position_RNAplex",
                          "sRNA_interacted_position_RNAup", "sRNA_strand",
-                         "target_gene_ID", "target_ID", "target_locus_tag", "target_position",
-                         "target_interacted_position_RNAplex",
-                         "target_interacted_position_RNAup", "target_strand",
-                         "energy_RNAplex", "rank_RNAplex",
-                         "energy_RNAup", "rank_RNAup"]) + "\n")
+                         "Target_gene_ID", "Target_ID", "Target_locus_tag", "Target_position",
+                         "Target_interacted_position_RNAplex",
+                         "Target_interacted_position_RNAup", "Target_strand",
+                         "Energy_RNAplex", "Rank_RNAplex",
+                         "Energy_RNAup", "Rank_RNAup"]) + "\n")
 
 
 def merge_base_rnaplex(srnas, srna_gffs, args_tar, gffs, merges, length):

@@ -293,11 +293,11 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._run_replot = self.mock.mock_run_replot
         self.srna._convert_pdf = self.mock.mock_convert_pdf
         self.srna._run_mountain = self.mock.mock_run_mountain
-        os.mkdir(os.path.join(self.out, "mountain_plot"))
-        sec_path = os.path.join(self.out, "sec_structure")
+        sec_path = os.path.join(self.out, "figs")
         os.mkdir(sec_path)
-        os.mkdir(os.path.join(sec_path, "sec_plot"))
-        os.mkdir(os.path.join(sec_path, "dot_plot"))
+        os.mkdir(os.path.join(sec_path, "sec_plots"))
+        os.mkdir(os.path.join(sec_path, "dot_plots"))
+        os.mkdir(os.path.join(sec_path, "mountain_plots"))
         tmp_paths = {"dot": self.out, "sec": self.fastas,
                      "tmp": self.tsss, "main": self.test_folder}
         gen_file(os.path.join(self.fastas, "tmp/test.fa"),
@@ -346,17 +346,17 @@ class TestsRNADetection(unittest.TestCase):
         os.mkdir(gff_out)
         os.mkdir(table_out)
         os.mkdir(stat_out)
-        os.mkdir(os.path.join(table_out, "for_class"))
-        os.mkdir(os.path.join(gff_out, "for_class"))
+        os.mkdir(os.path.join(table_out, "for_classes"))
+        os.mkdir(os.path.join(gff_out, "for_classes"))
         args = self.mock_args.mock()
         args.max_len = 300
         args.min_len = 30
         args.import_info = ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"]
         self.srna._class_srna(["test"], args)
         self.assertTrue(os.path.exists(os.path.join(
-            gff_out, "for_class/test")))
+            gff_out, "for_classes/test")))
         self.assertTrue(os.path.exists(os.path.join(
-            table_out, "for_class/test")))
+            table_out, "for_classes/test")))
 
     def test_filter_srna(self):
         self.srna.helper.merge_blast_out = self.mock.mock_merge_blast_out
@@ -421,6 +421,7 @@ class TestsRNADetection(unittest.TestCase):
         args.blastn = "blast_path"
         args.nr_format = False
         args.srna_format = False
+        args.compute_sec_str = False
         args.e_nr = 0
         args.e_srna = 0
         args.para_blast = 1

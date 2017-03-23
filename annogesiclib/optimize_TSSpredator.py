@@ -31,7 +31,7 @@ def compute_stat(stat_value, best, best_para, cores,
                            para_line, best["tp"], best["tp_rate"], best["fp"],
                            best["fp_rate"], best["fn"], best["missing_ratio"]))
         best_out.close()
-    print(", ".join(["Current strain={0}", "Current Parameter:step={1}",
+    print(", ".join(["Current genome={0}", "Current Parameters:step={1}",
                     "height={2}", "height_reduction={3}", "factor={4}",
                     "factor_reduction={5}", "base_height={6}",
                     "enrichment_factor={7}",
@@ -49,7 +49,7 @@ def compute_stat(stat_value, best, best_para, cores,
               stat_value["tp"], stat_value["tp_rate"], stat_value["fp"],
               stat_value["fp_rate"], stat_value["fn"],
               stat_value["missing_ratio"]))
-    print("\t".join(["Best Parameter:height={0}", "height_reduction={1}",
+    print("\t".join(["Best Parameters:height={0}", "height_reduction={1}",
                      "factor={2}", "factor_reduction={3}", "base_height={4}",
                      "enrichment_factor={5}", "processing_factor={6}"]).format(
           best_para["height"],
@@ -285,7 +285,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
     for lib in args_ops.libs:
         lib_datas = lib.split(":")
         if lib_datas[0].endswith(".wig") is not True:
-            print("Error: Exist a not proper wig files!!")
+            print("Error: Exist a not proper wig file!!")
             sys.exit()
         for wig in os.listdir(wig_folder):
             filename = wig.split("_STRAIN_")
@@ -842,8 +842,8 @@ def start_data(current_para, list_num):
 
 def extend_data(out_path, best, best_para, step, strain):
     '''extend the data from previous run'''
-    print("Current strain is {0}, Extending step from {1}".format(strain, step))
-    print("\t".join(["Best Parameter:height={0}", "height_reduction={1}",
+    print("Current genome is {0}, Extending step from {1}".format(strain, step))
+    print("\t".join(["Best Parameters:height={0}", "height_reduction={1}",
                      "factor={2}", "factor_reduction={3}", "base_height={4}",
                      "enrichment_factor={5}", "processing_factor={6}"]).format(
           best_para["height"],
