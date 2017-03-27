@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.11"
+__version__ = "0.5.12"
 
 def main():
     print("""
@@ -1731,7 +1731,8 @@ def main():
         "$SAMPLE_NUM is 4. Then, n_10 will be 40 (10 * "
         "$SAMPLE_NUM) and a_3 will be 140 (average read depth * 3). "
         "Based on the same example, if this value is r_10,a_3, the minimum "
-        "read depth will become exact 10 reads. Default is n_10,a_3.")
+        "read depth will become exact 10 reads. If you don't want to set "
+        "maximum read depth, you can assign \"none\". Default is n_10,a_3.")
     snp_add.add_argument(
         "--ploidy", "-pl", default="haploid",
         help="The query bacteria is haploid or diploid. Default is haploid.")

@@ -92,24 +92,32 @@ def change(snp, seq):
                     len(snp["ref"]) - len(snp["alt"]))
 
 
-def get_n_a_value(para, depth_file, min_sample):
+def get_n_a_value(para, depth_file, min_sample, type_):
     '''get the corresponding number of cutoff'''
-    tag = para.split("_")[0]
-    value = float(para.split("_")[-1])
-    if tag == "a":
-        fh = open(depth_file, "r")
-        total = 0
-        num = 0
-        for row in csv.reader(fh, delimiter='\t'):
-            total = total + int(row[-1])
-            num += 1
-        avg_dep = float(total / num)
-        fh.close()
-        value = avg_dep * value
-    elif tag == "n":
-        value = (min_sample * value)
-    elif tag == "r":
-        pass
+    if (para.lower() == "none") and type_ == "b_dp":
+        value = None
+    else:
+        tag = para.split("_")[0]
+        try:
+            value = float(para.split("_")[-1])
+        except ValueError:
+            print("Error: The format of input cutoff is wrong! Please check "
+                  "--read_depth_range, --dp4_cutoff, --indel_fraction again.")
+            sys.exit()
+        if tag == "a":
+            fh = open(depth_file, "r")
+            total = 0
+            num = 0
+            for row in csv.reader(fh, delimiter='\t'):
+                total = total + int(row[-1])
+                num += 1
+            avg_dep = float(total / num)
+            fh.close()
+            value = avg_dep * value
+        elif tag == "n":
+            value = (min_sample * value)
+        elif tag == "r":
+            pass
     return value
 
 def apply_filter(filters, snp, snps):
@@ -138,14 +146,14 @@ def import_data(snp_file, args_snp, bam_number, depth_file, min_sample):
     max_quals["All_genome"] = 0
     pre_strain = ""
     cutoff_sum = get_n_a_value(args_snp.dp4_sum, depth_file,
-                               min_sample)
+                               min_sample, "dp4")
     cutoff_frac = float(args_snp.dp4_frac)
     depth_s = get_n_a_value(args_snp.depth_s, depth_file,
-                            min_sample)
+                            min_sample, "s_dp")
     depth_b = get_n_a_value(args_snp.depth_b, depth_file,
-                            min_sample)
+                            min_sample, "b_dp")
     idv = get_n_a_value(args_snp.idv, depth_file,
-                        min_sample)
+                        min_sample, "idv")
     imf = float(args_snp.imf)
     fh = open(snp_file, "r")
     for row in csv.reader(fh, delimiter="\t"):
@@ -164,10 +172,19 @@ def import_data(snp_file, args_snp, bam_number, depth_file, min_sample):
                     max_quals[snp["strain"]] = snp["qual"]
                 if snp["qual"] > max_quals["All_genome"]:
                     max_quals["All_genome"] = snp["qual"]
-                if (snp["depth"] >= depth_s) and (
+                compute = False
+                if (depth_b is None):
+                    if (snp["depth"] >= depth_s) and (
+                        snp["dp4_sum"] >= cutoff_sum) and (
+                        snp["dp4_frac"] >= cutoff_frac):
+                        compute = True
+                else:
+                    if (snp["depth"] >= depth_s) and (
                         snp["depth"] <= depth_b) and (
                         snp["dp4_sum"] >= cutoff_sum) and (
                         snp["dp4_frac"] >= cutoff_frac):
+                        compute = True
+                if compute:
                     if snp["indel"] == -1:
                         apply_filter(args_snp.filters, snp, snps)
                     else:

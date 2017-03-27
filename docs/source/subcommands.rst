@@ -461,7 +461,8 @@ this example is 2 which means there are two samples in set1 and set2.
                             $SAMPLE_NUM) and a_3 will be 140 (average read depth *
                             3). Based on the same example, if this value is
                             r_10,a_3, the minimum read depth will become exact 10
-                            reads. Default is n_10,a_3.
+                            reads. If you don't want to set maximum read depth,
+                            you can assign "none". Default is n_10,a_3.
       --ploidy PLOIDY, -pl PLOIDY
                             The query bacteria is haploid or diploid. Default is
                             haploid.
