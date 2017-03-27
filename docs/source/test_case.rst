@@ -1,11 +1,11 @@
 Tutorial of ANNOgesic
 =====================
 
-Here we will guide you how to use ANNOgesic through a small test case. 
-You will see how to run each subcommand of ANNOgesic. The test case is a public 
-RNA-Seq data from NCBI GEO that was part of a work by
-`Dugar et al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
-The differential RNA-seq data is of **Campylobacter jejuni** subsp. jejuni 81116. 
+This tutorial through a small test case to show you how to use
+ANNOgesic's subcommands. It build on a public differential RNA-Seq
+data set from **Campylobacter jejuni** subsp. jejuni 81116 that can be
+downloaded from NCBI GEO and that was part of a work by `Dugar et
+al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
 There will be several output files which are generated in different formats - 
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures. 
 For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bioviz.org/igb/index.html>`_, 
