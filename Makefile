@@ -1,5 +1,6 @@
 test:
-	python3 tests/run_test.py
+	python3 -m pytest
+	# python3 tests/run_test.py
 
 coverage:
 	python3 -m coverage run tests/run_test.py
