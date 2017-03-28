@@ -422,6 +422,23 @@ class Controller(object):
                   "if \"{1}\" in --filter_info!".format(info, filters))
             sys.exit()
 
+    def _check_database(self, database, flag, info):
+        wrong = False
+        if database is None:
+            wrong = True
+        elif not os.path.isfile(database):
+            if (os.path.isfile(database + ".fa")) or (
+                    os.path.isfile(database + ".fna")) or (
+                    os.path.isfile(database + ".fasta")):
+                wrong = False
+            else:
+                wrong = True
+        if wrong:
+            print("Error: {0} is required "
+                  "if {1} is in --filter_info. "
+                  "Please check it!".format(flag, info))
+            sys.exit()
+
     def srna_detection(self):
         """sRNA_detection."""
         print("Running sRNA prediction")
@@ -450,6 +467,10 @@ class Controller(object):
                 for prop in ("blastn_path", "blastx_path", "makeblastdb_path"):
                     setattr(self._args, prop,
                             self.check_execute_file(getattr(self._args, prop)))
+                self._check_database(self._args.nr_database_path,
+                                     "--nr_database_path", "blast_nr")
+                self._check_database(self._args.srna_database_path,
+                                     "--srna_database_path", "blast_srna")
             elif "sorf" == info:
                 self._check_filter_input(
                         self._args.sorf_files, "sORF", "sorf")
