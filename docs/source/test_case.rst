@@ -25,11 +25,11 @@ if your execute path is not in your ``$PATH``, please specify your execute path 
 Generating a project
 --------------------
 
-First of all, we need to create a working folder by running ``create``. ``-pj`` represents project path.
+First of all, we need to create a working folder by running ``create``. ``--project_path`` represents project path.
 
 ::
 
-    $ annogesic create -pj ANNOgesic
+    $ annogesic create --project_path ANNOgesic
 
 Then we will see 
 
@@ -50,15 +50,16 @@ Let's setting the ``$FTP_SOURCE`` first
 
     FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/
 
-Then, we can download fasta files(``-f``), gff files(``-g``), gbk files(``-k``), ptt files(``-p``), 
-rnt files(``-r``), and converts to embl(``-e``).
+Then, we can download fasta files(``--ref_fasta``), gff files(``--ref_gff``), 
+gbk files(``--ref_gbk``), ptt files(``--ref_ptt``), 
+rnt files(``--ref_rnt``), and converts to embl(``--convert_embl``).
 
 ::
 
     $ annogesic get_input_files \
-        -F $FTP_SOURCE \
-        -g -f -e -k -p -r \
-        -pj ANNOgesic
+        --ftp_path $FTP_SOURCE \
+        --ftp_path --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
+        --project_path ANNOgesic
 
 Then we will get following results
 
@@ -173,13 +174,14 @@ Now, let's try it
 ::
 
      $ annogesic update_genome_fasta \
-        -c ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -o ANNOgesic/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
-           ANNOgesic/output/updated_references/fasta_files/test_case2.fa:test_case2 \
-        -m ANNOgesic/input/mutation_table/mutation.csv \
-        -pj ANNOgesic
+        --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --output_format ANNOgesic/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
+                        ANNOgesic/output/updated_references/fasta_files/test_case2.fa:test_case2 \
+        --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
+        --project_path ANNOgesic
 
-``-r`` is path of the close genome fasta file. In ``-o``, we assign a pairs of output filenames and 
+``--closed_fasta_files`` is path of the close genome fasta file. 
+In ``--output_format``, we assign a pairs of output filenames and 
 the genomes that we want to put into the file. In our case, "test_case1" is the first output fasta file, and "test_case2" 
 is the second output fasta file. "test_case1" stores the sequence of the new genome "NC_test.1", 
 and "test_case2" stores the sequence of the other new genome - "test_case2". 
@@ -245,23 +247,25 @@ After setting the environment, we can try it.
 ::
 
     anngesic annotation_transfer \
-        -ce ANNOgesic/input/references/annotations/NC_009839.1.embl \
-        -cf ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -uf ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
-            ANNOgesic/output/updated_references/fasta_files/test_case2.fa \
-        -e chromosome \
-        -t Strain \
-        -p NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
-        -g \
-        -pj ANNOgesic
+        --closed_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
+        --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --updated_fasta_files ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
+                              ANNOgesic/output/updated_references/fasta_files/test_case2.fa \
+        --element chromosome \
+        --transfer_type Strain \
+        --compare_pair NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
+        --convert_to_gff_rnt_ptt \
+        --project_path ANNOgesic
 
 
-``-e`` is prefix name of the output embl files. ``-t`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
+``--element`` is prefix name of the output embl files. 
+``--transfer_type`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
 We use ``Strain`` because the similarity is higher than 90%. For other situations, please check 
-`RATT <http://ratt.sourceforge.net/>`_. In ``-p``, we assign pairs of the target genomes (NC_test.1 and test_case2) 
-and their close genomes (NC_000915.1). Please be careful, the information that we assign to ``-p`` 
-is genome names in gff files not fasta filenames. ``-g`` means that we want to transfer the 
-output embl files to GFF3 files and store in ``ANNOgesic/output/updated_references/annotations``.
+`RATT <http://ratt.sourceforge.net/>`_. In ``--compare_pair``, we assign pairs of the target genomes 
+(NC_test.1 and test_case2) and their close genomes (NC_000915.1). 
+Please be careful, the information that we assign to ``--compare_pair`` 
+is genome names in gff files not fasta filenames. ``--convert_to_gff_rnt_ptt`` means that we want to transfer the 
+output embl files to GFF3, ptt, rnt files and store in ``ANNOgesic/output/updated_references/annotations``.
 
 Once the transfer is done, we can see
 
@@ -312,23 +316,28 @@ from our git repository.
     $ wget -cP ANNOgesic/input/manual_TSSs/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
 Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSSs``. 
-we can try ``optimize_tss_ps`` right now (since we only check first 200kb, we set ``-le`` as "NC_009839.1:200000" which 
-means only first 200kb of NC_009839.1 is valid.).
+we can try ``optimize_tss_ps`` right now (since we only check first 200kb, we set ``--genome_lengths`` 
+as "NC_009839.1:200000" which means only first 200kb of NC_009839.1 is valid.).
 
 ::
 
     $ annogesic optimize_tss_ps \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -tl $TEX_LIBS \
-        -p TSS -s 25 \
-        -m ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
-        -le NC_009839.1:200000 \
-        -rt all_1 \
-        -pj ANNOgesic
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --condition_names TSS --steps 25 \
+        --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+        --genome_lengths NC_009839.1:200000 \
+        --replicate_tex all_1 \
+        --project_path ANNOgesic
 
 ``optimize_tss_ps`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
 Results of the different parameters will be printed in the screen. We only set 25 runs for testing. 
+``--replicate_tex`` is the minimum replicates that a TSS can be detected. ``all_1`` means that a TSS 
+should be detected in at least one replicate for all conditions. ``--replicate_tex`` can be also assigned like ``all_2`` 
+(a TSS should be detected in at least two replicates for all conditions) 
+or ``1_2 2_2 3_3`` (in condition 1 and 2 -- based on the setting of ``--tex_notex_libs``, 
+a TSS should be detected in at least two replicates, and a TSS should be predicted in three replicates in condition 3).
 Once the optimization is done, you can find several files.
 
 ::
@@ -345,24 +354,24 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
 ::
 
     $ annogesic tss_ps \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -tl $TEX_LIBS \
-        -p test \
-        -he 0.4 \
-        -rh 0.1 \
-        -fa 1.7 \
-        -rf 0.2 \
-        -bh 0.039 \
-        -ef 1.1 \
-        -pf 4.5 \
-        -v \
-        -rt all_1 \
-        -le NC_009839.1:200000 \
-        -m ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
-        -pj ANNOgesic
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --condition_names test \
+        --height 0.4 \
+        --height_reduction 0.1 \
+        --factor 1.7 \
+        --factor_reduction 0.2 \
+        --base_height 0.039 \
+        --enrichment_factor 1.1 \
+        --processing_factor 4.5 \
+        --validate_gene \
+        --replicate_tex all_1 \
+        --genome_lengths NC_009839.1:200000 \
+        --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+        --project_path ANNOgesic
 
-We assign the manual-checked TSS gff file to ``-m``. Therefore, the output gff file contains the manual-detected TSSs and predicted TSSs. 
+We assign the manual-checked TSS gff file to ``--manual_files``. Therefore, the output gff file contains the manual-detected TSSs and predicted TSSs. 
 If we didn't assign it, Only the predicted TSSs will be included in output gff file. 
 The output files are gff file, MasterTable and statistic files.
 
@@ -381,27 +390,27 @@ The output files are gff file, MasterTable and statistic files.
     stat_gene_vali_NC_009839.1.csv                   stat_TSS_libs_NC_009839.1.csv   TSSstatistics.tsv
 
 If we want to predict processing sites, the procedures are the same. We just need to change the program from TSS to 
-processing_site (``-t``) and assign the proper parameter sets. We assume the best parameter sets are following: 
+processing_site (``--program``) and assign the proper parameter sets. We assume the best parameter sets are following: 
 height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
 base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
 
 ::
 
     $ annogesic tss_ps \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -tl $TEX_LIBS \
-        -p test \
-        -he 0.2 \
-        -rh 0.1 \
-        -fa 2.0 \
-        -rf 0.5 \ 
-        -bh 0.009 \
-        -ef 1.2 \
-        -pf 1.5 \ 
-        -rt all_1 \
-        -t processing_site \
-        -pj ANNOgesic
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --condition_names test \
+        --height 0.2 \
+        --height_reduction 0.1 \
+        --factor 2.0 \
+        --factor_reduction 0.5 \ 
+        --base_height 0.009 \
+        --enrichment_factor 1.2 \
+        --processing_factor 1.5 \ 
+        --replicate_tex all_1 \
+        --program processing_site \
+        --project_path ANNOgesic
 
 The output files are following:
 
@@ -426,7 +435,7 @@ Performing transcript detection
 
 Transcript detection is a basic procedure for detecting transcript boundary. 
 we can use subcommand ``transcript`` to do it. Normally, we strongly 
-recommend that the user should provide fragmented libraries. Because dRNA-Seq usually loses some information 
+recommend that the user should provide fragmented libraries (``--frag_libs``). Because dRNA-Seq usually loses some information 
 of 3'end. However, we only use TEX +/- for testing.
 
 There are several options for modifying transcripts by comparing transcripts and genome annotations. 
@@ -435,12 +444,12 @@ If you want to know the details, please check :ref:`transcript`. Now, we use def
 ::
 
     $ annogesic transcript \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -tl $TEX_LIBS \
-        -rt all_1 \
-        -cf gene CDS \
-        -ct ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --replicate_tex all_1 \
+        --compare_feature_genome gene CDS \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --project_path ANNOgesic
 
 The output files are gff files, tables and statistic files.
 
@@ -462,12 +471,12 @@ for computing secondary structure of potential terminators. Therefore, this proc
 ::
 
     $ annogesic terminator \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -tl $TEX_LIBS \
-        -rt all_1 -tb \
-        -pj ANNOgesic
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --replicate_tex all_1 \
+        --project_path ANNOgesic
 
 Four different kinds of gff files and tables will be generated.
 
@@ -525,13 +534,13 @@ subcommand ``utr``.
 ::
 
     $ annogesic utr \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -e ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+        --project_path ANNOgesic
 
-If the TSS gff file is not generated by ANNOgesic, please assign ``-s``,  the TSSs can be classified for generating UTRs.
+If the TSS gff file is not generated by ANNOgesic, please add ``--tss_source``,  the TSSs can be classified for generating UTRs.
 Output gff files and statistic files will be stored in ``ANNOgesic/output/UTRs/5UTRs`` and ``ANNOgesic/output/UTRs/3UTRs``.
 
 ::
@@ -560,13 +569,13 @@ detect operons and suboperons by executing subcommand ``operon``.
 ::
 
     $ annogesic operon \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -u5 ANNOgesic/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff \
-        -u3 ANNOgesic/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff \
-        -e ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --utr5_files ANNOgesic/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff \
+        --utr3_files ANNOgesic/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff \
+        --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+        --project_path ANNOgesic
 
 Three folders will be generated to store gff files, tables and statistics files.
 
@@ -586,17 +595,17 @@ Promoter motif detection
 
 As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. The promoters can be detected 
 by different types of the TSSs. Therefore, if the TSSs gff files are not generated by ``ANNOgesic``,
-you need to add ``-s`` and assign corresponding genome annotation file to ``-g``.
-Now, let try ``promoter`` by running MEME and GLAM2 (``-p`` is assigned by "both" in default. If you want to only run 
-MEME or GLAM2, please assign "meme" or "glam2" to ``-p``), the process may take a while.
+you need to add ``--tss_source`` and assign corresponding genome annotation file to ``--annotation_files``.
+Now, let try ``promoter`` by running MEME and GLAM2 (``--program`` is assigned by "both" in default. If you want to only run 
+MEME or GLAM2, please assign "meme" or "glam2" to ``--program``), the process may take a while.
 
 ::
 
     $ annogesic promoter \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -w 45 2-10 \
-        -pj ANNOgesic
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --motif_width 45 2-10 \
+        --project_path ANNOgesic
 
 We define the length of the motifs as ``50`` and ``2-10``. ``2-10`` means the width can be from 2 to 10.
 
@@ -670,34 +679,34 @@ you can skip this step.
     $ gunzip ANNOgesic/input/databases/nr.gz
     $ mv ANNOgesic/input/databases/nr ANNOgesic/input/databases/nr.fa
 
-If your nr database is in other folders, please assign your path ``-nd``.
-You can also remove ``-nf`` if your database is already formatted.
+If your nr database is in other folders, please assign your path ``--nr_database_path``.
+You can also remove ``--nr_format`` if your database is already formatted.
 Now, we can use the recommended filters to run ``srna``, but it may takes several hours.
 
 ::
 
     $ annogesic srna \
-        -d tss blast_srna sec_str blast_nr \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -p ANNOgesic/output/processing_sites/gffs/NC_009839.1_processing.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -tf ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
-        -pt ANNOgesic/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/meme.csv \
-        -pn MOTIF_1 \
-        -m \
-        -u \
-        -cs \
-        -sf \
-        -nf \
-        -nd ANNOgesic/input/databases/nr \
-        -sd ANNOgesic/input/databases/sRNA_database_BSRD \
-        -tl $TEX_LIBS \
-        -rt all_1 \
-        -pj ANNOgesic
+        --filter_info tss blast_srna sec_str blast_nr \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --processing_site_files ANNOgesic/output/processing_sites/gffs/NC_009839.1_processing.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+        --promoter_tables ANNOgesic/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/meme.csv \
+        --promoter_names MOTIF_1 \
+        --mountain_plot \
+        --utr_derived_srna \
+        --compute_sec_structures \
+        --srna_format \
+        --nr_format \
+        --nr_database_path ANNOgesic/input/databases/nr \
+        --srna_database_path ANNOgesic/input/databases/sRNA_database_BSRD \
+        --tex_notex_libs $TEX_LIBS \
+        --replicate_tex all_1 \
+        --project_path ANNOgesic
 
-If you have sORF information, you can also assign path of the sORF gff folder to ``-O``. 
+If you have sORF information, you can also assign path of the sORF gff folder to ``--sorf_files``. 
 Then, comparison of sRNAs and sORFs can be done.
 
 Output files are following.
@@ -770,14 +779,14 @@ In order to get information of sORFs, we can use subcommand ``sorf``.
 ::
 
     $ annogesic sorf \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -s ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
-        -tl $TEX_LIBS \
-        -rt all_1 -u \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --srna_files ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --replicate_tex all_1 -u \
+        --project_path ANNOgesic
 
 For generating best candidates, some filters can be assigned 
 (ex: with ribosome binding site (Shine-Dalgarno sequence), with TSS, without overlap with sRNA, etc.).
@@ -805,16 +814,16 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
 ::
 
     $ annogesic srna_target \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -r ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
-        -q NC_009839.1:36954:37044:- \
-        -p both \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --srna_files ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+        --query_srnas NC_009839.1:36954:37044:- \
+        --program both \
+        --project_path ANNOgesic
 
 For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like 
 ``NC_009839.1:36954:37044:- NC_009839.1:75845:75990:+``. If you want to compute all sRNAs, you 
-can assign ``all`` to ``-q`` (may take several days).
+can assign ``all`` to ``--query_srnas`` (may take several days).
 
 Several output folders will be generated. 
 
@@ -856,11 +865,11 @@ Mapping and detecting of circular RNA
 You may also be interested in circular RNAs. The subcommand ``circrna`` can help us to get circular RNAs by  
 using `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. Since 
 we didn't map reads of the test case before, we can also do mapping by running ``circrna``. If you already mapped 
-the reads by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``, then you can 
-remove ``-a`` and add path of the bam files to ``-nb`` or ``-fb``. However, 
+the reads by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``--splits``, then you can 
+add path of the bam files to ``--bam_files`` directly without alignment. However, 
 if you mapped the reads by other tools or you mapped the reads by 
-`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``-S``, Unfortunately, 
-you have to re-map the reads again. You can assign parallel (``-p``) for mapping.
+`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ without ``--splits``, Unfortunately, 
+you have to re-map the reads(``--read_files``) again. You can assign parallel (``--parallels``) for mapping.
 
 In normal situation, the reads should be directly given to ``circrna``. However, we just want to test the 
 subcommand. Thus, we can reduce the running time by selecting the subset of reads (first 50000) for only testing.
@@ -885,17 +894,17 @@ Then we setup the read files.
     ANNOgesic/input/reads/SRR515257_50000.fasta
 
 
-After that, we assign ``all_samples:$READ_FILE`` to ``-rp``. ``all_sample`` is the name of the set of read files. 
+After that, we assign ``all_samples:$READ_FILE`` to ``--read_files``. ``all_sample`` is the name of the set of read files. 
 The all four read files will be compute together. Now, we can try ``circrna``
 
 ::
 
      $ annogesic circrna \
-         -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-         -p 10 \
-         -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-         -rp all_samples:$READ_FILES \
-         -pj ANNOgesic
+         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+         --parallels 10 \
+         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+         --read_files all_samples:$READ_FILES \
+         --project_path ANNOgesic
 
 If you can't find testrealign.x, please refer to :ref:`Required tools or databases`.
 Several output folders will be generated.
@@ -950,8 +959,8 @@ running ``circrna``, we can just put them to corresponding folder. Please rememb
 ``circrna`` is very basic.
 
 Now, we can try to detect mutations. Since we already got the Bam files of NC_009839.1 (our query genome) via ``circrna``, 
-we can set ``-t`` as ``query_genome``. The procedures of comparing closed genome and query genome are similar, 
-you just need to put Bam files, and fasta files to corresponding folders and set ``-t`` as ``closed_genome``.
+we can set ``--bam_type`` as ``query_genome``. The procedures of comparing closed genome and query genome are similar, 
+you just need to put Bam files, and fasta files to corresponding folders and set ``--bam_type`` as ``closed_genome``.
 
 First, we copy the bam files to ``BAMs_map_query_genomes``.
 
@@ -968,17 +977,17 @@ Now, we can set our bam files
       ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam
 
 Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``. 
-``all_sample:2:$BAM_FILES`` for ``-b`` means the name of the set of bam files is all_sample, there are two 
+``all_sample:2:$BAM_FILES`` for ``--bam_files`` means the name of the set of bam files is all_sample, there are two 
 samples in this set, and all four bam files need to be compute together.
 
 ::
 
     $ annogesic snp \
-        -t query_genome \
-        -p with_BAQ without_BAQ extend_BAQ \
-        -b all_samples:2:$BAM_FILES \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -pj ANNOgesic
+        --bam_type query_genome \
+        --program with_BAQ without_BAQ extend_BAQ \
+        --bam_files all_samples:2:$BAM_FILES \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --project_path ANNOgesic
 
 Two output folders will be generated, ``compare_closed_and_updated_references`` is for results of the comparison between closed genome 
 and query genome, ``mutations_of_query_genomes`` is for results of detecting mutations of the query genome.
@@ -1054,12 +1063,12 @@ Let's try it.
 ::
 
     $ annogesic go_term \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -go ANNOgesic/input/databases/go.obo \
-        -gs ANNOgesic/input/databases/goslim_generic.obo \
-        -u ANNOgesic/input/databases/idmapping_selected.tab \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --go_obo ANNOgesic/input/databases/go.obo \
+        --goslim_obo ANNOgesic/input/databases/goslim_generic.obo \
+        --uniprot_id ANNOgesic/input/databases/idmapping_selected.tab \
+        --project_path ANNOgesic
 
 Output of ``go_term`` are stored in ``GO_term_results``. The statistic files and 
 figures are stored in ``statistics``.
@@ -1088,11 +1097,11 @@ information of the transcript to generate results which only included the expres
 ::
 
     $ annogesic localization \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -m -b negative \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --merge_to_gff --bacteria_type negative \
+        --project_path ANNOgesic
 
 Two output folders will be generated. ``psortb_results`` stores output 
 of `Psortb <http://www.psort.org/psortb/>`_. ``statistics`` stores 
@@ -1130,15 +1139,15 @@ Now, we can try the subcommand.
 ::
 
     $ annogesic ppi_network \
-        -s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -d ANNOgesic/input/databases/species.v10.txt \
-        -q NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
-        -n \
-        -pj ANNOgesic
+        --query_strains NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --species_string ANNOgesic/input/databases/species.v10.txt \
+        --query NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
+        --without_strain_pubmed \
+        --project_path ANNOgesic
 
 We only detected for two proteins. If you want to detect for all proteins in ptt files, 
-you can easily assign ``all`` in ``-q``.
+you can easily assign ``all`` in ``--query``.
 
 Three output folders will be generated.
 
@@ -1206,14 +1215,14 @@ Now we can try the subcommand.
 ::
 
     $ annogesic riboswitch_thermometer \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -ri ANNOgesic/input/riboswitch_ID_file/Rfam_riboswitch_ID.csv \
-        -ti ANNOgesic/input/RNA_thermometer_ID_file/Rfam_RNA_thermometer_ID.csv \
-        -R ANNOgesic/input/databases/CMs/Rfam.cm \
-        -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -t ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --riboswitch_id_file ANNOgesic/input/riboswitch_ID_file/Rfam_riboswitch_ID.csv \
+        --rna_thermometer_id_file ANNOgesic/input/RNA_thermometer_ID_file/Rfam_RNA_thermometer_ID.csv \
+        --rfam_path ANNOgesic/input/databases/CMs/Rfam.cm \
+        --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --project_path ANNOgesic
 
 Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_thermometer; 
 ``tables`` stores tables of the riboswitchs / RNA_thermometer; 
@@ -1251,9 +1260,9 @@ annotation to remove false positive. Let's try it.
 ::
 
      $ annogesic crispr \
-        -g ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -pj ANNOgesic
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --project_path ANNOgesic
 
 Output are as following, ``CRT_results`` stores output of `CRT <http://www.room220.com/crt/>`_; 
 ``gffs`` stores gff files of the CRISPRs; ``statistics`` is for statistic files.
@@ -1300,10 +1309,10 @@ Now let's do it. We merge all features that we have.
 ::
 
     $ annogesic merge_features \
-       -a ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-       -of $ALL_FEATURES \
-       -op NC_009839.1 \
-       -pj ANNOgesic
+       --transcript_file ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+       --other_features_files $ALL_FEATURES \
+       --output_prefix NC_009839.1 \
+       --project_path ANNOgesic
 
 Output gff file is stored in ``merge_all_features``
 
@@ -1326,13 +1335,13 @@ For testing, we use TSSs as main feature, sRNAs and CDSs as side features.
 ::
 
     $ annogesic screenshot \
-        -mg ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
-        -sg ANNOgesic/input/references/annotations/NC_009839.1.gff \
-            ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
-        -f ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        -o ANNOgesic/output/TSSs \
-        -tl $TEX_LIBS \
-        -pj ANNOgesic
+        --main_gff ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --side_gffs ANNOgesic/input/references/annotations/NC_009839.1.gff \
+                    ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+        --fasta_file ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --output_folder ANNOgesic/output/TSSs \
+        --tex_notex_libs $TEX_LIBS \
+        --project_path ANNOgesic
 
 Two txt files and two folders will be generated.
 
@@ -1377,9 +1386,9 @@ our screenshots.
 ::
 
     $ annogesic color_png \
-        -t 2 \
-        -f ANNOgesic/output/TSSs \
-        -pj ANNOgesic
+        --track_number 2 \
+        --screenshot_folder ANNOgesic/output/TSSs \
+        --project_path ANNOgesic
 
 We will see output filenames are the same as before. However, when we open the figures, the tracks are colored.
 

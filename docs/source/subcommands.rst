@@ -462,7 +462,7 @@ this example is 2 which means there are two samples in set1 and set2.
                             3). Based on the same example, if this value is
                             r_10,a_3, the minimum read depth will become exact 10
                             reads. If you don't want to set maximum read depth,
-                            you can assign "none". Default is n_10,a_3.
+                            you can assign "none". Default is n_10,none.
       --ploidy PLOIDY, -pl PLOIDY
                             The query bacteria is haploid or diploid. Default is
                             haploid.
@@ -605,10 +605,10 @@ For the transcripts, please check the section :ref:`transcript`.
 ::
 
     usage: annogesic tss_ps [-h] [--project_path [PROJECT_PATH]]
-                            [--compute_program COMPUTE_PROGRAM] --fasta_files
-                            FASTA_FILES [FASTA_FILES ...] --annotation_files
-                            ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                            [--program PROGRAM] --fasta_files FASTA_FILES
+                            [FASTA_FILES ...] --annotation_files ANNOTATION_FILES
+                            [ANNOTATION_FILES ...] --tex_notex_libs TEX_NOTEX_LIBS
+                            [TEX_NOTEX_LIBS ...]
                             [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                             --condition_names CONDITION_NAMES
                             [CONDITION_NAMES ...]
@@ -639,7 +639,7 @@ For the transcripts, please check the section :ref:`transcript`.
       --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
                             Path of the project folder. If none is given, the
                             current directory is used.
-      --compute_program COMPUTE_PROGRAM, -t COMPUTE_PROGRAM
+      --program PROGRAM, -p PROGRAM
                             Which feature you want to predict, please assign "TSS"
                             or "processing_site". Default is TSS.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -665,7 +665,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -p CONDITION_NAMES [CONDITION_NAMES ...]
+      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefix of all conditions. If multiple
                             conditions need to be assigned, please use spaces to
                             separate them. For example, prefix_condition1
@@ -889,7 +889,7 @@ genome annotation gff files are required. There are four options for modificatio
                                 [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
                                 [--tss_fuzzy TSS_FUZZY] [--table_best]
                                 [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                                [--fuzzy_term FUZZY_TERM]
+                                [--terminator_fuzzy TERMINATOR_FUZZY]
                                 [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
     
     optional arguments:
@@ -1000,17 +1000,17 @@ genome annotation gff files are required. There are four options for modificatio
                             is None. If multiple features need to be assigned,
                             just insert spaces between each feature, such as gene
                             CDS.
-      --tss_fuzzy TSS_FUZZY, -fu TSS_FUZZY
+      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
                             If --compare_TSS is assigned, please type the fuzzy
                             for comparing TSS with transcript here. Default is 5.
       --table_best, -tb     The output table only includes the information of the
                             highest expressed library. Default is False.
-      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -tr TERMINATOR_FILES [TERMINATOR_FILES ...]
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             If the paths of terminator gff files are assigned
                             here, this function will compare transcripts with
                             terminators to detect the parent transcript of
                             terminator. Default is None.
-      --fuzzy_term FUZZY_TERM, -fz FUZZY_TERM
+      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
                             If --terminator_files is assigned, please assign the
                             fuzzy here. Default is 30.
       --max_length_distribution MAX_LENGTH_DISTRIBUTION, -mb MAX_LENGTH_DISTRIBUTION
@@ -1060,16 +1060,14 @@ The generated output folders are as following:
 Based on this information, we can know the details of the specific transcript. The tags are as following:
 
 	**compare_$FEATURE:** State of overlap between transcripts and features
-	(If --compare_genome_annotation is assigned.) The value may be "cover", "right_shift", "left_shift", "within" or "no_related".
+	(If ``--compare_feature_genome`` and ``--annotation_files`` are assigned). The value may be "cover", "right_shift", "left_shift", "within" or "no_related".
 
-	**associated_tss:** Shows which TSSs are located on this transcript. 
-	(If --compare_TSS is assigned.)
+	**associated_tss:** Shows which TSSs are located on this transcript (If ``--tss_files`` is assigned).
 
-	**associated_term:** Shows which terminators are located on this transcript.
-	(If --terminator_folder is assigned.)
+	**associated_term:** Shows which terminators are located on this transcript (If ``--terminator_files`` is assigned).
 
-	**associated_$FEATURE:** Shows that the feature (--compare_feature_genome) are located on this transcript.
-	(If --compare_genome_annotation is assigned.) 
+	**associated_$FEATURE:** Shows that the features are located on this transcript
+	(If ``--compare_feature_genome`` and ``--annotation_files`` are assigned). 
 
 	**detect_lib:** This transcript is detected by Tex-treated libraries or fragmented/conventional libraries.
 
@@ -1367,7 +1365,7 @@ utr (UTR detection)
 to generate 5'UTR and 3'UTR. 5'UTRs are based on detecting the regions between TSSs and CDSs/tRNAs/sRNAs. 
 3'UTRs are based on detecting the 
 regions between the end of the transcripts and CDSs/tRNAs/sRNAs. If the input gff files of TSSs are not computed by 
-ANNOgesic, please use ``--TSS_source`` to classify TSSs for the analysis.
+ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
 
 - **Required files**
 
@@ -1428,7 +1426,7 @@ ANNOgesic, please use ``--TSS_source`` to classify TSSs for the analysis.
                             please assign the information for detection of 3'UTR.
                             It can be "transcript" or "terminator" or "both".
                             Default is transcript.
-      --terminator_fuzzy TERMINATOR_FUZZY, -f TERMINATOR_FUZZY
+      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
                             This is only for --base_3utr which is assigned by
                             "transcript" or "both", and terminator file are
                             provided. If the distance (nucleotides) between
@@ -1555,8 +1553,7 @@ this candidate will be included to the result without considering other filters.
 		Format of the header should be ``$ID|$GENOME|$SRNANAME``. For example, 
 		``srn_4840|S._aureus_NCTC8325|RsaOV`` The ID is srn_4840, 
 		the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
-		If the format of the header is not correct, an error or non-sense results will occur when 
-		the user runs this subcommand with ``--sRNA_blast_stat, -sb``.
+		If the format of the header is not correct, an error or non-sense results will occur.
 		If you want to use BSRD with proper headers, you can download it from our
 		`Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ easily.
 
@@ -1700,7 +1697,7 @@ this candidates will be removed.
                             here, processing site information will be used for
                             detecting sRNA. For detection of UTR-derived sRNA,
                             processing site information can improve the results.
-      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -tf TERMINATOR_FILES [TERMINATOR_FILES ...]
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             If terminator information can be provided, please
                             assign the paths of gff files of terminators. If
                             "term" in --filter_info, terminator gff files MUST be
@@ -1823,12 +1820,12 @@ this candidates will be removed.
                             The meaning is similar to --tss_5utr_fuzzy. This value
                             is for interCDS-derived sRNA instead of 5'UTR-derived
                             sRNA. Default is p_0.04.
-      --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -tfi TERMINATOR_FUZZY_IN_SRNA
+      --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -efi TERMINATOR_FUZZY_IN_SRNA
                             If --terminator_files is provided, please assign the
                             fuzzy for comparing terminator with transcript. This
                             value is for the terminator which is within sRNA.
                             Default is 30.
-      --terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA, -tfo TERMINATOR_FUZZY_OUT_SRNA
+      --terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA, -efo TERMINATOR_FUZZY_OUT_SRNA
                             The meaning is the same as --terminator_fuzzy_in_sRNA.
                             This value is for the terminator which is outside of
                             sRNA. Default is 30.
@@ -1921,7 +1918,7 @@ this candidates will be removed.
                             --run_utr_TEX_coverage, --run_utr_noTEX_coverage and
                             --run_utr_fragmented_coverage, but also this value.
                             Default is 50.
-      --cutoff_energy CUTOFF_ENERGY, -e CUTOFF_ENERGY
+      --cutoff_energy CUTOFF_ENERGY, -ce CUTOFF_ENERGY
                             If "sec_str" is included in --filter_info, please
                             assign the maximum folding energy change (normalized
                             by length of gene). Default is -0.05.
@@ -2410,7 +2407,7 @@ promoter (Promoter motif detection)
 We integrated `MEME <http://meme-suite.org/tools/meme>`_ (for ungapped motifs) and 
 `GLAM2 <http://meme-suite.org/tools/glam2>`_ (for gapped motifs) to predict the promoters.
 Based on the tool, HTML files can be generated for visualization. If the input TSS gff file 
-is not computed by ANNOgesic, please use ``--TSS_source`` to classify TSSs for predicting  
+is not computed by ANNOgesic, please add ``--tss_source`` to classify TSSs for predicting  
 promoter motifs.
 
 - **Required tools**
@@ -2539,7 +2536,7 @@ to generate promoter motifs. The results will be stored in this folder.
 		**Promoter tables:** ``meme.csv`` or ``glam2.csv`` is the promoter table which also includes the TSS information. 
 		Moreover, it can used as an input for sRNA detection (``srna``). Please check the section ``srna``.
 
-**TSS_classes:** If the TSSs are not computed by ANNOgesic, ``TSS_class`` will be generated for classification of TSS.
+**TSS_classes:** If the TSSs are not computed by ANNOgesic, ``TSS_classes`` will be generated for classification of TSS.
 TSS gff files with TSS types will be stored here.
 
 .. _operon:
@@ -2577,8 +2574,9 @@ sub-operons.
                             [TRANSCRIPT_FILES ...] --utr5_files UTR5_FILES
                             [UTR5_FILES ...] --utr3_files UTR3_FILES
                             [UTR3_FILES ...]
-                            [--term_files TERM_FILES [TERM_FILES ...]]
-                            [--tss_fuzzy TSS_FUZZY] [--term_fuzzy TERM_FUZZY]
+                            [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
+                            [--tss_fuzzy TSS_FUZZY]
+                            [--terminator_fuzzy TERMINATOR_FUZZY]
                             [--min_length MIN_LENGTH]
     
     optional arguments:
@@ -2598,7 +2596,7 @@ sub-operons.
                             Paths of the 5'UTR gff files.
       --utr3_files UTR3_FILES [UTR3_FILES ...], -u3 UTR3_FILES [UTR3_FILES ...]
                             Paths of the 3'UTR gff files.
-      --term_files TERM_FILES [TERM_FILES ...], -e TERM_FILES [TERM_FILES ...]
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             If terminator information can be provided, please
                             assign the paths of terminator gff files here.
     
@@ -2606,7 +2604,7 @@ sub-operons.
       --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
                             The fuzzy for comparing between TSS and transcript.
                             Default is 5.
-      --term_fuzzy TERM_FUZZY, -ef TERM_FUZZY
+      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
                             The fuzzy for comparing between terminator and
                             transcript. Default is 30.
       --min_length MIN_LENGTH, -l MIN_LENGTH
@@ -2663,7 +2661,7 @@ circrna (circular RNA detection)
 Moreover, the false positive can be removed by checking genome annotation files and quality of splicing site detection. 
 The user can assign reads for detecting circular RNAs or assign BAM files to skip mapping.
 BE CAREFUL, BAM files must be mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ 
-with ``-S`` or ``circrna`` can't find the proper candidates.
+with ``--splits`` or ``circrna`` can't find the proper candidates.
 
 - **Required tools**
 
@@ -2673,7 +2671,7 @@ For generating testrealign.x, please refer to :ref:`Required tools or databases`
 - **Required files**
 
 **Fasta files of reads or BAM files:** If you want to use BAM files directly, they should be 
-mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``-S``.
+mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``--splits``.
 The input format is ``$SET_NAME:$READ1,$READ2,...`` or ``$SET_NAME:$BAM1,$BAM2,...``. 
 For example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be computed together.
 If your BAM files are generated by mapping reads on multiple reference genomes, 
@@ -2944,7 +2942,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                             Paths of the genome annotation gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
-      --srna_files SRNA_FILES [SRNA_FILES ...], -r SRNA_FILES [SRNA_FILES ...]
+      --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
                             Paths of the sRNA gff files.
       --query_srnas QUERY_SRNAS [QUERY_SRNAS ...], -q QUERY_SRNAS [QUERY_SRNAS ...]
                             Please assign the query sRNA. The input format is
@@ -3100,9 +3098,8 @@ the supported literature of the protein-protein interaction networks.
     usage: annogesic ppi_network [-h] [--project_path [PROJECT_PATH]]
                                  --annotation_files ANNOTATION_FILES
                                  [ANNOTATION_FILES ...] --species_string
-                                 SPECIES_STRING --proteinid_strains
-                                 PROTEINID_STRAINS [PROTEINID_STRAINS ...]
-                                 [--query QUERY [QUERY ...]]
+                                 SPECIES_STRING --query_strains QUERY_STRAINS
+                                 [QUERY_STRAINS ...] [--query QUERY [QUERY ...]]
                                  [--without_strain_pubmed] [--score SCORE]
                                  [--node_size NODE_SIZE]
     
@@ -3122,7 +3119,7 @@ the supported literature of the protein-protein interaction networks.
       --species_string SPECIES_STRING, -d SPECIES_STRING
                             Please assign path of the species table of STRING
                             (species.$VERSION.txt).
-      --proteinid_strains PROTEINID_STRAINS [PROTEINID_STRAINS ...], -s PROTEINID_STRAINS [PROTEINID_STRAINS ...]
+      --query_strains QUERY_STRAINS [QUERY_STRAINS ...], -s QUERY_STRAINS [QUERY_STRAINS ...]
                             This is for query strain and filename. In order to
                             retrieve the data from STRING and Pubmed, The strain
                             name must be assigned. If the query strain is not
@@ -3163,8 +3160,8 @@ the supported literature of the protein-protein interaction networks.
                             Staphylococcus_aureus_HG003:2000:3211:-. For computing
                             all protein, just type "all". Default is all.
       --without_strain_pubmed, -n
-                            Retrieving the literature from Pubmed without
-                            assigning strains, Default is False.
+                            This function will retrieve the literature from Pubmed
+                            without assigning strains as well. Default is False.
     
     additional arguments:
       --score SCORE, -ps SCORE
@@ -3624,7 +3621,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
       --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
                             Path of the project folder. If none is given, the
                             current directory is used.
-      --program PROGRAM, -t PROGRAM
+      --program PROGRAM, -p PROGRAM
                             The feature for optimization. Please assign "TSS" or
                             "Processing_site". Default is TSS.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -3667,7 +3664,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
-      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -p CONDITION_NAMES [CONDITION_NAMES ...]
+      --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefixes of all conditions. If multiple
                             conditions need to be assigned, please use spaces to
                             separate them. For example, prefix_condition1
@@ -3920,10 +3917,10 @@ If transcript gff files can be provided, this module will search the parent tran
 
     usage: annogesic merge_features [-h] [--project_path [PROJECT_PATH]]
                                     --output_prefix OUTPUT_PREFIX
-                                    [--transcript_file_path TRANSCRIPT_FILE_PATH]
-                                    [--other_features_files_path OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...]]
-                                    [--fuzzy_term FUZZY_TERM]
-                                    [--fuzzy_tss FUZZY_TSS]
+                                    [--transcript_file TRANSCRIPT_FILE]
+                                    [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
+                                    [--terminator_fuzzy TERMINATOR_FUZZY]
+                                    [--tss_fuzzy TSS_FUZZY]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -3935,24 +3932,24 @@ If transcript gff files can be provided, this module will search the parent tran
       --output_prefix OUTPUT_PREFIX, -op OUTPUT_PREFIX
                             Please assign the prefix name of output gff file. The
                             filename will be $OUTPUT_PREFIX_merge_features.gff.
-      --transcript_file_path TRANSCRIPT_FILE_PATH, -a TRANSCRIPT_FILE_PATH
+      --transcript_file TRANSCRIPT_FILE, -a TRANSCRIPT_FILE
                             If transcript gff file is provided. The parent
                             transcripts ("Parent" in gff attributes) of all
                             features will be generated. If there is no transcript,
                             this function will just simply combine all input gff
                             files.
-      --other_features_files_path OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...], -of OTHER_FEATURES_FILES_PATH [OTHER_FEATURES_FILES_PATH ...]
+      --other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...], -of OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]
                             Please assign the gff files (besides transcript gff
                             file) which you want to merge. You can use spaces to
                             separate multiple gff files.
     
     additional arguments:
-      --fuzzy_term FUZZY_TERM, -fm FUZZY_TERM
+      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
                             For merging terminators, please assign the fuzzy
                             nucleotides between transcript and terminator.
                             ATTENTION, the third column of gff file of terminator
                             should be exact "terminator". Default is 30.
-      --fuzzy_tss FUZZY_TSS, -ft FUZZY_TSS
+      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
                             For merging TSSs, please assign the fuzzy between TSS
                             and transcript. ATTENTION, the third column of gff
                             file of terminator should be exact "TSS". Default is

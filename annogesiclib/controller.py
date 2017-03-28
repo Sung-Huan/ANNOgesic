@@ -253,12 +253,12 @@ class Controller(object):
                              ["--tex_notex_libs", "--condition_names"])
         self._args.tsspredator_path = self.check_execute_file(
                 self._args.tsspredator_path)
-        if self._args.compute_program.lower() == "tss":
+        if self._args.program.lower() == "tss":
             print("Running TSS prediction")
             project_creator.create_subfolders(
                 self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
-        elif self._args.compute_program.lower() == "processing_site":
+        elif self._args.program.lower() == "processing_site":
             print("Running processing site prediction")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(
@@ -267,7 +267,7 @@ class Controller(object):
             print("Error: No such program!")
             sys.exit()
         args_tss = self.args_container.container_tsspredator(
-            self._args.tsspredator_path, self._args.compute_program,
+            self._args.tsspredator_path, self._args.program,
             self._args.fasta_files, self._args.annotation_files,
             self._args.tex_notex_libs, self._args.condition_names,
             self._args.height, self._args.height_reduction,
@@ -392,7 +392,7 @@ class Controller(object):
             self._args.tss_fuzzy, self._args.tex_notex_libs,
             self._args.frag_libs, self._args.compare_feature_genome,
             self._args.table_best, self._args.terminator_files,
-            self._args.fuzzy_term, self._args.max_length_distribution)
+            self._args.terminator_fuzzy, self._args.max_length_distribution)
         transcript = TranscriptDetection(args_tran)
         transcript.run_transcript(args_tran)
 
@@ -585,17 +585,17 @@ class Controller(object):
         self.check_multi_files(
                 [self._args.tss_files, self._args.annotation_files,
                  self._args.transcript_files, self._args.utr5_files,
-                 self._args.utr3_files, self._args.term_files],
+                 self._args.utr3_files, self._args.terminator_files],
                 ["--tss_files", "--annotation_files",
                  "--transcript_files", "--utr5_files",
-                 "--utr3_files", "--term_files"])
+                 "--utr3_files", "--terminator_files"])
         project_creator.create_subfolders(
             self._paths.required_folders("operon"))
         args_op = self.args_container.container_operon(
             self._args.tss_files, self._args.annotation_files,
             self._args.transcript_files, self._args.utr5_files,
-            self._args.utr3_files, self._args.term_files,
-            self._args.tss_fuzzy, self._args.term_fuzzy,
+            self._args.utr3_files, self._args.terminator_files,
+            self._args.tss_fuzzy, self._args.terminator_fuzzy,
             self._args.min_length, self._paths.operon_output_folder,
             self._paths.operon_statistics_folder)
         operon = OperonDetection(args_op)
@@ -725,13 +725,13 @@ class Controller(object):
         print("Running protein-protein interaction networks prediction")
         self.check_multi_files([self._args.annotation_files],
                                ["--annotation_files"])
-        self.check_parameter([self._args.proteinid_strains,
+        self.check_parameter([self._args.query_strains,
                               self._args.species_string],
-                             ["--proteinid_strains", "--species_string"])
+                             ["--query_strains", "--species_string"])
         project_creator.create_subfolders(
             self._paths.required_folders("ppi_network"))
         args_ppi = self.args_container.container_ppi(
-            self._args.annotation_files, self._args.proteinid_strains,
+            self._args.annotation_files, self._args.query_strains,
             self._args.without_strain_pubmed, self._args.species_string,
             self._args.score, self._paths.ppi_output_folder,
             self._args.node_size, self._args.query)
@@ -843,14 +843,14 @@ class Controller(object):
         merge_folder = os.path.join(self._paths.output_folder,
                                     "merge_all_features")
         self.helper.check_make_folder(merge_folder)
-        other_features = self._args.other_features_files_path
-        self.check_file([self._args.transcript_file_path] + other_features,
-                        ["--transcript_path", "--other_features_path"],
+        other_features = self._args.other_features_files
+        self.check_file([self._args.transcript_file] + other_features,
+                        ["--transcript_file", "--other_features_files"],
                         False)
         self.check_parameter([self._args.output_prefix], ["--output_prefix"])
-        run_merge(merge_folder, self._args.transcript_file_path,
-                  self._args.other_features_files_path, self._args.fuzzy_term,
-                  self._args.fuzzy_tss,
+        run_merge(merge_folder, self._args.transcript_file,
+                  self._args.other_features_files, self._args.terminator_fuzzy,
+                  self._args.tss_fuzzy,
                   os.path.join(merge_folder, self._args.output_prefix))
 
     def screen(self):

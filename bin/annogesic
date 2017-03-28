@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.12"
+__version__ = "0.5.13"
 
 def main():
     print("""
@@ -163,7 +163,7 @@ def main():
         help="Path of the project folder. If none is given, "
         "the current directory is used.")
     TSSpredator_basic.add_argument(
-        "--compute_program", "-t", default="TSS",
+        "--program", "-p", default="TSS",
         help="Which feature you want to predict, please assign \"TSS\" or "
         "\"processing_site\". Default is TSS.")
     TSSpredator_basic.add_argument(
@@ -193,7 +193,7 @@ def main():
         "just use like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     TSSpredator_basic.add_argument(
-        "--condition_names", "-p", required=True, nargs='+',
+        "--condition_names", "-cn", required=True, nargs='+',
         help="The output prefix of all conditions. If multiple conditions "
         "need to be assigned, please use spaces to separate them. For example, "
         "prefix_condition1 prefix_condition2.")
@@ -337,7 +337,7 @@ def main():
         help="Path of the project folder. If none is given, "
         "the current directory is used.")
     op_TSSpredator_basic.add_argument(
-        "--program", "-t", default="TSS",
+        "--program", "-p", default="TSS",
         help="The feature for optimization. Please assign \"TSS\" or "
         "\"Processing_site\". Default is TSS.")
     op_TSSpredator_basic.add_argument(
@@ -381,7 +381,7 @@ def main():
         "just use like all_1 (--replicate_tex is 1 in all conditions). "
         "Default is all_1.")
     op_TSSpredator_basic.add_argument(
-        "--condition_names", "-p", required=True, nargs='+',
+        "--condition_names", "-cn", required=True, nargs='+',
         help="The output prefixes of all conditions. "
         "If multiple conditions need to be assigned, please use spaces to "
         "separate them. For example, prefix_condition1 prefix_condition2.")
@@ -721,7 +721,7 @@ def main():
         "If multiple features need to be assigned, just insert spaces "
         "between each feature, such as gene CDS.")
     Transcript_add.add_argument(
-        "--tss_fuzzy", "-fu", default=5, type=int,
+        "--tss_fuzzy", "-tf", default=5, type=int,
         help="If --compare_TSS is assigned, please type the fuzzy for "
         "comparing TSS with transcript here. Default is 5.")
     Transcript_add.add_argument(
@@ -729,12 +729,12 @@ def main():
         help="The output table only includes the information of the highest "
         "expressed library. Default is False.")
     Transcript_add.add_argument(
-        "--terminator_files", "-tr", default=None, nargs='+',
+        "--terminator_files", "-e", default=None, nargs='+',
         help="If the paths of terminator gff files are assigned here, "
         "this function will compare transcripts with terminators to detect "
         "the parent transcript of terminator. Default is None.")
     Transcript_add.add_argument(
-        "--fuzzy_term", "-fz", default=30, type=int,
+        "--terminator_fuzzy", "-ef", default=30, type=int,
         help="If --terminator_files is assigned, please assign the fuzzy "
         "here. Default is 30.")
     Transcript_add.add_argument(
@@ -787,7 +787,7 @@ def main():
         "be \"transcript\" or \"terminator\" or \"both\". "
         "Default is transcript.")
     UTR_add.add_argument(
-        "--terminator_fuzzy", "-f", default=30, type=int,
+        "--terminator_fuzzy", "-ef", default=30, type=int,
         help="This is only for --base_3utr which is assigned by \"transcript\" "
         "or \"both\", and terminator file are provided. "
         "If the distance (nucleotides) between terminator and the end of "
@@ -857,7 +857,7 @@ def main():
         "For detection of UTR-derived sRNA, processing site information can "
         "improve the results.")
     sRNA_basic.add_argument(
-        "--terminator_files", "-tf", default=None, nargs='+',
+        "--terminator_files", "-e", default=None, nargs='+',
         help="If terminator information can be provided, please assign the paths "
         "of gff files of terminators. If \"term\" in --filter_info, "
         "terminator gff files MUST be provided.")
@@ -995,12 +995,12 @@ def main():
         "interCDS-derived sRNA instead of 5'UTR-derived sRNA. "
         "Default is p_0.04.")
     sRNA_add.add_argument(
-        "--terminator_fuzzy_in_srna", "-tfi", default=30, type=int,
+        "--terminator_fuzzy_in_srna", "-efi", default=30, type=int,
         help="If --terminator_files is provided, please assign the fuzzy for "
         "comparing terminator with transcript. "
         "This value is for the terminator which is within sRNA. Default is 30.")
     sRNA_add.add_argument(
-        "--terminator_fuzzy_out_srna", "-tfo", default=30, type=int,
+        "--terminator_fuzzy_out_srna", "-efo", default=30, type=int,
         help="The meaning is the same as --terminator_fuzzy_in_sRNA. "
         "This value is for the terminator which is outside of sRNA. "
         "Default is 30.")
@@ -1089,7 +1089,7 @@ def main():
         "--run_utr_fragmented_coverage, "
         "but also this value. Default is 50.")
     sRNA_add.add_argument(
-        "--cutoff_energy", "-e", default=-0.05, type=float,
+        "--cutoff_energy", "-ce", default=-0.05, type=float,
         help="If \"sec_str\" is included in --filter_info, please assign the "
         "maximum folding energy change (normalized by length of gene). "
         "Default is -0.05.")
@@ -1437,7 +1437,7 @@ def main():
         "--utr3_files", "-u3", required=True, nargs='+',
         help="Paths of the 3'UTR gff files.")
     operon_basic.add_argument(
-        "--term_files", "-e", default=None, nargs='+',
+        "--terminator_files", "-e", default=None, nargs='+',
         help="If terminator information can be provided, please assign the "
         "paths of terminator gff files here.")
     operon_add = operon_parser.add_argument_group(
@@ -1447,7 +1447,7 @@ def main():
         help="The fuzzy for comparing between TSS and transcript. "
         "Default is 5.")
     operon_add.add_argument(
-        "--term_fuzzy", "-ef", default=30, type=int,
+        "--terminator_fuzzy", "-ef", default=30, type=int,
         help="The fuzzy for comparing between terminator and "
         "transcript. Default is 30.")
     operon_add.add_argument(
@@ -1560,7 +1560,7 @@ def main():
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files.")
     starget_basic.add_argument(
-        "--srna_files", "-r", required=True, nargs='+',
+        "--srna_files", "-s", required=True, nargs='+',
         help="Paths of the sRNA gff files.")
     starget_basic.add_argument(
         "--query_srnas", "-q", default=["all"], nargs='+',
@@ -1721,7 +1721,7 @@ def main():
         "--quality", "-q", default=40, type=int,
         help="The minimum quality of a real mutation. Default is 40.")
     snp_add.add_argument(
-        "--read_depth_range", "-d", default="n_10,a_3",
+        "--read_depth_range", "-d", default="n_10,none",
         help="Range of the read depth of a real mutation. The format is "
         "$MIN,$MAX. This value can be assigned by different types: "
         "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
@@ -1732,7 +1732,7 @@ def main():
         "$SAMPLE_NUM) and a_3 will be 140 (average read depth * 3). "
         "Based on the same example, if this value is r_10,a_3, the minimum "
         "read depth will become exact 10 reads. If you don't want to set "
-        "maximum read depth, you can assign \"none\". Default is n_10,a_3.")
+        "maximum read depth, you can assign \"none\". Default is n_10,none.")
     snp_add.add_argument(
         "--ploidy", "-pl", default="haploid",
         help="The query bacteria is haploid or diploid. Default is haploid.")
@@ -1811,7 +1811,7 @@ def main():
         help="Please assign path of the species table of STRING "
         "(species.$VERSION.txt).")
     ppi_basic.add_argument(
-        "--proteinid_strains", "-s", nargs='+', required=True,
+        "--query_strains", "-s", nargs='+', required=True,
         help="This is for query strain and filename. "
         "In order to retrieve the data from STRING and Pubmed, The strain "
         "name must be assigned. If the query strain is not available in "
@@ -1848,8 +1848,8 @@ def main():
         "just type \"all\". Default is all.")
     ppi_basic.add_argument(
         "--without_strain_pubmed", "-n", default=False, action="store_true",
-        help="Retrieving the literature from Pubmed without assigning "
-        "strains, Default is False.")
+        help="This function will retrieve the literature from Pubmed without "
+        "assigning strains as well. Default is False.")
     ppi_add = ppi_parser.add_argument_group(
         'additional arguments')
     ppi_add.add_argument(
@@ -2050,26 +2050,26 @@ def main():
         help="Please assign the prefix name of output gff file. "
         "The filename will be $OUTPUT_PREFIX_merge_features.gff.")
     merge_basic.add_argument(
-        "--transcript_file_path", "-a", default=None,
+        "--transcript_file", "-a", default=None,
         help="If transcript gff file is provided. The parent transcripts "
         "(\"Parent\" in gff attributes) of all features will be generated. "
         "If there is no transcript, this function will just simply combine "
         "all input gff files.")
     merge_basic.add_argument(
-        "--other_features_files_path", "-of", default=None, nargs='+',
+        "--other_features_files", "-of", default=None, nargs='+',
         help="Please assign the gff files (besides transcript gff file) "
         "which you want to merge. You can use spaces to separate multiple "
         "gff files.")
     merge_add = merge_parser.add_argument_group(
         'additional arguments')
     merge_add.add_argument(
-        "--fuzzy_term", "-fm", default=30, type=int,
+        "--terminator_fuzzy", "-ef", default=30, type=int,
         help="For merging terminators, please assign the fuzzy nucleotides "
         "between transcript and terminator. ATTENTION, the third column of "
         "gff file of terminator should be exact \"terminator\". "
         "Default is 30.")
     merge_add.add_argument(
-        "--fuzzy_tss", "-ft", default=5, type=int,
+        "--tss_fuzzy", "-tf", default=5, type=int,
         help="For merging TSSs, please assign the fuzzy between TSS and "
         "transcript. ATTENTION, the third column of gff file of terminator "
         "should be exact \"TSS\". Default is 5.")

@@ -135,7 +135,7 @@ Optimize_TSSpredator(){
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -tl $TEX_LIBS \
-        -p TSS -s 25 \
+        -cn TSS -s 25 \
         -m $ANNOGESIC_FOLDER/input/manual_TSSs/NC_009839_manual_TSS.gff \
         -le NC_009839.1:200000 \
         -rt all_1 \
@@ -151,7 +151,7 @@ TSS_prediction(){
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -tl $TEX_LIBS \
-        -p test \
+        -cn test \
         -he 0.4 \
         -rh 0.1 \
         -fa 1.7 \
@@ -173,7 +173,7 @@ processing_site_prediction()
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -tl $TEX_LIBS \
-        -p test \
+        -cn test \
         -he 0.2 \
         -rh 0.1 \
         -fa 2.0 \
@@ -182,7 +182,7 @@ processing_site_prediction()
         -ef 1.2 \
         -pf 1.5 \
         -rt all_1 \
-        -t processing_site \
+        -p processing_site \
         -pj $ANNOGESIC_FOLDER
 }
 
@@ -204,7 +204,7 @@ Terminator_prediction(){
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
         -tl $TEX_LIBS \
-        -rt all_1 -tb \
+        -rt all_1 \
         -pj $ANNOGESIC_FOLDER
 }
 
@@ -256,7 +256,7 @@ sRNA_detection(){
         -p $ANNOGESIC_FOLDER/output/processing_sites/gffs/NC_009839.1_processing.gff \
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-        -tf $ANNOGESIC_FOLDER/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+        -e $ANNOGESIC_FOLDER/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
         -pt $ANNOGESIC_FOLDER/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/meme.csv \
         -pn MOTIF_1 \
         -m \
@@ -289,7 +289,7 @@ sRNA_target(){
         srna_target \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-        -r $ANNOGESIC_FOLDER/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+        -s $ANNOGESIC_FOLDER/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
         -q NC_009839.1:36954:37044:- \
         -p both \
         -pj $ANNOGESIC_FOLDER
