@@ -13,14 +13,14 @@ For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bi
 
 Before we start, please check :ref:`The format of filename` and 
 :ref:`The input format of libraries for running ANNOgesic` in 
-the section :ref:`ANNOgesic's subcommands`. All the details are also in :ref:`ANNOgesic's subcommands`. 
+the section :ref:`ANNOgesic's subcommands` which includes all details as well.
 Moreover, all the requirements are listed in the section :ref:`Required tools or databases`.
-For command lines which we will present later, please check the 
-`run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ in our Git repository.
+The command lines which we will present later are also listed in 
+`run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
 
 If the subcommand integrates third-party software, ex: TSSpredator,
-please check path of the execute file. If necessary, please assign it properly. Moreover, 
-if your execute path is not in your ``$PATH``, please specify your execute path of ANNOgesic as well.
+please check path of the executed file, and specify it properly. Moreover, 
+if ``annogesic`` (executed file of ANNOgesic) is not in your ``$PATH``, please specify it as well.
 
 Generating a project
 --------------------
