@@ -18,14 +18,14 @@ Moreover, all the requirements are listed in the section :ref:`Required tools or
 The command lines which we will present later are also listed in 
 `run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
 
-If the subcommand integrates third-party software, ex: TSSpredator,
+If the subcommand is integrated from third-party softwares, ex: TSSpredator,
 please check path of the executed file, and specify it properly. Moreover, 
 if ``annogesic`` (executed file of ANNOgesic) is not in your ``$PATH``, please specify it as well.
 
 Generating a project
 --------------------
 
-First of all, we need to create a working folder by running ``create``. ``--project_path`` represents project path.
+First of all, we need to create a working folder (``--project_path``) by running ``create``.
 
 ::
 
@@ -71,8 +71,8 @@ Then we will get following results
     NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 
 In fact, these fasta and gff files are exactly what we want to use for the test case.
-But, in order to testing ``update_genome_fasta`` and ``annotation_transfer``, we used these files to 
-generate some dummy genomes..
+But, in order to test ``update_genome_fasta`` and ``annotation_transfer``, we used these files to 
+generate some dummy genomes.
 
 Putting wig, and reads to proper location
 ---------------------------------------------------
