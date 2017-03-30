@@ -11,7 +11,7 @@ Table of content
    installation
    docker
    subcommands
-   test_case
+   tutorial
    troubleshooting
    license
 

@@ -1,0 +1,1516 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial of ANNOgesic &mdash; ANNOgesic 0.5.14 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ANNOgesic 0.5.14 documentation" href="index.html"/>
+        <link rel="next" title="Troubleshooting" href="troubleshooting.html"/>
+        <link rel="prev" title="ANNOgesic’s subcommands" href="subcommands.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html" class="icon icon-home"> ANNOgesic
+        
+
+        
+          
+          <img src="_static/annogesic_logo_white.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">ANNOgesic - Transcriptome annotation pipeline</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-content">Table of content</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="required.html#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#github">Github</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="docker.html">Docker image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#create-create-analysis-folder">create (create analysis folder)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#get-input-files-download-required-files">get_input_files (download required files)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#update-genome-fasta-update-reference-genome-fasta-file">update_genome_fasta (update reference genome fasta file)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#annotation-transfer-annotation-transfer">annotation_transfer (annotation transfer)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#snp-snp-calling">snp (SNP calling)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#transcript-transcript-detection">transcript (transcript detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#terminator-terminator-detection">terminator (terminator detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#utr-utr-detection">utr (UTR detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#srna-srna-detection">srna (sRNA detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#sorf-sorf-detection">sorf (sORF detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#promoter-promoter-motif-detection">promoter (Promoter motif detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#operon-operon-detection">operon (Operon detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#circrna-circular-rna-detection">circrna (circular RNA detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#go-term-go-term-retrieving">go_term (GO term retrieving)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#srna-target-srna-target-prediction">srna_target (sRNA target prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#ppi-network-protein-protein-interaction-network-detection">ppi_network (protein-protein interaction network detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#localization-subcellular-localization-prediction">localization (subcellular localization prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#riboswitch-thermometer-riboswitch-and-rna-thermometer-detection">riboswitch_thermometer (riboswitch and RNA thermometer detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performing-transcript-detection">Performing transcript detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prediction-of-terminator">Prediction of terminator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-utr">Generating UTR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#detecting-operon-and-suboperon">Detecting operon and suboperon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#promoter-motif-detection">Promoter motif detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prediction-of-srna-and-sorf">Prediction of sRNA and sORF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#performing-srna-target-prediction">Performing sRNA target prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mapping-and-detecting-of-circular-rna">Mapping and detecting of circular RNA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#snp-calling">SNP calling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mapping-gene-ontology">Mapping Gene ontology</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generating-riboswitch-and-rna-thermometer">Generating riboswitch and RNA thermometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#detection-of-crispr">Detection of CRISPR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#producing-the-screenshots">Producing the screenshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coloring-the-screenshots">Coloring the screenshots</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="troubleshooting.html#pickling-error">Pickling error</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#download">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#source-code">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cite">Cite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#contact">Contact</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="required.html#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#github">Github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#create-create-analysis-folder">create (create analysis folder)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#get-input-files-download-required-files">get_input_files (download required files)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#update-genome-fasta-update-reference-genome-fasta-file">update_genome_fasta (update reference genome fasta file)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#annotation-transfer-annotation-transfer">annotation_transfer (annotation transfer)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#snp-snp-calling">snp (SNP calling)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#transcript-transcript-detection">transcript (transcript detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#terminator-terminator-detection">terminator (terminator detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#utr-utr-detection">utr (UTR detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#srna-srna-detection">srna (sRNA detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#sorf-sorf-detection">sorf (sORF detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#promoter-promoter-motif-detection">promoter (Promoter motif detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#operon-operon-detection">operon (Operon detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#circrna-circular-rna-detection">circrna (circular RNA detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#go-term-go-term-retrieving">go_term (GO term retrieving)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#srna-target-srna-target-prediction">srna_target (sRNA target prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#ppi-network-protein-protein-interaction-network-detection">ppi_network (protein-protein interaction network detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#localization-subcellular-localization-prediction">localization (subcellular localization prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#riboswitch-thermometer-riboswitch-and-rna-thermometer-detection">riboswitch_thermometer (riboswitch and RNA thermometer detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performing-transcript-detection">Performing transcript detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prediction-of-terminator">Prediction of terminator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-utr">Generating UTR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detecting-operon-and-suboperon">Detecting operon and suboperon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#promoter-motif-detection">Promoter motif detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prediction-of-srna-and-sorf">Prediction of sRNA and sORF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performing-srna-target-prediction">Performing sRNA target prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-and-detecting-of-circular-rna">Mapping and detecting of circular RNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#snp-calling">SNP calling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mapping-gene-ontology">Mapping Gene ontology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-riboswitch-and-rna-thermometer">Generating riboswitch and RNA thermometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detection-of-crispr">Detection of CRISPR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#producing-the-screenshots">Producing the screenshots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coloring-the-screenshots">Coloring the screenshots</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#pickling-error">Pickling error</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ANNOgesic</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Tutorial of ANNOgesic</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="tutorial-of-annogesic">
+<h1>Tutorial of ANNOgesic<a class="headerlink" href="#tutorial-of-annogesic" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial through a small test case to show you how to use
+ANNOgesic&#8217;s subcommands. It build on a public differential RNA-Seq
+data set from <strong>Campylobacter jejuni</strong> subsp. jejuni 81116 that can be
+downloaded from NCBI GEO and that was part of a work by <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">Dugar et
+al.</a>.
+There will be several output files which are generated in different formats -
+The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures.
+For viewing GFF3 file, you can use a genome browser, for example <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
+<a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
+<p>Before we start, please check <a class="reference internal" href="subcommands.html#the-format-of-filename"><span class="std std-ref">The format of filename</span></a> and
+<a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in
+the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a> which includes all details as well.
+Moreover, all the requirements are listed in the section <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+The command lines which we will present later are also listed in
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a>.</p>
+<p>If the subcommand is integrated from third-party softwares, ex: TSSpredator,
+please check path of the executed file, and specify it properly. Moreover,
+if <code class="docutils literal"><span class="pre">annogesic</span></code> (executed file of ANNOgesic) is not in your <code class="docutils literal"><span class="pre">$PATH</span></code>, please specify it as well.</p>
+<div class="section" id="generating-a-project">
+<h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
+<p>First of all, we need to create a working folder (<code class="docutils literal"><span class="pre">--project_path</span></code>) by running <code class="docutils literal"><span class="pre">create</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic create --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Then we will see</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Created folder &quot;ANNOgesic&quot; and required subfolders.
+$ ls
+ANNOgesic
+</pre></div>
+</div>
+</div>
+<div class="section" id="retrieving-the-input-data">
+<h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
+<p>For our test case, the input data can be downloaded from
+<a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/">NCBI</a>.
+Let&#8217;s setting the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FTP_SOURCE</span><span class="o">=</span><span class="n">ftp</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">.</span><span class="n">ncbi</span><span class="o">.</span><span class="n">nlm</span><span class="o">.</span><span class="n">nih</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">refseq</span><span class="o">/</span><span class="n">bacteria</span><span class="o">/</span><span class="n">Campylobacter_jejuni</span><span class="o">/</span><span class="n">latest_assembly_versions</span><span class="o">/</span><span class="n">GCF_000017905</span><span class="o">.</span><span class="mi">1</span><span class="n">_ASM1790v1</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Then, we can download fasta files(<code class="docutils literal"><span class="pre">--ref_fasta</span></code>), gff files(<code class="docutils literal"><span class="pre">--ref_gff</span></code>),
+gbk files(<code class="docutils literal"><span class="pre">--ref_gbk</span></code>), ptt files(<code class="docutils literal"><span class="pre">--ref_ptt</span></code>),
+rnt files(<code class="docutils literal"><span class="pre">--ref_rnt</span></code>), and converts to embl(<code class="docutils literal"><span class="pre">--convert_embl</span></code>).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic get_input_files \
+    --ftp_path $FTP_SOURCE \
+    --ftp_path --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Then we will get following results</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/input/references/fasta_files/
+NC_009839.1.fa
+$ ls ANNOgesic/input/references/annotations/
+NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
+</pre></div>
+</div>
+<p>In fact, these fasta and gff files are exactly what we want to use for the test case.
+But, in order to test <code class="docutils literal"><span class="pre">update_genome_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>, we used these files to
+generate some dummy genomes.</p>
+</div>
+<div class="section" id="putting-wig-and-reads-to-proper-location">
+<h2>Putting wig, and reads to proper location<a class="headerlink" href="#putting-wig-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
+<p>For the test case, we can download reads from
+<a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">here</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515254/SRR515254.sra
+$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515255/SRR515255.sra
+$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515256/SRR515256.sra
+$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515257/SRR515257.sra
+</pre></div>
+</div>
+<p>Then we can convert SRA files to Fasta or Fastq format for mapping by
+using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK158900/">SRA toolkit</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
+$ tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
+$ rm sratoolkit.2.5.2-ubuntu64.tar.gz
+$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515254.sra
+$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515255.sra
+$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515256.sra
+$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515257.sra
+$ mv *.fasta ANNOgesic/input/reads
+$ rm SRR515254.sra SRR515255.sra SRR515256.sra SRR515257.sra
+</pre></div>
+</div>
+<p>Now we get the reads. Then we have to download the wiggle files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+$ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+$ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
+$ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
+$ cd ANNOgesic/input/wigs/tex_notex
+$ gunzip GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig.gz \
+         GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig.gz \
+         GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig.gz \
+         GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig.gz
+$ cd ../../../../
+</pre></div>
+</div>
+<p>If we check the wiggle files, we will find that the fasta filename (presented by &#8220;chrom&#8221;) is not the same as fasta or annotation gff file.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ head ANNOgesic/input/wigs/tex_notex/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig
+  track type=wiggle_0 name=&quot;Log_81116_R1_minus_TEX_in_NC_009839&quot;
+  variableStep chrom=NC_009839 span=1
+  7  -1.0
+  8  -1.0
+  9  -1.0
+  10 -1.0
+  11 -1.0
+  12 -1.0
+  13 -1.0
+  14 -1.0
+</pre></div>
+</div>
+<p>Our genome fasta file is NC_009839.1.fa. Thus &#8220;chrom&#8221; in wiggle file should be NC_009839.1 not NC_009839.
+We can use <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">replace_seq_id.py</a> from our
+Git repository to replace the genome name in wiggle files properly. If the genome names in your fasta, annotation,
+wiggle files are the same, you don&#8217;t need to do this step.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/replace_seq_id.py
+$ python3 replace_seq_id.py -i ANNOgesic/input/wigs/tex_notex -n NC_009839.1
+$ rm replace_seq_id.py
+</pre></div>
+</div>
+<p>Since this is a tutorial, we only download one replicate to reduce the running time.</p>
+</div>
+<div class="section" id="improving-the-reference-genome">
+<h2>Improving the reference genome<a class="headerlink" href="#improving-the-reference-genome" title="Permalink to this headline">¶</a></h2>
+<p>Again, if the data retrieved from NCBI is exactly what you want, you can skip this step and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>.</p>
+<p>Although the data that we downloaded before is our real data (<code class="docutils literal"><span class="pre">ANNOgesic/input/references</span></code>),
+we will generate some new dummy files via this step and <code class="docutils literal"><span class="pre">annotation_transfer</span></code> in order to
+show you the function of these subcommands.</p>
+<p>Now, we assume that we need to generate fasta file of our query genome.
+First of all, we need to find a closed genome (fasta file and gff file can be found) of our query genome.
+Then, we need to generate a mutation table (please check the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>)
+between these two genomes. When these files are produced,
+we can run subcommand <code class="docutils literal"><span class="pre">update_genome_fasta</span></code> for getting fasta file of the query genome.</p>
+<p>A simple example can be found in
+<a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
+Each column of the table is separated by tab. The fasta files of the new genomes (NC_test.1 and test_case2)
+will be generated in <code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/fasta_files</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+</pre></div>
+</div>
+<p>Now, let&#8217;s try it</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic update_genome_fasta \
+   --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+   --output_format ANNOgesic/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
+                   ANNOgesic/output/updated_references/fasta_files/test_case2.fa:test_case2 \
+   --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
+   --project_path ANNOgesic
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">--closed_fasta_files</span></code> is path of the closed genome fasta file.
+In <code class="docutils literal"><span class="pre">--output_format</span></code>, we assigned a pairs of output filenames and
+the genomes which will be stored into the output file. In our case, &#8220;test_case1&#8221; is the first output fasta file which
+stores the sequence of &#8220;NC_test.1&#8221;, and &#8220;test_case2&#8221; which stores the sequence of the other new genome - &#8220;test_case2&#8221;.</p>
+<p>When the running process is done, the following information will appear.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ Transfering to target fasta
+  Please use the new fasta file to remapping again.
+</pre></div>
+</div>
+<p>Since the data (<code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/fasta_files</span></code>) that we generated is not real,
+we can ignore the information now. However, if the new fasta file is the real query one,
+you have to remap again in order to get the correct alignment and coverage files.</p>
+<p>Now we can check the results.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ head ANNOgesic/input/references/fasta_files/NC_009839.1.fa
+&gt;NC_009839.1
+ATGAATCCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAAATTATATCGCTATCTTAAA
+ATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTAACGCTCCTAATGAGCTTTTAGCCAAATTCATACAAACAA
+AATACGGTAAAAAAATTTCACATTTTTATGAAGTACAAAGCGGAAATAAAGCGAGCGTTTTGATACAAGCACAAAGTGCT
+AAACAAAGTAGCAAAAGCACTAAAATCGATATCGCTCATATCAAGGCGCAAAGTACGATTTTAAATCCTTCTTTTACTTT
+TGAAAGCTTTGTAGTGGGGGATTCTAACAAATACGCTTATGGAGCTTGTAAAGCTATCTCACAAAAAGACAAACTGGGAA
+AACTTTATAATCCTATCTTTATCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGT
+TTGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTTCAAATTTAAAAAATGGCTC
+TTTAGATAAATTTCACGAAAAATATAGAAATTGTGATGTTTTACTCATAGATGATGTGCAGTTTTTAGGAAAAACCGATA
+AAATTCAAGAAGAATTTTTCTTTATATTTAATGAAATCAAAAATAACGATGGACAAATCATCATGACTTCAGACAATCCA
+$ head ANNOgesic/output/updated_references/fasta_files/test_case1.fa
+&gt;NC_test.1
+ATcAACCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAA
+ATTATATCGCTATCTTAAAATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTA
+ACGCTCCTAATGAGCTTTTAGCCAAATTCATACAAACAAAATACGGTAAAAAAATTTCAC
+ATTTTTATGAAGTACAAAGCGGAAATAAAGCGAGCGTTTTGATACAAGCACAAAGTGCTA
+AACAAAGTAGCAAAAGCACTAAAATCGATATCGCTCATATCAAGGCGCAAAGTACGATTT
+TAAATCCTTCTTTTACTTTTGAAAGCTTTGTAGTGGGGGATTCTAACAAATACGCTTATG
+GAGCTTGTAAAGCTATCTCACAAAAAGACAAACTGGGAAAACTTTATAATCCTATCTTTA
+TCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGTT
+TGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTT
+</pre></div>
+</div>
+<p>We can see that the sequence of &#8220;NC_test.1&#8221; is stored in <code class="docutils literal"><span class="pre">test_case1.fa</span></code>.
+Moreover, the third nucleotide is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
+If we check <code class="docutils literal"><span class="pre">test_case2.fa</span></code>, the modification is also according to the mutation table and our setting.</p>
+<p>If the mutation table can not be provided, we can also use subcommand <code class="docutils literal"><span class="pre">snp</span></code> to detect mutations and generate
+fasta files automatically. For <code class="docutils literal"><span class="pre">snp</span></code>, we will go through it later.</p>
+</div>
+<div class="section" id="generating-annotation-files">
+<h2>Generating annotation files<a class="headerlink" href="#generating-annotation-files" title="Permalink to this headline">¶</a></h2>
+<p>We have fasta files of our new dummy query genome now. We can use them to generate annotation files.</p>
+<p>Before we running this subcommand, we have to modify environment paths of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
+If you run ANNOgesic in docker container, the path is already set.
+Otherwise, please check
+<a class="reference external" href="http://ratt.sourceforge.net/">RATT</a> to set your environment paths properly.</p>
+<p>After setting the environment, we can try it.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">anngesic</span> <span class="n">annotation_transfer</span> \
+    <span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">annotations</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">embl</span> \
+    <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">fa</span> \
+    <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">updated_references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">test_case1</span><span class="o">.</span><span class="n">fa</span> \
+                          <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">updated_references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">test_case2</span><span class="o">.</span><span class="n">fa</span> \
+    <span class="o">--</span><span class="n">element</span> <span class="n">chromosome</span> \
+    <span class="o">--</span><span class="n">transfer_type</span> <span class="n">Strain</span> \
+    <span class="o">--</span><span class="n">compare_pair</span> <span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="p">:</span><span class="n">NC_test</span><span class="o">.</span><span class="mi">1</span> <span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="p">:</span><span class="n">test_case2</span> \
+    <span class="o">--</span><span class="n">convert_to_gff_rnt_ptt</span> \
+    <span class="o">--</span><span class="n">project_path</span> <span class="n">ANNOgesic</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">--element</span></code> is prefix name of the output embl files.
+<code class="docutils literal"><span class="pre">--transfer_type</span></code> is a program of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
+We use <code class="docutils literal"><span class="pre">Strain</span></code> because the similarity between two genomes is higher than 90% (please check
+<a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>). In <code class="docutils literal"><span class="pre">--compare_pair</span></code>, the pairs of the query genomes
+(NC_test.1 and test_case2) and their closed genomes (NC_000915.1) are assigned.
+Please be careful, the information that we assign to <code class="docutils literal"><span class="pre">--compare_pair</span></code>
+is genome names in gff files not fasta filenames. <code class="docutils literal"><span class="pre">--convert_to_gff_rnt_ptt</span></code> means that we want to transfer the
+output embl files to GFF3, ptt, rnt files and store in <code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/annotations</span></code>.</p>
+<p>Once the transfer is done, we can see</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/updated_references/annotations/
+test_case1.gff  test_case1.ptt  test_case1.rnt  test_case2.gff  test_case2.ptt  test_case2.rnt
+$ ls ANNOgesic/output/annotation_transfer/
+chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff  ratt_log.txt  test_case2.gff
+</pre></div>
+</div>
+<p>In <code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/annotations</span></code>, we can find ptt, rnt and gff files. In <code class="docutils literal"><span class="pre">ANNOgesic/output/annotation_transfer</span></code>,
+we can find the output of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.</p>
+<p>We already saw how to update genome fasta and annotation files.
+We will use <code class="docutils literal"><span class="pre">ANNOgesic/input/references/annotations/NC_009839.1.gff</span></code> and <code class="docutils literal"><span class="pre">ANNOgesic/input/references/fasta_files/NC_009839.1</span></code>
+for running the following subcommands.</p>
+</div>
+<div class="section" id="tss-and-processing-site-prediction-and-optimization">
+<h2>TSS and processing site prediction and optimization<a class="headerlink" href="#tss-and-processing-site-prediction-and-optimization" title="Permalink to this headline">¶</a></h2>
+<p>Before running following subcommands, we need to setup our libraries as a correct format.
+First, we set the path of wig file folder.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">WIG_FOLDER</span><span class="o">=</span><span class="s2">&quot;ANNOgesic/input/wigs/tex_notex&quot;</span>
+</pre></div>
+</div>
+<p>Then, we can setup our libraries.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">TEX_LIBS</span><span class="o">=</span><span class="s2">&quot;$WIG_FOLDER/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_minus.wig:notex:1:a:- </span><span class="se">\</span>
+<span class="s2">          $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_minus.wig:tex:1:a:- </span><span class="se">\</span>
+<span class="s2">          $WIG_FOLDER/GSM951380_Log_81116_R1_minus_TEX_in_NC_009839_plus.wig:notex:1:a:+ </span><span class="se">\</span>
+<span class="s2">          $WIG_FOLDER/GSM951381_Log_81116_R1_plus_TEX_in_NC_009839_plus.wig:tex:1:a:+&quot;</span>
+</pre></div>
+</div>
+<p>Now, we can start to test other subcommands.</p>
+<p>Before running <code class="docutils literal"><span class="pre">tss_ps</span></code>, we can use <code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> to get the optimized parameters.
+The optimization requires a gff file of the manual-detected TSSs.
+In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of genome.</p>
+<p>For the test case, you can download the <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">manual TSS file</a>
+from our git repository.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/manual_TSSs/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
+</pre></div>
+</div>
+<p>Now, we have a manual TSS gff file which is stored in <code class="docutils literal"><span class="pre">ANNOgesic/input/manual_TSSs</span></code>.
+we can try <code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> right now (since we only check first 200kb, we set <code class="docutils literal"><span class="pre">--genome_lengths</span></code>
+as &#8220;NC_009839.1:200000&#8221; which means only first 200kb of NC_009839.1 is valid.).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic optimize_tss_ps \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --condition_names TSS --steps 25 \
+    --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+    --genome_lengths NC_009839.1:200000 \
+    --replicate_tex all_1 \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">optimize_tss_ps</span></code> will compare manual checked TSSs with predicted TSSs to search the best parameters.
+Results of the different parameters will be printed in the screen, and stored in <code class="docutils literal"><span class="pre">stat_NC_009839.1.csv</span></code> as well.
+We only set 25 runs for testing.
+<code class="docutils literal"><span class="pre">--replicate_tex</span></code> means the minimum replicates that a TSS can be detected. <code class="docutils literal"><span class="pre">all_1</span></code> means that a TSS
+should be detected in at least one replicate for all conditions. <code class="docutils literal"><span class="pre">--replicate_tex</span></code> can be also assigned like <code class="docutils literal"><span class="pre">all_2</span></code>
+(a TSS should be detected in at least two replicates for all conditions)
+or <code class="docutils literal"><span class="pre">1_2</span> <span class="pre">2_2</span> <span class="pre">3_3</span></code> (in condition 1 and 2 &#8211; based on the setting of <code class="docutils literal"><span class="pre">--tex_notex_libs</span></code>,
+a TSS should be detected in at least two replicates, and a TSS should be predicted in three replicates in condition 3).
+Once the optimization is done, you can find several files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSSs/optimized_TSSpredator/
+best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">best_NC_009839.1.csv</span></code> is for results of the best parameters; <code class="docutils literal"><span class="pre">stat_NC_009839.1.csv</span></code> is for results of each step.</p>
+<p>Now, we assume the best parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2,
+base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can set these parameters for running
+<code class="docutils literal"><span class="pre">tss</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic tss_ps \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --condition_names test \
+    --height 0.4 \
+    --height_reduction 0.1 \
+    --factor 1.7 \
+    --factor_reduction 0.2 \
+    --base_height 0.039 \
+    --enrichment_factor 1.1 \
+    --processing_factor 4.5 \
+    --validate_gene \
+    --replicate_tex all_1 \
+    --genome_lengths NC_009839.1:200000 \
+    --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>We assign the manual-checked TSS gff file to <code class="docutils literal"><span class="pre">--manual_files</span></code>. Therefore, the output gff file will contain the manual-detected TSSs and predicted TSSs.
+If we didn&#8217;t assign it, Only the predicted TSSs will be included in output gff file.
+The output files are gff file, MasterTable and statistic files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSSs/
+configs  gffs  MasterTables  optimized_TSSpredator  screenshots  statistics
+$ ls ANNOgesic/output/TSSs/configs/
+config_NC_009839.1.ini
+$ ls ANNOgesic/output/TSSs/gffs/
+NC_009839.1_TSS.gff
+$ ls ANNOgesic/output/TSSs/MasterTables/MasterTable_NC_009839.1/
+AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff
+$ ls ANNOgesic/output/TSSs/statistics/NC_009839.1/
+stat_compare_TSSpredator_manual_NC_009839.1.csv  stat_TSS_class_NC_009839.1.csv  TSS_class_NC_009839.1.png  TSS_venn_NC_009839.1.png
+stat_gene_vali_NC_009839.1.csv                   stat_TSS_libs_NC_009839.1.csv   TSSstatistics.tsv
+</pre></div>
+</div>
+<p>If we want to predict processing sites, the procedures are the same. We just need to change the program from TSS to
+processing_site (<code class="docutils literal"><span class="pre">--program</span></code>) and assign the proper parameter sets. We assume the best parameter sets are following:
+height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
+base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic tss_ps \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --condition_names test \
+    --height 0.2 \
+    --height_reduction 0.1 \
+    --factor 2.0 \
+    --factor_reduction 0.5 \
+    --base_height 0.009 \
+    --enrichment_factor 1.2 \
+    --processing_factor 1.5 \
+    --replicate_tex all_1 \
+    --program processing_site \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>The output files are following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/processing_sites/
+configs  gffs  MasterTables  statistics
+$ ls ANNOgesic/output/processing_sites/configs/
+config_NC_009839.1.ini
+$ ls ANNOgesic/output/processing_sites/gffs/
+NC_009839.1_processing.gff
+$ ls ANNOgesic/output/processing_sites/MasterTables/MasterTable_NC_009839.1/
+AlignmentStatistics.tsv  err.txt  log.txt  MasterTable.tsv  superConsensus.fa  superTSS.gff  superTSStracks.gff  test_super.fa  test_super.gff  test_TSS.gff
+$ ls ANNOgesic/output/processing_sites/statistics/NC_009839.1/
+processing_class_NC_009839.1.png  processing_venn_NC_009839.1.png  stat_processing_class_NC_009839.1.csv  stat_processing_libs_NC_009839.1.csv  TSSstatistics.tsv
+</pre></div>
+</div>
+<p>Since we use TSSpredator to detect processing site, the files in
+<code class="docutils literal"><span class="pre">ANNOgesic/output/processing_sites/MasterTables/MasterTable_NC_009839.1/</span></code> are for processing site not for TSS.</p>
+</div>
+<div class="section" id="performing-transcript-detection">
+<h2>Performing transcript detection<a class="headerlink" href="#performing-transcript-detection" title="Permalink to this headline">¶</a></h2>
+<p>Transcript detection is a basic procedure for detecting transcript boundary.
+we can use subcommand <code class="docutils literal"><span class="pre">transcript</span></code> to do it. Normally, we strongly
+recommend that the user should provide fragmented libraries (<code class="docutils literal"><span class="pre">--frag_libs</span></code>) because dRNA-Seq usually loses some information
+of 3&#8217;end. However, we only use TEX +/- for testing since we have no fragmented libraries.</p>
+<p>There are several options for modifying transcripts by comparing transcripts and genome annotations (<code class="docutils literal"><span class="pre">--modify_transcript</span></code>).
+If you want to know the details, please check <a class="reference internal" href="subcommands.html#transcript"><span class="std std-ref">transcript (transcript detection)</span></a>. Now, we use default setting to run this module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic transcript \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --replicate_tex all_1 \
+    --compare_feature_genome gene CDS \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>The output files are gff files, tables and statistic files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/transcripts/gffs
+NC_009839.1_transcript.gff
+$ ls ANNOgesic/output/transcripts/tables
+NC_009839.1_transcript.csv
+$ ls ANNOgesic/output/transcripts/statistics
+NC_009839.1_length_all.png  NC_009839.1_length_less_2000.png  stat_compare_transcript_TSS_NC_009839.1.csv  stat_compare_transcript_genome_NC_009839.1.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="prediction-of-terminator">
+<h2>Prediction of terminator<a class="headerlink" href="#prediction-of-terminator" title="Permalink to this headline">¶</a></h2>
+<p>We can run subcommand <code class="docutils literal"><span class="pre">terminator</span></code> to detect terminators. The command is like following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic terminator \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --replicate_tex all_1 \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Four different kinds of gff files and tables will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/terminators/gffs/
+all_candidates  best_candidates  expressed_candidates  non_expressed_candidates
+$ ls ANNOgesic/output/terminators/tables
+all_candidates  best_candidates  expressed_candidates  non_expressed_candidates
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates; <code class="docutils literal"><span class="pre">expressed_candidates</span></code> is for the candidates which reveal gene expression;
+<code class="docutils literal"><span class="pre">best_candidates</span></code> is for the candidates which reveal gene expression and their coverages show significant decreasing;
+<code class="docutils literal"><span class="pre">non_expressed_candidates</span></code> is for the candidates which have no expression.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/terminators/gffs/best_candidates
+NC_009839.1_term.gff
+$ ls ANNOgesic/output/terminators/gffs/expressed_candidates
+NC_009839.1_term.gff
+$ ls ANNOgesic/output/terminators/gffs/all_candidates
+NC_009839.1_term.gff
+$ ls ANNOgesic/output/terminators/gffs/non_expressed_candidates
+NC_009839.1_term.gff
+$ ls ANNOgesic/output/terminators/tables/best_candidates
+NC_009839.1_term.csv
+$ ls ANNOgesic/output/terminators/tables/expressed_candidates
+NC_009839.1_term.csv
+$ ls ANNOgesic/output/terminators/tables/all_candidates
+NC_009839.1_term.csv
+$ ls ANNOgesic/output/terminators/tables/non_expressed_candidates
+NC_009839.1_term.csv
+</pre></div>
+</div>
+<p>In transtermhp folder, output files of <a class="reference external" href="http://transterm.cbcb.umd.edu/">TranstermHP</a> can be found.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/terminators/transtermhp_results/NC_009839.1
+NC_009839.1_best_terminator_after_gene.bag  NC_009839.1_terminators.txt  NC_009839.1_terminators_within_robust_tail-to-tail_regions.t2t
+</pre></div>
+</div>
+<p>Moreover, statistic files are stored in <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/terminators/statistics/
+stat_compare_terminator_transcript_NC_009839.1_all_candidates.csv   stat_compare_terminator_transcript_NC_009839.1_expressed_candidates.csv
+stat_compare_terminator_transcript_NC_009839.1_best_candidates.csv  stat_NC_009839.1.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-utr">
+<h2>Generating UTR<a class="headerlink" href="#generating-utr" title="Permalink to this headline">¶</a></h2>
+<p>Now, we have the information of TSSs, transcripts and terminators. We can detect the 5&#8217;UTRs and 3&#8217;UTRs easily by using
+subcommand <code class="docutils literal"><span class="pre">utr</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic utr \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>If the TSS gff file is not generated by ANNOgesic, please add <code class="docutils literal"><span class="pre">--tss_source</span></code> which can classify TSSs for generating UTRs.
+Output gff files and statistic files will be stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/UTRs/5UTRs</span></code> and <code class="docutils literal"><span class="pre">ANNOgesic/output/UTRs/3UTRs</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/UTRs/3UTRs
+gffs/       statistics/
+$ ls ANNOgesic/output/UTRs/5UTRs
+gffs/       statistics/
+$ ls ANNOgesic/output/UTRs/3UTRs/gffs
+NC_009839.1_3UTR.gff
+$ ls ANNOgesic/output/UTRs/5UTRs/gffs
+NC_009839.1_5UTR.gff
+$ ls ANNOgesic/output/UTRs/5UTRs/statistics
+NC_009839.1_all_5utr_length.png
+$ ls ANNOgesic/output/UTRs/3UTRs/statistics
+NC_009839.1_all_3utr_length.png
+</pre></div>
+</div>
+<p>Now, we have all information for defining the transcript boundary.</p>
+</div>
+<div class="section" id="detecting-operon-and-suboperon">
+<h2>Detecting operon and suboperon<a class="headerlink" href="#detecting-operon-and-suboperon" title="Permalink to this headline">¶</a></h2>
+<p>We have TSSs, transcripts, terminators, CDSs, UTRs now. We can integrate all these feature to
+detect operons and suboperons by executing subcommand <code class="docutils literal"><span class="pre">operon</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic operon \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --utr5_files ANNOgesic/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff \
+    --utr3_files ANNOgesic/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff \
+    --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Three folders will be generated to store gff files, tables and statistics files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/operons/
+gffs  statistics  tables
+$ ls ANNOgesic/output/operons/gffs/
+NC_009839.1_operon.gff
+$ ls ANNOgesic/output/operons/tables/
+NC_009839.1_operon.csv
+$ ls ANNOgesic/output/operons/statistics/
+stat_NC_009839.1_operon.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="promoter-motif-detection">
+<h2>Promoter motif detection<a class="headerlink" href="#promoter-motif-detection" title="Permalink to this headline">¶</a></h2>
+<p>As long as we have TSSs, we can use subcommand <code class="docutils literal"><span class="pre">promoter</span></code> to get promoters. If the TSS gff files are not generated by <code class="docutils literal"><span class="pre">ANNOgesic</span></code>,
+please add <code class="docutils literal"><span class="pre">--tss_source</span></code> and corresponding genome annotation file (<code class="docutils literal"><span class="pre">--annotation_files</span></code>) in order to
+classify TSSs for detecting promoters.
+Now, let&#8217;s try <code class="docutils literal"><span class="pre">promoter</span></code> by running <a class="reference external" href="http://meme-suite.org/tools/meme">MEME</a> and <a class="reference external" href="http://meme-suite.org/tools/glam2">GLAM2</a>
+(<code class="docutils literal"><span class="pre">--program</span></code> is assigned by &#8220;both&#8221; in default. If you want to only run
+MEME or GLAM2, please assign &#8220;meme&#8221; or &#8220;glam2&#8221; to <code class="docutils literal"><span class="pre">--program</span></code>), the process may take a while.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic promoter \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --motif_width 45 2-10 \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>We defined the length of the motifs as <code class="docutils literal"><span class="pre">50</span></code> and <code class="docutils literal"><span class="pre">2-10</span></code>. <code class="docutils literal"><span class="pre">2-10</span></code> means the width can be from 2 to 10.</p>
+<p>Based on different types of the TSSs and the length of the motif, numerous output files will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/promoters/
+fasta_classes  NC_009839.1
+$ ls ANNOgesic/output/promoters/fasta_classes/NC_009839.1
+NC_009839.1_allgenome_all_types.fa  NC_009839.1_allgenome_internal.fa  NC_009839.1_allgenome_primary.fa    NC_009839.1_allgenome_without_orphan.fa
+NC_009839.1_allgenome_antisense.fa  NC_009839.1_allgenome_orphan.fa    NC_009839.1_allgenome_secondary.fa
+$ ls ANNOgesic/output/promoters/NC_009839.1
+MEME GLAM2
+$ ls ANNOgesic/output/promoters/NC_009839.1/MEME
+promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_internal_45_nt   promoter_motifs_NC_009839.1_allgenome_secondary_2-10_nt
+promoter_motifs_NC_009839.1_allgenome_all_types_45_nt    promoter_motifs_NC_009839.1_allgenome_orphan_2-10_nt   promoter_motifs_NC_009839.1_allgenome_secondary_45_nt
+promoter_motifs_NC_009839.1_allgenome_antisense_2-10_nt  promoter_motifs_NC_009839.1_allgenome_orphan_45_nt     promoter_motifs_NC_009839.1_allgenome_without_orphan_2-10_nt
+promoter_motifs_NC_009839.1_allgenome_antisense_45_nt    promoter_motifs_NC_009839.1_allgenome_primary_2-10_nt  promoter_motifs_NC_009839.1_allgenome_without_orphan_45_nt
+promoter_motifs_NC_009839.1_allgenome_internal_2-10_nt   promoter_motifs_NC_009839.1_allgenome_primary_45_nt
+$ ls ANNOgesic/output/promoters/NC_009839.1/GLAM2
+promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_internal_45_nt   promoter_motifs_NC_009839.1_allgenome_secondary_2-10_nt
+promoter_motifs_NC_009839.1_allgenome_all_types_45_nt    promoter_motifs_NC_009839.1_allgenome_orphan_2-10_nt   promoter_motifs_NC_009839.1_allgenome_secondary_45_nt
+promoter_motifs_NC_009839.1_allgenome_antisense_2-10_nt  promoter_motifs_NC_009839.1_allgenome_orphan_45_nt     promoter_motifs_NC_009839.1_allgenome_without_orphan_2-10_nt
+promoter_motifs_NC_009839.1_allgenome_antisense_45_nt    promoter_motifs_NC_009839.1_allgenome_primary_2-10_nt  promoter_motifs_NC_009839.1_allgenome_without_orphan_45_nt
+promoter_motifs_NC_009839.1_allgenome_internal_2-10_nt   promoter_motifs_NC_009839.1_allgenome_primary_45_nt
+$ ls ANNOgesic/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/
+logo1.eps  logo1.png  logo2.eps  logo2.png  logo3.eps  logo3.png  logo_rc1.eps  logo_rc1.png  logo_rc2.eps  logo_rc2.png  logo_rc3.eps  logo_rc3.png  meme.csv  meme.html  meme.txt  meme.xml
+$ ls ANNOgesic/output/promoters/NC_009839.1/GLAM2/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/
+glam2.csv   glam2.txt   logo1.eps  logo2.png  logo4.eps  logo5.png  logo7.eps  logo8.png  logo_ssc10.eps  logo_ssc1.png  logo_ssc3.eps  logo_ssc4.png  logo_ssc6.eps  logo_ssc7.png  logo_ssc9.eps
+glam2.html  logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps  logo_ssc10.png  logo_ssc2.eps  logo_ssc3.png  logo_ssc5.eps  logo_ssc6.png  logo_ssc8.eps  logo_ssc9.png
+glam2.meme  logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png  logo_ssc1.eps   logo_ssc2.png  logo_ssc4.eps  logo_ssc5.png  logo_ssc7.eps  logo_ssc8.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="prediction-of-srna-and-sorf">
+<h2>Prediction of sRNA and sORF<a class="headerlink" href="#prediction-of-srna-and-sorf" title="Permalink to this headline">¶</a></h2>
+<p>Based on transcripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we
+have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can
+get sRNAs by running subcommand <code class="docutils literal"><span class="pre">srna</span></code>. Normally, we recommend that the user inputs fragmented libraries as well.
+Here, we only use TEX +/- for testing.</p>
+<p>For running <code class="docutils literal"><span class="pre">srna</span></code>, we can apply several filters to improve the detection. These filters are <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
+<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>, <code class="docutils literal"><span class="pre">sorf</span></code>. Normally, <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
+<code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code> are recommended to be used.</p>
+<p>Please be aware, filters are strict. For example, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs which are
+associated with terminators will be included in the list of best candidates. If you want to include terminator information
+but do not use terminator as a filter, you can remove <code class="docutils literal"><span class="pre">term</span></code> in filters and still assign the path of terminator gff file.
+The results will include the sRNAs which are not associated with terminators, and terminator information can be shown
+and checked in the results as well.</p>
+<p>Before running <code class="docutils literal"><span class="pre">srna</span></code>, we have to get sRNA database (we can use <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>) and
+<a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (if you have not downloaded before).
+We can download fasta file of <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a> from our
+<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">Git repository</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/databases/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
+</pre></div>
+</div>
+<p>If you have your sRNA database in other folders, please assign your path of databases to <code class="docutils literal"><span class="pre">--srna_database_path</span></code>
+(please check <a class="reference internal" href="subcommands.html#srna"><span class="std std-ref">srna (sRNA detection)</span></a> to modify the headers of your database).
+If your database is formatted before, you can remove <code class="docutils literal"><span class="pre">--srna_format</span></code>.
+In order to use the recommended filters, we have to download
+<a class="reference external" href="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">nr database</a> (takes a while). If you already downloaded it,
+you can skip this step.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/databases/ ftp://ftp.ncbi.nih.gov/blast/db/FASTA/nr.gz
+$ gunzip ANNOgesic/input/databases/nr.gz
+$ mv ANNOgesic/input/databases/nr ANNOgesic/input/databases/nr.fa
+</pre></div>
+</div>
+<p>If your nr database is in other folders, please assign your path to <code class="docutils literal"><span class="pre">--nr_database_path</span></code>.
+You can also remove <code class="docutils literal"><span class="pre">--nr_format</span></code> if your database is already formatted.
+Now, we can use the recommended filters to run <code class="docutils literal"><span class="pre">srna</span></code>, but it may takes a while.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic srna \
+    --filter_info tss blast_srna sec_str blast_nr \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --processing_site_files ANNOgesic/output/processing_sites/gffs/NC_009839.1_processing.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
+    --promoter_tables ANNOgesic/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/meme.csv \
+    --promoter_names MOTIF_1 \
+    --mountain_plot \
+    --utr_derived_srna \
+    --compute_sec_structures \
+    --srna_format \
+    --nr_format \
+    --nr_database_path ANNOgesic/input/databases/nr \
+    --srna_database_path ANNOgesic/input/databases/sRNA_database_BSRD \
+    --tex_notex_libs $TEX_LIBS \
+    --replicate_tex all_1 \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>If you have sORF information, you can also assign path of the sORF gff file to <code class="docutils literal"><span class="pre">--sorf_files</span></code>.
+Then, the comparison of sRNAs and sORFs can be done.</p>
+<p>Output files are following.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNAs/
+blast_results_and_misc  figs  gffs  log.txt  sRNA_2d_NC_009839.1  sRNA_seq_NC_009839.1  statistics  tables
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">blast_results_and_misc</span></code> stores the results of blast; <code class="docutils literal"><span class="pre">figs</span></code> stores plots of sRNAs;
+<code class="docutils literal"><span class="pre">statistics</span></code> stores statistic files.</p>
+<p><code class="docutils literal"><span class="pre">sRNA_2d_NC_009839.1</span></code> and <code class="docutils literal"><span class="pre">sRNA_seq_NC_009839.1</span></code> are text files of sRNA sequences and secondary structures.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNAs/blast_results_and_misc/
+nr_blast_NC_009839.1.txt  sRNA_blast_NC_009839.1.txt
+$ ls ANNOgesic/output/sRNAs/figs/
+dot_plots  mountain_plots  sec_plots
+$ ls ANNOgesic/output/sRNAs/figs/mountain_plots/NC_009839.1/
+srna0_NC_009839.1_36954_37044_-_mountain.pdf     srna25_NC_009839.1_854600_854673_-_mountain.pdf    srna40_NC_009839.1_1091155_1091251_-_mountain.pdf  srna56_NC_009839.1_1440826_1441414_+_mountain.pdf
+srna10_NC_009839.1_248098_248257_-_mountain.pdf  srna26_NC_009839.1_879881_880088_-_mountain.pdf    srna41_NC_009839.1_1097654_1097750_-_mountain.pdf  srna57_NC_009839.1_1448211_1448306_+_mountain.pdf
+...
+
+$ ls ANNOgesic/output/sRNAs/figs/dot_plots/NC_009839.1/
+srna0_NC_009839.1_36954_37044_-_dp.pdf     srna25_NC_009839.1_854600_854673_-_dp.pdf    srna40_NC_009839.1_1091155_1091251_-_dp.pdf  srna56_NC_009839.1_1440826_1441414_+_dp.pdf
+srna10_NC_009839.1_248098_248257_-_dp.pdf  srna26_NC_009839.1_879881_880088_-_dp.pdf    srna41_NC_009839.1_1097654_1097750_-_dp.pdf  srna57_NC_009839.1_1448211_1448306_+_dp.pdf
+...
+
+$ ls ANNOgesic/output/sRNAs/figs/sec_plots/NC_009839.1/
+rna0_NC_009839.1_36954_37044_-_rss.pdf     srna25_NC_009839.1_854600_854673_-_rss.pdf    srna40_NC_009839.1_1091155_1091251_-_rss.pdf  srna56_NC_009839.1_1440826_1441414_+_rss.pdf
+srna10_NC_009839.1_248098_248257_-_rss.pdf  srna26_NC_009839.1_879881_880088_-_rss.pdf    srna41_NC_009839.1_1097654_1097750_-_rss.pdf  srna57_NC_009839.1_1448211_1448306_+_rss.pdf
+...
+
+$ ls ANNOgesic/output/sRNAs/statistics/
+stat_NC_009839.1_sRNA_blast.csv  stat_sRNA_class_NC_009839.1.csv
+</pre></div>
+</div>
+<p>In <code class="docutils literal"><span class="pre">gffs</span></code> and <code class="docutils literal"><span class="pre">tables</span></code>, three different folders are generated. <code class="docutils literal"><span class="pre">all_candidates</span></code> is for all candidates
+without filtering; <code class="docutils literal"><span class="pre">best_candidates</span></code> is for the candidates after filtering;
+<code class="docutils literal"><span class="pre">for_classes</span></code> is for different sRNA types based on <code class="docutils literal"><span class="pre">stat_sRNA_class_NC_009839.1.csv</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNAs/gffs/
+all_candidates  best_candidates  for_classes
+$ ls ANNOgesic/output/sRNAs/tables/
+all_candidates  best_candidates  for_classes
+$ ls ANNOgesic/output/sRNAs/gffs/all_candidates/
+NC_009839.1_sRNA.gff
+$ ls ANNOgesic/output/sRNAs/tables/all_candidates/
+NC_009839.1_sRNA.csv
+$ ls ANNOgesic/output/sRNAs/gffs/best_candidates/
+NC_009839.1_sRNA.gff
+$ ls ANNOgesic/output/sRNAs/tables/best_candidates/
+NC_009839.1_sRNA.csv
+$ ls ANNOgesic/output/sRNAs/gffs/for_classes/NC_009839.1/
+class_1_all.gff                                          class_1_class_2_class_7_all.gff                  class_2_all.gff                                  class_3_all.gff
+class_1_class_2_all.gff                                  class_1_class_3_all.gff                          class_2_class_3_all.gff                          class_3_class_4_all.gff
+...
+
+$ ls ANNOgesic/output/sRNAs/tables/for_classes/NC_009839.1/
+class_1_all.csv                                          class_1_class_2_class_7_all.csv                  class_2_all.csv                                  class_3_all.csv
+class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
+...
+</pre></div>
+</div>
+<p>As we know, expressed regions without annotation may be sORF as well.
+In order to get information of sORFs, we can use subcommand <code class="docutils literal"><span class="pre">sorf</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic sorf \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --srna_files ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+    --tex_notex_libs $TEX_LIBS \
+    --replicate_tex all_1 -u \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>For generating best candidates, some filters can be assigned
+(ex: with ribosome binding site (Shine-Dalgarno sequence), with TSS, without overlap with sRNA, etc.).
+After running <code class="docutils literal"><span class="pre">sorf</span></code>, gff files, statistic files and tables of the sORF will be generated. <code class="docutils literal"><span class="pre">all_candidates</span></code>
+stores the gff files and tables without filtering; <code class="docutils literal"><span class="pre">best_candidates</span></code> stores the gff_files and tables with filtering.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sORFs/gffs/all_candidates/
+NC_009839.1_sORF.gff
+$ ls ANNOgesic/output/sORFs/gffs/best_candidates/
+NC_009839.1_sORF.gff
+$ ls ANNOgesic/output/sORFs/tables/all_candidates/
+NC_009839.1_sORF.csv
+$ ls ANNOgesic/output/sORFs/tables/best_candidates/
+NC_009839.1_sORF.csv
+$ ls ANNOgesic/output/sORFs/statistics/
+stat_NC_009839.1_sORF.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="performing-srna-target-prediction">
+<h2>Performing sRNA target prediction<a class="headerlink" href="#performing-srna-target-prediction" title="Permalink to this headline">¶</a></h2>
+<p>Now we have sRNA candidates. If we want to know targets of these sRNAs, we can use <code class="docutils literal"><span class="pre">srna_target</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic srna_target \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --srna_files ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+    --query_srnas NC_009839.1:36954:37044:- \
+    --program both \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like
+<code class="docutils literal"><span class="pre">NC_009839.1:36954:37044:-</span> <span class="pre">NC_009839.1:75845:75990:+</span></code>. If you want to compute all sRNAs, you
+can assign <code class="docutils literal"><span class="pre">all</span></code> to <code class="docutils literal"><span class="pre">--query_srnas</span></code> (may take several days).</p>
+<p>Several output folders will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNA_targets/
+merged_results  RNAplex_results  RNAup_results  sRNA_seqs  target_seqs
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">sRNA_seqs</span></code> and <code class="docutils literal"><span class="pre">target_seqs</span></code> are for sequences of the sRNAs and the potential targets.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNA_targets/sRNA_seqs
+NC_009839.1_sRNA.fa
+$ ls ANNOgesic/output/sRNA_targets/target_seqs
+NC_009839.1_target.fa
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">RNAplex_results</span></code> and <code class="docutils literal"><span class="pre">RNAup_results</span></code> are for output of <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/">RNAplex and RNAup</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNA_targets/RNAplex_results/NC_009839.1/
+NC_009839.1_RNAplex_rank.csv  NC_009839.1_RNAplex.txt
+$ ls ANNOgesic/output/sRNA_targets/RNAup_results/NC_009839.1/
+NC_009839.1_RNAup.log  NC_009839.1_RNAup_rank.csv  NC_009839.1_RNAup.txt
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">merged_results</span></code> is for the merged results of <a class="reference external" href="http://www.tbi.univie.ac.at/RNA/RNAplex.1.html">RNAplex</a> and
+<a class="reference external" href="http://www.tbi.univie.ac.at/RNA/RNAup.1.html">RNAup</a>. <code class="docutils literal"><span class="pre">NC_009839.1_merge.csv</span></code>  contains all results of the
+both methods, and <code class="docutils literal"><span class="pre">NC_009839.1_overlap.csv</span></code> only stores candidates which are top 20 (default) in the both methods.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/sRNA_targets/merged_results/NC_009839.1/
+NC_009839.1_merge.csv  NC_009839.1_overlap.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="mapping-and-detecting-of-circular-rna">
+<h2>Mapping and detecting of circular RNA<a class="headerlink" href="#mapping-and-detecting-of-circular-rna" title="Permalink to this headline">¶</a></h2>
+<p>You may also be interested in circular RNAs. The subcommand <code class="docutils literal"><span class="pre">circrna</span></code> can help us to get circular RNAs by
+using <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>. Since
+we didn&#8217;t map reads of the test case before, we can also do mapping by running <code class="docutils literal"><span class="pre">circrna</span></code>. If you already mapped
+the reads by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> with <code class="docutils literal"><span class="pre">--splits</span></code>, you can
+add path of the bam files to <code class="docutils literal"><span class="pre">--bam_files</span></code> directly. However,
+if you mapped the reads by other tools or you mapped the reads by
+<a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> without <code class="docutils literal"><span class="pre">--splits</span></code>, Unfortunately,
+you have to re-map the reads(<code class="docutils literal"><span class="pre">--read_files</span></code>) again. You can assign the number of parallels (<code class="docutils literal"><span class="pre">--parallels</span></code>) for mapping.</p>
+<p>Since we just want to test the subcommand.
+Thus, we can reduce the running time by selecting the subset of reads (first 50000) for only testing.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ head -n 50000 ANNOgesic/input/reads/SRR515254.fasta &gt; ANNOgesic/input/reads/SRR515254_50000.fasta
+$ head -n 50000 ANNOgesic/input/reads/SRR515255.fasta &gt; ANNOgesic/input/reads/SRR515255_50000.fasta
+$ head -n 50000 ANNOgesic/input/reads/SRR515256.fasta &gt; ANNOgesic/input/reads/SRR515256_50000.fasta
+$ head -n 50000 ANNOgesic/input/reads/SRR515257.fasta &gt; ANNOgesic/input/reads/SRR515257_50000.fasta
+$ rm ANNOgesic/input/reads/SRR515254.fasta
+$ rm ANNOgesic/input/reads/SRR515255.fasta
+$ rm ANNOgesic/input/reads/SRR515256.fasta
+$ rm ANNOgesic/input/reads/SRR515257.fasta
+</pre></div>
+</div>
+<p>Then we setup the read files.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>$ READ_FILES=ANNOgesic/input/reads/SRR515254_50000.fasta,ANNOgesic/input/reads/SRR515255_50000.fasta,ANNOgesic/input/reads/SRR515256_50000.fasta,ANNOgesic/input/reads/SRR515257_50000.fasta</dd>
+</dl>
+<p>After that, we assign <code class="docutils literal"><span class="pre">all_samples:$READ_FILE</span></code> to <code class="docutils literal"><span class="pre">--read_files</span></code>. <code class="docutils literal"><span class="pre">all_sample</span></code> is the set name of read files.
+The all four read files will be compute together. Now, we can try <code class="docutils literal"><span class="pre">circrna</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic circrna \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --parallels 10 \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --read_files all_samples:$READ_FILES \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>If you can&#8217;t find <code class="docutils literal"><span class="pre">testrealign.x</span></code>, please refer to <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
+Several output folders will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/circRNAs/
+circRNA_tables  gffs  segemehl_alignment_files  segemehl_splice_results  statistics
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">segemehl_alignment_files</span></code> and <code class="docutils literal"><span class="pre">segemehl_splice_results</span></code> are for output of
+<a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a>. <code class="docutils literal"><span class="pre">segemehl_alignment_files</span></code> stores Bam files of
+the alignment and <code class="docutils literal"><span class="pre">segemehl_splice_results</span></code> stores results of the splice detection.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/
+SRR515254_50000_NC_009839.1.bam  SRR515256_50000_NC_009839.1.bam
+SRR515255_50000_NC_009839.1.bam  SRR515257_50000_NC_009839.1.bam
+$ ls ANNOgesic/output/circRNAs/segemehl_splice_results/NC_009839.1/
+NC_009839.1_all_samples_splicesites.bed  NC_009839.1_all_samples_transrealigned.bed
+</pre></div>
+</div>
+<p>Gff files, tables and statistic files are stored in <code class="docutils literal"><span class="pre">gffs</span></code>, <code class="docutils literal"><span class="pre">circRNA_tables</span></code> and <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/circRNAs/gffs/NC_009839.1/
+NC_009839.1_all_samples_circRNA_all.gff  NC_009839.1_all_samples_circRNA_best.gff
+$ ls ANNOgesic/output/circRNAs/circRNA_tables/NC_009839.1/
+NC_009839.1_all_samples_circRNA_all.csv  NC_009839.1_all_samples_circRNA_best.csv
+$ ls ANNOgesic/output/circRNAs/statistics/
+stat_NC_009839.1_all_samples_circRNA.csv
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">NC_009839.1_all_samples_circRNA_all.gff</span></code> and <code class="docutils literal"><span class="pre">NC_009839.1_all_samples_circRNA_all.csv</span></code> store all circular RNAs without filtering.
+<code class="docutils literal"><span class="pre">NC_009839.1_all_samples_circRNA_best.gff</span></code> and <code class="docutils literal"><span class="pre">NC_009839.1_all_samples_circRNA_best.csv</span></code> store
+the circular RNAs after filtering. In our case, there are some circular RNAs can be detected without filtering, but no one
+can exist after filtering.</p>
+</div>
+<div class="section" id="snp-calling">
+<h2>SNP calling<a class="headerlink" href="#snp-calling" title="Permalink to this headline">¶</a></h2>
+<p>If we want to know SNPs or mutations of our RNA-seq data, we can use <code class="docutils literal"><span class="pre">snp</span></code> to achieve this purpose.
+<code class="docutils literal"><span class="pre">snp</span></code> is compose of two parts. One part is for obtaining the differences between our query genome
+and the closed genome of our query one. If we have no fasta file of our query genome,
+this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closed genome. Then
+using <code class="docutils literal"><span class="pre">snp</span></code> can automatically detect differences between the closed genome and our query genome.
+Furthermore, potential fasta files of our query genome can be generated automatically as well.
+The other part is for detecting SNPs or mutations of our query genome if the fasta file of our query genome can be provided.
+In this part, you can know real mutations of our query genonme.</p>
+<p>Before running the subcommand, bam files are required. Since we already generated them via
+running <code class="docutils literal"><span class="pre">circrna</span></code>, we can just put them to the corresponding folder. Please remember that the mapping function of
+<code class="docutils literal"><span class="pre">circrna</span></code> is basic one.</p>
+<p>Now, we can try to detect mutations. The procedures of comparing closed genome and query genome are similar,
+you just need to put Bam files, and fasta files to corresponding folders and set <code class="docutils literal"><span class="pre">--bam_type</span></code>.</p>
+<p>First, we copy the bam files to <code class="docutils literal"><span class="pre">BAMs_map_query_genomes</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex
+</pre></div>
+</div>
+<p>Now, we can set our bam files</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>$ BAM_FILES=ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,</dt>
+<dd>ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam</dd>
+</dl>
+</dd>
+</dl>
+<p>Then we can run the subcommand with three programs &#8211; <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code>.
+<code class="docutils literal"><span class="pre">all_sample:2:$BAM_FILES</span></code> for <code class="docutils literal"><span class="pre">--bam_files</span></code> means the set name of bam files is &#8220;all_sample&#8221;, there are two
+samples in this set, and all four bam files need to be computed together.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic snp \
+    --bam_type query_genome \
+    --program with_BAQ without_BAQ extend_BAQ \
+    --bam_files all_samples:2:$BAM_FILES \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Two output folders will be generated, <code class="docutils literal"><span class="pre">compare_closed_and_updated_references</span></code> is for the results of comparison between closed genome
+and query genome, <code class="docutils literal"><span class="pre">mutations_of_query_genomes</span></code> is for results of detecting mutations of the query genome.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/
+compare_closed_and_updated_references  mutations_of_query_genomes
+</pre></div>
+</div>
+<p>Since we run <code class="docutils literal"><span class="pre">query_genome</span></code>,  the output folders are produced under <code class="docutils literal"><span class="pre">mutations_of_query_genomes</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/
+seqs  SNP_raw_outputs  SNP_tables  statistics
+</pre></div>
+</div>
+<p>The output folders are compose of three parts - <code class="docutils literal"><span class="pre">extend_BAQ</span></code>, <code class="docutils literal"><span class="pre">with_BAQ</span></code> and <code class="docutils literal"><span class="pre">without_BAQ</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/seqs/
+extend_BAQ/  with_BAQ/    without_BAQ/
+</pre></div>
+</div>
+<p>In <code class="docutils literal"><span class="pre">seqs</span></code>, the potential sequences can be found.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/seqs/with_BAQ/NC_009839.1/
+NC_009839.1_all_samples_NC_009839.1_1_1.fa
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">SNP_raw_outputs</span></code> stores output of <a class="reference external" href="https://github.com/samtools">Samtools and Bcftools</a>.
+<code class="docutils literal"><span class="pre">SNP_tables</span></code> stores results after filtering and the indices of potential sequence
+(potential sequences are stored in <code class="docutils literal"><span class="pre">seqs</span></code>).
+<code class="docutils literal"><span class="pre">statistics</span></code> stores the statistic files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/SNP_raw_outputs/NC_009839.1/
+NC_009839.1_extend_BAQ_all_samples.vcf  NC_009839.1_with_BAQ_all_samples.vcf  NC_009839.1_without_BAQ_all_samples.vcf
+$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/SNP_tables/NC_009839.1/
+NC_009839.1_extend_BAQ_all_samples_best.vcf           NC_009839.1_with_BAQ_all_samples_best.vcf           NC_009839.1_without_BAQ_all_samples_best.vcf
+NC_009839.1_extend_BAQ_all_samples_seq_reference.csv  NC_009839.1_with_BAQ_all_samples_seq_reference.csv  NC_009839.1_without_BAQ_all_samples_seq_reference.csv
+$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/statistics/
+figs                                                  stat_NC_009839.1_with_BAQ_all_samples_SNP_best.csv     stat_NC_009839.1_without_BAQ_all_samples_SNP_raw.csv
+stat_NC_009839.1_extend_BAQ_all_samples_SNP_best.csv  stat_NC_009839.1_with_BAQ_all_samples_SNP_raw.csv
+stat_NC_009839.1_extend_BAQ_all_samples_SNP_raw.csv   stat_NC_009839.1_without_BAQ_all_samples_SNP_best.csv
+$ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/statistics/figs
+NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png
+NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="mapping-gene-ontology">
+<h2>Mapping Gene ontology<a class="headerlink" href="#mapping-gene-ontology" title="Permalink to this headline">¶</a></h2>
+<p>Gene ontology is useful for understanding functions of gene products.
+<code class="docutils literal"><span class="pre">go_term</span></code> can search GO terms of the proteins in annotation files. Before running <code class="docutils literal"><span class="pre">go_term</span></code>, we
+need to prepare some databases. First, please download
+<a class="reference external" href="http://geneontology.org/page/go-slim-and-subset-guide">goslim.obo</a> and
+<a class="reference external" href="http://geneontology.org/page/download-ontology">go.obo</a> and
+<a class="reference external" href="http://www.uniprot.org/downloads">idmapping_selected.tab</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/databases http://www.geneontology.org/ontology/subsets/goslim_generic.obo
+$ wget -cP ANNOgesic/input/databases http://geneontology.org/ontology/go.obo
+$ wget -cP ANNOgesic/input/databases ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping_selected.tab.gz
+$ gunzip ANNOgesic/input/databases/idmapping_selected.tab.gz
+</pre></div>
+</div>
+<p>Now, we have all required databases. We can also import information of the transcripts to
+generate results which are only included the expressed CDSs.</p>
+<p>Let&#8217;s try it.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic go_term \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --go_obo ANNOgesic/input/databases/go.obo \
+    --goslim_obo ANNOgesic/input/databases/goslim_generic.obo \
+    --uniprot_id ANNOgesic/input/databases/idmapping_selected.tab \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>The results of <code class="docutils literal"><span class="pre">go_term</span></code> are stored in <code class="docutils literal"><span class="pre">GO_term_results</span></code>. The statistic files and
+figures are stored in <code class="docutils literal"><span class="pre">statistics</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/GO_terms/
+all_CDSs  expressed_CDSs
+$ ls ANNOgesic/output/GO_terms/all_CDSs/
+GO_term_results  statistics
+$ ls ANNOgesic/output/GO_terms/all_CDSs/GO_term_results/NC_009839.1/
+all_genomes_uniprot.csv
+$ ls ANNOgesic/output/GO_terms/all_CDSs/statistics/NC_009839.1/
+figs  stat_NC_009839.1.csv
+$ ls ANNOgesic/output/GO_terms/all_CDSs/statistics/NC_009839.1/figs/
+NC_009839.1_biological_process.png  NC_009839.1_cellular_component.png  NC_009839.1_molecular_function.png  NC_009839.1_three_roots.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="prediction-of-subcellular-localization">
+<h2>Prediction of Subcellular localization<a class="headerlink" href="#prediction-of-subcellular-localization" title="Permalink to this headline">¶</a></h2>
+<p>Subcellular localization is also a useful information for analysis of protein functions. For
+detecting subcellular localization, we can use the subcommand
+<code class="docutils literal"><span class="pre">localization</span></code>. We can also import
+information of the transcript to generate results which are only included the expressed CDSs.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic localization \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --merge_to_gff --bacteria_type negative \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Two output folders will be generated. <code class="docutils literal"><span class="pre">psortb_results</span></code> stores output
+of <a class="reference external" href="http://www.psort.org/psortb/">Psortb</a>. <code class="docutils literal"><span class="pre">statistics</span></code> stores
+statistic files and figures.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/subcellular_localization/
+all_CDSs  expressed_CDSs
+$ ls ANNOgesic/output/subcellular_localization/all_CDSs/
+psortb_results  statistics
+$ ls ANNOgesic/output/subcellular_localization/all_CDSs/psortb_results/NC_009839.1/
+NC_009839.1_raw.txt  NC_009839.1_table.csv
+$ ls ANNOgesic/output/subcellular_localization/all_CDSs/statistics/NC_009839.1/
+NC_009839.1_NC_009839.1_sublocal.png  stat_NC_009839.1_sublocal.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-protein-protein-interaction-network">
+<h2>Generating protein-protein interaction network<a class="headerlink" href="#generating-protein-protein-interaction-network" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">ppi_network</span></code> can detect protein-protein interaction from <a class="reference external" href="http://string-db.org/">STRING</a>
+(a database of protein-protein interaction) and searching the literatures by implementing
+<a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a>
+(text-mining for protein-protein interaction). Therefore, <code class="docutils literal"><span class="pre">ppi_network</span></code> can generate protein-protein
+interaction networks with supported literatures.</p>
+<p>Before running the subcommand, you need to download
+<a class="reference external" href="http://string-db.org/cgi/download.pl">species.v{$VERSIO}.txt from STRING</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/databases http://string-db.org/newstring_download/species.v10.txt
+</pre></div>
+</div>
+<p>Now, we can try the subcommand.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic ppi_network \
+    --query_strains NC_009839.1.gff:NC_009839.1:&#39;Campylobacter jejuni 81176&#39;:&#39;Campylobacter jejuni&#39; \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --species_string ANNOgesic/input/databases/species.v10.txt \
+    --query NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
+    --without_strain_pubmed \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>We only detected for two proteins. If you want to detect for all proteins in gff files,
+you can easily assign <code class="docutils literal"><span class="pre">all</span></code> in <code class="docutils literal"><span class="pre">--query</span></code>.</p>
+<p>Three output folders will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/PPI_networks/
+all_results/  best_results/ figures/
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">all_results</span></code> is for all interactions without filtering. <code class="docutils literal"><span class="pre">best_results</span></code> is for the interactions with
+the high <a class="reference external" href="http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/">PIE</a> score. <code class="docutils literal"><span class="pre">figures</span></code> is for
+figures of the protein-protein interaction networks. There are two subfolders - <code class="docutils literal"><span class="pre">with_strain</span></code> and <code class="docutils literal"><span class="pre">without_strain</span></code> in
+<code class="docutils literal"><span class="pre">figures</span></code>. These two folders store all information of the interactions and literature scores.
+<code class="docutils literal"><span class="pre">with_strain</span></code> is for results with assigning specific strain name for searching literatures.
+<code class="docutils literal"><span class="pre">without_strain</span></code> is for results without giving specific strain name for searching literatures.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/PPI_networks/all_results/PPI_NC_009839.1/
+NC_009839.1_without_strain.csv  NC_009839.1_with_strain.csv  without_strain  with_strain
+$ ls ANNOgesic/output/PPI_networks/best_results/PPI_NC_009839.1/
+NC_009839.1_without_strain.csv  NC_009839.1_with_strain.csv  without_strain  with_strain
+$ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/
+without_strain  with_strain
+$ ls ANNOgesic/output/PPI_networks/all_results/PPI_NC_009839.1/with_strain/NC_009839.1/
+flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
+flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+$ ls ANNOgesic/output/PPI_networks/all_results/PPI_NC_009839.1/without_strain/NC_009839.1/
+flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
+flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+$ ls ANNOgesic/output/PPI_networks/best_results/PPI_NC_009839.1/without_strain/NC_009839.1/
+flgB_flgD.csv    flgE_flgD.csv  flgG_flgC.csv  fliG_fliF.csv
+flgE-1_flgD.csv  flgF_flgC.csv  flgI_flgH.csv
+$ ls ANNOgesic/output/PPI_networks/best_results/PPI_NC_009839.1/with_strain/NC_009839.1/
+fliG_fliF.csv
+$ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/with_strain/NC_009839.1/
+C8J_RS00250_flgD.png
+$ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/without_strain/NC_009839.1/
+C8J_RS00250_flgD.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-riboswitch-and-rna-thermometer">
+<h2>Generating riboswitch and RNA thermometer<a class="headerlink" href="#generating-riboswitch-and-rna-thermometer" title="Permalink to this headline">¶</a></h2>
+<p>If we want to detect riboswitches and RNA thermometers, we can use subcommand <code class="docutils literal"><span class="pre">riboswitch_thermometer</span></code>.
+Before running it, we need to get information of the known riboswitches and RNA thermometers in Rfam.
+The <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/database">riboswitches and RNA thermometer files</a>
+can be downloaded them from our Git repository.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/riboswitch_ID_file/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_riboswitch_ID.csv
+$ wget -cP ANNOgesic/input/RNA_thermometer_ID_file/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/Rfam_RNA_thermometer_ID.csv
+</pre></div>
+</div>
+<p>We also need to download <a class="reference external" href="http://rfam.xfam.org/">Rfam</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/databases ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.tar.gz
+$ cd ANNOgesic/input/databases
+$ tar -zxvf Rfam.tar.gz
+$ rm Rfam.tar.gz
+$ cd ../../../
+</pre></div>
+</div>
+<p>Now we can try the subcommand.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic riboswitch_thermometer \
+    --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+    --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --riboswitch_id_file ANNOgesic/input/riboswitch_ID_file/Rfam_riboswitch_ID.csv \
+    --rna_thermometer_id_file ANNOgesic/input/RNA_thermometer_ID_file/Rfam_RNA_thermometer_ID.csv \
+    --rfam_path ANNOgesic/input/databases/CMs/Rfam.cm \
+    --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+    --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Output files are following, <code class="docutils literal"><span class="pre">gffs</span></code> stores gff files of the riboswitchs / RNA_thermometers;
+<code class="docutils literal"><span class="pre">tables</span></code> stores tables of the riboswitchs / RNA_thermometers;
+<code class="docutils literal"><span class="pre">scan_Rfam_results</span></code> stores output files of scanning Rfam; <code class="docutils literal"><span class="pre">statistics</span></code> is for statistic files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/riboswitches/
+gffs  scan_Rfam_results  statistics  tables
+$ ls ANNOgesic/output/riboswitches/gffs/
+NC_009839.1_riboswitch.gff
+$ ls ANNOgesic/output/riboswitches/scan_Rfam_results/NC_009839.1/
+NC_009839.1_riboswitch_prescan.txt  NC_009839.1_riboswitch_scan.txt
+$ ls ANNOgesic/output/riboswitches/tables/
+NC_009839.1_riboswitch.csv
+$ ls ANNOgesic/output/riboswitches/statistics/
+stat_NC_009839.1_riboswitch.txt
+$ ls ANNOgesic/output/RNA_thermometers/
+gffs  scan_Rfam_results  statistics  tables
+$ ls ANNOgesic/output/RNA_thermometers/gffs/
+NC_009839.1_RNA_thermometer.gff
+$ ls ANNOgesic/output/RNA_thermometers/scan_Rfam_results/NC_009839.1/
+NC_009839.1_RNA_thermometer_prescan.txt  NC_009839.1_RNA_thermometer_scan.txt
+$ ls ANNOgesic/output/RNA_thermometers/tables/
+NC_009839.1_RNA_thermometer.csv
+$ ls ANNOgesic/output/RNA_thermometers/statistics/
+stat_NC_009839.1_RNA_thermometer.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="detection-of-crispr">
+<h2>Detection of CRISPR<a class="headerlink" href="#detection-of-crispr" title="Permalink to this headline">¶</a></h2>
+<p>CRISPR is an important features for research of immunology. <code class="docutils literal"><span class="pre">crispr</span></code> is a useful subcommand for CRISPR detection.
+Let&#8217;s try it.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic crispr \
+   --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+   --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+   --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Output are as following, <code class="docutils literal"><span class="pre">CRT_results</span></code> stores output of <a class="reference external" href="http://www.room220.com/crt/">CRT</a>;
+<code class="docutils literal"><span class="pre">gffs</span></code> stores gff files of the CRISPRs; <code class="docutils literal"><span class="pre">statistics</span></code> is for statistic files.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/crisprs/
+CRT_results  gffs  statistics
+$ ls ANNOgesic/output/crisprs/CRT_results
+NC_009839.1.txt
+$ ls ANNOgesic/output/crisprs/gffs
+all_candidates  best_candidates
+$ ls ANNOgesic/output/crisprs/gffs/all_candidates
+NC_009839.1_CRISPR.gff
+$ ls ANNOgesic/output/crisprs/gffs/best_candidates
+NC_009839.1_CRISPR.gff
+$ ls ANNOgesic/output/crisprs/statistics
+NC_009839.1.csv
+</pre></div>
+</div>
+</div>
+<div class="section" id="merge-all-features-to-be-one-gff-file">
+<h2>Merge all features to be one gff file<a class="headerlink" href="#merge-all-features-to-be-one-gff-file" title="Permalink to this headline">¶</a></h2>
+<p>Now, we generated all features that ANNOgesic can provide. Sometimes, merging all features into
+one gff file is useful. <code class="docutils literal"><span class="pre">merge_features</span></code> is the subcommand to achieve this purpose.
+Moreover, <code class="docutils literal"><span class="pre">merge_features</span></code> can search parent transcript to each feature that
+we assigned.</p>
+<p>Now let&#8217;s do it. We merge all features that we have.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ALL_FEATURES</span><span class="o">=</span><span class="s2">&quot;ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/input/references/annotations/NC_009839.1.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/processing_sites/gffs/NC_009839.1_processing.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/sORFs/gffs/best_candidates/NC_009839.1_sORF.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/riboswitches/gffs/NC_009839.1_riboswitch.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/RNA_thermometers/gffs/NC_009839.1_RNA_thermometer.gff </span><span class="se">\</span>
+<span class="s2">              ANNOgesic/output/crisprs/gffs/best_candidates/NC_009839.1_CRISPR.gff&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic merge_features \
+   --transcript_file ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
+   --other_features_files $ALL_FEATURES \
+   --output_prefix NC_009839.1 \
+   --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Output gff file is stored in <code class="docutils literal"><span class="pre">merge_all_features</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/merge_all_features/
+NC_009839.1_merge_features.gff
+</pre></div>
+</div>
+</div>
+<div class="section" id="producing-the-screenshots">
+<h2>Producing the screenshots<a class="headerlink" href="#producing-the-screenshots" title="Permalink to this headline">¶</a></h2>
+<p>It is a good idea if we can get screenshots of our interesting features. Then we can
+check them very quickly. Therefore, ANNOgesic provides a subcommand <code class="docutils literal"><span class="pre">screenshot</span></code> for
+generating screenshots.</p>
+<p>Before we running it, we have to install <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>.</p>
+<p>For testing, we use TSSs as main feature, sRNAs and CDSs as side features.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic screenshot \
+    --main_gff ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+    --side_gffs ANNOgesic/input/references/annotations/NC_009839.1.gff \
+                ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
+    --fasta_file ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+    --output_folder ANNOgesic/output/TSSs \
+    --tex_notex_libs $TEX_LIBS \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>Two txt files and two folders will be generated.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSSs/screenshots/NC_009839.1/
+forward/     forward.txt  reverse/     reverse.txt
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">forward.txt</span></code> and <code class="docutils literal"><span class="pre">reverse.txt</span></code> are batch files for running in <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a>.
+<code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code> are the folders for storing screenshots.</p>
+<p>Since there are numerous candidates, we can only generate several ones in order to reduce the running time for testing.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">head</span> <span class="o">-</span><span class="n">n</span> <span class="mi">30</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSSs</span><span class="o">/</span><span class="n">screenshots</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">forward</span><span class="o">.</span><span class="n">txt</span> <span class="o">&gt;</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSSs</span><span class="o">/</span><span class="n">screenshots</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">forward_6_cases</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">head</span> <span class="o">-</span><span class="n">n</span> <span class="mi">30</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSSs</span><span class="o">/</span><span class="n">screenshots</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">reverse</span><span class="o">.</span><span class="n">txt</span> <span class="o">&gt;</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">TSSs</span><span class="o">/</span><span class="n">screenshots</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">reverse_6_cases</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Now, please open <a class="reference external" href="https://www.broadinstitute.org/software/igv/home">IGV</a> and follow the procedures: Tools -&gt;
+Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">forward_6_cases.txt</span></code>. Once it is done, please do it again for reverse strand: Tools -&gt;
+Run Batch Script -&gt; choose <code class="docutils literal"><span class="pre">reverse_6_cases.txt</span></code>. If you want to generate the screenshots for all candidates,
+you can run <code class="docutils literal"><span class="pre">forward.txt</span></code> and <code class="docutils literal"><span class="pre">reverse.txt</span></code>. Please be careful, if you use Docker container, the path may be not correct.</p>
+<p>As soon as the generation of the screenshots is done,
+we can see that there are several screenshots in <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSSs/screenshots/NC_009839.1/forward
+NC_009839.1:1396-1396.png  NC_009839.1:14812-14812.png  NC_009839.1:6676-6676.png  NC_009839.1:6680-6680.png  NC_009839.1:8098-8098.png  NC_009839.1:9295-9295.png
+$ ls ANNOgesic/output/TSSs/screenshots/NC_009839.1/reverse
+NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
+</pre></div>
+</div>
+</div>
+<div class="section" id="coloring-the-screenshots">
+<h2>Coloring the screenshots<a class="headerlink" href="#coloring-the-screenshots" title="Permalink to this headline">¶</a></h2>
+<p>If we have numerous libraries and we want to check TSSs, distinguishing the
+tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand <code class="docutils literal"><span class="pre">color_png</span></code> to color
+our screenshots.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic color_png \
+    --track_number 2 \
+    --screenshot_folder ANNOgesic/output/TSSs \
+    --project_path ANNOgesic
+</pre></div>
+</div>
+<p>The output filenames are the same as before. However, when we open the figures, the tracks are colored.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/TSSs/screenshots/NC_009839.1/forward
+NC_009839.1:1396-1396.png  NC_009839.1:14812-14812.png  NC_009839.1:6676-6676.png  NC_009839.1:6680-6680.png  NC_009839.1:8098-8098.png  NC_009839.1:9295-9295.png
+$ ls ANNOgesic/output/TSSs/screenshots/NC_009839.1/reverse
+NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-18360.png  NC_009839.1:2199-2199.png  NC_009839.1:4463-4463.png  NC_009839.1:856-856.png
+</pre></div>
+</div>
+<p>Now we already finished the first wonderful trip of ANNOgesic. Hopefully, you enjoy it!</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="subcommands.html" class="btn btn-neutral" title="ANNOgesic’s subcommands" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sung-Huan Yu.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5.14',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -410,7 +410,7 @@ this example is 2 which means there are two samples in set1 and set2.
                             current directory is used.
       --bam_type BAM_TYPE, -t BAM_TYPE
                             Please assign the type of BAM. If the BAM files are
-                            produced by mapping to the close genome of the query
+                            produced by mapping to the closed genome of the query
                             genome, please key in "closed_genome". the mutations
                             between the closed genome and query genome can be
                             detected for generating sequence of the query genome.
