@@ -248,21 +248,27 @@ def get_srna_name(gffs, srna):
 
 
 def get_target_info(gffs, target):
+    tmp_gff = None
     for gff in gffs:
         if (str(gff.start) + "-" +
             str(gff.end) + "_" + gff.strand) == target["detail"]:
-            target_info = gff
-            if ("locus_tag" in gff.attributes.keys()) and (
-                    "gene" in gff.attributes.keys()):
-                if (gff.attributes["gene"] not in target["target_locus"]):
-                    target["target_locus"] = "|".join([target["target_locus"],
-                                                       gff.attributes["gene"]])
-            elif ("locus_tag" in gff.attributes.keys()) and (
-                    "Name" in gff.attributes.keys()):
-                if (gff.attributes["Name"] not in target["target_locus"]):
-                    target["target_locus"] = "|".join([target["target_locus"],
-                                                       gff.attributes["Name"]])
-            return target_info
+            if gff.feature == "gene":
+                target_info = gff
+                if ("locus_tag" in gff.attributes.keys()) and (
+                        "gene" in gff.attributes.keys()):
+                    if (gff.attributes["gene"] not in target["target_locus"]):
+                        target["target_locus"] = "|".join([
+                            target["target_locus"], gff.attributes["gene"]])
+                elif ("locus_tag" in gff.attributes.keys()) and (
+                        "Name" in gff.attributes.keys()):
+                    if (gff.attributes["Name"] not in target["target_locus"]):
+                        target["target_locus"] = "|".join([
+                            target["target_locus"], gff.attributes["Name"]])
+                return target_info
+            else:
+                tmp_gff = gff
+    if tmp_gff is not None:
+        return tmp_gff
 
 
 def print_file(merges, out):

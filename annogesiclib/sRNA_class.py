@@ -176,8 +176,9 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
             " - sRNA candidates start with TSS",
             "(3'UTR derived and interCDS sRNA also includes the sRNA "
             "candidates which start with processing site.)"])
-        class_num = initiate("tss", args_srna.import_info, "with_TSS",
-                             class_num, index, out_stat, name)
+        class_num = initiate(
+                "with_TSS", srna_datas[strain][0].attributes.keys(),
+                "with_TSS", class_num, index, out_stat, name)
         class_num = initiate(
                 "nr_hit", srna_datas[strain][0].attributes.keys(),
                 "nr_no_hit", class_num, index, out_stat,
@@ -269,11 +270,11 @@ def check_and_set_num(checks):
         set_num(num_srna, ["in_CDS"])
     return num_srna
 
-
 def classify_srna(srna_file, out_folder, out_stat_file, args_srna):
     '''classify the sRNA based on the filters'''
     srna_datas, strains, checks = read_file(srna_file)
     out_stat = open(out_stat_file, "w")
+    out = None
     for strain in strains:
         checks["first"] = True
         if checks["limit"] is True:
@@ -311,16 +312,18 @@ def classify_srna(srna_file, out_folder, out_stat_file, args_srna):
                 for comb in range(2, class_num):
                     for keys in itertools.combinations(
                             srna_class[type_].keys(), comb):
-                        if (("class_" + str(index["sRNA_hit"])) in keys) and (
-                               ("class_" + str(index["sRNA_no_hit"])) in keys):
-                            continue
-                        else:
-                            keys = sort_keys(list(keys))
-                            gff_name = os.path.join(
-                                    out_folder, "_".join(sorted(list(keys)) +
-                                                         [strain]) + ".gff")
-                            print_intersection(
-                                srna_class[type_], keys, srna,
-                                gff_name, type_, out_stat)
+                        if ("sRNA_hit" in index.keys()) or (
+                                "sRNA_no_hit" in index.keys()):
+                            if (("class_" + str(index["sRNA_hit"])) in keys) and (
+                                   ("class_" + str(index["sRNA_no_hit"])) in keys):
+                                continue
+                        keys = sort_keys(list(keys))
+                        gff_name = os.path.join(
+                                out_folder, "_".join(sorted(list(keys)) +
+                                                     [strain]) + ".gff")
+                        print_intersection(
+                            srna_class[type_], keys, srna,
+                            gff_name, type_, out_stat)
     out_stat.close()
-    out.close()
+    if out is not None:
+        out.close()

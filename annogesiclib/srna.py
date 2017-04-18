@@ -40,7 +40,7 @@ class sRNADetection(object):
         self.tss_path = self._check_folder_exist(args_srna.tss_folder)
         self.pro_path = self._check_folder_exist(args_srna.pro_folder)
         self.sorf_path = self._check_folder_exist(args_srna.sorf_file)
-        self.fasta_path = os.path.join(args_srna.fastas, "tmp")
+        self.fasta_path = self._check_folder_exist(args_srna.fastas)
         self.tran_path = os.path.join(args_srna.trans, "tmp")
         self.term_path = self._check_folder_exist(args_srna.terms)
         self.merge_wigs = os.path.join(args_srna.out_folder, "merge_wigs")

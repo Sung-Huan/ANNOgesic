@@ -836,7 +836,8 @@ def main():
         "change of secondary structure and 3. blast to nr database to detect "
         "sRNA. If you want to use blast_srna as a filter, "
         "please follow the format: $ID|$GENOME|$SRNANAME. \"tss sec_str "
-        "blast_nr blast_srna\" is recommended to be assigned. "
+        "blast_nr blast_srna\" is recommended to be assigned. If you don't "
+        "want to use any filters, please assign \"none\". "
         "Default is tss sec_str blast_nr blast_srna.")
     sRNA_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
@@ -1678,7 +1679,7 @@ def main():
     snp_basic.add_argument(
         "--bam_type", "-t", required=True,
         help="Please assign the type of BAM. "
-        "If the BAM files are produced by mapping to the close genome "
+        "If the BAM files are produced by mapping to the closed genome "
         "of the query genome, please key in \"closed_genome\". "
         "the mutations between the closed genome and query genome can be "
         "detected for generating sequence of the query "

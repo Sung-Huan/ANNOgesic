@@ -95,13 +95,13 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
             self.example.srnas, self.example.srna_gffs, args_tar,
             self.example.gffs, merges, 50)
         output = [['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0',
-                   'cds0', 'AAA_00001|CDS_0', '100-150', '89-50',
+                   'cds0', 'AAA_00001', '100-150', '89-50',
                    '89-50', '+', '-6.5', '1', '-6.5', '1'],
                   ['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267',
-                   '+', 'gene2', 'cds2', 'AAA_00003|CDS_2', '2348-2934',
+                   '+', 'gene2', 'cds2', 'AAA_00003', '2348-2934',
                    '2337-50', '2337-50', '+', '-10.5', '1', '-10.5', '1'],
                   ['sRNA_2', 'aaa', '3544-6517', '6508-6516', '6508-6516',
-                   '-', 'gene0', 'cds0', 'AAA_00001|CDS_0', '100-150',
+                   '-', 'gene0', 'cds0', 'AAA_00001', '100-150',
                    '89-50', '89-50', '+', '-23.5', '1', '-23.5', '1']]
         count = 0
         for out in output:
@@ -221,9 +221,9 @@ class Example(object):
                  "source": "Refseq", "feature": "gene"}]
     attributes_gff = [
         {"ID": "cds0", "Name": "CDS_0", "locus_tag": "AAA_00001"},
-        {"ID": "gene0", "Name": "gene_1", "locus_tag": "AAA_00001"},
+        {"ID": "gene0", "Name": "AAA_00001", "locus_tag": "AAA_00001"},
         {"ID": "cds1", "Name": "CDS_2", "locus_tag": "AAA_00003"},
-        {"ID": "gene1", "Name": "gene_2", "locus_tag": "AAA_00003"}]
+        {"ID": "gene1", "Name": "AAA_00003", "locus_tag": "AAA_00003"}]
     gene_dict = [{"start": 100, "end": 150, "phase": ".",
                    "strand": "+", "seq_id": "aaa", "score": ".",
                    "source": "Refseq", "feature": "gene"},
@@ -250,10 +250,10 @@ class Example(object):
 >srna1023
 ((((((&)))))) 571,576 :  20,25  (-5.30 = -7.89 +  0.18 +  2.41)"""
     out_print = """sRNA	Genome	sRNA_position	sRNA_interacted_position_RNAplex	sRNA_strand	Target_gene_ID	Target_ID	Target_locus_tag	Target_position	Target_interacted_position_RNAplex	Target_strand	Energy_RNAplex	Rank_RNAplex
-sRNA_1	aaa	1258-2234	1259-1267	+	gene2	cds2	AAA_00003|CDS_2	2348-2934	2337-50	+	-10.5	1
-sRNA_2	aaa	3544-6517	6508-6516	-	gene0	cds0	AAA_00001|CDS_0	100-150	89-50	+	-23.5	1
-sRNA_2	aaa	3544-6517	6508-6516	-	gene2	cds2	AAA_00003|CDS_2	2348-2934	2337-50	+	-6.5	2
-sRNA_0	aaa	6-15	7-15	+	gene0	cds0	AAA_00001|CDS_0	100-150	89-50	+	-6.5	1"""
+sRNA_1	aaa	1258-2234	1259-1267	+	gene2	cds2	AAA_00003	2348-2934	2337-50	+	-10.5	1
+sRNA_2	aaa	3544-6517	6508-6516	-	gene0	cds0	AAA_00001	100-150	89-50	+	-23.5	1
+sRNA_2	aaa	3544-6517	6508-6516	-	gene2	cds2	AAA_00003	2348-2934	2337-50	+	-6.5	2
+sRNA_0	aaa	6-15	7-15	+	gene0	cds0	AAA_00001	100-150	89-50	+	-6.5	1"""
     rnaup = """>srna0
 >AAA_00001|cds0|100-150_+
 .(((((&))))). 571,576 :  20,25  (-4.87 = -8.00 + 0.31 + 2.81)

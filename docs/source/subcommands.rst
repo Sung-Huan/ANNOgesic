@@ -1681,8 +1681,9 @@ this candidates will be removed.
                             detect sRNA. If you want to use blast_srna as a
                             filter, please follow the format:
                             $ID|$GENOME|$SRNANAME. "tss sec_str blast_nr
-                            blast_srna" is recommended to be assigned. Default is
-                            tss sec_str blast_nr blast_srna.
+                            blast_srna" is recommended to be assigned. If you
+                            don't want to use any filters, please assign "none".
+                            Default is tss sec_str blast_nr blast_srna.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]

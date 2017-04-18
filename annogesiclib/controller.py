@@ -434,9 +434,10 @@ class Controller(object):
             else:
                 wrong = True
         if wrong:
-            print("Error: {0} is required "
-                  "if {1} is in --filter_info. "
-                  "Please check it!".format(flag, info))
+            print("Error: {0} is required if {1} is in --filter_info. "
+                  "But the assignment of {0} is empty or wrong. "
+                  "Please check the {0} or remove {1} from "
+                  "--filter_info!".format(flag, info))
             sys.exit()
 
     def srna_detection(self):
@@ -484,9 +485,10 @@ class Controller(object):
                 self._check_filter_input(self._args.tss_files,
                                          "TSS", "tss")
             else:
-                print("Error: Please check the --filter_info, "
-                      "invalid value was assigned!")
-                sys.exit()
+                if "none" != info.lower():
+                    print("Error: Please check the --filter_info, "
+                          "invalid value was assigned!")
+                    sys.exit()
         if self._args.utr_derived_srna:
             if self._args.tss_files is None:
                 print("Error: The TSS has to be provided "
