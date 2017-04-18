@@ -155,7 +155,6 @@ class TestTranscripSNP(unittest.TestCase):
         ts.stat(max_quals, trans_snps, 2, stat_file,
                 self.test_folder + "/test", args, "best.csv")
         datas = import_data(stat_file + "_best.csv")
-        print("\n".join(datas))
         self.assertEqual("\n".join(datas), self.example.stat)
 
     def test_plot_bar(self):
@@ -386,9 +385,9 @@ the number of QUAL which is between 50 and 60 = 0
 the number of QUAL which is between 60 and 70 = 0
 the number of QUAL which is between 70 and 80 = 0
 the number of QUAL which is between 80 and 90 = 0
-the number of QUAL which is between 90 and 100 = 0
-the number of QUAL which is between 100 and 110 = 1
-the total numbers of QUAL which are higher than 20 = 1"""
+the number of QUAL which is between 90 and 100 = 1
+the number of QUAL which is between 100 and 110 = 0
+the total numbers of QUAL are 1"""
 
     depth_file = """aaa	1	100
 aaa	2	100

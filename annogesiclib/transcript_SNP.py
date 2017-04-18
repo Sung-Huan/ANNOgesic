@@ -348,21 +348,21 @@ def stat(max_quals, trans_snps, bam_number, stat_prefix,
             num_quality = 0
             out_stat.write(strain + ":\n")
             best_cutoffs = []
-            cutoffs = sorted(cutoffs)
             for cutoff in cutoffs:
-                if args_snp.quality <= (num_cutoff - 10):
+                if ((args_snp.quality <= (num_cutoff - 10)) and (
+                        "best" in type_)) or ("raw" in type_):
                     num_quality = num_quality + cutoff
-                if num_cutoff < args_snp.quality:
+                if (num_cutoff < args_snp.quality) and ("best" in type_):
                     num_quality = 0
+                    best_cutoffs.append(0)
                 else:
                     best_cutoffs.append(cutoff)
                 out_stat.write("the number of QUAL which is between "
                                "{0} and {1} = {2}\n".format(
                                    num_cutoff - 10, num_cutoff, cutoff))
                 num_cutoff = num_cutoff + 10
-            out_stat.write("the total numbers of QUAL which are "
-                           "higher than {0} = {1}\n".format(
-                               args_snp.quality, num_quality))
+            out_stat.write("the total numbers of QUAL are {0}\n".format(
+                               num_quality))
             plot_bar(best_cutoffs, strain, out_snp,
                      type_.replace(".csv", ".png"))
             printed = False
@@ -454,7 +454,7 @@ def snp_detect(fasta_file, snp_file, depth_file, out_snp, out_seq,
             best_snps.append(snp)
     conflicts, qual_nooverlap_snps = overlap_position(best_snps)
     stat(max_quals, raw_snps, bam_number, stat_prefix, out_snp, args_snp, "raw.csv")
-    stat(max_quals, snps, bam_number, stat_prefix, out_snp, args_snp, "best.csv")
+    stat(max_quals, best_snps, bam_number, stat_prefix, out_snp, args_snp, "best.csv")
     seqs = read_fasta(fasta_file)
     gen_new_fasta(qual_nooverlap_snps, seqs, out_ref, conflicts, out_seq)
     out_best.close()

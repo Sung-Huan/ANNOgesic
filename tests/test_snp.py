@@ -198,7 +198,7 @@ ACTTGATCCCGAACGACAGTTAT"""
     out_stat = """NC_007795.1:
 the number of QUAL which is between 0 and 10 = 0
 the number of QUAL which is between 10 and 20 = 0
-the number of QUAL which is between 20 and 30 = 0
+the number of QUAL which is between 20 and 30 = 1
 the number of QUAL which is between 30 and 40 = 0
 the number of QUAL which is between 40 and 50 = 0
 the number of QUAL which is between 50 and 60 = 0
@@ -206,8 +206,9 @@ the number of QUAL which is between 60 and 70 = 0
 the number of QUAL which is between 70 and 80 = 0
 the number of QUAL which is between 80 and 90 = 0
 the number of QUAL which is between 90 and 100 = 1
-the number of QUAL which is between 100 and 110 = 1
-the total numbers of QUAL which are higher than 2 = 2"""
+the number of QUAL which is between 100 and 110 = 0
+the total numbers of QUAL are 2"""
+
     bam = """@HD     VN:1.0
 @SQ     SN:NC_007795.1  LN:2821361
 @PG     ID:segemehl     VN:0.1.4-$Rev: 380 $ ($Date: 2012-12-17 12:43:51 +0100 (Mon, 17 Dec 2012) $)    CL:segemehl --query RAPL_analysis/output/read_alignments-processed_reads/pMEM_OD_0.2.fa_processed.fa --index RAPL_analysis/output/read_alignments-index/index.idx --database RAPL_analysis/input/reference_sequences/NC_007795.fa --outfile RAPL_analysis/output/read_alignments-alignments/pMEM_OD_0.2.fa_alignments.sam --hitstrategy 1 --accuracy 95 --evalue 5 --threads 24 --nomatchfilename RAPL_analysis/output/read_alignments-unaligned_reads/pMEM_OD_0.2.fa_unaligned.fa"""
