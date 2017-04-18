@@ -320,8 +320,6 @@ $ANNOGESIC_FOLDER/input/reads/SRR515257_50000.fasta
         -pj $ANNOGESIC_FOLDER
 }
 
-#-rp sample1:$READ_FILES1 sample2:$READ_FILES2 \
-
 SNP_calling(){
     #### This is only for tutorial.
     #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
