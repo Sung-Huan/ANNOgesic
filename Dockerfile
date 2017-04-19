@@ -2,8 +2,8 @@ FROM ubuntu
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 #ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get upgrade --yes
 RUN apt-get update --yes
+RUN apt-get upgrade --yes
 RUN apt-get install default-jre default-jdk python3 python3-scipy \
 vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
 software-properties-common python3-software-properties bioperl \
@@ -18,7 +18,7 @@ netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
 libbio-perl-perl libsqlite3-dev --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
-RUN apt-get upgrade --yes && apt-get update --yes
+RUN apt-get update --yes && apt-get upgrade --yes 
 
 RUN pip3 install \
 matplotlib \
