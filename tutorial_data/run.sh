@@ -29,7 +29,7 @@ main(){
 #    sRNA_target
 #    CircRNA_detection
 #    SNP_calling
-#    Go_term
+#    GO_term
 #    Subcellular_localization
 #    PPI_network
 #    riboswitch_and_RNA_thermometer
@@ -100,14 +100,12 @@ get_input_files(){
 
 update_genome_fasta(){
     #### The mutation.csv is only for our tutorial.
-    wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
-
+    wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+    mv mutation.csv ANNOgesic/input/mutation_table 
 
     $ANNOGESIC_PATH \
         update_genome_fasta \
 	-c $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-	-o $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
-	   $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case2.fa:test_case2 \
 	-m $ANNOGESIC_FOLDER/input/mutation_table/mutation.csv \
 	-pj $ANNOGESIC_FOLDER
 }
@@ -117,7 +115,7 @@ annotation_transfer(){
         annotation_transfer \
 	-ce $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.embl \
 	-cf $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-	-uf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case1.fa \
+	-uf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/NC_test.1.fa \
 	    $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case2.fa \
 	-e chromosome \
 	-t Strain \
@@ -331,14 +329,14 @@ $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC
 
     $ANNOGESIC_PATH \
          snp \
-	-t query_genome \
+	-t related_genome \
 	-p with_BAQ without_BAQ extend_BAQ \
 	-b all_samples:2:$BAM_FILES \
 	-f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
 }
 
-Go_term(){
+GO_term(){
     #### If you have no goslim_generic.obo, go.obo, and idmapping_selected.tab, please download them.
     wget -cP ANNOgesic/input/databases http://www.geneontology.org/ontology/subsets/goslim_generic.obo
     wget -cP ANNOgesic/input/databases http://geneontology.org/ontology/go.obo

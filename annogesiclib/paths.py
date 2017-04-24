@@ -97,7 +97,7 @@ class Paths(object):
 
     def _set_bam_folder_names(self):
         self.bam_base_folder = "%s/BAMs" % self.input_folder
-        self.bam_ref_folder = "%s/BAMs_map_closed_genomes" % self.bam_base_folder
+        self.bam_ref_folder = "%s/BAMs_map_related_genomes" % self.bam_base_folder
         self.bam_tar_folder = "%s/BAMs_map_query_genomes" % self.bam_base_folder
         self.bam_ref_frag_folder = "%s/fragment" % (
             self.bam_ref_folder)
@@ -264,7 +264,7 @@ class Paths(object):
 
     def _set_snp_folder_names(self):
         self.snp_base_folder = "%s/SNP_calling" % self.output_folder
-        self.ref_snp_folder = "%s/compare_closed_and_updated_references" % self.snp_base_folder
+        self.ref_snp_folder = "%s/compare_related_and_query_references" % self.snp_base_folder
         self.tar_snp_folder = "%s/mutations_of_query_genomes" % self.snp_base_folder
         self.snp_ref_stat_folder = "%s/statistics" % (
              self.ref_snp_folder)

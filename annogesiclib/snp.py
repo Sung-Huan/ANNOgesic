@@ -17,8 +17,8 @@ class SNPCalling(object):
         self.multiparser = Multiparser()
         self.seq_editer = SeqEditer()
         self.helper = Helper()
-        if args_snp.types == "closed_genome":
-            file_type = "compare_closed_and_updated_references"
+        if args_snp.types == "related_genome":
+            file_type = "compare_related_and_query_references"
         else:
             file_type = "mutations_of_query_genomes"
         self.seq_path = os.path.join(args_snp.out_folder, file_type, "seqs")

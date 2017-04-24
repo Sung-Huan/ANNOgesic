@@ -1,5 +1,6 @@
 import os
 import shutil
+import csv
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.seq_editer import SeqEditer
 from annogesiclib.helper import Helper
@@ -27,32 +28,46 @@ class TargetFasta(object):
         return new_ref_folder
 
     def get_target_fasta(self, mut_table, tar_folder, ref_files,
-                         output, out_folder):
+                         combine, out_folder):
+        pass
         new_ref_folder = self.gen_folder(out_folder, ref_files)
         self.seq_editer.modify_seq(self.folders["tmp_ref"], mut_table,
                                    self.folders["tmp_tar"])
         print("Transfering to query sequences")
-        for file_ in output:
-            first = True
-            datas = file_.split(":")
-            filename = datas[0]
-            strains = datas[1].split(",")
-            out = open(filename, "w")
-            for strain in strains:
-                if strain + ".fa" in os.listdir(self.folders["tmp_tar"]):
-                    if first:
-                        first = False
+        mh = open(mut_table, "r")
+        pre_strain = None
+        out = None
+        for row in csv.reader(mh, delimiter='\t'):
+            strain = row[1]
+            if not row[0].startswith("#"):
+                if (pre_strain != row[1]):
+                    fasta = os.path.join(out_folder, "fasta_files",
+                                         strain + ".fa")
+                    if out is not None:
+                        out.close()
+                    out = open(fasta, "w")
+                    if strain + ".fa" in os.listdir(self.folders["tmp_tar"]):
+                        with open(os.path.join(
+                                  self.folders["tmp_tar"],
+                                  strain + ".fa")) as f_h:
+                            for line in f_h:
+                                out.write(line)
                     else:
-                        out.write("\n")
-                    with open(os.path.join(
-                              self.folders["tmp_tar"],
-                              strain + ".fa")) as f_h:
-                        for line in f_h:
-                            out.write(line)
-                else:
-                    print("Error: No fasta information of {0}.fa".format(
-                          strain))
-            out.close()
+                        print("Error: No fasta information of {0}.fa".format(
+                              strain))
+        out.close()
+        if combine:
+            out_seq = "updated_genomes.fa"
+            if os.path.exists(out_seq):
+                os.remove(out_seq)
+            for seq in os.listdir(os.path.join(out_folder, "fasta_files")):
+                if seq.endswith(".fa"):
+                    os.system(" ".join(["cat", os.path.join(
+                                            out_folder, "fasta_files", seq),
+                                        ">>", out_seq]))
+                    os.remove(os.path.join(out_folder, "fasta_files", seq))
+            shutil.move(out_seq, os.path.join(
+                out_folder, "fasta_files", out_seq))
         shutil.rmtree(self.folders["tmp_tar"])
         shutil.rmtree(self.folders["tmp_ref"])
         if "tmp_reference" in os.listdir(out_folder):

@@ -36,7 +36,7 @@ def main():
     create_project_basic = create_project_parser.add_argument_group(
             'basic arguments')
     create_project_basic.add_argument(
-        "--project_path", "-pj", default=".", help="Name/path of the project.")
+        "--project_path", "-pj", required=True, help="Name/path of the project.")
     create_project_parser.set_defaults(func=create_project)
     # Parameters for get input files
     get_input_parser = subparsers.add_parser(
@@ -45,9 +45,8 @@ def main():
     get_input_basic = get_input_parser.add_argument_group(
             'basic arguments')
     get_input_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     get_input_basic.add_argument(
         "--ftp_path", "-F",
         help="Path of folder on the NCBI FTP server where the required files "
@@ -79,9 +78,8 @@ def main():
     get_target_fasta_basic = get_target_fasta_parser.add_argument_group(
             'basic arguments')
     get_target_fasta_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     get_target_fasta_basic.add_argument(
         "--related_fasta_files", "-c", required=True, nargs='+',
         help="Path of the genome fasta files of the closely related species.")
@@ -93,15 +91,9 @@ def main():
         "https://github.com/Sung-Huan/ANNOgesic/"
         "blob/master/tutorial_data/mutation.csv")
     get_target_fasta_basic.add_argument(
-        "--output_format", "-o", default=None, required=True, nargs='+',
-        help="Please assign the filename of output file and the genome names "
-        "(listed in Target_id of mutation table) "
-        "which should be included in the specific output file. For example: "
-        "$FILE_PATH1:genome1,genome2 $FILE_PATH2:genome3. "
-        "FILE_PATH1 is a output fasta file which includes the information of "
-        "genome1 and genome2 (import multi-genomes to one file should be "
-        "separated by \",\".) And FILE_PATH2 is for genome3. "
-        "The multiple output files are splitted by spaces.")
+        "--combine_to_one_fasta", "-cm", default=False, action="store_true",
+        help="For combining all updated sequences in --mutation_table to "
+        "one fasta file. Default is False.")
     get_target_fasta_parser.set_defaults(func=get_target_fasta)    
 
     # run RATT
@@ -111,9 +103,8 @@ def main():
     RATT_basic = RATT_parser.add_argument_group(
         'basic arguments')
     RATT_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     RATT_basic.add_argument(
         "--compare_pair", "-p", required=True, nargs='+',
         help="Please assign the name of genome pairs, e.g. "
@@ -160,9 +151,8 @@ def main():
     TSSpredator_basic = TSSpredator_parser.add_argument_group(
         'basic arguments')
     TSSpredator_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     TSSpredator_basic.add_argument(
         "--program", "-p", default="TSS",
         help="Which feature you want to predict, please assign \"TSS\" or "
@@ -179,7 +169,7 @@ def main():
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
         "replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     TSSpredator_basic.add_argument(
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
@@ -187,7 +177,7 @@ def main():
         "has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
-        "conditions, please use spaces to separate them. For example, "
+        "conditions, please use spaces to separate them. For an example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
         "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, "
@@ -196,8 +186,8 @@ def main():
     TSSpredator_basic.add_argument(
         "--condition_names", "-cn", required=True, nargs='+',
         help="The output prefix of all conditions. If multiple conditions "
-        "need to be assigned, please use spaces to separate them. For example, "
-        "prefix_condition1 prefix_condition2.")
+        "need to be assigned, please use spaces to separate them. "
+        "For an example, prefix_condition1 prefix_condition2.")
     TSSpredator_add = TSSpredator_parser.add_argument_group(
         'additional arguments')
     TSSpredator_add.add_argument(
@@ -288,7 +278,7 @@ def main():
         help="If --manual_files is assigned, Please specify the genome length "
         "of input genomes. If you want to compare whole genome, please type "
         "\"all\". The input format is $GENOME:SLENGTH. Multiple genomes "
-        "can be accepted, please use spaces to separate them. For example, "
+        "can be accepted, please use spaces to separate them. For an example, "
         "test.gff contain two genomes (s1 and s2). s1 was manual checked "
         "100kb and s2 was checked whole genome. The value of this argument "
         "will be s1:100000 s2:all. Default setting will compute all genomes "
@@ -334,9 +324,8 @@ def main():
     op_TSSpredator_basic = op_TSSpredator_parser.add_argument_group(
         'basic arguments')
     op_TSSpredator_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     op_TSSpredator_basic.add_argument(
         "--program", "-p", default="TSS",
         help="The feature for optimization. Please assign \"TSS\" or "
@@ -358,7 +347,7 @@ def main():
         "manual-detected TSS gff files. If the genome was manual detected "
         "for compare whole genome, please type \"all\". The input format "
         "is $GENOME:SLENGTH. Multiple genomes "
-        "can be accepted, please use spaces to separate them. For example, "
+        "can be accepted, please use spaces to separate them. For an example, "
         "test.gff contain two genomes (s1 and s2). s1 was manual checked "
         "100kb and s2 was checked whole genome. The value of this argument "
         "will be s1:100000 s2:all. Default setting will compute all genomes "
@@ -369,23 +358,23 @@ def main():
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
         "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
         "to be assigned, please use spaces to separate the wig files. "
-        "For example, $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        "For an example, $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     op_TSSpredator_basic.add_argument(
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
         "to be detected. The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
-        "different conditions, please use spaces to separate them. For example, "
-        "1_2 2_ 3_3. It means that --replicate_tex is 2 in number 1 and "
-        "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
-        "For assigning the same --replicate_tex to all conditions, "
-        "just use like all_1 (--replicate_tex is 1 in all conditions). "
-        "Default is all_1.")
+        "different conditions, please use spaces to separate them. "
+        "For an example, 1_2 2_2 3_3. It means that --replicate_tex is 2 in "
+        "number 1 and number 2 conditions. In number 3 condition, "
+        "--replicate_tex is 3. For assigning the same --replicate_tex to all "
+        "conditions, just use like all_1 (--replicate_tex is 1 in all "
+        "conditions). Default is all_1.")
     op_TSSpredator_basic.add_argument(
         "--condition_names", "-cn", required=True, nargs='+',
         help="The output prefixes of all conditions. "
         "If multiple conditions need to be assigned, please use spaces to "
-        "separate them. For example, prefix_condition1 prefix_condition2.")
+        "separate them. For an example, prefix_condition1 prefix_condition2.")
     op_TSSpredator_add = op_TSSpredator_parser.add_argument_group(
         'additional arguments')
     op_TSSpredator_add.add_argument(
@@ -459,9 +448,8 @@ def main():
     Terminator_basic = Terminator_parser.add_argument_group(
         'basic arguments')
     Terminator_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     Terminator_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files.")
@@ -477,7 +465,7 @@ def main():
         "name of TEX+/- library. The format is: wig_file_path:TEX+/-(tex or "
         "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     Terminator_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
@@ -486,7 +474,7 @@ def main():
         "name of fragmented library. The format is: wig_file_path:fragmented("
         "frag):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.")
     Terminator_basic.add_argument(
         "--tex_notex", "-te", default=1, type=int,
@@ -500,7 +488,7 @@ def main():
         "replicates that a terminator has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
-        "conditions, please use spaces to separate them. For example, "
+        "conditions, please use spaces to separate them. For an example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
         "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, "
@@ -597,7 +585,7 @@ def main():
         help="The minimum U-tail length of terminator. Default is 3 nts.")
     Terminator_add.add_argument(
         "--range_u_tail", "-ru", default=6, type=int,
-        help="The range (nucleotides) for detection of U-tail. For example, "
+        help="The range (nucleotides) for detection of U-tail. For an example, "
         "if --range_u_tail is 6 and --min_u_tail_length is 3, "
         "and there are 3 Us within 6 nts, This candidate will be assigned as "
         "the terminator which has poly U-tail. Default is 6.")
@@ -616,9 +604,8 @@ def main():
     Transcript_basic = Transcript_parser.add_argument_group(
         'basic arguments')
     Transcript_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     Transcript_basic.add_argument(
         "--annotation_files", "-g", default=None, nargs='+',
         help="If paths of the genome annotation gff files.")
@@ -646,7 +633,7 @@ def main():
         "name of TEX+/- library. The format is: wig_file_path:TEX+/-(tex or "
         "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     Transcript_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
@@ -655,7 +642,7 @@ def main():
         "name of fragmented library. The format is: wig_file_path:fragmented("
         "frag):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.")
     Transcript_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
@@ -663,7 +650,7 @@ def main():
         "replicates that a transcript has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
-        "conditions, please use spaces to separate them. For example, "
+        "conditions, please use spaces to separate them. For an example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
         "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
@@ -751,9 +738,8 @@ def main():
     UTR_basic = UTR_parser.add_argument_group(
         'basic arguments')
     UTR_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     UTR_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files.")
@@ -810,9 +796,8 @@ def main():
     sRNA_basic = sRNA_parser.add_argument_group(
         'basic arguments')
     sRNA_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     sRNA_basic.add_argument(
         "--utr_derived_srna", "-u", default=False, action="store_true",
         help="The function is for detecting UTR-derived sRNA. "
@@ -895,7 +880,7 @@ def main():
         "If \"blast_srna\" is included in --filter_info, "
         "please assign the path of sRNA database with proper header. "
         "Format of the header should be $ID|$GENOME|$NAME "
-        "For example of the proper header, please check "
+        "For an example of the proper header, please check "
         "https://github.com/Sung-Huan/ANNOgesic/blob/"
         "master/database/sRNA_database_BSRD.fa")
     sRNA_basic.add_argument(
@@ -910,7 +895,7 @@ def main():
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
         "replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     sRNA_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
@@ -919,7 +904,7 @@ def main():
         "of fragmented libraries here. The format is: "
         "wig_file_path:fragmented(frag):condition_id(integer):replicate_id("
         "alphabet):strand(+ or -). If multiple wig files need to be assigned, "
-        "please use spaces to separate the wig files. For example, "
+        "please use spaces to separate the wig files. For an example, "
         "$WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.")
     sRNA_basic.add_argument(
         "--tex_notex", "-te", default=2, type=int,
@@ -933,7 +918,7 @@ def main():
         "replicates that a sRNA has to be detected. "
         "The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to different "
-        "conditions, please use spaces to separate them. For example, "
+        "conditions, please use spaces to separate them. For an example, "
         "1_2 2_2 3_3. It means that --replicate_tex is 2 in number 1 and "
         "number 2 conditions. In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
@@ -1174,7 +1159,7 @@ def main():
         help="If --promoter_tables is provided, the information of promoter "
         "can be use for ranking sRNA candidates as well. "
         "The ranking score is --ranking_time_promoter * average coverage. "
-        "For example, a sRNA candidate which is associated with promoter and "
+        "For an example, a sRNA candidate which is associated with promoter and "
         "its average coverage is 10. If --ranking_time_promoter is 2, "
         "the ranking score will be 20 (2*10). "
         "For the candidate which are not associated with promoter, the "
@@ -1187,9 +1172,8 @@ def main():
     sORF_basic = sORF_parser.add_argument_group(
         'basic arguments')
     sORF_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     sORF_basic.add_argument(
         "--utr_derived_sorf", "-u", default=False, action="store_true",
         help="This function will detect UTR-derived sORF. Default is False.")
@@ -1217,7 +1201,7 @@ def main():
         "of TEX+/- library here. The format is: wig_file_path:TEX+/-(tex or "
         "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     sORF_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
@@ -1226,7 +1210,7 @@ def main():
         "name of fragmented library here. The format is: "
         "wig_file_path:fragmented(frag):condition_id(integer):replicate_id("
         "alphabet):strand(+ or -). If multiple wig files need to be assigned, "
-        "please use spaces to separate the wig files. For example, "
+        "please use spaces to separate the wig files. For an example, "
         "$WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.")
     sORF_basic.add_argument(
         "--tex_notex", "-te", default=2, type=int,
@@ -1240,7 +1224,7 @@ def main():
         "replicates that a sORF has to be detected. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. If different --replicate_tex "
         "values need to be assigned to different conditions, please use spaces "
-        "to separate them. For example, 1_2 2_2 3_3. It means that "
+        "to separate them. For an example, 1_2 2_2 3_3. It means that "
         "--replicate_tex is 2 in number 1 and number 2 conditions. "
         "In number 3 condition, --replicate_tex is 3. "
         "For assigning the same --replicate_tex to all conditions, just use "
@@ -1348,9 +1332,8 @@ def main():
         "--program", "-p", default="both",
         help="Please assign the program -- meme or glam2 or both. Default is both")
     promoter_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     promoter_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of genome fasta files.")
@@ -1362,7 +1345,7 @@ def main():
         help="The length for motif detection. "
         "For detecting a range of length, please insert \"-\" between "
         "two values. Moreover, if multiple motif length need to be assigned, "
-        "please use spaces to separate them. For example, 50 2-10. It means "
+        "please use spaces to separate them. For an example, 50 2-10. It means "
         "that the length of motif for detection is 50 and within 2 to 10. "
         "The number should be less or equal than --nt_before_TSS. "
         "Default is 50.")
@@ -1403,7 +1386,7 @@ def main():
         "TEX+/- library. The format is: wig_file_path:TEX+/-(tex or notex):"
         "condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     promoter_add.add_argument(
         "--annotation_files", "-g", default=None, nargs='+',
@@ -1420,9 +1403,8 @@ def main():
     operon_basic = operon_parser.add_argument_group(
         'basic arguments')
     operon_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     operon_basic.add_argument(
         "--tss_files", "-t", required=True, nargs='+',
         help="Paths of the TSS gff files.")
@@ -1462,9 +1444,8 @@ def main():
     circrna_basic = circrna_parser.add_argument_group(
         'basic arguments')
     circrna_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     circrna_basic.add_argument(
         "--read_files", "-rp", default=None, nargs='+',
         help="If this argument is given, ANNOgesic will map the reads via "
@@ -1474,14 +1455,14 @@ def main():
         "please directly run segemehl (MUST run with -S). "
         "please assign the fasta files. "
         "The input format is $SET_NAME:$READ1,$READ2,... "
-        "For example, set1:read1.fa,read2.fa means these two fasta files need "
+        "For an example, set1:read1.fa,read2.fa means these two fasta files need "
         "to be compute together. .bz2 and .gz compressed fasta files can be "
         "accepted as well.")
     circrna_basic.add_argument(
         "--bam_files", "-b", default=None, nargs='+',
         help="You can want assign the paths of Bam files to skip mapping. "
         "The input format is $SET_NAME:$BAM1,$BAM2,... "
-        "For example, set1:bam1.bam,bam2.bam means these two bam files need "
+        "For an example, set1:bam1.bam,bam2.bam means these two bam files need "
         "to be compute together. BE CAREFUL, the bam files must be generated "
         "via segemehl with -S.")
     circrna_basic.add_argument(
@@ -1526,9 +1507,8 @@ def main():
     goterm_basic = goterm_parser.add_argument_group(
         'basic arguments')
     goterm_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     goterm_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files.")
@@ -1552,9 +1532,8 @@ def main():
     starget_basic = starget_parser.add_argument_group(
         'basic arguments')
     starget_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     starget_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files.")
@@ -1568,7 +1547,7 @@ def main():
         "--query_srnas", "-q", default=["all"], nargs='+',
         help="Please assign the query sRNA. The input format is "
         "$GENOME:$START:$END:$STRAND. If multiple sRNAs need to be assigned, "
-        "please use spaces to separate them. For example, "
+        "please use spaces to separate them. For an example, "
         "NC_007795.1:200:534:+ NC_007795.1:6767:6900:-. If you want to detect "
         "all sRNAs in gff file, please assign \"all\". Default is all.")
     starget_basic.add_argument(
@@ -1675,9 +1654,8 @@ def main():
     snp_basic = snp_parser.add_argument_group(
         'basic arguments')
     snp_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     snp_basic.add_argument(
         "--bam_type", "-t", required=True,
         help="Please assign the type of BAM. "
@@ -1693,7 +1671,7 @@ def main():
         help="Please assign the program for detecting SNP of transcript: "
         "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\". "
         "Multi-programs can be executed at the same time (separated "
-        "by spaces). For example: with_BAQ without_BAQ extend_BAQ.")
+        "by spaces). For an example: with_BAQ without_BAQ extend_BAQ.")
     snp_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files.")
@@ -1705,7 +1683,7 @@ def main():
         "considered as the given number of samples. "
         "$SAMPLE_NUM also influences --dp4_cutoff, "
         "--indel_fraction, and --read_depth_range."
-        "For example, if sample1.bam, sample2.bam, and "
+        "For an example, if sample1.bam, sample2.bam, and "
         "sample3.bam are three samples/replicates of one condition. "
         "You can assign set1:2:sample1.bam,sample2.bam,sample3.bam. "
         "This means these three bam files should be computed together. "
@@ -1729,7 +1707,7 @@ def main():
         "$MIN,$MAX. This value can be assigned by different types: "
         "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
         "(assigned by --bam_files) (\"n\") "
-        "or 3. times of the average read depth (\"a\"). For example, "
+        "or 3. times of the average read depth (\"a\"). For an example, "
         "n_10,a_3 is assigned, the average read depth is 70 and the "
         "$SAMPLE_NUM is 4. Then, n_10 will be 40 (10 * "
         "$SAMPLE_NUM) and a_3 will be 140 (average read depth * 3). "
@@ -1761,7 +1739,7 @@ def main():
         "3. times of average read depth "
         "(\"a\"). The second value is for (number 3 + number 4) / (number 1 + "
         "number 2 + number 3 + number 4). These two values are split by "
-        "commas. For example, n_10,0.8 is assigned and the average read depth "
+        "commas. For an example, n_10,0.8 is assigned and the average read depth "
         "is 70 and $SAMPLE_NUM is 4. It means "
         "that the sum of number 3 and number 4 should be higher than 40 "
         "(10 * $SAMPLE_NUM), and the fraction "
@@ -1776,7 +1754,7 @@ def main():
         "of deletion. The minimum IDV can be assigned by different types: "
         "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
         "(assigned by --bam_files) (\"n\") or "
-        "3. times of the average read depth (\"a\"). For example, n_10,0.8 "
+        "3. times of the average read depth (\"a\"). For an example, n_10,0.8 "
         "is assigned, the average read depth is 70 and $SAMPLE_NUM "
         "is 4. It means that IDV should be higher than 40 (10 * "
         "$SAMPLE_NUM), and IMF should be higher than 0.8. "
@@ -1789,7 +1767,7 @@ def main():
         default=["RPB_b0.1", "MQSB_b0.1", "MQB_b0.1", "BQB_b0.1"], nargs='+',
         help="This function can set more filters to improve the results. "
         "Please assign 1. the tag, 2. bigger (\"b\") or smaller (\"s\") and "
-        "3. value for filters. For example, \"RPB_b0.1,MQ0F_s0\" "
+        "3. value for filters. For an example, \"RPB_b0.1,MQ0F_s0\" "
         "means that RPB should be bigger than 0.1 and MQ0F should be smaller "
         "than 0. Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.")
     snp_parser.set_defaults(func=SNP)
@@ -1800,9 +1778,8 @@ def main():
     ppi_basic = ppi_parser.add_argument_group(
         'basic arguments')
     ppi_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     ppi_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files. BE CAREFUL: The gff "
@@ -1819,7 +1796,7 @@ def main():
         "In order to retrieve the data from STRING and Pubmed, The strain "
         "name must be assigned. If the query strain is not available in "
         "database, you can assign the close strain of your query strain. "
-        "For example, the query strain is Staphylococcus aureus HG003, but "
+        "For an example, the query strain is Staphylococcus aureus HG003, but "
         "there is no Staphylococcus aureus HG003 in STRING database. "
         "Therefore, Staphylococcus aureus NCTC 8325 (close strain) can be "
         "used as reference. The input format can be: "
@@ -1846,7 +1823,7 @@ def main():
         help="Please assign the query protein here. The format is "
         "$GENOME_NAME_OF_GFF:$START_POINT:$END_POINT:$STRAND. If multiple proteins "
         "need to be assigned, please use spaces to separate them. "
-        "For example, Staphylococcus_aureus_HG003:345:456:+ "
+        "For an example, Staphylococcus_aureus_HG003:345:456:+ "
         "Staphylococcus_aureus_HG003:2000:3211:-. For computing all protein, "
         "just type \"all\". Default is all.")
     ppi_basic.add_argument(
@@ -1870,9 +1847,8 @@ def main():
     sub_local_basic = sub_local_parser.add_argument_group(
         'basic arguments')
     sub_local_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     sub_local_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of genome annotation gff files.")
@@ -1910,9 +1886,8 @@ def main():
     ribos_basic = ribos_parser.add_argument_group(
         'basic arguments')
     ribos_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     ribos_basic.add_argument(
         "--program", "-p", default="both",
         help="Please assign the feature that you want to detect. "
@@ -1923,7 +1898,7 @@ def main():
         help="If --program is \"riboswitch\" or \"both\", please assign the "
         "file path of riboswitch ID in Rfam. The file should include the "
         "Rfam ID, riboswitch name, and Description of the riboswitch. "
-        "For example, please check "
+        "For an example, please check "
         "https://github.com/Sung-Huan/ANNOgesic/blob/master/"
         "database/Rfam_riboswitch_ID.csv")
     ribos_basic.add_argument(
@@ -1931,7 +1906,7 @@ def main():
         help="If --program is \"thermometer\" or \"both\", please assign "
         "the file path of RNA thermometer ID of Rfam. The file should "
         "include the Rfam ID, RNA thermometer name and Description of "
-        "the RNA thermometer. For example, please check "
+        "the RNA thermometer. For an example, please check "
         "https://github.com/Sung-Huan/ANNOgesic/blob/master/"
         "database/Rfam_RNA_thermometer_ID.csv")
     ribos_basic.add_argument(
@@ -1996,9 +1971,8 @@ def main():
     crispr_basic = crispr_parser.add_argument_group(
         'basic arguments')
     crispr_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     crispr_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Path of the genome fasta files.")
@@ -2045,9 +2019,8 @@ def main():
     merge_basic = merge_parser.add_argument_group(
         'basic arguments')
     merge_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     merge_basic.add_argument(
         "--output_prefix", "-op", required=True,
         help="Please assign the prefix name of output gff file. "
@@ -2084,9 +2057,8 @@ def main():
     screen_basic = screen_parser.add_argument_group(
         'basic arguments')
     screen_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     screen_basic.add_argument(
         "--fasta_file", "-f", required=True,
         help="Path of the genome fasta file.")
@@ -2106,7 +2078,7 @@ def main():
         "format here. The format is: wig_file_path:TEX+/-(tex or notex):"
         "condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
     screen_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
@@ -2115,7 +2087,7 @@ def main():
         "proper format here. The format is: wig_file_path:fragmented(frag):"
         "condition_id(integer):replicate_id(alphabet):strand(+ or -). "
         "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For example, "
+        "separate the wig files. For an example, "
         "$WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.")
     screen_basic.add_argument(
         "--output_folder", "-o", required=True,
@@ -2142,9 +2114,8 @@ def main():
     color_basic = color_parser.add_argument_group(
         'basic arguments')
     color_basic.add_argument(
-        "--project_path", "-pj", default=".", nargs="?",
-        help="Path of the project folder. If none is given, "
-        "the current directory is used.")
+        "--project_path", "-pj", required=True,
+        help="Path of the project folder.")
     color_basic.add_argument(
         "--screenshot_folder", "-f", required=True,
         help="The folder which stores \"screenshots\" "

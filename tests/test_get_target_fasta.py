@@ -67,9 +67,11 @@ class TestTargetFasta(unittest.TestCase):
             shutil.rmtree(self.root_folder)
         self.ref_folder = os.path.join(self.root_folder, "ref")
         self.tar_folder = os.path.join(self.root_folder, "tar")
+        self.fasta_folder = os.path.join(self.root_folder, "fasta_files")
         os.mkdir(self.root_folder)
         os.mkdir(self.ref_folder)
         os.mkdir(self.tar_folder)
+        os.mkdir(os.path.join(self.root_folder, "fasta_files"))
         self.target_fasta = TargetFasta(self.tar_folder, self.ref_folder)
         self.target_fasta.seq_editer = Mock_seq_editer
         self.target_fasta.multiparser = Mock_multiparser
@@ -81,14 +83,15 @@ class TestTargetFasta(unittest.TestCase):
             shutil.rmtree(self.root_folder)
 
     def test_get_target_fasta(self):
-        gen_file("a_test_project/ref/ddd.fa", "test")
-        self.target_fasta.get_target_fasta(None,
+        gen_file("a_test_project/ref/bbb.fa", self.example.fasta_file2)
+        gen_file("a_test_project/mut", self.example.mutation_table)
+        self.target_fasta.get_target_fasta("a_test_project/mut",
                                            self.tar_folder,
-                                           ["a_test_project/ref/ddd.fa"],
-                                           ["a_test_project/tar/ccc.fa:aaa"],
+                                           ["a_test_project/ref/bbb.fa"],
+                                           False,
                                            self.root_folder)
         self.assertTrue(os.path.exists(
-            os.path.join(self.tar_folder, "ccc.fa")))
+            os.path.join(self.fasta_folder, "aaa.fa")))
 
 class ExampleData(object):
 

@@ -49,21 +49,21 @@ class TestSNPCalling(unittest.TestCase):
             os.mkdir(self.table)
             os.mkdir(os.path.join(
                 self.test_folder,
-                "compare_closed_and_updated_references"))
+                "compare_related_and_query_references"))
             os.mkdir(os.path.join(
                 self.test_folder,
-                "compare_closed_and_updated_references/seqs"))
+                "compare_related_and_query_references/seqs"))
             os.mkdir(os.path.join(
                 self.test_folder,
-                "compare_closed_and_updated_references/seqs/with_BAQ"))
+                "compare_related_and_query_references/seqs/with_BAQ"))
             os.mkdir(os.path.join(
                 self.test_folder,
-                "compare_closed_and_updated_references/statistics"))
+                "compare_related_and_query_references/statistics"))
             os.mkdir(os.path.join(
                 self.test_folder,
-                "compare_closed_and_updated_references/SNP_raw_outputs"))
+                "compare_related_and_query_references/SNP_raw_outputs"))
         args = self.mock_args.mock()
-        args.types = "closed_genome"
+        args.types = "related_genome"
         args.out_folder = self.test_folder
         args.fastas = self.fasta
         self.snp = SNPCalling(args)
@@ -78,7 +78,7 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(fasta, self.example.fasta)
         snp_folder = os.path.join(
                  self.test_folder,
-                 "compare_closed_and_updated_references/SNP_raw_outputs/test")
+                 "compare_related_and_query_references/SNP_raw_outputs/test")
         os.mkdir(snp_folder)
         snp = os.path.join(snp_folder, "test_with_BAQ_NC_007795.1.vcf")
         gen_file(snp, self.example.snp)
@@ -96,7 +96,7 @@ class TestSNPCalling(unittest.TestCase):
         args.min_sample = 2
         os.mkdir(os.path.join(
             self.test_folder,
-            "compare_closed_and_updated_references/seqs/with_BAQ/test"))
+            "compare_related_and_query_references/seqs/with_BAQ/test"))
         depth_file = os.path.join(self.test_folder, "tmp_depthNC_007795.1")
         gen_file(depth_file, self.example.depth_file)
         bam_datas = [{"sample": "NC_007795.1", "bam_number": 1,
@@ -105,12 +105,12 @@ class TestSNPCalling(unittest.TestCase):
                                  "test", bam_datas, self.table, args,)
         datas = import_data(os.path.join(
             self.test_folder,
-            "compare_closed_and_updated_references/statistics/stat_test_with_BAQ_NC_007795.1_SNP_best.csv"))
+            "compare_related_and_query_references/statistics/stat_test_with_BAQ_NC_007795.1_SNP_best.csv"))
         print("\n".join(datas))
         self.assertEqual("\n".join(datas), self.example.out_stat)
         datas = import_data(os.path.join(
             self.test_folder,
-            "compare_closed_and_updated_references/seqs/with_BAQ/test/test_NC_007795.1_NC_007795.1_1_1.fa"))
+            "compare_related_and_query_references/seqs/with_BAQ/test/test_NC_007795.1_NC_007795.1_1_1.fa"))
         self.assertEqual("\n".join(datas),
                          ">NC_007795.1\nAaTTGaaTCCCGAACGACAGTTAT")
         os.remove("test_NC_007795.1_seq_reference.csv")

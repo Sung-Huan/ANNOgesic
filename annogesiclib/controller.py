@@ -185,22 +185,22 @@ class Controller(object):
     def get_target_fasta(self):
         """Get target fasta"""
         print("Running update genome fasta")
-        self.check_multi_files([self._args.closed_fasta_files],
-                               ["--closed_fasta_files"])
-        self.check_parameter([self._args.output_format], ["--output_format"])
+        self.check_multi_files([self._args.related_fasta_files],
+                               ["--related_fasta_files"])
+#        self.check_parameter([self._args.output_format], ["--output_format"])
         self.check_file([self._args.mutation_table], "--mutation_table", True)
         project_creator.create_subfolders(
             self._paths.required_folders("get_target_fasta"))
-        for output in self._args.output_format:
-            output = output.split(":")[0]
-            if not os.path.exists("/".join(output.split("/")[:-1])):
-                print("Error: Some folders in --output_format don't exist!")
-                sys.exit()
+#        for output in self._args.output_format:
+#            output = output.split(":")[0]
+#            if not os.path.exists("/".join(output.split("/")[:-1])):
+#                print("Error: Some folders in --output_format don't exist!")
+#                sys.exit()
         target = TargetFasta(self._paths.tar_fasta_folder,
-                             self._args.closed_fasta_files)
+                             self._args.related_fasta_files)
         target.get_target_fasta(
                 self._args.mutation_table, self._paths.tar_fasta_folder,
-                self._args.closed_fasta_files, self._args.output_format,
+                self._args.related_fasta_files, self._args.combine_to_one_fasta,
                 self._paths.target_base_folder)
 
     def ratt(self):
@@ -216,17 +216,17 @@ class Controller(object):
                 self._args.transfer_type != "Free"):
             print("Error: please assign correct --transfer_type!")
             sys.exit()
-        if (self._args.closed_embl_files is None) and (
-                self._args.closed_gbk_files is None):
+        if (self._args.related_embl_files is None) and (
+                self._args.related_gbk_files is None):
             print("Error: please assign proper embl or genbank files")
             sys.exit()
-        elif (self._args.closed_embl_files is not None) and (
-                self._args.closed_gbk_files is not None):
+        elif (self._args.related_embl_files is not None) and (
+                self._args.related_gbk_files is not None):
             print("Error: please choose embl as input or genbank as input")
             sys.exit()
         self._args.ratt_path = self.check_execute_file(self._args.ratt_path)
         self.check_multi_files(
-                [self._args.updated_fasta_files, self._args.closed_fasta_files],
+                [self._args.updated_fasta_files, self._args.related_fasta_files],
                 ["--updated_fasta_files", "--closed_fasta_files"])
         self.check_parameter([self._args.element, self._args.compare_pair],
                              ["--element", "--compare_pair"])
@@ -234,8 +234,8 @@ class Controller(object):
             self._paths.required_folders("annotation_transfer"))
         args_ratt = self.args_container.container_ratt(
             self._args.ratt_path, self._args.element, self._args.transfer_type,
-            self._args.closed_embl_files, self._args.closed_gbk_files,
-            self._args.updated_fasta_files, self._args.closed_fasta_files,
+            self._args.related_embl_files, self._args.related_gbk_files,
+            self._args.updated_fasta_files, self._args.related_fasta_files,
             self._paths.ratt_folder, self._args.convert_to_gff_rnt_ptt,
             self._paths.tar_annotation_folder, self._args.compare_pair)
         ratt = RATT(args_ratt)
@@ -714,9 +714,9 @@ class Controller(object):
         self.check_multi_files(
                 [self._args.fasta_files],
                 ["--fasta_files"])
-        if (self._args.bam_type != "closed_genome") and (
+        if (self._args.bam_type != "related_genome") and (
                 self._args.bam_type != "query_genome"):
-            print("Error: Please assign \"closed_genome\" or"
+            print("Error: Please assign \"related_genome\" or"
                   " \"query_genome\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
