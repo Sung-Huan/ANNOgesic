@@ -41,7 +41,7 @@ def main():
     # Parameters for get input files
     get_input_parser = subparsers.add_parser(
         "get_input_files", help="Get required files. "
-        "(i.e. Annotation files, fasta files)")
+        "(i.e. annotation files, fasta files)")
     get_input_basic = get_input_parser.add_argument_group(
             'basic arguments')
     get_input_basic.add_argument(
@@ -50,7 +50,8 @@ def main():
         "the current directory is used.")
     get_input_basic.add_argument(
         "--ftp_path", "-F",
-        help="Path of NCBI FTP where can download the required files.")
+        help="Path of folder on the NCBI FTP server where the required files "
+        "are located.")
     get_input_basic.add_argument(
         "--ref_fasta", "-f", default=False, action="store_true",
         help="Download fasta files of the reference. Default is False.")
@@ -82,13 +83,13 @@ def main():
         help="Path of the project folder. If none is given, "
         "the current directory is used.")
     get_target_fasta_basic.add_argument(
-        "--closed_fasta_files", "-c", required=True, nargs='+',
-        help="Path of the closed fasta files.")
+        "--related_fasta_files", "-c", required=True, nargs='+',
+        help="Path of the genome fasta files of the closely related species.")
     get_target_fasta_basic.add_argument(
         "--mutation_table", "-m", required=True,
         help="Path of the mutation table which stores the mutation "
-        "information between the query genome and closed genome of "
-        "the query one. For example, please check "
+        "information between the query genome and genome of the closely "
+        "related species. For an example check "
         "https://github.com/Sung-Huan/ANNOgesic/"
         "blob/master/tutorial_data/mutation.csv")
     get_target_fasta_basic.add_argument(
@@ -106,7 +107,7 @@ def main():
     # run RATT
     RATT_parser = subparsers.add_parser(
         "annotation_transfer", help="Transfer the annotations "
-        "from closed genome to the target genome.")
+        "from a closely related species genome to a target genome.")
     RATT_basic = RATT_parser.add_argument_group(
         'basic arguments')
     RATT_basic.add_argument(
@@ -115,22 +116,22 @@ def main():
         "the current directory is used.")
     RATT_basic.add_argument(
         "--compare_pair", "-p", required=True, nargs='+',
-        help="Please assign the name of genome pairs, ex. "
-        "NC_007795:NEW_NC_007795. The closed genome is NC_007795 and "
+        help="Please assign the name of genome pairs, e.g. "
+        "NC_007795:NEW_NC_007795. The related genome is NC_007795 and "
         "the target genome is NEW_NC_007795. The assigned names are the "
         "headers of the fasta file (start with \">\"), not the "
         "filename of fasta file. If multiple genomes need to be assigned, "
         "please use spaces to separate the genomes.")
     RATT_basic.add_argument(
-        "--closed_embl_files", "-ce", default=None, nargs='+',
-        help="The paths of embl files.")
+        "--related_embl_files", "-ce", default=None, nargs='+',
+        help="The paths of the embl files of the related species.")
     RATT_basic.add_argument(
-        "--closed_gbk_files", "-cg", default=None, nargs='+',
-        help="If you have no embl file, you can assign genbank files. "
+        "--related_gbk_files", "-cg", default=None, nargs='+',
+        help="The paths of the genbank files of the related species. "
         "The genbank can be ended by .gbk, .gbff or .gb")
     RATT_basic.add_argument(
-        "--closed_fasta_files", "-cf", required=True, nargs='+',
-        help="The paths of closed fasta files.")
+        "--related_fasta_files", "-cf", required=True, nargs='+',
+        help="The paths of the fasta files of the related species.")
     RATT_basic.add_argument(
         "--updated_fasta_files", "-uf", required=True, nargs='+',
         help="The paths of updated fasta files.")
@@ -1519,9 +1520,9 @@ def main():
         help="This function is for ignoring hypothetical protein in "
         "genome annotation file. Default is False.")
     circrna_parser.set_defaults(func=run_circrna)
-    # Parameters of Go term
+    # Parameters of GO term
     goterm_parser = subparsers.add_parser(
-        "go_term", help="Extract Go terms from Uniprot.")
+        "go_term", help="Extract GO terms from Uniprot.")
     goterm_basic = goterm_parser.add_argument_group(
         'basic arguments')
     goterm_basic.add_argument(
@@ -1669,7 +1670,8 @@ def main():
     starget_parser.set_defaults(func=sRNA_target)
     # Parameters of SNP transcript
     snp_parser = subparsers.add_parser(
-        "snp", help="Detect SNP/mutation and generate potential fasta file.")
+        "snp", help="Detect SNP/mutation and generate fasta file if mutations "
+        "were found.")
     snp_basic = snp_parser.add_argument_group(
         'basic arguments')
     snp_basic.add_argument(
@@ -1679,13 +1681,13 @@ def main():
     snp_basic.add_argument(
         "--bam_type", "-t", required=True,
         help="Please assign the type of BAM. "
-        "If the BAM files are produced by mapping to the closed genome "
-        "of the query genome, please key in \"closed_genome\". "
-        "the mutations between the closed genome and query genome can be "
+        "If the BAM files are produced by mapping to a related genome "
+        "of the query genome, please key in \"related_genome\". "
+        "the mutations between the related genome and the query genome can be "
         "detected for generating sequence of the query "
-        "genome. If the BAM files are produced by mapping to exact "
-        "query genome, please key in \"query_genome\". "
-        "The exact mutations of query genome can be detected.")
+        "genome. If the BAM files are produced by mapping to "
+        "query genome, please use the key \"query_genome\". "
+        "By that mutations of query genome can be detected.")
     snp_basic.add_argument(
         "--program", "-p", required=True, nargs='+',
         help="Please assign the program for detecting SNP of transcript: "
@@ -1793,8 +1795,8 @@ def main():
     snp_parser.set_defaults(func=SNP)
     # Parameters of protein-protein interaction network
     ppi_parser = subparsers.add_parser(
-        "ppi_network", help="Detect protein-protein interactions with "
-        "literature supported.")
+        "ppi_network", help="Detect protein-protein interactions suported by "
+        "literature.")
     ppi_basic = ppi_parser.add_argument_group(
         'basic arguments')
     ppi_basic.add_argument(
@@ -1864,7 +1866,7 @@ def main():
     # Parameters of subcellular localization
     sub_local_parser = subparsers.add_parser(
         "localization", help="Predict subcellular localization "
-        "of CDSs.")
+        "of proteins.")
     sub_local_basic = sub_local_parser.add_argument_group(
         'basic arguments')
     sub_local_basic.add_argument(
@@ -2078,7 +2080,7 @@ def main():
 
     # Parameters of generate screenshots
     screen_parser = subparsers.add_parser(
-        "screenshot", help="Generate screenshot for selected feature.")
+        "screenshot", help="Generate screenshots for selected features using IGV.")
     screen_basic = screen_parser.add_argument_group(
         'basic arguments')
     screen_basic.add_argument(
@@ -2133,9 +2135,10 @@ def main():
 
     # Parameter of generating color png
     color_parser = subparsers.add_parser(
-        "color_png", help="Generate color screenshots of TSS or "
-        "processing site. It only works after running \"screenshot\" "
-        "(after running batch script). ")
+        "colorize_screenshot_tracks", help="Add color information to "
+        "screenshots (e.g. useful for dRNA-Seq based TSS and PS "
+        "detection. It only works after running \"screenshot\" "
+        "(after running batch script).")
     color_basic = color_parser.add_argument_group(
         'basic arguments')
     color_basic.add_argument(
