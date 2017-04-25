@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tutorial of ANNOgesic &mdash; ANNOgesic 0.5.15 documentation</title>
+  <title>Tutorial of ANNOgesic &mdash; ANNOgesic 0.5.16 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ANNOgesic 0.5.15 documentation" href="index.html"/>
+    <link rel="top" title="ANNOgesic 0.5.16 documentation" href="index.html"/>
         <link rel="next" title="Troubleshooting" href="troubleshooting.html"/>
         <link rel="prev" title="ANNOgesic’s subcommands" href="subcommands.html"/> 
 
@@ -114,7 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="subcommands.html#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
 </ul>
 </li>
@@ -196,7 +196,7 @@
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="subcommands.html#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
 </ul>
 </li>
@@ -275,7 +275,7 @@ downloaded from NCBI GEO and that was part of a work by <a class="reference exte
 al.</a>.
 There will be several output files which are generated in different formats -
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures.
-For viewing GFF3 file, you can use a genome browser, for example <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
+For viewing GFF3 file, you can use a genome browser, for examples <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
 <a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
 <p>Before we start, please check <a class="reference internal" href="subcommands.html#the-format-of-filename"><span class="std std-ref">The format of filename</span></a> and
 <a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in
@@ -395,7 +395,7 @@ $ rm replace_seq_id.py
 we will generate some new dummy files via this step and <code class="docutils literal"><span class="pre">annotation_transfer</span></code> in order to
 show you the function of these subcommands.</p>
 <p>Now, we assume that we need to generate fasta file of our query genome.
-First of all, we need to find a closed genome (fasta file and gff file can be found) of our query genome.
+First of all, we need to find a closely related genome (fasta file and gff file can be found) of our query genome.
 Then, we need to generate a mutation table (please check the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a>)
 between these two genomes. When these files are produced,
 we can run subcommand <code class="docutils literal"><span class="pre">update_genome_fasta</span></code> for getting fasta file of the query genome.</p>
@@ -403,19 +403,18 @@ we can run subcommand <code class="docutils literal"><span class="pre">update_ge
 <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
 Each column of the table is separated by tab. The fasta files of the new genomes (NC_test.1 and test_case2)
 will be generated in <code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/fasta_files</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+$ mv mutation.csv ANNOgesic/input/mutation_table
 </pre></div>
 </div>
 <p>Now, let&#8217;s try it</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic update_genome_fasta \
-   --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-   --output_format ANNOgesic/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
-                   ANNOgesic/output/updated_references/fasta_files/test_case2.fa:test_case2 \
+   --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
    --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
    --project_path ANNOgesic
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">--closed_fasta_files</span></code> is path of the closed genome fasta file.
+<p><code class="docutils literal"><span class="pre">--related_fasta_files</span></code> is path of the fasta file of closely related genome.
 In <code class="docutils literal"><span class="pre">--output_format</span></code>, we assigned a pairs of output filenames and
 the genomes which will be stored into the output file. In our case, &#8220;test_case1&#8221; is the first output fasta file which
 stores the sequence of &#8220;NC_test.1&#8221;, and &#8220;test_case2&#8221; which stores the sequence of the other new genome - &#8220;test_case2&#8221;.</p>
@@ -439,7 +438,7 @@ AACTTTATAATCCTATCTTTATCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGT
 TTGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTTCAAATTTAAAAAATGGCTC
 TTTAGATAAATTTCACGAAAAATATAGAAATTGTGATGTTTTACTCATAGATGATGTGCAGTTTTTAGGAAAAACCGATA
 AAATTCAAGAAGAATTTTTCTTTATATTTAATGAAATCAAAAATAACGATGGACAAATCATCATGACTTCAGACAATCCA
-$ head ANNOgesic/output/updated_references/fasta_files/test_case1.fa
+$ head ANNOgesic/output/updated_references/fasta_files/NC_test.1.fa
 &gt;NC_test.1
 ATcAACCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAA
 ATTATATCGCTATCTTAAAATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTA
@@ -452,8 +451,7 @@ TCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGTT
 TGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTT
 </pre></div>
 </div>
-<p>We can see that the sequence of &#8220;NC_test.1&#8221; is stored in <code class="docutils literal"><span class="pre">test_case1.fa</span></code>.
-Moreover, the third nucleotide is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
+<p>We can see the third nucleotide of <code class="docutils literal"><span class="pre">NC_test.1.fa</span></code> is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
 If we check <code class="docutils literal"><span class="pre">test_case2.fa</span></code>, the modification is also according to the mutation table and our setting.</p>
 <p>If the mutation table can not be provided, we can also use subcommand <code class="docutils literal"><span class="pre">snp</span></code> to detect mutations and generate
 fasta files automatically. For <code class="docutils literal"><span class="pre">snp</span></code>, we will go through it later.</p>
@@ -467,8 +465,8 @@ Otherwise, please check
 <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a> to set your environment paths properly.</p>
 <p>After setting the environment, we can try it.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">anngesic</span> <span class="n">annotation_transfer</span> \
-    <span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">annotations</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">embl</span> \
-    <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">fa</span> \
+    <span class="o">--</span><span class="n">related_embl_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">annotations</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">embl</span> \
+    <span class="o">--</span><span class="n">related_fasta_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">NC_009839</span><span class="o">.</span><span class="mf">1.</span><span class="n">fa</span> \
     <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">updated_references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">test_case1</span><span class="o">.</span><span class="n">fa</span> \
                           <span class="n">ANNOgesic</span><span class="o">/</span><span class="n">output</span><span class="o">/</span><span class="n">updated_references</span><span class="o">/</span><span class="n">fasta_files</span><span class="o">/</span><span class="n">test_case2</span><span class="o">.</span><span class="n">fa</span> \
     <span class="o">--</span><span class="n">element</span> <span class="n">chromosome</span> \
@@ -482,7 +480,7 @@ Otherwise, please check
 <code class="docutils literal"><span class="pre">--transfer_type</span></code> is a program of <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>.
 We use <code class="docutils literal"><span class="pre">Strain</span></code> because the similarity between two genomes is higher than 90% (please check
 <a class="reference external" href="http://ratt.sourceforge.net/">RATT</a>). In <code class="docutils literal"><span class="pre">--compare_pair</span></code>, the pairs of the query genomes
-(NC_test.1 and test_case2) and their closed genomes (NC_000915.1) are assigned.
+(NC_test.1 and test_case2) and their closely related genomes (NC_000915.1) are assigned.
 Please be careful, the information that we assign to <code class="docutils literal"><span class="pre">--compare_pair</span></code>
 is genome names in gff files not fasta filenames. <code class="docutils literal"><span class="pre">--convert_to_gff_rnt_ptt</span></code> means that we want to transfer the
 output embl files to GFF3, ptt, rnt files and store in <code class="docutils literal"><span class="pre">ANNOgesic/output/updated_references/annotations</span></code>.</p>
@@ -814,7 +812,7 @@ Here, we only use TEX +/- for testing.</p>
 <p>For running <code class="docutils literal"><span class="pre">srna</span></code>, we can apply several filters to improve the detection. These filters are <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
 <code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code>, <code class="docutils literal"><span class="pre">promoter</span></code>, <code class="docutils literal"><span class="pre">term</span></code>, <code class="docutils literal"><span class="pre">sorf</span></code>. Normally, <code class="docutils literal"><span class="pre">tss</span></code>, <code class="docutils literal"><span class="pre">sec_str</span></code>,
 <code class="docutils literal"><span class="pre">blast_nr</span></code>, <code class="docutils literal"><span class="pre">blast_srna</span></code> are recommended to be used.</p>
-<p>Please be aware, filters are strict. For example, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs which are
+<p>Please be aware, filters are strict. For examples, if your filters are included <code class="docutils literal"><span class="pre">term</span></code>, only the sRNAs which are
 associated with terminators will be included in the list of best candidates. If you want to include terminator information
 but do not use terminator as a filter, you can remove <code class="docutils literal"><span class="pre">term</span></code> in filters and still assign the path of terminator gff file.
 The results will include the sRNAs which are not associated with terminators, and terminator information can be shown
@@ -1064,16 +1062,16 @@ can exist after filtering.</p>
 <h2>SNP calling<a class="headerlink" href="#snp-calling" title="Permalink to this headline">¶</a></h2>
 <p>If we want to know SNPs or mutations of our RNA-seq data, we can use <code class="docutils literal"><span class="pre">snp</span></code> to achieve this purpose.
 <code class="docutils literal"><span class="pre">snp</span></code> is compose of two parts. One part is for obtaining the differences between our query genome
-and the closed genome of our query one. If we have no fasta file of our query genome,
-this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closed genome. Then
-using <code class="docutils literal"><span class="pre">snp</span></code> can automatically detect differences between the closed genome and our query genome.
+and the closely related genome of our query one. If we have no fasta file of our query genome,
+this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closely related genome. Then
+using <code class="docutils literal"><span class="pre">snp</span></code> can automatically detect differences between the closely related genome and our query genome.
 Furthermore, potential fasta files of our query genome can be generated automatically as well.
 The other part is for detecting SNPs or mutations of our query genome if the fasta file of our query genome can be provided.
 In this part, you can know real mutations of our query genonme.</p>
 <p>Before running the subcommand, bam files are required. Since we already generated them via
 running <code class="docutils literal"><span class="pre">circrna</span></code>, we can just put them to the corresponding folder. Please remember that the mapping function of
 <code class="docutils literal"><span class="pre">circrna</span></code> is basic one.</p>
-<p>Now, we can try to detect mutations. The procedures of comparing closed genome and query genome are similar,
+<p>Now, we can try to detect mutations. The procedures of comparing closely related genome and query genome are similar,
 you just need to put Bam files, and fasta files to corresponding folders and set <code class="docutils literal"><span class="pre">--bam_type</span></code>.</p>
 <p>First, we copy the bam files to <code class="docutils literal"><span class="pre">BAMs_map_query_genomes</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex
@@ -1099,10 +1097,10 @@ samples in this set, and all four bam files need to be computed together.</p>
     --project_path ANNOgesic
 </pre></div>
 </div>
-<p>Two output folders will be generated, <code class="docutils literal"><span class="pre">compare_closed_and_updated_references</span></code> is for the results of comparison between closed genome
+<p>Two output folders will be generated, <code class="docutils literal"><span class="pre">compare_related_and_query_references</span></code> is for the results of comparison between closely related genome
 and query genome, <code class="docutils literal"><span class="pre">mutations_of_query_genomes</span></code> is for results of detecting mutations of the query genome.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/output/SNP_calling/
-compare_closed_and_updated_references  mutations_of_query_genomes
+compare_related_and_query_references  mutations_of_query_genomes
 </pre></div>
 </div>
 <p>Since we run <code class="docutils literal"><span class="pre">query_genome</span></code>,  the output folders are produced under <code class="docutils literal"><span class="pre">mutations_of_query_genomes</span></code>.</p>
@@ -1428,9 +1426,9 @@ NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-1836
 <div class="section" id="coloring-the-screenshots">
 <h2>Coloring the screenshots<a class="headerlink" href="#coloring-the-screenshots" title="Permalink to this headline">¶</a></h2>
 <p>If we have numerous libraries and we want to check TSSs, distinguishing the
-tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand <code class="docutils literal"><span class="pre">color_png</span></code> to color
+tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand <code class="docutils literal"><span class="pre">colorize_screenshot_tracks</span></code> to color
 our screenshots.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic color_png \
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic colorize_screenshot_tracks \
     --track_number 2 \
     --screenshot_folder ANNOgesic/output/TSSs \
     --project_path ANNOgesic
@@ -1486,7 +1484,7 @@ NC_009839.1:15670-15670.png  NC_009839.1:18053-18053.png  NC_009839.1:18360-1836
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.15',
+            VERSION:'0.5.16',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

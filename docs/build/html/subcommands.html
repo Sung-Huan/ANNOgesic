@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.15 documentation</title>
+  <title>ANNOgesic’s subcommands &mdash; ANNOgesic 0.5.16 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="ANNOgesic 0.5.15 documentation" href="index.html"/>
+    <link rel="top" title="ANNOgesic 0.5.16 documentation" href="index.html"/>
         <link rel="next" title="Tutorial of ANNOgesic" href="tutorial.html"/>
         <link rel="prev" title="Docker image" href="docker.html"/> 
 
@@ -114,7 +114,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
 </ul>
 </li>
@@ -196,7 +196,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#color-png-color-screenshot">color_png (color screenshot)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
 </ul>
 </li>
@@ -278,7 +278,7 @@ please use following principle of filename designation:</p>
 <p>The genome filenames should be the same as the annotation file designation, i.e.
 <code class="docutils literal"><span class="pre">NC_007795.fa,</span> <span class="pre">NC_007795.gff,</span> <span class="pre">NC_007795.ptt,</span> <span class="pre">NC_007795.rnt,</span> <span class="pre">NC_007705.gbk</span></code>.</p>
 <p>For all input gff files for ANNOgesic please use following format:
-<code class="docutils literal"><span class="pre">$GENOME_$FEATURE.gff</span></code>. For example, <code class="docutils literal"><span class="pre">NC_007795_TSS.gff,</span> <span class="pre">NC_007795_transcript.gff</span></code>.</p>
+<code class="docutils literal"><span class="pre">$GENOME_$FEATURE.gff</span></code>. For an example, <code class="docutils literal"><span class="pre">NC_007795_TSS.gff,</span> <span class="pre">NC_007795_transcript.gff</span></code>.</p>
 <p>Possible feature names are:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -364,8 +364,8 @@ into the corresponding folders.</p>
 <p>The folders are following:</p>
 <p><strong>input:</strong> Stores all input files.</p>
 <blockquote>
-<div><p><strong>BAMs:</strong> For <code class="docutils literal"><span class="pre">.bam</span></code> files. <code class="docutils literal"><span class="pre">BAMs_map_closed_genomes</span></code>
-is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which are mapped on closed genomes of our real query genomes.
+<div><p><strong>BAMs:</strong> For <code class="docutils literal"><span class="pre">.bam</span></code> files. <code class="docutils literal"><span class="pre">BAMs_map_related_genomes</span></code>
+is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which are mapped on closely related genomes of our real query genomes.
 <code class="docutils literal"><span class="pre">BAMs_map_query_genomes</span></code> is for the <code class="docutils literal"><span class="pre">.bam</span></code> files which are mapped on our query genomes.</p>
 <p><strong>databases:</strong> For all databases.</p>
 <p><strong>manual_TSSs:</strong> If the manual detected transcription starting sites (TSSs) can be provided,
@@ -373,7 +373,7 @@ it can be stored here for running <code class="docutils literal"><span class="pr
 the automatic predicted ones and manual detected ones. Please use gff3 format.</p>
 <p><strong>manual_processing_sites:</strong> It is similar to <code class="docutils literal"><span class="pre">manual_TSS</span></code>, but for
 processing sites.</p>
-<p><strong>mutation_table:</strong> If the mutation table between the closed genomes and
+<p><strong>mutation_table:</strong> If the mutation table between the closely ralated genomes and
 query genomes is provided, please put the file here. Please check
 the section of <a class="reference internal" href="#update-genome-fasta"><span class="std std-ref">update_genome_fasta (update reference genome fasta file)</span></a> for the format of
 mutation table.</p>
@@ -408,7 +408,7 @@ For format details, please check the section of
 <div class="section" id="get-input-files-download-required-files">
 <span id="get-input-files"></span><h2>get_input_files (download required files)<a class="headerlink" href="#get-input-files-download-required-files" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">get_input_files</span></code> is the subcommand for downloading required files (fasta, annotation files) from NCBI.
-Therefore, the web address of the reference genome in NCBI needs to be assigned. For example,
+Therefore, the web address of the reference genome in NCBI needs to be assigned. For an example,
 <a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1">ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1</a>
 Then, the user can assign the file type for download.</p>
 <ul class="simple">
@@ -418,7 +418,7 @@ Then, the user can assign the file type for download.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">get_input_files</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">get_input_files</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
                                  <span class="p">[</span><span class="o">--</span><span class="n">ftp_path</span> <span class="n">FTP_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_fasta</span><span class="p">]</span>
                                  <span class="p">[</span><span class="o">--</span><span class="n">ref_gff</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_gbk</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_ptt</span><span class="p">]</span>
                                  <span class="p">[</span><span class="o">--</span><span class="n">ref_rnt</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">convert_embl</span><span class="p">]</span>
@@ -427,12 +427,11 @@ Then, the user can assign the file type for download.</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">ftp_path</span> <span class="n">FTP_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">F</span> <span class="n">FTP_PATH</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">NCBI</span> <span class="n">FTP</span> <span class="n">where</span> <span class="n">can</span> <span class="n">download</span> <span class="n">the</span> <span class="n">required</span>
-                        <span class="n">files</span><span class="o">.</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">folder</span> <span class="n">on</span> <span class="n">the</span> <span class="n">NCBI</span> <span class="n">FTP</span> <span class="n">server</span> <span class="n">where</span> <span class="n">the</span>
+                        <span class="n">required</span> <span class="n">files</span> <span class="n">are</span> <span class="n">located</span><span class="o">.</span>
   <span class="o">--</span><span class="n">ref_fasta</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span>       <span class="n">Download</span> <span class="n">fasta</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reference</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span>
                         <span class="kc">False</span><span class="o">.</span>
   <span class="o">--</span><span class="n">ref_gff</span><span class="p">,</span> <span class="o">-</span><span class="n">g</span>         <span class="n">Download</span> <span class="n">gff</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reference</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
@@ -457,15 +456,15 @@ Then, the user can assign the file type for download.</p>
 <div class="section" id="update-genome-fasta-update-reference-genome-fasta-file">
 <span id="update-genome-fasta"></span><h2>update_genome_fasta (update reference genome fasta file)<a class="headerlink" href="#update-genome-fasta-update-reference-genome-fasta-file" title="Permalink to this headline">¶</a></h2>
 <p>If fasta files of the query genomes do not exist, <code class="docutils literal"><span class="pre">update_genome_fasta</span></code> can
-update fasta files from the closed genomes of the real query genomes to our real query ones
+update fasta files from the closely related genomes of the real query genomes to our real query ones
 via searching the mutations.
 Therefore, a table of mutation information is required. For the format of the table, please check
 <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.
 Titles of the columns are presented on the top and they need to start with <code class="docutils literal"><span class="pre">#</span></code>.
 Each column is separated by <code class="docutils literal"><span class="pre">tab</span></code>. If the mutation type is deletion or insertion,
 the user can type <code class="docutils literal"><span class="pre">-</span></code> to represent them. The information of <code class="docutils literal"><span class="pre">Target_ids</span></code>
-(the query genome names), <code class="docutils literal"><span class="pre">Reference_ids</span></code>, (the closed genome names)
-<code class="docutils literal"><span class="pre">Reference_nts</span></code> (the nucleotides of the closed genomes), <code class="docutils literal"><span class="pre">Positions</span></code>, <code class="docutils literal"><span class="pre">Target_nts</span></code>
+(the query genome names), <code class="docutils literal"><span class="pre">Reference_ids</span></code>, (the names of closely related genomes)
+<code class="docutils literal"><span class="pre">Reference_nts</span></code> (the nucleotides of the closely related genomes), <code class="docutils literal"><span class="pre">Positions</span></code>, <code class="docutils literal"><span class="pre">Target_nts</span></code>
 (the nucleotides of the query genomes) are required. The other columns can be blank.
 Please use <code class="docutils literal"><span class="pre">tab</span></code> to separate all columns including blank ones.</p>
 <p>If no mutation information is provided, <code class="docutils literal"><span class="pre">snp</span></code> can be used for detecting mutations.
@@ -474,42 +473,35 @@ Please use <code class="docutils literal"><span class="pre">tab</span></code> to
 <li><strong>Required files</strong></li>
 </ul>
 <p><strong>Fasta files of reference genome</strong></p>
-<p><strong>Mutation table:</strong> Contains the information of mutations between closed and query genomes.
-For example, please check <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.</p>
+<p><strong>Mutation table:</strong> Contains the information of mutations between related and query genomes.
+For an example, please check <a class="reference external" href="https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv">mutation table</a>.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic update_genome_fasta [-h] [--project_path [PROJECT_PATH]]
-                                     --closed_fasta_files CLOSED_FASTA_FILES
-                                     [CLOSED_FASTA_FILES ...] --mutation_table
-                                     MUTATION_TABLE --output_format
-                                     OUTPUT_FORMAT [OUTPUT_FORMAT ...]
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">update_genome_fasta</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
+                                     <span class="o">--</span><span class="n">related_fasta_files</span> <span class="n">RELATED_FASTA_FILES</span>
+                                     <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                                     <span class="o">--</span><span class="n">mutation_table</span> <span class="n">MUTATION_TABLE</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">combine_to_one_fasta</span><span class="p">]</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
-basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
-  --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -c CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
-                        Path of the closed fasta files.
-  --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
-                        Path of the mutation table which stores the mutation
-                        information between the query genome and closed genome
-                        of the query one. For example, please check
-                        https://github.com/Sung-
-                        Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
-  --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
-                        Please assign the filename of output file and the
-                        genome names (listed in Target_id of mutation table)
-                        which should be included in the specific output file.
-                        For example: $FILE_PATH1:genome1,genome2
-                        $FILE_PATH2:genome3. FILE_PATH1 is a output fasta file
-                        which includes the information of genome1 and genome2
-                        (import multi-genomes to one file should be separated
-                        by &quot;,&quot;.) And FILE_PATH2 is for genome3. The multiple
-                        output files are splitted by spaces.
+<span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">related_fasta_files</span> <span class="n">RELATED_FASTA_FILES</span> <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">c</span> <span class="n">RELATED_FASTA_FILES</span> <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">fasta</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">closely</span> <span class="n">related</span>
+                        <span class="n">species</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">mutation_table</span> <span class="n">MUTATION_TABLE</span><span class="p">,</span> <span class="o">-</span><span class="n">m</span> <span class="n">MUTATION_TABLE</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">mutation</span> <span class="n">table</span> <span class="n">which</span> <span class="n">stores</span> <span class="n">the</span> <span class="n">mutation</span>
+                        <span class="n">information</span> <span class="n">between</span> <span class="n">the</span> <span class="n">query</span> <span class="n">genome</span> <span class="ow">and</span> <span class="n">genome</span> <span class="n">of</span> <span class="n">the</span>
+                        <span class="n">closely</span> <span class="n">related</span> <span class="n">species</span><span class="o">.</span> <span class="n">For</span> <span class="n">an</span> <span class="n">example</span> <span class="n">check</span>
+                        <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Sung</span><span class="o">-</span>
+                        <span class="n">Huan</span><span class="o">/</span><span class="n">ANNOgesic</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">tutorial_data</span><span class="o">/</span><span class="n">mutation</span><span class="o">.</span><span class="n">csv</span>
+  <span class="o">--</span><span class="n">combine_to_one_fasta</span><span class="p">,</span> <span class="o">-</span><span class="n">cm</span>
+                        <span class="n">For</span> <span class="n">combining</span> <span class="nb">all</span> <span class="n">updated</span> <span class="n">sequences</span> <span class="ow">in</span>
+                        <span class="o">--</span><span class="n">mutation_table</span> <span class="n">to</span> <span class="n">one</span> <span class="n">fasta</span> <span class="n">file</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="kc">False</span><span class="o">.</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -519,9 +511,9 @@ basic arguments:
 </div>
 <div class="section" id="annotation-transfer-annotation-transfer">
 <span id="annotation-transfer"></span><h2>annotation_transfer (annotation transfer)<a class="headerlink" href="#annotation-transfer-annotation-transfer" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from the closed genomes
+<p><code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code> is the subcommand for transferring the annotation from the closely related genomes
 to the real query genomes. To achieve this, <a class="reference external" href="http://www.sanger.ac.uk/resources/software/pagit/">RATT</a>
-is integrated in ANNOgesic. The higher similarity between closed genomes and query genomes are,
+is integrated in ANNOgesic. The higher similarity between closely related genomes and query genomes are,
 the more precise the performance is. Before running <code class="docutils literal"><span class="pre">annotation</span> <span class="pre">transfer</span></code>,
 please run <code class="docutils literal"><span class="pre">source</span> <span class="pre">$PAGIT_HOME/sourceme.pagit</span></code> first. it will modify the path for executing RATT.
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.</p>
@@ -532,19 +524,19 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
-<p><strong>Annotation files of the closed genomes</strong>: Genbank/embl files of the closed genomes.</p>
-<p><strong>Fasta files of the closed genomes</strong></p>
+<p><strong>Annotation files of the closely related genomes</strong>: Genbank/embl files of the closely related genomes.</p>
+<p><strong>Fasta files of the closely related genomes</strong></p>
 <p><strong>Fasta files of the updated genomes</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">annotation_transfer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">annotation_transfer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
                                      <span class="o">--</span><span class="n">compare_pair</span> <span class="n">COMPARE_PAIR</span>
                                      <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">]</span>
-                                     <span class="p">[</span><span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">]]</span>
-                                     <span class="p">[</span><span class="o">--</span><span class="n">closed_gbk_files</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">]]</span>
-                                     <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">CLOSED_FASTA_FILES</span>
-                                     <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">related_embl_files</span> <span class="n">RELATED_EMBL_FILES</span> <span class="p">[</span><span class="n">RELATED_EMBL_FILES</span> <span class="o">...</span><span class="p">]]</span>
+                                     <span class="p">[</span><span class="o">--</span><span class="n">related_gbk_files</span> <span class="n">RELATED_GBK_FILES</span> <span class="p">[</span><span class="n">RELATED_GBK_FILES</span> <span class="o">...</span><span class="p">]]</span>
+                                     <span class="o">--</span><span class="n">related_fasta_files</span> <span class="n">RELATED_FASTA_FILES</span>
+                                     <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                                      <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">UPDATED_FASTA_FILES</span>
                                      <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                                      <span class="p">[</span><span class="o">--</span><span class="n">ratt_path</span> <span class="n">RATT_PATH</span><span class="p">]</span> <span class="o">--</span><span class="n">element</span> <span class="n">ELEMENT</span>
@@ -555,24 +547,23 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">compare_pair</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">p</span> <span class="n">COMPARE_PAIR</span> <span class="p">[</span><span class="n">COMPARE_PAIR</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">genome</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span>
-                        <span class="n">NC_007795</span><span class="p">:</span><span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span> <span class="n">closed</span> <span class="n">genome</span> <span class="ow">is</span>
+                        <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">genome</span> <span class="n">pairs</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span>
+                        <span class="n">NC_007795</span><span class="p">:</span><span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span> <span class="n">related</span> <span class="n">genome</span> <span class="ow">is</span>
                         <span class="n">NC_007795</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">target</span> <span class="n">genome</span> <span class="ow">is</span> <span class="n">NEW_NC_007795</span><span class="o">.</span> <span class="n">The</span>
                         <span class="n">assigned</span> <span class="n">names</span> <span class="n">are</span> <span class="n">the</span> <span class="n">headers</span> <span class="n">of</span> <span class="n">the</span> <span class="n">fasta</span> <span class="n">file</span>
                         <span class="p">(</span><span class="n">start</span> <span class="k">with</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">),</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">filename</span> <span class="n">of</span> <span class="n">fasta</span> <span class="n">file</span><span class="o">.</span> <span class="n">If</span>
                         <span class="n">multiple</span> <span class="n">genomes</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">assigned</span><span class="p">,</span> <span class="n">please</span> <span class="n">use</span>
                         <span class="n">spaces</span> <span class="n">to</span> <span class="n">separate</span> <span class="n">the</span> <span class="n">genomes</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">closed_embl_files</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">ce</span> <span class="n">CLOSED_EMBL_FILES</span> <span class="p">[</span><span class="n">CLOSED_EMBL_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">embl</span> <span class="n">files</span><span class="o">.</span>
-  <span class="o">--</span><span class="n">closed_gbk_files</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cg</span> <span class="n">CLOSED_GBK_FILES</span> <span class="p">[</span><span class="n">CLOSED_GBK_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">If</span> <span class="n">you</span> <span class="n">have</span> <span class="n">no</span> <span class="n">embl</span> <span class="n">file</span><span class="p">,</span> <span class="n">you</span> <span class="n">can</span> <span class="n">assign</span> <span class="n">genbank</span>
-                        <span class="n">files</span><span class="o">.</span> <span class="n">The</span> <span class="n">genbank</span> <span class="n">can</span> <span class="n">be</span> <span class="n">ended</span> <span class="n">by</span> <span class="o">.</span><span class="n">gbk</span><span class="p">,</span> <span class="o">.</span><span class="n">gbff</span> <span class="ow">or</span> <span class="o">.</span><span class="n">gb</span>
-  <span class="o">--</span><span class="n">closed_fasta_files</span> <span class="n">CLOSED_FASTA_FILES</span> <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cf</span> <span class="n">CLOSED_FASTA_FILES</span> <span class="p">[</span><span class="n">CLOSED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">closed</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">related_embl_files</span> <span class="n">RELATED_EMBL_FILES</span> <span class="p">[</span><span class="n">RELATED_EMBL_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">ce</span> <span class="n">RELATED_EMBL_FILES</span> <span class="p">[</span><span class="n">RELATED_EMBL_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">embl</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">related</span> <span class="n">species</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">related_gbk_files</span> <span class="n">RELATED_GBK_FILES</span> <span class="p">[</span><span class="n">RELATED_GBK_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cg</span> <span class="n">RELATED_GBK_FILES</span> <span class="p">[</span><span class="n">RELATED_GBK_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genbank</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">related</span> <span class="n">species</span><span class="o">.</span>
+                        <span class="n">The</span> <span class="n">genbank</span> <span class="n">can</span> <span class="n">be</span> <span class="n">ended</span> <span class="n">by</span> <span class="o">.</span><span class="n">gbk</span><span class="p">,</span> <span class="o">.</span><span class="n">gbff</span> <span class="ow">or</span> <span class="o">.</span><span class="n">gb</span>
+  <span class="o">--</span><span class="n">related_fasta_files</span> <span class="n">RELATED_FASTA_FILES</span> <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">cf</span> <span class="n">RELATED_FASTA_FILES</span> <span class="p">[</span><span class="n">RELATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
+                        <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">fasta</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">related</span> <span class="n">species</span><span class="o">.</span>
   <span class="o">--</span><span class="n">updated_fasta_files</span> <span class="n">UPDATED_FASTA_FILES</span> <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">uf</span> <span class="n">UPDATED_FASTA_FILES</span> <span class="p">[</span><span class="n">UPDATED_FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">The</span> <span class="n">paths</span> <span class="n">of</span> <span class="n">updated</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
 
@@ -616,16 +607,16 @@ query genomes if it is necessary.</p>
 </ul>
 <p><strong>BAM files:</strong> BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
 For assigning the files, please follow the format &#8211; <code class="docutils literal"><span class="pre">$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...</span></code>.
-For example, the user has four bam files and these files are for two different conditions. Then the input will be
+For an example, the user has four bam files and these files are for two different conditions. Then the input will be
 <code class="docutils literal"><span class="pre">set1:2:sample1.bam,sample2.bam</span> <span class="pre">set2:2:sample3.bam,sample4.bam</span></code>. <code class="docutils literal"><span class="pre">$SAMPLE_NUM</span></code> in
 this example is 2 which means there are two samples in set1 and set2.
 <code class="docutils literal"><span class="pre">$SAMPLE_NUM</span></code> will influence <code class="docutils literal"><span class="pre">--dp4_cutoff</span></code>, <code class="docutils literal"><span class="pre">--indel_fraction</span></code>, and
 <code class="docutils literal"><span class="pre">--read_depth_range</span></code> which will be used to filter the mutations.</p>
-<p><strong>Fasta files of the closed genomes</strong> or <strong>Fasta files of the query genomes</strong></p>
+<p><strong>Fasta files of the closely related genomes</strong> or <strong>Fasta files of the query genomes</strong></p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic snp [-h] [--project_path [PROJECT_PATH]] --bam_type BAM_TYPE
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic snp [-h] --project_path PROJECT_PATH --bam_type BAM_TYPE
                      --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
                      [FASTA_FILES ...] --bam_files BAM_FILES [BAM_FILES ...]
                      [--samtools_path SAMTOOLS_PATH]
@@ -639,23 +630,22 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --bam_type BAM_TYPE, -t BAM_TYPE
                         Please assign the type of BAM. If the BAM files are
-                        produced by mapping to the closed genome of the query
-                        genome, please key in &quot;closed_genome&quot;. the mutations
-                        between the closed genome and query genome can be
+                        produced by mapping to a related genome of the query
+                        genome, please key in &quot;related_genome&quot;. the mutations
+                        between the related genome and the query genome can be
                         detected for generating sequence of the query genome.
-                        If the BAM files are produced by mapping to exact
-                        query genome, please key in &quot;query_genome&quot;. The exact
+                        If the BAM files are produced by mapping to query
+                        genome, please use the key &quot;query_genome&quot;. By that
                         mutations of query genome can be detected.
   --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
                         Please assign the program for detecting SNP of
                         transcript: &quot;with_BAQ&quot;, &quot;without_BAQ&quot;, &quot;extend_BAQ&quot;.
                         Multi-programs can be executed at the same time
-                        (separated by spaces). For example: with_BAQ
+                        (separated by spaces). For an example: with_BAQ
                         without_BAQ extend_BAQ.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of the genome fasta files.
@@ -666,7 +656,7 @@ basic arguments:
                         (samples/replicates) should be considered as the given
                         number of samples. $SAMPLE_NUM also influences
                         --dp4_cutoff, --indel_fraction, and
-                        --read_depth_range.For example, if sample1.bam,
+                        --read_depth_range.For an example, if sample1.bam,
                         sample2.bam, and sample3.bam are three
                         samples/replicates of one condition. You can assign
                         set1:2:sample1.bam,sample2.bam,sample3.bam. This means
@@ -689,7 +679,7 @@ additional arguments:
                         is $MIN,$MAX. This value can be assigned by different
                         types: 1. real number (&quot;r&quot;), 2. times of $SAMPLE_NUM
                         (assigned by --bam_files) (&quot;n&quot;) or 3. times of the
-                        average read depth (&quot;a&quot;). For example, n_10,a_3 is
+                        average read depth (&quot;a&quot;). For an example, n_10,a_3 is
                         assigned, the average read depth is 70 and the
                         $SAMPLE_NUM is 4. Then, n_10 will be 40 (10 *
                         $SAMPLE_NUM) and a_3 will be 140 (average read depth *
@@ -720,21 +710,21 @@ additional arguments:
                         or 3. times of average read depth (&quot;a&quot;). The second
                         value is for (number 3 + number 4) / (number 1 +
                         number 2 + number 3 + number 4). These two values are
-                        split by commas. For example, n_10,0.8 is assigned and
-                        the average read depth is 70 and $SAMPLE_NUM is 4. It
-                        means that the sum of number 3 and number 4 should be
-                        higher than 40 (10 * $SAMPLE_NUM), and the fraction --
-                        (number 3 + number 4) / (number 1 + number 2 + number
-                        3 + number 4) should be higher than 0.8. Based on the
-                        same example, if r_10,0.8 is assigned, the sum of read
-                        depth of number 3 and number 4 will become exact 10
-                        reads. Default is n_10,0.8.
+                        split by commas. For an example, n_10,0.8 is assigned
+                        and the average read depth is 70 and $SAMPLE_NUM is 4.
+                        It means that the sum of number 3 and number 4 should
+                        be higher than 40 (10 * $SAMPLE_NUM), and the fraction
+                        -- (number 3 + number 4) / (number 1 + number 2 +
+                        number 3 + number 4) should be higher than 0.8. Based
+                        on the same example, if r_10,0.8 is assigned, the sum
+                        of read depth of number 3 and number 4 will become
+                        exact 10 reads. Default is n_10,0.8.
   --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
                         This value is the minimum IDV and IMF which supports
                         insertion of deletion. The minimum IDV can be assigned
                         by different types: 1. real number (&quot;r&quot;), 2. times of
                         $SAMPLE_NUM (assigned by --bam_files) (&quot;n&quot;) or 3.
-                        times of the average read depth (&quot;a&quot;). For example,
+                        times of the average read depth (&quot;a&quot;). For an example,
                         n_10,0.8 is assigned, the average read depth is 70 and
                         $SAMPLE_NUM is 4. It means that IDV should be higher
                         than 40 (10 * $SAMPLE_NUM), and IMF should be higher
@@ -745,17 +735,17 @@ additional arguments:
   --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                         This function can set more filters to improve the
                         results. Please assign 1. the tag, 2. bigger (&quot;b&quot;) or
-                        smaller (&quot;s&quot;) and 3. value for filters. For example,
-                        &quot;RPB_b0.1,MQ0F_s0&quot; means that RPB should be bigger
-                        than 0.1 and MQ0F should be smaller than 0. Default is
-                        RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
+                        smaller (&quot;s&quot;) and 3. value for filters. For an
+                        example, &quot;RPB_b0.1,MQ0F_s0&quot; means that RPB should be
+                        bigger than 0.1 and MQ0F should be smaller than 0.
+                        Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
 </pre></div>
 </div>
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">closed_genome</span></code>,
-the results will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_closed_and_updated_references</span></code>.
+<p>If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">related_genome</span></code>,
+the results will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/compare_related_and_query_references</span></code>.
 If <code class="docutils literal"><span class="pre">bam_type</span></code> is <code class="docutils literal"><span class="pre">query_genome</span></code>, the results will be stored in <code class="docutils literal"><span class="pre">$ANNOgesic/output/SNP_calling/mutations_of_query_genomes</span></code>.</p>
 <p>The output folders and results are following:</p>
 <p><strong>SNP_raw_output:</strong> Stores output tables which be only considered read depth and QUAL.</p>
@@ -823,9 +813,9 @@ For the transcripts, please check the section <a class="reference internal" href
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic tss_ps [-h] [--project_path [PROJECT_PATH]]
-                        [--program PROGRAM] --fasta_files FASTA_FILES
-                        [FASTA_FILES ...] --annotation_files ANNOTATION_FILES
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic tss_ps [-h] --project_path PROJECT_PATH [--program PROGRAM]
+                        --fasta_files FASTA_FILES [FASTA_FILES ...]
+                        --annotation_files ANNOTATION_FILES
                         [ANNOTATION_FILES ...] --tex_notex_libs TEX_NOTEX_LIBS
                         [TEX_NOTEX_LIBS ...]
                         [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
@@ -855,9 +845,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --program PROGRAM, -p PROGRAM
                         Which feature you want to predict, please assign &quot;TSS&quot;
                         or &quot;processing_site&quot;. Default is TSS.
@@ -870,7 +859,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value is the minimal number of replicates that a
@@ -878,7 +867,7 @@ basic arguments:
                         $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use spaces to separate
-                        them. For example, 1_2 2_2 3_3. It means that
+                        them. For an example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
@@ -887,7 +876,7 @@ basic arguments:
   --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                         The output prefix of all conditions. If multiple
                         conditions need to be assigned, please use spaces to
-                        separate them. For example, prefix_condition1
+                        separate them. For an example, prefix_condition1
                         prefix_condition2.
 
 additional arguments:
@@ -977,7 +966,7 @@ additional arguments:
                         genome length of input genomes. If you want to compare
                         whole genome, please type &quot;all&quot;. The input format is
                         $GENOME:SLENGTH. Multiple genomes can be accepted,
-                        please use spaces to separate them. For example,
+                        please use spaces to separate them. For an example,
                         test.gff contain two genomes (s1 and s2). s1 was
                         manual checked 100kb and s2 was checked whole genome.
                         The value of this argument will be s1:100000 s2:all.
@@ -1074,7 +1063,7 @@ extended to the two ends of gene.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic transcript [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic transcript [-h] --project_path PROJECT_PATH
                             [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
                             [--modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]]
                             [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
@@ -1096,9 +1085,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         If paths of the genome annotation gff files.
   --modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...], -mt MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]
@@ -1126,7 +1114,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If the fragmented (or conventional) libraries can be
@@ -1134,7 +1122,7 @@ basic arguments:
                         library. The format is: wig_file_path:fragmented(frag)
                         :condition_id(integer):replicate_id(alphabet):strand(+
                         or -). If multiple wig files need to be assigned,
-                        please use spaces to separate the wig files. For
+                        please use spaces to separate the wig files. For an
                         example, $WIG_PATH_1:frag:1:a:+
                         $WIG_PATH_2:frag:1:a:-.
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
@@ -1144,7 +1132,7 @@ basic arguments:
                         $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use spaces to separate
-                        them. For example, 1_2 2_2 3_3. It means that
+                        them. For an example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
@@ -1281,7 +1269,7 @@ which have coverage significant decrease.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic terminator [-h] [--project_path [PROJECT_PATH]] --fasta_files
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic terminator [-h] --project_path PROJECT_PATH --fasta_files
                             FASTA_FILES [FASTA_FILES ...] --annotation_files
                             ANNOTATION_FILES [ANNOTATION_FILES ...]
                             --transcript_files TRANSCRIPT_FILES
@@ -1316,9 +1304,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of the genome fasta files.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -1331,7 +1318,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If the fragmented (or conventional) libraries can be
@@ -1339,7 +1326,7 @@ basic arguments:
                         library. The format is: wig_file_path:fragmented(frag)
                         :condition_id(integer):replicate_id(alphabet):strand(+
                         or -). If multiple wig files need to be assigned,
-                        please use spaces to separate the wig files. For
+                        please use spaces to separate the wig files. For an
                         example, $WIG_PATH_1:frag:1:a:+
                         $WIG_PATH_2:frag:1:a:-.
   --tex_notex TEX_NOTEX, -te TEX_NOTEX
@@ -1355,7 +1342,7 @@ basic arguments:
                         $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use spaces to separate
-                        them. For example, 1_2 2_2 3_3. It means that
+                        them. For an example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
@@ -1444,7 +1431,7 @@ additional arguments:
                         nts.
   --range_u_tail RANGE_U_TAIL, -ru RANGE_U_TAIL
                         The range (nucleotides) for detection of U-tail. For
-                        example, if --range_u_tail is 6 and
+                        an example, if --range_u_tail is 6 and
                         --min_u_tail_length is 3, and there are 3 Us within 6
                         nts, This candidate will be assigned as the terminator
                         which has poly U-tail. Default is 6.
@@ -1530,7 +1517,7 @@ ANNOgesic, please use <code class="docutils literal"><span class="pre">--tss_sou
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">utr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span> <span class="o">--</span><span class="n">annotation_files</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">utr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span> <span class="o">--</span><span class="n">annotation_files</span>
                      <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">tss_files</span>
                      <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">transcript_files</span>
                      <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -1544,9 +1531,8 @@ ANNOgesic, please use <code class="docutils literal"><span class="pre">--tss_sou
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">tss_files</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">t</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -1668,7 +1654,7 @@ Please refer to the section <a class="reference internal" href="#promoter"><span
 </ul>
 <p>There are some filters which can improve the prediction. The user can assign the information to remove false positive.
 If the information is not assigned to be a filter, it still can input to the module. Then, the information will
-be shown in the output files, but this information is not considered as a filter. For example, if terminator association
+be shown in the output files, but this information is not considered as a filter. For an example, if terminator association
 is not assigned to be a filter, the user still can specify the path of terminator gff files. The associated terminators
 will be shown in output gff files and tables, but the sRNA candidates which are not associated with terminators will
 still be included. Following is the filter names with the required files and tools.</p>
@@ -1698,7 +1684,7 @@ this candidate will be included to the result without considering other filters.
 <p><strong>Required files:</strong></p>
 <blockquote>
 <div><strong>sRNA database:</strong> Such as <a class="reference external" href="http://www.bac-srna.org/BSRD/index.jsp">BSRD</a>.
-Format of the header should be <code class="docutils literal"><span class="pre">$ID|$GENOME|$SRNANAME</span></code>. For example,
+Format of the header should be <code class="docutils literal"><span class="pre">$ID|$GENOME|$SRNANAME</span></code>. For an example,
 <code class="docutils literal"><span class="pre">srn_4840|S._aureus_NCTC8325|RsaOV</span></code> The ID is srn_4840,
 the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
 If the format of the header is not correct, an error or non-sense results will occur.
@@ -1736,8 +1722,7 @@ this candidates will be removed.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic srna [-h] [--project_path [PROJECT_PATH]]
-                      [--utr_derived_srna]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic srna [-h] --project_path PROJECT_PATH [--utr_derived_srna]
                       [--filter_info FILTER_INFO [FILTER_INFO ...]]
                       --transcript_files TRANSCRIPT_FILES
                       [TRANSCRIPT_FILES ...] --annotation_files
@@ -1798,9 +1783,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --utr_derived_srna, -u
                         The function is for detecting UTR-derived sRNA.
                         Default is False.
@@ -1876,7 +1860,7 @@ basic arguments:
                         If &quot;blast_srna&quot; is included in --filter_info, please
                         assign the path of sRNA database with proper header.
                         Format of the header should be $ID|$GENOME|$NAME For
-                        example of the proper header, please check
+                        an example of the proper header, please check
                         https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
                         abase/sRNA_database_BSRD.fa
   --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
@@ -1889,7 +1873,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If fragmented (or conventional) libraries can be
@@ -1898,7 +1882,7 @@ basic arguments:
                         d(frag):condition_id(integer):replicate_id(alphabet):s
                         trand(+ or -). If multiple wig files need to be
                         assigned, please use spaces to separate the wig files.
-                        For example, $WIG_PATH_1:frag:1:a:+
+                        For an example, $WIG_PATH_1:frag:1:a:+
                         $WIG_PATH_2:frag:1:a:-.
   --tex_notex TEX_NOTEX, -te TEX_NOTEX
                         If TEX+/- libraries is assigned, this value is that a
@@ -1911,8 +1895,8 @@ basic arguments:
                         The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                         If different --replicate_tex values need to be
                         assigned to different conditions, please use spaces to
-                        separate them. For example, 1_2 2_2 3_3. It means that
-                        --replicate_tex is 2 in number 1 and number 2
+                        separate them. For an example, 1_2 2_2 3_3. It means
+                        that --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
@@ -2136,11 +2120,11 @@ additional arguments:
                         If --promoter_tables is provided, the information of
                         promoter can be use for ranking sRNA candidates as
                         well. The ranking score is --ranking_time_promoter *
-                        average coverage. For example, a sRNA candidate which
-                        is associated with promoter and its average coverage
-                        is 10. If --ranking_time_promoter is 2, the ranking
-                        score will be 20 (2*10). For the candidate which are
-                        not associated with promoter, the
+                        average coverage. For an example, a sRNA candidate
+                        which is associated with promoter and its average
+                        coverage is 10. If --ranking_time_promoter is 2, the
+                        ranking score will be 20 (2*10). For the candidate
+                        which are not associated with promoter, the
                         --ranking_time_promoter will be 1. Therefore,
                         --ranking_time_promoter can not be smaller than 1.
                         Default is 2.
@@ -2255,9 +2239,9 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic sorf [-h] [--project_path [PROJECT_PATH]]
-                      [--utr_derived_sorf] --fasta_files FASTA_FILES
-                      [FASTA_FILES ...] --transcript_files TRANSCRIPT_FILES
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic sorf [-h] --project_path PROJECT_PATH [--utr_derived_sorf]
+                      --fasta_files FASTA_FILES [FASTA_FILES ...]
+                      --transcript_files TRANSCRIPT_FILES
                       [TRANSCRIPT_FILES ...] --annotation_files
                       ANNOTATION_FILES [ANNOTATION_FILES ...]
                       [--tss_files TSS_FILES [TSS_FILES ...]]
@@ -2288,9 +2272,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --utr_derived_sorf, -u
                         This function will detect UTR-derived sORF. Default is
                         False.
@@ -2314,7 +2297,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If the fragmented (or conventional) libraries can be
@@ -2322,7 +2305,7 @@ basic arguments:
                         here. The format is: wig_file_path:fragmented(frag):co
                         ndition_id(integer):replicate_id(alphabet):strand(+ or
                         -). If multiple wig files need to be assigned, please
-                        use spaces to separate the wig files. For example,
+                        use spaces to separate the wig files. For an example,
                         $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
   --tex_notex TEX_NOTEX, -te TEX_NOTEX
                         If the TEX+/- libraries is provided, this value is
@@ -2335,8 +2318,8 @@ basic arguments:
                         The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                         If different --replicate_tex values need to be
                         assigned to different conditions, please use spaces to
-                        separate them. For example, 1_2 2_2 3_3. It means that
-                        --replicate_tex is 2 in number 1 and number 2
+                        separate them. For an example, 1_2 2_2 3_3. It means
+                        that --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
                         conditions, just use like all_1 (--replicate_tex is 1
@@ -2495,10 +2478,9 @@ in order to assign the correct format.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic promoter [-h] [--program PROGRAM]
-                          [--project_path [PROJECT_PATH]] --fasta_files
-                          FASTA_FILES [FASTA_FILES ...] --tss_files TSS_FILES
-                          [TSS_FILES ...]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic promoter [-h] [--program PROGRAM] --project_path PROJECT_PATH
+                          --fasta_files FASTA_FILES [FASTA_FILES ...]
+                          --tss_files TSS_FILES [TSS_FILES ...]
                           [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
                           [--num_motifs NUM_MOTIFS]
                           [--nt_before_tss NT_BEFORE_TSS]
@@ -2516,9 +2498,8 @@ basic arguments:
   --program PROGRAM, -p PROGRAM
                         Please assign the program -- meme or glam2 or both.
                         Default is both
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                         Paths of genome fasta files.
   --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
@@ -2527,7 +2508,7 @@ basic arguments:
                         The length for motif detection. For detecting a range
                         of length, please insert &quot;-&quot; between two values.
                         Moreover, if multiple motif length need to be
-                        assigned, please use spaces to separate them. For
+                        assigned, please use spaces to separate them. For an
                         example, 50 2-10. It means that the length of motif
                         for detection is 50 and within 2 to 10. The number
                         should be less or equal than --nt_before_TSS. Default
@@ -2563,7 +2544,7 @@ additional arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         If --tss_source is False, please assign the paths of
@@ -2618,12 +2599,11 @@ sub-operons.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">operon</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span> <span class="o">--</span><span class="n">tss_files</span>
-                        <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">annotation_files</span>
-                        <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
-                        <span class="o">--</span><span class="n">transcript_files</span> <span class="n">TRANSCRIPT_FILES</span>
-                        <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">utr5_files</span> <span class="n">UTR5_FILES</span>
-                        <span class="p">[</span><span class="n">UTR5_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">utr3_files</span> <span class="n">UTR3_FILES</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">operon</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span> <span class="o">--</span><span class="n">tss_files</span> <span class="n">TSS_FILES</span>
+                        <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span>
+                        <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">transcript_files</span>
+                        <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">utr5_files</span>
+                        <span class="n">UTR5_FILES</span> <span class="p">[</span><span class="n">UTR5_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">utr3_files</span> <span class="n">UTR3_FILES</span>
                         <span class="p">[</span><span class="n">UTR3_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="p">[</span><span class="o">--</span><span class="n">terminator_files</span> <span class="n">TERMINATOR_FILES</span> <span class="p">[</span><span class="n">TERMINATOR_FILES</span> <span class="o">...</span><span class="p">]]</span>
                         <span class="p">[</span><span class="o">--</span><span class="n">tss_fuzzy</span> <span class="n">TSS_FUZZY</span><span class="p">]</span>
@@ -2634,9 +2614,8 @@ sub-operons.</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">tss_files</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">t</span> <span class="n">TSS_FILES</span> <span class="p">[</span><span class="n">TSS_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">TSS</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -2707,7 +2686,7 @@ For generating testrealign.x, please refer to <a class="reference internal" href
 <p><strong>Fasta files of reads or BAM files:</strong> If you want to use BAM files directly, they should be
 mapped by <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">Segemehl</a> with <code class="docutils literal"><span class="pre">--splits</span></code>.
 The input format is <code class="docutils literal"><span class="pre">$SET_NAME:$READ1,$READ2,...</span></code> or <code class="docutils literal"><span class="pre">$SET_NAME:$BAM1,$BAM2,...</span></code>.
-For example, <code class="docutils literal"><span class="pre">set1:read1.fa,read2.fa</span></code> means these two fasta files need to be computed together.
+For an example, <code class="docutils literal"><span class="pre">set1:read1.fa,read2.fa</span></code> means these two fasta files need to be computed together.
 If your BAM files are generated by mapping reads on multiple reference genomes,
 <a class="reference external" href="http://www.bioinf.uni-leipzig.de/Software/segemehl/">testrealign.x</a> may not be able to
 handle them.</p>
@@ -2716,7 +2695,7 @@ handle them.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic circrna [-h] --project_path PROJECT_PATH
                          [--read_files READ_FILES [READ_FILES ...]]
                          [--bam_files BAM_FILES [BAM_FILES ...]] --fasta_files
                          FASTA_FILES [FASTA_FILES ...] --annotation_files
@@ -2733,9 +2712,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
                         If this argument is given, ANNOgesic will map the
                         reads via segemehl (with -S). BE CAREFUL, this
@@ -2743,14 +2721,14 @@ basic arguments:
                         map the reads. If some specific functions of segemehl
                         need to be implemented, please directly run segemehl
                         (MUST run with -S). please assign the fasta files. The
-                        input format is $SET_NAME:$READ1,$READ2,... For
+                        input format is $SET_NAME:$READ1,$READ2,... For an
                         example, set1:read1.fa,read2.fa means these two fasta
                         files need to be compute together. .bz2 and .gz
                         compressed fasta files can be accepted as well.
   --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
                         You can want assign the paths of Bam files to skip
                         mapping. The input format is $SET_NAME:$BAM1,$BAM2,...
-                        For example, set1:bam1.bam,bam2.bam means these two
+                        For an example, set1:bam1.bam,bam2.bam means these two
                         bam files need to be compute together. BE CAREFUL, the
                         bam files must be generated via segemehl with -S.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -2818,7 +2796,7 @@ Based on this information, we can know the details of the specific circular RNA.
 <div class="section" id="go-term-go-term-retrieving">
 <span id="go-term"></span><h2>go_term (GO term retrieving)<a class="headerlink" href="#go-term-go-term-retrieving" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">go_term</span></code> can retrieve the information of Gene Ontology from Uniprot.
-Some analyses of Go terms can be done as well.</p>
+Some analyses of GO terms can be done as well.</p>
 <ul class="simple">
 <li><strong>Required files</strong></li>
 </ul>
@@ -2833,9 +2811,8 @@ Some analyses of Go terms can be done as well.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">go_term</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
-                         <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span>
-                         <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">go_term</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span> <span class="o">--</span><span class="n">annotation_files</span>
+                         <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
                          <span class="p">[</span><span class="o">--</span><span class="n">transcript_files</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]]</span>
                          <span class="o">--</span><span class="n">uniprot_id</span> <span class="n">UNIPROT_ID</span> <span class="o">--</span><span class="n">go_obo</span> <span class="n">GO_OBO</span> <span class="o">--</span><span class="n">goslim_obo</span>
                          <span class="n">GOSLIM_OBO</span>
@@ -2844,9 +2821,8 @@ Some analyses of Go terms can be done as well.</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">transcript_files</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">a</span> <span class="n">TRANSCRIPT_FILES</span> <span class="p">[</span><span class="n">TRANSCRIPT_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -2864,17 +2840,17 @@ Some analyses of Go terms can be done as well.</p>
 <ul class="simple">
 <li><strong>Output files</strong></li>
 </ul>
-<p>Output files are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/Go_terms</span></code>. If gff files of the transcript are assigned,
-two sub-folders will be generated. Results of the expressed CDSs are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/Go_term/expressed_CDSs</span></code> and
-results of all CDSs are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/Go_term/all_CDSs</span></code>.</p>
-<p><strong>Go_term_results:</strong> Stores tables of the Go terms information. The meaning of each column is as following:</p>
+<p>Output files are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/GO_terms</span></code>. If gff files of the transcript are assigned,
+two sub-folders will be generated. Results of the expressed genes are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/GO_term/expressed_CDSs</span></code> and
+results of all CDSs are stored in <code class="docutils literal"><span class="pre">ANNOgesic/output/GO_term/all_CDSs</span></code>.</p>
+<p><strong>GO_term_results:</strong> Stores tables of the GO terms information. The meaning of each column is as following:</p>
 <blockquote>
 <div><p><strong>Genome:</strong> Genome name.</p>
-<p><strong>Strand:</strong> Strand of the CDS.</p>
+<p><strong>Strand:</strong> Strand of the gene.</p>
 <p><strong>Start:</strong> Starting point of this CDS.</p>
 <p><strong>End:</strong> End point of this CDS.</p>
 <p><strong>Protein_id</strong> Protein ID of this CDS.</p>
-<p><strong>Go_term</strong> Go term of This CDS.</p>
+<p><strong>GO_term</strong> GO term of This CDS.</p>
 </div></blockquote>
 <p><strong>statistics:</strong> Stores statistic files and figures.</p>
 <blockquote>
@@ -2903,7 +2879,7 @@ programs. <code class="docutils literal"><span class="pre">srna_target</span></c
 <ul class="simple">
 <li>Arguments</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic srna_target [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic srna_target [-h] --project_path PROJECT_PATH
                              --annotation_files ANNOTATION_FILES
                              [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                              [FASTA_FILES ...] --srna_files SRNA_FILES
@@ -2934,9 +2910,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         Paths of the genome annotation gff files.
   --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -2947,7 +2922,7 @@ basic arguments:
                         Please assign the query sRNA. The input format is
                         $GENOME:$START:$END:$STRAND. If multiple sRNAs need to
                         be assigned, please use spaces to separate them. For
-                        example, NC_007795.1:200:534:+
+                        an example, NC_007795.1:200:534:+
                         NC_007795.1:6767:6900:-. If you want to detect all
                         sRNAs in gff file, please assign &quot;all&quot;. Default is
                         all.
@@ -3076,7 +3051,7 @@ the supported literature of the protein-protein interaction networks.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic ppi_network [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic ppi_network [-h] --project_path PROJECT_PATH
                              --annotation_files ANNOTATION_FILES
                              [ANNOTATION_FILES ...] --species_string
                              SPECIES_STRING --query_strains QUERY_STRAINS
@@ -3088,9 +3063,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                         Paths of the genome annotation gff files. BE CAREFUL:
                         The gff files MUST have proper locus_tag item in the
@@ -3105,8 +3079,8 @@ basic arguments:
                         retrieve the data from STRING and Pubmed, The strain
                         name must be assigned. If the query strain is not
                         available in database, you can assign the close strain
-                        of your query strain. For example, the query strain is
-                        Staphylococcus aureus HG003, but there is no
+                        of your query strain. For an example, the query strain
+                        is Staphylococcus aureus HG003, but there is no
                         Staphylococcus aureus HG003 in STRING database.
                         Therefore, Staphylococcus aureus NCTC 8325 (close
                         strain) can be used as reference. The input format can
@@ -3136,7 +3110,7 @@ basic arguments:
                         Please assign the query protein here. The format is
                         $GENOME_NAME_OF_GFF:$START_POINT:$END_POINT:$STRAND.
                         If multiple proteins need to be assigned, please use
-                        spaces to separate them. For example,
+                        spaces to separate them. For an example,
                         Staphylococcus_aureus_HG003:345:456:+
                         Staphylococcus_aureus_HG003:2000:3211:-. For computing
                         all protein, just type &quot;all&quot;. Default is all.
@@ -3177,7 +3151,7 @@ Color is the best score of the supported literature of the interactions.</p>
 </div>
 <div class="section" id="localization-subcellular-localization-prediction">
 <span id="subcellular-localization"></span><h2>localization (subcellular localization prediction)<a class="headerlink" href="#localization-subcellular-localization-prediction" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">localization</span></code> can predict the subcellular localization of CDSs.
+<p><code class="docutils literal"><span class="pre">localization</span></code> can predict the subcellular localization of proteins.
 Some statistics and visualization files are provided as well.</p>
 <ul class="simple">
 <li><strong>Required tools</strong></li>
@@ -3195,7 +3169,7 @@ Some statistics and visualization files are provided as well.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">localization</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">localization</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
                               <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span>
                               <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span> <span class="o">--</span><span class="n">fasta_files</span> <span class="n">FASTA_FILES</span>
                               <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -3209,9 +3183,8 @@ Some statistics and visualization files are provided as well.</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Paths</span> <span class="n">of</span> <span class="n">genome</span> <span class="n">annotation</span> <span class="n">gff</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">fasta_files</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">f</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -3314,7 +3287,7 @@ from our Git repository.</p>
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">riboswitch_thermometer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">riboswitch_thermometer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
                                         <span class="p">[</span><span class="o">--</span><span class="n">program</span> <span class="n">PROGRAM</span><span class="p">]</span>
                                         <span class="p">[</span><span class="o">--</span><span class="n">riboswitch_id_file</span> <span class="n">RIBOSWITCH_ID_FILE</span><span class="p">]</span>
                                         <span class="p">[</span><span class="o">--</span><span class="n">rna_thermometer_id_file</span> <span class="n">RNA_THERMOMETER_ID_FILE</span><span class="p">]</span>
@@ -3339,9 +3312,8 @@ from our Git repository.</p>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">program</span> <span class="n">PROGRAM</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span> <span class="n">PROGRAM</span>
                         <span class="n">Please</span> <span class="n">assign</span> <span class="n">the</span> <span class="n">feature</span> <span class="n">that</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">detect</span><span class="o">.</span> <span class="n">The</span>
                         <span class="n">options</span> <span class="n">can</span> <span class="n">be</span> <span class="s2">&quot;riboswitch&quot;</span><span class="p">,</span> <span class="s2">&quot;thermometer&quot;</span><span class="p">,</span> <span class="s2">&quot;both&quot;</span><span class="o">.</span>
@@ -3350,14 +3322,14 @@ from our Git repository.</p>
                         <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;riboswitch&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span>
                         <span class="n">the</span> <span class="n">file</span> <span class="n">path</span> <span class="n">of</span> <span class="n">riboswitch</span> <span class="n">ID</span> <span class="ow">in</span> <span class="n">Rfam</span><span class="o">.</span> <span class="n">The</span> <span class="n">file</span>
                         <span class="n">should</span> <span class="n">include</span> <span class="n">the</span> <span class="n">Rfam</span> <span class="n">ID</span><span class="p">,</span> <span class="n">riboswitch</span> <span class="n">name</span><span class="p">,</span> <span class="ow">and</span>
-                        <span class="n">Description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">riboswitch</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">please</span>
+                        <span class="n">Description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">riboswitch</span><span class="o">.</span> <span class="n">For</span> <span class="n">an</span> <span class="n">example</span><span class="p">,</span> <span class="n">please</span>
                         <span class="n">check</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Sung</span><span class="o">-</span><span class="n">Huan</span><span class="o">/</span><span class="n">ANNOgesic</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">mast</span>
                         <span class="n">er</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">Rfam_riboswitch_ID</span><span class="o">.</span><span class="n">csv</span>
   <span class="o">--</span><span class="n">rna_thermometer_id_file</span> <span class="n">RNA_THERMOMETER_ID_FILE</span><span class="p">,</span> <span class="o">-</span><span class="n">ti</span> <span class="n">RNA_THERMOMETER_ID_FILE</span>
                         <span class="n">If</span> <span class="o">--</span><span class="n">program</span> <span class="ow">is</span> <span class="s2">&quot;thermometer&quot;</span> <span class="ow">or</span> <span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">please</span> <span class="n">assign</span>
                         <span class="n">the</span> <span class="n">file</span> <span class="n">path</span> <span class="n">of</span> <span class="n">RNA</span> <span class="n">thermometer</span> <span class="n">ID</span> <span class="n">of</span> <span class="n">Rfam</span><span class="o">.</span> <span class="n">The</span> <span class="n">file</span>
                         <span class="n">should</span> <span class="n">include</span> <span class="n">the</span> <span class="n">Rfam</span> <span class="n">ID</span><span class="p">,</span> <span class="n">RNA</span> <span class="n">thermometer</span> <span class="n">name</span> <span class="ow">and</span>
-                        <span class="n">Description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">RNA</span> <span class="n">thermometer</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
+                        <span class="n">Description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">RNA</span> <span class="n">thermometer</span><span class="o">.</span> <span class="n">For</span> <span class="n">an</span> <span class="n">example</span><span class="p">,</span>
                         <span class="n">please</span> <span class="n">check</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Sung</span><span class="o">-</span><span class="n">Huan</span><span class="o">/</span><span class="n">ANNOgesic</span><span class="o">/</span><span class="n">bl</span>
                         <span class="n">ob</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">Rfam_RNA_thermometer_ID</span><span class="o">.</span><span class="n">csv</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -3455,7 +3427,7 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">crispr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span> <span class="o">--</span><span class="n">fasta_files</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">crispr</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span> <span class="o">--</span><span class="n">fasta_files</span>
                         <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="p">[</span><span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]]</span>
                         <span class="p">[</span><span class="o">--</span><span class="n">crt_path</span> <span class="n">CRT_PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">window_size</span> <span class="n">WINDOW_SIZE</span><span class="p">]</span>
@@ -3470,9 +3442,8 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">fasta_files</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">f</span> <span class="n">FASTA_FILES</span> <span class="p">[</span><span class="n">FASTA_FILES</span> <span class="o">...</span><span class="p">]</span>
                         <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">genome</span> <span class="n">fasta</span> <span class="n">files</span><span class="o">.</span>
   <span class="o">--</span><span class="n">annotation_files</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">],</span> <span class="o">-</span><span class="n">g</span> <span class="n">ANNOTATION_FILES</span> <span class="p">[</span><span class="n">ANNOTATION_FILES</span> <span class="o">...</span><span class="p">]</span>
@@ -3535,7 +3506,7 @@ Then <code class="docutils literal"><span class="pre">optimize_tss_ps</span></co
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic optimize_tss_ps [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic optimize_tss_ps [-h] --project_path PROJECT_PATH
                                  [--program PROGRAM] --fasta_files FASTA_FILES
                                  [FASTA_FILES ...] --annotation_files
                                  ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -3562,9 +3533,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --program PROGRAM, -p PROGRAM
                         The feature for optimization. Please assign &quot;TSS&quot; or
                         &quot;Processing_site&quot;. Default is TSS.
@@ -3583,7 +3553,7 @@ basic arguments:
                         manual detected for compare whole genome, please type
                         &quot;all&quot;. The input format is $GENOME:SLENGTH. Multiple
                         genomes can be accepted, please use spaces to separate
-                        them. For example, test.gff contain two genomes (s1
+                        them. For an example, test.gff contain two genomes (s1
                         and s2). s1 was manual checked 100kb and s2 was
                         checked whole genome. The value of this argument will
                         be s1:100000 s2:all. Default setting will compute all
@@ -3594,7 +3564,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                         This value is the minimal number of replicates that a
@@ -3602,7 +3572,7 @@ basic arguments:
                         $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                         --replicate_tex values need to be assigned to
                         different conditions, please use spaces to separate
-                        them. For example, 1_2 2_ 3_3. It means that
+                        them. For an example, 1_2 2_2 3_3. It means that
                         --replicate_tex is 2 in number 1 and number 2
                         conditions. In number 3 condition, --replicate_tex is
                         3. For assigning the same --replicate_tex to all
@@ -3611,7 +3581,7 @@ basic arguments:
   --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                         The output prefixes of all conditions. If multiple
                         conditions need to be assigned, please use spaces to
-                        separate them. For example, prefix_condition1
+                        separate them. For an example, prefix_condition1
                         prefix_condition2.
 
 additional arguments:
@@ -3685,7 +3655,7 @@ The second column is the parameter set. <code class="docutils literal"><span cla
 height reduction; <code class="docutils literal"><span class="pre">fa</span></code> means factor; <code class="docutils literal"><span class="pre">rf</span></code> means factor reduction; <code class="docutils literal"><span class="pre">bh</span></code> indicates
 base height; <code class="docutils literal"><span class="pre">ef</span></code> indicates enrichment factor; <code class="docutils literal"><span class="pre">pf</span></code> means processing factor. About the details
 of parameters, please refer to <a class="reference external" href="http://it.inf.uni-tuebingen.de/?page_id=190">TSSpredator</a>.
-For example, <code class="docutils literal"><span class="pre">he_2.0_rh_1.8_fa_4.4_rf_2.8_bh_0.08_ef_3.0_pf_2.6</span></code> means that height is 2.0,
+For an example, <code class="docutils literal"><span class="pre">he_2.0_rh_1.8_fa_4.4_rf_2.8_bh_0.08_ef_3.0_pf_2.6</span></code> means that height is 2.0,
 height reduction is 1.8, factor is 4.4, factor reduction is 2.8, base height is 0.08,
 enrichment factor is 3.0 and processing factor is 2.6. The third column is
 the number of true positive. The fourth column is true positive rate. The fifth
@@ -3714,7 +3684,7 @@ If comparing <code class="docutils literal"><span class="pre">--main_gff</span><
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic screenshot [-h] [--project_path [PROJECT_PATH]] --fasta_file
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic screenshot [-h] --project_path PROJECT_PATH --fasta_file
                             FASTA_FILE --main_gff MAIN_GFF
                             [--side_gffs SIDE_GFFS [SIDE_GFFS ...]]
                             [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
@@ -3726,9 +3696,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --fasta_file FASTA_FILE, -f FASTA_FILE
                         Path of the genome fasta file.
   --main_gff MAIN_GFF, -mg MAIN_GFF
@@ -3745,7 +3714,7 @@ basic arguments:
                         wig_file_path:TEX+/-(tex or notex):condition_id(intege
                         r):replicate_id(alphabet):strand(+ or -). If multiple
                         wig files need to be assigned, please use spaces to
-                        separate the wig files. For example,
+                        separate the wig files. For an example,
                         $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
   --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                         If the fragmented (or conventional) wig file is
@@ -3753,7 +3722,7 @@ basic arguments:
                         The format is: wig_file_path:fragmented(frag):conditio
                         n_id(integer):replicate_id(alphabet):strand(+ or -).
                         If multiple wig files need to be assigned, please use
-                        spaces to separate the wig files. For example,
+                        spaces to separate the wig files. For an example,
                         $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
   --output_folder OUTPUT_FOLDER, -o OUTPUT_FOLDER
                         Please assign the output folder. It will create a sub-
@@ -3780,14 +3749,14 @@ as following:</p>
 <p><strong>forward:</strong> Folder for storing screenshots of the forward strand.</p>
 <p><strong>reverse:</strong> Folder for storing screenshots of the reverse strand.</p>
 <p>When batch files are executed on IGV, the screenshots will be automatically stored in the folder called <code class="docutils literal"><span class="pre">forward</span></code> and <code class="docutils literal"><span class="pre">reverse</span></code>.
-Format of the filenames will be <code class="docutils literal"><span class="pre">$GENOME:$START-$END.png</span></code>. For example, <code class="docutils literal"><span class="pre">NC_007795:1051529-1051696.png</span></code>
+Format of the filenames will be <code class="docutils literal"><span class="pre">$GENOME:$START-$END.png</span></code>. For an example, <code class="docutils literal"><span class="pre">NC_007795:1051529-1051696.png</span></code>
 means the genome is NC_007795, the feature&#8217;s start point is 1051529 and end point is
 1051696.</p>
 </div>
-<div class="section" id="color-png-color-screenshot">
-<span id="color-png"></span><h2>color_png (color screenshot)<a class="headerlink" href="#color-png-color-screenshot" title="Permalink to this headline">¶</a></h2>
-<p><code class="docutils literal"><span class="pre">color_png</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If numerous samples are included in one figure,
-Tracks will be difficult to check. <code class="docutils literal"><span class="pre">color_png</span></code> can color the tracks based on TEX +/- libraries
+<div class="section" id="colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">
+<span id="color-png"></span><h2>colorize_screenshot_tracks (colorize the tracks of screenshots)<a class="headerlink" href="#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">colorize_screenshot_tracks</span></code> is a following procedure of <code class="docutils literal"><span class="pre">screenshot</span></code>. If numerous samples are included in one figure,
+Tracks will be difficult to check. <code class="docutils literal"><span class="pre">colorize_screenshot_tracks</span></code> can color the tracks based on TEX +/- libraries
 for improving the checking process.</p>
 <ul class="simple">
 <li><strong>Required tools</strong></li>
@@ -3801,18 +3770,18 @@ exist in the folder of <code class="docutils literal"><span class="pre">screensh
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">color_png</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]]</span>
-                           <span class="o">--</span><span class="n">screenshot_folder</span> <span class="n">SCREENSHOT_FOLDER</span>
-                           <span class="o">--</span><span class="n">track_number</span> <span class="n">TRACK_NUMBER</span>
-                           <span class="p">[</span><span class="o">--</span><span class="n">imagemagick_covert_path</span> <span class="n">IMAGEMAGICK_COVERT_PATH</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">annogesic</span> <span class="n">colorize_screenshot_tracks</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span>
+                                            <span class="o">--</span><span class="n">screenshot_folder</span>
+                                            <span class="n">SCREENSHOT_FOLDER</span> <span class="o">--</span><span class="n">track_number</span>
+                                            <span class="n">TRACK_NUMBER</span>
+                                            <span class="p">[</span><span class="o">--</span><span class="n">imagemagick_covert_path</span> <span class="n">IMAGEMAGICK_COVERT_PATH</span><span class="p">]</span>
 
 <span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
 
 <span class="n">basic</span> <span class="n">arguments</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">project_path</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">],</span> <span class="o">-</span><span class="n">pj</span> <span class="p">[</span><span class="n">PROJECT_PATH</span><span class="p">]</span>
-                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span> <span class="n">If</span> <span class="n">none</span> <span class="ow">is</span> <span class="n">given</span><span class="p">,</span> <span class="n">the</span>
-                        <span class="n">current</span> <span class="n">directory</span> <span class="ow">is</span> <span class="n">used</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">project_path</span> <span class="n">PROJECT_PATH</span><span class="p">,</span> <span class="o">-</span><span class="n">pj</span> <span class="n">PROJECT_PATH</span>
+                        <span class="n">Path</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span> <span class="n">folder</span><span class="o">.</span>
   <span class="o">--</span><span class="n">screenshot_folder</span> <span class="n">SCREENSHOT_FOLDER</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span> <span class="n">SCREENSHOT_FOLDER</span>
                         <span class="n">The</span> <span class="n">folder</span> <span class="n">which</span> <span class="n">stores</span> <span class="s2">&quot;screenshots&quot;</span> <span class="p">(</span><span class="n">a</span> <span class="n">folder</span>
                         <span class="n">generated</span> <span class="n">by</span> <span class="n">subcommand</span> <span class="s2">&quot;screenshot&quot;</span><span class="p">)</span><span class="o">.</span>
@@ -3842,7 +3811,7 @@ If transcript gff files can be provided, this module will search the parent tran
 <ul class="simple">
 <li><strong>Arguments</strong></li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic merge_features [-h] [--project_path [PROJECT_PATH]]
+<div class="highlight-default"><div class="highlight"><pre><span></span>usage: annogesic merge_features [-h] --project_path PROJECT_PATH
                                 --output_prefix OUTPUT_PREFIX
                                 [--transcript_file TRANSCRIPT_FILE]
                                 [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
@@ -3853,9 +3822,8 @@ optional arguments:
   -h, --help            show this help message and exit
 
 basic arguments:
-  --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                        Path of the project folder. If none is given, the
-                        current directory is used.
+  --project_path PROJECT_PATH, -pj PROJECT_PATH
+                        Path of the project folder.
   --output_prefix OUTPUT_PREFIX, -op OUTPUT_PREFIX
                         Please assign the prefix name of output gff file. The
                         filename will be $OUTPUT_PREFIX_merge_features.gff.
@@ -3930,7 +3898,7 @@ gff file shows the parent transcript.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.5.15',
+            VERSION:'0.5.16',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

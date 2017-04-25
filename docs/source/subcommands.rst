@@ -18,7 +18,7 @@ The genome filenames should be the same as the annotation file designation, i.e.
 ``NC_007795.fa, NC_007795.gff, NC_007795.ptt, NC_007795.rnt, NC_007705.gbk``.
 
 For all input gff files for ANNOgesic please use following format:
-``$GENOME_$FEATURE.gff``. For example, ``NC_007795_TSS.gff, NC_007795_transcript.gff``.
+``$GENOME_$FEATURE.gff``. For an example, ``NC_007795_TSS.gff, NC_007795_transcript.gff``.
 
 Possible feature names are:
 
@@ -95,8 +95,8 @@ The folders are following:
 
 **input:** Stores all input files.
 
-	**BAMs:** For ``.bam`` files. ``BAMs_map_closed_genomes`` 
-	is for the ``.bam`` files which are mapped on closed genomes of our real query genomes.
+	**BAMs:** For ``.bam`` files. ``BAMs_map_related_genomes`` 
+	is for the ``.bam`` files which are mapped on closely related genomes of our real query genomes.
 	``BAMs_map_query_genomes`` is for the ``.bam`` files which are mapped on our query genomes.
 
 	**databases:** For all databases.
@@ -108,7 +108,7 @@ The folders are following:
 	**manual_processing_sites:** It is similar to ``manual_TSS``, but for 
 	processing sites.
 
-	**mutation_table:** If the mutation table between the closed genomes and 
+	**mutation_table:** If the mutation table between the closely ralated genomes and 
 	query genomes is provided, please put the file here. Please check 
 	the section of :ref:`update_genome_fasta` for the format of 
 	mutation table.
@@ -151,7 +151,7 @@ get_input_files (download required files)
 -----------------------------------------
 
 ``get_input_files`` is the subcommand for downloading required files (fasta, annotation files) from NCBI. 
-Therefore, the web address of the reference genome in NCBI needs to be assigned. For example,
+Therefore, the web address of the reference genome in NCBI needs to be assigned. For an example,
 ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000013425.1_ASM1342v1
 Then, the user can assign the file type for download.
 
@@ -165,7 +165,7 @@ Then, the user can assign the file type for download.
 
 ::
 
-    usage: annogesic get_input_files [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic get_input_files [-h] --project_path PROJECT_PATH
                                      [--ftp_path FTP_PATH] [--ref_fasta]
                                      [--ref_gff] [--ref_gbk] [--ref_ptt]
                                      [--ref_rnt] [--convert_embl]
@@ -174,12 +174,11 @@ Then, the user can assign the file type for download.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --ftp_path FTP_PATH, -F FTP_PATH
-                            Path of NCBI FTP where can download the required
-                            files.
+                            Path of folder on the NCBI FTP server where the
+                            required files are located.
       --ref_fasta, -f       Download fasta files of the reference. Default is
                             False.
       --ref_gff, -g         Download gff files of the reference. Default is False.
@@ -208,15 +207,15 @@ update_genome_fasta (update reference genome fasta file)
 --------------------------------------------------------
 
 If fasta files of the query genomes do not exist, ``update_genome_fasta`` can 
-update fasta files from the closed genomes of the real query genomes to our real query ones 
+update fasta files from the closely related genomes of the real query genomes to our real query ones 
 via searching the mutations. 
 Therefore, a table of mutation information is required. For the format of the table, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 Titles of the columns are presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
 the user can type ``-`` to represent them. The information of ``Target_ids`` 
-(the query genome names), ``Reference_ids``, (the closed genome names) 
-``Reference_nts`` (the nucleotides of the closed genomes), ``Positions``, ``Target_nts`` 
+(the query genome names), ``Reference_ids``, (the names of closely related genomes) 
+``Reference_nts`` (the nucleotides of the closely related genomes), ``Positions``, ``Target_nts`` 
 (the nucleotides of the query genomes) are required. The other columns can be blank. 
 Please use ``tab`` to separate all columns including blank ones.
 
@@ -227,44 +226,37 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
 
 **Fasta files of reference genome**
 
-**Mutation table:** Contains the information of mutations between closed and query genomes.
-For example, please check `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
+**Mutation table:** Contains the information of mutations between related and query genomes.
+For an example, please check `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 
 - **Arguments**
 
 ::
 
-    usage: annogesic update_genome_fasta [-h] [--project_path [PROJECT_PATH]]
-                                         --closed_fasta_files CLOSED_FASTA_FILES
-                                         [CLOSED_FASTA_FILES ...] --mutation_table
-                                         MUTATION_TABLE --output_format
-                                         OUTPUT_FORMAT [OUTPUT_FORMAT ...]
+    usage: annogesic update_genome_fasta [-h] --project_path PROJECT_PATH
+                                         --related_fasta_files RELATED_FASTA_FILES
+                                         [RELATED_FASTA_FILES ...]
+                                         --mutation_table MUTATION_TABLE
+                                         [--combine_to_one_fasta]
     
     optional arguments:
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
-      --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -c CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
-                            Path of the closed fasta files.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
+      --related_fasta_files RELATED_FASTA_FILES [RELATED_FASTA_FILES ...], -c RELATED_FASTA_FILES [RELATED_FASTA_FILES ...]
+                            Path of the genome fasta files of the closely related
+                            species.
       --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                             Path of the mutation table which stores the mutation
-                            information between the query genome and closed genome
-                            of the query one. For example, please check
+                            information between the query genome and genome of the
+                            closely related species. For an example check
                             https://github.com/Sung-
                             Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
-      --output_format OUTPUT_FORMAT [OUTPUT_FORMAT ...], -o OUTPUT_FORMAT [OUTPUT_FORMAT ...]
-                            Please assign the filename of output file and the
-                            genome names (listed in Target_id of mutation table)
-                            which should be included in the specific output file.
-                            For example: $FILE_PATH1:genome1,genome2
-                            $FILE_PATH2:genome3. FILE_PATH1 is a output fasta file
-                            which includes the information of genome1 and genome2
-                            (import multi-genomes to one file should be separated
-                            by ",".) And FILE_PATH2 is for genome3. The multiple
-                            output files are splitted by spaces.
+      --combine_to_one_fasta, -cm
+                            For combining all updated sequences in
+                            --mutation_table to one fasta file. Default is False.
 
 - **Output files**
 
@@ -275,9 +267,9 @@ For example, please check `mutation table <https://raw.githubusercontent.com/Sun
 annotation_transfer (annotation transfer)
 -----------------------------------------
 
-``annotation transfer`` is the subcommand for transferring the annotation from the closed genomes 
+``annotation transfer`` is the subcommand for transferring the annotation from the closely related genomes 
 to the real query genomes. To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
-is integrated in ANNOgesic. The higher similarity between closed genomes and query genomes are, 
+is integrated in ANNOgesic. The higher similarity between closely related genomes and query genomes are, 
 the more precise the performance is. Before running ``annotation transfer``, 
 please run ``source $PAGIT_HOME/sourceme.pagit`` first. it will modify the path for executing RATT. 
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.
@@ -288,9 +280,9 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 
 - **Required files**
 
-**Annotation files of the closed genomes**: Genbank/embl files of the closed genomes.
+**Annotation files of the closely related genomes**: Genbank/embl files of the closely related genomes.
 
-**Fasta files of the closed genomes**
+**Fasta files of the closely related genomes**
 
 **Fasta files of the updated genomes**
 
@@ -298,13 +290,13 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 
 ::
 
-    usage: annogesic annotation_transfer [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic annotation_transfer [-h] --project_path PROJECT_PATH
                                          --compare_pair COMPARE_PAIR
                                          [COMPARE_PAIR ...]
-                                         [--closed_embl_files CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...]]
-                                         [--closed_gbk_files CLOSED_GBK_FILES [CLOSED_GBK_FILES ...]]
-                                         --closed_fasta_files CLOSED_FASTA_FILES
-                                         [CLOSED_FASTA_FILES ...]
+                                         [--related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]]
+                                         [--related_gbk_files RELATED_GBK_FILES [RELATED_GBK_FILES ...]]
+                                         --related_fasta_files RELATED_FASTA_FILES
+                                         [RELATED_FASTA_FILES ...]
                                          --updated_fasta_files UPDATED_FASTA_FILES
                                          [UPDATED_FASTA_FILES ...]
                                          [--ratt_path RATT_PATH] --element ELEMENT
@@ -315,24 +307,23 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
-                            Please assign the name of genome pairs, ex.
-                            NC_007795:NEW_NC_007795. The closed genome is
+                            Please assign the name of genome pairs, e.g.
+                            NC_007795:NEW_NC_007795. The related genome is
                             NC_007795 and the target genome is NEW_NC_007795. The
                             assigned names are the headers of the fasta file
                             (start with ">"), not the filename of fasta file. If
                             multiple genomes need to be assigned, please use
                             spaces to separate the genomes.
-      --closed_embl_files CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...], -ce CLOSED_EMBL_FILES [CLOSED_EMBL_FILES ...]
-                            The paths of embl files.
-      --closed_gbk_files CLOSED_GBK_FILES [CLOSED_GBK_FILES ...], -cg CLOSED_GBK_FILES [CLOSED_GBK_FILES ...]
-                            If you have no embl file, you can assign genbank
-                            files. The genbank can be ended by .gbk, .gbff or .gb
-      --closed_fasta_files CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...], -cf CLOSED_FASTA_FILES [CLOSED_FASTA_FILES ...]
-                            The paths of closed fasta files.
+      --related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...], -ce RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]
+                            The paths of the embl files of the related species.
+      --related_gbk_files RELATED_GBK_FILES [RELATED_GBK_FILES ...], -cg RELATED_GBK_FILES [RELATED_GBK_FILES ...]
+                            The paths of the genbank files of the related species.
+                            The genbank can be ended by .gbk, .gbff or .gb
+      --related_fasta_files RELATED_FASTA_FILES [RELATED_FASTA_FILES ...], -cf RELATED_FASTA_FILES [RELATED_FASTA_FILES ...]
+                            The paths of the fasta files of the related species.
       --updated_fasta_files UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...], -uf UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...]
                             The paths of updated fasta files.
     
@@ -379,19 +370,19 @@ query genomes if it is necessary.
 
 **BAM files:** BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
 For assigning the files, please follow the format -- ``$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...``. 
-For example, the user has four bam files and these files are for two different conditions. Then the input will be 
+For an example, the user has four bam files and these files are for two different conditions. Then the input will be 
 ``set1:2:sample1.bam,sample2.bam set2:2:sample3.bam,sample4.bam``. ``$SAMPLE_NUM`` in 
 this example is 2 which means there are two samples in set1 and set2. 
 ``$SAMPLE_NUM`` will influence ``--dp4_cutoff``, ``--indel_fraction``, and 
 ``--read_depth_range`` which will be used to filter the mutations.
 
-**Fasta files of the closed genomes** or **Fasta files of the query genomes**
+**Fasta files of the closely related genomes** or **Fasta files of the query genomes**
 
 - **Arguments**
 
 ::
 
-    usage: annogesic snp [-h] [--project_path [PROJECT_PATH]] --bam_type BAM_TYPE
+    usage: annogesic snp [-h] --project_path PROJECT_PATH --bam_type BAM_TYPE
                          --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
                          [FASTA_FILES ...] --bam_files BAM_FILES [BAM_FILES ...]
                          [--samtools_path SAMTOOLS_PATH]
@@ -405,23 +396,22 @@ this example is 2 which means there are two samples in set1 and set2.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --bam_type BAM_TYPE, -t BAM_TYPE
                             Please assign the type of BAM. If the BAM files are
-                            produced by mapping to the closed genome of the query
-                            genome, please key in "closed_genome". the mutations
-                            between the closed genome and query genome can be
+                            produced by mapping to a related genome of the query
+                            genome, please key in "related_genome". the mutations
+                            between the related genome and the query genome can be
                             detected for generating sequence of the query genome.
-                            If the BAM files are produced by mapping to exact
-                            query genome, please key in "query_genome". The exact
+                            If the BAM files are produced by mapping to query
+                            genome, please use the key "query_genome". By that
                             mutations of query genome can be detected.
       --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
                             Please assign the program for detecting SNP of
                             transcript: "with_BAQ", "without_BAQ", "extend_BAQ".
                             Multi-programs can be executed at the same time
-                            (separated by spaces). For example: with_BAQ
+                            (separated by spaces). For an example: with_BAQ
                             without_BAQ extend_BAQ.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
@@ -432,7 +422,7 @@ this example is 2 which means there are two samples in set1 and set2.
                             (samples/replicates) should be considered as the given
                             number of samples. $SAMPLE_NUM also influences
                             --dp4_cutoff, --indel_fraction, and
-                            --read_depth_range.For example, if sample1.bam,
+                            --read_depth_range.For an example, if sample1.bam,
                             sample2.bam, and sample3.bam are three
                             samples/replicates of one condition. You can assign
                             set1:2:sample1.bam,sample2.bam,sample3.bam. This means
@@ -455,7 +445,7 @@ this example is 2 which means there are two samples in set1 and set2.
                             is $MIN,$MAX. This value can be assigned by different
                             types: 1. real number ("r"), 2. times of $SAMPLE_NUM
                             (assigned by --bam_files) ("n") or 3. times of the
-                            average read depth ("a"). For example, n_10,a_3 is
+                            average read depth ("a"). For an example, n_10,a_3 is
                             assigned, the average read depth is 70 and the
                             $SAMPLE_NUM is 4. Then, n_10 will be 40 (10 *
                             $SAMPLE_NUM) and a_3 will be 140 (average read depth *
@@ -486,21 +476,21 @@ this example is 2 which means there are two samples in set1 and set2.
                             or 3. times of average read depth ("a"). The second
                             value is for (number 3 + number 4) / (number 1 +
                             number 2 + number 3 + number 4). These two values are
-                            split by commas. For example, n_10,0.8 is assigned and
-                            the average read depth is 70 and $SAMPLE_NUM is 4. It
-                            means that the sum of number 3 and number 4 should be
-                            higher than 40 (10 * $SAMPLE_NUM), and the fraction --
-                            (number 3 + number 4) / (number 1 + number 2 + number
-                            3 + number 4) should be higher than 0.8. Based on the
-                            same example, if r_10,0.8 is assigned, the sum of read
-                            depth of number 3 and number 4 will become exact 10
-                            reads. Default is n_10,0.8.
+                            split by commas. For an example, n_10,0.8 is assigned
+                            and the average read depth is 70 and $SAMPLE_NUM is 4.
+                            It means that the sum of number 3 and number 4 should
+                            be higher than 40 (10 * $SAMPLE_NUM), and the fraction
+                            -- (number 3 + number 4) / (number 1 + number 2 +
+                            number 3 + number 4) should be higher than 0.8. Based
+                            on the same example, if r_10,0.8 is assigned, the sum
+                            of read depth of number 3 and number 4 will become
+                            exact 10 reads. Default is n_10,0.8.
       --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
                             This value is the minimum IDV and IMF which supports
                             insertion of deletion. The minimum IDV can be assigned
                             by different types: 1. real number ("r"), 2. times of
                             $SAMPLE_NUM (assigned by --bam_files) ("n") or 3.
-                            times of the average read depth ("a"). For example,
+                            times of the average read depth ("a"). For an example,
                             n_10,0.8 is assigned, the average read depth is 70 and
                             $SAMPLE_NUM is 4. It means that IDV should be higher
                             than 40 (10 * $SAMPLE_NUM), and IMF should be higher
@@ -511,15 +501,15 @@ this example is 2 which means there are two samples in set1 and set2.
       --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                             This function can set more filters to improve the
                             results. Please assign 1. the tag, 2. bigger ("b") or
-                            smaller ("s") and 3. value for filters. For example,
-                            "RPB_b0.1,MQ0F_s0" means that RPB should be bigger
-                            than 0.1 and MQ0F should be smaller than 0. Default is
-                            RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
+                            smaller ("s") and 3. value for filters. For an
+                            example, "RPB_b0.1,MQ0F_s0" means that RPB should be
+                            bigger than 0.1 and MQ0F should be smaller than 0.
+                            Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
 
 - **Output files**
 
-If ``bam_type`` is ``closed_genome``, 
-the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_closed_and_updated_references``. 
+If ``bam_type`` is ``related_genome``, 
+the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_related_and_query_references``. 
 If ``bam_type`` is ``query_genome``, the results will be stored in ``$ANNOgesic/output/SNP_calling/mutations_of_query_genomes``.
 
 The output folders and results are following:
@@ -604,9 +594,9 @@ For the transcripts, please check the section :ref:`transcript`.
 
 ::
 
-    usage: annogesic tss_ps [-h] [--project_path [PROJECT_PATH]]
-                            [--program PROGRAM] --fasta_files FASTA_FILES
-                            [FASTA_FILES ...] --annotation_files ANNOTATION_FILES
+    usage: annogesic tss_ps [-h] --project_path PROJECT_PATH [--program PROGRAM]
+                            --fasta_files FASTA_FILES [FASTA_FILES ...]
+                            --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --tex_notex_libs TEX_NOTEX_LIBS
                             [TEX_NOTEX_LIBS ...]
                             [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
@@ -636,9 +626,8 @@ For the transcripts, please check the section :ref:`transcript`.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --program PROGRAM, -p PROGRAM
                             Which feature you want to predict, please assign "TSS"
                             or "processing_site". Default is TSS.
@@ -651,7 +640,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
@@ -659,7 +648,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For example, 1_2 2_2 3_3. It means that
+                            them. For an example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
@@ -668,7 +657,7 @@ For the transcripts, please check the section :ref:`transcript`.
       --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefix of all conditions. If multiple
                             conditions need to be assigned, please use spaces to
-                            separate them. For example, prefix_condition1
+                            separate them. For an example, prefix_condition1
                             prefix_condition2.
     
     additional arguments:
@@ -758,7 +747,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             genome length of input genomes. If you want to compare
                             whole genome, please type "all". The input format is
                             $GENOME:SLENGTH. Multiple genomes can be accepted,
-                            please use spaces to separate them. For example,
+                            please use spaces to separate them. For an example,
                             test.gff contain two genomes (s1 and s2). s1 was
                             manual checked 100kb and s2 was checked whole genome.
                             The value of this argument will be s1:100000 s2:all.
@@ -874,7 +863,7 @@ genome annotation gff files are required. There are four options for modificatio
 
 ::
 
-    usage: annogesic transcript [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic transcript [-h] --project_path PROJECT_PATH
                                 [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
                                 [--modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]]
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
@@ -896,9 +885,8 @@ genome annotation gff files are required. There are four options for modificatio
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             If paths of the genome annotation gff files.
       --modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...], -mt MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]
@@ -926,7 +914,7 @@ genome annotation gff files are required. There are four options for modificatio
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented (or conventional) libraries can be
@@ -934,7 +922,7 @@ genome annotation gff files are required. There are four options for modificatio
                             library. The format is: wig_file_path:fragmented(frag)
                             :condition_id(integer):replicate_id(alphabet):strand(+
                             or -). If multiple wig files need to be assigned,
-                            please use spaces to separate the wig files. For
+                            please use spaces to separate the wig files. For an
                             example, $WIG_PATH_1:frag:1:a:+
                             $WIG_PATH_2:frag:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
@@ -944,7 +932,7 @@ genome annotation gff files are required. There are four options for modificatio
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For example, 1_2 2_2 3_3. It means that
+                            them. For an example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
@@ -1104,7 +1092,7 @@ which have coverage significant decrease.
 
 ::
 
-    usage: annogesic terminator [-h] [--project_path [PROJECT_PATH]] --fasta_files
+    usage: annogesic terminator [-h] --project_path PROJECT_PATH --fasta_files
                                 FASTA_FILES [FASTA_FILES ...] --annotation_files
                                 ANNOTATION_FILES [ANNOTATION_FILES ...]
                                 --transcript_files TRANSCRIPT_FILES
@@ -1139,9 +1127,8 @@ which have coverage significant decrease.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -1154,7 +1141,7 @@ which have coverage significant decrease.
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented (or conventional) libraries can be
@@ -1162,7 +1149,7 @@ which have coverage significant decrease.
                             library. The format is: wig_file_path:fragmented(frag)
                             :condition_id(integer):replicate_id(alphabet):strand(+
                             or -). If multiple wig files need to be assigned,
-                            please use spaces to separate the wig files. For
+                            please use spaces to separate the wig files. For an
                             example, $WIG_PATH_1:frag:1:a:+
                             $WIG_PATH_2:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
@@ -1178,7 +1165,7 @@ which have coverage significant decrease.
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For example, 1_2 2_2 3_3. It means that
+                            them. For an example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
@@ -1267,7 +1254,7 @@ which have coverage significant decrease.
                             nts.
       --range_u_tail RANGE_U_TAIL, -ru RANGE_U_TAIL
                             The range (nucleotides) for detection of U-tail. For
-                            example, if --range_u_tail is 6 and
+                            an example, if --range_u_tail is 6 and
                             --min_u_tail_length is 3, and there are 3 Us within 6
                             nts, This candidate will be assigned as the terminator
                             which has poly U-tail. Default is 6.
@@ -1383,7 +1370,7 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
 
 ::
 
-    usage: annogesic utr [-h] [--project_path [PROJECT_PATH]] --annotation_files
+    usage: annogesic utr [-h] --project_path PROJECT_PATH --annotation_files
                          ANNOTATION_FILES [ANNOTATION_FILES ...] --tss_files
                          TSS_FILES [TSS_FILES ...] --transcript_files
                          TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
@@ -1397,9 +1384,8 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
@@ -1517,7 +1503,7 @@ Please refer to the section :ref:`promoter`.
 
 There are some filters which can improve the prediction. The user can assign the information to remove false positive. 
 If the information is not assigned to be a filter, it still can input to the module. Then, the information will 
-be shown in the output files, but this information is not considered as a filter. For example, if terminator association 
+be shown in the output files, but this information is not considered as a filter. For an example, if terminator association 
 is not assigned to be a filter, the user still can specify the path of terminator gff files. The associated terminators 
 will be shown in output gff files and tables, but the sRNA candidates which are not associated with terminators will 
 still be included. Following is the filter names with the required files and tools.
@@ -1550,7 +1536,7 @@ this candidate will be included to the result without considering other filters.
 	**Required files:**
 
 		**sRNA database:** Such as `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_. 
-		Format of the header should be ``$ID|$GENOME|$SRNANAME``. For example, 
+		Format of the header should be ``$ID|$GENOME|$SRNANAME``. For an example, 
 		``srn_4840|S._aureus_NCTC8325|RsaOV`` The ID is srn_4840, 
 		the strain of this sRNA is S._aureus_NCTC8325 and the name of sRNA is RsaOV.
 		If the format of the header is not correct, an error or non-sense results will occur.
@@ -1591,8 +1577,7 @@ this candidates will be removed.
 
 ::
 
-    usage: annogesic srna [-h] [--project_path [PROJECT_PATH]]
-                          [--utr_derived_srna]
+    usage: annogesic srna [-h] --project_path PROJECT_PATH [--utr_derived_srna]
                           [--filter_info FILTER_INFO [FILTER_INFO ...]]
                           --transcript_files TRANSCRIPT_FILES
                           [TRANSCRIPT_FILES ...] --annotation_files
@@ -1653,9 +1638,8 @@ this candidates will be removed.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --utr_derived_srna, -u
                             The function is for detecting UTR-derived sRNA.
                             Default is False.
@@ -1731,7 +1715,7 @@ this candidates will be removed.
                             If "blast_srna" is included in --filter_info, please
                             assign the path of sRNA database with proper header.
                             Format of the header should be $ID|$GENOME|$NAME For
-                            example of the proper header, please check
+                            an example of the proper header, please check
                             https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
                             abase/sRNA_database_BSRD.fa
       --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
@@ -1744,7 +1728,7 @@ this candidates will be removed.
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If fragmented (or conventional) libraries can be
@@ -1753,7 +1737,7 @@ this candidates will be removed.
                             d(frag):condition_id(integer):replicate_id(alphabet):s
                             trand(+ or -). If multiple wig files need to be
                             assigned, please use spaces to separate the wig files.
-                            For example, $WIG_PATH_1:frag:1:a:+
+                            For an example, $WIG_PATH_1:frag:1:a:+
                             $WIG_PATH_2:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If TEX+/- libraries is assigned, this value is that a
@@ -1766,8 +1750,8 @@ this candidates will be removed.
                             The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                             If different --replicate_tex values need to be
                             assigned to different conditions, please use spaces to
-                            separate them. For example, 1_2 2_2 3_3. It means that
-                            --replicate_tex is 2 in number 1 and number 2
+                            separate them. For an example, 1_2 2_2 3_3. It means
+                            that --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
@@ -1991,11 +1975,11 @@ this candidates will be removed.
                             If --promoter_tables is provided, the information of
                             promoter can be use for ranking sRNA candidates as
                             well. The ranking score is --ranking_time_promoter *
-                            average coverage. For example, a sRNA candidate which
-                            is associated with promoter and its average coverage
-                            is 10. If --ranking_time_promoter is 2, the ranking
-                            score will be 20 (2*10). For the candidate which are
-                            not associated with promoter, the
+                            average coverage. For an example, a sRNA candidate
+                            which is associated with promoter and its average
+                            coverage is 10. If --ranking_time_promoter is 2, the
+                            ranking score will be 20 (2*10). For the candidate
+                            which are not associated with promoter, the
                             --ranking_time_promoter will be 1. Therefore,
                             --ranking_time_promoter can not be smaller than 1.
                             Default is 2.
@@ -2161,9 +2145,9 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 
 ::
 
-    usage: annogesic sorf [-h] [--project_path [PROJECT_PATH]]
-                          [--utr_derived_sorf] --fasta_files FASTA_FILES
-                          [FASTA_FILES ...] --transcript_files TRANSCRIPT_FILES
+    usage: annogesic sorf [-h] --project_path PROJECT_PATH [--utr_derived_sorf]
+                          --fasta_files FASTA_FILES [FASTA_FILES ...]
+                          --transcript_files TRANSCRIPT_FILES
                           [TRANSCRIPT_FILES ...] --annotation_files
                           ANNOTATION_FILES [ANNOTATION_FILES ...]
                           [--tss_files TSS_FILES [TSS_FILES ...]]
@@ -2194,9 +2178,8 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --utr_derived_sorf, -u
                             This function will detect UTR-derived sORF. Default is
                             False.
@@ -2220,7 +2203,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented (or conventional) libraries can be
@@ -2228,7 +2211,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             here. The format is: wig_file_path:fragmented(frag):co
                             ndition_id(integer):replicate_id(alphabet):strand(+ or
                             -). If multiple wig files need to be assigned, please
-                            use spaces to separate the wig files. For example,
+                            use spaces to separate the wig files. For an example,
                             $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If the TEX+/- libraries is provided, this value is
@@ -2241,8 +2224,8 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
                             If different --replicate_tex values need to be
                             assigned to different conditions, please use spaces to
-                            separate them. For example, 1_2 2_2 3_3. It means that
-                            --replicate_tex is 2 in number 1 and number 2
+                            separate them. For an example, 1_2 2_2 3_3. It means
+                            that --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
@@ -2432,10 +2415,9 @@ in order to assign the correct format.
 
 ::
 
-    usage: annogesic promoter [-h] [--program PROGRAM]
-                              [--project_path [PROJECT_PATH]] --fasta_files
-                              FASTA_FILES [FASTA_FILES ...] --tss_files TSS_FILES
-                              [TSS_FILES ...]
+    usage: annogesic promoter [-h] [--program PROGRAM] --project_path PROJECT_PATH
+                              --fasta_files FASTA_FILES [FASTA_FILES ...]
+                              --tss_files TSS_FILES [TSS_FILES ...]
                               [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
                               [--num_motifs NUM_MOTIFS]
                               [--nt_before_tss NT_BEFORE_TSS]
@@ -2453,9 +2435,8 @@ in order to assign the correct format.
       --program PROGRAM, -p PROGRAM
                             Please assign the program -- meme or glam2 or both.
                             Default is both
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of genome fasta files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
@@ -2464,7 +2445,7 @@ in order to assign the correct format.
                             The length for motif detection. For detecting a range
                             of length, please insert "-" between two values.
                             Moreover, if multiple motif length need to be
-                            assigned, please use spaces to separate them. For
+                            assigned, please use spaces to separate them. For an
                             example, 50 2-10. It means that the length of motif
                             for detection is 50 and within 2 to 10. The number
                             should be less or equal than --nt_before_TSS. Default
@@ -2500,7 +2481,7 @@ in order to assign the correct format.
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             If --tss_source is False, please assign the paths of
@@ -2568,12 +2549,11 @@ sub-operons.
 
 ::
 
-    usage: annogesic operon [-h] [--project_path [PROJECT_PATH]] --tss_files
-                            TSS_FILES [TSS_FILES ...] --annotation_files
-                            ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            --transcript_files TRANSCRIPT_FILES
-                            [TRANSCRIPT_FILES ...] --utr5_files UTR5_FILES
-                            [UTR5_FILES ...] --utr3_files UTR3_FILES
+    usage: annogesic operon [-h] --project_path PROJECT_PATH --tss_files TSS_FILES
+                            [TSS_FILES ...] --annotation_files ANNOTATION_FILES
+                            [ANNOTATION_FILES ...] --transcript_files
+                            TRANSCRIPT_FILES [TRANSCRIPT_FILES ...] --utr5_files
+                            UTR5_FILES [UTR5_FILES ...] --utr3_files UTR3_FILES
                             [UTR3_FILES ...]
                             [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
                             [--tss_fuzzy TSS_FUZZY]
@@ -2584,9 +2564,8 @@ sub-operons.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
                             Paths of the TSS gff files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -2674,7 +2653,7 @@ For generating testrealign.x, please refer to :ref:`Required tools or databases`
 **Fasta files of reads or BAM files:** If you want to use BAM files directly, they should be 
 mapped by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``--splits``.
 The input format is ``$SET_NAME:$READ1,$READ2,...`` or ``$SET_NAME:$BAM1,$BAM2,...``. 
-For example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be computed together.
+For an example, ``set1:read1.fa,read2.fa`` means these two fasta files need to be computed together.
 If your BAM files are generated by mapping reads on multiple reference genomes, 
 `testrealign.x <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ may not be able to 
 handle them.
@@ -2687,7 +2666,7 @@ handle them.
 
 ::
 
-    usage: annogesic circrna [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic circrna [-h] --project_path PROJECT_PATH
                              [--read_files READ_FILES [READ_FILES ...]]
                              [--bam_files BAM_FILES [BAM_FILES ...]] --fasta_files
                              FASTA_FILES [FASTA_FILES ...] --annotation_files
@@ -2704,9 +2683,8 @@ handle them.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
                             If this argument is given, ANNOgesic will map the
                             reads via segemehl (with -S). BE CAREFUL, this
@@ -2714,14 +2692,14 @@ handle them.
                             map the reads. If some specific functions of segemehl
                             need to be implemented, please directly run segemehl
                             (MUST run with -S). please assign the fasta files. The
-                            input format is $SET_NAME:$READ1,$READ2,... For
+                            input format is $SET_NAME:$READ1,$READ2,... For an
                             example, set1:read1.fa,read2.fa means these two fasta
                             files need to be compute together. .bz2 and .gz
                             compressed fasta files can be accepted as well.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
                             You can want assign the paths of Bam files to skip
                             mapping. The input format is $SET_NAME:$BAM1,$BAM2,...
-                            For example, set1:bam1.bam,bam2.bam means these two
+                            For an example, set1:bam1.bam,bam2.bam means these two
                             bam files need to be compute together. BE CAREFUL, the
                             bam files must be generated via segemehl with -S.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -2804,7 +2782,7 @@ go_term (GO term retrieving)
 ----------------------------
 
 ``go_term`` can retrieve the information of Gene Ontology from Uniprot.
-Some analyses of Go terms can be done as well.
+Some analyses of GO terms can be done as well.
 
 - **Required files**
 
@@ -2824,9 +2802,8 @@ Some analyses of Go terms can be done as well.
 
 ::
 
-    usage: annogesic go_term [-h] [--project_path [PROJECT_PATH]]
-                             --annotation_files ANNOTATION_FILES
-                             [ANNOTATION_FILES ...]
+    usage: annogesic go_term [-h] --project_path PROJECT_PATH --annotation_files
+                             ANNOTATION_FILES [ANNOTATION_FILES ...]
                              [--transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]]
                              --uniprot_id UNIPROT_ID --go_obo GO_OBO --goslim_obo
                              GOSLIM_OBO
@@ -2835,9 +2812,8 @@ Some analyses of Go terms can be done as well.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
@@ -2853,15 +2829,15 @@ Some analyses of Go terms can be done as well.
 
 - **Output files**
 
-Output files are stored in ``ANNOgesic/output/Go_terms``. If gff files of the transcript are assigned, 
-two sub-folders will be generated. Results of the expressed CDSs are stored in ``ANNOgesic/output/Go_term/expressed_CDSs`` and 
-results of all CDSs are stored in ``ANNOgesic/output/Go_term/all_CDSs``.
+Output files are stored in ``ANNOgesic/output/GO_terms``. If gff files of the transcript are assigned, 
+two sub-folders will be generated. Results of the expressed genes are stored in ``ANNOgesic/output/GO_term/expressed_CDSs`` and 
+results of all CDSs are stored in ``ANNOgesic/output/GO_term/all_CDSs``.
 
-**Go_term_results:** Stores tables of the Go terms information. The meaning of each column is as following:
+**GO_term_results:** Stores tables of the GO terms information. The meaning of each column is as following:
 
 	**Genome:** Genome name.
 
-	**Strand:** Strand of the CDS.
+	**Strand:** Strand of the gene.
 
 	**Start:** Starting point of this CDS.
 
@@ -2869,7 +2845,7 @@ results of all CDSs are stored in ``ANNOgesic/output/Go_term/all_CDSs``.
 
 	**Protein_id** Protein ID of this CDS.
 
-	**Go_term** Go term of This CDS.
+	**GO_term** GO term of This CDS.
 
 **statistics:** Stores statistic files and figures.
 
@@ -2905,7 +2881,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
 
 ::
 
-    usage: annogesic srna_target [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic srna_target [-h] --project_path PROJECT_PATH
                                  --annotation_files ANNOTATION_FILES
                                  [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                                  [FASTA_FILES ...] --srna_files SRNA_FILES
@@ -2936,9 +2912,8 @@ programs. ``srna_target`` can also compare the results of both programs and prov
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -2949,7 +2924,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                             Please assign the query sRNA. The input format is
                             $GENOME:$START:$END:$STRAND. If multiple sRNAs need to
                             be assigned, please use spaces to separate them. For
-                            example, NC_007795.1:200:534:+
+                            an example, NC_007795.1:200:534:+
                             NC_007795.1:6767:6900:-. If you want to detect all
                             sRNAs in gff file, please assign "all". Default is
                             all.
@@ -3096,7 +3071,7 @@ the supported literature of the protein-protein interaction networks.
 
 ::
 
-    usage: annogesic ppi_network [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic ppi_network [-h] --project_path PROJECT_PATH
                                  --annotation_files ANNOTATION_FILES
                                  [ANNOTATION_FILES ...] --species_string
                                  SPECIES_STRING --query_strains QUERY_STRAINS
@@ -3108,9 +3083,8 @@ the supported literature of the protein-protein interaction networks.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files. BE CAREFUL:
                             The gff files MUST have proper locus_tag item in the
@@ -3125,8 +3099,8 @@ the supported literature of the protein-protein interaction networks.
                             retrieve the data from STRING and Pubmed, The strain
                             name must be assigned. If the query strain is not
                             available in database, you can assign the close strain
-                            of your query strain. For example, the query strain is
-                            Staphylococcus aureus HG003, but there is no
+                            of your query strain. For an example, the query strain
+                            is Staphylococcus aureus HG003, but there is no
                             Staphylococcus aureus HG003 in STRING database.
                             Therefore, Staphylococcus aureus NCTC 8325 (close
                             strain) can be used as reference. The input format can
@@ -3156,7 +3130,7 @@ the supported literature of the protein-protein interaction networks.
                             Please assign the query protein here. The format is
                             $GENOME_NAME_OF_GFF:$START_POINT:$END_POINT:$STRAND.
                             If multiple proteins need to be assigned, please use
-                            spaces to separate them. For example,
+                            spaces to separate them. For an example,
                             Staphylococcus_aureus_HG003:345:456:+
                             Staphylococcus_aureus_HG003:2000:3211:-. For computing
                             all protein, just type "all". Default is all.
@@ -3204,7 +3178,7 @@ Color is the best score of the supported literature of the interactions.
 localization (subcellular localization prediction)
 --------------------------------------------------------------
 
-``localization`` can predict the subcellular localization of CDSs. 
+``localization`` can predict the subcellular localization of proteins. 
 Some statistics and visualization files are provided as well.
 
 - **Required tools**
@@ -3225,7 +3199,7 @@ Some statistics and visualization files are provided as well.
 
 ::
 
-    usage: annogesic localization [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic localization [-h] --project_path PROJECT_PATH
                                   --annotation_files ANNOTATION_FILES
                                   [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                                   [FASTA_FILES ...]
@@ -3239,9 +3213,8 @@ Some statistics and visualization files are provided as well.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of genome annotation gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
@@ -3346,7 +3319,7 @@ from our Git repository.
 
 ::
 
-    usage: annogesic riboswitch_thermometer [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
                                             [--program PROGRAM]
                                             [--riboswitch_id_file RIBOSWITCH_ID_FILE]
                                             [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
@@ -3371,9 +3344,8 @@ from our Git repository.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --program PROGRAM, -p PROGRAM
                             Please assign the feature that you want to detect. The
                             options can be "riboswitch", "thermometer", "both".
@@ -3382,14 +3354,14 @@ from our Git repository.
                             If --program is "riboswitch" or "both", please assign
                             the file path of riboswitch ID in Rfam. The file
                             should include the Rfam ID, riboswitch name, and
-                            Description of the riboswitch. For example, please
+                            Description of the riboswitch. For an example, please
                             check https://github.com/Sung-Huan/ANNOgesic/blob/mast
                             er/database/Rfam_riboswitch_ID.csv
       --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
                             If --program is "thermometer" or "both", please assign
                             the file path of RNA thermometer ID of Rfam. The file
                             should include the Rfam ID, RNA thermometer name and
-                            Description of the RNA thermometer. For example,
+                            Description of the RNA thermometer. For an example,
                             please check https://github.com/Sung-Huan/ANNOgesic/bl
                             ob/master/database/Rfam_RNA_thermometer_ID.csv
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -3503,7 +3475,7 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
 
 ::
 
-    usage: annogesic crispr [-h] [--project_path [PROJECT_PATH]] --fasta_files
+    usage: annogesic crispr [-h] --project_path PROJECT_PATH --fasta_files
                             FASTA_FILES [FASTA_FILES ...]
                             [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
                             [--crt_path CRT_PATH] [--window_size WINDOW_SIZE]
@@ -3518,9 +3490,8 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Path of the genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -3592,7 +3563,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
 
 ::
 
-    usage: annogesic optimize_tss_ps [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic optimize_tss_ps [-h] --project_path PROJECT_PATH
                                      [--program PROGRAM] --fasta_files FASTA_FILES
                                      [FASTA_FILES ...] --annotation_files
                                      ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -3619,9 +3590,8 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --program PROGRAM, -p PROGRAM
                             The feature for optimization. Please assign "TSS" or
                             "Processing_site". Default is TSS.
@@ -3640,7 +3610,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             manual detected for compare whole genome, please type
                             "all". The input format is $GENOME:SLENGTH. Multiple
                             genomes can be accepted, please use spaces to separate
-                            them. For example, test.gff contain two genomes (s1
+                            them. For an example, test.gff contain two genomes (s1
                             and s2). s1 was manual checked 100kb and s2 was
                             checked whole genome. The value of this argument will
                             be s1:100000 s2:all. Default setting will compute all
@@ -3651,7 +3621,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
@@ -3659,7 +3629,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For example, 1_2 2_ 3_3. It means that
+                            them. For an example, 1_2 2_2 3_3. It means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
@@ -3668,7 +3638,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
       --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefixes of all conditions. If multiple
                             conditions need to be assigned, please use spaces to
-                            separate them. For example, prefix_condition1
+                            separate them. For an example, prefix_condition1
                             prefix_condition2.
     
     additional arguments:
@@ -3741,7 +3711,7 @@ The second column is the parameter set. ``he`` represents height; ``rh`` represe
 height reduction; ``fa`` means factor; ``rf`` means factor reduction; ``bh`` indicates 
 base height; ``ef`` indicates enrichment factor; ``pf`` means processing factor. About the details 
 of parameters, please refer to `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_.
-For example, ``he_2.0_rh_1.8_fa_4.4_rf_2.8_bh_0.08_ef_3.0_pf_2.6`` means that height is 2.0, 
+For an example, ``he_2.0_rh_1.8_fa_4.4_rf_2.8_bh_0.08_ef_3.0_pf_2.6`` means that height is 2.0, 
 height reduction is 1.8, factor is 4.4, factor reduction is 2.8, base height is 0.08, 
 enrichment factor is 3.0 and processing factor is 2.6. The third column is 
 the number of true positive. The fourth column is true positive rate. The fifth 
@@ -3778,7 +3748,7 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
 
 ::
 
-    usage: annogesic screenshot [-h] [--project_path [PROJECT_PATH]] --fasta_file
+    usage: annogesic screenshot [-h] --project_path PROJECT_PATH --fasta_file
                                 FASTA_FILE --main_gff MAIN_GFF
                                 [--side_gffs SIDE_GFFS [SIDE_GFFS ...]]
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
@@ -3790,9 +3760,8 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --fasta_file FASTA_FILE, -f FASTA_FILE
                             Path of the genome fasta file.
       --main_gff MAIN_GFF, -mg MAIN_GFF
@@ -3809,7 +3778,7 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
+                            separate the wig files. For an example,
                             $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
                             If the fragmented (or conventional) wig file is
@@ -3817,7 +3786,7 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
                             The format is: wig_file_path:fragmented(frag):conditio
                             n_id(integer):replicate_id(alphabet):strand(+ or -).
                             If multiple wig files need to be assigned, please use
-                            spaces to separate the wig files. For example,
+                            spaces to separate the wig files. For an example,
                             $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
       --output_folder OUTPUT_FOLDER, -o OUTPUT_FOLDER
                             Please assign the output folder. It will create a sub-
@@ -3847,17 +3816,17 @@ as following:
 **reverse:** Folder for storing screenshots of the reverse strand.
 
 When batch files are executed on IGV, the screenshots will be automatically stored in the folder called ``forward`` and ``reverse``. 
-Format of the filenames will be ``$GENOME:$START-$END.png``. For example, ``NC_007795:1051529-1051696.png`` 
+Format of the filenames will be ``$GENOME:$START-$END.png``. For an example, ``NC_007795:1051529-1051696.png`` 
 means the genome is NC_007795, the feature's start point is 1051529 and end point is 
 1051696.
 
 .. _color_png:
 
-color_png (color screenshot)
-----------------------------
+colorize_screenshot_tracks (colorize the tracks of screenshots)
+---------------------------------------------------------------
 
-``color_png`` is a following procedure of ``screenshot``. If numerous samples are included in one figure, 
-Tracks will be difficult to check. ``color_png`` can color the tracks based on TEX +/- libraries 
+``colorize_screenshot_tracks`` is a following procedure of ``screenshot``. If numerous samples are included in one figure, 
+Tracks will be difficult to check. ``colorize_screenshot_tracks`` can color the tracks based on TEX +/- libraries 
 for improving the checking process.
 
 - **Required tools**
@@ -3873,18 +3842,18 @@ exist in the folder of ``screenshots``.
 
 ::
 
-    usage: annogesic color_png [-h] [--project_path [PROJECT_PATH]]
-                               --screenshot_folder SCREENSHOT_FOLDER
-                               --track_number TRACK_NUMBER
-                               [--imagemagick_covert_path IMAGEMAGICK_COVERT_PATH]
+    usage: annogesic colorize_screenshot_tracks [-h] --project_path PROJECT_PATH
+                                                --screenshot_folder
+                                                SCREENSHOT_FOLDER --track_number
+                                                TRACK_NUMBER
+                                                [--imagemagick_covert_path IMAGEMAGICK_COVERT_PATH]
     
     optional arguments:
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --screenshot_folder SCREENSHOT_FOLDER, -f SCREENSHOT_FOLDER
                             The folder which stores "screenshots" (a folder
                             generated by subcommand "screenshot").
@@ -3916,7 +3885,7 @@ If transcript gff files can be provided, this module will search the parent tran
 
 ::
 
-    usage: annogesic merge_features [-h] [--project_path [PROJECT_PATH]]
+    usage: annogesic merge_features [-h] --project_path PROJECT_PATH
                                     --output_prefix OUTPUT_PREFIX
                                     [--transcript_file TRANSCRIPT_FILE]
                                     [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
@@ -3927,9 +3896,8 @@ If transcript gff files can be provided, this module will search the parent tran
       -h, --help            show this help message and exit
     
     basic arguments:
-      --project_path [PROJECT_PATH], -pj [PROJECT_PATH]
-                            Path of the project folder. If none is given, the
-                            current directory is used.
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
       --output_prefix OUTPUT_PREFIX, -op OUTPUT_PREFIX
                             Please assign the prefix name of output gff file. The
                             filename will be $OUTPUT_PREFIX_merge_features.gff.

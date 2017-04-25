@@ -40,29 +40,28 @@ bacterial as well as archaeal samples.
 ::
 
     usage: annogesic [-h] [--version]
-                     {create,get_input_files,update_genome_fasta,
-                      annotation_transfer,tss_ps,optimize_tss_ps,
-                      terminator,transcript,utr,srna,sorf,promoter,
-                      operon,circrna,go_term,srna_target,snp,ppi_network,
-                      localization,riboswitch_thermometer,crispr,
-                      merge_features,screenshot,color_png}
+                     {create,get_input_files,update_genome_fasta,annotation_transfer,
+                      tss_ps,optimize_tss_ps,terminator,transcript,utr,srna,sorf,
+                      promoter,operon,circrna,go_term,srna_target,snp,ppi_network,
+                      localization,riboswitch_thermometer,crispr,merge_features,
+                      screenshot,colorize_screenshot_tracks}
                      ...
     
     positional arguments:
-      {create,get_input_files,update_genome_fasta,annotation_transfer,tss_ps,
-       optimize_tss_ps,terminator,transcript,utr,srna,sorf,promoter,operon,
-       circrna,go_term,srna_target,snp,ppi_network,localization,
-       riboswitch_thermometer,crispr,merge_features,screenshot,color_png}
+      {create,get_input_files,update_genome_fasta,annotation_transfer,tss_ps,optimize_tss_ps,
+       terminator,transcript,utr,srna,sorf,promoter,operon,circrna,go_term,srna_target,snp,
+       ppi_network,localization,riboswitch_thermometer,crispr,merge_features,screenshot,
+       colorize_screenshot_tracks}
                             commands
         create              Create a project
-        get_input_files     Get required files. (i.e. Annotation files, fasta
+        get_input_files     Get required files. (i.e. annotation files, fasta
                             files)
         update_genome_fasta
                             Get fasta files of query genomes if the query
                             sequences do not exist.
         annotation_transfer
-                            Transfer the annotations from closed genome to the
-                            target genome.
+                            Transfer the annotations from a closely related
+                            species genome to a target genome.
         tss_ps              Detect TSSs or processing sites.
         optimize_tss_ps     Optimize TSSs or processing sites based on manual
                             detected ones.
@@ -74,20 +73,23 @@ bacterial as well as archaeal samples.
         promoter            Discover promoter motifs.
         operon              Detect operons and sub-operons.
         circrna             Detect circular RNAs.
-        go_term             Extract Go terms from Uniprot.
+        go_term             Extract GO terms from Uniprot.
         srna_target         Detect sRNA-mRNA interactions.
-        snp                 Detect SNP/mutation and generate potential fasta file.
-        ppi_network         Detect protein-protein interactions with literature
-                            supported.
-        localization        Predict subcellular localization of CDSs.
+        snp                 Detect SNP/mutation and generate fasta file if
+                            mutations were found.
+        ppi_network         Detect protein-protein interactions suported by
+                            literature.
+        localization        Predict subcellular localization of proteins.
         riboswitch_thermometer
                             Predict riboswitches and RNA thermometers.
         crispr              Predict CRISPR related RNAs.
         merge_features      Merge all features to one gff file.
-        screenshot          Generate screenshot for selected feature.
-        color_png           Generate color screenshots of TSS or processing site.
-                            It only works after running "screenshot" (after
-                            running batch script).
+        screenshot          Generate screenshots for selected features using IGV.
+        colorize_screenshot_tracks
+                            Add color information to screenshots (e.g. useful for
+                            dRNA-Seq based TSS and PS detection. It only works
+                            after running "screenshot" (after running batch
+                            script).
     
     optional arguments:
       -h, --help            show this help message and exit

@@ -8,7 +8,7 @@ downloaded from NCBI GEO and that was part of a work by `Dugar et
 al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
 There will be several output files which are generated in different formats - 
 The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures. 
-For viewing GFF3 file, you can use a genome browser, for example `IGB <http://bioviz.org/igb/index.html>`_, 
+For viewing GFF3 file, you can use a genome browser, for examples `IGB <http://bioviz.org/igb/index.html>`_, 
 `IGV <https://www.broadinstitute.org/igv/>`_ or `Jbrowse <http://jbrowse.org/>`_.
 
 Before we start, please check :ref:`The format of filename` and 
@@ -155,7 +155,7 @@ we will generate some new dummy files via this step and ``annotation_transfer`` 
 show you the function of these subcommands.
 
 Now, we assume that we need to generate fasta file of our query genome. 
-First of all, we need to find a closed genome (fasta file and gff file can be found) of our query genome. 
+First of all, we need to find a closely related genome (fasta file and gff file can be found) of our query genome. 
 Then, we need to generate a mutation table (please check the section :ref:`ANNOgesic's subcommands`) 
 between these two genomes. When these files are produced, 
 we can run subcommand ``update_genome_fasta`` for getting fasta file of the query genome. 
@@ -167,20 +167,19 @@ will be generated in ``ANNOgesic/output/updated_references/fasta_files``.
 
 ::
 
-     $ wget -cP ANNOgesic/input/mutation_table https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+     $ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
+     $ mv mutation.csv ANNOgesic/input/mutation_table
 
 Now, let's try it
 
 ::
 
      $ annogesic update_genome_fasta \
-        --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        --output_format ANNOgesic/output/updated_references/fasta_files/test_case1.fa:NC_test.1 \
-                        ANNOgesic/output/updated_references/fasta_files/test_case2.fa:test_case2 \
+        --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
         --project_path ANNOgesic
 
-``--closed_fasta_files`` is path of the closed genome fasta file. 
+``--related_fasta_files`` is path of the fasta file of closely related genome. 
 In ``--output_format``, we assigned a pairs of output filenames and 
 the genomes which will be stored into the output file. In our case, "test_case1" is the first output fasta file which
 stores the sequence of "NC_test.1", and "test_case2" which stores the sequence of the other new genome - "test_case2". 
@@ -211,7 +210,7 @@ Now we can check the results.
     TTGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTTCAAATTTAAAAAATGGCTC
     TTTAGATAAATTTCACGAAAAATATAGAAATTGTGATGTTTTACTCATAGATGATGTGCAGTTTTTAGGAAAAACCGATA
     AAATTCAAGAAGAATTTTTCTTTATATTTAATGAAATCAAAAATAACGATGGACAAATCATCATGACTTCAGACAATCCA
-    $ head ANNOgesic/output/updated_references/fasta_files/test_case1.fa
+    $ head ANNOgesic/output/updated_references/fasta_files/NC_test.1.fa
     >NC_test.1
     ATcAACCAAATCAAATACTTGAAAATTTAAAAAAAGAATTAAGTGAAAACGAATACGAAA
     ATTATATCGCTATCTTAAAATTTAACGAAAAACAAAGCAAAGCAGATTTTCTAGTCTTTA
@@ -223,8 +222,7 @@ Now we can check the results.
     TCTATGGGCCTACAGGGCTTGGAAAAACGCACTTGCTTCAAGCTGTGGGAAATGCAAGTT
     TGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTT
 
-We can see that the sequence of "NC_test.1" is stored in ``test_case1.fa``. 
-Moreover, the third nucleotide is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
+We can see the third nucleotide of ``NC_test.1.fa`` is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
 If we check ``test_case2.fa``, the modification is also according to the mutation table and our setting.
 
 If the mutation table can not be provided, we can also use subcommand ``snp`` to detect mutations and generate 
@@ -245,8 +243,8 @@ After setting the environment, we can try it.
 ::
 
     anngesic annotation_transfer \
-        --closed_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
-        --closed_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --related_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
+        --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --updated_fasta_files ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
                               ANNOgesic/output/updated_references/fasta_files/test_case2.fa \
         --element chromosome \
@@ -260,7 +258,7 @@ After setting the environment, we can try it.
 ``--transfer_type`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
 We use ``Strain`` because the similarity between two genomes is higher than 90% (please check 
 `RATT <http://ratt.sourceforge.net/>`_). In ``--compare_pair``, the pairs of the query genomes 
-(NC_test.1 and test_case2) and their closed genomes (NC_000915.1) are assigned. 
+(NC_test.1 and test_case2) and their closely related genomes (NC_000915.1) are assigned. 
 Please be careful, the information that we assign to ``--compare_pair`` 
 is genome names in gff files not fasta filenames. ``--convert_to_gff_rnt_ptt`` means that we want to transfer the 
 output embl files to GFF3, ptt, rnt files and store in ``ANNOgesic/output/updated_references/annotations``.
@@ -650,7 +648,7 @@ For running ``srna``, we can apply several filters to improve the detection. The
 ``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Normally, ``tss``, ``sec_str``,
 ``blast_nr``, ``blast_srna`` are recommended to be used.
 
-Please be aware, filters are strict. For example, if your filters are included ``term``, only the sRNAs which are 
+Please be aware, filters are strict. For examples, if your filters are included ``term``, only the sRNAs which are 
 associated with terminators will be included in the list of best candidates. If you want to include terminator information 
 but do not use terminator as a filter, you can remove ``term`` in filters and still assign the path of terminator gff file. 
 The results will include the sRNAs which are not associated with terminators, and terminator information can be shown 
@@ -948,9 +946,9 @@ SNP calling
 
 If we want to know SNPs or mutations of our RNA-seq data, we can use ``snp`` to achieve this purpose.
 ``snp`` is compose of two parts. One part is for obtaining the differences between our query genome 
-and the closed genome of our query one. If we have no fasta file of our query genome, 
-this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closed genome. Then 
-using ``snp`` can automatically detect differences between the closed genome and our query genome. 
+and the closely related genome of our query one. If we have no fasta file of our query genome, 
+this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closely related genome. Then 
+using ``snp`` can automatically detect differences between the closely related genome and our query genome. 
 Furthermore, potential fasta files of our query genome can be generated automatically as well. 
 The other part is for detecting SNPs or mutations of our query genome if the fasta file of our query genome can be provided.
 In this part, you can know real mutations of our query genonme.
@@ -959,7 +957,7 @@ Before running the subcommand, bam files are required. Since we already generate
 running ``circrna``, we can just put them to the corresponding folder. Please remember that the mapping function of 
 ``circrna`` is basic one.
 
-Now, we can try to detect mutations. The procedures of comparing closed genome and query genome are similar, 
+Now, we can try to detect mutations. The procedures of comparing closely related genome and query genome are similar, 
 you just need to put Bam files, and fasta files to corresponding folders and set ``--bam_type``.
 
 First, we copy the bam files to ``BAMs_map_query_genomes``.
@@ -989,13 +987,13 @@ samples in this set, and all four bam files need to be computed together.
         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --project_path ANNOgesic
 
-Two output folders will be generated, ``compare_closed_and_updated_references`` is for the results of comparison between closed genome 
+Two output folders will be generated, ``compare_related_and_query_references`` is for the results of comparison between closely related genome 
 and query genome, ``mutations_of_query_genomes`` is for results of detecting mutations of the query genome.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/                                                                                                      
-    compare_closed_and_updated_references  mutations_of_query_genomes
+    compare_related_and_query_references  mutations_of_query_genomes
 
 Since we run ``query_genome``,  the output folders are produced under ``mutations_of_query_genomes``.
 
@@ -1379,12 +1377,12 @@ Coloring the screenshots
 ------------------------
 
 If we have numerous libraries and we want to check TSSs, distinguishing the 
-tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``color_png`` to color
+tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``colorize_screenshot_tracks`` to color
 our screenshots.
 
 ::
 
-    $ annogesic color_png \
+    $ annogesic colorize_screenshot_tracks \
         --track_number 2 \
         --screenshot_folder ANNOgesic/output/TSSs \
         --project_path ANNOgesic
