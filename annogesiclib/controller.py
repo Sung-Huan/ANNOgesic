@@ -458,7 +458,7 @@ class Controller(object):
                           "but sec_str is still in --filter_info.")
                     sys.exit()
                 self._check_filter_input(
-                        self._args.fasta_files, "fasta", "fasta")
+                        self._args.fasta_files, "fasta file", "sec_str")
                 for prop in ("rnafold_path", "relplot_path",
                              "mountain_path", "ps2pdf14_path"):
                     setattr(self._args, prop,

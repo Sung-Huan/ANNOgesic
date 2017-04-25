@@ -898,6 +898,7 @@ def get_best(sorfs, tss_file, srna_file, args_sorf):
                     elif not args_sorf.no_srna:
                         final_sorfs.append(tmp_sorf)
         elif srna_file is not None:
+            tmp_sorf = copy.deepcopy(sorf)
             if (args_sorf.no_srna) and (tmp_sorf["sRNA"][0] == "NA"):
                 final_sorfs.append(sorf)
             elif not args_sorf.no_srna:

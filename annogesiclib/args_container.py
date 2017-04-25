@@ -837,7 +837,7 @@ class ArgsContainer(object):
             args_srna.output_table = files["frag_csv"]
             args_srna.cutoffs = args_srna.coverage_frag
             args_srna.tss_source = True
-            args_srna.cut_notex = None
+            args_srna.cut_notex = args_srna.coverage_frag
             args_srna.anti_notex_cutoff = None
         else:
             args_srna.wig_f_file = os.path.join(

@@ -792,6 +792,8 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                                          args_srna)
     anti_cutoff_coverage, anti_notex = get_intergenic_antisense_cutoff(
                                        args_srna)
+#    print(inter_notex)
+#    print(anti_notex)
     nums, cdss, tas, pros, genes, ncs = read_data(args_srna)
     if not args_srna.tss_source:
         print("Classifying TSSs...")
@@ -819,6 +821,7 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                             args_srna, tsss, pros, nums,
                             output, out_table, texs, detects,
                             cutoff_coverage, notex)
+#            print(args_srna.notex)
             check_srna_condition(ta, args_srna, cdss, wigs_f, wigs_r)
     file_name = args_srna.output_file.split(".")
     file_name = file_name[0] + ".stat"
