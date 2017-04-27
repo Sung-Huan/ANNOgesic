@@ -468,10 +468,12 @@ class Controller(object):
                 for prop in ("blastn_path", "blastx_path", "makeblastdb_path"):
                     setattr(self._args, prop,
                             self.check_execute_file(getattr(self._args, prop)))
-                self._check_database(self._args.nr_database_path,
-                                     "--nr_database_path", "blast_nr")
-                self._check_database(self._args.srna_database_path,
-                                     "--srna_database_path", "blast_srna")
+                if ("blast_nr" == info):
+                    self._check_database(self._args.nr_database_path,
+                                         "--nr_database_path", "blast_nr")
+                if ("blast_srna" == info):
+                    self._check_database(self._args.srna_database_path,
+                                         "--srna_database_path", "blast_srna")
             elif "sorf" == info:
                 self._check_filter_input(
                         self._args.sorf_files, "sORF", "sorf")
