@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.17"
+__version__ = "0.5.18"
 
 def main():
     print("""
@@ -948,9 +948,6 @@ def main():
     sRNA_add.add_argument(
         "--makeblastdb_path", default="makeblastdb",
         help="Please assign the path of makeblastdb in blast+ package.")
-    sRNA_add.add_argument(
-        "--ps2pdf14_path", default="ps2pdf14",
-        help="Please assign the path of ps2pdf14.")
     sRNA_add.add_argument(
         "--parallel_blast", "-pb", type=int, default=10,
         help="How many parallels that you want to use for blast. "

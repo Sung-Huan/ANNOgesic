@@ -682,7 +682,7 @@ class ArgsContainer(object):
         return self
 
     def container_srna(self, rnafold, relplot_pl, mountain_pl, blastn, blastx,
-                       blastdb, ps2pdf14_path, srna_folder, UTR_derived_sRNA,
+                       blastdb, srna_folder, UTR_derived_sRNA,
                        annotation_files, TSS_files, transcript_files,
                        TSS_intergenic_fuzzy, TSS_5UTR_fuzzy, TSS_3UTR_fuzzy,
                        TSS_interCDS_fuzzy, import_info, processing_site_files,
@@ -712,7 +712,6 @@ class ArgsContainer(object):
         self.blastx = blastx
         self.blastn = blastn
         self.blastdb = blastdb
-        self.ps2pdf14_path = ps2pdf14_path
         self.out_folder = srna_folder
         self.utr_srna = UTR_derived_sRNA
         self.gffs = self._gen_copy_new_folder(

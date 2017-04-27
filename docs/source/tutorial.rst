@@ -732,13 +732,13 @@ Output files are following.
     ...
 
     $ ls ANNOgesic/output/sRNAs/figs/dot_plots/NC_009839.1/
-    srna0_NC_009839.1_36954_37044_-_dp.pdf     srna25_NC_009839.1_854600_854673_-_dp.pdf    srna40_NC_009839.1_1091155_1091251_-_dp.pdf  srna56_NC_009839.1_1440826_1441414_+_dp.pdf
-    srna10_NC_009839.1_248098_248257_-_dp.pdf  srna26_NC_009839.1_879881_880088_-_dp.pdf    srna41_NC_009839.1_1097654_1097750_-_dp.pdf  srna57_NC_009839.1_1448211_1448306_+_dp.pdf
+    srna0_NC_009839.1_36954_37044_-_dp.ps     srna25_NC_009839.1_854600_854673_-_dp.ps    srna40_NC_009839.1_1091155_1091251_-_dp.ps  srna56_NC_009839.1_1440826_1441414_+_dp.ps
+    srna10_NC_009839.1_248098_248257_-_dp.ps  srna26_NC_009839.1_879881_880088_-_dp.ps    srna41_NC_009839.1_1097654_1097750_-_dp.ps  srna57_NC_009839.1_1448211_1448306_+_dp.ps
     ...
 
     $ ls ANNOgesic/output/sRNAs/figs/sec_plots/NC_009839.1/
-    rna0_NC_009839.1_36954_37044_-_rss.pdf     srna25_NC_009839.1_854600_854673_-_rss.pdf    srna40_NC_009839.1_1091155_1091251_-_rss.pdf  srna56_NC_009839.1_1440826_1441414_+_rss.pdf
-    srna10_NC_009839.1_248098_248257_-_rss.pdf  srna26_NC_009839.1_879881_880088_-_rss.pdf    srna41_NC_009839.1_1097654_1097750_-_rss.pdf  srna57_NC_009839.1_1448211_1448306_+_rss.pdf
+    rna0_NC_009839.1_36954_37044_-_rss.ps     srna25_NC_009839.1_854600_854673_-_rss.ps    srna40_NC_009839.1_1091155_1091251_-_rss.ps  srna56_NC_009839.1_1440826_1441414_+_rss.ps
+    srna10_NC_009839.1_248098_248257_-_rss.ps  srna26_NC_009839.1_879881_880088_-_rss.ps    srna41_NC_009839.1_1097654_1097750_-_rss.ps  srna57_NC_009839.1_1448211_1448306_+_rss.ps
     ...
 
     $ ls ANNOgesic/output/sRNAs/statistics/

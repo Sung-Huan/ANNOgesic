@@ -265,24 +265,25 @@ class TestsRNADetection(unittest.TestCase):
                          datas["tmp"].split("/")[-4])
         self.assertEqual(datas["tmp"].split("/")[-1], "tmp_srna")
 
-    def test_replot_sec_to_pdf(self):
+    def test_replot_sec(self):
         self.srna._run_replot = self.mock.mock_run_replot
         self.srna._convert_pdf = self.mock.mock_convert_pdf
-        gen_file(os.path.join(self.tsss, "test.rss.pdf"), "test")
-        gen_file(os.path.join(self.tsss, "test.dp.pdf"), "test")
+        gen_file(os.path.join(self.tsss, "test.rss.ps"), "test")
+        gen_file(os.path.join(self.tsss, "test.dp.ps"), "test")
         tmp_paths = {"dot": self.out, "sec": self.fastas, "tmp": self.tsss}
-        self.srna._replot_sec_to_pdf("vienna_util", tmp_paths,
-                                     "ps2pdf14_path", "test")
+        self.srna._replot_sec("vienna_util", tmp_paths, "test")
         self.assertTrue(os.path.exists(os.path.join(
-            tmp_paths["dot"], "test/test.dp.pdf")))
+            tmp_paths["dot"], "test/test.dp.ps")))
         self.assertTrue(os.path.exists(os.path.join(
-            tmp_paths["sec"], "test/test.rss.pdf")))
+            tmp_paths["sec"], "test/test.rss.ps")))
 
     def test_plot_mountain(self):
         self.srna._run_mountain = self.mock.mock_run_mountain
-        tmp_paths = {"main": self.test_folder, "tmp": self.tsss}
+        tmp_paths = {"main": self.test_folder, "tmp": self.tsss,
+                     "dot": self.sorf}
         moun_path = "fastas"
-        gen_file(os.path.join(tmp_paths["tmp"], "test.dp.ps"), "test")
+        os.mkdir(os.path.join(tmp_paths["dot"], "test"))
+        gen_file(os.path.join(tmp_paths["dot"], "test/test.dp.ps"), "test")
         self.srna._plot_mountain(True, moun_path,
                                  tmp_paths, "test", "vienna_util")
         self.assertTrue("test_folder/fastas/test/test.mountain.pdf")

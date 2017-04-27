@@ -1514,8 +1514,6 @@ still be included. Following is the filter names with the required files and too
 
 		`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_
 
-		`Ps2pdf14 <http://pages.cs.wisc.edu/~ghost/doc/AFPL/6.50/Ps2pdf.htm>`_
-
 	**Required files:**
 
 		**Fasta files of genome sequences**
@@ -1602,7 +1600,6 @@ this candidates will be removed.
                           [--mountain_path MOUNTAIN_PATH]
                           [--blastn_path BLASTN_PATH] [--blastx_path BLASTX_PATH]
                           [--makeblastdb_path MAKEBLASTDB_PATH]
-                          [--ps2pdf14_path PS2PDF14_PATH]
                           [--parallel_blast PARALLEL_BLAST] [--tss_source]
                           [--tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
                           [--tss_5utr_fuzzy TSS_5UTR_FUZZY]
@@ -1777,8 +1774,6 @@ this candidates will be removed.
       --makeblastdb_path MAKEBLASTDB_PATH
                             Please assign the path of makeblastdb in blast+
                             package.
-      --ps2pdf14_path PS2PDF14_PATH
-                            Please assign the path of ps2pdf14.
       --parallel_blast PARALLEL_BLAST, -pb PARALLEL_BLAST
                             How many parallels that you want to use for blast.
                             Default is 10.
@@ -2004,11 +1999,11 @@ Output files are stored in ``$ANNOgesic/output/sRNAs``. the output folders and f
 	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 	**sec_plots:** Stores the secondary structure plots of sRNA candidates. 
-	Filename of is as ``srna10_NC_009839.1_335339_335435_+_rss.pdf``.
+	Filename of is as ``srna10_NC_009839.1_335339_335435_+_rss.ps``.
 	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 	**dot_plots:** Stores the dot plots of sRNA candidates. 
-	Filename of dot plot is as ``srna10_NC_009839.1_335339_335435_+_dp.pdf``.
+	Filename of dot plot is as ``srna10_NC_009839.1_335339_335435_+_dp.ps``.
 	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 **statistics:** Stores statistics files. ``stat_$GENOME_sRNA_blast.csv`` is the analysis result of BLAST for sRNA databases.

@@ -439,11 +439,7 @@ class sRNADetection(object):
                   os.path.join(tmp_paths["tmp"], dot_file),
                   ">", os.path.join(tmp_paths["tmp"], rel_file)]))
 
-    def _convert_pdf(self, ps2pdf14_path, tmp_paths, file_, pdf_file):
-        call([ps2pdf14_path, os.path.join(tmp_paths["tmp"], file_), pdf_file])
-
-    def _replot_sec_to_pdf(self, relplot_pl, tmp_paths,
-                           ps2pdf14_path, prefix):
+    def _replot_sec(self, relplot_pl, tmp_paths, prefix):
         for file_ in os.listdir(os.getcwd()):
             if file_.endswith("ss.ps"):
                 dot_file = file_.replace("ss.ps", "dp.ps")
@@ -451,24 +447,18 @@ class sRNADetection(object):
                 print("Replotting {0}".format(file_))
                 self._run_replot(relplot_pl, tmp_paths, file_,
                                  dot_file, rel_file)
-        for file_ in os.listdir(tmp_paths["tmp"]):
-            if (file_.endswith("rss.ps")) or (file_.endswith("dp.ps")):
-                pdf_file = file_.replace(".ps", ".pdf")
-                print("Converting {0} to pdf files".format(file_))
-                self._convert_pdf(ps2pdf14_path, tmp_paths,
-                                  file_, pdf_file)
         os.mkdir(os.path.join(tmp_paths["sec"], prefix))
         os.mkdir(os.path.join(tmp_paths["dot"], prefix))
         self.helper.move_all_content(
                 tmp_paths["tmp"], os.path.join(tmp_paths["sec"], prefix),
-                ["rss.pdf"])
+                ["rss.ps"])
         self.helper.move_all_content(
                 tmp_paths["tmp"], os.path.join(tmp_paths["dot"], prefix),
-                ["dp.pdf"])
+                ["dp.ps"])
 
-    def _run_mountain(self, mountain_pl, tmp_paths, dot_file, out):
+    def _run_mountain(self, mountain_pl, dot_path, dot_file, out):
         call([mountain_pl,
-              os.path.join(tmp_paths["tmp"], dot_file)], stdout=out)
+              os.path.join(dot_path, dot_file)], stdout=out)
 
     def _plot_mountain(self, mountain, moun_path,
                        tmp_paths, prefix, mountain_pl):
@@ -478,13 +468,14 @@ class sRNADetection(object):
             txt_path = os.path.join(tmp_paths["tmp"], "tmp_txt")
             self.helper.check_make_folder(txt_path)
             print("Generating mountain plots of {0}".format(prefix))
-            for dot_file in os.listdir(tmp_paths["tmp"]):
+            dot_path = os.path.join(tmp_paths["dot"], prefix)
+            for dot_file in os.listdir(dot_path):
                 if dot_file.endswith("dp.ps"):
                     moun_txt = os.path.join(tmp_paths["tmp"], "mountain.txt")
                     out = open(moun_txt, "w")
                     moun_file = dot_file.replace("dp.ps", "mountain.pdf")
                     print("Generating {0}".format(moun_file))
-                    self._run_mountain(mountain_pl, tmp_paths, dot_file, out)
+                    self._run_mountain(mountain_pl, dot_path, dot_file, out)
                     plot_mountain_plot(moun_txt, moun_file)
                     shutil.move(moun_file,
                                 os.path.join(tmp_moun_path, prefix, moun_file))
@@ -506,11 +497,9 @@ class sRNADetection(object):
             tmp_paths = self._get_seq_sec(
                     self.fasta_path, args_srna.out_folder, prefix, sec_path,
                     dot_path, args_srna.rnafold)
-            self._replot_sec_to_pdf(args_srna.relplot_pl, tmp_paths,
-                                    args_srna.ps2pdf14_path, prefix)
+            self._replot_sec(args_srna.relplot_pl, tmp_paths, prefix)
             self._plot_mountain(args_srna.mountain, moun_path, tmp_paths,
                                 prefix, args_srna.mountain_pl)
-            self.helper.remove_all_content(os.getcwd(), ".ps", "file")
             os.chdir(tmp_paths["main"])
             shutil.move("_".join([self.prefixs["energy"], prefix]),
                         "_".join([self.prefixs["basic"], prefix]))

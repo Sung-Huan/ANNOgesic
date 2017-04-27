@@ -460,7 +460,7 @@ class Controller(object):
                 self._check_filter_input(
                         self._args.fasta_files, "fasta file", "sec_str")
                 for prop in ("rnafold_path", "relplot_path",
-                             "mountain_path", "ps2pdf14_path"):
+                             "mountain_path"):
                     setattr(self._args, prop,
                             self.check_execute_file(getattr(self._args, prop)))
             elif ("blast_nr" == info) or (
@@ -499,7 +499,7 @@ class Controller(object):
                 self._args.rnafold_path, self._args.relplot_path,
                 self._args.mountain_path, self._args.blastn_path,
                 self._args.blastx_path, self._args.makeblastdb_path,
-                self._args.ps2pdf14_path, self._paths.srna_folder,
+                self._paths.srna_folder,
                 self._args.utr_derived_srna, self._args.annotation_files,
                 self._args.tss_files, self._args.transcript_files,
                 self._args.tss_intergenic_fuzzy, self._args.tss_5utr_fuzzy,
