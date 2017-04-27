@@ -127,9 +127,13 @@ class ArgsContainer(object):
                 print("Error: Please assign \"tex\", \"notex\" or "
                       "\"frag\" to your input libraries.")
                 sys.exit()
-            if int(datas[2]) not in conds.keys():
-                conds[int(datas[2])] = 0
-            conds[int(datas[2])] += 1
+            try: 
+                if int(datas[2]) not in conds.keys():
+                    conds[int(datas[2])] = 0
+                conds[int(datas[2])] += 1
+            except ValueError:
+                print("Error: Condition of libs should be assigned by integers!")
+                sys.exit()
             if datas[3] not in reps.keys():
                 reps[datas[3]] = 0
             reps[datas[3]] += 1

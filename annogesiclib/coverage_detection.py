@@ -57,14 +57,18 @@ def define_cutoff(coverages, median, utr_type):
 def check_notex(cover, texs, cutoff, notex):
     '''Check the cutoff of average coverage for TEX+ and TEX- libs'''
     if notex is not None:
-        for keys in texs.keys():
-            tracks = keys.split("@AND@")
-            if cover["track"] == tracks[0]:
-                if cover["avg"] > cutoff:
-                    return True
-            elif cover["track"] == tracks[1]:
-                if cover["avg"] > notex:
-                    return True
+        if len(texs) != 0:
+            for keys in texs.keys():
+                tracks = keys.split("@AND@")
+                if cover["track"] == tracks[0]:
+                    if cover["avg"] > cutoff:
+                        return True
+                elif cover["track"] == tracks[1]:
+                    if cover["avg"] > notex:
+                        return True
+        else:
+            if cover["avg"] > cutoff:
+                return True
     else:
         if cover["avg"] > cutoff:
             return True

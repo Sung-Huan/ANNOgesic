@@ -343,7 +343,9 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
     detect, srna_datas, pro = exchange_to_pro(args_srna, srna_datas, ta, start,
                                               end, cutoff, wigs, notex)
     if ta.strand == "+":
-        if detect:
+        if (detect) and (
+                (srna_datas["pos"] - start) >= args_srna.min_len) and (
+                (srna_datas["pos"] - start) <= args_srna.max_len):
             string = ("\t".join([str(field) for field in [
                       ta.seq_id, "ANNOgesic", "ncRNA", str(start),
                       str(srna_datas["pos"]), ".", ta.strand, "."]]))
@@ -352,7 +354,9 @@ def detect_wig_pos(wigs, ta, start, end, tss, cutoff, notex, args_srna):
             print_file(string, tss, srna_datas, ta.attributes["sRNA_type"],
                        args_srna, ta.seq_id)
     else:
-        if detect:
+        if (detect) and (
+                (end - srna_datas["pos"]) >= args_srna.min_len) and (
+                (end - srna_datas["pos"]) <= args_srna.max_len):
             string = ("\t".join([str(field) for field in [
                       ta.seq_id, "ANNOgesic", "ncRNA", str(srna_datas["pos"]),
                       str(end), ".", ta.strand, "."]]))
@@ -792,8 +796,6 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                                          args_srna)
     anti_cutoff_coverage, anti_notex = get_intergenic_antisense_cutoff(
                                        args_srna)
-#    print(inter_notex)
-#    print(anti_notex)
     nums, cdss, tas, pros, genes, ncs = read_data(args_srna)
     if not args_srna.tss_source:
         print("Classifying TSSs...")
@@ -821,7 +823,6 @@ def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):
                             args_srna, tsss, pros, nums,
                             output, out_table, texs, detects,
                             cutoff_coverage, notex)
-#            print(args_srna.notex)
             check_srna_condition(ta, args_srna, cdss, wigs_f, wigs_r)
     file_name = args_srna.output_file.split(".")
     file_name = file_name[0] + ".stat"
