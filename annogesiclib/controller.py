@@ -187,15 +187,9 @@ class Controller(object):
         print("Running update genome fasta")
         self.check_multi_files([self._args.related_fasta_files],
                                ["--related_fasta_files"])
-#        self.check_parameter([self._args.output_format], ["--output_format"])
         self.check_file([self._args.mutation_table], "--mutation_table", True)
         project_creator.create_subfolders(
             self._paths.required_folders("get_target_fasta"))
-#        for output in self._args.output_format:
-#            output = output.split(":")[0]
-#            if not os.path.exists("/".join(output.split("/")[:-1])):
-#                print("Error: Some folders in --output_format don't exist!")
-#                sys.exit()
         target = TargetFasta(self._paths.tar_fasta_folder,
                              self._args.related_fasta_files)
         target.get_target_fasta(

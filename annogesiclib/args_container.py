@@ -27,11 +27,31 @@ class ArgsContainer(object):
                     lengths[m_l.split(":")[0]] = int(m_l.split(":")[-1])
         return lengths
 
-    def _create_working_wigs(self, out_folder, libs, wig_folder):
+    def _check_track_name(self, lib, tracks, strand):
+        if lib.split("/")[-1] in tracks["file"]:
+            print("Error: Some filenames of the wiggle files are repeated!")
+            sys.exit()
+        else:
+            tracks["file"].append(lib.split("/")[-1])
+        with open(lib) as fh:
+            for line in fh:
+                line = line.strip()
+                if line.startswith("track"):
+                    track_name = line.split(" ")[-1]
+                    if track_name in tracks["track"][strand]:
+                        print("Error: Some names of the tracks in the "
+                              "wiggle files are repeated!")
+                        sys.exit()
+                    else:
+                        tracks["track"][strand].append(track_name) 
+
+    def _create_working_wigs(self, out_folder, libs, wig_folder, tracks):
         new_libs = []
         if libs is not None:
             self.helper.check_make_folder(wig_folder)
             for lib in libs:
+                self._check_track_name(lib.split(":")[0], tracks,
+                                       lib.split(":")[-1])
                 shutil.copy(lib.split(":")[0], wig_folder)
                 wig = lib.split(":")[0].split("/")[-1]
                 new_libs.append(":".join([wig, ":".join(lib.split(":")[1:])]))
@@ -111,6 +131,7 @@ class ArgsContainer(object):
                         print("Error: The --tex_notex_libs was assinged incorrectly.  "
                               "Please check it again.")
                         sys.exit()
+
 
     def _check_tex_frag(self, libs, wig_type):
         conds = {}
@@ -447,7 +468,9 @@ class ArgsContainer(object):
                 ["--annotation_files"])
         self.wig_folder = os.path.join(out_folder, "tmp_wig")
         self.helper.check_make_folder(self.wig_folder)
-        self.libs = self._create_working_wigs(out_folder, lib, self.wig_folder)
+        tracks = {"file": [], "track": {"+": [], "-": []}}
+        self.libs = self._create_working_wigs(out_folder, lib,
+                                              self.wig_folder, tracks)
         self.libs = self._check_libs(self.libs, None)
         self._check_condition_num(output_prefix, self.libs)
         self.output_prefixs = output_prefix
@@ -504,7 +527,9 @@ class ArgsContainer(object):
                 annotation_file, ["--annotation_files"])
         self.wigs = os.path.join(out_folder, "tmp_wig")
         self.helper.check_make_folder(self.wigs)
-        self.libs = self._create_working_wigs(out_folder, lib, self.wigs)
+        tracks = {"file": [], "track": {"+": [], "-": []}}
+        self.libs = self._create_working_wigs(out_folder, lib,
+                                              self.wigs, tracks)
         self.libs = self._check_libs(self.libs, None)
         self.output_folder = out_folder
         self.height = max_height
@@ -570,11 +595,11 @@ class ArgsContainer(object):
         self.fuzzy_up_gene = fuzzy_within_gene
         self.fuzzy_down_gene = fuzzy_downstream_gene
         self.hp_folder = transtermhp_folder
-        self.tlibs = tex_notex_libs
+        tracks = {"file": [], "track": {"+": [], "-": []}}
         self.tlibs = self._create_working_wigs(
-                out_folder, tex_notex_libs, self.tex_wigs)
+                out_folder, tex_notex_libs, self.tex_wigs, tracks)
         self.flibs = self._create_working_wigs(
-                out_folder, frag_libs, self.frag_wigs)
+                out_folder, frag_libs, self.frag_wigs, tracks)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
@@ -641,10 +666,11 @@ class ArgsContainer(object):
         self.compare_tss = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_tss", tss_files, ["--tss_files"])
         self.fuzzy = TSS_fuzzy
+        tracks = {"file": [], "track": {"+": [], "-": []}}
         self.tlibs = self._create_working_wigs(
-                out_folder, tex_treated_libs, self.tex_wigs)
+                out_folder, tex_treated_libs, self.tex_wigs, tracks)
         self.flibs = self._create_working_wigs(
-                out_folder, fragmented_libs, self.frag_wigs)
+                out_folder, fragmented_libs, self.frag_wigs, tracks)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.c_feature = compare_feature_genome
         self.table_best = table_best
@@ -779,10 +805,11 @@ class ArgsContainer(object):
                 "--run_utr_fragmented_coverage")
         self.max_len = max_length
         self.min_len = min_length
+        tracks = {"file": [], "track": {"+": [], "-": []}}
         self.tlibs = self._create_working_wigs(
-                srna_folder, tex_notex_libs, self.tex_wigs)
+                srna_folder, tex_notex_libs, self.tex_wigs, tracks)
         self.flibs = self._create_working_wigs(
-                srna_folder, frag_libs, self.frag_wigs)
+                srna_folder, frag_libs, self.frag_wigs, tracks)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.replicates_tex = replicates_tex
         self.replicates_frag = replicates_frag
@@ -966,12 +993,11 @@ class ArgsContainer(object):
         self.fastas = self._gen_copy_new_folder(
                 [".fa", ".fna", ".fasta"], sorf_folder,
                 "temp_fasta", fasta_files, ["--fasta_files"])
-        self.tlibs = tex_notex_libs
-        self.flibs = frag_libs
+        tracks = {"file": [], "track": {"+": [], "-": []}}
         self.tlibs = self._create_working_wigs(
-                sorf_folder, tex_notex_libs, self.tex_wigs)
+                sorf_folder, tex_notex_libs, self.tex_wigs, tracks)
         self.flibs = self._create_working_wigs(
-                sorf_folder, frag_libs, self.frag_wigs)
+                sorf_folder, frag_libs, self.frag_wigs, tracks)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.tex_notex = tex_notex
         self.replicates_tex = replicates_tex
@@ -1118,14 +1144,26 @@ class ArgsContainer(object):
         self.combine = combine_all
         self.e_value = e_value
         self.para = para
-        if tex_libs is not None:
-            self.helper.check_make_folder(os.path.join(out_folder, "tmp_wig"))
-            self.tex_wigs = self._create_wig_folder(
-                    os.path.join(out_folder, "tmp_wig", "tex_notex"), tex_libs)
-            self.input_libs = self._create_working_wigs(
-                     out_folder, tex_libs, self.tex_wigs)
-            self.libs = self.input_libs
-            self = self._parser_combine_wigs("promoter")
+        if not TSS_source:
+            if tex_libs is None:
+                print("Error: if --tss_source is False, please assign "
+                      "--tex_libs and --annotation_files as well!")
+                sys.exit()
+            else:
+                if annotation_files is None:
+                    print("Error: if --tss_source is False, please assign "
+                          "--tex_libs and --annotation_files as well!")
+                    sys.exit()
+                self.helper.check_make_folder(os.path.join(
+                    out_folder, "tmp_wig"))
+                self.tex_wigs = self._create_wig_folder(
+                        os.path.join(out_folder, "tmp_wig", "tex_notex"),
+                        tex_libs)
+                tracks = {"file": [], "track": {"+": [], "-": []}}
+                self.input_libs = self._create_working_wigs(
+                         out_folder, tex_libs, self.tex_wigs, tracks)
+                self.libs = self.input_libs
+                self = self._parser_combine_wigs("promoter")
         return self
 
     def container_operon(self, TSS_files, annotation_files,
