@@ -167,8 +167,7 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "total_ex")
 
 
-def check_repeat(strain, start, end, strand):
-    checks = []
+def check_repeat(checks, strain, start, end, strand):
     detect = False
     try:
         term = {"strain": strain, "start": int(start),
@@ -203,13 +202,15 @@ def stat_term(term_gff, term_table, stat, output_decrease,
                             "Detect", "Associated_gene", "Associated_transcript",
                             "Coverage_decrease", "Coverage_detail"]) + "\n")
     gh = open(term_gff)
+    checks = []
     for entry in Gff3Parser().entries(gh):
-        detect = check_repeat(entry.seq_id, entry.start,
+        detect = check_repeat(checks, entry.seq_id, entry.start,
                               entry.end, entry.strand)
         if detect:
             terms.append(entry)
+    checks = []
     for row in csv.reader(fh, delimiter="\t"):
-        detect = check_repeat(row[0], row[2], row[3], row[4])
+        detect = check_repeat(checks, row[0], row[2], row[3], row[4])
         if detect:
             if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
                 out_td.write("\t".join(row) + "\n")
