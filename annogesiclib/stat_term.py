@@ -167,6 +167,24 @@ def classify_terms(terms, nums, out_d, out_e, out_n, pre_strain):
                 plus_num(nums, strain, "total_ex")
 
 
+def check_repeat(strain, start, end, strand):
+    checks = []
+    detect = False
+    try:
+        term = {"strain": strain, "start": int(start),
+                "strand": strand, "end": int(end)}
+        if len(checks) == 0:
+            checks.append(term)
+            detect = True
+        else:
+            if term not in checks:
+                detect = True
+                checks.append(term)
+        return detect
+    except ValueError:
+        return detect
+
+
 def stat_term(term_gff, term_table, stat, output_decrease,
               output_expression, output_non):
     terms = []
@@ -184,17 +202,22 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out_tn.write("\t".join(["Genome", "Name", "Start", "End", "Strand",
                             "Detect", "Associated_gene", "Associated_transcript",
                             "Coverage_decrease", "Coverage_detail"]) + "\n")
-    for row in csv.reader(fh, delimiter="\t"):
-        if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
-            out_td.write("\t".join(row) + "\n")
-            out_te.write("\t".join(row) + "\n")
-        if (row[-1] == "No_coverage_decreasing"):
-            out_te.write("\t".join(row) + "\n")
-        if (row[-1] == "NA"):
-            out_tn.write("\t".join(row) + "\n")
     gh = open(term_gff)
     for entry in Gff3Parser().entries(gh):
-        terms.append(entry)
+        detect = check_repeat(entry.seq_id, entry.start,
+                              entry.end, entry.strand)
+        if detect:
+            terms.append(entry)
+    for row in csv.reader(fh, delimiter="\t"):
+        detect = check_repeat(row[0], row[2], row[3], row[4])
+        if detect:
+            if (row[-1] != "NA") and (row[-1] != "No_coverage_decreasing"):
+                out_td.write("\t".join(row) + "\n")
+                out_te.write("\t".join(row) + "\n")
+            if (row[-1] == "No_coverage_decreasing"):
+                out_te.write("\t".join(row) + "\n")
+            if (row[-1] == "NA"):
+                out_tn.write("\t".join(row) + "\n")
     out = open(stat, "w")
     out_e = open(output_expression + ".gff", "w")
     out_d = open(output_decrease + ".gff", "w")
