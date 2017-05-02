@@ -2014,7 +2014,7 @@ TSS gff files with TSS types will be stored here.
 
 **tables:** Stores sRNA tables with more details. There are also some sub-folders:
 
-	**for_classes:** Stores the results based on different sRNA classes.
+	**for_classes:** Stores the results based on different sRNA classes. The information of sRNA classes can be found in ``stat_sRNA_class_$GENOME.csv``.
 
 	**best_candidates:** Stores the best results of sRNAs after filtering.
 

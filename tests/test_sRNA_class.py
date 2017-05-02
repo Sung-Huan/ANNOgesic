@@ -46,11 +46,11 @@ class TestsRNAClass(unittest.TestCase):
         args.import_info = ["tss", "sec_str", "blast_nr", "blast_srna"]
         class_num, index = sc.print_stat_title(
             checks, out_stat, strain, srna_datas, 1, args)
-        self.assertEqual(out_stat.getvalue(), """1 - the normalized(by length of sRNA) free energy change of secondary structure below to 0
+        self.assertEqual(out_stat.getvalue(), """1 - Normalized(by length of sRNA) free energy change of the secondary structure is below to 0
 2 - sRNA candidates start with TSS (3'UTR derived and interCDS sRNA also includes the sRNA candidates which start with processing site.)
-3 - blast can not find the homology from nr database (the cutoff is 0).
-4 - blast can not find the homology from sRNA database.
-5 - blast can find the homology from sRNA database.
+3 - Running BLAST can not find the homology in nr database (the cutoff is 0).
+4 - Running BLAST can not find the homology in sRNA database.
+5 - Running BLAST can find the homology in sRNA database.
 All genomes:
 """)
 

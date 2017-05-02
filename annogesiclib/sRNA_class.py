@@ -169,8 +169,8 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
         class_num = initiate(
                 "2d_energy", srna_datas[strain][0].attributes.keys(),
                 "2d_energy", class_num, index, out_stat,
-                " - the normalized(by length of sRNA) free energy "
-                "change of secondary structure below to " +
+                " - Normalized(by length of sRNA) free energy "
+                "change of the secondary structure is below to " +
                 str(args_srna.energy))
         name = " ".join([
             " - sRNA candidates start with TSS",
@@ -182,30 +182,30 @@ def print_stat_title(checks, out_stat, strain, srna_datas,
         class_num = initiate(
                 "nr_hit", srna_datas[strain][0].attributes.keys(),
                 "nr_no_hit", class_num, index, out_stat,
-                "".join([" - blast can not find the homology from nr "
+                "".join([" - Running BLAST can not find the homology in nr "
                          "database (the cutoff is ",
                          str(args_srna.nr_hits_num), ")."]))
         class_num = initiate(
                 "with_term", srna_datas[strain][0].attributes.keys(),
                 "with_term", class_num, index, out_stat,
-                " - sRNA candidates ends with terminator (including the "
+                " - sRNA candidates end with terminator (including the "
                 "candidates ends with processing site).")
         class_num = initiate(
                 "sORF", srna_datas[strain][0].attributes.keys(),
                 "sORF", class_num, index, out_stat,
-                " - have no confliction of sORF candidates.")
+                " - sRNA candidates have no conflict with sORF candidates.")
         class_num = initiate(
                 "sRNA_hit", srna_datas[strain][0].attributes.keys(),
                 "sRNA_no_hit", class_num, index, out_stat,
-                " - blast can not find the homology from sRNA database.")
+                " - Running BLAST can not find the homology in sRNA database.")
         class_num = initiate(
                 "sRNA_hit", srna_datas[strain][0].attributes.keys(),
                 "sRNA_hit", class_num, index, out_stat,
-                " - blast can find the homology from sRNA database.")
+                " - Running BLAST can find the homology in sRNA database.")
         class_num = initiate(
                 "promoter", srna_datas[strain][0].attributes.keys(),
                 "promoter", class_num, index, out_stat,
-                " - sRNA candidates associated with promoter.")
+                " - sRNA candidates are associated with promoter.")
     else:
         out_stat.write("\n")
     if num_strain <= 2:

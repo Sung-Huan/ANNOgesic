@@ -265,8 +265,11 @@ def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
         srnas = merge_srna(utrs, "UTR")
     elif len(inters) != 0:
         srnas = merge_srna(inters, "inter")
-    sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start,
-                                              x.end, x.strand))
+    if srnas is not None:
+        sort_srnas = sorted(srnas, key=lambda x: (x.seq_id, x.start,
+                                                  x.end, x.strand))
+    else:
+        sort_srnas = None
     for srna in sort_srnas:
         new_srna = compare_srna_cds(srna, cdss, cutoff_overlap)
         if new_srna:
