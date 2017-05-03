@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Docker image &mdash; ANNOgesic 0.5.21 documentation</title>
+  <title>Q and A &mdash; ANNOgesic 0.5.21 documentation</title>
   
 
   
@@ -31,8 +31,8 @@
 
   
     <link rel="top" title="ANNOgesic 0.5.21 documentation" href="index.html"/>
-        <link rel="next" title="ANNOgesic’s subcommands" href="subcommands.html"/>
-        <link rel="prev" title="Installation" href="installation.html"/> 
+        <link rel="next" title="License" href="license.html"/>
+        <link rel="prev" title="Tutorial of ANNOgesic" href="tutorial.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,7 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
 </ul>
 </li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Docker image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="docker.html">Docker image</a></li>
 <li class="toctree-l3"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
@@ -144,7 +144,7 @@
 <li class="toctree-l4"><a class="reference internal" href="tutorial.html#coloring-the-screenshots">Coloring the screenshots</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="questions.html">Q and A</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Q and A</a></li>
 <li class="toctree-l3"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 </li>
@@ -167,7 +167,7 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Docker image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker image</a></li>
 <li class="toctree-l1"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
 <li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
@@ -223,7 +223,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#coloring-the-screenshots">Coloring the screenshots</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="questions.html">Q and A</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Q and A</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -249,7 +249,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Docker image</li>
+    <li>Q and A</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -260,44 +260,73 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="docker-image">
-<h1>Docker image<a class="headerlink" href="#docker-image" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference external" href="https://www.docker.com">Docker</a> is a platform for distributing package.
-It is light and easy to manage. <code class="docutils literal"><span class="pre">ANNOgesic</span></code> includes a <code class="docutils literal"><span class="pre">Dockfile</span></code> which
-is for build up a environment and install all required tools for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>.</p>
-<p>You can simply pull the Docker image by running</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker pull silasysh/annogesic
+  <div class="section" id="q-and-a">
+<h1>Q and A<a class="headerlink" href="#q-and-a" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>I got the error about complaining no module can be found as following,</li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s2">&quot;ANNOgesic.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">6</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+    <span class="kn">from</span> <span class="nn">annogesiclib.controller</span> <span class="k">import</span> <span class="n">Controller</span>
+<span class="ne">ImportError</span><span class="p">:</span> <span class="n">No</span> <span class="n">module</span> <span class="n">named</span> <span class="n">annogesiclib</span><span class="o">.</span><span class="n">controller</span>
 </pre></div>
 </div>
-<p>Alternatively, you can build the image by <code class="docutils literal"><span class="pre">Dockfile</span></code>.
-Please go to the folder where <code class="docutils literal"><span class="pre">Dockfile</span></code> are located. Then type</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo docker build -t=&quot;annogesic&quot; .
-</pre></div>
-</div>
-<p>It will build up an image called annogesic. You can see the images by typing <code class="docutils literal"><span class="pre">docker</span> <span class="pre">images</span></code></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">REPOSITORY</span>          <span class="n">TAG</span>                 <span class="n">IMAGE</span> <span class="n">ID</span>            <span class="n">CREATED</span>             <span class="n">VIRTUAL</span> <span class="n">SIZE</span>
-<span class="n">annogesic</span>           <span class="n">latest</span>              <span class="n">d35f555694ad</span>        <span class="mi">3</span> <span class="n">days</span> <span class="n">ago</span>          <span class="mf">2.782</span> <span class="n">GB</span>
-<span class="n">ubuntu</span>              <span class="mf">14.04</span>               <span class="n">d2a0ecffe6fa</span>        <span class="mi">11</span> <span class="n">days</span> <span class="n">ago</span>         <span class="mf">188.4</span> <span class="n">MB</span>
-</pre></div>
-</div>
-<p>Then we can use the image to create a container for running <code class="docutils literal"><span class="pre">ANNOgesic</span></code>. Please type</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -t -i annogesic bash
-</pre></div>
-</div>
-<p>Then you will jump into the container.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">root</span><span class="nd">@c9de31fcd7e3</span><span class="p">:</span><span class="o">~</span><span class="c1"># ls</span>
-<span class="n">ANNOgesic</span>
-</pre></div>
-</div>
-<p>If you want to mount the files from your host to the container, just add <code class="docutils literal"><span class="pre">-v</span></code> to the command.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
-</pre></div>
-</div>
-<p>The paths should be absolute path. If we go to <code class="docutils literal"><span class="pre">root</span></code> in container. We can see the file.</p>
-<p>If you want to copy the files from container to host, you can use <code class="docutils literal"><span class="pre">cp</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker cp &lt;containerId&gt;:/file/path/within/container /host/path/target
-</pre></div>
-</div>
+<ul class="simple">
+<li>Solution</li>
+</ul>
+<p>Switch to Python 3.3 or higher. The newer versions can handle this.</p>
+<ul class="simple">
+<li>I try to install ANNOgesic in my own directory. However, when I execute ANNOgesic, an error comes out as following,</li>
+</ul>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first docutils">
+<dt>Traceback (most recent call last):</dt>
+<dd><dl class="first last docutils">
+<dt>File &#8220;bin/annogesic&#8221;, line 7, in &lt;module&gt;</dt>
+<dd>from annogesiclib.controller import Controller</dd>
+</dl>
+</dd>
+</dl>
+<p class="last">ImportError: No module named &#8216;annogesiclib&#8217;</p>
+</dd>
+</dl>
+<ul class="simple">
+<li>Solution</li>
+</ul>
+<p>Please generate a soft link of <code class="docutils literal"><span class="pre">annogesiclib</span></code> to <code class="docutils literal"><span class="pre">bin</span></code>.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>$ cd ANNOgesic/bin
+$ ln -s ../annogesiclib .</dd>
+</dl>
+<ul class="simple">
+<li>When I finished sRNA detection, there are some files in <code class="docutils literal"><span class="pre">sRNAs/gffs/for_classes</span></code> and <code class="docutils literal"><span class="pre">sRNAs/tables/for_classes</span></code>.</li>
+</ul>
+<p>What do the classes mean?</p>
+<ul class="simple">
+<li>Solution</li>
+</ul>
+<p>Please check <code class="docutils literal"><span class="pre">stat_sRNA_class_$GENOME.csv</span></code> in <code class="docutils literal"><span class="pre">stat</span></code> folder. The information of classes can be found in it. The
+classes are based on the input information.</p>
+<ul class="simple">
+<li>I got a sRNA gff file which only contain <code class="docutils literal"><span class="pre">##gff-version</span> <span class="pre">3</span></code>. What does it mean?</li>
+<li>Solution</li>
+</ul>
+<p>If you only got <code class="docutils literal"><span class="pre">##gff-version</span> <span class="pre">3</span></code> in sRNA gff file, it means that ANNOgesic can not find any sRNA in this genome.
+This case can be applied to other genomic feature prediction.</p>
+<ul class="simple">
+<li>How long does sRNA target prediction take?</li>
+<li>Solution</li>
+</ul>
+<p>It depends on the input data size. However, most of the sRNA target prediction tools need to spend around one hour for detecting
+targets of one sRNA. RNAplex is a fast one which can detect the targets of one sRNA in several minutes. If you want to reduce the
+running time, you can specify <code class="docutils literal"><span class="pre">--program</span> <span class="pre">RNAplex</span></code>. However, the accuracy may be influenced.</p>
+<ul class="simple">
+<li>When I run sRNA target prediction, I found many files in <code class="docutils literal"><span class="pre">RNAplfold</span></code>. Are they necessary?</li>
+<li>Solution</li>
+</ul>
+<p>These files are intermediate input for RNAplex. They will be deleted when RNAplex is done.</p>
 </div>
 
 
@@ -306,10 +335,10 @@ Please go to the folder where <code class="docutils literal"><span class="pre">D
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="subcommands.html" class="btn btn-neutral float-right" title="ANNOgesic’s subcommands" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial of ANNOgesic" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

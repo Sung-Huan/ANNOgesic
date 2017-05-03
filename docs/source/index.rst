@@ -12,7 +12,7 @@ Table of content
    docker
    subcommands
    tutorial
-   troubleshooting
+   questions
    license
 
 Introduction

@@ -402,11 +402,29 @@ class PPINetwork(object):
         self.helper.remove_all_content(os.path.join(args_ppi.out_folder),
                                        "temp", "dir")
 
+    def check_query(self, args_ppi):
+        for gff in os.listdir(args_ppi.ptts):
+            gff_f = open(os.path.join(args_ppi.ptts, gff), "r")
+            for query in args_ppi.querys:
+                detect = False
+                for entry in Gff3Parser().entries(gff_f):
+                    datas = query.split(":")
+                    if (entry.seq_id == datas[0]) and (
+                            entry.start == int(datas[1])) and (
+                            entry.end == int(datas[2])) and (
+                            entry.strand == datas[3]):
+                        detect = True
+                        break
+                if not detect:
+                    print("Error: Some of the query proteins do not exist!")
+                    sys.exit()
+
     def retrieve_ppi_network(self, args_ppi):
         '''retrieve PPI from STRING with PIE and draw network'''
         strain_ids = []
         paths = {}
         files = {}
+        self.check_query(args_ppi)
         for strain in args_ppi.strains:
             datas = strain.split(":")
             ptt_file = "PPI_" + datas[0].replace(".gff", ".ptt")

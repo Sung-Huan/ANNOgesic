@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 import time
 from subprocess import Popen
 from annogesiclib.multiparser import Multiparser
@@ -105,11 +106,13 @@ class sRNATargetPrediction(object):
             out = open(srna_out, "a")
             seq = self._read_fasta(seq_file)
             num = 0
+            detect = False
             for entry in self.gff_parser.entries(gff_f):
                 if (entry.seq_id == srna["seq_id"]) and (
                         entry.strand == srna["strand"]) and (
                         entry.start == srna["start"]) and (
                         entry.end == srna["end"]):
+                    detect = True
                     if "ID" in entry.attributes.keys():
                         id_ = entry.attributes["ID"]
                     else:
@@ -120,6 +123,9 @@ class sRNATargetPrediction(object):
                               id_, entry.seq_id, entry.start,
                               entry.end, entry.strand, gene))
                     num += 1
+            if not detect:
+                print("Error: Some of the query sRNAs do not exist!")
+                sys.exit()
             gff_f.close()
             out.close()
 
@@ -229,6 +235,7 @@ class sRNATargetPrediction(object):
                  self.rnaplex_path, prefix), "_RNAplex_", "file")
             self.fixer.fix_rnaplex(rnaplex_file, self.tmps["tmp"])
             shutil.move(self.tmps["tmp"], rnaplex_file)
+            shutil.rmtree(rnaplfold_folder)
 
     def _run_rnaup(self, num_up, processes, out_rnaup, out_log, args_tar):
         for index in range(1, num_up + 1):
@@ -386,16 +393,16 @@ class sRNATargetPrediction(object):
             self._rna_plex(prefixs, args_tar)
         self.helper.remove_all_content(self.target_seq_path,
                                        "_target_", "file")
+#        if (args_tar.program == "RNAplex") or (
+#                args_tar.program == "both"):
+#            for strain in os.listdir(os.path.join(
+#                          args_tar.out_folder, "RNAplex_results")):
+#                shutil.rmtree(os.path.join(args_tar.out_folder, "RNAplex_results",
+#                                           strain, "RNAplfold"))
         if (args_tar.program == "both") or (
                 args_tar.program == "RNAup"):
             self._rnaup(prefixs, args_tar)
         self._merge_rnaplex_rnaup(prefixs, args_tar)
-        if (args_tar.program == "RNAplex") or (
-                args_tar.program == "both"):
-            for strain in os.listdir(os.path.join(
-                          args_tar.out_folder, "RNAplex_results")):
-                shutil.rmtree(os.path.join(args_tar.out_folder, "RNAplex_results",
-                                           strain, "RNAplfold"))
         self.helper.remove_all_content(args_tar.out_folder,
                                        self.tmps["tmp"], "dir")
         self.helper.remove_all_content(args_tar.out_folder,
