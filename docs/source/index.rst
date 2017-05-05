@@ -109,6 +109,8 @@ or
 
     pip3 install annogesic
 
+Please check :ref:`Required tools or databases` for the required third-party tools.
+
 Source code
 ===========
 

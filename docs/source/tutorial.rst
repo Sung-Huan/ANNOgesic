@@ -37,7 +37,7 @@ First of all, we need to create a working folder (``--project_path``) by running
 
     $ annogesic create --project_path ANNOgesic
 
-This will creted the following folder structure:
+This will create the following folder structure:
 
 ::
 

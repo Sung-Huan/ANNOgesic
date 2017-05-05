@@ -16,7 +16,7 @@ snap cpanminus mummer exonerate mafft fasttree libsvg-perl \
 libgd-svg-perl python-setuptools libc6-i386 lib32stdc++6 lib32gcc1 \
 netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
-libbio-perl-perl libsqlite3-dev --yes --fix-missing
+libbio-perl-perl libsqlite3-dev tree --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
 RUN apt-get update --yes && apt-get upgrade --yes 
 

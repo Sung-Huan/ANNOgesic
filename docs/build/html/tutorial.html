@@ -120,8 +120,8 @@
 </li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-the-genome-sequences-and-annotation-files">Retrieving the genome sequences and annotation files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#retrieving-wiggle-and-read-files">Retrieving wiggle and read files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -199,8 +199,8 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial of ANNOgesic</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#generating-a-project">Generating a project</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#retrieving-the-input-data">Retrieving the input data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#putting-wig-and-reads-to-proper-location">Putting wig, and reads to proper location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-the-genome-sequences-and-annotation-files">Retrieving the genome sequences and annotation files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-wiggle-and-read-files">Retrieving wiggle and read files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#improving-the-reference-genome">Improving the reference genome</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#generating-annotation-files">Generating annotation files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
@@ -262,68 +262,90 @@
             
   <div class="section" id="tutorial-of-annogesic">
 <h1>Tutorial of ANNOgesic<a class="headerlink" href="#tutorial-of-annogesic" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial through a small test case to show you how to use
-ANNOgesic&#8217;s subcommands. It build on a public differential RNA-Seq
-data set from <strong>Campylobacter jejuni</strong> subsp. jejuni 81116 that can be
+<p>This tutorial guids you through a small test case to show you how to
+use ANNOgesic&#8217;s subcommands. It builds on a differential RNA-Seq data
+set from <em>Campylobacter jejuni</em> subsp. jejuni 81116 which can be
 downloaded from NCBI GEO and that was part of a work by <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">Dugar et
 al.</a>.
-There will be several output files which are generated in different formats -
-The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures.
-For viewing GFF3 file, you can use a genome browser, for examples <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>,
-<a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
+As part of the tutorial several output files will be generated in
+different formats including CSV files (tabular separated plain text
+files), that can be opened in LibreOffice or Excel, GFF3 files, plain
+text files and figures. For the viewing GFF3 files you can use genome
+browsers like <a class="reference external" href="http://bioviz.org/igb/index.html">IGB</a>, <a class="reference external" href="https://www.broadinstitute.org/igv/">IGV</a> or <a class="reference external" href="http://jbrowse.org/">Jbrowse</a>.</p>
 <p>Before we start, please check <a class="reference internal" href="subcommands.html#the-format-of-filename"><span class="std std-ref">The format of filename</span></a> and
-<a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in
-the section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a> which includes all details as well.
-Moreover, all the requirements are listed in the section <a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.
-The command lines which we will present later are also listed in
-<a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a>.</p>
-<p>If the subcommand is integrated from third-party softwares, ex: TSSpredator,
-please check path of the executed file, and specify it properly. Moreover,
-if <code class="docutils literal"><span class="pre">annogesic</span></code> (executed file of ANNOgesic) is not in your <code class="docutils literal"><span class="pre">$PATH</span></code>, please specify it as well.</p>
+<a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic"><span class="std std-ref">The input format of libraries for running ANNOgesic</span></a> in the
+section <a class="reference internal" href="subcommands.html#annogesic-s-subcommands"><span class="std std-ref">ANNOgesic&#8217;s subcommands</span></a> for more details.
+Moreover, all the requirements are listed in the section
+<a class="reference internal" href="required.html#required-tools-or-databases"><span class="std std-ref">Required tools or databases</span></a>.  The shell commands which we will
+present later are also combined in the shell script <a class="reference external" href="https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data">run.sh</a>.</p>
+<p>If a subcommand requires third-party softwares (e.g. TSSpredator in
+the subcommand <code class="docutils literal"><span class="pre">tss_ps</span></code>) make sure that path of the executable file
+is properly specified or is part of the environmental variable
+<code class="docutils literal"><span class="pre">$PATH</span></code>. Moreover, if <code class="docutils literal"><span class="pre">annogesic</span></code> (executable file of ANNOgesic)
+is not in your <code class="docutils literal"><span class="pre">$PATH</span></code>, please specify its full path.</p>
 <div class="section" id="generating-a-project">
 <h2>Generating a project<a class="headerlink" href="#generating-a-project" title="Permalink to this headline">¶</a></h2>
 <p>First of all, we need to create a working folder (<code class="docutils literal"><span class="pre">--project_path</span></code>) by running <code class="docutils literal"><span class="pre">create</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic create --project_path ANNOgesic
 </pre></div>
 </div>
-<p>Then we will see</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>Created folder &quot;ANNOgesic&quot; and required subfolders.
-$ ls
+<p>This will create the following folder structure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ tree ANNOgesic
 ANNOgesic
+├── input
+│   ├── BAMs
+│   │   ├── BAMs_map_query_genomes
+│   │   │   ├── fragment
+│   │   │   └── tex_notex
+│   │   └── BAMs_map_related_genomes
+│   │       ├── fragment
+│   │       └── tex_notex
+│   ├── databases
+│   ├── manual_processing_sites
+│   ├── manual_TSSs
+│   ├── mutation_tables
+│   ├── reads
+│   ├── references
+│   │   ├── annotations
+│   │   └── fasta_files
+│   ├── riboswitch_ID_file
+│   ├── RNA_thermometer_ID_file
+│   └── wigs
+│       ├── fragment
+│       └── tex_notex
+├── output
+└── used_annogesic_version.txt
+
+22 directories, 1 file
 </pre></div>
 </div>
 </div>
-<div class="section" id="retrieving-the-input-data">
-<h2>Retrieving the input data<a class="headerlink" href="#retrieving-the-input-data" title="Permalink to this headline">¶</a></h2>
-<p>For our test case, the input data can be downloaded from
-<a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/">NCBI</a>.
-Let&#8217;s setting the <code class="docutils literal"><span class="pre">$FTP_SOURCE</span></code> first</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">FTP_SOURCE</span><span class="o">=</span><span class="n">ftp</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">.</span><span class="n">ncbi</span><span class="o">.</span><span class="n">nlm</span><span class="o">.</span><span class="n">nih</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">genomes</span><span class="o">/</span><span class="n">refseq</span><span class="o">/</span><span class="n">bacteria</span><span class="o">/</span><span class="n">Campylobacter_jejuni</span><span class="o">/</span><span class="n">latest_assembly_versions</span><span class="o">/</span><span class="n">GCF_000017905</span><span class="o">.</span><span class="mi">1</span><span class="n">_ASM1790v1</span><span class="o">/</span>
-</pre></div>
-</div>
-<p>Then, we can download fasta files(<code class="docutils literal"><span class="pre">--ref_fasta</span></code>), gff files(<code class="docutils literal"><span class="pre">--ref_gff</span></code>),
-gbk files(<code class="docutils literal"><span class="pre">--ref_gbk</span></code>), ptt files(<code class="docutils literal"><span class="pre">--ref_ptt</span></code>),
-rnt files(<code class="docutils literal"><span class="pre">--ref_rnt</span></code>), and converts to embl(<code class="docutils literal"><span class="pre">--convert_embl</span></code>).</p>
+<div class="section" id="retrieving-the-genome-sequences-and-annotation-files">
+<h2>Retrieving the genome sequences and annotation files<a class="headerlink" href="#retrieving-the-genome-sequences-and-annotation-files" title="Permalink to this headline">¶</a></h2>
+<p>For our test case, the genome and annotation data has to be retrieved
+<a class="reference external" href="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/">NCBI</a>.</p>
+<p>ANNOgesic offers a convenient to do that and we download fasta files
+(<code class="docutils literal"><span class="pre">--ref_fasta</span></code>), gff files (<code class="docutils literal"><span class="pre">--ref_gff</span></code>), gbk files
+(<code class="docutils literal"><span class="pre">--ref_gbk</span></code>), ptt files (<code class="docutils literal"><span class="pre">--ref_ptt</span></code>), rnt files (<code class="docutils literal"><span class="pre">--ref_rnt</span></code>),
+and convert the the gff files to embl format (<code class="docutils literal"><span class="pre">--convert_embl</span></code>).</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ annogesic get_input_files \
-    --ftp_path $FTP_SOURCE \
+    --ftp_path ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/ \
     --ftp_path --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
     --project_path ANNOgesic
 </pre></div>
 </div>
-<p>Then we will get following results</p>
+<p>The file will be place in the following locations:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ls ANNOgesic/input/references/fasta_files/
 NC_009839.1.fa
 $ ls ANNOgesic/input/references/annotations/
 NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 </pre></div>
 </div>
-<p>In fact, these fasta and gff files are exactly what we want to use for the test case.
-But, in order to test <code class="docutils literal"><span class="pre">update_genome_fasta</span></code> and <code class="docutils literal"><span class="pre">annotation_transfer</span></code>, we used these files to
-generate some dummy genomes.</p>
+<p>Alternatively you can manually copy the file into these subfolders.</p>
 </div>
-<div class="section" id="putting-wig-and-reads-to-proper-location">
-<h2>Putting wig, and reads to proper location<a class="headerlink" href="#putting-wig-and-reads-to-proper-location" title="Permalink to this headline">¶</a></h2>
-<p>For the test case, we can download reads from
+<div class="section" id="retrieving-wiggle-and-read-files">
+<h2>Retrieving wiggle and read files<a class="headerlink" href="#retrieving-wiggle-and-read-files" title="Permalink to this headline">¶</a></h2>
+<p>We need to download reads in SRA format form GEO
 <a class="reference external" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883">here</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515254/SRR515254.sra
 $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515255/SRR515255.sra
@@ -332,19 +354,16 @@ $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SR
 </pre></div>
 </div>
 <p>Then we can convert SRA files to Fasta or Fastq format for mapping by
-using <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK158900/">SRA toolkit</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
-$ tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
-$ rm sratoolkit.2.5.2-ubuntu64.tar.gz
-$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515254.sra
-$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515255.sra
-$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515256.sra
-$ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515257.sra
+using <code class="docutils literal"><span class="pre">fastq-dump</span></code> of the the <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK158900/">SRA toolkit</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ fastq-dump --fasta SRR515254.sra
+$ fastq-dump --fasta SRR515255.sra
+$ fastq-dump --fasta SRR515256.sra
+$ fastq-dump --fasta SRR515257.sra
 $ mv *.fasta ANNOgesic/input/reads
 $ rm SRR515254.sra SRR515255.sra SRR515256.sra SRR515257.sra
 </pre></div>
 </div>
-<p>Now we get the reads. Then we have to download the wiggle files.</p>
+<p>Then we have to download the coverage files in wiggle format.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
 $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951380/suppl/GSM951380%5FLog%5F81116%5FR1%5Fminus%5FTEX%5Fin%5FNC%5F009839%5Fplus.wig.gz
 $ wget -cP ANNOgesic/input/wigs/tex_notex ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM951nnn/GSM951381/suppl/GSM951381%5FLog%5F81116%5FR1%5Fplus%5FTEX%5Fin%5FNC%5F009839%5Fminus.wig.gz
