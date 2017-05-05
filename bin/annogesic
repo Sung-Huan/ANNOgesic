@@ -92,7 +92,7 @@ def main():
         "blob/master/tutorial_data/mutation.csv")
     get_target_fasta_basic.add_argument(
         "--combine_to_one_fasta", "-cm", default=False, action="store_true",
-        help="For combining all updated sequences in --mutation_table to "
+        help="Combinine all updated sequences in --mutation_table to "
         "one fasta file. Default is False.")
     get_target_fasta_parser.set_defaults(func=get_target_fasta)    
 
@@ -107,12 +107,12 @@ def main():
         help="Path of the project folder.")
     RATT_basic.add_argument(
         "--compare_pair", "-p", required=True, nargs='+',
-        help="Please assign the name of genome pairs, e.g. "
+        help="Please assign the sequence identifier of genome pairs, e.g. "
         "NC_007795:NEW_NC_007795. The related genome is NC_007795 and "
         "the target genome is NEW_NC_007795. The assigned names are the "
         "headers of the fasta file (start with \">\"), not the "
-        "filename of fasta file. If multiple genomes need to be assigned, "
-        "please use spaces to separate the genomes.")
+        "filename of fasta file. If multiple sequences need to be assigned, "
+        "please use spaces to separate them.")
     RATT_basic.add_argument(
         "--related_embl_files", "-ce", default=None, nargs='+',
         help="The paths of the embl files of the related species.")
