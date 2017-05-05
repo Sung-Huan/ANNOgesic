@@ -1,26 +1,32 @@
 Tutorial of ANNOgesic
 =====================
 
-This tutorial through a small test case to show you how to use
-ANNOgesic's subcommands. It build on a public differential RNA-Seq
-data set from **Campylobacter jejuni** subsp. jejuni 81116 that can be
+This tutorial guids you through a small test case to show you how to
+use ANNOgesic's subcommands. It builds on a differential RNA-Seq data
+set from *Campylobacter jejuni* subsp. jejuni 81116 which can be
 downloaded from NCBI GEO and that was part of a work by `Dugar et
 al. <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
-There will be several output files which are generated in different formats - 
-The CSV (tabular separated plain text files) files (opened by LibreOffice or Excel), GFF3 files, TXT files and figures. 
-For viewing GFF3 file, you can use a genome browser, for examples `IGB <http://bioviz.org/igb/index.html>`_, 
-`IGV <https://www.broadinstitute.org/igv/>`_ or `Jbrowse <http://jbrowse.org/>`_.
+As part of the tutorial several output files will be generated in
+different formats including CSV files (tabular separated plain text
+files), that can be opened in LibreOffice or Excel, GFF3 files, plain
+text files and figures. For the viewing GFF3 files you can use genome
+browsers like `IGB <http://bioviz.org/igb/index.html>`_, `IGV
+<https://www.broadinstitute.org/igv/>`_ or `Jbrowse
+<http://jbrowse.org/>`_.
 
-Before we start, please check :ref:`The format of filename` and 
-:ref:`The input format of libraries for running ANNOgesic` in 
-the section :ref:`ANNOgesic's subcommands` which includes all details as well.
-Moreover, all the requirements are listed in the section :ref:`Required tools or databases`.
-The command lines which we will present later are also listed in 
-`run.sh <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
+Before we start, please check :ref:`The format of filename` and
+:ref:`The input format of libraries for running ANNOgesic` in the
+section :ref:`ANNOgesic's subcommands` for more details.
+Moreover, all the requirements are listed in the section
+:ref:`Required tools or databases`.  The shell commands which we will
+present later are also combined in the shell script `run.sh
+<https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
 
-If the subcommand is integrated from third-party softwares, ex: TSSpredator,
-please check path of the executed file, and specify it properly. Moreover, 
-if ``annogesic`` (executed file of ANNOgesic) is not in your ``$PATH``, please specify it as well.
+If a subcommand requires third-party softwares (e.g. TSSpredator in
+the subcommand ``tss_ps``) make sure that path of the executable file
+is properly specified or is part of the environmental variable
+``$PATH``. Moreover, if ``annogesic`` (executable file of ANNOgesic)
+is not in your ``$PATH``, please specify its full path.
 
 Generating a project
 --------------------
@@ -31,37 +37,59 @@ First of all, we need to create a working folder (``--project_path``) by running
 
     $ annogesic create --project_path ANNOgesic
 
-Then we will see 
+This will creted the following folder structure:
 
 ::
 
-    Created folder "ANNOgesic" and required subfolders.
-    $ ls 
-    ANNOgesic
 
-Retrieving the input data
--------------------------
+   $ tree ANNOgesic
+   ANNOgesic
+   ├── input
+   │   ├── BAMs
+   │   │   ├── BAMs_map_query_genomes
+   │   │   │   ├── fragment
+   │   │   │   └── tex_notex
+   │   │   └── BAMs_map_related_genomes
+   │   │       ├── fragment
+   │   │       └── tex_notex
+   │   ├── databases
+   │   ├── manual_processing_sites
+   │   ├── manual_TSSs
+   │   ├── mutation_tables
+   │   ├── reads
+   │   ├── references
+   │   │   ├── annotations
+   │   │   └── fasta_files
+   │   ├── riboswitch_ID_file
+   │   ├── RNA_thermometer_ID_file
+   │   └── wigs
+   │       ├── fragment
+   │       └── tex_notex
+   ├── output
+   └── used_annogesic_version.txt
 
-For our test case, the input data can be downloaded from 
+   22 directories, 1 file
+
+
+Retrieving the genome sequences and annotation files
+----------------------------------------------------
+
+For our test case, the genome and annotation data has to be retrieved
 `NCBI <ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/>`_.
-Let's setting the ``$FTP_SOURCE`` first
 
-::
-
-    FTP_SOURCE=ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/
-
-Then, we can download fasta files(``--ref_fasta``), gff files(``--ref_gff``), 
-gbk files(``--ref_gbk``), ptt files(``--ref_ptt``), 
-rnt files(``--ref_rnt``), and converts to embl(``--convert_embl``).
+ANNOgesic offers a convenient to do that and we download fasta files
+(``--ref_fasta``), gff files (``--ref_gff``), gbk files
+(``--ref_gbk``), ptt files (``--ref_ptt``), rnt files (``--ref_rnt``),
+and convert the the gff files to embl format (``--convert_embl``).
 
 ::
 
     $ annogesic get_input_files \
-        --ftp_path $FTP_SOURCE \
+        --ftp_path ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/ \
         --ftp_path --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
         --project_path ANNOgesic
 
-Then we will get following results
+The file will be place in the following locations:
 
 ::
 
@@ -70,13 +98,12 @@ Then we will get following results
     $ ls ANNOgesic/input/references/annotations/
     NC_009839.1.embl  NC_009839.1.gbk  NC_009839.1.gff
 
-In fact, these fasta and gff files are exactly what we want to use for the test case.
-But, in order to test ``update_genome_fasta`` and ``annotation_transfer``, we used these files to 
-generate some dummy genomes.
+Alternatively you can manually copy the file into these subfolders.
 
-Putting wig, and reads to proper location
----------------------------------------------------
-For the test case, we can download reads from 
+Retrieving wiggle and read files
+--------------------------------
+
+We need to download reads in SRA format form GEO
 `here <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE38883>`_.
 
 ::
@@ -86,22 +113,20 @@ For the test case, we can download reads from
     $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515256/SRR515256.sra
     $ wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/SRR515257/SRR515257.sra
 
-Then we can convert SRA files to Fasta or Fastq format for mapping by 
-using `SRA toolkit <http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_.
+Then we can convert SRA files to Fasta or Fastq format for mapping by
+using ``fastq-dump`` of the the `SRA toolkit
+<http://www.ncbi.nlm.nih.gov/books/NBK158900/>`_.
 
 ::
   
-   $ wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
-   $ tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
-   $ rm sratoolkit.2.5.2-ubuntu64.tar.gz
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515254.sra
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515255.sra
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515256.sra
-   $ ./sratoolkit.2.5.2-ubuntu64/bin/fastq-dump.2.5.2 --fasta SRR515257.sra
+   $ fastq-dump --fasta SRR515254.sra
+   $ fastq-dump --fasta SRR515255.sra
+   $ fastq-dump --fasta SRR515256.sra
+   $ fastq-dump --fasta SRR515257.sra
    $ mv *.fasta ANNOgesic/input/reads
    $ rm SRR515254.sra SRR515255.sra SRR515256.sra SRR515257.sra
 
-Now we get the reads. Then we have to download the wiggle files.
+Then we have to download the coverage files in wiggle format.
 
 ::
 
