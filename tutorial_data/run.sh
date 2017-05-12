@@ -453,7 +453,7 @@ gen_screenshot(){
 
 color_png(){
     $ANNOGESIC_PATH \
-        color_png \
+        colorize_screenshot_tracks \
 	-t 2 \
 	-f $ANNOGESIC_FOLDER/output/TSSs \
 	-pj $ANNOGESIC_FOLDER
