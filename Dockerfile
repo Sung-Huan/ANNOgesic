@@ -28,6 +28,17 @@ ANNOgesic
 RUN mkdir tools
 WORKDIR tools
 
+# RATT
+RUN wget ftp://ftp.sanger.ac.uk/pub/resources/software/pagit/PAGIT.V1.64bit.tgz && \
+tar -zxvf PAGIT.V1.64bit.tgz && mv PAGIT/RATT /opt/RATT && rm -rf PAGIT
+# patch the error of perl version and the path of mummer
+RUN sed -i '244s/defined//' /opt/RATT/main.ratt.pl && \
+sed -i '19s/$PAGIT_HOME/\/usr/' /opt/RATT/start.ratt.sh
+
+ENV RATT_HOME=/opt/RATT \
+PERL5LIB=/opt/RATT/:$PERL5LIB \
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
+
 # vienna package
 RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.2.5.tar.gz && \
 tar -zxvf ViennaRNA-2.2.5.tar.gz && cd ViennaRNA-2.2.5 && ./configure  --without-perl --without-python && make && make install && \
@@ -161,17 +172,6 @@ tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make instal
 RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2 && \
 tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
 
-# RATT
-RUN git clone https://github.com/sanger-pathogens/rapid_annotation_transfer_tool.git && \
-mv rapid_annotation_transfer_tool /opt/RATT
-# patch the error of perl version and the path of mummer
-RUN sed -i '244s/defined//' /opt/RATT/main.ratt.pl && \
-sed -i '19s/$PAGIT_HOME/\/usr/' /opt/RATT/start.ratt.sh
-
-ENV RATT_HOME=/opt/RATT \
-PERL5LIB=/opt/RATT/:$PERL5LIB \
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
-
 RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
@@ -179,7 +179,9 @@ ViennaRNA-2.2.5.tar.gz \
 htslib-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
 bcftools-1.3.1.tar.bz2 \
-CRT1.2-CLI.jar.zip 
+CRT1.2-CLI.jar.zip \
+PAGIT.V1.64bit.tgz
+
 
 RUN pip3 install ANNOgesic --upgrade
 
