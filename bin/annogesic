@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.5.21"
+__version__ = "0.5.22"
 
 def main():
     print("""
@@ -1675,17 +1675,10 @@ def main():
     snp_basic.add_argument(
         "--bam_files", "-b", required=True, nargs='+',
         help="The input format is "
-        "$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,... "
-        "$SAMPLE_NUM means the input bam files (samples/replicates) should be "
-        "considered as the given number of samples. "
-        "$SAMPLE_NUM also influences --dp4_cutoff, "
-        "--indel_fraction, and --read_depth_range."
-        "For an example, if sample1.bam, sample2.bam, and "
-        "sample3.bam are three samples/replicates of one condition. "
-        "You can assign set1:2:sample1.bam,sample2.bam,sample3.bam. "
+        "$SET_NAME:$BAMFILE1,$BAMFILE2,... "
+        "For an example, set1:2:sample1.bam,sample2.bam,sample3.bam. "
         "This means these three bam files should be computed together. "
-        "And these bam files (samples/replicates) should be considered as "
-        "2 samples. If multiple samples need to be assigned, please use "
+        "If multiple genomes need to be assigned, please use "
         "spaces to separate the input.")
     snp_add = snp_parser.add_argument_group(
         'additional arguments')
@@ -1702,12 +1695,12 @@ def main():
         "--read_depth_range", "-d", default="n_10,none",
         help="Range of the read depth of a real mutation. The format is "
         "$MIN,$MAX. This value can be assigned by different types: "
-        "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
+        "1. real number (\"r\"), 2. times of the number of bam files "
         "(assigned by --bam_files) (\"n\") "
         "or 3. times of the average read depth (\"a\"). For an example, "
-        "n_10,a_3 is assigned, the average read depth is 70 and the "
-        "$SAMPLE_NUM is 4. Then, n_10 will be 40 (10 * "
-        "$SAMPLE_NUM) and a_3 will be 140 (average read depth * 3). "
+        "n_10,a_3 is assigned. If the average read depth is 70 and 4 "
+        "bam files are provided, n_10 will be 40 "
+        "and a_3 will be 140 (average read depth * 3). "
         "Based on the same example, if this value is r_10,a_3, the minimum "
         "read depth will become exact 10 reads. If you don't want to set "
         "maximum read depth, you can assign \"none\". Default is n_10,none.")
@@ -1732,15 +1725,14 @@ def main():
         "reverse bases (number 4). Two values need to be assigned, "
         "ex: n_10,0.8. The first value is for (number 3 + number 4). "
         "This value can be assigned based on 1. real number (\"r\"), 2. times "
-        "of $SAMPLE_NUM (assigned by --bam_files) (\"n\") or "
+        "of the number of bam files (assigned by --bam_files) (\"n\") or "
         "3. times of average read depth "
         "(\"a\"). The second value is for (number 3 + number 4) / (number 1 + "
         "number 2 + number 3 + number 4). These two values are split by "
         "commas. For an example, n_10,0.8 is assigned and the average read depth "
-        "is 70 and $SAMPLE_NUM is 4. It means "
+        "is 70 and 4 bam files are provided. It means "
         "that the sum of number 3 and number 4 should be higher than 40 "
-        "(10 * $SAMPLE_NUM), and the fraction "
-        "-- (number 3 + number 4) / "
+        ", and the fraction -- (number 3 + number 4) / "
         "(number 1 + number 2 + number 3 + number 4) should be higher than "
         "0.8. Based on the same example, if r_10,0.8 is assigned, the sum of "
         "read depth of number 3 and number 4 will become exact 10 reads. "
@@ -1749,12 +1741,12 @@ def main():
         "--indel_fraction", "-if", default="n_10,0.8",
         help="This value is the minimum IDV and IMF which supports insertion "
         "of deletion. The minimum IDV can be assigned by different types: "
-        "1. real number (\"r\"), 2. times of $SAMPLE_NUM "
+        "1. real number (\"r\"), 2. times of the number of bam files "
         "(assigned by --bam_files) (\"n\") or "
         "3. times of the average read depth (\"a\"). For an example, n_10,0.8 "
-        "is assigned, the average read depth is 70 and $SAMPLE_NUM "
-        "is 4. It means that IDV should be higher than 40 (10 * "
-        "$SAMPLE_NUM), and IMF should be higher than 0.8. "
+        "is assigned. If the average read depth is 70 and 4 bam files are "
+        "provided, IDV should be higher than 40 "
+        ", and IMF should be higher than 0.8. "
         "Based on the same example, if r_10,0.8 is assigned, "
         "the minimum IDV will become "
         "exact 10 reads. Default is n_10,0.8 and the two numbers are "

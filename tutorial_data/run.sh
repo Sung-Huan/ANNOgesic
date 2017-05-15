@@ -331,7 +331,7 @@ $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC
          snp \
 	-t related_genome \
 	-p with_BAQ without_BAQ extend_BAQ \
-	-b all_samples:2:$BAM_FILES \
+	-b all_samples:$BAM_FILES \
 	-f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
 	-pj $ANNOGESIC_FOLDER
 }

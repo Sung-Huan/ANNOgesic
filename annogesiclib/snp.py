@@ -247,23 +247,16 @@ class SNPCalling(object):
         bam_datas = []
         for bam in bams:
             datas = bam.split(":")
-            if len(datas) != 3:
+            if len(datas) != 2:
                 print("Error: the format of --bam_files is wrong!")
-                sys.exit()
-            try:
-                int(datas[1])
-            except ValueError:
-                print("Error: the format of --bam_files is wrong! "
-                      "The format should be like "
-                      "$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,... "
-                      "and $SAMPLE_NUM should be integer!")
                 sys.exit()
             for file_ in datas[-1].split(","):
                 if not os.path.exists(file_):
                     print("Error: there are some Bam files "
                           "which do not exist!")
                     sys.exit()
-            bam_datas.append({"sample": datas[0], "rep": int(datas[1]),
+            bam_datas.append({"sample": datas[0],
+                              "rep": len(datas[-1].split(",")),
                               "bams": datas[-1].split(",")})
         return bam_datas
 

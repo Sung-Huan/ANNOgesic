@@ -177,8 +177,8 @@ class TestSNPCalling(unittest.TestCase):
         args = self.mock_args.mock()
         args.types = "reference"
         args.program = ["with_BAQ"]
-        args.bams = ["a1:1:" + os.path.join(self.test_folder, "frag_bams"),
-                     "a2:1:" + os.path.join(self.test_folder, "tex_bams")]
+        args.bams = ["a1:" + os.path.join(self.test_folder, "frag_bams"),
+                     "a2:" + os.path.join(self.test_folder, "tex_bams")]
         args.frag_bams = os.path.join(self.test_folder, "frag_bams")
         args.normal_bams = os.path.join(self.test_folder, "tex_bams")
         os.mkdir(args.normal_bams)
