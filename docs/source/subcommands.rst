@@ -255,8 +255,8 @@ For an example, please check `mutation table <https://raw.githubusercontent.com/
                             https://github.com/Sung-
                             Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
       --combine_to_one_fasta, -cm
-                            For combining all updated sequences in
-                            --mutation_table to one fasta file. Default is False.
+                            Combinine all updated sequences in --mutation_table to
+                            one fasta file. Default is False.
 
 - **Output files**
 
@@ -310,13 +310,13 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --compare_pair COMPARE_PAIR [COMPARE_PAIR ...], -p COMPARE_PAIR [COMPARE_PAIR ...]
-                            Please assign the name of genome pairs, e.g.
-                            NC_007795:NEW_NC_007795. The related genome is
+                            Please assign the sequence identifier of genome pairs,
+                            e.g. NC_007795:NEW_NC_007795. The related genome is
                             NC_007795 and the target genome is NEW_NC_007795. The
                             assigned names are the headers of the fasta file
                             (start with ">"), not the filename of fasta file. If
-                            multiple genomes need to be assigned, please use
-                            spaces to separate the genomes.
+                            multiple sequences need to be assigned, please use
+                            spaces to separate them.
       --related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...], -ce RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]
                             The paths of the embl files of the related species.
       --related_gbk_files RELATED_GBK_FILES [RELATED_GBK_FILES ...], -cg RELATED_GBK_FILES [RELATED_GBK_FILES ...]
@@ -369,12 +369,9 @@ query genomes if it is necessary.
 - **Required files**
 
 **BAM files:** BAM files from fragmented/conventional libraries or TEX +/- treated libraries both can be accepted.
-For assigning the files, please follow the format -- ``$SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...``. 
-For an example, the user has four bam files and these files are for two different conditions. Then the input will be 
-``set1:2:sample1.bam,sample2.bam set2:2:sample3.bam,sample4.bam``. ``$SAMPLE_NUM`` in 
-this example is 2 which means there are two samples in set1 and set2. 
-``$SAMPLE_NUM`` will influence ``--dp4_cutoff``, ``--indel_fraction``, and 
-``--read_depth_range`` which will be used to filter the mutations.
+For assigning the files, please follow the format -- ``$SET_NAME:$BAMFILE1,$BAMFILE2,...``. 
+For an example, the user has four bam files of one genome. Then the input will be 
+``set1:sample1.bam,sample2.bam,sample3.bam,sample4.bam``.
 
 **Fasta files of the closely related genomes** or **Fasta files of the query genomes**
 
@@ -416,20 +413,12 @@ this example is 2 which means there are two samples in set1 and set2.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
-                            The input format is
-                            $SET_NAME:$SAMPLE_NUM:$BAMFILE1,$BAMFILE2,...
-                            $SAMPLE_NUM means the input bam files
-                            (samples/replicates) should be considered as the given
-                            number of samples. $SAMPLE_NUM also influences
-                            --dp4_cutoff, --indel_fraction, and
-                            --read_depth_range.For an example, if sample1.bam,
-                            sample2.bam, and sample3.bam are three
-                            samples/replicates of one condition. You can assign
-                            set1:2:sample1.bam,sample2.bam,sample3.bam. This means
-                            these three bam files should be computed together. And
-                            these bam files (samples/replicates) should be
-                            considered as 2 samples. If multiple samples need to
-                            be assigned, please use spaces to separate the input.
+                            The input format is $SET_NAME:$BAMFILE1,$BAMFILE2,...
+                            For an example,
+                            set1:sample1.bam,sample2.bam,sample3.bam. This means
+                            these three bam files should be computed together. If
+                            multiple genomes need to be assigned, please use
+                            spaces to separate the input.
     
     additional arguments:
       --samtools_path SAMTOOLS_PATH
@@ -443,16 +432,16 @@ this example is 2 which means there are two samples in set1 and set2.
       --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
                             Range of the read depth of a real mutation. The format
                             is $MIN,$MAX. This value can be assigned by different
-                            types: 1. real number ("r"), 2. times of $SAMPLE_NUM
-                            (assigned by --bam_files) ("n") or 3. times of the
-                            average read depth ("a"). For an example, n_10,a_3 is
-                            assigned, the average read depth is 70 and the
-                            $SAMPLE_NUM is 4. Then, n_10 will be 40 (10 *
-                            $SAMPLE_NUM) and a_3 will be 140 (average read depth *
-                            3). Based on the same example, if this value is
-                            r_10,a_3, the minimum read depth will become exact 10
-                            reads. If you don't want to set maximum read depth,
-                            you can assign "none". Default is n_10,none.
+                            types: 1. real number ("r"), 2. times of the number of
+                            bam files (assigned by --bam_files) ("n") or 3. times
+                            of the average read depth ("a"). For an example,
+                            n_10,a_3 is assigned. If the average read depth is 70
+                            and 4 bam files are provided, n_10 will be 40 and a_3
+                            will be 140 (average read depth * 3). Based on the
+                            same example, if this value is r_10,a_3, the minimum
+                            read depth will become exact 10 reads. If you don't
+                            want to set maximum read depth, you can assign "none".
+                            Default is n_10,none.
       --ploidy PLOIDY, -pl PLOIDY
                             The query bacteria is haploid or diploid. Default is
                             haploid.
@@ -472,32 +461,31 @@ this example is 2 which means there are two samples in set1 and set2.
                             4). Two values need to be assigned, ex: n_10,0.8. The
                             first value is for (number 3 + number 4). This value
                             can be assigned based on 1. real number ("r"), 2.
-                            times of $SAMPLE_NUM (assigned by --bam_files) ("n")
-                            or 3. times of average read depth ("a"). The second
-                            value is for (number 3 + number 4) / (number 1 +
-                            number 2 + number 3 + number 4). These two values are
-                            split by commas. For an example, n_10,0.8 is assigned
-                            and the average read depth is 70 and $SAMPLE_NUM is 4.
-                            It means that the sum of number 3 and number 4 should
-                            be higher than 40 (10 * $SAMPLE_NUM), and the fraction
-                            -- (number 3 + number 4) / (number 1 + number 2 +
-                            number 3 + number 4) should be higher than 0.8. Based
-                            on the same example, if r_10,0.8 is assigned, the sum
-                            of read depth of number 3 and number 4 will become
-                            exact 10 reads. Default is n_10,0.8.
+                            times of the number of bam files (assigned by
+                            --bam_files) ("n") or 3. times of average read depth
+                            ("a"). The second value is for (number 3 + number 4) /
+                            (number 1 + number 2 + number 3 + number 4). These two
+                            values are split by commas. For an example, n_10,0.8
+                            is assigned and the average read depth is 70 and 4 bam
+                            files are provided. It means that the sum of number 3
+                            and number 4 should be higher than 40 , and the
+                            fraction -- (number 3 + number 4) / (number 1 + number
+                            2 + number 3 + number 4) should be higher than 0.8.
+                            Based on the same example, if r_10,0.8 is assigned,
+                            the sum of read depth of number 3 and number 4 will
+                            become exact 10 reads. Default is n_10,0.8.
       --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
                             This value is the minimum IDV and IMF which supports
                             insertion of deletion. The minimum IDV can be assigned
                             by different types: 1. real number ("r"), 2. times of
-                            $SAMPLE_NUM (assigned by --bam_files) ("n") or 3.
-                            times of the average read depth ("a"). For an example,
-                            n_10,0.8 is assigned, the average read depth is 70 and
-                            $SAMPLE_NUM is 4. It means that IDV should be higher
-                            than 40 (10 * $SAMPLE_NUM), and IMF should be higher
-                            than 0.8. Based on the same example, if r_10,0.8 is
-                            assigned, the minimum IDV will become exact 10 reads.
-                            Default is n_10,0.8 and the two numbers are separated
-                            by commas.
+                            the number of bam files (assigned by --bam_files)
+                            ("n") or 3. times of the average read depth ("a"). For
+                            an example, n_10,0.8 is assigned. If the average read
+                            depth is 70 and 4 bam files are provided, IDV should
+                            be higher than 40 , and IMF should be higher than 0.8.
+                            Based on the same example, if r_10,0.8 is assigned,
+                            the minimum IDV will become exact 10 reads. Default is
+                            n_10,0.8 and the two numbers are separated by commas.
       --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
                             This function can set more filters to improve the
                             results. Please assign 1. the tag, 2. bigger ("b") or
@@ -516,13 +504,13 @@ The output folders and results are following:
 
 **SNP_raw_output:** Stores output tables which be only considered read depth and QUAL.
 
-	**VCF Table (only consider read depth and QUAL):** Filename is ``$GENOME_$PROGRAM_$SAMPLE.vcf``.
+	**VCF Table (only consider read depth and QUAL):** Filename is ``$GENOME_$PROGRAM_$SET.vcf``.
 
 **SNP_table:** Stores two types of output tables
 
-        **VCF Table (consider all filters):** Filename is ``$GENOME_$PROGRAM_$SAMPLE_best.vcf``.
+        **VCF Table (consider all filters):** Filename is ``$GENOME_$PROGRAM_$SET_best.vcf``.
 
-        **Index of fasta files:**: Filename is ``$GENOME_$PROGRAM_$SAMPLE_seq_reference.csv``.
+        **Index of fasta files:**: Filename is ``$GENOME_$PROGRAM_$SET_seq_reference.csv``.
         The meaning of this file is like following example:
 
 ::
@@ -535,7 +523,7 @@ The example contains "position conflict" and "mutation conflict".
 As a result, the conflicts will affect the other mutation's positions.
 Therefore, it will generate four different fasta files. The first two lines are "position conflict", and 
 the last line is "mutation conflict".
-``$GENOME_$PROGRAM_$SAMPLE_seq_reference.csv`` is the index for these four fasta files.
+``$GENOME_$PROGRAM_$SET_seq_reference.csv`` is the index for these four fasta files.
 
 ::
 
@@ -550,7 +538,7 @@ The third one is the index of the "mutations conflict".
 The fourth one is the selected position and nucleotides. 
 The last column is the genome name.
 
-**Potential fasta files**: Filename is ``$FASTANAME_$SAMPLE_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa``, 
+**Potential fasta files**: Filename is ``$FASTANAME_$SET_$STRIANNAME_$INDEXofPOSITIONCONNFLICT_$INDEXofMUTATIONCONFLICT.fa``, 
 and it is stored in ``$ANNOgesic/output/SNP_calling/$BAM_TYPE/seqs``.
 Based on the example in **Index of fasta files**, ``Staphylococcus_aureus_HG003_set1_Staphylococcus_aureus_HG003_1_1.fa``
 will be generated based on the first line of ``$GENOME_$PROGRAM_seq_reference.csv``.

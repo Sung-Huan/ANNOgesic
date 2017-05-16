@@ -28,6 +28,10 @@ ANNOgesic
 RUN mkdir tools
 WORKDIR tools
 
+# sratoolkit
+RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz && \
+tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz && rm sratoolkit.2.5.2-ubuntu64.tar.gz
+
 # RATT
 RUN wget ftp://ftp.sanger.ac.uk/pub/resources/software/pagit/PAGIT.V1.64bit.tgz && \
 tar -zxvf PAGIT.V1.64bit.tgz && mv PAGIT/RATT /opt/RATT && rm -rf PAGIT

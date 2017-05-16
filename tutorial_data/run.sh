@@ -52,12 +52,12 @@ get_wig_and_read_files(){
     #### This is for downloading tutorial data.
     #### If you have your own data, please put your data in corresponding folders and skip this step.
 
-    #### Download sratoolkit
+    #### Download and install sratoolkit. If sratoolkit has been installed, you can skip this step.
     wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz
     tar -zxvf sratoolkit.2.5.2-ubuntu64.tar.gz
     rm sratoolkit.2.5.2-ubuntu64.tar.gz
 
-    #### transfer SRA files to fasta files
+    #### transfer SRA files to fasta files. Please specify the path of fastq_dump
     for SRA in SRR515254 SRR515255 SRR515256 SRR515257
     do
         wget ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByStudy/sra/SRP/SRP013/SRP013869/$SRA/$SRA.sra

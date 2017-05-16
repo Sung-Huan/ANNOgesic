@@ -1008,7 +1008,7 @@ samples in this set, and all four bam files need to be computed together.
     $ annogesic snp \
         --bam_type query_genome \
         --program with_BAQ without_BAQ extend_BAQ \
-        --bam_files all_samples:2:$BAM_FILES \
+        --bam_files all_samples:$BAM_FILES \
         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --project_path ANNOgesic
 
