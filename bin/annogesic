@@ -277,7 +277,7 @@ def main():
         "--genome_lengths", "-le", default=None, nargs='+',
         help="If --manual_files is assigned, Please specify the genome length "
         "of input genomes. If you want to compare whole genome, please type "
-        "\"all\". The input format is $GENOME:SLENGTH. Multiple genomes "
+        "\"all\". The input format is $GENOME:$LENGTH. Multiple genomes "
         "can be accepted, please use spaces to separate them. For an example, "
         "test.gff contain two genomes (s1 and s2). s1 was manual checked "
         "100kb and s2 was checked whole genome. The value of this argument "
@@ -306,8 +306,8 @@ def main():
         "--reference_gff_files", "-rg", default=None, nargs='+',
         help="If --overlap_feature is \"TSS\" or \"processing_site\", "
         "--reference_gff_files need to be assigned. For TSS, please assign "
-        "the folder of processing site. For processing_site, please assign "
-        "the folder of TSS. Don't use this flag if --overlap_feature "
+        "the path of processing site. For processing_site, please assign "
+        "the path of TSS. Don't use this flag if --overlap_feature "
         "is \"both\".")
     TSSpredator_add.add_argument(
         "--remove_low_expression", "-rl", default=None,
