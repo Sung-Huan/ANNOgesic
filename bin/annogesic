@@ -300,22 +300,22 @@ def main():
         "the TSS correctly. Default is False.")
     TSSpredator_add.add_argument(
         "--overlap_feature", "-of", default="both",
-        help="If processing site and TSS are overlap, you can keep \"TSS\" "
+        help="If processing site and TSS are overlaping, keep \"TSS\" "
         "or \"processing_site\" or \"both\". Default is both.")
     TSSpredator_add.add_argument(
         "--reference_gff_files", "-rg", default=None, nargs='+',
         help="If --overlap_feature is \"TSS\" or \"processing_site\", "
         "--reference_gff_files need to be assigned. For TSS, please assign "
         "the folder of processing site. For processing_site, please assign "
-        "the folder of TSS. If --overlap_feature is \"both\", please don't "
-        "use this function (Default). Default is None (keep both).")
+        "the folder of TSS. Don't use this flag if --overlap_feature "
+        "is \"both\".")
     TSSpredator_add.add_argument(
         "--remove_low_expression", "-rl", default=None,
         help="If you want to remove low expressed TSS/processing site, please "
         "assign the file of manual-checked gff file here. This function will "
         "remove the low expressed ones based on comparison of manual-checked "
         "ones and predicted ones. BE CAREFUL: This function may remove some "
-        "True positives as sell. Please make sure you want to do it.")
+        "True positives as well.")
     TSSpredator_parser.set_defaults(func=run_TSSpredator)
     # Parameter of optimization of TSSpredator
     op_TSSpredator_parser = subparsers.add_parser(
