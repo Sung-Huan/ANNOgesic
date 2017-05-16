@@ -1676,7 +1676,7 @@ def main():
         "--bam_files", "-b", required=True, nargs='+',
         help="The input format is "
         "$SET_NAME:$BAMFILE1,$BAMFILE2,... "
-        "For an example, set1:2:sample1.bam,sample2.bam,sample3.bam. "
+        "For an example, set1:sample1.bam,sample2.bam,sample3.bam. "
         "This means these three bam files should be computed together. "
         "If multiple genomes need to be assigned, please use "
         "spaces to separate the input.")
