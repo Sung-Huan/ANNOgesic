@@ -155,8 +155,8 @@ def main():
         help="Path of the project folder.")
     TSSpredator_basic.add_argument(
         "--program", "-p", default="TSS",
-        help="Which feature you want to predict, please assign \"TSS\" or "
-        "\"processing_site\". Default is TSS.")
+        help="The feature to predict. Please assign \"TSS\" or "
+        "\"processing_site\". Default is \"TSS\".")
     TSSpredator_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the query genome fasta files.")
@@ -165,12 +165,12 @@ def main():
         help="Paths of the query genome gff files.")
     TSSpredator_basic.add_argument(
         "--tex_notex_libs", "-tl", required=True, nargs='+',
-        help="The libraries of TEX+/- wig files. The format is: "
+        help="TEX+/- wig files for TSSpredator. The format is: "
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
-        "replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     TSSpredator_basic.add_argument(
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS "
@@ -192,22 +192,19 @@ def main():
         'additional arguments')
     TSSpredator_add.add_argument(
         "--tsspredator_path", default="/usr/local/bin/TSSpredator.jar",
-        help="If you want to assign the path of TSSpredator, "
-        "please assign here. Default is /usr/local/bin/TSSpredator.jar")
+        help="Path of TSSpredator. Default is /usr/local/bin/TSSpredator.jar")
     TSSpredator_add.add_argument(
         "--specify_genomes", "-ss", default=None, nargs="+",
-        help="If you want to assign different parameters to different "
-        "genomes, Please input the genome names that you want to compute. "
-        "The genome names should be separated by spaces. "
-        "Default is running all genomes based on the same parameter.")
+        help="To assigned different parameters to different "
+        "genomic sequences. Default is running all genomes based on the same "
+        "parameter.")
     TSSpredator_add.add_argument(
         "--height", "-he", default=[0.3], nargs="+",
         help="This value relates to the minimal number of read starts at a "
 	"certain genomic position to be considered as a TSS candidate. "
-        "If --specify_genomes is assigned, please input --height based on "
-        "the order of --specify_genomes. Ex: if --specify_genomes is s1 s2 "
-        "and --height is 0.3 0.4, it means the height of s1 is 0.3 and "
-        "the height of s2 is 0.4. Default is 0.3.")
+        "If --specify_genomes is assigned, please input --height in "
+        "the same order as --specify_genomes. For example if "
+        "--specify_genomes is s1 s2 and --height is 0.3 0.4. Default is 0.3.")
     TSSpredator_add.add_argument(
         "--height_reduction", "-rh", default=[0.2], nargs="+",
         help="When comparing different genomes/conditions and "
@@ -216,13 +213,12 @@ def main():
         "genomes/conditions by the value set here. "
         "This value must be smaller than the step height threshold. "
         "If --specify_genomes is assigned, please input --height_reduction "
-        "based on the order of --specify_genomes like the statement of "
-        "--height. Default is 0.2.")
+        "in the same order as --specify_genomes. Default is 0.2.")
     TSSpredator_add.add_argument(
         "--factor", "-fa", default=[2.0], nargs="+",
-        help="This is the minimal factor by which the TSS height has to "
+        help="The minimal factor by which the TSS height has to "
 	"exceed the local expression background. If --specify_genomes is "
-        "assigned, please input --factor based on the order of "
+        "assigned, please input --factor in the same order as "
         "--specify_genomes like the statement of --height. Default is 2.0.")
     TSSpredator_add.add_argument(
         "--factor_reduction", "-rf", default=[0.5], nargs="+",
@@ -236,28 +232,24 @@ def main():
         "--height. Default is 0.5.")
     TSSpredator_add.add_argument(
         "--enrichment_factor", "-ef", default=[2.0], nargs="+",
-        help="This is the minimal enrichment factor. If --specify_genomes is "
+        help="The minimal enrichment factor. If --specify_genomes is "
         "assigned, please input --enrichment_factor "
-        "based on the order of --specify_genomes like the statement of "
-        "--height. Default is 2.0.")
+        "in the same order as --specify_genomes. Default is 2.0.")
     TSSpredator_add.add_argument(
         "--processing_factor", "-pf", default=[1.5], nargs="+",
-        help="This is the minimal processing factor. If untreated library "
-        "is higher than the treated library and above which the TSS candidate "
+        help="The minimal processing factor. If the value for the "
+        "untreated library is higher than the treated library the positions"
         "is considered as a processing site and not annotated as detected. "
         "If --specify_genomes is assigned, please input --processing_factor "
-        "based on the order of --specify_genomes like the statement of "
-        "--height. Default is 1.5.")
+        "inf the same order as --specify_genomes. Default is 1.5.")
     TSSpredator_add.add_argument(
         "--base_height", "-bh", default=[0], nargs="+",
-        help="This is the minimal number of reads should be mapped on TSS. "
+        help="The minimal number of reads should be mapped on TSS. "
         "If --specify_genomes is assigned, please input --base_height "
-        "based on the order of --specify_genomes like the statement of "
-        "--height.Default is 0.0.")
+        "in the same order as --specify_genomes. Default is 0.0.")
     TSSpredator_add.add_argument(
         "--utr_length", "-u", default=300, type=int,
-        help="The length of UTR. It is for Primary and Secondary TSSs. "
-        "Default is 300.")
+        help="The length of UTRs. Default is 300.")
     TSSpredator_add.add_argument(
         "--fuzzy", "-fu", default=5, type=int,
         help="If --compare_transcript_files is provided, please assign "
@@ -332,40 +324,42 @@ def main():
         "\"Processing_site\". Default is TSS.")
     op_TSSpredator_basic.add_argument(
         "--fasta_files", "-f", nargs='+', required=True,
-        help="Paths of the fasta file that you want to optimize.")
+        help="Paths of the fasta file of the reference genome.")
     op_TSSpredator_basic.add_argument(
         "--annotation_files", "-g", nargs='+', required=True,
-        help="Paths of the query genome annotation gff file.")
+        help="Paths of the gff file of the reference genome.")
     op_TSSpredator_basic.add_argument(
         "--manual_files", "-m", nargs='+', required=True,
-        help="Paths of the manual-checked gff files. It is the benchmark for "
-        "training. Please detect the TSSs/processing sites at least "
-        "200kb or 50 true TSSs/processing sites.")
+        help="Paths of the manual-checked TSS or PS in gff format. It is used "
+        "for benchmarking the prediction during the optimization. The set "
+        "should comprise roughly 50 TSS/PS or more.")
     op_TSSpredator_basic.add_argument(
-        "--genome_lengths", "-le", default=None, nargs='+',
-        help="Please specify the genome length of input genomes in the "
-        "manual-detected TSS gff files. If the genome was manual detected "
-        "for compare whole genome, please type \"all\". The input format "
-        "is $GENOME:SLENGTH. Multiple genomes "
-        "can be accepted, please use spaces to separate them. For an example, "
-        "test.gff contain two genomes (s1 and s2). s1 was manual checked "
-        "100kb and s2 was checked whole genome. The value of this argument "
-        "will be s1:100000 s2:all. Default setting will compute all genomes "
-        "in manual-detected TSS gff files with whole length of genome.")
+        "--curated_sequence_length", "-le", default=None, nargs='+',
+        help="The length of the sequence used for the manual set of TSS/PS. "
+        "This value is required to calculate the accurracy. If the whole "
+        "genome was used write \"all\". Otherwise use the accession number "
+        "of the reference sequence in the folowing format: $GENOME:SLENGTH. "
+        "Multiple entries are accepted. For an example, "
+        "test.gff contains two sequences s1 and s2. For s1 100 kb were "
+        "checked while for s2 the whole sequence was curated. The value of "
+        "this argument would be s1:100000 s2:all. Per default all the full "
+        "length of all sequences will be used.")
     op_TSSpredator_basic.add_argument(
         "--tex_notex_libs", "-tl", required=True, nargs='+',
         help="TEX+/- wig files for TSSpredator. The format is: "
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
         "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
         "to be assigned, please use spaces to separate the wig files. "
-        "For an example, $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     op_TSSpredator_basic.add_argument(
         "--replicate_tex", "-rt", default=["all_1"], nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
-        "to be detected. The format is $NUMBERofCONDITION_$NUMBERofREPLICATE. "
+        "to be detected in. The format is "
+        "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
         "different conditions, please use spaces to separate them. "
-        "For an example, 1_2 2_2 3_3. It means that --replicate_tex is 2 in "
+        "For example, 1_2 2_2 3_3 means that --replicate_tex is 2 in "
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
@@ -379,8 +373,7 @@ def main():
         'additional arguments')
     op_TSSpredator_add.add_argument(
         "--tsspredator_path", default="/usr/local/bin/TSSpredator.jar",
-        help="If you want to assign the path of TSSpredator, please "
-        "assign here. Default is /usr/local/bin/TSSpredator.jar")
+        help="Path of TSSpredator. Default is /usr/local/bin/TSSpredator.jar")
     op_TSSpredator_add.add_argument(
         "--max_height", "-he", default=2.5, type=float,
         help="This value relates to the minimum number of read starts at a "
@@ -461,12 +454,12 @@ def main():
         help="Paths of the transcript gff files.")
     Terminator_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
-        help="If the libraries of TEX+/- can be provided, please assign the "
-        "name of TEX+/- library. The format is: wig_file_path:TEX+/-(tex or "
-        "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        help="TEX+/- wig files for TSSpredator. The format is: "
+        "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     Terminator_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
         help="If the fragmented (or conventional) libraries can be provided, "
@@ -629,12 +622,12 @@ def main():
         "Default is merge_overlapped.")
     Transcript_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
-        help="If the TEX+/- libraries can be provided, please assign the "
-        "name of TEX+/- library. The format is: wig_file_path:TEX+/-(tex or "
-        "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        help="TEX+/- wig files for TSSpredator. The format is: "
+        "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     Transcript_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
         help="If the fragmented (or conventional) libraries can be provided, "
@@ -890,13 +883,12 @@ def main():
         "please assign the path of nr database.")
     sRNA_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
-        help="If TEX+/- libraries can be provided, please assign the "
-        "name of TEX+/- libraries here. The format is: "
+        help="TEX+/- wig files for TSSpredator. The format is: "
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
-        "replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     sRNA_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
         help="If fragmented (or conventional) libraries can be provided, "
@@ -1194,12 +1186,12 @@ def main():
         "this function will compare sORF and sRNA to detect the overlap.")
     sORF_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
-        help="If the TEX+/- libraries can be provided, please assign the name "
-        "of TEX+/- library here. The format is: wig_file_path:TEX+/-(tex or "
-        "notex):condition_id(integer):replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        help="TEX+/- wig files for TSSpredator. The format is: "
+        "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     sORF_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
         help="If the fragmented (or conventional) libraries can be provided, "
@@ -1457,11 +1449,9 @@ def main():
         "accepted as well.")
     circrna_basic.add_argument(
         "--bam_files", "-b", default=None, nargs='+',
-        help="You can want assign the paths of Bam files to skip mapping. "
-        "The input format is $SET_NAME:$BAM1,$BAM2,... "
-        "For an example, set1:bam1.bam,bam2.bam means these two bam files need "
-        "to be compute together. BE CAREFUL, the bam files must be generated "
-        "via segemehl with -S.")
+        help="Path of input BAM files. Required format: "
+        "$SET_NAME:$BAM1,$BAM2,... . BAM files need to be generated using the ""
+        mapper segemehl with the parameter \"-S\".")
     circrna_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files. ")
@@ -2023,8 +2013,8 @@ def main():
     merge_basic.add_argument(
         "--other_features_files", "-of", default=None, nargs='+',
         help="Please assign the gff files (besides transcript gff file) "
-        "which you want to merge. You can use spaces to separate multiple "
-        "gff files.")
+        "which you want to merge. Multiple gff files can be separated by "
+        "spaces.")
     merge_add = merge_parser.add_argument_group(
         'additional arguments')
     merge_add.add_argument(
@@ -2063,12 +2053,12 @@ def main():
         "separate them.")
     screen_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
-        help="If TEX+/- wig file is required, please also assign the proper "
-        "format here. The format is: wig_file_path:TEX+/-(tex or notex):"
-        "condition_id(integer):replicate_id(alphabet):strand(+ or -). "
-        "If multiple wig files need to be assigned, please use spaces to "
-        "separate the wig files. For an example, "
-        "$WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.")
+        help="TEX+/- wig files for TSSpredator. The format is: "
+        "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
+        "replicate_id(alphabet):strand(+ or -). If multiple wig files need "
+        "to be assigned, please use spaces to separate the wig files. "
+        "For example, my_lib_tex_forward.wig:tex:1:a:+ "
+        "my_lib_tex_reverse.wig:tex:1:a:-.")
     screen_basic.add_argument(
         "--frag_libs", "-fl", default=None, nargs='+',
         help="If the fragmented (or conventional) wig file is required, "
