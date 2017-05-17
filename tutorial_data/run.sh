@@ -365,7 +365,7 @@ Subcellular_localization(){
 
 PPI_network(){
     #### If you have no species.$Version.txt of STRING database, please download it.
-    wget -cP ANNOgesic/input/databases http://string-db.org/newstring_download/species.v10.txt
+    wget -cP ANNOgesic/input/databases https://string-db.org/download/species.v10.5.txt
 
 
     $ANNOGESIC_PATH \
@@ -373,7 +373,7 @@ PPI_network(){
 	-s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
 	-g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
 	-d $ANNOGESIC_FOLDER/input/databases/species.v10.txt \
-	-q NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
+	-q NC_009839.1:962231:963001:- NC_009839.1:123943:125151:+ \
 	-n \
 	-pj $ANNOGESIC_FOLDER
 }

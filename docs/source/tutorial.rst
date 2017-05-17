@@ -1165,7 +1165,7 @@ Now, we can try the subcommand.
         --query_strains NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
         --species_string ANNOgesic/input/databases/species.v10.txt \
-        --query NC_009839.1:70579:71463:+ NC_009839.1:102567:103973:+ \
+        --query NC_009839.1:962231:963001:- NC_009839.1:123943:125151:+ \
         --without_strain_pubmed \
         --project_path ANNOgesic
 
@@ -1195,20 +1195,22 @@ figures of the protein-protein interaction networks. There are two subfolders - 
     $ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/
     without_strain  with_strain
     $ ls ANNOgesic/output/PPI_networks/all_results/PPI_NC_009839.1/with_strain/NC_009839.1/
-    flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
-    flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+    atpC_atpD.csv                     Cjejjejuni_010100005380_livH.csv                     Cjejjejuni_010100005385_livF.csv  Cjejjejuni_010100005385_livM.csv  livH_livG.csv  livM_livG.csv
+    Cjejjejuni_010100005380_livF.csv  Cjejjejuni_010100005380_livM.csv                     Cjejjejuni_010100005385_livG.csv  livG_livF.csv                     livH_livM.csv
+    Cjejjejuni_010100005380_livG.csv  Cjejjejuni_010100005385_Cjejjejuni_010100005380.csv  Cjejjejuni_010100005385_livH.csv  livH_livF.csv                     livM_livF.csv
     $ ls ANNOgesic/output/PPI_networks/all_results/PPI_NC_009839.1/without_strain/NC_009839.1/
-    flgB_flgD.csv    flgE_flgD.csv  flgF_fliG.csv  flgG_fliG.csv  fliG_fliF.csv
-    flgE-1_flgD.csv  flgF_flgC.csv  flgG_flgC.csv  flgI_flgH.csv  pyrB_ansA.csv
+    atpC_atpD.csv                     Cjejjejuni_010100005380_livH.csv                     Cjejjejuni_010100005385_livF.csv  Cjejjejuni_010100005385_livM.csv  livH_livG.csv  livM_livG.csv
+    Cjejjejuni_010100005380_livF.csv  Cjejjejuni_010100005380_livM.csv                     Cjejjejuni_010100005385_livG.csv  livG_livF.csv                     livH_livM.csv
+    Cjejjejuni_010100005380_livG.csv  Cjejjejuni_010100005385_Cjejjejuni_010100005380.csv  Cjejjejuni_010100005385_livH.csv  livH_livF.csv                     livM_livF.csv
     $ ls ANNOgesic/output/PPI_networks/best_results/PPI_NC_009839.1/without_strain/NC_009839.1/
-    flgB_flgD.csv    flgE_flgD.csv  flgG_flgC.csv  fliG_fliF.csv
-    flgE-1_flgD.csv  flgF_flgC.csv  flgI_flgH.csv
+    Cjejjejuni_010100005380_livF.csv  Cjejjejuni_010100005380_livH.csv  Cjejjejuni_010100005385_livF.csv  Cjejjejuni_010100005385_livH.csv  livG_livF.csv  livH_livG.csv  livM_livF.csv
+    Cjejjejuni_010100005380_livG.csv  Cjejjejuni_010100005380_livM.csv  Cjejjejuni_010100005385_livG.csv  Cjejjejuni_010100005385_livM.csv  livH_livF.csv  livH_livM.csv  livM_livG.csv
     $ ls ANNOgesic/output/PPI_networks/best_results/PPI_NC_009839.1/with_strain/NC_009839.1/
-    fliG_fliF.csv
+    Cjejjejuni_010100005385_Cjejjejuni_010100005380.csv
     $ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/with_strain/NC_009839.1/
-    C8J_RS00250_flgD.png
+    C8J_RS04960_livG.png
     $ ls ANNOgesic/output/PPI_networks/figures/PPI_NC_009839.1/without_strain/NC_009839.1/
-    C8J_RS00250_flgD.png
+    C8J_RS04960_livG.png
 
 Generating riboswitch and RNA thermometer
 -----------------------------------------

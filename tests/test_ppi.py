@@ -21,8 +21,8 @@ class TestPPI(unittest.TestCase):
         self.mock_args = MockClass()
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
-            os.mkdir(os.path.join(self.test_folder, "tmp_specific"))
-            os.mkdir(os.path.join(self.test_folder, "tmp_nospecific"))
+            os.mkdir(os.path.join(self.test_folder, "tmp_id_list"))
+#            os.mkdir(os.path.join(self.test_folder, "tmp_nospecific"))
             os.mkdir(os.path.join(self.test_folder, "with_strain"))
             os.mkdir(os.path.join(self.test_folder, "with_strain/test_ptt"))
             os.mkdir(os.path.join(self.test_folder, "without_strain"))
@@ -87,6 +87,10 @@ class TestPPI(unittest.TestCase):
                  "93061.SAOUHSC_01684\t93061.SAOUHSC_01683\t333\ttest_aaa")
         gen_file(os.path.join(self.test_folder, "SAOUHSC_01683"),
                  "93061.SAOUHSC_01683\t93061.SAOUHSC_01684\t333\ttest_bbb")
+        gen_file(os.path.join(self.test_folder, "tmp_specific"),
+                 "")
+        gen_file(os.path.join(self.test_folder, "tmp_nospecific"),
+                 "12949105\t0.151711\n1404401\t-0.210303")
         paths = {"all": self.test_folder, "fig": self.test_folder,
                  "best": self.test_folder}
         querys = "all"
@@ -96,12 +100,12 @@ class TestPPI(unittest.TestCase):
         args.out_folder = self.test_folder
         args.querys = "all"
         args.no_specific = True
-        args.score = 19
+        args.score = 0
         self.ppi._get_pubmed(row, strain_id, mode, actor, id_file, first_output,
                              ptt, files, paths, args)
         data = import_data(
             "test_folder/without_strain/test_ptt/test_aaa_test_bbb.csv")
-        self.assertEqual("\n".join(data), self.example.with_out)
+        self.assertEqual("\n".join(data), self.example.without_out)
         data = import_data(
             "test_folder/with_strain/test_ptt/test_aaa_test_bbb.csv")
         self.assertEqual("\n".join(data), self.example.with_out)
@@ -213,7 +217,7 @@ class TestPPI(unittest.TestCase):
 
     def test_retrieve_actions(self):
         self.ppi._run_wget = self.mock.mock_run_wget
-        files = {"id_list": os.path.join(self.test_folder, "tmp_specific"),
+        files = {"id_list": os.path.join(self.test_folder, "tmp_id_list"),
                  "id_log": "", "pubmed_log": "",
                  "all_specific": "", "best_specific": "",
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
@@ -222,7 +226,7 @@ class TestPPI(unittest.TestCase):
         paths = {"all": os.path.join(self.test_folder, "all_results"),
                  "fig": os.path.join(self.test_folder, "figures"),
                  "best": os.path.join(self.test_folder, "best_results")}
-        gen_file(os.path.join(self.test_folder, "tmp_specific/test.txt"),
+        gen_file(os.path.join(self.test_folder, "tmp_id_list/test.txt"),
                  "93061\ttest")
         gen_file(os.path.join(self.test_folder, "tmp_action"),
                  self.example.ppi_line)
@@ -241,6 +245,10 @@ class Example(object):
     with_out = """Interaction of SAOUHSC_01684 | test_aaa
 Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score
 test_ptt	test_aaa	test_bbb	interaction		test_A	861	NA	NA"""
+    without_out="""Interaction of SAOUHSC_01684 | test_aaa
+Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score
+test_ptt	test_aaa	test_bbb	interaction		test_A	861	12949105	0.151711
+test_ptt	test_aaa	test_bbb	interaction		test_A	861	1404401	-0.210303"""
 
     merge_out = """Interaction of SAOUHSC_01684 | test_aaa
 Genome	Item_id_a	Item_id_b	Mode	Action	a_is_acting	STRING_action_score	Pubmed_id	Pubmed_score

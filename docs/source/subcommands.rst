@@ -734,7 +734,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             If --manual_files is assigned, Please specify the
                             genome length of input genomes. If you want to compare
                             whole genome, please type "all". The input format is
-                            $GENOME:SLENGTH. Multiple genomes can be accepted,
+                            $GENOME:$LENGTH. Multiple genomes can be accepted,
                             please use spaces to separate them. For an example,
                             test.gff contain two genomes (s1 and s2). s1 was
                             manual checked 100kb and s2 was checked whole genome.
@@ -755,23 +755,21 @@ For the transcripts, please check the section :ref:`transcript`.
                             compare TSSs with CDSs to classify the TSS correctly.
                             Default is False.
       --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
-                            If processing site and TSS are overlap, you can keep
-                            "TSS" or "processing_site" or "both". Default is both.
+                            If processing site and TSS are overlaping, keep "TSS"
+                            or "processing_site" or "both". Default is both.
       --reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...], -rg REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]
                             If --overlap_feature is "TSS" or "processing_site",
                             --reference_gff_files need to be assigned. For TSS,
-                            please assign the folder of processing site. For
-                            processing_site, please assign the folder of TSS. If
-                            --overlap_feature is "both", please don't use this
-                            function (Default). Default is None (keep both).
+                            please assign the path of processing site. For
+                            processing_site, please assign the path of TSS. Don't
+                            use this flag if --overlap_feature is "both".
       --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
                             If you want to remove low expressed TSS/processing
                             site, please assign the file of manual-checked gff
                             file here. This function will remove the low expressed
                             ones based on comparison of manual-checked ones and
                             predicted ones. BE CAREFUL: This function may remove
-                            some True positives as sell. Please make sure you want
-                            to do it.
+                            some True positives as well
 
 - **Output files**
 

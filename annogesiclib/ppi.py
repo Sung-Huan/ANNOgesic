@@ -313,7 +313,6 @@ class PPINetwork(object):
                     self._run_wget(
                         action_source, self.tmp_files["wget_action"],
                         files["action_log"])
-                    break
         t_h.close()
         if not detect:
             print("Warning: " + id_file + " can not be found in STRING!")
@@ -403,12 +402,12 @@ class PPINetwork(object):
                                        "temp", "dir")
 
     def check_query(self, args_ppi):
-        for gff in os.listdir(args_ppi.ptts):
-            gff_f = open(os.path.join(args_ppi.ptts, gff), "r")
-            for query in args_ppi.querys:
-                detect = False
+        for query in args_ppi.querys:
+            detect = False
+            datas = query.split(":")
+            for gff in os.listdir(args_ppi.ptts):
+                gff_f = open(os.path.join(args_ppi.ptts, gff), "r")
                 for entry in Gff3Parser().entries(gff_f):
-                    datas = query.split(":")
                     if (entry.seq_id == datas[0]) and (
                             entry.start == int(datas[1])) and (
                             entry.end == int(datas[2])) and (
@@ -456,4 +455,4 @@ class PPINetwork(object):
             self._retrieve_id(strain_id, genes, files)
             self._retrieve_actions(files, strain_id, paths, args_ppi)
         self._plot(args_ppi, files)
-        self._remove_tmps(args_ppi)
+#        self._remove_tmps(args_ppi)
