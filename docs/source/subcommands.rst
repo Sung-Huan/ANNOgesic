@@ -379,13 +379,16 @@ For an example, the user has four bam files of one genome. Then the input will b
 
 ::
 
-    usage: annogesic snp [-h] --project_path PROJECT_PATH --bam_type BAM_TYPE
-                         --program PROGRAM [PROGRAM ...] --fasta_files FASTA_FILES
-                         [FASTA_FILES ...] --bam_files BAM_FILES [BAM_FILES ...]
-                         [--samtools_path SAMTOOLS_PATH]
+    usage: annogesic snp [-h] --project_path PROJECT_PATH --bam_type
+                         {related_genome,query_genome} --program
+                         {with_BAQ,without_BAQ,extend_BAQ}
+                         [{with_BAQ,without_BAQ,extend_BAQ} ...] --fasta_files
+                         FASTA_FILES [FASTA_FILES ...] --bam_files BAM_FILES
+                         [BAM_FILES ...] [--samtools_path SAMTOOLS_PATH]
                          [--bcftools_path BCFTOOLS_PATH] [--quality QUALITY]
-                         [--read_depth_range READ_DEPTH_RANGE] [--ploidy PLOIDY]
-                         [--rg_tag] [--caller CALLER] [--dp4_cutoff DP4_CUTOFF]
+                         [--read_depth_range READ_DEPTH_RANGE]
+                         [--ploidy {haploid,diploid}] [--rg_tag] [--caller {c,m}]
+                         [--dp4_cutoff DP4_CUTOFF]
                          [--indel_fraction INDEL_FRACTION]
                          [--filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...]]
     
@@ -395,101 +398,83 @@ For an example, the user has four bam files of one genome. Then the input will b
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
-      --bam_type BAM_TYPE, -t BAM_TYPE
-                            Please assign the type of BAM. If the BAM files are
-                            produced by mapping to a related genome of the query
-                            genome, please key in "related_genome". the mutations
+      --bam_type {related_genome,query_genome}, -t {related_genome,query_genome}
+                            If the BAM files are produced by mapping to a related
+                            genome, please assign "related_genome". the mutations
                             between the related genome and the query genome can be
                             detected for generating sequence of the query genome.
-                            If the BAM files are produced by mapping to query
-                            genome, please use the key "query_genome". By that
-                            mutations of query genome can be detected.
-      --program PROGRAM [PROGRAM ...], -p PROGRAM [PROGRAM ...]
-                            Please assign the program for detecting SNP of
-                            transcript: "with_BAQ", "without_BAQ", "extend_BAQ".
-                            Multi-programs can be executed at the same time
-                            (separated by spaces). For an example: with_BAQ
-                            without_BAQ extend_BAQ.
+                            If the BAM files are produced by mapping to the query
+                            genome, please assign "query_genome". The mutations of
+                            query genome can be detected.
+      --program {with_BAQ,without_BAQ,extend_BAQ} [{with_BAQ,without_BAQ,extend_BAQ} ...], -p {with_BAQ,without_BAQ,extend_BAQ} [{with_BAQ,without_BAQ,extend_BAQ} ...]
+                            The program for detecting SNPs: "with_BAQ",
+                            "without_BAQ", "extend_BAQ". Multi-programs can be
+                            executed at the same time (separated by spaces). For
+                            example, with_BAQ without_BAQ extend_BAQ.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
-                            The input format is $SET_NAME:$BAMFILE1,$BAMFILE2,...
-                            For an example,
-                            set1:sample1.bam,sample2.bam,sample3.bam. This means
-                            these three bam files should be computed together. If
-                            multiple genomes need to be assigned, please use
-                            spaces to separate the input.
+                            Path of input BAM files. Required format:
+                            $SET_NAME:$BAM1,$BAM2,... . If multiple sets need to
+                            be assigned, please use spaces to separate them.
     
     additional arguments:
       --samtools_path SAMTOOLS_PATH
-                            If you want to assign the path of samtools, please
-                            assign here.
+                            Path of samtools.
       --bcftools_path BCFTOOLS_PATH
-                            If you want to assign the path of bcftools, please
-                            assign here.
+                            Path of bcftools.
       --quality QUALITY, -q QUALITY
-                            The minimum quality of a real mutation. Default is 40.
+                            The minimum quality of a mutation. Default is 40.
       --read_depth_range READ_DEPTH_RANGE, -d READ_DEPTH_RANGE
-                            Range of the read depth of a real mutation. The format
-                            is $MIN,$MAX. This value can be assigned by different
-                            types: 1. real number ("r"), 2. times of the number of
-                            bam files (assigned by --bam_files) ("n") or 3. times
-                            of the average read depth ("a"). For an example,
-                            n_10,a_3 is assigned. If the average read depth is 70
-                            and 4 bam files are provided, n_10 will be 40 and a_3
-                            will be 140 (average read depth * 3). Based on the
-                            same example, if this value is r_10,a_3, the minimum
-                            read depth will become exact 10 reads. If you don't
-                            want to set maximum read depth, you can assign "none".
-                            Default is n_10,none.
-      --ploidy PLOIDY, -pl PLOIDY
+                            The range of read depth for a mutation. The format is
+                            $MIN,$MAX. It can be assigned by different types: 1.
+                            real number ("r"), 2. times of the number of bam files
+                            (counted from --bam_files) ("n") or 3. times of the
+                            average read depth ("a"). For example, n_10,a_3 is
+                            assigned. If the average read depth is 70 and 4 bam
+                            files are provided, n_10 will be 40 and a_3 will be
+                            140 (average read depth * 3). Based on the same
+                            example, if this value is r_10,a_3, the minimum read
+                            depth will become exact 10 reads. If "none" is
+                            assigned, read depth will not be considered. Default
+                            is n_10,none.
+      --ploidy {haploid,diploid}, -pl {haploid,diploid}
                             The query bacteria is haploid or diploid. Default is
                             haploid.
-      --rg_tag, -R          This function is for one BAM file which includes multi
-                            samples (opposite of --ignore-RG in samtools). Default
-                            is False.
-      --caller CALLER, -c CALLER
+      --rg_tag, -R          For one BAM file which includes multiple samples
+                            (opposite of --ignore-RG in samtools). Default is
+                            False.
+      --caller {c,m}, -c {c,m}
                             The types of caller - consensus-caller or
                             multiallelic-caller. For details, please check
-                            bcftools. "c" represents consensus-caller. "m"
-                            represents multiallelic-caller. Default is m.
+                            documentation of bcftools. "c" represents consensus-
+                            caller. "m" represents multiallelic-caller. Default is
+                            m.
       --dp4_cutoff DP4_CUTOFF, -D DP4_CUTOFF
-                            The cutoff of DP4. DP4 is compose of four numbers: the
-                            reads covering the reference forward bases (number 1),
-                            reference reverse bases (number 2), alternate forward
-                            bases (number 3) and alternate reverse bases (number
-                            4). Two values need to be assigned, ex: n_10,0.8. The
-                            first value is for (number 3 + number 4). This value
-                            can be assigned based on 1. real number ("r"), 2.
-                            times of the number of bam files (assigned by
-                            --bam_files) ("n") or 3. times of average read depth
-                            ("a"). The second value is for (number 3 + number 4) /
-                            (number 1 + number 2 + number 3 + number 4). These two
-                            values are split by commas. For an example, n_10,0.8
-                            is assigned and the average read depth is 70 and 4 bam
-                            files are provided. It means that the sum of number 3
-                            and number 4 should be higher than 40 , and the
-                            fraction -- (number 3 + number 4) / (number 1 + number
-                            2 + number 3 + number 4) should be higher than 0.8.
-                            Based on the same example, if r_10,0.8 is assigned,
-                            the sum of read depth of number 3 and number 4 will
-                            become exact 10 reads. Default is n_10,0.8.
+                            The cutoff of DP4. The format is
+                            $MIN_SNP_READS_NUMBER:$MIN_SNP_READS_RATIO.
+                            $MIN_SNP_READS_NUMBER can be assigned by three types:
+                            1. real number ("r"), 2. times of the number of bam
+                            files (counted from --bam_files) ("n") or 3. times of
+                            average read depth ("a"). For example, n_10,0.8. If
+                            the BAM files are 4, it means the minimum mapped reads
+                            of a SNP is 40 (4 * 10), and the minimum ratio of
+                            mapped read of a SNP (mapped reads of a SNP / total
+                            reads) is 0.8. Default is n_10,0.8.
       --indel_fraction INDEL_FRACTION, -if INDEL_FRACTION
-                            This value is the minimum IDV and IMF which supports
-                            insertion of deletion. The minimum IDV can be assigned
-                            by different types: 1. real number ("r"), 2. times of
-                            the number of bam files (assigned by --bam_files)
-                            ("n") or 3. times of the average read depth ("a"). For
-                            an example, n_10,0.8 is assigned. If the average read
-                            depth is 70 and 4 bam files are provided, IDV should
-                            be higher than 40 , and IMF should be higher than 0.8.
-                            Based on the same example, if r_10,0.8 is assigned,
-                            the minimum IDV will become exact 10 reads. Default is
-                            n_10,0.8 and the two numbers are separated by commas.
+                            The minimum IDV and IMF which supports for insertion
+                            of deletion. The minimum IDV can be assigned by
+                            different types: 1. real number ("r"), 2. times of the
+                            number of bam files (assigned by --bam_files) ("n") or
+                            3. times of the average read depth ("a"). The input
+                            format is $MIN_IDF:$MIN_IMF. For example, The value is
+                            n_10,0.8 and 4 BAM files are assigned. The minimum IDV
+                            is 40, and the minimum IMF is 0.8. Default is
+                            n_10,0.8.
       --filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...], -ft FILTER_TAG_INFO [FILTER_TAG_INFO ...]
-                            This function can set more filters to improve the
-                            results. Please assign 1. the tag, 2. bigger ("b") or
-                            smaller ("s") and 3. value for filters. For an
+                            For using more filters to improve the detection.
+                            Please assign 1. the name of tag, 2. bigger ("b") or
+                            smaller ("s") and 3. the value of the filter. For
                             example, "RPB_b0.1,MQ0F_s0" means that RPB should be
                             bigger than 0.1 and MQ0F should be smaller than 0.
                             Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
@@ -582,7 +567,7 @@ For the transcripts, please check the section :ref:`transcript`.
 
 ::
 
-    usage: annogesic tss_ps [-h] --project_path PROJECT_PATH [--program PROGRAM]
+    usage: annogesic tss_ps [-h] --project_path PROJECT_PATH [--program {TSS,PS}]
                             --fasta_files FASTA_FILES [FASTA_FILES ...]
                             --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --tex_notex_libs TEX_NOTEX_LIBS
@@ -591,23 +576,20 @@ For the transcripts, please check the section :ref:`transcript`.
                             --condition_names CONDITION_NAMES
                             [CONDITION_NAMES ...]
                             [--tsspredator_path TSSPREDATOR_PATH]
-                            [--specify_genomes SPECIFY_GENOMES [SPECIFY_GENOMES ...]]
-                            [--height HEIGHT [HEIGHT ...]]
-                            [--height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]]
-                            [--factor FACTOR [FACTOR ...]]
-                            [--factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...]]
-                            [--enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]]
-                            [--processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...]]
-                            [--base_height BASE_HEIGHT [BASE_HEIGHT ...]]
-                            [--utr_length UTR_LENGTH] [--fuzzy FUZZY]
-                            [--cluster CLUSTER]
+                            [--height HEIGHT]
+                            [--height_reduction HEIGHT_REDUCTION]
+                            [--factor FACTOR]
+                            [--factor_reduction FACTOR_REDUCTION]
+                            [--enrichment_factor ENRICHMENT_FACTOR]
+                            [--processing_factor PROCESSING_FACTOR]
+                            [--base_height BASE_HEIGHT] [--utr_length UTR_LENGTH]
+                            [--fuzzy FUZZY] [--cluster CLUSTER]
                             [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
-                            [--genome_lengths GENOME_LENGTHS [GENOME_LENGTHS ...]]
+                            [--curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]]
                             [--validate_gene]
                             [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
-                            [--re_check_orphan]
-                            [--overlap_feature OVERLAP_FEATURE]
-                            [--reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]]
+                            [--re_check_orphan] [--remove_overlap_feature]
+                            [--compare_overlap_gff COMPARE_OVERLAP_GFF [COMPARE_OVERLAP_GFF ...]]
                             [--remove_low_expression REMOVE_LOW_EXPRESSION]
     
     optional arguments:
@@ -616,27 +598,28 @@ For the transcripts, please check the section :ref:`transcript`.
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
-      --program PROGRAM, -p PROGRAM
-                            Which feature you want to predict, please assign "TSS"
-                            or "processing_site". Default is TSS.
+      --program {TSS,PS}, -p {TSS,PS}
+                            The feature to predict. Please assign "TSS" or "PS".
+                            Default is "TSS".
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the query genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the query genome gff files.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            The libraries of TEX+/- wig files. The format is:
+                            TEX+/- wig files for TSSpredator. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected. The format is
+                            TSS has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For an example, 1_2 2_2 3_3. It means that
+                            them. For example, 1_2 2_2 3_3 means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
@@ -650,71 +633,42 @@ For the transcripts, please check the section :ref:`transcript`.
     
     additional arguments:
       --tsspredator_path TSSPREDATOR_PATH
-                            If you want to assign the path of TSSpredator, please
-                            assign here. Default is /usr/local/bin/TSSpredator.jar
-      --specify_genomes SPECIFY_GENOMES [SPECIFY_GENOMES ...], -ss SPECIFY_GENOMES [SPECIFY_GENOMES ...]
-                            If you want to assign different parameters to
-                            different genomes, Please input the genome names that
-                            you want to compute. The genome names should be
-                            separated by spaces. Default is running all genomes
-                            based on the same parameter.
-      --height HEIGHT [HEIGHT ...], -he HEIGHT [HEIGHT ...]
+                            Path of TSSpredator. Default is
+                            /usr/local/bin/TSSpredator.jar
+      --height HEIGHT, -he HEIGHT
                             This value relates to the minimal number of read
                             starts at a certain genomic position to be considered
-                            as a TSS candidate. If --specify_genomes is assigned,
-                            please input --height based on the order of
-                            --specify_genomes. Ex: if --specify_genomes is s1 s2
-                            and --height is 0.3 0.4, it means the height of s1 is
-                            0.3 and the height of s2 is 0.4. Default is 0.3.
-      --height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...], -rh HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]
+                            as a TSS candidate. Default is 0.3.
+      --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
                             When comparing different genomes/conditions and the
                             step height threshold is reached in at least one
                             genome/condition, the threshold is reduced for the
                             other genomes/conditions by the value set here. This
                             value must be smaller than the step height threshold.
-                            If --specify_genomes is assigned, please input
-                            --height_reduction based on the order of
-                            --specify_genomes like the statement of --height.
                             Default is 0.2.
-      --factor FACTOR [FACTOR ...], -fa FACTOR [FACTOR ...]
-                            This is the minimal factor by which the TSS height has
-                            to exceed the local expression background. If
-                            --specify_genomes is assigned, please input --factor
-                            based on the order of --specify_genomes like the
-                            statement of --height. Default is 2.0.
-      --factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...], -rf FACTOR_REDUCTION [FACTOR_REDUCTION ...]
+      --factor FACTOR, -fa FACTOR
+                            The minimal factor by which the TSS height has to
+                            exceed the local expression background. Default is
+                            2.0.
+      --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
                             When comparing different genomes/conditions and the
                             step factor threshold is reached in at least one
                             genome/condition, the threshold is reduced for the
                             other genomes/conditions by the value set here. This
                             value must be smaller than the step factor threshold.
-                            If --specify_genomes is assigned, please input
-                            --factor_reduction based on the order of
-                            --specify_genomes like the statement of --height.
                             Default is 0.5.
-      --enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...], -ef ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]
-                            This is the minimal enrichment factor. If
-                            --specify_genomes is assigned, please input
-                            --enrichment_factor based on the order of
-                            --specify_genomes like the statement of --height.
-                            Default is 2.0.
-      --processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...], -pf PROCESSING_FACTOR [PROCESSING_FACTOR ...]
-                            This is the minimal processing factor. If untreated
-                            library is higher than the treated library and above
-                            which the TSS candidate is considered as a processing
-                            site and not annotated as detected. If
-                            --specify_genomes is assigned, please input
-                            --processing_factor based on the order of
-                            --specify_genomes like the statement of --height.
-                            Default is 1.5.
-      --base_height BASE_HEIGHT [BASE_HEIGHT ...], -bh BASE_HEIGHT [BASE_HEIGHT ...]
-                            This is the minimal number of reads should be mapped
-                            on TSS. If --specify_genomes is assigned, please input
-                            --base_height based on the order of --specify_genomes
-                            like the statement of --height.Default is 0.0.
+      --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
+                            The minimal enrichment factor. Default is 2.0.
+      --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
+                            The minimal processing factor. If the value for the
+                            untreated library is higher than the treated library
+                            the positionsis considered as a processing site and
+                            not annotated as detected. Default is 1.5.
+      --base_height BASE_HEIGHT, -bh BASE_HEIGHT
+                            The minimal number of reads should be mapped on TSS.
+                            Default is 0.0.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
-                            The length of UTR. It is for Primary and Secondary
-                            TSSs. Default is 300.
+                            The length of UTRs. Default is 300.
       --fuzzy FUZZY, -fu FUZZY
                             If --compare_transcript_files is provided, please
                             assign the fuzzy for comparing TSS and transcript.
@@ -730,17 +684,17 @@ For the transcripts, please check the section :ref:`transcript`.
                             this function will merge manual checked ones and
                             TSSpredator predicted ones. Please assign the path of
                             manual-checked TSS gff files.
-      --genome_lengths GENOME_LENGTHS [GENOME_LENGTHS ...], -le GENOME_LENGTHS [GENOME_LENGTHS ...]
-                            If --manual_files is assigned, Please specify the
-                            genome length of input genomes. If you want to compare
-                            whole genome, please type "all". The input format is
-                            $GENOME:$LENGTH. Multiple genomes can be accepted,
-                            please use spaces to separate them. For an example,
-                            test.gff contain two genomes (s1 and s2). s1 was
-                            manual checked 100kb and s2 was checked whole genome.
-                            The value of this argument will be s1:100000 s2:all.
-                            Default setting will compute all genomes in manual-
-                            detected TSS gff files with whole length of genome.
+      --curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...], -le CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]
+                            The length of the sequence used for the manual set of
+                            TSS/PS. This value is required to calculate the
+                            accurracy. If the whole genome was used write "all".
+                            Otherwise use the name of the reference sequence in
+                            the folowing format: $GENOME:SLENGTH. Multiple entries
+                            are accepted. For an example, test.gff contains two
+                            sequences s1 and s2. For s1 100 kb were checked while
+                            for s2 the whole sequence was curated. The value of
+                            this argument would be s1:100000 s2:all. Per default
+                            all the full length of all sequences will be used.
       --validate_gene, -v   Using TSS candidates to validate genes in annotation
                             file. it will be store in statistics folder. Default
                             is False.
@@ -754,22 +708,21 @@ For the transcripts, please check the section :ref:`transcript`.
                             to orphan TSSs by TSSpredator. The function can
                             compare TSSs with CDSs to classify the TSS correctly.
                             Default is False.
-      --overlap_feature OVERLAP_FEATURE, -of OVERLAP_FEATURE
-                            If processing site and TSS are overlaping, keep "TSS"
-                            or "processing_site" or "both". Default is both.
-      --reference_gff_files REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...], -rg REFERENCE_GFF_FILES [REFERENCE_GFF_FILES ...]
-                            If --overlap_feature is "TSS" or "processing_site",
-                            --reference_gff_files need to be assigned. For TSS,
-                            please assign the path of processing site. For
-                            processing_site, please assign the path of TSS. Don't
-                            use this flag if --overlap_feature is "both".
+      --remove_overlap_feature, -of
+                            If a processing site and a TSS are overlaping, keep
+                            "TSS", The predicted feature (based on --program) will
+                            be removed. Default is False.
+      --compare_overlap_gff COMPARE_OVERLAP_GFF [COMPARE_OVERLAP_GFF ...], -rg COMPARE_OVERLAP_GFF [COMPARE_OVERLAP_GFF ...]
+                            If --overlap_feature is "TSS" or "PS",
+                            --reference_gff_files need to be assigned. For TSS
+                            prediction, please assign the path of processing site.
+                            For processing site prediction, please assign the path
+                            of TSS. Don't use this flag if --overlap_feature is
+                            "both".
       --remove_low_expression REMOVE_LOW_EXPRESSION, -rl REMOVE_LOW_EXPRESSION
-                            If you want to remove low expressed TSS/processing
-                            site, please assign the file of manual-checked gff
-                            file here. This function will remove the low expressed
-                            ones based on comparison of manual-checked ones and
-                            predicted ones. BE CAREFUL: This function may remove
-                            some True positives as well
+                            For removing the low expressed TSS by comparing the
+                            manual detected TSSs and predicted ones. Please assign
+                            the manual-checked TSS in gff format.
 
 - **Output files**
 
@@ -851,12 +804,12 @@ genome annotation gff files are required. There are four options for modificatio
 
     usage: annogesic transcript [-h] --project_path PROJECT_PATH
                                 [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
-                                [--modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]]
+                                [--modify_transcript {merge_overlap,extend_3end,extend_5end,within_extend_ends,none} [{merge_overlap,extend_3end,extend_5end,within_extend_ends,none} ...]]
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                                 [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                                 [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                                 [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                                [--tex_notex TEX_NOTEX] [--length LENGTH]
+                                [--tex_notex {1,2}] [--length LENGTH]
                                 [--height HEIGHT] [--width WIDTH]
                                 [--tolerance TOLERANCE]
                                 [--tolerance_coverage TOLERANCE_COVERAGE]
@@ -875,62 +828,58 @@ genome annotation gff files are required. There are four options for modificatio
                             Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             If paths of the genome annotation gff files.
-      --modify_transcript MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...], -mt MODIFY_TRANSCRIPT [MODIFY_TRANSCRIPT ...]
-                            If --annotation_files is provided, you can assign how
-                            to modify the transcripts by genome annotations. There
-                            are five opetions. 1. "merge_overlap": if multiple
-                            transcripts overlap the same gene, they will be merged
-                            as one complete transcript. 2. "extend_3end": if the
-                            transcript starts at the upstream of the gene and ends
-                            within the gene, the end point of the transcript will
-                            be extended to the end point of gene. 3.
-                            "extend_5end": if the transcript starts within the
-                            gene and ends at the downstream of gene, the starting
-                            point of the transcript will be extended to the
-                            starting point of the gene. 4. "within_extend_ends":
-                            if the transcript is within the gene, the two ends of
-                            the transcript will be extended to the two ends of
-                            gene. 5. "none": the transcript will not be modified
-                            by the genome annotations. If you want to assign
-                            mutliple modifications to this function, please use
-                            spaces to separated them. Default is merge_overlapped.
+      --modify_transcript {merge_overlap,extend_3end,extend_5end,within_extend_ends,none} [{merge_overlap,extend_3end,extend_5end,within_extend_ends,none} ...], -mt {merge_overlap,extend_3end,extend_5end,within_extend_ends,none} [{merge_overlap,extend_3end,extend_5end,within_extend_ends,none} ...]
+                            If --annotation_files is provided, the post-
+                            modification of transcript based on genome annotations
+                            can be assigned. There are five opetions. 1.
+                            "merge_overlap": if multiple transcripts overlap with
+                            the same gene, they will be merged as one complete
+                            transcript. 2. "extend_3end": if a transcript starts
+                            at the upstream of a gene and ends within the gene,
+                            the end point of the transcript will be extended to
+                            the end point of the gene. 3. "extend_5end": if a
+                            transcript starts within a gene and ends at the
+                            downstream of gene, the starting point of the
+                            transcript will be extended to the starting point of
+                            the gene. 4. "within_extend_ends": if a transcript is
+                            within a gene, the two ends of the transcript will be
+                            extended to the two ends of gene. 5. "none": the
+                            transcript will not be modified by the genome
+                            annotations. For using mutliple modifications, please
+                            separated them by spaces. Default is merge_overlapped.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            If the TEX+/- libraries can be provided, please assign
-                            the name of TEX+/- library. The format is:
+                            TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            If the fragmented (or conventional) libraries can be
-                            provided, please assign the name of fragmented
-                            library. The format is: wig_file_path:fragmented(frag)
-                            :condition_id(integer):replicate_id(alphabet):strand(+
-                            or -). If multiple wig files need to be assigned,
-                            please use spaces to separate the wig files. For an
-                            example, $WIG_PATH_1:frag:1:a:+
-                            $WIG_PATH_2:frag:1:a:-.
+                            Wig files of RNA-Seq with transcript fragmented. The
+                            format is: wig_file_path:frag:condition_id(integer):re
+                            plicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use spaces to
+                            separate the wig files. For example,
+                            my_lib_frag_forward.wig:frag:1:a:+
+                            my_lib_frag_reverse.wig:frag:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
-                            This value (for TEX+/- libraries) is the minimal
-                            number of replicates that a transcript has to be
-                            detected. The format is
+                            This value is the minimal number of replicates that a
+                            TSS has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For an example, 1_2 2_2 3_3. It means that
+                            them. For example, 1_2 2_2 3_3 means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            The meaning and input type is the same to
-                            --replicates_tex. This value is for fragmented (or
-                            conventional) libraries.
-      --tex_notex TEX_NOTEX, -te TEX_NOTEX
-                            If the libraries of TEX+/- need to be provided, please
-                            assign this value as well. This value is that a
+                            It is similar to --replicates_tex. This value is for
+                            fragmented (or conventional) libraries.
+      --tex_notex {1,2}, -te {1,2}
+                            The value is for TEX+/- libraries to decide the
                             transcript should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 1.
@@ -938,59 +887,41 @@ genome annotation gff files are required. There are four options for modificatio
     additional arguments:
       --length LENGTH, -l LENGTH
                             The minimum length of the transcript after modifying
-                            by genome annotation. If --annotation_files is
-                            assigned, this value will be for the final output.
-                            Otherwise, --width will be the minimum length for the
-                            final output. Default is 20.
+                            base on genome annotation. Default is 20.
       --height HEIGHT, -he HEIGHT
                             The minimum coverage of the transcript. If --tex_notex
-                            is 1, coverage of TEX+ or TEX- libraries should higher
-                            than this value. If --tex_notex is 2, the function
-                            will compute the average of coverage of TEX+ and TEX-
-                            libraries, and the average should higher than the
-                            minimum coverage. The default is 10.
+                            is 2, the average coverage of TEX+ and TEX- libraries
+                            should be higher than this value. The default is 10.
       --width WIDTH, -w WIDTH
                             The minimum length of the transcript without modifying
-                            by genome annotation. This value will be for the final
-                            output if --annotation_files is not provided.
-                            Otherwise, --length would be the minimum length of the
-                            transcript for the final output. The default is 20.
+                            by genome annotation. The default is 20.
       --tolerance TOLERANCE, -t TOLERANCE
-                            This value defines the number of nucleotides that
-                            coverages drop below --height can be ignore in one
-                            transcript. The default is 5.
+                            The number of nucleotides which coveraes can drop
+                            below the --height in a transcript. The default is 5.
       --tolerance_coverage TOLERANCE_COVERAGE, -tc TOLERANCE_COVERAGE
-                            If the coverage is lower than tolerance_coverage, even
-                            the length is within --tolerance, the algorithm will
-                            still divide the current transcript to two parts.
-                            Default is 0.
+                            The minimum coverage of the nucleotides which match
+                            the situation of --tolerance, Default is 0.
       --tss_files TSS_FILES [TSS_FILES ...], -ct TSS_FILES [TSS_FILES ...]
-                            If the paths of TSS files are assigned here, this
-                            function will compare transcripts with TSSs to detect
-                            the overlap.
+                            Paths of TSS files for comparing transcripts and TSSs.
       --compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...], -cf COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]
                             If --compare_genome_annotation is provided, please
-                            assign the feature which you want to compare. Default
-                            is None. If multiple features need to be assigned,
-                            just insert spaces between each feature, such as gene
-                            CDS.
+                            assign the feature for comparing. Multiple features
+                            can be separated by spaces. Default is None.
       --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            If --compare_TSS is assigned, please type the fuzzy
-                            for comparing TSS with transcript here. Default is 5.
+                            The fuzzy value for comparing TSS with transcript.
+                            Default is 5.
       --table_best, -tb     The output table only includes the information of the
                             highest expressed library. Default is False.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            If the paths of terminator gff files are assigned
-                            here, this function will compare transcripts with
-                            terminators to detect the parent transcript of
-                            terminator. Default is None.
+                            Paths of terminator gff files for comparing
+                            transcripts and terminators. Default is None.
       --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
                             If --terminator_files is assigned, please assign the
-                            fuzzy here. Default is 30.
+                            fuzzy value. Default is 30.
       --max_length_distribution MAX_LENGTH_DISTRIBUTION, -mb MAX_LENGTH_DISTRIBUTION
                             For generating the figure of distribution of
-                            transcript length, please assign the maximum length
-                            that you want to include. Default is 2000.
+                            transcript length, please assign the maximum length.
+                            Default is 2000.
 
 - **Output files**
 
@@ -1085,7 +1016,7 @@ which have coverage significant decrease.
                                 [TRANSCRIPT_FILES ...]
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                                 [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                                [--tex_notex TEX_NOTEX]
+                                [--tex_notex {1,2}]
                                 [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                                 [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                                 [--transterm_path TRANSTERM_PATH]
@@ -1122,82 +1053,77 @@ which have coverage significant decrease.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript gff files.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            If the libraries of TEX+/- can be provided, please
-                            assign the name of TEX+/- library. The format is:
+                            TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            If the fragmented (or conventional) libraries can be
-                            provided, please assign the name of fragmented
-                            library. The format is: wig_file_path:fragmented(frag)
-                            :condition_id(integer):replicate_id(alphabet):strand(+
-                            or -). If multiple wig files need to be assigned,
-                            please use spaces to separate the wig files. For an
-                            example, $WIG_PATH_1:frag:1:a:+
-                            $WIG_PATH_2:frag:1:a:-.
-      --tex_notex TEX_NOTEX, -te TEX_NOTEX
-                            If the libraries of TEX+/- can be provided, please
-                            assign this value as well. This value is that the
+                            Wig files of RNA-Seq with transcript fragmented. The
+                            format is: wig_file_path:frag:condition_id(integer):re
+                            plicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use spaces to
+                            separate the wig files. For example,
+                            my_lib_frag_forward.wig:frag:1:a:+
+                            my_lib_frag_reverse.wig:frag:1:a:-.
+      --tex_notex {1,2}, -te {1,2}
+                            The value is for TEX+/- libraries to decide the
                             terminator should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 1.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
-                            This value (for TEX+/- libraries) is the minimal
-                            number of replicates that a terminator has to be
-                            detected. The format is
+                            This value is the minimal number of replicates that a
+                            TSS has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For an example, 1_2 2_2 3_3. It means that
+                            them. For example, 1_2 2_2 3_3 means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            The meaning and input type is the same as
-                            --replicates_tex. This value is for fragmented (or
-                            conventional) libraries.
+                            It is similar to --replicates_tex. This value is for
+                            fragmented (or conventional) libraries.
     
     additional arguments:
       --transterm_path TRANSTERM_PATH
-                            Please assign the path of "transterm" in TransTermHP.
+                            Path of "transterm" in TransTermHP.
       --expterm_path EXPTERM_PATH
-                            Please assign the path of expterm.dat for TransTermHP.
-                            Default is /usr/local/bin/expterm.dat
+                            Path of expterm.dat for TransTermHP. Default is
+                            /usr/local/bin/expterm.dat
       --rnafold_path RNAFOLD_PATH
-                            If you want to assign the path of "RNAfold" of Vienna
-                            package, please assign here.
+                            Path of "RNAfold" of Vienna package.
       --srna_files SRNA_FILES [SRNA_FILES ...], -sr SRNA_FILES [SRNA_FILES ...]
-                            If you want to include sRNA information to detect
-                            terminator, please assign the paths of sRNA gff files.
+                            Paths of sRNA gff files if sRNA information need to be
+                            considered as well.
       --decrease DECREASE, -d DECREASE
-                            This value is maximum ratio -- (lowest coverage /
-                            highest coverage) within (or nearby) the terminator.
-                            If the ratio is smaller than --decrease, the candidate
-                            will be considered as the terminator which has
-                            coverage dramatic decreasing. Default is 0.5.
+                            The maximum ratio -- (lowest coverage / highest
+                            coverage) within (or nearby) the terminator. If the
+                            ratio is smaller than --decrease, the candidate will
+                            be considered as highly-confidence terminator. Default
+                            is 0.5.
       --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
-                            This value is the extended region (nucleotides) of the
-                            terminators for detecting coverage significant
-                            decreasing. Ex: the location of terminator is 300-400,
-                            and --fuzzy_detect_coverage is 30. If the coverage
-                            decrease is detected within 270-430, this candidate
-                            will be still considered as the terminator which have
-                            coverage dramatic decrease. Default is 30.
+                            The extended region (nucleotides) of the terminators
+                            for detecting coverage significant drop. For example,
+                            the location of terminator is 300-400, and
+                            --fuzzy_detect_coverage is 30. If the coverage
+                            decrease is detected within 270-430, this candidate is
+                            still considered as the terminator which have coverage
+                            dramatic decrease. Default is 30.
       --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
                             If the candidates are within transcript and the
-                            distance (nucleotides) between the end of
-                            gene/transcript and terminator is within this value,
-                            the candidate will be considered as a terminator.
-                            Otherwise, it will be removed. Default is 30.
+                            distance (nucleotides) between the end of transcript
+                            and terminator is within this value, the candidate
+                            will be considered as a terminator. Otherwise, it will
+                            be removed. Default is 30.
       --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
                             The meaning is similar to --fuzzy_within_transcript.
-                            This value is for the candidates which are downstream
-                            of transcript. Default is 30.
+                            This value is for the candidates which are at the
+                            downstream of transcript. Default is 30.
       --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
                             The meaning is similar to --fuzzy_within_transcript.
                             This value is for gene in stead of transcript. Default
@@ -1207,15 +1133,15 @@ which have coverage significant decrease.
                             --fuzzy_downstream_transcript. This value is for gene
                             in stead of transcript. Default is 310.
       --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
-                            The highest coverage of terminator must be higher than
-                            this value. The low expressed terminator will not be
-                            included in "best_candidates", but still in
+                            The minimum value of the highest coverage of
+                            terminator. The low expressed terminator are not
+                            included in "best_candidates", but are still in
                             "all_candidates". Default is 10.
       --table_best, -tb     Output table only contains the information of the
                             library which has most significant coverage decrease.
                             Default is False.
       --window_size WINDOW_SIZE, -wz WINDOW_SIZE
-                            Window size for searching secondary structure of
+                            Window size for searching secondary structure in
                             intergenic region. Default is 100 nts.
       --window_shift WINDOW_SHIFT, -ws WINDOW_SHIFT
                             The number of nucleotides for window shift. Default is
@@ -1240,15 +1166,16 @@ which have coverage significant decrease.
                             nts.
       --range_u_tail RANGE_U_TAIL, -ru RANGE_U_TAIL
                             The range (nucleotides) for detection of U-tail. For
-                            an example, if --range_u_tail is 6 and
+                            example, if --range_u_tail is 6 and
                             --min_u_tail_length is 3, and there are 3 Us within 6
                             nts, This candidate will be assigned as the terminator
                             which has poly U-tail. Default is 6.
       --keep_multi_term, -kp
-                            Sometimes, one gene is associated with more terminator
-                            candidates. In default, it will only keep the high
-                            confident one. This function can keep all terminators
-                            which associated with the same gene. Default is False.
+                            Sometimes, one gene is associated with multiple
+                            terminators In default, it will only keep the highly-
+                            confidence one. This flag can keep all terminators
+                            which are associated with the same gene. Default is
+                            False.
 
 - **Output files**
 
@@ -1361,8 +1288,9 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
                          TSS_FILES [TSS_FILES ...] --transcript_files
                          TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                          [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                         [--tss_source] [--base_5utr BASE_5UTR]
-                         [--utr_length UTR_LENGTH] [--base_3utr BASE_3UTR]
+                         [--tss_source] [--base_5utr {both,transcript,TSS}]
+                         [--utr_length UTR_LENGTH]
+                         [--base_3utr {both,transcript,terminator}]
                          [--terminator_fuzzy TERMINATOR_FUZZY]
                          [--fuzzy_3utr FUZZY_3UTR] [--fuzzy_5utr FUZZY_5UTR]
     
@@ -1379,38 +1307,28 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript gff files.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            If the paths of terminator files are assigned here,
-                            this function will also apply terminator to detect
-                            3'UTR.
+                            If the paths of terminator files are assigned,
+                            terminator will be used to detect 3'UTR.
     
     additional arguments:
-      --tss_source, -s      The TSS gff file is generated by ANNOgesic or not. If
-                            the TSS file is not generated by ANNOgesic, this
-                            function will classify the TSSs for detecting UTRs.
+      --tss_source, -s      The TSS gff file is generated by ANNOgesic or not.
                             Default is True (from ANNOgesic).
-      --base_5utr BASE_5UTR, -b5 BASE_5UTR
-                            Please assign the information for detection of 5'UTR.
-                            It can be "TSS" or "transcript" or "both". Default is
-                            both.
+      --base_5utr {both,transcript,TSS}, -b5 {both,transcript,TSS}
+                            The information for detection of 5'UTR. It can be
+                            "TSS" or "transcript" or "both". Default is both.
       --utr_length UTR_LENGTH, -l UTR_LENGTH
                             The maximum UTR length. Default is 300.
-      --base_3utr BASE_3UTR, -b3 BASE_3UTR
+      --base_3utr {both,transcript,terminator}, -b3 {both,transcript,terminator}
                             please assign the information for detection of 3'UTR.
                             It can be "transcript" or "terminator" or "both".
                             Default is transcript.
       --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            This is only for --base_3utr which is assigned by
-                            "transcript" or "both", and terminator file are
-                            provided. If the distance (nucleotides) between
-                            terminator and the end of transcript is lower than
-                            this value, the terminator is consider to be
-                            associated with the 3'UTR. Default is 30.
+                            The minimum fuzzy value for comparing transcript and
+                            terminator. Default is 30.
       --fuzzy_3utr FUZZY_3UTR, -f3 FUZZY_3UTR
-                            If --base_3utr includes transcript, please assign the
-                            fuzzy of 3'UTR. Default is 10 nucleotides.
+                            The fuzzy value of transcript for 3'UTR detection.
       --fuzzy_5utr FUZZY_5UTR, -f5 FUZZY_5UTR
-                            If --base_5utr includes transcript, please assign the
-                            fuzzy of 5'UTR. Default is 5 nucleotides.
+                            The fuzzy value of transcript for 5'UTR detection.
 
 - **Output files**
 
@@ -1562,7 +1480,7 @@ this candidates will be removed.
 ::
 
     usage: annogesic srna [-h] --project_path PROJECT_PATH [--utr_derived_srna]
-                          [--filter_info FILTER_INFO [FILTER_INFO ...]]
+                          [--filter_info {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...]]
                           --transcript_files TRANSCRIPT_FILES
                           [TRANSCRIPT_FILES ...] --annotation_files
                           ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -1578,7 +1496,7 @@ this candidates will be removed.
                           [--nr_database_path NR_DATABASE_PATH]
                           [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                           [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                          [--tex_notex TEX_NOTEX]
+                          [--tex_notex {1,2}]
                           [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                           [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
                           [--rnafold_path RNAFOLD_PATH]
@@ -1594,17 +1512,17 @@ this candidates will be removed.
                           [--terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA]
                           [--terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA]
                           [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-                          [--run_intergenic_tex_coverage RUN_INTERGENIC_TEX_COVERAGE]
-                          [--run_intergenic_notex_coverage RUN_INTERGENIC_NOTEX_COVERAGE]
-                          [--run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE]
-                          [--run_break_transcript RUN_BREAK_TRANSCRIPT]
-                          [--run_antisense_tex_coverage RUN_ANTISENSE_TEX_COVERAGE]
-                          [--run_antisense_notex_coverage RUN_ANTISENSE_NOTEX_COVERAGE]
-                          [--run_antisense_fragmented_coverage RUN_ANTISENSE_FRAGMENTED_COVERAGE]
-                          [--run_utr_tex_coverage RUN_UTR_TEX_COVERAGE]
-                          [--run_utr_notex_coverage RUN_UTR_NOTEX_COVERAGE]
-                          [--run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE]
-                          [--min_utr_coverage MIN_UTR_COVERAGE]
+                          [--min_intergenic_tex_coverage MIN_INTERGENIC_TEX_COVERAGE]
+                          [--min_intergenic_notex_coverage MIN_INTERGENIC_NOTEX_COVERAGE]
+                          [--min_intergenic_fragmented_coverage MIN_INTERGENIC_FRAGMENTED_COVERAGE]
+                          [--min_complete_5utr_transcript_coverage MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE]
+                          [--min_antisense_tex_coverage MIN_ANTISENSE_TEX_COVERAGE]
+                          [--min_antisense_notex_coverage MIN_ANTISENSE_NOTEX_COVERAGE]
+                          [--min_antisense_fragmented_coverage MIN_ANTISENSE_FRAGMENTED_COVERAGE]
+                          [--min_utr_tex_coverage MIN_UTR_TEX_COVERAGE]
+                          [--min_utr_notex_coverage MIN_UTR_NOTEX_COVERAGE]
+                          [--min_utr_fragmented_coverage MIN_UTR_FRAGMENTED_COVERAGE]
+                          [--min_all_utr_coverage MIN_ALL_UTR_COVERAGE]
                           [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
                           [--nr_format] [--srna_format] [--table_best]
                           [--decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE]
@@ -1624,346 +1542,277 @@ this candidates will be removed.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --utr_derived_srna, -u
-                            The function is for detecting UTR-derived sRNA.
-                            Default is False.
-      --filter_info FILTER_INFO [FILTER_INFO ...], -d FILTER_INFO [FILTER_INFO ...]
-                            There are several filters that you can use to improve
-                            sRNA detection: 1. tss (sRNA has to start with TSS),
-                            2. sec_str (free energy change of secondary structure
-                            (normalized by length) has to be smaller than
-                            --cutoff_energy), 3. blast_nr (the number of the
-                            homology can not be found more than --cutoff_nr_hit in
-                            the non-redundant database), 4. blast_srna (as long as
-                            the homology can be found in sRNA database, the
-                            candidates will be included to best candidtes without
-                            considering other filters), 5. sorf (sRNA can not
-                            overlap sORF), 6. term (sRNA has to be associated with
-                            a terminator), 7. promoter (sRNA has to be associated
-                            with a promoter motif). ATTENTION: without importing
-                            any information, the results may include many false
-                            positives. If multiple filters needs to be assigned,
-                            please use spaces to separated them. ex: tss sec_str
-                            blast_nr - means it used 1. TSS, 2. free energy change
-                            of secondary structure and 3. blast to nr database to
-                            detect sRNA. If you want to use blast_srna as a
-                            filter, please follow the format:
-                            $ID|$GENOME|$SRNANAME. "tss sec_str blast_nr
-                            blast_srna" is recommended to be assigned. If you
-                            don't want to use any filters, please assign "none".
+                            Assign to detect UTR-derived sRNA. Default is False.
+      --filter_info {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...], -d {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...]
+                            The filters for improving sRNA detection: 1. tss (sRNA
+                            has to start with a TSS), 2. sec_str (free energy
+                            change of secondary structure (normalized by length)
+                            has to be smaller than --cutoff_energy), 3. blast_nr
+                            (the number of the homology can not be found more than
+                            --cutoff_nr_hit in the non-redundant database), 4.
+                            blast_srna (as long as the homology can be found in
+                            sRNA database, the candidates will be included to best
+                            candidtes without considering other filters), 5. sorf
+                            (sRNA must not overlap sORFs), 6. term (sRNA has to be
+                            associated with a terminator), 7. promoter (sRNA has
+                            to be associated with a promoter motif). For using
+                            multiple filters, please separated them by spaced. If
+                            blast_srna was assigned, the headers of sequences in
+                            sRNA database should be $ID|$GENOME|$SRNANAME. "tss
+                            sec_str blast_nr blast_srna" are recommended to be
+                            used. If "none" is assigned, no filters are applied.
                             Default is tss sec_str blast_nr blast_srna.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
-                            If the paths of TSS gff files are assigned here, TSS
-                            information will be used for detecting sRNA. If you
-                            want to detect UTR-derived sRNA or "tss" in
-                            --filter_info, TSS gff files MUST be provided.
-      --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
-                            If the paths of processing site gff files are assigned
-                            here, processing site information will be used for
-                            detecting sRNA. For detection of UTR-derived sRNA,
-                            processing site information can improve the results.
-      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            If terminator information can be provided, please
-                            assign the paths of gff files of terminators. If
-                            "term" in --filter_info, terminator gff files MUST be
+                            Paths of TSS gff files. For detecting UTR-derived sRNA
+                            or "tss" in --filter_info, TSS gff files MUST be
                             provided.
+      --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
+                            Paths of processing site gff files. It can improve the
+                            detection of UTR-derived sRNAs.
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
+                            Paths of terminator gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            If "sec_str" or "blast_nr" or "blast_srna" is assigned
-                            to --filter_info, fasta files MUST be assigned here.
+                            paths of fasta files of reference genome, If
+                            "sec_str", "blast_nr" or "blast_srna" is assigned to
+                            --filter_info, fasta files are required.
       --compute_sec_structures, -cs
-                            Compute secondary structures of sRNAs. Default is
+                            Computing secondary structures of sRNAs. Default is
                             False.
       --promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...], -pt PROMOTER_TABLES [PROMOTER_TABLES ...]
-                            If the paths of promoter tables can be provided,
-                            please assign the paths of promoter tables here. If
-                            "promoter" in --filter_info, the promoter tables MUST
-                            be assigned. The format of table is $GENOME
-                            $TSS_POSITION $TSS_STRAND $PROMOTER_NAME. TSS
-                            information is also required.
+                            Paths of promoter tables, The format of the table is
+                            $GENOME $TSS_POSITION $TSS_STRAND $PROMOTER_NAME.
       --promoter_names PROMOTER_NAMES [PROMOTER_NAMES ...], -pn PROMOTER_NAMES [PROMOTER_NAMES ...]
                             If --promoter_tables is provided, please assign the
-                            promoter name (the last column of promoter table)
-                            which you want to compare. If multiple promoters need
-                            to be assigned, please put spaces between the
+                            promoter name (the last column of promoter table). For
+                            multiple promoters, please put spaces between the
                             promoters. Default is None.
       --sorf_files SORF_FILES [SORF_FILES ...], -O SORF_FILES [SORF_FILES ...]
-                            If the paths of sORF gff files can be provided, please
-                            assign the paths of sORF gff files here. If "sorf" in
-                            --filter_info, sORF gff files MUST is assigned.
+                            Paths of sORF gff files
       --srna_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
-                            If sRNA database can be provided, please assign here.
-                            If "blast_srna" is included in --filter_info, please
-                            assign the path of sRNA database with proper header.
-                            Format of the header should be $ID|$GENOME|$NAME For
-                            an example of the proper header, please check
+                            Path of sRNA database with proper headers of
+                            sequences. Format of the header should be
+                            $ID|$GENOME|$NAME. Please check
                             https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
                             abase/sRNA_database_BSRD.fa
       --nr_database_path NR_DATABASE_PATH, -nd NR_DATABASE_PATH
-                            If nr database can be provided, please assign here. If
-                            "blast_nr" is included in --filter_info, please assign
-                            the path of nr database.
+                            Path of nr database
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            If TEX+/- libraries can be provided, please assign the
-                            name of TEX+/- libraries here. The format is:
+                            TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            If fragmented (or conventional) libraries can be
-                            provided, please assign the name of fragmented
-                            libraries here. The format is: wig_file_path:fragmente
-                            d(frag):condition_id(integer):replicate_id(alphabet):s
-                            trand(+ or -). If multiple wig files need to be
-                            assigned, please use spaces to separate the wig files.
-                            For an example, $WIG_PATH_1:frag:1:a:+
-                            $WIG_PATH_2:frag:1:a:-.
-      --tex_notex TEX_NOTEX, -te TEX_NOTEX
+                            Wig files of RNA-Seq with transcript fragmented. The
+                            format is: wig_file_path:frag:condition_id(integer):re
+                            plicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use spaces to
+                            separate the wig files. For example,
+                            my_lib_frag_forward.wig:frag:1:a:+
+                            my_lib_frag_reverse.wig:frag:1:a:-.
+      --tex_notex {1,2}, -te {1,2}
                             If TEX+/- libraries is assigned, this value is that a
                             sRNA should be detected in both (TEX+ and TEX-) or can
                             be detected in only one library (TEX+ or TEX-). Please
                             assign 1 or 2. Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
-                            This value (for TEX+/- libraries) is the minimal
-                            number of replicates that a sRNA has to be detected.
-                            The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
-                            If different --replicate_tex values need to be
-                            assigned to different conditions, please use spaces to
-                            separate them. For an example, 1_2 2_2 3_3. It means
-                            that --replicate_tex is 2 in number 1 and number 2
+                            This value is the minimal number of replicates that a
+                            TSS has to be detected in. The format is
+                            $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
+                            --replicate_tex values need to be assigned to
+                            different conditions, please use spaces to separate
+                            them. For example, 1_2 2_2 3_3 means that
+                            --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            The meaning and input type is the same as
-                            --replicates_tex. This value is for fragmented (or
-                            conventional) libraries.
+                            It is similar to --replicates_tex. This value is for
+                            fragmented (or conventional) libraries.
     
     additional arguments:
       --rnafold_path RNAFOLD_PATH
-                            Please assign RNAfold path.
+                            Path of RNAfold.
       --relplot_path RELPLOT_PATH
-                            Please assign the path of relplot.pl in Vienna
-                            package.
+                            Path of relplot.pl in Vienna package.
       --mountain_path MOUNTAIN_PATH
-                            Please assign the path of mountain.pl in Vienna
-                            package.
+                            Path of mountain.pl in Vienna package.
       --blastn_path BLASTN_PATH
-                            Please assign the path of blastn in blast+ package.
+                            Path of blastn in BLAST+ package.
       --blastx_path BLASTX_PATH
-                            Please assign the path of blastx in blast+ package.
+                            Path of blastx in BLAST+ package.
       --makeblastdb_path MAKEBLASTDB_PATH
-                            Please assign the path of makeblastdb in blast+
-                            package.
+                            Path of makeblastdb in BLAST+ package.
       --parallel_blast PARALLEL_BLAST, -pb PARALLEL_BLAST
-                            How many parallels that you want to use for blast.
-                            Default is 10.
-      --tss_source, -ts     If the TSS gff file is not generated by ANNOgesic,
-                            please use this function to classify TSSs and generate
-                            the proper format for sRNA prediction. Default is True
-                            (from ANNOgesic).
+                            The number of parallel runs. Default is 10.
+      --tss_source, -ts     The TSS gff files are generated from ANNOgesic or not.
+                            Default is True (from ANNOgesic).
       --tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
-                            If --tss_files is provided, please assign the fuzzy
-                            for comparing TSS with transcript. It is for
-                            intergenic sRNA. Default is 3.
+                            The fuzzy value of comparing TSS and transcript for
+                            detecting intergenic sRNA. Default is 3.
       --tss_5utr_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
-                            If --tss_files is provided, please assign the fuzzy
-                            for comparing TSS with transcript. It is for 5'UTR-
-                            derived sRNA.The input type can be percentage ("p") or
-                            the real amount of reads ("n"). Ex: p_0.05 means the
-                            fuzzy is 5 percent of the length of 5'UTR. n_10 means
-                            the fuzzy is 10 base pair. Default is n_3.
+                            The fuzzy value of comparing TSS and transcript for
+                            detecting 5'UTR-derived sRNA.The input type can be
+                            percentage ("p") or the real amount of reads ("n").
+                            For example, p_0.05 means the fuzzy is 5 percent of
+                            the length of 5'UTR. n_10 means the fuzzy is 10 nts.
+                            Default is n_3.
       --tss_3utr_fuzzy TSS_3UTR_FUZZY, -f3 TSS_3UTR_FUZZY
-                            The meaning is similar to --tss_5utr_fuzzy. This value
-                            is for 3'UTR-derived sRNA instead of 5'UTR-derived
-                            sRNA. Default is p_0.04.
+                            It is similar to --tss_5utr_fuzzy. This value is for
+                            3'UTR-derived sRNA instead of 5'UTR-derived sRNA.
+                            Default is p_0.04.
       --tss_intercds_fuzzy TSS_INTERCDS_FUZZY, -fc TSS_INTERCDS_FUZZY
-                            The meaning is similar to --tss_5utr_fuzzy. This value
-                            is for interCDS-derived sRNA instead of 5'UTR-derived
-                            sRNA. Default is p_0.04.
+                            It is similar to --tss_5utr_fuzzy. This value is for
+                            interCDS-derived sRNA instead of 5'UTR-derived sRNA.
+                            Default is p_0.04.
       --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -efi TERMINATOR_FUZZY_IN_SRNA
-                            If --terminator_files is provided, please assign the
-                            fuzzy for comparing terminator with transcript. This
-                            value is for the terminator which is within sRNA.
-                            Default is 30.
+                            The fuzzy value for comparing terminator and
+                            transcript for detecting the terminator which is
+                            within sRNA. Default is 30.
       --terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA, -efo TERMINATOR_FUZZY_OUT_SRNA
-                            The meaning is the same as --terminator_fuzzy_in_sRNA.
-                            This value is for the terminator which is outside of
-                            sRNA. Default is 30.
+                            It is similar to --terminator_fuzzy_in_sRNA. This
+                            value is for the terminator which is outside of sRNA.
+                            Default is 30.
       --min_length MIN_LENGTH, -lm MIN_LENGTH
-                            Please assign the minimum sRNA length. Default is 30.
+                            The minimum sRNA length. Default is 30.
       --max_length MAX_LENGTH, -lM MAX_LENGTH
-                            Please assign the maximum sRNA length. Default is 500.
-      --run_intergenic_tex_coverage RUN_INTERGENIC_TEX_COVERAGE, -it RUN_INTERGENIC_TEX_COVERAGE
-                            The minimum average coverage of intergenic sRNA
-                            candidates in TEX+ libraries. This value is based on
-                            different types of TSSs. The order of numbers is
-                            "Primary,Secondary,Internal,Antisense,Orphan". Ex: The
-                            input is 0,0,0,50,10. It means that antisense TSS
-                            (minimum coverage is 50) and orphan TSS (minimum
-                            coverage is 10) are used for sRNA prediction. The
-                            other types of TSSs will not be used for sRNA
-                            detection (assign to 0). If TSS information is not
-                            provided, it will choose the lowest one as a general
-                            cutoff for prediction. Ex: if the input is 0,0,0,50,10
-                            and --tss_files is not provided, 10 will be the
-                            general cutoff for prediction. Default is 0,0,0,40,20
-                            and each number is separated by commas.
-      --run_intergenic_notex_coverage RUN_INTERGENIC_NOTEX_COVERAGE, -in RUN_INTERGENIC_NOTEX_COVERAGE
-                            The meaning is the same as
-                            --run_intergenic_tex_coverage. This value is for TEX-
-                            libraries. Default is 0,0,0,30,10 and each number is
-                            separated by commas.
-      --run_intergenic_fragmented_coverage RUN_INTERGENIC_FRAGMENTED_COVERAGE, -if RUN_INTERGENIC_FRAGMENTED_COVERAGE
-                            The meaning is the same as
-                            --run_intergenic_tex_coverage. This value is for
-                            fragmented (or conventional) libraries. Default is
-                            400,200,0,50,20 and each number is separated by
-                            commas.
-      --run_break_transcript RUN_BREAK_TRANSCRIPT, -ib RUN_BREAK_TRANSCRIPT
-                            Several primary/secondary TSSs are associated with
-                            transcripts which has no CDSs/tRNA/rRNA inside
-                            (perhaps associated with ncRNA). In order to detect
-                            the sRNA candidates in these transcripts, please
-                            assign the minimum average coverage of the sRNA
-                            candidates. The format is $TEX,$NOTEX,$FRAG, ex:
-                            200,100,100 is means that the minimum average coverage
-                            is 200 for TEX+ libraries, 100 for TEX- and fragmented
-                            (or conventional) libraries. Default is 30,20,30 and
-                            each number is separated by commas.
-      --run_antisense_tex_coverage RUN_ANTISENSE_TEX_COVERAGE, -at RUN_ANTISENSE_TEX_COVERAGE
-                            The meaning is the same as
-                            --run_intergenic_tex_coverage. This value is for
-                            antisense in stead of intergenic. Default is
-                            0,0,0,40,20 and each number is separated by commas.
-      --run_antisense_notex_coverage RUN_ANTISENSE_NOTEX_COVERAGE, -an RUN_ANTISENSE_NOTEX_COVERAGE
-                            The meaning is the same as
-                            --run_intergenic_notex_coverage. This value is for
-                            antisense in stead of intergenic. Default is
-                            0,0,0,30,10 and each number is separated by commas.
-      --run_antisense_fragmented_coverage RUN_ANTISENSE_FRAGMENTED_COVERAGE, -af RUN_ANTISENSE_FRAGMENTED_COVERAGE
-                            The meaning is the same as
-                            --run_intergenic_fragmented_coverage. This value is
-                            for antisense in stead of intergenic. Default is
-                            400,200,0,50,20 and each number is separated by
-                            commas.
-      --run_utr_tex_coverage RUN_UTR_TEX_COVERAGE, -ut RUN_UTR_TEX_COVERAGE
+                            The maximum sRNA length. Default is 500.
+      --min_intergenic_tex_coverage MIN_INTERGENIC_TEX_COVERAGE, -it MIN_INTERGENIC_TEX_COVERAGE
+                            The minimum average coverage of intergenic sRNAs for
+                            TEX+ libraries. This value is based on different types
+                            of TSSs. The order of numbers is
+                            "Primary,Secondary,Internal,Antisense,Orphan". For
+                            example, 0,0,0,50,10 means that antisense TSS (minimum
+                            coverage is 50) and orphan TSS (minimum coverage is
+                            10) are used for sRNA prediction. The other types of
+                            TSSs will not be used for the detection (assign to 0).
+                            If TSS information is not provided, the lowest value
+                            would be the general cutoff for the prediction.
+                            Default is 0,0,0,40,20.
+      --min_intergenic_notex_coverage MIN_INTERGENIC_NOTEX_COVERAGE, -in MIN_INTERGENIC_NOTEX_COVERAGE
+                            It is similar to --min_intergenic_tex_coverage. This
+                            value is for TEX- libraries. Default is 0,0,0,30,10.
+      --min_intergenic_fragmented_coverage MIN_INTERGENIC_FRAGMENTED_COVERAGE, -if MIN_INTERGENIC_FRAGMENTED_COVERAGE
+                            It is similar to --min_intergenic_tex_coverage. This
+                            value is for fragmented (or conventional) libraries.
+                            Default is 400,200,0,50,20.
+      --min_complete_5utr_transcript_coverage MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE, -ib MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE
+                            Several primary/secondary TSSs are also associated
+                            with a complete transcript containing no
+                            CDSs/tRNA/rRNA in 5'UTR of the following CDS which is
+                            located in another transcript. In order to detect the
+                            sRNA candidates in these transcripts, please assign
+                            the minimum average coverage of the sRNA candidates.
+                            The format is $TEX,$NOTEX,$FRAG. For example,
+                            200,100,100 means that the minimum average coverage is
+                            200 for TEX+ libraries, 100 for TEX- and fragmented
+                            (or conventional) libraries. Default is 30,20,30.
+      --min_antisense_tex_coverage MIN_ANTISENSE_TEX_COVERAGE, -at MIN_ANTISENSE_TEX_COVERAGE
+                            It is similar to --min_intergenic_tex_coverage. This
+                            value is for antisense in stead of intergenic. Default
+                            is 0,0,0,40,20.
+      --min_antisense_notex_coverage MIN_ANTISENSE_NOTEX_COVERAGE, -an MIN_ANTISENSE_NOTEX_COVERAGE
+                            It is similar to --min_intergenic_notex_coverage. This
+                            value is for antisense in stead of intergenic. Default
+                            is 0,0,0,30,10.
+      --min_antisense_fragmented_coverage MIN_ANTISENSE_FRAGMENTED_COVERAGE, -af MIN_ANTISENSE_FRAGMENTED_COVERAGE
+                            It is similar to --min_intergenic_fragmented_coverage.
+                            This value is for antisense in stead of intergenic.
+                            Default is 400,200,0,50,20.
+      --min_utr_tex_coverage MIN_UTR_TEX_COVERAGE, -ut MIN_UTR_TEX_COVERAGE
                             The minimum average coverage of UTR-derived sRNA
                             candidates in TEX+ libraries. The input can be
                             assigned by the percentile ("p") or real number of
                             coverage ("n"). The order of numbers is
-                            "5'UTR,3'UTR,interCDS". Ex: if the input is
-                            "p_0.7,p_0.5,p_0.5", it will use 70 percentile of
-                            5'UTR coverage as minimum coverage for 5'UTR-derived
-                            sRNA, median of 3'UTR and interCDS coverage as minimum
-                            coverage for 3'UTR and interCDS-derived sRNA. Ex: if
-                            the input is "n_30,n_10,n_20 " it will use 30 as
-                            minimum coverage for 5'UTR-derived sRNA, 10 as minimum
-                            coverage for 3'UTR-derived sRNA and 20 as minimum
-                            coverage for interCDS-derived sRNA. Default is
-                            p_0.8,p_0.6,p_0.7 and each number is separated by
-                            commas.
-      --run_utr_notex_coverage RUN_UTR_NOTEX_COVERAGE, -un RUN_UTR_NOTEX_COVERAGE
-                            The meaning is the same as --run_utr_tex_coverage.
-                            This value is for TEX- libraries. Default is
-                            p_0.7,p_0.5,p_0.6 and each number is separated by
-                            commas.
-      --run_utr_fragmented_coverage RUN_UTR_FRAGMENTED_COVERAGE, -uf RUN_UTR_FRAGMENTED_COVERAGE
-                            The meaning is the same as --run_utr_tex_coverage.
-                            This value is for fragmented (or conventional)
-                            libraries. Default is p_0.7,p_0.5,p_0.6 and each
-                            number is separated by commas.
-      --min_utr_coverage MIN_UTR_COVERAGE, -mu MIN_UTR_COVERAGE
-                            The minimum general coverage of UTR-derived sRNA. The
-                            coverage of UTR-derived sRNA should not only fit the
-                            --run_utr_TEX_coverage, --run_utr_noTEX_coverage and
-                            --run_utr_fragmented_coverage, but also this value.
+                            "5'UTR,3'UTR,interCDS". For example,
+                            "p_0.7,p_0.5,p_0.5" means that 70 percentile of all
+                            5'UTR coverages is used for the minimum coverage of
+                            5'UTR-derived sRNA, median of all 3'UTR and interCDS
+                            coverages is used for minimum coverage of 3'UTR and
+                            interCDS-derived sRNA. Default is p_0.8,p_0.6,p_0.7.
+      --min_utr_notex_coverage MIN_UTR_NOTEX_COVERAGE, -un MIN_UTR_NOTEX_COVERAGE
+                            It is similar to --min_utr_tex_coverage. This value is
+                            for TEX- libraries. Default is p_0.7,p_0.5,p_0.6.
+      --min_utr_fragmented_coverage MIN_UTR_FRAGMENTED_COVERAGE, -uf MIN_UTR_FRAGMENTED_COVERAGE
+                            It is similar to --min_utr_tex_coverage. This value is
+                            for fragmented (or conventional) libraries. Default is
+                            p_0.7,p_0.5,p_0.6.
+      --min_all_utr_coverage MIN_ALL_UTR_COVERAGE, -mu MIN_ALL_UTR_COVERAGE
+                            The minimum coverage of UTR-derived sRNA. The coverage
+                            of UTR-derived sRNA should not only fit the
+                            --min_utr_TEX_coverage, --min_utr_noTEX_coverage and
+                            --min_utr_fragmented_coverage, but also this value.
                             Default is 50.
       --cutoff_energy CUTOFF_ENERGY, -ce CUTOFF_ENERGY
                             If "sec_str" is included in --filter_info, please
                             assign the maximum folding energy change (normalized
                             by length of gene). Default is -0.05.
-      --mountain_plot, -m   This function will generate mountain plot of sRNA
-                            candidate. Default is False.
-      --nr_format, -nf      This function will format nr database. If the nr
-                            database has formatted, the step can be skip. Default
-                            is False.
-      --srna_format, -sf    The meaning is the same as --nr_format. It is for sRNA
-                            database in stead of nr database. Default is False.
+      --mountain_plot, -m   Generating mountain plot of sRNA candidate. Default is
+                            False.
+      --nr_format, -nf      Format nr database. Default is False.
+      --srna_format, -sf    Format sRNA database. Default is False.
       --table_best, -tb     The output table of sRNA candidates only contains the
                             information of the highest expressed library. Default
                             is False.
       --decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE, -di DECREASE_INTERGENIC_ANTISENSE
                             This value is for detecting the coverage decrease in
                             intergenic/antisense transcript. If the length of
-                            intergenic transcript is longer than the max_length,
-                            it will check the sRNA candidates based on coverage.
-                            If the ratio -- (the lowest coverage / the highest
-                            coverage) of the sRNA region is smaller than this
-                            value, the spot of lowest coverage will be considered
-                            as the end point of the sRNA. If the new sRNA length
-                            is suitable for a sRNA candidate, this candidate will
-                            be included in output. Default is 0.1.
+                            intergenic transcript is longer than the --max_length,
+                            it will searching the coverages of the transcript. If
+                            the ratio -- (the lowest coverage / the highest
+                            coverage) of the transcript is smaller than this value
+                            and the length is within a given range, the transcript
+                            will be considered as a sRNA as well.Default is 0.1.
       --decrease_utr DECREASE_UTR, -du DECREASE_UTR
-                            This value is for detecting the coverage decrease in
-                            UTR region. The end point of UTR-derived sRNA is
-                            defined by processing site or the end of transcript
-                            (3'UTR-derived sRNA). If there is no processing sites
-                            in 5'UTR or interCDS, the algorithm will check the
-                            coverage to detect the end point of sRNA. If the ratio
-                            -- (the lowest coverage / the highest coverage) of the
-                            sRNA region is smaller than this value, the spot of
-                            lowest coverage will be considered as the end point of
-                            the sRNA. If the new sRNA length is suitable for a
-                            sRNA candidate, this candidate will be included in
-                            output. Default is 0.05.
+                            It is similar to --decrease_intergenic_antisense. This
+                            value is for UTR-derived sRNA. Default is 0.05.
       --fuzzy_intergenic_antisense FUZZY_INTERGENIC_ANTISENSE, -fi FUZZY_INTERGENIC_ANTISENSE
-                            If the situation is like
-                            --decrease_intergenic_antisense mentioned, This value
-                            is the fuzzy nucleotides for detecting the coverage
-                            decrease. Ex: the location of intergenic sRNA is
-                            300-400, and --fuzzy_intergenic_antisense is 30. The
-                            algorithm will search the coverage decrease within
-                            270-430. Default is 10.
+                            The fuzzy nucleotides for detecting the coverage
+                            decrease (please check
+                            --decrease_intergenic_antisense). For example, the
+                            location of intergenic sRNA is 300-400, and
+                            --fuzzy_intergenic_antisense is 30. The searching
+                            region is 270-430. Default is 10.
       --fuzzy_utr FUZZY_UTR, -fu FUZZY_UTR
-                            It is similar with --fuzzy_intergenic_antisense. This
-                            is for UTR-derived sRNAs. Default is 10.
+                            It is similar to --fuzzy_intergenic_antisense. This is
+                            for UTR-derived sRNAs. Default is 10.
       --cutoff_nr_hit CUTOFF_NR_HIT, -cn CUTOFF_NR_HIT
                             The maximum hits number in nr database. Default is 0.
       --blast_e_nr BLAST_E_NR, -en BLAST_E_NR
-                            The maximum e value for blast in nr database. Default
-                            is 0.0001.
+                            The maximum e value for searching in nr database.
+                            Default is 0.0001.
       --blast_e_srna BLAST_E_SRNA, -es BLAST_E_SRNA
-                            The maximum e value for blast in sRNA database.
+                            The maximum e value for searching in sRNA database.
                             Default is 0.0001.
       --detect_srna_in_cds, -ds
-                            This function will search sRNA in CDS (ex: the genome
-                            annotation is not correct). More sRNA candidates which
-                            overlap with CDS will be detected. Default is False.
+                            Searching sRNA in CDS (e.g. the genome annotation is
+                            not correct). More sRNA candidates which overlap with
+                            CDS will be detected. Default is False.
       --overlap_percent_cds OVERLAP_PERCENT_CDS, -oc OVERLAP_PERCENT_CDS
-                            If --detect_srna_in_cds is True, please assign the
-                            maximum ratio of overlap between CDS and sRNA
-                            candidates. Default is 0.5
+                            The maximum ratio of overlapping between CDS and sRNA
+                            candidates. It only works if --detect_srna_in_cds is
+                            true. Default is 0.5
       --ignore_hypothetical_protein, -ih
-                            This function is for ignoring the hypothetical
-                            proteins in genome annotation file. Default is False.
+                            For ignoring the hypothetical proteins in genome
+                            annotation file. Default is False.
       --ranking_time_promoter RANKING_TIME_PROMOTER, -rp RANKING_TIME_PROMOTER
                             If --promoter_tables is provided, the information of
-                            promoter can be use for ranking sRNA candidates as
-                            well. The ranking score is --ranking_time_promoter *
-                            average coverage. For an example, a sRNA candidate
-                            which is associated with promoter and its average
-                            coverage is 10. If --ranking_time_promoter is 2, the
-                            ranking score will be 20 (2*10). For the candidate
-                            which are not associated with promoter, the
-                            --ranking_time_promoter will be 1. Therefore,
-                            --ranking_time_promoter can not be smaller than 1.
-                            Default is 2.
+                            promoter can be use for ranking sRNA candidates. The
+                            ranking score is --ranking_time_promoter * average
+                            coverage. For example, a sRNA candidate which is
+                            associated with a promoter and its average coverage is
+                            10. If --ranking_time_promoter is 2, the ranking score
+                            will be 20 (2*10). For the candidate which are not
+                            associated with promoter, the --ranking_time_promoter
+                            will be 1. Therefore, --ranking_time_promoter can not
+                            be smaller than 1. Default is 2.
 
 - **Output files**
 
@@ -2145,7 +1994,8 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                           [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
                           [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
                           [--cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE]
-                          [--cutoff_background CUTOFF_BACKGROUND] [--table_best]
+                          [--cutoff_base_coverage CUTOFF_BASE_COVERAGE]
+                          [--table_best]
                           [--start_codon START_CODON [START_CODON ...]]
                           [--stop_codon STOP_CODON [STOP_CODON ...]]
                           [--min_rbs_distance MIN_RBS_DISTANCE]
@@ -2162,71 +2012,63 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --utr_derived_sorf, -u
-                            This function will detect UTR-derived sORF. Default is
-                            False.
+                            Detecting UTR-derived sORF. Default is False.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            The paths of genome fasta files.
+                            Paths of fasta files of reference genome.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript gff files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
-                            If the paths of TSS gff files are assigned here, this
-                            function will use the TSS information to detect sORF.
-                            If running without TSS, the results may be influenced.
+                            Paths of TSS gff files.
       --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
-                            If the paths of sRNA gff files can be provided, this
-                            function will compare sORF and sRNA to detect the
-                            overlap.
+                            Paths of sRNA gff files for comparing sORF and sRNA to
+                            detect the overlapping.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            If the TEX+/- libraries can be provided, please assign
-                            the name of TEX+/- library here. The format is:
+                            TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            If the fragmented (or conventional) libraries can be
-                            provided, please assign the name of fragmented library
-                            here. The format is: wig_file_path:fragmented(frag):co
-                            ndition_id(integer):replicate_id(alphabet):strand(+ or
-                            -). If multiple wig files need to be assigned, please
-                            use spaces to separate the wig files. For an example,
-                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
+                            Wig files of RNA-Seq with transcript fragmented. The
+                            format is: wig_file_path:frag:condition_id(integer):re
+                            plicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use spaces to
+                            separate the wig files. For example,
+                            my_lib_frag_forward.wig:frag:1:a:+
+                            my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
                             If the TEX+/- libraries is provided, this value is
                             that a sORF should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
-                            This value (for TEX+/- libraries) is the minimal
-                            number of replicates that a sORF has to be detected.
-                            The format is $NUMBERofCONDITION_$NUMBERofREPLICATE.
-                            If different --replicate_tex values need to be
-                            assigned to different conditions, please use spaces to
-                            separate them. For an example, 1_2 2_2 3_3. It means
-                            that --replicate_tex is 2 in number 1 and number 2
+                            This value is the minimal number of replicates that a
+                            TSS has to be detected in. The format is
+                            $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
+                            --replicate_tex values need to be assigned to
+                            different conditions, please use spaces to separate
+                            them. For example, 1_2 2_2 3_3 means that
+                            --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            The meaning and input type is the same as
-                            --replicates_tex. This value is for fragmented (or
-                            conventional) libraries.
+                            It is similar to --replicates_tex. This value is for
+                            fragmented (or conventional) libraries.
     
     additional arguments:
       --utr_length UTR_LENGTH, -ul UTR_LENGTH
-                            If --tss_files is provided, please assign the utr
-                            length for comparing TSS with sORF. The default number
-                            is 300.
+                            The utr length for comparing TSS with sORF. The
+                            default number is 300.
       --min_length MIN_LENGTH, -lm MIN_LENGTH
-                            Please assign the minimum residue length of sORF.
-                            Default is 30.
+                            The minimum residue length of sORF. Default is 30.
       --max_length MAX_LENGTH, -lM MAX_LENGTH
-                            Please assign the maximum residue length of sORF.
-                            Default is 150.
+                            The maximum residue length of sORF. Default is 150.
       --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
                             The minimum coverage of intergenic sORF candidates.
       --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
@@ -2234,18 +2076,18 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
                             The minimum coverage of 5'UTR derived sORF candidates.
                             This value can be assigned by percentage ("p") or the
-                            amount of reads ("n"). Ex: p_0.05 means that the
-                            coverage of sORF candidates should be higher than 5
-                            percentile of all 5'UTR transcripts. n_10 means that
+                            amount of reads ("n"). For example, p_0.05 means that
+                            the coverage of sORF candidates should be higher than
+                            5 percentile of all 5'UTR transcripts. n_10 means that
                             the coverage of sORF candidates should be higher than
                             10. Default is p_0.5.
       --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
-                            The meaning is the same as --cutoff_5utr_coverage.
-                            This value is for 3'UTR. Default is p_0.5.
+                            It is similar to --cutoff_5utr_coverage. This value is
+                            for 3'UTR. Default is p_0.5.
       --cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
-                            The meaning is the same as --cutoff_5utr_coverage.
-                            This value is for interCDS. Default is p_0.5.
-      --cutoff_background CUTOFF_BACKGROUND, -cub CUTOFF_BACKGROUND
+                            It is similar to --cutoff_5utr_coverage. This value is
+                            for interCDS. Default is p_0.5.
+      --cutoff_base_coverage CUTOFF_BASE_COVERAGE, -cub CUTOFF_BASE_COVERAGE
                             The general minimum coverage of all sORF candidates.
                             All candidates should fit this condition as well.
                             Default is 10.
@@ -2263,31 +2105,28 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
                             The minimum distance (nucleotides) between the
                             ribosome binding site (Shine-Dalgarno sequence) and
-                            start codon. Default is 3.
+                            the start codon. Default is 3.
       --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
                             The maximum distance (nucleotides) between the
                             ribosome binding site (Shine-Dalgarno sequence) and
-                            start codon. Default is 15.
+                            the start codon. Default is 15.
       --rbs_not_after_tss, -at
-                            For generating best results, if the ribosome binding
-                            site (Shine-Dalgarno sequence) of sORF is not
-                            associated with TSS, this function will include this
-                            candidate as well. Default is False.
+                            Including the sORFs which is not associated with
+                            ribosome binding site to highly-confidence sORF list.
+                            Default is False.
       --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                            The number of nucleotides of Shine-Dalgarno sequence
-                            allow be different with AGGAGG. Default is 2.
+                            The number of nucleotides of ribosome binding site
+                            allow to be different with AGGAGG. Default is 2.
       --print_all_combination, -pa
-                            Non-annotated transcript may has many start codons and
-                            stop codons. This function can print all combinations
-                            of start codons and stop codons. Default is False.
-      --best_no_srna, -bs   For generating best results, this function can exclude
-                            the sORFs which overlap with sRNA. Default is False.
-      --best_no_tss, -bt    For generating best results, this function can include
-                            the sORFs which are not associated with TSS. Default
-                            is False.
+                            For printing all combinations of multiple start and
+                            stop codons. Default is False.
+      --best_no_srna, -bs   Excluding the sORFs which overlap with sRNAs to highly
+                            confidence sORF list. Default is False.
+      --best_no_tss, -bt    Excluding the sORFs which do not start with TSS to
+                            highly confidence sORF list. Default is False.
       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
-                            This function is for ignoring hypothetical protein in
-                            genome annotation file. Default is False.
+                            For ignoring hypothetical protein in genome annotation
+                            file. Default is False.
 
 - **Output files**
 
@@ -2396,9 +2235,10 @@ in order to assign the correct format.
 
 ::
 
-    usage: annogesic promoter [-h] [--program PROGRAM] --project_path PROJECT_PATH
-                              --fasta_files FASTA_FILES [FASTA_FILES ...]
-                              --tss_files TSS_FILES [TSS_FILES ...]
+    usage: annogesic promoter [-h] [--program {meme,glam2,both}] --project_path
+                              PROJECT_PATH --fasta_files FASTA_FILES
+                              [FASTA_FILES ...] --tss_files TSS_FILES
+                              [TSS_FILES ...]
                               [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
                               [--num_motifs NUM_MOTIFS]
                               [--nt_before_tss NT_BEFORE_TSS]
@@ -2413,8 +2253,8 @@ in order to assign the correct format.
       -h, --help            show this help message and exit
     
     basic arguments:
-      --program PROGRAM, -p PROGRAM
-                            Please assign the program -- meme or glam2 or both.
+      --program {meme,glam2,both}, -p {meme,glam2,both}
+                            Please assign the program -- meme, glam2 or both.
                             Default is both
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
@@ -2425,15 +2265,13 @@ in order to assign the correct format.
       --motif_width MOTIF_WIDTH [MOTIF_WIDTH ...], -w MOTIF_WIDTH [MOTIF_WIDTH ...]
                             The length for motif detection. For detecting a range
                             of length, please insert "-" between two values.
-                            Moreover, if multiple motif length need to be
-                            assigned, please use spaces to separate them. For an
-                            example, 50 2-10. It means that the length of motif
-                            for detection is 50 and within 2 to 10. The number
-                            should be less or equal than --nt_before_TSS. Default
-                            is 50.
+                            Moreover, if multiple lengths need to be assigned,
+                            please use spaces to separate them. For an example, 50
+                            2-10 means that the lengths of motifs are 50 and
+                            within 2 to 10. The number should be less or equal
+                            than --nt_before_TSS. Default is 50.
       --num_motifs NUM_MOTIFS, -n NUM_MOTIFS
-                            The number of motifs that you want to detect. Default
-                            is 10.
+                            The number of motifs. Default is 10.
       --nt_before_tss NT_BEFORE_TSS, -b NT_BEFORE_TSS
                             The number of upstream nucleotides of TSS for promoter
                             prediction. Default is 50.
@@ -2450,12 +2288,9 @@ in order to assign the correct format.
                             this number of iteration, it will be ended. Default is
                             10000.
       --parallels PARALLELS, -pl PARALLELS
-                            This function can run MEME by parallel. Please input
-                            the number of parallel runs.
-      --tss_source, -s      If the TSS gff file is not generated by ANNOgesic,
-                            this function can classify TSS and generate the proper
-                            format for promoter detection. Default is True (from
-                            ANNOgesic)
+                            The number of parallel runs.
+      --tss_source, -s      The TSS gff files are generated from ANNOgesic or not.
+                            Default is True (from ANNOgesic)
       --tex_libs TEX_LIBS [TEX_LIBS ...], -tl TEX_LIBS [TEX_LIBS ...]
                             If --tss_source is False, please assign the name of
                             TEX+/- library. The format is:
@@ -2467,9 +2302,8 @@ in order to assign the correct format.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             If --tss_source is False, please assign the paths of
                             genome annotation gff files.
-      --combine_all, -c     This function will combine all TSS files in
-                            "tss_files" to generate global promoter motifs.
-                            Default is False.
+      --combine_all, -c     For generating global promoter motifs across all
+                            genomes in TSS files. Default is False.
 
 - **Output files**
 
@@ -2558,15 +2392,14 @@ sub-operons.
       --utr3_files UTR3_FILES [UTR3_FILES ...], -u3 UTR3_FILES [UTR3_FILES ...]
                             Paths of the 3'UTR gff files.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            If terminator information can be provided, please
-                            assign the paths of terminator gff files here.
+                            Paths of terminator gff files.
     
     additional arguments:
       --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            The fuzzy for comparing between TSS and transcript.
-                            Default is 5.
+                            The fuzzy value for comparing between TSS and
+                            transcript. Default is 5.
       --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            The fuzzy for comparing between terminator and
+                            The fuzzy value for comparing between terminator and
                             transcript. Default is 30.
       --min_length MIN_LENGTH, -l MIN_LENGTH
                             The minimum length of operon. Default is 20.
@@ -2667,22 +2500,18 @@ handle them.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
-                            If this argument is given, ANNOgesic will map the
-                            reads via segemehl (with -S). BE CAREFUL, this
-                            function only use default parameters of segemehl to
-                            map the reads. If some specific functions of segemehl
-                            need to be implemented, please directly run segemehl
-                            (MUST run with -S). please assign the fasta files. The
-                            input format is $SET_NAME:$READ1,$READ2,... For an
-                            example, set1:read1.fa,read2.fa means these two fasta
-                            files need to be compute together. .bz2 and .gz
-                            compressed fasta files can be accepted as well.
+                            Paths of read fasta files. ANNOgesic will map the
+                            reads via segemehl (with -S). Required format:
+                            $SET_NAME:$READ1,$READ2,... If multiple data sets need
+                            to be assigned, please separated them by spaces. For
+                            using BAM files, please check --bam_files.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
-                            You can want assign the paths of Bam files to skip
-                            mapping. The input format is $SET_NAME:$BAM1,$BAM2,...
-                            For an example, set1:bam1.bam,bam2.bam means these two
-                            bam files need to be compute together. BE CAREFUL, the
-                            bam files must be generated via segemehl with -S.
+                            Path of input BAM files. Required format:
+                            $SET_NAME:$BAM1,$BAM2,... . BAM files need to be
+                            generated using the mapper segemehl with the parameter
+                            "-S". If multiple data sets need to be assigned,
+                            please separated them by spaces. For using fasta files
+                            of reads, please check --read_files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of the genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -2690,28 +2519,26 @@ handle them.
     
     additional arguments:
       --segemehl_path SEGEMEHL_PATH
-                            Please assign the path of segemehl.x in segemehl
-                            package.
+                            Path of segemehl.x in segemehl package.
       --testrealign_path TESTREALIGN_PATH
-                            Please assign the path of testrealign.x in segemehl
-                            package.
+                            Path of testrealign.x in segemehl package.
       --samtools_path SAMTOOLS_PATH
-                            Please assign the path of samtools.
+                            Path of samtools.
       --parallels PARALLELS, -p PARALLELS
-                            The number of parallels processes for --align. Default
-                            is 10.
+                            The number of parallels runs for mapping if
+                            --read_files is assigned. Default is 10.
       --support_reads SUPPORT_READS, -s SUPPORT_READS
-                            The minimum supported reads of circular RNA. Default
-                            is 10.
+                            The minimum reads for supporting a circular RNA.
+                            Default is 10.
       --start_ratio START_RATIO, -sr START_RATIO
-                            The minimum ratio -- (supported reads of circRNA / all
-                            reads) at starting point of candidate. Default is 0.5.
+                            The minimum ratio -- (reads of circRNA / all reads) at
+                            starting point of candidate. Default is 0.5.
       --end_ratio END_RATIO, -er END_RATIO
-                            The meaning is similar to --start_ratio. This value is
-                            for end point of candidate. Default is 0.5.
+                            I is similar to --start_ratio. This value is for end
+                            point of candidate. Default is 0.5.
       --ignore_hypothetical_proteins IGNORE_HYPOTHETICAL_PROTEINS, -ih IGNORE_HYPOTHETICAL_PROTEINS
-                            This function is for ignoring hypothetical protein in
-                            genome annotation file. Default is False.
+                            For ignoring hypothetical protein in genome annotation
+                            file. Default is False.
 
 - **Output files**
 
@@ -2798,15 +2625,14 @@ Some analyses of GO terms can be done as well.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            If paths of the transcript gff files are provided, GO
-                            term can be retrieved based on expressed CDS and all
-                            CDS.
+                            Paths of the transcript gff files which can be used to
+                            retrieve GO terms based on expressed CDS and all CDS.
       --uniprot_id UNIPROT_ID, -u UNIPROT_ID
                             Path of the UniProt ID mapping database.
       --go_obo GO_OBO, -go GO_OBO
-                            The path of go.obo.
+                            Path of go.obo.
       --goslim_obo GOSLIM_OBO, -gs GOSLIM_OBO
-                            The path of goslim.obo.
+                            Path of goslim.obo.
 
 - **Output files**
 
@@ -2868,7 +2694,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                                  [FASTA_FILES ...] --srna_files SRNA_FILES
                                  [SRNA_FILES ...]
                                  [--query_srnas QUERY_SRNAS [QUERY_SRNAS ...]]
-                                 [--program PROGRAM] [--top TOP]
+                                 [--program {RNAplex,RNAup,both}] [--top TOP]
                                  [--rnaplfold_path RNAPLFOLD_PATH]
                                  [--rnaplex_path RNAPLEX_PATH]
                                  [--rnaup_path RNAUP_PATH]
@@ -2902,93 +2728,80 @@ programs. ``srna_target`` can also compare the results of both programs and prov
       --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
                             Paths of the sRNA gff files.
       --query_srnas QUERY_SRNAS [QUERY_SRNAS ...], -q QUERY_SRNAS [QUERY_SRNAS ...]
-                            Please assign the query sRNA. The input format is
+                            The query sRNA. The input format is
                             $GENOME:$START:$END:$STRAND. If multiple sRNAs need to
                             be assigned, please use spaces to separate them. For
-                            an example, NC_007795.1:200:534:+
-                            NC_007795.1:6767:6900:-. If you want to detect all
-                            sRNAs in gff file, please assign "all". Default is
-                            all.
-      --program PROGRAM, -p PROGRAM
+                            example, NC_007795.1:200:534:+
+                            NC_007795.1:6767:6900:-. If all sRNAs of the reference
+                            genome need to be used, please assign "all". Default
+                            is all.
+      --program {RNAplex,RNAup,both}, -p {RNAplex,RNAup,both}
                             The program for detecting sRNA-mRNA interaction.
                             Please assign "RNAplex" or "RNAup" or "both". Default
                             is both.
-      --top TOP, -t TOP     The minimum ranking number of targets which will be
-                            included to final output. The ranking is based on the
-                            binding energy. Default is 20.
+      --top TOP, -t TOP     The ranking number of targets which will be included
+                            to final output. The ranking is based on the binding
+                            energy. Default is 20.
     
     additional arguments:
       --rnaplfold_path RNAPLFOLD_PATH
-                            Please assign the path of RNAplfold in Vienna package.
+                            Path of RNAplfold in Vienna package.
       --rnaplex_path RNAPLEX_PATH
-                            Please assign the path of RNAplex in Vienna package.
+                            Path of RNAplex in Vienna package.
       --rnaup_path RNAUP_PATH
-                            Please assign the path of RNAup in Vienna package.
+                            Path of RNAup in Vienna package.
       --interaction_length INTERACTION_LENGTH, -i INTERACTION_LENGTH
                             Maximum length of an interaction. Default is 30.
       --window_size_target WINDOW_SIZE_TARGET, -wt WINDOW_SIZE_TARGET
-                            This value is the average of the pair probabilities
-                            over windows for mRNA target. This function only works
-                            for "RNAplex". Default is 240.
+                            The average of the pair probabilities over windows for
+                            mRNA target. It only works for "RNAplex". Default is
+                            240.
       --span_target SPAN_TARGET, -st SPAN_TARGET
-                            This value is the maximum allowed separation of a base
-                            pair to span for mRNA target. This function only works
-                            for "RNAplex". Default is 160.
+                            The maximum allowed separation of a base pair to span
+                            for mRNA target. It only works for "RNAplex". Default
+                            is 160.
       --window_size_srna WINDOW_SIZE_SRNA, -ws WINDOW_SIZE_SRNA
-                            The meaning is similar to --window_size_target. This
-                            value is for sRNA. Default is 30.
+                            It is similar to --window_size_target, but for sRNA.
+                            Default is 30.
       --span_srna SPAN_SRNA, -ss SPAN_SRNA
-                            The meaning is similar to --span_target. This value is
-                            for sRNA. Default is 30.
+                            It is similar to --span_target, but for sRNA. Default
+                            is 30.
       --unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET, -ut UNSTRUCTURED_REGION_RNAPLEX_TARGET
-                            Calculate the mean probability that from length 1 to
-                            this value are unpaired for mRNA target. This function
-                            only works for "RNAplex". Default is 30.
+                            Calculate the mean probability of the unpaired region
+                            for mRNA target. It only works for "RNAplex". Default
+                            is 30.
       --unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA, -us UNSTRUCTURED_REGION_RNAPLEX_SRNA
-                            The meaning is similar to
-                            --unstructured_region_rnaplex_target. This value is
-                            for sRNA. Default is 30.
+                            It is similar to --unstructured_region_rnaplex_target,
+                            but for sRNA. Default is 30.
       --unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP, -uu UNSTRUCTURED_REGION_RNAUP
-                            Compute the mean probability that from length 1 to
-                            this value are unpaired. This function only works for
-                            "RNAup". Default is 30.
+                            Compute the mean probability of unpaired region. It
+                            only works for "RNAup". Default is 30.
       --energy_threshold ENERGY_THRESHOLD, -e ENERGY_THRESHOLD
-                            The minimum energy for a duplex. This function only
-                            works for "RNAplex". Default is -8.
+                            The minimum energy for a duplex. It only works for
+                            "RNAplex". Default is -8.
       --duplex_distance DUPLEX_DISTANCE, -d DUPLEX_DISTANCE
-                            Distance between target 3' ends of two consecutive
-                            duplexes. This function only works for "RNAplex".
-                            Default is 20.
+                            Distance between target 3'ends of two consecutive
+                            duplexes. It works for "RNAplex". Default is 20.
       --parallels_rnaplex PARALLELS_RNAPLEX, -pp PARALLELS_RNAPLEX
-                            The number of parallels for running RNAplex. Default
-                            is 5.
+                            The number of parallel runs for running RNAplex.
+                            Default is 5.
       --parallels_rnaup PARALLELS_RNAUP, -pu PARALLELS_RNAUP
-                            The number of parallel processes for running RNAup.
-                            Default is 20.
+                            The number of parallel runs for running RNAup. Default
+                            is 20.
       --continue_rnaup, -cr
-                            The running time of RNAup is long if numerous sRNAs
-                            are assigned. This function can continue to run RNAup
-                            based on the previous intermediate results if the
-                            previous process was crushed. Default is False.
+                            For running RNAup based on the previous intermediate
+                            results if the previous process was crushed. Default
+                            is False.
       --potential_target_start POTENTIAL_TARGET_START, -ps POTENTIAL_TARGET_START
-                            --potential_target_start and --potential_target_end
-                            will be applied to extract the potential target. This
-                            value indicates the number of nucleotides at the
-                            upstream of --target_feature starting point which will
-                            be extracted as part of the potential target. Default
-                            is 200.
+                            Extracting the upstream nucleotides of
+                            --target_feature. Default is 200.
       --potential_target_end POTENTIAL_TARGET_END, -pe POTENTIAL_TARGET_END
-                            --potential_target_start and --potential_target_end
-                            will be applied to extract the potential target. This
-                            value indicates the number of nucleotides at the
-                            downstream of --target_feature starting point which
-                            will be extracted as part of the potential target.
-                            Default is 150.
+                            Extracting the nucleotides directly behind staring
+                            point of --target_feature. Default is 150.
       --target_feature TARGET_FEATURE [TARGET_FEATURE ...], -tf TARGET_FEATURE [TARGET_FEATURE ...]
-                            This is the feature name for extracting as potential
-                            targets. If multiple features need to be assigned,
-                            please use spaces to separate them. Ex: CDS tRNA.
-                            Default is CDS.
+                            The feature name of potential targets. If multiple
+                            features need to be assigned, please use spaces to
+                            separate them. For example, CDS exon. Default is CDS.
 
 - **Output files**
 
@@ -3067,66 +2880,48 @@ the supported literature of the protein-protein interaction networks.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the genome annotation gff files. BE CAREFUL:
-                            The gff files MUST have proper locus_tag item in the
-                            attributes. The locus_tag items can be assigned by a
-                            real locus tag like locus_tag=SAOUHSC_00003, or a gene
-                            name, such as, locus_tag=dnaA.
+                            Paths of the genome annotation gff files with proper
+                            locus_tag item in the attributes.
       --species_string SPECIES_STRING, -d SPECIES_STRING
-                            Please assign path of the species table of STRING
+                            Path of the species table of STRING
                             (species.$VERSION.txt).
       --query_strains QUERY_STRAINS [QUERY_STRAINS ...], -s QUERY_STRAINS [QUERY_STRAINS ...]
-                            This is for query strain and filename. In order to
-                            retrieve the data from STRING and Pubmed, The strain
-                            name must be assigned. If the query strain is not
-                            available in database, you can assign the close strain
-                            of your query strain. For an example, the query strain
-                            is Staphylococcus aureus HG003, but there is no
-                            Staphylococcus aureus HG003 in STRING database.
-                            Therefore, Staphylococcus aureus NCTC 8325 (close
-                            strain) can be used as reference. The input format can
-                            be: Staphylococcus_aureus_HG003.gff:Staphylococcus_aur
-                            eus_HG003:"Staphylococcus aureus 8325":"Staphylococcus
-                            aureus". or Staphylococcus_aureus_HG003.gff:Staphyloco
-                            ccus_aureus_HG003:"93061":"Staphylococcus aureus". or 
-                            Staphylococcus_aureus_HG003.gff:Staphylococcus_aureus_
-                            HG003:"Staphylococcus aureus NCTC
-                            8325":"Staphylococcus aureus". (gff_filename:gff_strai
-                            n_name:STRING_name:Pubmed_name). First one is the gff
-                            file name. Second one is the strain name in gff files.
-                            Third one is from STRING (please check the
-                            species.vXXX.txt of STRING, taxon_id,
-                            STRING_name_compact or official_name_NCBI can be
-                            assigned here), and the fourth one is for searching
-                            Pubmed. If you want to detect for multiple strains,
-                            just put spaces between these strains. Before running
-                            it, please check the species table
-                            (species.v$VERSION.txt) which should be downloaded. If
-                            the file was not downloaded before, please download
-                            it. BE CAREFUL, if the assigned name is with spaces,
-                            please put "" at two ends. For searching Pubmen, if a
-                            specific name is assigned, it may not be able to find
-                            the related literature.
+                            The name of input file of the query genomes. Required
+                            format: $GFF_FILE:$STRAIN_IN_GFF:$STRAIN_IN_STRING:$ST
+                            RAIN_FOR_PUBMED. $GFF_FILE is the name of the gff
+                            file, $STRAIN_IN_GFF is the name of the strain in gff
+                            file, $STRAIN_IN_STRING is the strain name in species
+                            table of STRING (species.$VERSION.txt), and
+                            $STRAIN_FOR_PUBMED is the strain name for searching in
+                            Pubmed. If the strain is not available in STRING
+                            database, it can be relaced by a related strain. For
+                            example, Staphylococcus_aureus_HG003.gff:Staphylococcu
+                            s_aureus_HG003:"Staphylococcus aureus NCTC
+                            8325":"Staphylococcus aureus" (Staphylococcus aureus
+                            NCTC 8325 is a related strain of HG003 since HG003 is
+                            not available in STRING). if the assigned name is with
+                            spaces, please use Double quotes. For assigning
+                            multiple strains, please separated them by spaces.
       --query QUERY [QUERY ...], -q QUERY [QUERY ...]
-                            Please assign the query protein here. The format is
+                            The query proteins. Required format:
                             $GENOME_NAME_OF_GFF:$START_POINT:$END_POINT:$STRAND.
-                            If multiple proteins need to be assigned, please use
-                            spaces to separate them. For an example,
+                            For assigning multiple proteins, please use spaces to
+                            separate them. For example,
                             Staphylococcus_aureus_HG003:345:456:+
                             Staphylococcus_aureus_HG003:2000:3211:-. For computing
-                            all protein, just type "all". Default is all.
+                            all proteins in gff files, just type "all". Default is
+                            all.
       --without_strain_pubmed, -n
-                            This function will retrieve the literature from Pubmed
-                            without assigning strains as well. Default is False.
+                            For retrieving the literature from Pubmed only based
+                            on protein name without assigning strains. Default is
+                            False.
     
     additional arguments:
       --score SCORE, -ps SCORE
-                            Please assign minimum PIE score for searching
-                            literature. The value is from -1 (worst) to 1 (best).
-                            Default is 0.
+                            The minimum PIE score for searching literature. The
+                            value is from -1 (worst) to 1 (best). Default is 0.
       --node_size NODE_SIZE, -ns NODE_SIZE
-                            Please assign the size of nodes in figure, default is
-                            4000.
+                            The size of nodes in figure, default is 4000.
 
 - **Output files**
 
@@ -3185,10 +2980,9 @@ Some statistics and visualization files are provided as well.
                                   [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                                   [FASTA_FILES ...]
                                   [--transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]]
-                                  --bacteria_type BACTERIA_TYPE
+                                  --bacteria_type {positive,negative}
                                   [--psortb_path PSORTB_PATH]
                                   [--difference_multi DIFFERENCE_MULTI]
-                                  [--merge_to_gff]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -3201,24 +2995,21 @@ Some statistics and visualization files are provided as well.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             Paths of genome fasta files.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            If paths of the transcript gff files are provided, it
-                            can get the results based on expressed CDS and all
-                            CDS.
-      --bacteria_type BACTERIA_TYPE, -b BACTERIA_TYPE
+                            Paths of the transcript gff files for detecting the
+                            subcellular localization based on expressed CDS and
+                            all CDS.
+      --bacteria_type {positive,negative}, -b {positive,negative}
                             The type of bacteria (Gram-positive or Gram-negative).
                             Please assign 'positive' or 'negative'.
     
     additional arguments:
       --psortb_path PSORTB_PATH
-                            If you want to assign the path of Psortb, please
-                            assign here.
+                            Path of Psortb.
       --difference_multi DIFFERENCE_MULTI, -d DIFFERENCE_MULTI
-                            For the protein which have multiple locations, if the
-                            difference of psorb scores is smaller than
-                            --difference_multi, it will be printed out as well.
-                            Default is 0.5. The maximum value is 10.
-      --merge_to_gff, -m    Merging the information to genome annotation gff file.
-                            Default is False.
+                            For the protein which have multiple predicted
+                            locations, if the difference of psorb scores is
+                            smaller than this value, all locations will be printed
+                            out. Default is 0.5. The maximum value is 10.
 
 - **Output files**
 
@@ -3301,7 +3092,7 @@ from our Git repository.
 ::
 
     usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
-                                            [--program PROGRAM]
+                                            [--program {riboswich,thermometer,both}]
                                             [--riboswitch_id_file RIBOSWITCH_ID_FILE]
                                             [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
                                             --annotation_files ANNOTATION_FILES
@@ -3327,24 +3118,21 @@ from our Git repository.
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
-      --program PROGRAM, -p PROGRAM
-                            Please assign the feature that you want to detect. The
-                            options can be "riboswitch", "thermometer", "both".
-                            Default is both.
+      --program {riboswich,thermometer,both}, -p {riboswich,thermometer,both}
+                            Please assign the feature for detection. The options
+                            can be "riboswitch", "thermometer", "both". Default is
+                            both.
       --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
-                            If --program is "riboswitch" or "both", please assign
-                            the file path of riboswitch ID in Rfam. The file
-                            should include the Rfam ID, riboswitch name, and
-                            Description of the riboswitch. For an example, please
-                            check https://github.com/Sung-Huan/ANNOgesic/blob/mast
-                            er/database/Rfam_riboswitch_ID.csv
+                            Path of the file whic contain the information of
+                            riboswitch in Rfam. Required format of the file:
+                            $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
+                            check an exmple in https://github.com/Sung-Huan/ANNOge
+                            sic/blob/master/database/Rfam_riboswitch_ID.csv
       --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
-                            If --program is "thermometer" or "both", please assign
-                            the file path of RNA thermometer ID of Rfam. The file
-                            should include the Rfam ID, RNA thermometer name and
-                            Description of the RNA thermometer. For an example,
-                            please check https://github.com/Sung-Huan/ANNOgesic/bl
-                            ob/master/database/Rfam_RNA_thermometer_ID.csv
+                            It is similar to -riboswitch_id_file, but for RNA
+                            thermometer. Please check an example in
+                            https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
+                            abase/Rfam_RNA_thermometer_ID.csv
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the annotation gff files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
@@ -3358,36 +3146,36 @@ from our Git repository.
     
     additional arguments:
       --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
-                            Please assign the path of cmscan in Infernal package.
+                            Path of cmscan in Infernal package.
       --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
-                            Please assign the path of cmpress in Infernal package.
+                            Path of cmpress in Infernal package.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The UTR length. Default is 300.
       --e_value E_VALUE, -e E_VALUE
                             The maximum e value. Default is 0.001.
       --output_all, -o      One query sequence may fit multiple riboswitches or
-                            RNA thermometers. If --output_all is True, all results
-                            will be printed out. Otherwise, only the best one will
-                            be printed out. Default is False.
+                            RNA thermometers. It can print multiple riboswitches
+                            or RNA thermometers. Otherwise, only the highest
+                            confident one will be printed. Default is False.
       --fuzzy FUZZY, -z FUZZY
-                            The fuzzy (nucleotides) for extracting the sequences
-                            of potential riboswitches or RNA thermometers. Default
-                            is 10.
+                            The fuzzy nucleotides for extracting the sequences of
+                            potential riboswitches or RNA thermometers. Default is
+                            10.
       --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                            The number of nucleotides of Shine-Dalgarno sequence
+                            The number of nucleotides of ribosome binding site
                             allow to be different with AGGAGG. Default is 2.
       --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
                             The types of start codon. If multiple types need to be
                             assigned, please use spaces to separate them. Default
                             is ATG.
       --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
-                            The maximum distance (nucleotides) between ribosome
-                            binding site (Shine-Dalgarno sequence) and start
-                            codon. Default is 14.
+                            The maximum distance (nucleotides) between the
+                            ribosome binding site (Shine-Dalgarno sequence) and
+                            the start codon. Default is 14.
       --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
-                            The minimum distance (nucleotides) between ribosome
-                            binding site (Shine-Dalgarno sequence) and start
-                            codon. Default is 5.
+                            The minimum distance (nucleotides) between the
+                            ribosome binding site (Shine-Dalgarno sequence) and
+                            the start codon. Default is 5.
 
 - **Output files**
 
@@ -3474,16 +3262,14 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Path of the genome fasta files.
+                            Paths of the genome fasta files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            If paths of the genome gff files are provided, this
-                            function will compare CRISPRs with the genome
-                            annotation for removing the false positives. Default
-                            is None.
+                            Paths of the genome gff files for comparing CRISPRs
+                            and the genome annotation to remove the false
+                            positives. Default is None.
     
     additional arguments:
-      --crt_path CRT_PATH   If you want to assign the path of CRT.jar, please
-                            assign here. Default is /usr/local/bin/CRT.jar
+      --crt_path CRT_PATH   Path of CRT.jar. Default is /usr/local/bin/CRT.jar
       --window_size WINDOW_SIZE, -w WINDOW_SIZE
                             Length of the window size for searching CRISPR (range:
                             6-9). Default is 8.
@@ -3499,8 +3285,8 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
       --Max_length_spacer MAX_LENGTH_SPACER, -Ms MAX_LENGTH_SPACER
                             Maximum length of CRISPR spacers. Default is 50.
       --ignore_hypothetical_protein, -in
-                            This function is for ignoring the hypothetical
-                            proteins. Default is False.
+                            For ignoring the hypothetical proteins. Default is
+                            False.
 
 - **Output files**
 
@@ -3545,12 +3331,12 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
 ::
 
     usage: annogesic optimize_tss_ps [-h] --project_path PROJECT_PATH
-                                     [--program PROGRAM] --fasta_files FASTA_FILES
-                                     [FASTA_FILES ...] --annotation_files
-                                     ANNOTATION_FILES [ANNOTATION_FILES ...]
-                                     --manual_files MANUAL_FILES
-                                     [MANUAL_FILES ...]
-                                     [--genome_lengths GENOME_LENGTHS [GENOME_LENGTHS ...]]
+                                     [--program {TSS,PS}] --fasta_files
+                                     FASTA_FILES [FASTA_FILES ...]
+                                     --annotation_files ANNOTATION_FILES
+                                     [ANNOTATION_FILES ...] --manual_files
+                                     MANUAL_FILES [MANUAL_FILES ...]
+                                     [--curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]]
                                      --tex_notex_libs TEX_NOTEX_LIBS
                                      [TEX_NOTEX_LIBS ...]
                                      [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
@@ -3573,59 +3359,59 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
-      --program PROGRAM, -p PROGRAM
+      --program {TSS,PS}, -p {TSS,PS}
                             The feature for optimization. Please assign "TSS" or
-                            "Processing_site". Default is TSS.
+                            "PS". Default is TSS.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Paths of the fasta file that you want to optimize.
+                            Paths of the fasta file of the reference genome.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the query genome annotation gff file.
+                            Paths of the gff file of the reference genome.
       --manual_files MANUAL_FILES [MANUAL_FILES ...], -m MANUAL_FILES [MANUAL_FILES ...]
-                            Paths of the manual-checked gff files. It is the
-                            benchmark for training. Please detect the
-                            TSSs/processing sites at least 200kb or 50 true
-                            TSSs/processing sites.
-      --genome_lengths GENOME_LENGTHS [GENOME_LENGTHS ...], -le GENOME_LENGTHS [GENOME_LENGTHS ...]
-                            Please specify the genome length of input genomes in
-                            the manual-detected TSS gff files. If the genome was
-                            manual detected for compare whole genome, please type
-                            "all". The input format is $GENOME:SLENGTH. Multiple
-                            genomes can be accepted, please use spaces to separate
-                            them. For an example, test.gff contain two genomes (s1
-                            and s2). s1 was manual checked 100kb and s2 was
-                            checked whole genome. The value of this argument will
-                            be s1:100000 s2:all. Default setting will compute all
-                            genomes in manual-detected TSS gff files with whole
-                            length of genome.
+                            Paths of the manual-checked TSS or PS in gff format.
+                            It is used for benchmarking the prediction during the
+                            optimization. The set should comprise roughly 50
+                            TSS/PS or more.
+      --curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...], -le CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]
+                            The length of the sequence used for the manual set of
+                            TSS/PS. This value is required to calculate the
+                            accurracy. If the whole genome was used write "all".
+                            Otherwise use the name of the reference sequence in
+                            the folowing format: $GENOME:SLENGTH. Multiple entries
+                            are accepted. For an example, test.gff contains two
+                            sequences s1 and s2. For s1 100 kb were checked while
+                            for s2 the whole sequence was curated. The value of
+                            this argument would be s1:100000 s2:all. Per default
+                            all the full length of all sequences will be used.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             TEX+/- wig files for TSSpredator. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected. The format is
+                            TSS has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
-                            them. For an example, 1_2 2_2 3_3. It means that
+                            them. For example, 1_2 2_2 3_3 means that
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
-                            The output prefixes of all conditions. If multiple
-                            conditions need to be assigned, please use spaces to
-                            separate them. For an example, prefix_condition1
+                            The prefixs of output filename.If multiple conditions
+                            need to be assigned, please use spaces to separate
+                            them. For an example, prefix_condition1
                             prefix_condition2.
     
     additional arguments:
       --tsspredator_path TSSPREDATOR_PATH
-                            If you want to assign the path of TSSpredator, please
-                            assign here. Default is /usr/local/bin/TSSpredator.jar
+                            Path of TSSpredator. Default is
+                            /usr/local/bin/TSSpredator.jar
       --max_height MAX_HEIGHT, -he MAX_HEIGHT
                             This value relates to the minimum number of read
                             starts at a certain genomic position to be considered
@@ -3640,8 +3426,8 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             During optimization, --max_height_reduction will be
                             never larger than this value. Default is 2.4.
       --max_factor MAX_FACTOR, -fa MAX_FACTOR
-                            This is the minimum factor by which the TSS height has
-                            to exceed the local expression background. During
+                            The minimum factor by which the TSS height has to
+                            exceed the local expression background. During
                             optimization, --max_factor will be never larger than
                             this value. Default is 10.
       --max_factor_reduction MAX_FACTOR_REDUCTION, -rf MAX_FACTOR_REDUCTION
@@ -3653,29 +3439,26 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             During optimization, --max_factor_reduction will be
                             never larger than this value. Default is 9.9.
       --max_base_height MAX_BASE_HEIGHT, -bh MAX_BASE_HEIGHT
-                            This is the minimum number of reads should be mapped
-                            on TSS. During optimization, --max_base_height will be
-                            never larger than this value. Default is 0.06.
+                            The minimum number of reads should be mapped on TSS.
+                            During optimization, --max_base_height will be never
+                            larger than this value. Default is 0.06.
       --max_enrichment_factor MAX_ENRICHMENT_FACTOR, -ef MAX_ENRICHMENT_FACTOR
-                            This is the minimum enrichment factor. During
-                            optimization, --max_enrichment_factor will be never
-                            larger than this value. Default is 6.0.
+                            The minimum enrichment factor. During optimization,
+                            --max_enrichment_factor will be never larger than this
+                            value. Default is 6.0.
       --max_processing_factor MAX_PROCESSING_FACTOR, -pf MAX_PROCESSING_FACTOR
-                            This is the minimum processing factor. If untreated
-                            library is higher than the treated library and above
-                            which the TSS candidate is considered as a processing
-                            site and not annotated as detected. During
-                            optimization, --max_processing_factor will be never
-                            larger than this value. Default is 6.0
+                            The minimum processing factor. If the value for the
+                            untreated library is higher than the treated library
+                            the positionsis considered as a processing site and
+                            not annotated as detected. During optimization,
+                            --max_processing_factor will be never larger than this
+                            value. Default is 6.0
       --utr_length UTR_LENGTH, -u UTR_LENGTH
-                            The length of UTR. It is for Primary and Secondary
-                            TSSs. Default is 300.
+                            The length of UTR. Default is 300.
       --cluster CLUSTER, -cu CLUSTER
                             This value defines the maximal distance (nucleotides)
                             between TSS candidates have to be clustered together.
-                            If the distance between these multiple TSSs is smaller
-                            or equal to this value, only one of them will be
-                            printed out. Default is 2.
+                            Default is 2.
       --parallels PARALLELS, -c PARALLELS
                             Parallel runs for optimization. Default is 4.
       --steps STEPS, -s STEPS
@@ -3735,7 +3518,7 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                                 [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                                 --output_folder OUTPUT_FOLDER [--height HEIGHT]
-                                [--present PRESENT]
+                                [--present {expand,collapse,squish}]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -3746,41 +3529,39 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
       --fasta_file FASTA_FILE, -f FASTA_FILE
                             Path of the genome fasta file.
       --main_gff MAIN_GFF, -mg MAIN_GFF
-                            Screenshot will be generated based on the position of
-                            --main_gff file.
+                            Screenshot will be generated based on the positions of
+                            genomic features in this gff file.
       --side_gffs SIDE_GFFS [SIDE_GFFS ...], -sg SIDE_GFFS [SIDE_GFFS ...]
-                            If you want to compare other features with the
-                            --main_gff, please assign the path of other gff files
-                            here. If multiple gff files need to be assigned, just
-                            use spaces to separate them.
+                            The gff files of other genomic feature (besides
+                            --main_gff). For assigning multiple files, please use
+                            space to separated them.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            If TEX+/- wig file is required, please also assign the
-                            proper format here. The format is:
+                            TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
                             r):replicate_id(alphabet):strand(+ or -). If multiple
                             wig files need to be assigned, please use spaces to
-                            separate the wig files. For an example,
-                            $WIG_PATH_1:tex:1:a:+ $WIG_PATH_2:tex:1:a:-.
+                            separate the wig files. For example,
+                            my_lib_tex_forward.wig:tex:1:a:+
+                            my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            If the fragmented (or conventional) wig file is
-                            required, please also assign the proper format here.
-                            The format is: wig_file_path:fragmented(frag):conditio
-                            n_id(integer):replicate_id(alphabet):strand(+ or -).
-                            If multiple wig files need to be assigned, please use
-                            spaces to separate the wig files. For an example,
-                            $WIG_PATH_1:frag:1:a:+ $WIG_PATH_2:frag:1:a:-.
+                            Wig files of RNA-Seq with transcript fragmented. The
+                            format is: wig_file_path:frag:condition_id(integer):re
+                            plicate_id(alphabet):strand(+ or -). If multiple wig
+                            files need to be assigned, please use spaces to
+                            separate the wig files. For example,
+                            my_lib_frag_forward.wig:frag:1:a:+
+                            my_lib_frag_reverse.wig:frag:1:a:-.
       --output_folder OUTPUT_FOLDER, -o OUTPUT_FOLDER
-                            Please assign the output folder. It will create a sub-
-                            folder "screenshots" in --output_folder to store the
+                            Path of the output folder. It will create a sub-folder
+                            "screenshots" under --output_folder to store the
                             results.
     
     additional arguments:
       --height HEIGHT, -he HEIGHT
-                            Please assign the height of the screenshot. Default is
-                            1500.
-      --present PRESENT, -p PRESENT
-                            The presentation type of the features in the
-                            screenshot. expand/collapse/squish. Default is expand.
+                            Height of the screenshot. Default is 1500.
+      --present {expand,collapse,squish}, -p {expand,collapse,squish}
+                            The presentation types (expand, collapse, or squish)
+                            of the features in the screenshot. Default is expand.
 
 - **Output files**
 
@@ -3836,15 +3617,14 @@ exist in the folder of ``screenshots``.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --screenshot_folder SCREENSHOT_FOLDER, -f SCREENSHOT_FOLDER
-                            The folder which stores "screenshots" (a folder
-                            generated by subcommand "screenshot").
+                            The folder containing "screenshots" which generated
+                            from subcommand "screenshot" (storage of screenshots).
       --track_number TRACK_NUMBER, -t TRACK_NUMBER
                             The number of tracks.
     
     additional arguments:
       --imagemagick_covert_path IMAGEMAGICK_COVERT_PATH, -m IMAGEMAGICK_COVERT_PATH
-                            Please assign the path of "convert" in ImageMagick
-                            package.
+                            Path of "convert" in ImageMagick package.
 
 - **Output files**
 
@@ -3880,30 +3660,24 @@ If transcript gff files can be provided, this module will search the parent tran
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --output_prefix OUTPUT_PREFIX, -op OUTPUT_PREFIX
-                            Please assign the prefix name of output gff file. The
-                            filename will be $OUTPUT_PREFIX_merge_features.gff.
+                            The prefix name of output gff file. The filename will
+                            be $OUTPUT_PREFIX_merge_features.gff.
       --transcript_file TRANSCRIPT_FILE, -a TRANSCRIPT_FILE
-                            If transcript gff file is provided. The parent
-                            transcripts ("Parent" in gff attributes) of all
-                            features will be generated. If there is no transcript,
-                            this function will just simply combine all input gff
-                            files.
+                            Path of transcript gff file. The parent transcripts
+                            ("Parent" in gff attributes) of all features will be
+                            generated.
       --other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...], -of OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]
-                            Please assign the gff files (besides transcript gff
-                            file) which you want to merge. You can use spaces to
-                            separate multiple gff files.
+                            Paths of the gff files (besides transcript gff file).
+                            For assigning multiple gff files, please use spaces to
+                            separate them.
     
     additional arguments:
       --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            For merging terminators, please assign the fuzzy
-                            nucleotides between transcript and terminator.
-                            ATTENTION, the third column of gff file of terminator
-                            should be exact "terminator". Default is 30.
+                            The fuzzy nucleotides for comparing transcripts and
+                            terminators. Default is 30.
       --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            For merging TSSs, please assign the fuzzy between TSS
-                            and transcript. ATTENTION, the third column of gff
-                            file of terminator should be exact "TSS". Default is
-                            5.
+                            The fuzzy value for comparing TSSs and transcripts.
+                            Default is 5.
 
 - **Output files**
 

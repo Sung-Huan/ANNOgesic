@@ -37,7 +37,7 @@ def filter_tss_pro(tss_file, pro_file, feature, cluster):
         compare_tss_pro(pros, tsss, out, cluster)
         os.remove(pro_file)
         shutil.move("tmp_filter", pro_file)
-    elif feature.lower() == "processing_site":
+    elif feature.lower() == "processing":
         compare_tss_pro(tsss, pros, out, cluster)
         os.remove(tss_file)
         shutil.move("tmp_filter", tss_file)

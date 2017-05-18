@@ -319,7 +319,7 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
                   "fivePrimeMinus", rep_set)
         print_lib(lib_num, lib_dict["fp"], out, wig_folder,
                   "fivePrimePlus", rep_set)
-    elif args_ops.program.lower() == "processing_site":
+    elif args_ops.program.lower() == "ps":
         print_lib(lib_num, lib_dict["nm"], out, wig_folder,
                   "fivePrimeMinus", rep_set)
         print_lib(lib_num, lib_dict["np"], out, wig_folder,
@@ -401,7 +401,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops, strain):
     if (args_ops.program.lower() == "tss"):
         print_lib(lib_num, lib_dict["nm"], out, wig, "normalMinus", rep_set)
         print_lib(lib_num, lib_dict["np"], out, wig, "normalPlus", rep_set)
-    elif (args_ops.program.lower() == "processing_site"):
+    elif (args_ops.program.lower() == "ps"):
         print_lib(lib_num, lib_dict["fm"], out, wig, "normalMinus", rep_set)
         print_lib(lib_num, lib_dict["fp"], out, wig, "normalPlus", rep_set)
     out.write("numReplicates = {0}\n".format(len(rep_set)))

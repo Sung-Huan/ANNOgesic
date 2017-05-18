@@ -130,21 +130,11 @@ class SubLocal(object):
 
     def _extract_result(self, args_sub, tmp_psortb_path, prefix, gff_file):
         '''extract the result of psortb'''
-        if args_sub.merge:
-            print("Merging gff files")
-            extract_psortb(os.path.join(
-                tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
-                os.path.join(tmp_psortb_path, "_".join([
-                    prefix, self.endfix_table])),
-                gff_file, os.path.join(prefix + ".gff"),
-                args_sub.fuzzy)
-            shutil.move(prefix + ".gff", gff_file)
-        else:
-            extract_psortb(os.path.join(
-                tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
-                os.path.join(tmp_psortb_path, "_".join([
-                    prefix, self.endfix_table])),
-                None, None, args_sub.fuzzy)
+        extract_psortb(os.path.join(
+            tmp_psortb_path, "_".join([prefix, self.endfix_raw])),
+            os.path.join(tmp_psortb_path, "_".join([
+                prefix, self.endfix_table])),
+            None, None, args_sub.fuzzy)
 
     def _merge_and_stat(self, gffs, tmp_psortb_path, stat_path, psortb_result):
         for folder in os.listdir(gffs):

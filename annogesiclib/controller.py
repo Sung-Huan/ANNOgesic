@@ -239,9 +239,9 @@ class Controller(object):
         """Run TSSpredator for predicting TSS candidates."""
         self.check_multi_files(
                 [self._args.fasta_files, self._args.annotation_files,
-                 self._args.reference_gff_files, self._args.manual_files,
+                 self._args.compare_overlap_gff, self._args.manual_files,
                  self._args.compare_transcript_files],
-                ["--fasta_files", "--annotation_files", "--reference_gff_files",
+                ["--fasta_files", "--annotation_files", "--compare_overlap_gff",
                  "--manual_files","--compare_transcript_files"])
         self.check_parameter([self._args.tex_notex_libs, self._args.condition_names],
                              ["--tex_notex_libs", "--condition_names"])
@@ -252,7 +252,7 @@ class Controller(object):
             project_creator.create_subfolders(
                 self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
-        elif self._args.program.lower() == "processing_site":
+        elif self._args.program.lower() == "ps":
             print("Running processing site prediction")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(
@@ -269,11 +269,11 @@ class Controller(object):
             self._args.base_height, self._args.enrichment_factor,
             self._args.processing_factor, self._args.replicate_tex,
             out_folder, self._args.validate_gene,
-            self._args.manual_files, self._args.genome_lengths,
+            self._args.manual_files, self._args.curated_sequence_length,
             self._args.compare_transcript_files, self._args.fuzzy,
             self._args.utr_length, self._args.cluster,
-            self._args.re_check_orphan, self._args.specify_genomes,
-            self._args.overlap_feature, self._args.reference_gff_files,
+            self._args.re_check_orphan,
+            self._args.remove_overlap_feature, self._args.compare_overlap_gff,
             self._args.remove_low_expression)
         tsspredator = TSSpredator(args_tss)
         tsspredator.run_tsspredator(args_tss)
@@ -295,7 +295,7 @@ class Controller(object):
             project_creator.create_subfolders(
                 self._paths.required_folders("TSS"))
             out_folder = self._paths.tsspredator_folder
-        elif self._args.program.lower() == "processing_site":
+        elif self._args.program.lower() == "ps":
             print("Running optimization of processing site prediction")
             out_folder = self._paths.processing_site_folder
             project_creator.create_subfolders(
@@ -312,7 +312,7 @@ class Controller(object):
             self._args.max_enrichment_factor, self._args.max_processing_factor,
             self._args.utr_length, self._args.tex_notex_libs,
             self._args.condition_names, self._args.cluster,
-            self._args.genome_lengths, self._args.parallels,
+            self._args.curated_sequence_length, self._args.parallels,
             self._args.program, self._args.replicate_tex,
             self._args.steps)
         optimize_tss(args_ops)
@@ -505,16 +505,16 @@ class Controller(object):
                 self._args.nr_format, self._args.srna_format,
                 self._args.srna_database_path, self._args.nr_database_path,
                 self._args.cutoff_energy, self._args.parallel_blast,
-                self._args.run_intergenic_tex_coverage,
-                self._args.run_intergenic_notex_coverage,
-                self._args.run_intergenic_fragmented_coverage,
-                self._args.run_break_transcript,
-                self._args.run_antisense_tex_coverage,
-                self._args.run_antisense_notex_coverage,
-                self._args.run_antisense_fragmented_coverage,
-                self._args.run_utr_tex_coverage,
-                self._args.run_utr_notex_coverage,
-                self._args.run_utr_fragmented_coverage,
+                self._args.min_intergenic_tex_coverage,
+                self._args.min_intergenic_notex_coverage,
+                self._args.min_intergenic_fragmented_coverage,
+                self._args.min_complete_5utr_transcript_coverage,
+                self._args.min_antisense_tex_coverage,
+                self._args.min_antisense_notex_coverage,
+                self._args.min_antisense_fragmented_coverage,
+                self._args.min_utr_tex_coverage,
+                self._args.min_utr_notex_coverage,
+                self._args.min_utr_fragmented_coverage,
                 self._args.max_length, self._args.min_length,
                 self._args.tex_notex_libs, self._args.frag_libs,
                 self._args.replicate_tex, self._args.replicate_frag,
@@ -528,7 +528,7 @@ class Controller(object):
                 self._args.terminator_fuzzy_in_srna,
                 self._args.terminator_fuzzy_out_srna,
                 self._args.ignore_hypothetical_protein, self._args.tss_source,
-                self._args.min_utr_coverage, self._args.promoter_tables,
+                self._args.min_all_utr_coverage, self._args.promoter_tables,
                 self._args.ranking_time_promoter, self._args.promoter_names,
                 self._args.compute_sec_structures)
         srna = sRNADetection(args_srna)
@@ -561,7 +561,7 @@ class Controller(object):
             self._args.replicate_tex, self._args.replicate_frag,
             self._args.table_best, self._args.srna_files,
             self._args.start_codon, self._args.stop_codon,
-            self._args.cutoff_background, self._args.fuzzy_rbs,
+            self._args.cutoff_base_coverage, self._args.fuzzy_rbs,
             self._args.rbs_not_after_tss, self._args.print_all_combination,
             self._args.best_no_srna, self._args.best_no_tss,
             self._args.ignore_hypothetical_protein,
@@ -776,7 +776,7 @@ class Controller(object):
         args_sub = self.args_container.container_sublocal(
             self._args.psortb_path, self._args.annotation_files,
             self._args.fasta_files, self._args.bacteria_type,
-            self._args.difference_multi, self._args.merge_to_gff,
+            self._args.difference_multi,
             self._paths.sublocal_output_folder, self._args.transcript_files)
         sublocal = SubLocal(args_sub)
         sublocal.run_sub_local(args_sub)

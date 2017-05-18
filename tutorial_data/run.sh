@@ -180,7 +180,7 @@ processing_site_prediction()
         -ef 1.2 \
         -pf 1.5 \
         -rt all_1 \
-        -p processing_site \
+        -p PS \
         -pj $ANNOGESIC_FOLDER
 }
 

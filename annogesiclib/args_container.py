@@ -400,46 +400,6 @@ class ArgsContainer(object):
         self.pairs = compare_pair
         return self
 
-    def _check_para_num(self, paras, s_strains):
-        if s_strains is None:
-            if len(paras) > 1:
-                print("Error: The assignments of parameters should be single "
-                      "number. Otherwise, please use --specify_genomes.")
-                sys.exit()
-        else:
-            if len(s_strains) != len(paras):
-                print("Error: The number of --specify_genomes "
-                      "and the paramter set are different!")
-                sys.exit()
-
-    def _assign_tss_para(self, s_strains, hes, rhs, fas, rfs, bhs, efs, pfs):
-        if s_strains is None:
-            for paras in [hes, rhs, fas, rfs, bhs, efs, pfs]:
-                self._check_para_num(paras, s_strains)
-            height = hes[0]
-            height_re = rhs[0]
-            factor = fas[0]
-            factor_re = rfs[0]
-            base = bhs[0]
-            enrichment = efs[0]
-            processing = pfs[0]
-        else:
-            height = {}
-            height_re = {}
-            factor = {}
-            factor_re = {}
-            base = {}
-            enrichment = {}
-            processing = {}
-            for paras, var in zip([hes, rhs, fas, rfs, bhs, efs, pfs],
-                                  [height, height_re, factor, factor_re,
-                                   base, enrichment, processing]):
-                self._check_para_num(paras, s_strains)
-                for s_strain, para in zip(s_strains, paras):
-                    var[s_strain] = para
-            
-        return height, height_re, factor, factor_re, base, enrichment, processing
-
     def container_tsspredator(self, TSSpredator_path, compute_program,
                               fasta_files, annotation_files, lib,
                               output_prefix, height, height_reduction, factor,
@@ -447,9 +407,8 @@ class ArgsContainer(object):
                               processing_factor, replicate_match, out_folder,
                               validate_gene, merge_manual, strain_lengths,
                               compare_transcript_assembly, fuzzy, utr_length,
-                              cluster, re_check_orphan, specify_strains,
-                              overlap_feature,
-                              reference_gff_files, remove_low_expression):
+                              cluster, re_check_orphan, overlap_feature,
+                              overlap_gff, remove_low_expression):
         if strain_lengths is not None:
             nt_lengths = self._check_strain_length(
                     strain_lengths, "--genome_lengths")
@@ -474,13 +433,14 @@ class ArgsContainer(object):
         self.libs = self._check_libs(self.libs, None)
         self._check_condition_num(output_prefix, self.libs)
         self.output_prefixs = output_prefix
-        self.height, self.height_reduction, self.factor, self.factor_reduction, \
-        self.base_height, self.enrichment_factor, self.processing_factor = \
-        self._assign_tss_para(specify_strains, height, height_reduction, factor,
-                              factor_reduction, base_height, enrichment_factor,
-                              processing_factor)
+        self.height = height
+        self.height_reduction = height_reduction
+        self.factor = factor
+        self.factor_reduction = factor_reduction
+        self.base_height = base_height
+        self.enrichment_factor = enrichment_factor
+        self.processing_factor = processing_factor
         self.repmatch = replicate_match
-        self.specify_strains = specify_strains
         self.out_folder = out_folder
         self.validate = validate_gene
         self.manual = self._gen_copy_new_folder(
@@ -494,9 +454,9 @@ class ArgsContainer(object):
         self.cluster = cluster
         self.check_orphan = re_check_orphan
         self.overlap_feature = overlap_feature
-        self.references = self._gen_copy_new_folder(
-                [".gff"], out_folder, "tmp_reference", reference_gff_files,
-                ["--reference_gff_files"])
+        self.overlap_gffs = self._gen_copy_new_folder(
+                [".gff"], out_folder, "tmp_reference", overlap_gff,
+                ["--compare_overlap_gff"])
         self.remove_low_expression = remove_low_expression
         return self
 
@@ -1080,7 +1040,7 @@ class ArgsContainer(object):
         return self
 
     def container_sublocal(self, Psortb_path, annotation_files, fasta_files,
-                           bacteria_type, difference_multi, merge_to_gff,
+                           bacteria_type, difference_multi,
                            sublocal_output_folder, transcript_files):
         self.psortb_path = Psortb_path
         self.gffs = self._gen_copy_new_folder(
@@ -1091,7 +1051,6 @@ class ArgsContainer(object):
                 "tmp_fa", fasta_files, ["--fasta_files"])
         self.gram = bacteria_type
         self.fuzzy = difference_multi
-        self.merge = merge_to_gff
         self.out_folder = sublocal_output_folder
         self.trans = self._gen_copy_new_folder(
                 [".gff"], sublocal_output_folder, "tmp_ta",

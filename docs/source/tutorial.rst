@@ -348,13 +348,13 @@ as "NC_009839.1:200000" which means only first 200kb of NC_009839.1 is valid.).
         --tex_notex_libs $TEX_LIBS \
         --condition_names TSS --steps 25 \
         --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
-        --genome_lengths NC_009839.1:200000 \
+        --curated_sequence_length NC_009839.1:200000 \
         --replicate_tex all_1 \
         --project_path ANNOgesic
 
 ``optimize_tss_ps`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
 Results of the different parameters will be printed in the screen, and stored in ``stat_NC_009839.1.csv`` as well. 
-We only set 25 runs for testing. 
+We only set 25 runs for testing. For optimization of processing sites, we just need to change ``--program`` from TSS to PS. 
 ``--replicate_tex`` means the minimum replicates that a TSS can be detected. ``all_1`` means that a TSS 
 should be detected in at least one replicate for all conditions. ``--replicate_tex`` can be also assigned like ``all_2`` 
 (a TSS should be detected in at least two replicates for all conditions) 
@@ -389,7 +389,7 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
         --processing_factor 4.5 \
         --validate_gene \
         --replicate_tex all_1 \
-        --genome_lengths NC_009839.1:200000 \
+        --curated_sequence_length NC_009839.1:200000 \
         --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
         --project_path ANNOgesic
 
@@ -412,7 +412,7 @@ The output files are gff file, MasterTable and statistic files.
     stat_gene_vali_NC_009839.1.csv                   stat_TSS_libs_NC_009839.1.csv   TSSstatistics.tsv
 
 If we want to predict processing sites, the procedures are the same. We just need to change the program from TSS to 
-processing_site (``--program``) and assign the proper parameter sets. We assume the best parameter sets are following: 
+PS (``--program``) and assign the proper parameter sets. We assume the best parameter sets are following: 
 height is 0.2, height_reduction is 0.1, factor is 2.0, factor_reduction is 0.5,
 base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
 
@@ -431,7 +431,7 @@ base_height is 0.009, enrichment_factor is 1.2, processing_factor is 1.5.
         --enrichment_factor 1.2 \
         --processing_factor 1.5 \ 
         --replicate_tex all_1 \
-        --program processing_site \
+        --program PS \
         --project_path ANNOgesic
 
 The output files are following:

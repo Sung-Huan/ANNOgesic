@@ -333,7 +333,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.overlap_feature = "overlap"
         args.program = "TSS"
         args.cluster = 3
-        args.references = self.test_folder
+        args.overlap_gffs = self.test_folder
         self.tss._deal_with_overlap(self.out, args)
         self.assertTrue(os.path.exists(os.path.join(self.out, "test_TSS.gff")))
 
@@ -432,7 +432,7 @@ class TestsTSSpredator(unittest.TestCase):
         gen_file("test_folder/manuals/test.gff", self.example.tss_file)
         args.overlap_feature = "TSS"
         args.stat = True
-        args.references = self.gffs
+        args.overlap_gffs = self.gffs
         args.validate = True
         args.fuzzy = 2
         args.specify_strains = None

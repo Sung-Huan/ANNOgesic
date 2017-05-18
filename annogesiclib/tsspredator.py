@@ -105,7 +105,7 @@ class TSSpredator(object):
                             wig_folder, "fivePrimeMinus", rep_set)
             self._print_lib(lib_num, lib_dict["fp"], out,
                             wig_folder, "fivePrimePlus", rep_set)
-        elif program.lower() == "processing_site":
+        elif program.lower() == "ps":
             self._print_lib(lib_num, lib_dict["nm"], out,
                             wig_folder, "fivePrimeMinus", rep_set)
             self._print_lib(lib_num, lib_dict["np"], out,
@@ -150,26 +150,9 @@ class TSSpredator(object):
                     out.write("minNumRepMatches_{0} = {1}\n".format(
                         lib, rep))
 
-    def _get_para(self, args_tss, strain):
-        if args_tss.specify_strains is None:
-            return args_tss.height, args_tss.height_reduction, \
-                   args_tss.factor, args_tss.factor_reduction, \
-                   args_tss.base_height, args_tss.enrichment_factor, \
-                   args_tss.processing_factor
-        else:
-            return args_tss.height[strain], \
-                   args_tss.height_reduction[strain], \
-                   args_tss.factor[strain], \
-                   args_tss.factor_reduction[strain], \
-                   args_tss.base_height[strain], \
-                   args_tss.enrichment_factor[strain], \
-                   args_tss.processing_factor[strain]
-
     def _gen_config(self, project_strain_name, args_tss, gff,
                     wig_folder, fasta, config_file):
         '''generation of config files'''
-        he, rh, fa, rf, bh, ef, pf = self._get_para(
-             args_tss, project_strain_name)
         master_folder = "MasterTable_" + project_strain_name
         out_path = os.path.join(self.master, master_folder)
         self.helper.check_make_folder(out_path)
@@ -185,19 +168,19 @@ class TSSpredator(object):
         out.write("maxASutrLength = 100\n")
         out.write("maxGapLengthInGene = 500\n")
         out.write("maxNormalTo5primeFactor = {0}\n".format(
-                  pf))
+                  args_tss.processing_factor))
         out.write("maxTSSinClusterDistance = {0}\n".format(
                   args_tss.cluster + 1))
         out.write("maxUTRlength = {0}\n".format(args_tss.utr_length))
         out.write("min5primeToNormalFactor = {0}\n".format(
-                  ef))
-        out.write("minCliffFactor = {0}\n".format(fa))
+                  args_tss.enrichment_factor))
+        out.write("minCliffFactor = {0}\n".format(args_tss.factor))
         out.write("minCliffFactorDiscount = {0}\n".format(
-                  rf))
-        out.write("minCliffHeight = {0}\n".format(he))
+                  args_tss.factor_reduction))
+        out.write("minCliffHeight = {0}\n".format(args_tss.height))
         out.write("minCliffHeightDiscount = {0}\n".format(
-                  rh))
-        out.write("minNormalHeight = {0}\n".format(bh))
+                  args_tss.height_reduction))
+        out.write("minNormalHeight = {0}\n".format(args_tss.base_height))
         self._print_repmatch(args_tss, out)
         out.write("minPlateauLength = 0\n")
         out.write("mode = cond\n")
@@ -358,26 +341,20 @@ class TSSpredator(object):
             for gff in os.listdir(self.gff_path):
                 if fasta[:-3] == gff[:-4]:
                     prefix = fasta[:-3]
-                    if (args_tss.specify_strains is None):
-                        run = True
-                    else:
-                        if (prefix in args_tss.specify_strains):
-                            run = True
-                    if run:
-                        for wig in os.listdir(self.wig_path):
-                            filename = wig.split("_STRAIN_")
-                            if filename[1][:-4] == prefix:
-                                detect = True
-                                break
-                        if detect:
-                            prefixs.append(prefix)
-                            config = os.path.join(
-                                    input_folder,
-                                    "_".join(["config", prefix]) + ".ini")
-                            self._gen_config(
-                                prefix, args_tss,
-                                os.path.join(self.gff_path, gff), self.wig_path,
-                                os.path.join(self.fasta_path, fasta), config)
+                    for wig in os.listdir(self.wig_path):
+                        filename = wig.split("_STRAIN_")
+                        if filename[1][:-4] == prefix:
+                            detect = True
+                            break
+                    if detect:
+                        prefixs.append(prefix)
+                        config = os.path.join(
+                                input_folder,
+                                "_".join(["config", prefix]) + ".ini")
+                        self._gen_config(
+                            prefix, args_tss,
+                            os.path.join(self.gff_path, gff), self.wig_path,
+                            os.path.join(self.fasta_path, fasta), config)
         return prefixs
 
     def _merge_wigs(self, wig_folder, prefix, libs):
@@ -429,7 +406,7 @@ class TSSpredator(object):
     def _deal_with_overlap(self, out_folder, args_tss):
         '''deal with the situation that TSS and 
         processing site at the same position'''
-        if args_tss.overlap_feature.lower() == "both":
+        if not args_tss.overlap_feature:
             pass
         else:
             print("Comparing TSSs and Processing sites")
@@ -437,19 +414,19 @@ class TSSpredator(object):
                 for tss in os.listdir(out_folder):
                     if tss.endswith("_TSS.gff"):
                         ref = self.helper.get_correct_file(
-                                args_tss.references, "_processing.gff",
+                                args_tss.overlap_gffs, "_processing.gff",
                                 tss.replace("_TSS.gff", ""), None, None)
                         filter_tss_pro(os.path.join(out_folder, tss),
-                                       ref, args_tss.overlap_feature,
+                                       ref, args_tss.program,
                                        args_tss.cluster)
-            elif args_tss.program.lower() == "processing_site":
+            elif args_tss.program.lower() == "processing":
                 for tss in os.listdir(out_folder):
                     if tss.endswith("_processing.gff"):
                         ref = self.helper.get_correct_file(
-                                args_tss.references, "_TSS.gff",
+                                args_tss.overlap_gffs, "_TSS.gff",
                                 tss.replace("_processing.gff", ""), None, None)
                         filter_tss_pro(os.path.join(out_folder, tss),
-                                       ref, args_tss.overlap_feature,
+                                       ref, args_tss.program,
                                        args_tss.cluster)
 
     def _low_expression(self, args_tss, gff_folder):
@@ -501,7 +478,7 @@ class TSSpredator(object):
                 shutil.move(os.path.join(out_path, "TSSstatistics.tsv"),
                             os.path.join(
                                 self.stat_outfolder, "TSSstatistics.tsv"))
-        if args_tss.program.lower() == "processing_site":
+        if args_tss.program.lower() == "ps":
             args_tss.program = "processing"
         self._convert_gff(prefixs, args_tss)
         if args_tss.check_orphan:
