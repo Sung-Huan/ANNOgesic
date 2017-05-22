@@ -96,8 +96,8 @@ The folders are following:
 **input:** Stores all input files.
 
 	**BAMs:** For ``.bam`` files. ``BAMs_map_related_genomes`` 
-	is for the ``.bam`` files which are mapped on closely related genomes of our real query genomes.
-	``BAMs_map_query_genomes`` is for the ``.bam`` files which are mapped on our query genomes.
+	is for the ``.bam`` files which are mapped on closely related genomes of the reference genomes.
+	``BAMs_map_reference_genomes`` is for the ``.bam`` files which are mapped on the reference genomes.
 
 	**databases:** For all databases.
 
@@ -109,7 +109,7 @@ The folders are following:
 	processing sites.
 
 	**mutation_table:** If the mutation table between the closely ralated genomes and 
-	query genomes is provided, please put the file here. Please check 
+	reference genomes is provided, please put the file here. Please check 
 	the section of :ref:`update_genome_fasta` for the format of 
 	mutation table.
 
@@ -206,17 +206,17 @@ Output folder names are following:
 update_genome_fasta (update reference genome fasta file)
 --------------------------------------------------------
 
-If fasta files of the query genomes do not exist, ``update_genome_fasta`` can 
-update fasta files from the closely related genomes of the real query genomes to our real query ones 
+If fasta files of the reference genomes do not exist, ``update_genome_fasta`` can 
+update fasta files from the closely related genomes to our reference genomes 
 via searching the mutations. 
 Therefore, a table of mutation information is required. For the format of the table, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 Titles of the columns are presented on the top and they need to start with ``#``. 
 Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
 the user can type ``-`` to represent them. The information of ``Target_ids`` 
-(the query genome names), ``Reference_ids``, (the names of closely related genomes) 
+(the reference genome names), ``Reference_ids``, (the names of closely related genomes) 
 ``Reference_nts`` (the nucleotides of the closely related genomes), ``Positions``, ``Target_nts`` 
-(the nucleotides of the query genomes) are required. The other columns can be blank. 
+(the nucleotides of the reference genomes) are required. The other columns can be blank. 
 Please use ``tab`` to separate all columns including blank ones.
 
 If no mutation information is provided, ``snp`` can be used for detecting mutations. 
@@ -226,7 +226,7 @@ If no mutation information is provided, ``snp`` can be used for detecting mutati
 
 **Fasta files of reference genome**
 
-**Mutation table:** Contains the information of mutations between related and query genomes.
+**Mutation table:** Contains the information of mutations between related and reference genomes.
 For an example, please check `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 
 - **Arguments**
@@ -250,8 +250,8 @@ For an example, please check `mutation table <https://raw.githubusercontent.com/
                             species.
       --mutation_table MUTATION_TABLE, -m MUTATION_TABLE
                             Path of the mutation table which stores the mutation
-                            information between the query genome and genome of the
-                            closely related species. For an example check
+                            information between the reference genome and genome of
+                            the closely related species. For an example check
                             https://github.com/Sung-
                             Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
       --combine_to_one_fasta, -cm
@@ -268,8 +268,8 @@ annotation_transfer (annotation transfer)
 -----------------------------------------
 
 ``annotation transfer`` is the subcommand for transferring the annotation from the closely related genomes 
-to the real query genomes. To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
-is integrated in ANNOgesic. The higher similarity between closely related genomes and query genomes are, 
+to the reference genomes. To achieve this, `RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ 
+is integrated in ANNOgesic. The higher similarity between closely related genomes and reference genomes are, 
 the more precise the performance is. Before running ``annotation transfer``, 
 please run ``source $PAGIT_HOME/sourceme.pagit`` first. it will modify the path for executing RATT. 
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.
@@ -358,7 +358,7 @@ snp (SNP calling)
 There are multiple programs which can be applied to detect mutations 
 (with BAQ, without BAQ and extend BAQ) and there are multiple flag options to set filters
 (QUAL, DP, DP4, etc.). Moreover, ``snp`` can also be used for generating the fasta files of 
-query genomes if it is necessary.
+reference genomes if it is necessary.
 
 - **Required tools**
 
@@ -373,14 +373,14 @@ For assigning the files, please follow the format -- ``$SET_NAME:$BAMFILE1,$BAMF
 For an example, the user has four bam files of one genome. Then the input will be 
 ``set1:sample1.bam,sample2.bam,sample3.bam,sample4.bam``.
 
-**Fasta files of the closely related genomes** or **Fasta files of the query genomes**
+**Fasta files of the closely related genomes** or **Fasta files of the reference genomes**
 
 - **Arguments**
 
 ::
 
     usage: annogesic snp [-h] --project_path PROJECT_PATH --bam_type
-                         {related_genome,query_genome} --program
+                         {related_genome,reference_genome} --program
                          {with_BAQ,without_BAQ,extend_BAQ}
                          [{with_BAQ,without_BAQ,extend_BAQ} ...] --fasta_files
                          FASTA_FILES [FASTA_FILES ...] --bam_files BAM_FILES
@@ -398,14 +398,15 @@ For an example, the user has four bam files of one genome. Then the input will b
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
-      --bam_type {related_genome,query_genome}, -t {related_genome,query_genome}
+      --bam_type {related_genome,reference_genome}, -t {related_genome,reference_genome}
                             If the BAM files are produced by mapping to a related
                             genome, please assign "related_genome". the mutations
-                            between the related genome and the query genome can be
-                            detected for generating sequence of the query genome.
-                            If the BAM files are produced by mapping to the query
-                            genome, please assign "query_genome". The mutations of
-                            query genome can be detected.
+                            between the related genome and the refernce genome can
+                            be detected for generating sequence of the query
+                            genome. If the BAM files are produced by mapping to
+                            the reference genome, please assign
+                            "reference_genome". The mutations of reference genome
+                            can be detected.
       --program {with_BAQ,without_BAQ,extend_BAQ} [{with_BAQ,without_BAQ,extend_BAQ} ...], -p {with_BAQ,without_BAQ,extend_BAQ} [{with_BAQ,without_BAQ,extend_BAQ} ...]
                             The program for detecting SNPs: "with_BAQ",
                             "without_BAQ", "extend_BAQ". Multi-programs can be
@@ -482,8 +483,8 @@ For an example, the user has four bam files of one genome. Then the input will b
 - **Output files**
 
 If ``bam_type`` is ``related_genome``, 
-the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_related_and_query_references``. 
-If ``bam_type`` is ``query_genome``, the results will be stored in ``$ANNOgesic/output/SNP_calling/mutations_of_query_genomes``.
+the results will be stored in ``$ANNOgesic/output/SNP_calling/compare_related_and_reference_genomes``. 
+If ``bam_type`` is ``reference_genome``, the results will be stored in ``$ANNOgesic/output/SNP_calling/mutations_of_reference_genomes``.
 
 The output folders and results are following:
 

@@ -46,7 +46,7 @@ This will create the following folder structure:
    ANNOgesic
    ├── input
    │   ├── BAMs
-   │   │   ├── BAMs_map_query_genomes
+   │   │   ├── BAMs_map_reference_genomes
    │   │   │   ├── fragment
    │   │   │   └── tex_notex
    │   │   └── BAMs_map_related_genomes
@@ -173,29 +173,27 @@ Since this is a tutorial, we only download one replicate to reduce the running t
 Improving the reference genome
 ------------------------------
 
-Again, if the data retrieved from NCBI is exactly what you want, you can skip this step and ``annotation_transfer``. 
+If the fasta file of the target reference genome is not available, ``update_genome_fasta`` 
+can generate it from a related genome.
 
-Although the data that we downloaded before is our real data (``ANNOgesic/input/references``),
-we will generate some new dummy files via this step and ``annotation_transfer`` in order to 
-show you the function of these subcommands.
-
-Now, we assume that we need to generate fasta file of our query genome. 
-First of all, we need to find a closely related genome (fasta file and gff file can be found) of our query genome. 
+Now, we assume that we need to generate fasta file of the reference genome. 
+First of all, we need to find a closely related genome (fasta file and gff file can be found) of our target genome. 
 Then, we need to generate a mutation table (please check the section :ref:`ANNOgesic's subcommands`) 
-between these two genomes. When these files are produced, 
-we can run subcommand ``update_genome_fasta`` for getting fasta file of the query genome. 
+between these two genomes. When these files are available, 
+we can run subcommand ``update_genome_fasta`` for getting fasta file of the target genome. 
 
-A simple example can be found in  
+A simple example of the mutation table can be found in 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
-Each column of the table is separated by tab. The fasta files of the new genomes (NC_test.1 and test_case2)
-will be generated in ``ANNOgesic/output/updated_references/fasta_files``.
+Each column of the table is separated by tab. 
 
 ::
 
      $ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
      $ mv mutation.csv ANNOgesic/input/mutation_table
 
-Now, let's try it
+We assume NC_009839.1.fa is a related genome of our     
+target genome -- NC_test.1 and test_case2. The fasta files of the new genomes (NC_test.1 and test_case2)
+will be generated in ``ANNOgesic/output/updated_references/fasta_files``.
 
 ::
 
@@ -205,10 +203,6 @@ Now, let's try it
         --project_path ANNOgesic
 
 ``--related_fasta_files`` is path of the fasta file of closely related genome. 
-In ``--output_format``, we assigned a pairs of output filenames and 
-the genomes which will be stored into the output file. In our case, "test_case1" is the first output fasta file which
-stores the sequence of "NC_test.1", and "test_case2" which stores the sequence of the other new genome - "test_case2". 
-
 When the running process is done, the following information will appear.
 
 ::
@@ -216,9 +210,9 @@ When the running process is done, the following information will appear.
     $ Transfering to target fasta
       Please use the new fasta file to remapping again.
 
-Since the data (``ANNOgesic/output/updated_references/fasta_files``) that we generated is not real,
-we can ignore the information now. However, if the new fasta file is the real query one,
-you have to remap again in order to get the correct alignment and coverage files.
+Since the data (``ANNOgesic/output/updated_references/fasta_files``) that we generated is only a dummy data,
+we can ignore the information now. Otherwise,
+you have to re-map again in order to get the correct alignment and coverage files.
 
 Now we can check the results.
 
@@ -256,7 +250,11 @@ fasta files automatically. For ``snp``, we will go through it later.
 Generating annotation files
 ---------------------------
 
-We have fasta files of our new dummy query genome now. We can use them to generate annotation files.
+If the genome annotation of the target reference genome in GFF format is not available, ``annotation_transfer``
+can generate it from a related genome.
+
+Like the last section, we assume NC_009839.1.fa is a related genome of our
+target genome -- NC_test.1 and test_case2.
 
 Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
 If you run ANNOgesic in docker container, the path is already set. 
@@ -282,11 +280,10 @@ After setting the environment, we can try it.
 ``--element`` is prefix name of the output embl files. 
 ``--transfer_type`` is a program of `RATT <http://ratt.sourceforge.net/>`_.
 We use ``Strain`` because the similarity between two genomes is higher than 90% (please check 
-`RATT <http://ratt.sourceforge.net/>`_). In ``--compare_pair``, the pairs of the query genomes 
+`RATT <http://ratt.sourceforge.net/>`_). In ``--compare_pair``, the pairs of the genomes 
 (NC_test.1 and test_case2) and their closely related genomes (NC_000915.1) are assigned. 
-Please be careful, the information that we assign to ``--compare_pair`` 
-is genome names in gff files not fasta filenames. ``--convert_to_gff_rnt_ptt`` means that we want to transfer the 
-output embl files to GFF3, ptt, rnt files and store in ``ANNOgesic/output/updated_references/annotations``.
+The annotation information in embl, GFF3, ptt, and rnt format will be stored in 
+``ANNOgesic/output/updated_references/annotations``.
 
 Once the transfer is done, we can see
 
@@ -301,14 +298,14 @@ In ``ANNOgesic/output/updated_references/annotations``, we can find ptt, rnt and
 we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
 
 We already saw how to update genome fasta and annotation files. 
-We will use ``ANNOgesic/input/references/annotations/NC_009839.1.gff`` and ``ANNOgesic/input/references/fasta_files/NC_009839.1`` 
-for running the following subcommands.
+For the following subcommands, we will use ``ANNOgesic/input/references/annotations/NC_009839.1.gff`` 
+and ``ANNOgesic/input/references/fasta_files/NC_009839.1`` as the reference genome.
 
 TSS and processing site prediction and optimization
 ---------------------------------------------------
 
-Before running following subcommands, we need to setup our libraries as a correct format.
-First, we set the path of wig file folder.
+Before running following subcommands, we need to setup our libraries in a correct format.
+First, we set the paths of wig files.
 
 ::
 
@@ -325,18 +322,18 @@ Then, we can setup our libraries.
 
 Now, we can start to test other subcommands.
  
-Before running ``tss_ps``, we can use ``optimize_tss_ps`` to get the optimized parameters. 
-The optimization requires a gff file of the manual-detected TSSs. 
-In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of genome. 
+Before running ``tss_ps``, we can use ``optimize_tss_ps`` to optimize the parameters. 
+The optimization requires a small set of the manual-detected TSSs in GFF3 format. 
+In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of the genome. 
 
-For the test case, you can download the `manual TSS file <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
+For this test case, you can download the `manual TSS file <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_ 
 from our git repository. 
 
 ::
 
     $ wget -cP ANNOgesic/input/manual_TSSs/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
-Now, we have a manual TSS gff file which is stored in ``ANNOgesic/input/manual_TSSs``. 
+Now, we have a manual-detected TSS gff file which is stored in ``ANNOgesic/input/manual_TSSs``. 
 we can try ``optimize_tss_ps`` right now (since we only check first 200kb, we set ``--genome_lengths`` 
 as "NC_009839.1:200000" which means only first 200kb of NC_009839.1 is valid.).
 
@@ -352,13 +349,13 @@ as "NC_009839.1:200000" which means only first 200kb of NC_009839.1 is valid.).
         --replicate_tex all_1 \
         --project_path ANNOgesic
 
-``optimize_tss_ps`` will compare manual checked TSSs with predicted TSSs to search the best parameters. 
+``optimize_tss_ps`` will compare manual-checked TSSs with predicted TSSs to search the optimized parameters. 
 Results of the different parameters will be printed in the screen, and stored in ``stat_NC_009839.1.csv`` as well. 
 We only set 25 runs for testing. For optimization of processing sites, we just need to change ``--program`` from TSS to PS. 
 ``--replicate_tex`` means the minimum replicates that a TSS can be detected. ``all_1`` means that a TSS 
-should be detected in at least one replicate for all conditions. ``--replicate_tex`` can be also assigned like ``all_2`` 
-(a TSS should be detected in at least two replicates for all conditions) 
-or ``1_2 2_2 3_3`` (in condition 1 and 2 -- based on the setting of ``--tex_notex_libs``, 
+should be detected in at least one replicate in all conditions. ``--replicate_tex`` can be also assigned like ``all_2`` 
+(a TSS should be detected in at least two replicates in all conditions) 
+or ``1_2 2_2 3_3`` (in condition 1 and 2 (based on the setting of ``--tex_notex_libs``, 
 a TSS should be detected in at least two replicates, and a TSS should be predicted in three replicates in condition 3).
 Once the optimization is done, you can find several files.
 
@@ -367,9 +364,9 @@ Once the optimization is done, you can find several files.
     $ ls ANNOgesic/output/TSSs/optimized_TSSpredator/
     best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
 
-``best_NC_009839.1.csv`` is for results of the best parameters; ``stat_NC_009839.1.csv`` is for results of each step.
+``best_NC_009839.1.csv`` is for the results of the optimized parameters; ``stat_NC_009839.1.csv`` is for the results of each step.
 
-Now, we assume the best parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2, 
+Now, we assume the optimized parameters are following: height is 0.4, height_reduction is 0.1, factor is 1.7, factor_reduction is 0.2, 
 base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can set these parameters for running  
 ``tss``.
 
@@ -393,7 +390,8 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
         --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
         --project_path ANNOgesic
 
-We assign the manual-checked TSS gff file to ``--manual_files``. Therefore, the output gff file will contain the manual-detected TSSs and predicted TSSs. 
+We assigned the manual-checked TSS gff file to ``--manual_files``. Therefore, 
+the output gff file will contain the manual-detected TSSs and predicted TSSs. 
 If we didn't assign it, Only the predicted TSSs will be included in output gff file. 
 The output files are gff file, MasterTable and statistic files.
 
@@ -456,8 +454,9 @@ Performing transcript detection
 -------------------------------
 
 Transcript detection is a basic procedure for detecting transcript boundary. 
-we can use subcommand ``transcript`` to do it. Normally, we strongly 
-recommend that the user should provide fragmented libraries (``--frag_libs``) because dRNA-Seq usually loses some information 
+we can use subcommand ``transcript`` to detect the transcript. Normally, we strongly 
+recommend that the user should provide the libraries of RNA-Seq with transcript fragmented 
+(``--frag_libs``) because dRNA-Seq focus on 5'end and usually loses some information 
 of 3'end. However, we only use TEX +/- for testing since we have no fragmented libraries.
 
 There are several options for modifying transcripts by comparing transcripts and genome annotations (``--modify_transcript``). 
@@ -549,7 +548,7 @@ Moreover, statistic files are stored in ``statistics``.
 Generating UTR
 --------------
 
-Now, we have the information of TSSs, transcripts and terminators. We can detect the 5'UTRs and 3'UTRs easily by using 
+Now, we have the information of TSSs, transcripts and terminators. We can detect the 5'UTRs and 3'UTRs by using 
 subcommand ``utr``.
 
 ::
@@ -614,12 +613,12 @@ Three folders will be generated to store gff files, tables and statistics files.
 Promoter motif detection
 ------------------------
 
-As long as we have TSSs, we can use subcommand ``promoter`` to get promoters. If the TSS gff files are not generated by ``ANNOgesic``,
+As long as we have TSSs, we can use subcommand ``promoter`` to identify promoters. If the TSS gff files are not generated by ``ANNOgesic``,
 please add ``--tss_source`` and corresponding genome annotation file (``--annotation_files``) in order to  
 classify TSSs for detecting promoters.
-Now, let's try ``promoter`` by running `MEME <http://meme-suite.org/tools/meme>`_ and `GLAM2 <http://meme-suite.org/tools/glam2>`_ 
-(``--program`` is assigned by "both" in default. If you want to only run 
-MEME or GLAM2, please assign "meme" or "glam2" to ``--program``), the process may take a while.
+Now, let's try ``promoter`` (``--program`` is assigned by "both" in default. If you want to only run 
+`MEME <http://meme-suite.org/tools/meme>`_ or `GLAM2 <http://meme-suite.org/tools/glam2>`_, 
+please assign "meme" or "glam2" to ``--program``), the process may take a while.
 
 ::
 
@@ -666,20 +665,20 @@ Prediction of sRNA and sORF
 
 Based on transcripts, genome annotation and coverage information, sRNAs can be detected. Moreover, we 
 have TSSs and processing sites which can be used for detecting UTR-derived sRNAs as well. Now, we can 
-get sRNAs by running subcommand ``srna``. Normally, we recommend that the user inputs fragmented libraries as well.
-Here, we only use TEX +/- for testing.
+get sRNAs by running subcommand ``srna``. Normally, we recommend that the user uses the libraries of RNA-Seq 
+with transcript fragmented as well. Here, we only use TEX +/- for testing.
 
 For running ``srna``, we can apply several filters to improve the detection. These filters are ``tss``, ``sec_str``,
 ``blast_nr``, ``blast_srna``, ``promoter``, ``term``, ``sorf``. Normally, ``tss``, ``sec_str``,
 ``blast_nr``, ``blast_srna`` are recommended to be used.
 
-Please be aware, filters are strict. For examples, if your filters are included ``term``, only the sRNAs which are 
+Please be aware, filters are strict. For examples, if your filters include ``term``, only the sRNAs which are 
 associated with terminators will be included in the list of best candidates. If you want to include terminator information 
 but do not use terminator as a filter, you can remove ``term`` in filters and still assign the path of terminator gff file. 
 The results will include the sRNAs which are not associated with terminators, and terminator information can be shown 
-and checked in the results as well.
+and checked in the results as well. For details of the filters, please check the section :ref:`srna` in ANNOgesic subcommand.
 
-Before running ``srna``, we have to get sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
+Before running ``srna``, we have to download sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 
 We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ from our 
 `Git repository <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.
@@ -688,11 +687,9 @@ We can download fasta file of `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ f
 
     $ wget -cP ANNOgesic/input/databases/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/database/sRNA_database_BSRD.fa
 
-
-
 If you have your sRNA database in other folders, please assign your path of databases to ``--srna_database_path`` 
 (please check :ref:`srna` to modify the headers of your database).
-If your database is formatted before, you can remove ``--srna_format``.
+If your database was formatted before, you can remove ``--srna_format``.
 In order to use the recommended filters, we have to download 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (takes a while). If you already downloaded it, 
 you can skip this step.
@@ -730,8 +727,8 @@ Now, we can use the recommended filters to run ``srna``, but it may takes a whil
         --replicate_tex all_1 \
         --project_path ANNOgesic
 
-If you have sORF information, you can also assign path of the sORF gff file to ``--sorf_files``. 
-Then, the comparison of sRNAs and sORFs can be done.
+If you have sORF information, you can also assign the path of sORF gff file to ``--sorf_files``. 
+Then, the comparison between sRNAs and sORFs can be executed.
 
 Output files are following.
 
@@ -797,7 +794,7 @@ without filtering; ``best_candidates`` is for the candidates after filtering;
     class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
     ...
 
-As we know, expressed regions without annotation may be sORF as well. 
+As we know, expressed regions without annotations may be sORFs as well. 
 In order to get information of sORFs, we can use subcommand ``sorf``.
 
 ::
@@ -845,7 +842,7 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
         --program both \
         --project_path ANNOgesic
 
-For testing, we only assign one sRNA to do the prediction. You can also assign several of sRNAs like 
+For testing, we only assign one sRNA to do the prediction. You can also assign several sRNAs like 
 ``NC_009839.1:36954:37044:- NC_009839.1:75845:75990:+``. If you want to compute all sRNAs, you 
 can assign ``all`` to ``--query_srnas`` (may take several days).
 
@@ -865,7 +862,8 @@ Several output folders will be generated.
     $ ls ANNOgesic/output/sRNA_targets/target_seqs
     NC_009839.1_target.fa
 
-``RNAplex_results`` and ``RNAup_results`` are for output of `RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
+``RNAplex_results`` and ``RNAup_results`` are for the output of 
+`RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
 
 ::
 
@@ -886,9 +884,9 @@ both methods, and ``NC_009839.1_overlap.csv`` only stores candidates which are t
 Mapping and detecting of circular RNA
 -------------------------------------
 
-You may also be interested in circular RNAs. The subcommand ``circrna`` can help us to get circular RNAs by  
+You may also be interested in circular RNAs. The subcommand ``circrna`` can help us to predict circular RNAs by  
 using `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. Since 
-we didn't map reads of the test case before, we can also do mapping by running ``circrna``. If you already mapped 
+we didn't map reads before, we can also do mapping by running ``circrna``. If you already mapped 
 the reads by `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ with ``--splits``, you can 
 add path of the bam files to ``--bam_files`` directly. However, 
 if you mapped the reads by other tools or you mapped the reads by 
@@ -896,7 +894,7 @@ if you mapped the reads by other tools or you mapped the reads by
 you have to re-map the reads(``--read_files``) again. You can assign the number of parallels (``--parallels``) for mapping.
 
 Since we just want to test the subcommand. 
-Thus, we can reduce the running time by selecting the subset of reads (first 50000) for only testing.
+Thus, we can reduce the running time by selecting the subset of the reads (first 50000) for only testing.
 
 ::
 
@@ -930,7 +928,8 @@ The all four read files will be compute together. Now, we can try ``circrna``
          --read_files all_samples:$READ_FILES \
          --project_path ANNOgesic
 
-If you can't find ``testrealign.x``, please refer to :ref:`Required tools or databases`.
+``testrealign.x`` is not available, please refer to :ref:`Required tools or databases`.
+
 Several output folders will be generated.
 
 ::
@@ -969,76 +968,73 @@ can exist after filtering.
 SNP calling
 --------------
 
-If we want to know SNPs or mutations of our RNA-seq data, we can use ``snp`` to achieve this purpose.
-``snp`` is compose of two parts. One part is for obtaining the differences between our query genome 
-and the closely related genome of our query one. If we have no fasta file of our query genome, 
-this part will be very useful. We just need to map the reads of our query genome on the fasta file of the closely related genome. Then 
-using ``snp`` can automatically detect differences between the closely related genome and our query genome. 
-Furthermore, potential fasta files of our query genome can be generated automatically as well. 
-The other part is for detecting SNPs or mutations of our query genome if the fasta file of our query genome can be provided.
-In this part, you can know real mutations of our query genonme.
+If we want to know SNPs or mutations based on our RNA-Seq data, we can use ``snp`` to achieve this purpose.
+``snp`` is compose of two parts. One part is for obtaining the differences between our reference genome 
+and the closely related genome. If we have no fasta file of our reference genome, 
+this part will be very useful. We just need to map the reads on the fasta file of the closely related genome. Then 
+using ``snp`` can automatically detect differences between the closely related genome and our reference genome. 
+Furthermore, potential fasta files of the refernce genome can be generated automatically as well. 
+The other part is for detecting SNPs or mutations of the reference genome if the fasta file of the reference genome can be provided.
+In this part, you can know real mutations of our reference genonme.
 
-Before running the subcommand, bam files are required. Since we already generated them via 
+Before running the subcommand, BAM files are required. Since we already generated them via 
 running ``circrna``, we can just put them to the corresponding folder. Please remember that the mapping function of 
-``circrna`` is basic one.
+``circrna`` is only basic one.
 
-Now, we can try to detect mutations. The procedures of comparing closely related genome and query genome are similar, 
-you just need to put Bam files, and fasta files to corresponding folders and set ``--bam_type``.
-
-First, we copy the bam files to ``BAMs_map_query_genomes``.
+First, we copy the bam files to ``BAMs_map_reference_genomes``.
 
 ::
 
-    $ cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex
+    $ cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex
 
 Now, we can set our bam files
 
 ::
-    $ BAM_FILES=ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,\
-      ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,\
-      ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,\
-      ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam
+    $ BAM_FILES=ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,\
+      ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam
 
 Then we can run the subcommand with three programs -- ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``. 
-``all_sample:2:$BAM_FILES`` for ``--bam_files`` means the set name of bam files is "all_sample", there are two 
-samples in this set, and all four bam files need to be computed together.
+``all_sample:$BAM_FILES`` for ``--bam_files`` means the set name of BAM files is "all_sample", 
+and all four BAM files need to be computed together.
 
 ::
 
     $ annogesic snp \
-        --bam_type query_genome \
+        --bam_type reference_genome \
         --program with_BAQ without_BAQ extend_BAQ \
         --bam_files all_samples:$BAM_FILES \
         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --project_path ANNOgesic
 
-Two output folders will be generated, ``compare_related_and_query_references`` is for the results of comparison between closely related genome 
-and query genome, ``mutations_of_query_genomes`` is for results of detecting mutations of the query genome.
+Two output folders will be generated, ``compare_related_and_reference_genomes`` is for the results of comparison between closely related genome 
+and reference genome, ``mutations_of_reference_genomes`` is for results of detecting mutations of the reference genome.
 
 ::
 
     $ ls ANNOgesic/output/SNP_calling/                                                                                                      
-    compare_related_and_query_references  mutations_of_query_genomes
+    compare_related_and_reference_genomes  mutations_of_reference_genomes
 
-Since we run ``query_genome``,  the output folders are produced under ``mutations_of_query_genomes``.
+Since we run ``reference_genome``,  the output folders are generated under ``mutations_of_reference_genomes``.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/
     seqs  SNP_raw_outputs  SNP_tables  statistics
 
 The output folders are compose of three parts - ``extend_BAQ``, ``with_BAQ`` and ``without_BAQ``.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/seqs/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/seqs/
     extend_BAQ/  with_BAQ/    without_BAQ/
 
 In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/seqs/with_BAQ/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/seqs/with_BAQ/NC_009839.1/
     NC_009839.1_all_samples_NC_009839.1_1_1.fa
 
 ``SNP_raw_outputs`` stores output of `Samtools and Bcftools <https://github.com/samtools>`_. 
@@ -1048,16 +1044,16 @@ In ``seqs``, the potential sequences can be found.
 
 ::
 
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/SNP_raw_outputs/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/SNP_raw_outputs/NC_009839.1/
     NC_009839.1_extend_BAQ_all_samples.vcf  NC_009839.1_with_BAQ_all_samples.vcf  NC_009839.1_without_BAQ_all_samples.vcf
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/SNP_tables/NC_009839.1/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/SNP_tables/NC_009839.1/
     NC_009839.1_extend_BAQ_all_samples_best.vcf           NC_009839.1_with_BAQ_all_samples_best.vcf           NC_009839.1_without_BAQ_all_samples_best.vcf
     NC_009839.1_extend_BAQ_all_samples_seq_reference.csv  NC_009839.1_with_BAQ_all_samples_seq_reference.csv  NC_009839.1_without_BAQ_all_samples_seq_reference.csv
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/statistics/
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/statistics/
     figs                                                  stat_NC_009839.1_with_BAQ_all_samples_SNP_best.csv     stat_NC_009839.1_without_BAQ_all_samples_SNP_raw.csv
     stat_NC_009839.1_extend_BAQ_all_samples_SNP_best.csv  stat_NC_009839.1_with_BAQ_all_samples_SNP_raw.csv
     stat_NC_009839.1_extend_BAQ_all_samples_SNP_raw.csv   stat_NC_009839.1_without_BAQ_all_samples_SNP_best.csv
-    $ ls ANNOgesic/output/SNP_calling/mutations_of_query_genomes/statistics/figs
+    $ ls ANNOgesic/output/SNP_calling/mutations_of_reference_genomes/statistics/figs
     NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png  NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_best.png
     NC_009839.1_extend_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_with_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png   NC_009839.1_without_BAQ_all_samples_NC_009839.1_SNP_QUAL_raw.png
 
@@ -1079,7 +1075,7 @@ need to prepare some databases. First, please download
     $ gunzip ANNOgesic/input/databases/idmapping_selected.tab.gz
 
 Now, we have all required databases. We can also import information of the transcripts to 
-generate results which are only included the expressed CDSs.
+generate results which only contain the expressed CDSs.
 
 Let's try it.
 
@@ -1115,7 +1111,7 @@ Prediction of Subcellular localization
 Subcellular localization is also a useful information for analysis of protein functions. For 
 detecting subcellular localization, we can use the subcommand 
 ``localization``. We can also import 
-information of the transcript to generate results which are only included the expressed CDSs.
+information of the transcripts to generate results which only contain the expressed CDSs.
 
 ::
 
@@ -1126,7 +1122,7 @@ information of the transcript to generate results which are only included the ex
         --merge_to_gff --bacteria_type negative \
         --project_path ANNOgesic
 
-Two output folders will be generated. ``psortb_results`` stores output 
+Two output folders will be generated. ``psortb_results`` stores the output files 
 of `Psortb <http://www.psort.org/psortb/>`_. ``statistics`` stores 
 statistic files and figures.
 
@@ -1144,11 +1140,11 @@ statistic files and figures.
 Generating protein-protein interaction network
 ----------------------------------------------
 
-``ppi_network`` can detect protein-protein interaction from `STRING <http://string-db.org/>`_ 
+``ppi_network`` can detect protein-protein interaction based on `STRING <http://string-db.org/>`_ 
 (a database of protein-protein interaction) and searching the literatures by implementing 
 `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ 
 (text-mining for protein-protein interaction). Therefore, ``ppi_network`` can generate protein-protein 
-interaction networks with supported literatures.
+interaction networks based on literatures.
 
 Before running the subcommand, you need to download 
 `species.v{$VERSIO}.txt from STRING <http://string-db.org/cgi/download.pl>`_
@@ -1172,7 +1168,7 @@ Now, we can try the subcommand.
 We only detected for two proteins. If you want to detect for all proteins in gff files, 
 you can easily assign ``all`` in ``--query``.
 
-Three output folders will be generated.
+Three output folders were generated.
 
 ::
 
@@ -1182,7 +1178,7 @@ Three output folders will be generated.
 ``all_results`` is for all interactions without filtering. ``best_results`` is for the interactions with 
 the high `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ score. ``figures`` is for 
 figures of the protein-protein interaction networks. There are two subfolders - ``with_strain`` and ``without_strain`` in 
-``figures``. These two folders store all information of the interactions and literature scores. 
+``figures``, ``all_results``, and ``best_results``. The two subfolders store all information of the interactions and PIE scores. 
 ``with_strain`` is for results with assigning specific strain name for searching literatures. 
 ``without_strain`` is for results without giving specific strain name for searching literatures.
 
@@ -1216,7 +1212,7 @@ Generating riboswitch and RNA thermometer
 -----------------------------------------
 
 If we want to detect riboswitches and RNA thermometers, we can use subcommand ``riboswitch_thermometer``.
-Before running it, we need to get information of the known riboswitches and RNA thermometers in Rfam. 
+Before running it, we need to get the information of known riboswitches and RNA thermometers in Rfam. 
 The `riboswitches and RNA thermometer files <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_ 
 can be downloaded them from our Git repository.
 
@@ -1377,7 +1373,7 @@ Two txt files and two folders will be generated.
 ``forward.txt`` and ``reverse.txt`` are batch files for running in `IGV <https://www.broadinstitute.org/software/igv/home>`_.
 ``forward`` and ``reverse`` are the folders for storing screenshots.
 
-Since there are numerous candidates, we can only generate several ones in order to reduce the running time for testing.
+Since there are numerous candidates, we only generate several ones for testing.
 
 ::
 
@@ -1386,7 +1382,7 @@ Since there are numerous candidates, we can only generate several ones in order 
 
 
 Now, please open `IGV <https://www.broadinstitute.org/software/igv/home>`_ and follow the procedures: Tools -> 
-Run Batch Script -> choose ``forward_6_cases.txt``. Once it is done, please do it again for reverse strand: Tools ->
+Run Batch Script -> choose ``forward_6_cases.txt``. Once it is done, please do it again for the reverse strand: Tools ->
 Run Batch Script -> choose ``reverse_6_cases.txt``. If you want to generate the screenshots for all candidates, 
 you can run ``forward.txt`` and ``reverse.txt``. Please be careful, if you use Docker container, the path may be not correct.
 
@@ -1404,8 +1400,8 @@ Coloring the screenshots
 ------------------------
 
 If we have numerous libraries and we want to check TSSs, distinguishing the 
-tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``colorize_screenshot_tracks`` to color
-our screenshots.
+tracks of TEX+ and TEX- will be painful. Therefore, we provide a subcommand ``colorize_screenshot_tracks`` to colorize 
+our screenshots based on the tracks.
 
 ::
 
@@ -1414,7 +1410,7 @@ our screenshots.
         --screenshot_folder ANNOgesic/output/TSSs \
         --project_path ANNOgesic
 
-The output filenames are the same as before. However, when we open the figures, the tracks are colored.
+The output filenames are the same as before. However, when we open the files of figures, the tracks are colorized.
 
 ::
 

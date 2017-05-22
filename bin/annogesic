@@ -73,8 +73,8 @@ def main():
     get_input_parser.set_defaults(func=get_input)
     # get target fasta
     get_target_fasta_parser = subparsers.add_parser(
-        "update_genome_fasta", help="Get fasta files of query genomes "
-        "if the query sequences do not exist.")
+        "update_genome_fasta", help="Get fasta files of reference genomes "
+        "if the reference sequences do not exist.")
     get_target_fasta_basic = get_target_fasta_parser.add_argument_group(
             'basic arguments')
     get_target_fasta_basic.add_argument(
@@ -86,7 +86,7 @@ def main():
     get_target_fasta_basic.add_argument(
         "--mutation_table", "-m", required=True,
         help="Path of the mutation table which stores the mutation "
-        "information between the query genome and genome of the closely "
+        "information between the reference genome and genome of the closely "
         "related species. For an example check "
         "https://github.com/Sung-Huan/ANNOgesic/"
         "blob/master/tutorial_data/mutation.csv")

@@ -321,15 +321,15 @@ $ANNOGESIC_FOLDER/input/reads/SRR515257_50000.fasta
 SNP_calling(){
     #### This is only for tutorial.
     #### Since we already got Bam via circrna, we can put the bam files to corresponding folder
-    cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_query_genomes/tex_notex
-    BAM_FILES=$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,\
-$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,\
-$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,\
-$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_query_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam 
+    cp ANNOgesic/output/circRNAs/segemehl_alignment_files/NC_009839.1/SRR51525* ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex
+    BAM_FILES=$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,\
+$ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam 
 
     $ANNOGESIC_PATH \
          snp \
-	-t related_genome \
+	-t referencegenome \
 	-p with_BAQ without_BAQ extend_BAQ \
 	-b all_samples:$BAM_FILES \
 	-f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
