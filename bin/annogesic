@@ -1538,14 +1538,14 @@ def main():
         help="Path of the project folder.")
     snp_basic.add_argument(
         "--bam_type", "-t", required=True,
-        choices=["related_genome", "query_genome"],
+        choices=["related_genome", "reference_genome"],
         help="If the BAM files are produced by mapping to a related genome, "
         "please assign \"related_genome\". "
-        "the mutations between the related genome and the query genome can be "
+        "the mutations between the related genome and the refernce genome can be "
         "detected for generating sequence of the query "
         "genome. If the BAM files are produced by mapping to the "
-        "query genome, please assign \"query_genome\". "
-        "The mutations of query genome can be detected.")
+        "reference genome, please assign \"reference_genome\". "
+        "The mutations of reference genome can be detected.")
     snp_basic.add_argument(
         "--program", "-p", required=True, nargs='+',
         choices=["with_BAQ", "without_BAQ", "extend_BAQ"],

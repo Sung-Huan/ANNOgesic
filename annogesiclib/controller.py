@@ -711,9 +711,9 @@ class Controller(object):
                 [self._args.fasta_files],
                 ["--fasta_files"])
         if (self._args.bam_type != "related_genome") and (
-                self._args.bam_type != "query_genome"):
+                self._args.bam_type != "reference_genome"):
             print("Error: Please assign \"related_genome\" or"
-                  " \"query_genome\" to --bam_type!")
+                  " \"reference_genome\" to --bam_type!")
             sys.exit()
         if (self._args.ploidy != "haploid") and (
                 self._args.ploidy != "diploid"):

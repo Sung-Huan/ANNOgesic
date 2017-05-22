@@ -18,9 +18,9 @@ class SNPCalling(object):
         self.seq_editer = SeqEditer()
         self.helper = Helper()
         if args_snp.types == "related_genome":
-            file_type = "compare_related_and_query_references"
+            file_type = "compare_related_and_reference_genomes"
         else:
-            file_type = "mutations_of_query_genomes"
+            file_type = "mutations_of_reference_genomes"
         self.seq_path = os.path.join(args_snp.out_folder, file_type, "seqs")
         self.stat_path = os.path.join(args_snp.out_folder, file_type,
                                       "statistics")
