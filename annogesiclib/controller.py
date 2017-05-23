@@ -498,7 +498,8 @@ class Controller(object):
                 self._paths.srna_folder,
                 self._args.utr_derived_srna, self._args.annotation_files,
                 self._args.tss_files, self._args.transcript_files,
-                self._args.tss_intergenic_fuzzy, self._args.tss_5utr_fuzzy,
+                self._args.tss_intergenic_antisense_fuzzy,
+                self._args.tss_5utr_fuzzy,
                 self._args.tss_3utr_fuzzy, self._args.tss_intercds_fuzzy,
                 self._args.filter_info, self._args.processing_site_files,
                 self._args.fasta_files, self._args.mountain_plot,
@@ -641,7 +642,7 @@ class Controller(object):
             self._args.support_reads, self._args.segemehl_path,
             self._args.testrealign_path, self._args.samtools_path,
             self._args.start_ratio, self._args.end_ratio,
-            self._args.ignore_hypothetical_proteins,
+            self._args.ignore_hypothetical_protein,
             self._paths.circrna_output_folder)
         circ = CircRNADetection(args_circ)
         circ.run_circrna(args_circ)

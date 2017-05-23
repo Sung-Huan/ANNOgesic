@@ -237,8 +237,9 @@ def main():
         help="The length of UTRs. Default is 300.")
     TSSpredator_add.add_argument(
         "--fuzzy", "-fu", default=5, type=int,
-        help="If --compare_transcript_files is provided, please assign "
-        "the fuzzy for comparing TSS and transcript. Default is 5.")
+        help="The 5'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated TSSs ("
+        "--compare_transcript_files is provided). Default is 5.")
     TSSpredator_add.add_argument(
         "--cluster", "-c", default=2, type=int,
         help="This value defines the maximal distance (nucleotides) between "
@@ -672,7 +673,9 @@ def main():
         "Default is None.")
     Transcript_add.add_argument(
         "--tss_fuzzy", "-tf", default=5, type=int,
-        help="The fuzzy value for comparing TSS with transcript. Default is 5.")
+        help="The 5'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated TSSs (--tss_files is "
+        "provided). Default is 5.")
     Transcript_add.add_argument(
         "--table_best", "-tb", default=False, action="store_true",
         help="The output table only includes the information of the highest "
@@ -683,8 +686,8 @@ def main():
         "terminators. Default is None.")
     Transcript_add.add_argument(
         "--terminator_fuzzy", "-ef", default=30, type=int,
-        help="If --terminator_files is assigned, please assign the fuzzy value. "
-        "Default is 30.")
+        help="The 3'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated terminators. Default is 30.")
     Transcript_add.add_argument(
         "--max_length_distribution", "-mb", default=2000, type=int,
         help="For generating the figure of distribution of transcript length, "
@@ -733,14 +736,18 @@ def main():
         "Default is transcript.")
     UTR_add.add_argument(
         "--terminator_fuzzy", "-ef", default=30, type=int,
-        help="The minimum fuzzy value for comparing transcript and terminator. "
-        "Default is 30.")
+        help="The 3'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated terminators. Default is 30.")
     UTR_add.add_argument(
         "--fuzzy_3utr", "-f3", default=10, type=int,
-        help="The fuzzy value of transcript for 3'UTR detection.")
+        help="The length of 3'UTR can be extended or withdrew by this "
+        "fuzzy value (only works when transcript information is provided). "
+        "Default is 10.")
     UTR_add.add_argument(
         "--fuzzy_5utr", "-f5", default=5, type=int,
-        help="The fuzzy value of transcript for 5'UTR detection.")
+        help="The length of 5'UTR can be extended or withdrew by this "
+        "fuzzy value (only works when transcript information is provided). "
+        "Default is 5.")
     UTR_parser.set_defaults(func=run_UTR_detection)
 
     # Parameter of sRNA detection
@@ -886,14 +893,15 @@ def main():
         help="The TSS gff files are generated from ANNOgesic or not. "
         "Default is True (from ANNOgesic).")
     sRNA_add.add_argument(
-        "--tss_intergenic_fuzzy", "-ft", default=3, type=int,
-        help="The fuzzy value of comparing TSS and transcript for "
-        "detecting intergenic sRNA. Default is 3.")
+        "--tss_intergenic_antisense_fuzzy", "-ft", default=3, type=int,
+        help="The 5'ends of intergenic and antisense sRNA candidates will be "
+        "extended or withdrew by this fuzzy value for searching the "
+        "associated TSSs. Default is 30.")
     sRNA_add.add_argument(
         "--tss_5utr_fuzzy", "-f5", default="n_3", type=str,
-        help="The fuzzy value of comparing TSS and transcript for "
-        "detecting 5'UTR-derived sRNA."
-        "The input type can be percentage (\"p\") or the real amount of reads "
+        help="The 5'ends of 5'UTR-derived sRNAs will be extended or withdrew "
+        "by this fuzzy value for searching the associated TSSs. The input "
+        "type can be percentage (\"p\") or the real amount of reads "
         "(\"n\"). For example, p_0.05 means the fuzzy is 5 percent of the "
         "length of 5'UTR. n_10 means the fuzzy is 10 nts. Default is n_3.")
     sRNA_add.add_argument(
@@ -906,13 +914,14 @@ def main():
         "interCDS-derived sRNAs. Default is p_0.04.")
     sRNA_add.add_argument(
         "--terminator_fuzzy_in_srna", "-efi", default=30, type=int,
-        help="The fuzzy value (in nt) for comparing terminator and transcript"
-        " for detecting the terminator which is within sRNA. Default is 30.")
+        help="The 3'ends of sRNA candidates will be withdrew by this fuzzy "
+        "value for searching the associated terminators which are within "
+        "sRNAs. Default is 30.")
     sRNA_add.add_argument(
         "--terminator_fuzzy_out_srna", "-efo", default=30, type=int,
-        help="Similar to --terminator_fuzzy_in_sRNA. "
-        "This value is for the terminators located outside of sRNAs. "
-        "Default is 30.")
+        help="The 3'ends of sRNA candidates will be extended by this fuzzy "
+        "value for searching the associated terminators which are behind of "
+        "sRNAs. Default is 30.")
     sRNA_add.add_argument(
         "--min_length", "-lm",default=30, type=int,
         help="The minimum sRNA length. Default is 30.")
@@ -1025,10 +1034,11 @@ def main():
         "for UTR-derived sRNA. Default is 0.05.")
     sRNA_add.add_argument(
         "--fuzzy_intergenic_antisense", "-fi", default=10, type=int,
-        help="The fuzzy value for detecting the "
-        "coverage decrease (please check --decrease_intergenic_antisense). "
-        "For example, the location of intergenic sRNA is 300-400, "
-        "and --fuzzy_intergenic_antisense is 30. The searching region is 270-430. "
+        help="The region of intergenic and antisense sRNAs will be extended "
+        "by this fuzzy value for detecting the significant coverage decrease. "
+        "(please check --decrease_intergenic_antisense). For example, the "
+        "location of intergenic sRNA is 300-400, and "
+        "--fuzzy_intergenic_antisense is 30. The searching region is 270-430. "
         "Default is 10.")
     sRNA_add.add_argument(
         "--fuzzy_utr", "-fu", default=10, type=int,
@@ -1325,12 +1335,12 @@ def main():
         'additional arguments')
     operon_add.add_argument(
         "--tss_fuzzy", "-tf", default=5, type=int,
-        help="The fuzzy value (in nt) for comparing between TSS and "
-        "transcript. Default is 5.")
+        help="The 5'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated TSSs. Default is 5.")
     operon_add.add_argument(
         "--terminator_fuzzy", "-ef", default=30, type=int,
-        help="The fuzzy value (in nt) for comparing between terminator and "
-        "transcript. Default is 30.")
+        help="The 3'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated terminators. Default is 30.")
     operon_add.add_argument(
         "--min_length", "-l", default=20, type=int,
         help="The minimum length of operon. Default is 20.")
@@ -1390,7 +1400,7 @@ def main():
         help="Similar to --start_ratio. "
         "This value is for the end points of candidates. Default is 0.5.")
     circrna_add.add_argument(
-        "--ignore_hypothetical_proteins", "-ih", default=False,
+        "--ignore_hypothetical_protein", "-ih", default=False,
         help="For ignoring hypothetical protein in "
         "the genome annotation file. Default is False.")
     circrna_parser.set_defaults(func=run_circrna)
@@ -1797,8 +1807,10 @@ def main():
         "will be printed. Default is False.")
     ribos_add.add_argument(
         "--fuzzy", "-z", default=10, type=int,
-        help="The fuzzy  value (in nt) for extracting the sequences of "
-        "potential riboswitches or RNA thermometers. Default is 10.")
+        help="The regions of potential riboswitches or RNA thermometers will "
+        "be extended by this fuzzy value for extracting their sequences. "
+        "A search in Rfam will be executed based on the sequences. "
+        "Default is 10.")
     ribos_add.add_argument(
         "--fuzzy_rbs", "-zr", default=2, type=int,
         help="The number of nucleotides of ribosome binding site "
@@ -1888,12 +1900,12 @@ def main():
         'additional arguments')
     merge_add.add_argument(
         "--terminator_fuzzy", "-ef", default=30, type=int,
-        help="The fuzzy value (in nt) for comparing "
-        "transcripts and terminators. Default is 30.")
+        help="The 3'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated terminators. Default is 30.")
     merge_add.add_argument(
         "--tss_fuzzy", "-tf", default=5, type=int,
-        help="The fuzzy value (in nt) for comparing TSSs and "
-        "transcripts. Default is 5.")
+        help="The 5'ends of transcripts will be extended or withdrew by this "
+        "fuzzy value for searching the associated TSSs. Default is 5.")
     merge_parser.set_defaults(func=Merge)
 
     # Parameters of generate screenshots
