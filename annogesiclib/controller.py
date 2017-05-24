@@ -270,7 +270,7 @@ class Controller(object):
             self._args.processing_factor, self._args.replicate_tex,
             out_folder, self._args.validate_gene,
             self._args.manual_files, self._args.curated_sequence_length,
-            self._args.compare_transcript_files, self._args.fuzzy,
+            self._args.compare_transcript_files, self._args.tolerance,
             self._args.utr_length, self._args.cluster,
             self._args.re_check_orphan,
             self._args.remove_overlap_feature, self._args.compare_overlap_gff,
@@ -350,11 +350,11 @@ class Controller(object):
             self._paths.transterm_folder, self._args.fasta_files,
             self._args.annotation_files, self._args.transcript_files,
             self._args.srna_files, self._args.decrease,
-            self._args.highest_coverage, self._args.fuzzy_detect_coverage,
-            self._args.fuzzy_within_transcript,
-            self._args.fuzzy_downstream_transcript,
-            self._args.fuzzy_within_gene,
-            self._args.fuzzy_downstream_gene, self._paths.transtermhp_folder,
+            self._args.highest_coverage, self._args.tolerance_detect_coverage,
+            self._args.tolerance_within_transcript,
+            self._args.tolerance_downstream_transcript,
+            self._args.tolerance_within_gene,
+            self._args.tolerance_downstream_gene, self._paths.transtermhp_folder,
             self._args.tex_notex_libs, self._args.frag_libs,
             self._args.tex_notex, self._args.replicate_tex,
             self._args.replicate_frag, self._args.table_best,
@@ -382,11 +382,11 @@ class Controller(object):
             self._args.tolerance, self._args.tolerance_coverage,
             self._args.replicate_tex, self._args.replicate_frag,
             self._paths.transcript_output_folder,
-            self._args.tss_files,
-            self._args.tss_fuzzy, self._args.tex_notex_libs,
-            self._args.frag_libs, self._args.compare_feature_genome,
-            self._args.table_best, self._args.terminator_files,
-            self._args.terminator_fuzzy, self._args.max_length_distribution)
+            self._args.tss_files, self._args.tss_tolerance,
+            self._args.tex_notex_libs, self._args.frag_libs,
+            self._args.compare_feature_genome, self._args.table_best,
+            self._args.terminator_files, self._args.terminator_tolerance,
+            self._args.max_length_distribution)
         transcript = TranscriptDetection(args_tran)
         transcript.run_transcript(args_tran)
 
@@ -401,12 +401,11 @@ class Controller(object):
         project_creator.create_subfolders(self._paths.required_folders("utr"))
         args_utr = self.args_container.container_utr(
                 self._args.tss_files, self._args.annotation_files,
-                self._args.transcript_files,
-                self._args.terminator_files,
-                self._args.terminator_fuzzy, self._paths.utr_folder,
+                self._args.transcript_files, self._args.terminator_files,
+                self._args.terminator_tolerance, self._paths.utr_folder,
                 self._args.tss_source, self._args.base_5utr,
                 self._args.utr_length, self._args.base_3utr,
-                self._args.fuzzy_3utr, self._args.fuzzy_5utr)
+                self._args.tolerance_3utr, self._args.tolerance_5utr)
         utr = UTRDetection(args_utr)
         utr.run_utr_detection(args_utr)
 
@@ -495,17 +494,17 @@ class Controller(object):
                 self._args.rnafold_path, self._args.relplot_path,
                 self._args.mountain_path, self._args.blastn_path,
                 self._args.blastx_path, self._args.makeblastdb_path,
-                self._paths.srna_folder,
-                self._args.utr_derived_srna, self._args.annotation_files,
-                self._args.tss_files, self._args.transcript_files,
-                self._args.tss_intergenic_antisense_fuzzy,
-                self._args.tss_5utr_fuzzy,
-                self._args.tss_3utr_fuzzy, self._args.tss_intercds_fuzzy,
-                self._args.filter_info, self._args.processing_site_files,
-                self._args.fasta_files, self._args.mountain_plot,
-                self._args.nr_format, self._args.srna_format,
-                self._args.srna_database_path, self._args.nr_database_path,
-                self._args.cutoff_energy, self._args.parallel_blast,
+                self._paths.srna_folder, self._args.utr_derived_srna,
+                self._args.annotation_files, self._args.tss_files,
+                self._args.transcript_files,
+                self._args.tss_intergenic_antisense_tolerance,
+                self._args.tss_5utr_tolerance, self._args.tss_3utr_tolerance,
+                self._args.tss_intercds_tolerance, self._args.filter_info,
+                self._args.processing_site_files, self._args.fasta_files,
+                self._args.mountain_plot, self._args.nr_format,
+                self._args.srna_format, self._args.srna_database_path,
+                self._args.nr_database_path, self._args.cutoff_energy,
+                self._args.parallel_blast,
                 self._args.min_intergenic_tex_coverage,
                 self._args.min_intergenic_notex_coverage,
                 self._args.min_intergenic_fragmented_coverage,
@@ -522,12 +521,12 @@ class Controller(object):
                 self._args.tex_notex, self._args.blast_e_nr,
                 self._args.blast_e_srna, self._args.detect_srna_in_cds,
                 self._args.table_best, self._args.decrease_intergenic_antisense,
-                self._args.decrease_utr, self._args.fuzzy_intergenic_antisense,
-                self._args.fuzzy_utr, self._args.cutoff_nr_hit,
+                self._args.decrease_utr, self._args.tolerance_intergenic_antisense,
+                self._args.tolerance_utr, self._args.cutoff_nr_hit,
                 self._args.sorf_files, self._args.overlap_percent_cds,
                 self._args.terminator_files,
-                self._args.terminator_fuzzy_in_srna,
-                self._args.terminator_fuzzy_out_srna,
+                self._args.terminator_tolerance_in_srna,
+                self._args.terminator_tolerance_out_srna,
                 self._args.ignore_hypothetical_protein, self._args.tss_source,
                 self._args.min_all_utr_coverage, self._args.promoter_tables,
                 self._args.ranking_time_promoter, self._args.promoter_names,
@@ -562,7 +561,7 @@ class Controller(object):
             self._args.replicate_tex, self._args.replicate_frag,
             self._args.table_best, self._args.srna_files,
             self._args.start_codon, self._args.stop_codon,
-            self._args.cutoff_base_coverage, self._args.fuzzy_rbs,
+            self._args.cutoff_base_coverage, self._args.tolerance_rbs,
             self._args.rbs_not_after_tss, self._args.print_all_combination,
             self._args.best_no_srna, self._args.best_no_tss,
             self._args.ignore_hypothetical_protein,
@@ -615,7 +614,7 @@ class Controller(object):
             self._args.tss_files, self._args.annotation_files,
             self._args.transcript_files, self._args.utr5_files,
             self._args.utr3_files, self._args.terminator_files,
-            self._args.tss_fuzzy, self._args.terminator_fuzzy,
+            self._args.tss_tolerance, self._args.terminator_tolerance,
             self._args.min_length, self._paths.operon_output_folder,
             self._paths.operon_statistics_folder)
         operon = OperonDetection(args_op)
@@ -832,9 +831,9 @@ class Controller(object):
             self._args.rfam_path, ribos_path,
             thermo_path, self._args.e_value,
             self._args.output_all, self._paths.database_folder,
-            self._args.fuzzy, self._args.start_codon,
+            self._args.tolerance, self._args.start_codon,
             self._args.min_dist_rbs, self._args.max_dist_rbs,
-            self._args.fuzzy_rbs, self._args.utr_length)
+            self._args.tolerance_rbs, self._args.utr_length)
         ribos = Ribos(args_ribo)
         ribos.run_ribos(args_ribo)
 
@@ -869,8 +868,8 @@ class Controller(object):
                         False)
         self.check_parameter([self._args.output_prefix], ["--output_prefix"])
         run_merge(merge_folder, self._args.transcript_file,
-                  self._args.other_features_files, self._args.terminator_fuzzy,
-                  self._args.tss_fuzzy,
+                  self._args.other_features_files,
+                  self._args.terminator_tolerance, self._args.tss_tolerance,
                   os.path.join(merge_folder, self._args.output_prefix))
 
     def screen(self):

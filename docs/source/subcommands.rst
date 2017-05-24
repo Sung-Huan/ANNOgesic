@@ -584,7 +584,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             [--enrichment_factor ENRICHMENT_FACTOR]
                             [--processing_factor PROCESSING_FACTOR]
                             [--base_height BASE_HEIGHT] [--utr_length UTR_LENGTH]
-                            [--fuzzy FUZZY] [--cluster CLUSTER]
+                            [--tolerance TOLERANCE] [--cluster CLUSTER]
                             [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
                             [--curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]]
                             [--validate_gene]
@@ -670,10 +670,11 @@ For the transcripts, please check the section :ref:`transcript`.
                             Default is 0.0.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The length of UTRs. Default is 300.
-      --fuzzy FUZZY, -fu FUZZY
-                            If --compare_transcript_files is provided, please
-                            assign the fuzzy for comparing TSS and transcript.
-                            Default is 5.
+      --tolerance TOLERANCE, -to TOLERANCE
+                            The 5'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated TSSs (--compare_transcript_files is
+                            provided). Default is 5.
       --cluster CLUSTER, -c CLUSTER
                             This value defines the maximal distance (nucleotides)
                             between TSS candidates have to be clustered together.
@@ -816,9 +817,9 @@ genome annotation gff files are required. There are four options for modificatio
                                 [--tolerance_coverage TOLERANCE_COVERAGE]
                                 [--tss_files TSS_FILES [TSS_FILES ...]]
                                 [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
-                                [--tss_fuzzy TSS_FUZZY] [--table_best]
+                                [--tss_tolerance TSS_TOLERANCE] [--table_best]
                                 [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                                [--terminator_fuzzy TERMINATOR_FUZZY]
+                                [--terminator_tolerance TERMINATOR_TOLERANCE]
                                 [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
     
     optional arguments:
@@ -877,7 +878,7 @@ genome annotation gff files are required. There are four options for modificatio
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            It is similar to --replicates_tex. This value is for
+                            Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
       --tex_notex {1,2}, -te {1,2}
                             The value is for TEX+/- libraries to decide the
@@ -908,17 +909,20 @@ genome annotation gff files are required. There are four options for modificatio
                             If --compare_genome_annotation is provided, please
                             assign the feature for comparing. Multiple features
                             can be separated by spaces. Default is None.
-      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            The fuzzy value for comparing TSS with transcript.
-                            Default is 5.
+      --tss_tolerance TSS_TOLERANCE, -tt TSS_TOLERANCE
+                            The 5'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated TSSs (--tss_files is provided). Default is
+                            5.
       --table_best, -tb     The output table only includes the information of the
                             highest expressed library. Default is False.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             Paths of terminator gff files for comparing
                             transcripts and terminators. Default is None.
-      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            If --terminator_files is assigned, please assign the
-                            fuzzy value. Default is 30.
+      --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE
+                            The 3'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated terminators. Default is 30.
       --max_length_distribution MAX_LENGTH_DISTRIBUTION, -mb MAX_LENGTH_DISTRIBUTION
                             For generating the figure of distribution of
                             transcript length, please assign the maximum length.
@@ -1025,11 +1029,11 @@ which have coverage significant decrease.
                                 [--rnafold_path RNAFOLD_PATH]
                                 [--srna_files SRNA_FILES [SRNA_FILES ...]]
                                 [--decrease DECREASE]
-                                [--fuzzy_detect_coverage FUZZY_DETECT_COVERAGE]
-                                [--fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT]
-                                [--fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT]
-                                [--fuzzy_within_gene FUZZY_WITHIN_GENE]
-                                [--fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE]
+                                [--tolerance_detect_coverage TOLERANCE_DETECT_COVERAGE]
+                                [--tolerance_within_transcript TOLERANCE_WITHIN_TRANSCRIPT]
+                                [--tolerance_downstream_transcript TOLERANCE_DOWNSTREAM_TRANSCRIPT]
+                                [--tolerance_within_gene TOLERANCE_WITHIN_GENE]
+                                [--tolerance_downstream_gene TOLERANCE_DOWNSTREAM_GENE]
                                 [--highest_coverage HIGHEST_COVERAGE]
                                 [--table_best] [--window_size WINDOW_SIZE]
                                 [--window_shift WINDOW_SHIFT]
@@ -1087,7 +1091,7 @@ which have coverage significant decrease.
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            It is similar to --replicates_tex. This value is for
+                            Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
     
     additional arguments:
@@ -1097,7 +1101,7 @@ which have coverage significant decrease.
                             Path of expterm.dat for TransTermHP. Default is
                             /usr/local/bin/expterm.dat
       --rnafold_path RNAFOLD_PATH
-                            Path of "RNAfold" of Vienna package.
+                            Path of RNAfold of Vienna package.
       --srna_files SRNA_FILES [SRNA_FILES ...], -sr SRNA_FILES [SRNA_FILES ...]
                             Paths of sRNA gff files if sRNA information need to be
                             considered as well.
@@ -1107,32 +1111,33 @@ which have coverage significant decrease.
                             ratio is smaller than --decrease, the candidate will
                             be considered as highly-confidence terminator. Default
                             is 0.5.
-      --fuzzy_detect_coverage FUZZY_DETECT_COVERAGE, -fc FUZZY_DETECT_COVERAGE
+      --tolerance_detect_coverage TOLERANCE_DETECT_COVERAGE, -tc TOLERANCE_DETECT_COVERAGE
                             The extended region (nucleotides) of the terminators
                             for detecting coverage significant drop. For example,
                             the location of terminator is 300-400, and
-                            --fuzzy_detect_coverage is 30. If the coverage
+                            --tolerance_detect_coverage is 30. If the coverage
                             decrease is detected within 270-430, this candidate is
                             still considered as the terminator which have coverage
                             dramatic decrease. Default is 30.
-      --fuzzy_within_transcript FUZZY_WITHIN_TRANSCRIPT, -fut FUZZY_WITHIN_TRANSCRIPT
+      --tolerance_within_transcript TOLERANCE_WITHIN_TRANSCRIPT, -tut TOLERANCE_WITHIN_TRANSCRIPT
                             If the candidates are within transcript and the
                             distance (nucleotides) between the end of transcript
                             and terminator is within this value, the candidate
                             will be considered as a terminator. Otherwise, it will
                             be removed. Default is 30.
-      --fuzzy_downstream_transcript FUZZY_DOWNSTREAM_TRANSCRIPT, -fdt FUZZY_DOWNSTREAM_TRANSCRIPT
-                            The meaning is similar to --fuzzy_within_transcript.
-                            This value is for the candidates which are at the
-                            downstream of transcript. Default is 30.
-      --fuzzy_within_gene FUZZY_WITHIN_GENE, -fuc FUZZY_WITHIN_GENE
-                            The meaning is similar to --fuzzy_within_transcript.
-                            This value is for gene in stead of transcript. Default
-                            is 10.
-      --fuzzy_downstream_gene FUZZY_DOWNSTREAM_GENE, -fdg FUZZY_DOWNSTREAM_GENE
+      --tolerance_downstream_transcript TOLERANCE_DOWNSTREAM_TRANSCRIPT, -tdt TOLERANCE_DOWNSTREAM_TRANSCRIPT
                             The meaning is similar to
-                            --fuzzy_downstream_transcript. This value is for gene
-                            in stead of transcript. Default is 310.
+                            --tolerance_within_transcript. This value is for the
+                            candidates which are at the downstream of transcript.
+                            Default is 30.
+      --tolerance_within_gene TOLERANCE_WITHIN_GENE, -twg TOLERANCE_WITHIN_GENE
+                            The meaning is similar to
+                            --tolerance_within_transcript. This value is for gene
+                            in stead of transcript. Default is 10.
+      --tolerance_downstream_gene TOLERANCE_DOWNSTREAM_GENE, -tdg TOLERANCE_DOWNSTREAM_GENE
+                            The meaning is similar to
+                            --tolerance_downstream_transcript. This value is for
+                            gene in stead of transcript. Default is 310.
       --highest_coverage HIGHEST_COVERAGE, -hc HIGHEST_COVERAGE
                             The minimum value of the highest coverage of
                             terminator. The low expressed terminator are not
@@ -1292,8 +1297,9 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
                          [--tss_source] [--base_5utr {both,transcript,TSS}]
                          [--utr_length UTR_LENGTH]
                          [--base_3utr {both,transcript,terminator}]
-                         [--terminator_fuzzy TERMINATOR_FUZZY]
-                         [--fuzzy_3utr FUZZY_3UTR] [--fuzzy_5utr FUZZY_5UTR]
+                         [--terminator_tolerance TERMINATOR_TOLERANCE]
+                         [--tolerance_3utr TOLERANCE_3UTR]
+                         [--tolerance_5utr TOLERANCE_5UTR]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -1323,13 +1329,18 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
                             please assign the information for detection of 3'UTR.
                             It can be "transcript" or "terminator" or "both".
                             Default is transcript.
-      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            The minimum fuzzy value for comparing transcript and
-                            terminator. Default is 30.
-      --fuzzy_3utr FUZZY_3UTR, -f3 FUZZY_3UTR
-                            The fuzzy value of transcript for 3'UTR detection.
-      --fuzzy_5utr FUZZY_5UTR, -f5 FUZZY_5UTR
-                            The fuzzy value of transcript for 5'UTR detection.
+      --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE
+                            The 3'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated terminators. Default is 30.
+      --tolerance_3utr TOLERANCE_3UTR, -t3 TOLERANCE_3UTR
+                            The length of 3'UTR can be extended or withdrew by
+                            this value (nucleotides). It only works when
+                            transcript information is provided. Default is 10.
+      --tolerance_5utr TOLERANCE_5UTR, -t5 TOLERANCE_5UTR
+                            The length of 5'UTR can be extended or withdrew by
+                            this value (nucleotides). It only works when
+                            transcript information is provided. Default is 5.
 
 - **Output files**
 
@@ -1506,12 +1517,12 @@ this candidates will be removed.
                           [--blastn_path BLASTN_PATH] [--blastx_path BLASTX_PATH]
                           [--makeblastdb_path MAKEBLASTDB_PATH]
                           [--parallel_blast PARALLEL_BLAST] [--tss_source]
-                          [--tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY]
-                          [--tss_5utr_fuzzy TSS_5UTR_FUZZY]
-                          [--tss_3utr_fuzzy TSS_3UTR_FUZZY]
-                          [--tss_intercds_fuzzy TSS_INTERCDS_FUZZY]
-                          [--terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA]
-                          [--terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA]
+                          [--tss_intergenic_antisense_tolerance TSS_INTERGENIC_ANTISENSE_TOLERANCE]
+                          [--tss_5utr_tolerance TSS_5UTR_TOLERANCE]
+                          [--tss_3utr_tolerance TSS_3UTR_TOLERANCE]
+                          [--tss_intercds_tolerance TSS_INTERCDS_TOLERANCE]
+                          [--terminator_tolerance_in_srna TERMINATOR_TOLERANCE_IN_SRNA]
+                          [--terminator_tolerance_out_srna TERMINATOR_TOLERANCE_OUT_SRNA]
                           [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
                           [--min_intergenic_tex_coverage MIN_INTERGENIC_TEX_COVERAGE]
                           [--min_intergenic_notex_coverage MIN_INTERGENIC_NOTEX_COVERAGE]
@@ -1528,8 +1539,9 @@ this candidates will be removed.
                           [--nr_format] [--srna_format] [--table_best]
                           [--decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE]
                           [--decrease_utr DECREASE_UTR]
-                          [--fuzzy_intergenic_antisense FUZZY_INTERGENIC_ANTISENSE]
-                          [--fuzzy_utr FUZZY_UTR] [--cutoff_nr_hit CUTOFF_NR_HIT]
+                          [--tolerance_intergenic_antisense TOLERANCE_INTERGENIC_ANTISENSE]
+                          [--tolerance_utr TOLERANCE_UTR]
+                          [--cutoff_nr_hit CUTOFF_NR_HIT]
                           [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
                           [--detect_srna_in_cds]
                           [--overlap_percent_cds OVERLAP_PERCENT_CDS]
@@ -1545,24 +1557,25 @@ this candidates will be removed.
       --utr_derived_srna, -u
                             Assign to detect UTR-derived sRNA. Default is False.
       --filter_info {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...], -d {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...]
-                            The filters for improving sRNA detection: 1. tss (sRNA
-                            has to start with a TSS), 2. sec_str (free energy
-                            change of secondary structure (normalized by length)
-                            has to be smaller than --cutoff_energy), 3. blast_nr
-                            (the number of the homology can not be found more than
-                            --cutoff_nr_hit in the non-redundant database), 4.
-                            blast_srna (as long as the homology can be found in
-                            sRNA database, the candidates will be included to best
-                            candidtes without considering other filters), 5. sorf
-                            (sRNA must not overlap sORFs), 6. term (sRNA has to be
-                            associated with a terminator), 7. promoter (sRNA has
-                            to be associated with a promoter motif). For using
-                            multiple filters, please separated them by spaced. If
-                            blast_srna was assigned, the headers of sequences in
-                            sRNA database should be $ID|$GENOME|$SRNANAME. "tss
-                            sec_str blast_nr blast_srna" are recommended to be
-                            used. If "none" is assigned, no filters are applied.
-                            Default is tss sec_str blast_nr blast_srna.
+                            The filters for improving the sRNA detection: 1. tss
+                            (sRNA has to start with a TSS), 2. sec_str (free
+                            energy change of secondary structure (normalized by
+                            length) has to be smaller than --cutoff_energy), 3.
+                            blast_nr (the number of the homologs in the non-
+                            redundant database has to be below the --cutoff_nr_hit
+                            ), 4. blast_srna (as long as the homologs can be found
+                            in the sRNA database, the candidates will be included
+                            to the best candidtes without considering other
+                            filters), 5. sorf (sRNA must not overlap with sORFs),
+                            6. term (sRNA has to be associated with a terminator),
+                            7. promoter (sRNA has to be associated with a promoter
+                            motif). For using multiple filters, please separated
+                            them by spaces. If blast_srna was assigned, the
+                            headers of sequences in sRNA database should be
+                            $ID|$GENOME|$SRNANAME. "tss sec_str blast_nr
+                            blast_srna" are recommended to be used. If "none" is
+                            assigned, no filters are applied. Default is tss
+                            sec_str blast_nr blast_srna.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -1572,10 +1585,10 @@ this candidates will be removed.
                             or "tss" in --filter_info, TSS gff files MUST be
                             provided.
       --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
-                            Paths of processing site gff files. It can improve the
-                            detection of UTR-derived sRNAs.
+                            Paths of the processing site gff files. It can improve
+                            the detection of UTR-derived sRNAs.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            Paths of terminator gff files.
+                            Paths of the terminator gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             paths of fasta files of reference genome, If
                             "sec_str", "blast_nr" or "blast_srna" is assigned to
@@ -1610,7 +1623,7 @@ this candidates will be removed.
                             my_lib_tex_forward.wig:tex:1:a:+
                             my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            Wig files of RNA-Seq with transcript fragmented. The
+                            Wig files of RNA-Seq with fragmented transcripts. The
                             format is: wig_file_path:frag:condition_id(integer):re
                             plicate_id(alphabet):strand(+ or -). If multiple wig
                             files need to be assigned, please use spaces to
@@ -1618,10 +1631,10 @@ this candidates will be removed.
                             my_lib_frag_forward.wig:frag:1:a:+
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex {1,2}, -te {1,2}
-                            If TEX+/- libraries is assigned, this value is that a
-                            sRNA should be detected in both (TEX+ and TEX-) or can
-                            be detected in only one library (TEX+ or TEX-). Please
-                            assign 1 or 2. Default is 2.
+                            If TEX+/- libraries are assigned, a sRNA should be
+                            detected in both (TEX+ and TEX-) or needs to be
+                            detected in only one library (TEX+ or TEX-). Default
+                            is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected in. The format is
@@ -1632,55 +1645,56 @@ this candidates will be removed.
                             --replicate_tex is 2 in number 1 and number 2
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
-                            conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            conditions, use all_1 (--replicate_tex is 1 in all
+                            conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            It is similar to --replicates_tex. This value is for
-                            fragmented (or conventional) libraries.
+                            Similar to --replicates_tex. This value is for
+                            libraries with fragmented transcripts.
     
     additional arguments:
       --rnafold_path RNAFOLD_PATH
-                            Path of RNAfold.
+                            Path of RNAfold of the Vienna package
       --relplot_path RELPLOT_PATH
-                            Path of relplot.pl in Vienna package.
+                            Path of relplot.pl of the Vienna package.
       --mountain_path MOUNTAIN_PATH
-                            Path of mountain.pl in Vienna package.
+                            Path of mountain.pl of the Vienna package.
       --blastn_path BLASTN_PATH
-                            Path of blastn in BLAST+ package.
+                            Path of blastn of the BLAST+ package.
       --blastx_path BLASTX_PATH
-                            Path of blastx in BLAST+ package.
+                            Path of blastx of the BLAST+ package.
       --makeblastdb_path MAKEBLASTDB_PATH
-                            Path of makeblastdb in BLAST+ package.
+                            Path of makeblastdb of the BLAST+ package.
       --parallel_blast PARALLEL_BLAST, -pb PARALLEL_BLAST
-                            The number of parallel runs. Default is 10.
+                            The number of parallel jobs. Default is 10.
       --tss_source, -ts     The TSS gff files are generated from ANNOgesic or not.
                             Default is True (from ANNOgesic).
-      --tss_intergenic_fuzzy TSS_INTERGENIC_FUZZY, -ft TSS_INTERGENIC_FUZZY
-                            The fuzzy value of comparing TSS and transcript for
-                            detecting intergenic sRNA. Default is 3.
-      --tss_5utr_fuzzy TSS_5UTR_FUZZY, -f5 TSS_5UTR_FUZZY
-                            The fuzzy value of comparing TSS and transcript for
-                            detecting 5'UTR-derived sRNA.The input type can be
-                            percentage ("p") or the real amount of reads ("n").
-                            For example, p_0.05 means the fuzzy is 5 percent of
-                            the length of 5'UTR. n_10 means the fuzzy is 10 nts.
-                            Default is n_3.
-      --tss_3utr_fuzzy TSS_3UTR_FUZZY, -f3 TSS_3UTR_FUZZY
-                            It is similar to --tss_5utr_fuzzy. This value is for
-                            3'UTR-derived sRNA instead of 5'UTR-derived sRNA.
-                            Default is p_0.04.
-      --tss_intercds_fuzzy TSS_INTERCDS_FUZZY, -fc TSS_INTERCDS_FUZZY
-                            It is similar to --tss_5utr_fuzzy. This value is for
-                            interCDS-derived sRNA instead of 5'UTR-derived sRNA.
-                            Default is p_0.04.
-      --terminator_fuzzy_in_srna TERMINATOR_FUZZY_IN_SRNA, -efi TERMINATOR_FUZZY_IN_SRNA
-                            The fuzzy value for comparing terminator and
-                            transcript for detecting the terminator which is
-                            within sRNA. Default is 30.
-      --terminator_fuzzy_out_srna TERMINATOR_FUZZY_OUT_SRNA, -efo TERMINATOR_FUZZY_OUT_SRNA
-                            It is similar to --terminator_fuzzy_in_sRNA. This
-                            value is for the terminator which is outside of sRNA.
-                            Default is 30.
+      --tss_intergenic_antisense_tolerance TSS_INTERGENIC_ANTISENSE_TOLERANCE, -tit TSS_INTERGENIC_ANTISENSE_TOLERANCE
+                            The 5'ends of intergenic and antisense sRNA candidates
+                            will be extended or withdrew by this value
+                            (nucleotides) for searching the associated TSSs.
+                            Default is 3.
+      --tss_5utr_tolerance TSS_5UTR_TOLERANCE, -t5 TSS_5UTR_TOLERANCE
+                            The 5'ends of 5'UTR-derived sRNAs will be extended or
+                            withdrew by this value (nucleotides) for searching the
+                            associated TSSs. The input type can be percentage
+                            ("p") or the real amount of reads ("n"). For example,
+                            p_0.05 means this value is 5 percent of the length of
+                            5'UTR. n_10 means this value is 10 nts. Default is
+                            n_3.
+      --tss_3utr_tolerance TSS_3UTR_TOLERANCE, -t3 TSS_3UTR_TOLERANCE
+                            Similar to --tss_5utr_tolerance. This value is for
+                            3'UTR-derived sRNAs. Default is p_0.04.
+      --tss_intercds_tolerance TSS_INTERCDS_TOLERANCE, -tc TSS_INTERCDS_TOLERANCE
+                            Similar to --tss_5utr_tolerance. This value is for
+                            interCDS-derived sRNAs. Default is p_0.04.
+      --terminator_tolerance_in_srna TERMINATOR_TOLERANCE_IN_SRNA, -eti TERMINATOR_TOLERANCE_IN_SRNA
+                            The 3'ends of sRNA candidates will be withdrew by this
+                            value (nucleotides) for searching the associated
+                            terminators which are within sRNAs. Default is 30.
+      --terminator_tolerance_out_srna TERMINATOR_TOLERANCE_OUT_SRNA, -eto TERMINATOR_TOLERANCE_OUT_SRNA
+                            The 3'ends of sRNA candidates will be extended by this
+                            value (nucleotides) for searching the associated
+                            terminators which are behind of sRNAs. Default is 30.
       --min_length MIN_LENGTH, -lm MIN_LENGTH
                             The minimum sRNA length. Default is 30.
       --max_length MAX_LENGTH, -lM MAX_LENGTH
@@ -1698,12 +1712,12 @@ this candidates will be removed.
                             would be the general cutoff for the prediction.
                             Default is 0,0,0,40,20.
       --min_intergenic_notex_coverage MIN_INTERGENIC_NOTEX_COVERAGE, -in MIN_INTERGENIC_NOTEX_COVERAGE
-                            It is similar to --min_intergenic_tex_coverage. This
-                            value is for TEX- libraries. Default is 0,0,0,30,10.
+                            Similar to --min_intergenic_tex_coverage. This value
+                            is for TEX- libraries. Default is 0,0,0,30,10.
       --min_intergenic_fragmented_coverage MIN_INTERGENIC_FRAGMENTED_COVERAGE, -if MIN_INTERGENIC_FRAGMENTED_COVERAGE
-                            It is similar to --min_intergenic_tex_coverage. This
-                            value is for fragmented (or conventional) libraries.
-                            Default is 400,200,0,50,20.
+                            Similar to --min_intergenic_tex_coverage. This value
+                            is for fragmented (or conventional) libraries. Default
+                            is 400,200,0,50,20.
       --min_complete_5utr_transcript_coverage MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE, -ib MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE
                             Several primary/secondary TSSs are also associated
                             with a complete transcript containing no
@@ -1716,17 +1730,17 @@ this candidates will be removed.
                             200 for TEX+ libraries, 100 for TEX- and fragmented
                             (or conventional) libraries. Default is 30,20,30.
       --min_antisense_tex_coverage MIN_ANTISENSE_TEX_COVERAGE, -at MIN_ANTISENSE_TEX_COVERAGE
-                            It is similar to --min_intergenic_tex_coverage. This
-                            value is for antisense in stead of intergenic. Default
-                            is 0,0,0,40,20.
+                            Similar to --min_intergenic_tex_coverage. This value
+                            is for antisense in stead of intergenic. Default is
+                            0,0,0,40,20.
       --min_antisense_notex_coverage MIN_ANTISENSE_NOTEX_COVERAGE, -an MIN_ANTISENSE_NOTEX_COVERAGE
-                            It is similar to --min_intergenic_notex_coverage. This
-                            value is for antisense in stead of intergenic. Default
-                            is 0,0,0,30,10.
+                            Similar to --min_intergenic_notex_coverage. This value
+                            is for antisense in stead of intergenic. Default is
+                            0,0,0,30,10.
       --min_antisense_fragmented_coverage MIN_ANTISENSE_FRAGMENTED_COVERAGE, -af MIN_ANTISENSE_FRAGMENTED_COVERAGE
-                            It is similar to --min_intergenic_fragmented_coverage.
-                            This value is for antisense in stead of intergenic.
-                            Default is 400,200,0,50,20.
+                            Similar to --min_intergenic_fragmented_coverage. This
+                            value is for antisense in stead of intergenic. Default
+                            is 400,200,0,50,20.
       --min_utr_tex_coverage MIN_UTR_TEX_COVERAGE, -ut MIN_UTR_TEX_COVERAGE
                             The minimum average coverage of UTR-derived sRNA
                             candidates in TEX+ libraries. The input can be
@@ -1739,18 +1753,18 @@ this candidates will be removed.
                             coverages is used for minimum coverage of 3'UTR and
                             interCDS-derived sRNA. Default is p_0.8,p_0.6,p_0.7.
       --min_utr_notex_coverage MIN_UTR_NOTEX_COVERAGE, -un MIN_UTR_NOTEX_COVERAGE
-                            It is similar to --min_utr_tex_coverage. This value is
-                            for TEX- libraries. Default is p_0.7,p_0.5,p_0.6.
+                            Similar to --min_utr_tex_coverage. This value is for
+                            TEX- libraries. Default is p_0.7,p_0.5,p_0.6.
       --min_utr_fragmented_coverage MIN_UTR_FRAGMENTED_COVERAGE, -uf MIN_UTR_FRAGMENTED_COVERAGE
-                            It is similar to --min_utr_tex_coverage. This value is
-                            for fragmented (or conventional) libraries. Default is
+                            Similar to --min_utr_tex_coverage. This value is for
+                            fragmented (or conventional) libraries. Default is
                             p_0.7,p_0.5,p_0.6.
       --min_all_utr_coverage MIN_ALL_UTR_COVERAGE, -mu MIN_ALL_UTR_COVERAGE
-                            The minimum coverage of UTR-derived sRNA. The coverage
-                            of UTR-derived sRNA should not only fit the
-                            --min_utr_TEX_coverage, --min_utr_noTEX_coverage and
-                            --min_utr_fragmented_coverage, but also this value.
-                            Default is 50.
+                            The minimum coverage of UTR-derived sRNAs. The
+                            coverage of UTR-derived sRNAs should not only exceed
+                            the --min_utr_TEX_coverage, --min_utr_noTEX_coverage
+                            and --min_utr_fragmented_coverage, but also this
+                            value. Default is 50.
       --cutoff_energy CUTOFF_ENERGY, -ce CUTOFF_ENERGY
                             If "sec_str" is included in --filter_info, please
                             assign the maximum folding energy change (normalized
@@ -1772,25 +1786,26 @@ this candidates will be removed.
                             and the length is within a given range, the transcript
                             will be considered as a sRNA as well.Default is 0.1.
       --decrease_utr DECREASE_UTR, -du DECREASE_UTR
-                            It is similar to --decrease_intergenic_antisense. This
-                            value is for UTR-derived sRNA. Default is 0.05.
-      --fuzzy_intergenic_antisense FUZZY_INTERGENIC_ANTISENSE, -fi FUZZY_INTERGENIC_ANTISENSE
-                            The fuzzy nucleotides for detecting the coverage
-                            decrease (please check
-                            --decrease_intergenic_antisense). For example, the
-                            location of intergenic sRNA is 300-400, and
-                            --fuzzy_intergenic_antisense is 30. The searching
+                            Similar to --decrease_intergenic_antisense. This value
+                            is for UTR-derived sRNA. Default is 0.05.
+      --tolerance_intergenic_antisense TOLERANCE_INTERGENIC_ANTISENSE, -ti TOLERANCE_INTERGENIC_ANTISENSE
+                            The 5'ends and 3'ends of intergenic and antisense
+                            sRNAs will be extended by this value (nucleotides) for
+                            detecting the significant coverage decrease. (please
+                            check --decrease_intergenic_antisense). For example,
+                            the location of intergenic sRNA is 300-400, and
+                            --tolerance_intergenic_antisense is 30. The searching
                             region is 270-430. Default is 10.
-      --fuzzy_utr FUZZY_UTR, -fu FUZZY_UTR
-                            It is similar to --fuzzy_intergenic_antisense. This is
+      --tolerance_utr TOLERANCE_UTR, -tu TOLERANCE_UTR
+                            Similar to --tolerance_intergenic_antisense. This is
                             for UTR-derived sRNAs. Default is 10.
       --cutoff_nr_hit CUTOFF_NR_HIT, -cn CUTOFF_NR_HIT
                             The maximum hits number in nr database. Default is 0.
       --blast_e_nr BLAST_E_NR, -en BLAST_E_NR
-                            The maximum e value for searching in nr database.
+                            The maximum e-value for searching in nr database.
                             Default is 0.0001.
       --blast_e_srna BLAST_E_SRNA, -es BLAST_E_SRNA
-                            The maximum e value for searching in sRNA database.
+                            The maximum e-value for searching in sRNA database.
                             Default is 0.0001.
       --detect_srna_in_cds, -ds
                             Searching sRNA in CDS (e.g. the genome annotation is
@@ -1801,7 +1816,7 @@ this candidates will be removed.
                             candidates. It only works if --detect_srna_in_cds is
                             true. Default is 0.5
       --ignore_hypothetical_protein, -ih
-                            For ignoring the hypothetical proteins in genome
+                            For ignoring hypothetical proteins in the genome
                             annotation file. Default is False.
       --ranking_time_promoter RANKING_TIME_PROMOTER, -rp RANKING_TIME_PROMOTER
                             If --promoter_tables is provided, the information of
@@ -1811,9 +1826,10 @@ this candidates will be removed.
                             associated with a promoter and its average coverage is
                             10. If --ranking_time_promoter is 2, the ranking score
                             will be 20 (2*10). For the candidate which are not
-                            associated with promoter, the --ranking_time_promoter
-                            will be 1. Therefore, --ranking_time_promoter can not
-                            be smaller than 1. Default is 2.
+                            associated with a promoter, the
+                            --ranking_time_promoter will be 1. Therefore,
+                            --ranking_time_promoter can not be smaller than 1.
+                            Default is 2.
 
 - **Output files**
 
@@ -2001,7 +2017,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                           [--stop_codon STOP_CODON [STOP_CODON ...]]
                           [--min_rbs_distance MIN_RBS_DISTANCE]
                           [--max_rbs_distance MAX_RBS_DISTANCE]
-                          [--rbs_not_after_tss] [--fuzzy_rbs FUZZY_RBS]
+                          [--rbs_not_after_tss] [--tolerance_rbs TOLERANCE_RBS]
                           [--print_all_combination] [--best_no_srna]
                           [--best_no_tss]
                           [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
@@ -2013,18 +2029,18 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --utr_derived_sorf, -u
-                            Detecting UTR-derived sORF. Default is False.
+                            Detect UTR-derived sORF. Default is False.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Paths of fasta files of reference genome.
+                            Paths of the fasta files of the reference genome.
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript gff files.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the genome annotation gff files.
+                            Paths of the the genome annotation gff files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
                             Paths of TSS gff files.
       --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
-                            Paths of sRNA gff files for comparing sORF and sRNA to
-                            detect the overlapping.
+                            Paths of the sRNA gff files for comparing sORF and
+                            sRNA to detect the overlapping.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
@@ -2034,7 +2050,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             my_lib_tex_forward.wig:tex:1:a:+
                             my_lib_tex_reverse.wig:tex:1:a:-.
       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            Wig files of RNA-Seq with transcript fragmented. The
+                            Wig files of RNA-Seq with fragmented transcripts. The
                             format is: wig_file_path:frag:condition_id(integer):re
                             plicate_id(alphabet):strand(+ or -). If multiple wig
                             files need to be assigned, please use spaces to
@@ -2042,7 +2058,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             my_lib_frag_forward.wig:frag:1:a:+
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex TEX_NOTEX, -te TEX_NOTEX
-                            If the TEX+/- libraries is provided, this value is
+                            If the TEX+/- libraries are provided, this value is
                             that a sORF should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 2.
@@ -2059,7 +2075,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             conditions, just use like all_1 (--replicate_tex is 1
                             in all conditions). Default is all_1.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            It is similar to --replicates_tex. This value is for
+                            Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
     
     additional arguments:
@@ -2075,23 +2091,24 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
                             The minimum coverage of antisense sORF candidates.
       --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
-                            The minimum coverage of 5'UTR derived sORF candidates.
-                            This value can be assigned by percentage ("p") or the
-                            amount of reads ("n"). For example, p_0.05 means that
-                            the coverage of sORF candidates should be higher than
-                            5 percentile of all 5'UTR transcripts. n_10 means that
-                            the coverage of sORF candidates should be higher than
-                            10. Default is p_0.5.
+                            The minimum coverage for 5'UTR derived sORF
+                            candidates. This value can be assigned by percentile
+                            ("p") or the amount of reads ("n"). For example,
+                            p_0.05 means that the coverage of sORF candidates
+                            should be higher than the 5 percentile of all 5'UTR
+                            transcripts. n_10 means that the coverage of sORF
+                            candidates should be higher than 10 reads. Default is
+                            p_0.5.
       --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
-                            It is similar to --cutoff_5utr_coverage. This value is
-                            for 3'UTR. Default is p_0.5.
+                            Similar to --cutoff_5utr_coverage. This value is for
+                            3'UTRs. Default is p_0.5.
       --cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
-                            It is similar to --cutoff_5utr_coverage. This value is
-                            for interCDS. Default is p_0.5.
+                            Similar to --cutoff_5utr_coverage. This value is for
+                            interCDS. Default is p_0.5.
       --cutoff_base_coverage CUTOFF_BASE_COVERAGE, -cub CUTOFF_BASE_COVERAGE
                             The general minimum coverage of all sORF candidates.
-                            All candidates should fit this condition as well.
-                            Default is 10.
+                            All candidates should exceed this value. Default is
+                            10.
       --table_best, -tb     The output table of sORF candidates only includes
                             information of the highest expressed library. Default
                             is False.
@@ -2112,12 +2129,12 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             ribosome binding site (Shine-Dalgarno sequence) and
                             the start codon. Default is 15.
       --rbs_not_after_tss, -at
-                            Including the sORFs which is not associated with
-                            ribosome binding site to highly-confidence sORF list.
-                            Default is False.
-      --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
-                            The number of nucleotides of ribosome binding site
-                            allow to be different with AGGAGG. Default is 2.
+                            Include the sORFs which are not associated with
+                            ribosome binding site to the high-confidence sORF
+                            list. Default is False.
+      --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
+                            The number of nucleotides of ribosome binding sites
+                            allowed to be different from AGGAGG. Default is 2.
       --print_all_combination, -pa
                             For printing all combinations of multiple start and
                             stop codons. Default is False.
@@ -2126,8 +2143,8 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --best_no_tss, -bt    Excluding the sORFs which do not start with TSS to
                             highly confidence sORF list. Default is False.
       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
-                            For ignoring hypothetical protein in genome annotation
-                            file. Default is False.
+                            For ignoring hypothetical protein in the genome
+                            annotation file. Default is False.
 
 - **Output files**
 
@@ -2372,8 +2389,8 @@ sub-operons.
                             UTR5_FILES [UTR5_FILES ...] --utr3_files UTR3_FILES
                             [UTR3_FILES ...]
                             [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                            [--tss_fuzzy TSS_FUZZY]
-                            [--terminator_fuzzy TERMINATOR_FUZZY]
+                            [--tss_tolerance TSS_TOLERANCE]
+                            [--terminator_tolerance TERMINATOR_TOLERANCE]
                             [--min_length MIN_LENGTH]
     
     optional arguments:
@@ -2396,12 +2413,14 @@ sub-operons.
                             Paths of terminator gff files.
     
     additional arguments:
-      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            The fuzzy value for comparing between TSS and
-                            transcript. Default is 5.
-      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            The fuzzy value for comparing between terminator and
-                            transcript. Default is 30.
+      --tss_tolerance TSS_TOLERANCE, -tt TSS_TOLERANCE
+                            The 5'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated TSSs. Default is 5.
+      --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE
+                            The 3'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated terminators. Default is 30.
       --min_length MIN_LENGTH, -l MIN_LENGTH
                             The minimum length of operon. Default is 20.
 
@@ -3107,8 +3126,8 @@ from our Git repository.
                                             [--cmpress_path CMPRESS_PATH]
                                             [--utr_length UTR_LENGTH]
                                             [--e_value E_VALUE] [--output_all]
-                                            [--fuzzy FUZZY]
-                                            [--fuzzy_rbs FUZZY_RBS]
+                                            [--tolerance TOLERANCE]
+                                            [--tolerance_rbs TOLERANCE_RBS]
                                             [--start_codon START_CODON [START_CODON ...]]
                                             [--max_dist_rbs MAX_DIST_RBS]
                                             [--min_dist_rbs MIN_DIST_RBS]
@@ -3120,18 +3139,18 @@ from our Git repository.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --program {riboswich,thermometer,both}, -p {riboswich,thermometer,both}
-                            Please assign the feature for detection. The options
-                            can be "riboswitch", "thermometer", "both". Default is
-                            both.
+                            Please choose the feature for the detection. The
+                            options can be "riboswitch", "thermometer", "both".
+                            Default is both.
       --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
-                            Path of the file whic contain the information of
-                            riboswitch in Rfam. Required format of the file:
+                            Path of the file which contains the information of
+                            riboswitches in Rfam. Required format of the file:
                             $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
-                            check an exmple in https://github.com/Sung-Huan/ANNOge
-                            sic/blob/master/database/Rfam_riboswitch_ID.csv
+                            check an example in https://github.com/Sung-Huan/ANNOg
+                            esic/blob/master/database/Rfam_riboswitch_ID.csv
       --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
-                            It is similar to -riboswitch_id_file, but for RNA
-                            thermometer. Please check an example in
+                            Same format as for -riboswitch_id_file, but for RNA
+                            thermometers. Please check an example in
                             https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
                             abase/Rfam_RNA_thermometer_ID.csv
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
@@ -3158,11 +3177,12 @@ from our Git repository.
                             RNA thermometers. It can print multiple riboswitches
                             or RNA thermometers. Otherwise, only the highest
                             confident one will be printed. Default is False.
-      --fuzzy FUZZY, -z FUZZY
-                            The fuzzy nucleotides for extracting the sequences of
-                            potential riboswitches or RNA thermometers. Default is
-                            10.
-      --fuzzy_rbs FUZZY_RBS, -zr FUZZY_RBS
+      --tolerance TOLERANCE, -to TOLERANCE
+                            The 5'ends and 3'ends of potential riboswitches or RNA
+                            thermometers will be extended by this value
+                            (nucleotides) for extracting the sequences to search
+                            in Rfam. Default is 10.
+      --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
                             The number of nucleotides of ribosome binding site
                             allow to be different with AGGAGG. Default is 2.
       --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
@@ -3651,8 +3671,8 @@ If transcript gff files can be provided, this module will search the parent tran
                                     --output_prefix OUTPUT_PREFIX
                                     [--transcript_file TRANSCRIPT_FILE]
                                     [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
-                                    [--terminator_fuzzy TERMINATOR_FUZZY]
-                                    [--tss_fuzzy TSS_FUZZY]
+                                    [--terminator_tolerance TERMINATOR_TOLERANCE]
+                                    [--tss_tolerance TSS_TOLERANCE]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -3661,7 +3681,7 @@ If transcript gff files can be provided, this module will search the parent tran
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --output_prefix OUTPUT_PREFIX, -op OUTPUT_PREFIX
-                            The prefix name of output gff file. The filename will
+                            The prefix name of output gff file. The file name will
                             be $OUTPUT_PREFIX_merge_features.gff.
       --transcript_file TRANSCRIPT_FILE, -a TRANSCRIPT_FILE
                             Path of transcript gff file. The parent transcripts
@@ -3673,12 +3693,14 @@ If transcript gff files can be provided, this module will search the parent tran
                             separate them.
     
     additional arguments:
-      --terminator_fuzzy TERMINATOR_FUZZY, -ef TERMINATOR_FUZZY
-                            The fuzzy nucleotides for comparing transcripts and
-                            terminators. Default is 30.
-      --tss_fuzzy TSS_FUZZY, -tf TSS_FUZZY
-                            The fuzzy value for comparing TSSs and transcripts.
-                            Default is 5.
+      --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE
+                            The 3'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated terminators. Default is 30.
+      --tss_tolerance TSS_TOLERANCE, -tt TSS_TOLERANCE
+                            The 5'ends of transcripts will be extended or withdrew
+                            by this value (nucleotides) for searching the
+                            associated TSSs. Default is 5.
 
 - **Output files**
 
