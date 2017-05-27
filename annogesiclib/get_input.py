@@ -70,10 +70,14 @@ def get_file(ftp, input_folder, files_type):
                 input_file = input_file[:-3]
             with open(input_file, "r") as g_f:
                 for line in g_f:
-                    if line[0:7] == "VERSION":
-                        data = line[12:].split(" ")
+                    line = line.strip()
+                    if line.startswith("VERSION"):
+                        for data in line.split(" "):
+                            if (len(data) != 0) and (data != "VERSION"):
+                                break
                         break
-            shutil.move(input_file, os.path.join(input_folder, data[0] + ".gbk"))
+            print(os.path.join(input_folder, data + ".gbk"))
+            shutil.move(input_file, os.path.join(input_folder, data + ".gbk"))
         if checks["detect"]:
             checks["detect"] = False
             checks["change"], seq_name = deal_detect(
