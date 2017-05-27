@@ -1,5 +1,6 @@
-ANNOgesic -  THE pipeline for bacterial/archaeal RNA-Seq based genome annotations
-*********************************************************************************
+ANNOgesic - The pipeline for bacterial/archaeal RNA-Seq based genome annotations
+********************************************************************************
+
 Table of content
 ================
 

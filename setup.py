@@ -5,11 +5,11 @@ except ImportError:
 
 setup(
     name='ANNOgesic',
-    version='0.6.4',
+    version='0.6.5',
     packages=['annogesiclib'],
     author='Sung-Huan Yu',
     author_email='sung-huan.yu@uni-wuerzburg.de',
-    description='A bacterial transcriptome annotation pipeline based on RNA-Seq',
+    description='ANNOgesic - The pipeline for bacterial/archaeal RNA-Seq based genome annotations',
     url='',
     install_requires=[
         "biopython >= 1.65",
