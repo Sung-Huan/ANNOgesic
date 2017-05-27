@@ -1119,7 +1119,7 @@ information of the transcripts to generate results which only contain the expres
         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        --merge_to_gff --bacteria_type negative \
+        --bacteria_type negative \
         --project_path ANNOgesic
 
 Two output folders will be generated. ``psortb_results`` stores the output files 

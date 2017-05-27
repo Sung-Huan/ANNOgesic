@@ -359,7 +359,7 @@ Subcellular_localization(){
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -m -b negative \
+        -b negative \
         -pj $ANNOGESIC_FOLDER
 }
 
