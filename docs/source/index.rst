@@ -1,5 +1,5 @@
-ANNOgesic - Transcriptome annotation pipeline
-*********************************************
+ANNOgesic -  THE pipeline for bacterial/archaeal RNA-Seq based genome annotations
+*********************************************************************************
 Table of content
 ================
 
