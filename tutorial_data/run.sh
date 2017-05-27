@@ -288,7 +288,7 @@ sRNA_target(){
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -s $ANNOGESIC_FOLDER/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
-        -q NC_009839.1:36989:37044:- \
+        -q NC_009839.1:36954:37044:- \
         -p both \
         -pj $ANNOGESIC_FOLDER
 }
