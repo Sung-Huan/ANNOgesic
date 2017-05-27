@@ -207,7 +207,7 @@ When the running process is done, the following information will appear.
 
 ::
 
-    $ Transfering to target fasta
+    $ Updating the reference sequences
       Please use the new fasta file to remapping again.
 
 Since the data (``ANNOgesic/output/updated_references/fasta_files``) that we generated is only a dummy data,
