@@ -83,7 +83,6 @@ class GoTermFinding(object):
             fig_path = os.path.join(strain_stat_path, "figs")
             if "fig" not in os.listdir(strain_stat_path):
                 os.mkdir(fig_path)
-            print("Computing statistics of {0}".format(folder))
             map2goslim(goslim, go,
                        os.path.join(out_path, folder, self.all_strain),
                        os.path.join(strain_stat_path,
