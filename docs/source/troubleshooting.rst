@@ -15,4 +15,5 @@ Pickling error
 
 - Solution
 
-Switch to Python 3.3 or higher. The newer versions can handle this.
+Check that if you have used the correction version of Python (i.e. the
+one you used to install ANNOgesic).
