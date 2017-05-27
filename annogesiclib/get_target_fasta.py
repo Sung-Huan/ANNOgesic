@@ -33,7 +33,7 @@ class TargetFasta(object):
         new_ref_folder = self.gen_folder(out_folder, ref_files)
         self.seq_editer.modify_seq(self.folders["tmp_ref"], mut_table,
                                    self.folders["tmp_tar"])
-        print("Transfering to query sequences")
+        print("Updating the reference sequences")
         mh = open(mut_table, "r")
         pre_strain = None
         out = None
