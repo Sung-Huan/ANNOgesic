@@ -1151,7 +1151,7 @@ Before running the subcommand, you need to download
 
 ::
 
-    $ wget -cP ANNOgesic/input/databases http://string-db.org/newstring_download/species.v10.txt
+    wget -cP ANNOgesic/input/databases https://string-db.org/download/species.v10.5.txt
 
 Now, we can try the subcommand.
 
@@ -1160,7 +1160,7 @@ Now, we can try the subcommand.
     $ annogesic ppi_network \
         --query_strains NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
-        --species_string ANNOgesic/input/databases/species.v10.txt \
+        --species_string ANNOgesic/input/databases/species.v10.5.txt \
         --query NC_009839.1:962231:963001:- NC_009839.1:123943:125151:+ \
         --without_strain_pubmed \
         --project_path ANNOgesic

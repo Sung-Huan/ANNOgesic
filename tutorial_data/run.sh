@@ -372,7 +372,7 @@ PPI_network(){
         ppi_network \
 	-s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
 	-g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
-	-d $ANNOGESIC_FOLDER/input/databases/species.v10.txt \
+	-d $ANNOGESIC_FOLDER/input/databases/species.v10.5.txt \
 	-q NC_009839.1:962231:963001:- NC_009839.1:123943:125151:+ \
 	-n \
 	-pj $ANNOGESIC_FOLDER
