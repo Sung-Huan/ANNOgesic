@@ -50,7 +50,6 @@ class ColorPNG(object):
                             print("Converting {0} to png files now...".format(
                                   screenshot))
                             png_file = screenshot.replace(".svg", ".png")
-                            print(os.path.join(out_path, png_file))
                             self._convert_png(imagemagick_path, out_path,
                                               screenshot, png_file)
                     Helper().remove_all_content(out_path, ".svg", "file")
