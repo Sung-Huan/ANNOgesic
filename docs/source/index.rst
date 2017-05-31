@@ -1,4 +1,4 @@
-ANNOgesic - A tool for bacterial/archaeal RNA-Seq based genome annotations
+ANNOgesic - THE tool for bacterial/archaeal RNA-Seq based genome annotations
 ********************************************************************************
 
 Table of content
