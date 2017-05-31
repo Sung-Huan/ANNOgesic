@@ -1151,7 +1151,7 @@ Before running the subcommand, you need to download
 
 ::
 
-    wget -cP ANNOgesic/input/databases https://string-db.org/download/species.v10.5.txt
+    $ wget -cP ANNOgesic/input/databases http://string-db.org/newstring_download/species.v10.5.txt
 
 Now, we can try the subcommand.
 
