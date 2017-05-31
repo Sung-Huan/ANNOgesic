@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 
-"""transcript annotation and analysis pipeline"""
+"""A tool for bacterial/archaeal RNA-Seq based genome annotations"""
 import argparse
 import os
 from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.7"
+__version__ = "0.6.9"
 
 def main():
     print("""

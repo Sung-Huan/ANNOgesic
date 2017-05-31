@@ -1,4 +1,4 @@
-ANNOgesic - The pipeline for bacterial/archaeal RNA-Seq based genome annotations
+ANNOgesic - A tool for bacterial/archaeal RNA-Seq based genome annotations
 ********************************************************************************
 
 Table of content
@@ -37,7 +37,7 @@ ANNOgesic features are new implementations while other build on well
 known third-party tools for which it offers adaptive
 parameter-optimizations. Additionally, numerous visualization and
 statistics help the user to quickly evaluat feature predictions
-resulting from an ANNOgesic analysis. The pipeline was heavily tested
+resulting from an ANNOgesic analysis. The tool was heavily tested
 with several RNA-Seq data set from bacterial as well as archaeal
 samples.
 
