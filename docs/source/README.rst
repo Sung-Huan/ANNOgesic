@@ -7,30 +7,34 @@
 
 About ANNOgesic
 ---------------
-ANNOgesic is a modular, command-line tool that can
-integrate different types of RNA-Seq data like dRNA-Seq or RNA-Seq
-generated after transcript fragmentation and generates high quality
-genome annotations. It can detect genes, CDSs/tRNAs/rRNAs, 
-transcription starting sites (TSS) and processing sites, transcripts, 
-terminators, untranslated regions (UTR) as well as small RNAs (sRNA), 
-small open reading frames (sORF), circular RNAs, CRISPR related RNAs, 
-riboswitches and RNA-thermometers. It can also perform RNA-RNA
-and protein-protein interactions prediction. Furthermore, it groups
-genes into operons and sub-operons and reveal promoter motifs. It can
-also allocate GO term and subcellular localization to genes. Several
-of ANNOgesic features are new implementation while others are
-performed and improved by third-party tools and for some of them
-adaptive parameter-optimizations were included. Additionally, numerous
-visualization and statistics help the user quickly evaluated feature
-predictions resulting from an ANNOgesic analysis. The tool is
-modular and was heavily tested with several RNA-Seq data set from
-bacterial as well as archaeal samples.
+
+ANNOgesic is the swiss army knife for RNA-Seq based annotation of
+bacterial/archaeal genomes.
+
+It is a modular, command-line tool that can integrate different types
+of RNA-Seq data based on dRNA-Seq (differential RNA-Seq) or RNA-Seq
+protocols that inclusde transcript fragmentation to generate high
+quality genome annotations. It can detect genes, CDSs/tRNAs/rRNAs,
+transcription starting sites (TSS) and processing sites, transcripts,
+terminators, untranslated regions (UTR) as well as small RNAs (sRNA),
+small open reading frames (sORF), circular RNAs, CRISPR related RNAs,
+riboswitches and RNA-thermometers. It can also perform RNA-RNA and
+protein-protein interactions prediction. Furthermore, it groups genes
+into operons and sub-operons and reveal promoter motifs. It can also
+allocate GO term and subcellular localization to genes. Several of
+ANNOgesic features are new implementations while other build on well
+known third-party tools for which it offers adaptive
+parameter-optimizations. Additionally, numerous visualization and
+statistics help the user to quickly evaluat feature predictions
+resulting from an ANNOgesic analysis. The tool was heavily tested
+with several RNA-Seq data set from bacterial as well as archaeal
+samples.
 
 Documentation
 -------------
 
 Documentation can be found on
-`here <http://pythonhosted.org/ANNOgesic>`__.
+`here <http://annogesic.readthedocs.io/en/latest/index.html>`__.
 
 Installation
 ------------
@@ -42,7 +46,7 @@ Short version (if you have all the requirements installed):
     $ pip3 install ANNOgesic
 
 If you want to know the requirement, please refer to 
-`Documentation <http://pythonhosted.org/ANNOgesic/>`__.
+`Documentation <http://annogesic.readthedocs.io/en/latest/index.html>`__.
 
 Arguments
 -------------
@@ -109,7 +113,7 @@ License
 -------
 
 `ISC <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
-Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhosted.org/ANNOgesic/license.html>`__
+Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.readthedocs.io/en/latest/license.html>`__
 
 Contact
 -------

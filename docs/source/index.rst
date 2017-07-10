@@ -124,7 +124,7 @@ License
 =======
 
 `ISC <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
-Consortium license ~ simplified BSD license) - see `LICENSE <https://pythonhosted.org/ANNOgesic/license.html>`__
+Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.readthedocs.io/en/latest/license.html>`__
 
 Cite
 ====
