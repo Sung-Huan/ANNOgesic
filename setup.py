@@ -5,12 +5,12 @@ except ImportError:
 
 setup(
     name='ANNOgesic',
-    version='0.6.10',
+    version='0.6.11',
     packages=['annogesiclib'],
     author='Sung-Huan Yu',
     author_email='sung-huan.yu@uni-wuerzburg.de',
     description='ANNOgesic - A tool for bacterial/archaeal RNA-Seq based genome annotations',
-    url='',
+    url='https://github.com/Sung-Huan/ANNOgesic',
     install_requires=[
         "biopython >= 1.65",
         "matplotlib >= 1.5.0",
