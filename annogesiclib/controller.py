@@ -220,16 +220,18 @@ class Controller(object):
             sys.exit()
         self._args.ratt_path = self.check_execute_file(self._args.ratt_path)
         self.check_multi_files(
-                [self._args.updated_fasta_files, self._args.related_fasta_files],
-                ["--updated_fasta_files", "--closed_fasta_files"])
+                [self._args.target_fasta_files, self._args.related_fasta_files],
+                ["--target_fasta_files", "--closed_fasta_files"])
         self.check_parameter([self._args.element, self._args.compare_pair],
                              ["--element", "--compare_pair"])
+        project_creator.create_subfolders(
+            self._paths.required_folders("get_target_fasta"))
         project_creator.create_subfolders(
             self._paths.required_folders("annotation_transfer"))
         args_ratt = self.args_container.container_ratt(
             self._args.ratt_path, self._args.element, self._args.transfer_type,
             self._args.related_embl_files, self._args.related_gbk_files,
-            self._args.updated_fasta_files, self._args.related_fasta_files,
+            self._args.target_fasta_files, self._args.related_fasta_files,
             self._paths.ratt_folder, self._args.convert_to_gff_rnt_ptt,
             self._paths.tar_annotation_folder, self._args.compare_pair)
         ratt = RATT(args_ratt)

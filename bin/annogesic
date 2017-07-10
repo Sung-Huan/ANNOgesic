@@ -125,8 +125,8 @@ def main():
         "--related_fasta_files", "-cf", required=True, nargs='+',
         help="The paths of the fasta files of the related species.")
     RATT_basic.add_argument(
-        "--updated_fasta_files", "-uf", required=True, nargs='+',
-        help="The paths of updated fasta files.")
+        "--target_fasta_files", "-tf", required=True, nargs='+',
+        help="The paths of the target fasta files.")
     RATT_add = RATT_parser.add_argument_group(
         'additional arguments')
     RATT_add.add_argument(

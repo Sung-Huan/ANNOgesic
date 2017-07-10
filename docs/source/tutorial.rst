@@ -268,7 +268,7 @@ After setting the environment, we can try it.
     anngesic annotation_transfer \
         --related_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
         --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        --updated_fasta_files ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
+        --target_fasta_files ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
                               ANNOgesic/output/updated_references/fasta_files/test_case2.fa \
         --element chromosome \
         --transfer_type Strain \

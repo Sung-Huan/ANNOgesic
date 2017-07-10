@@ -324,8 +324,8 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             The genbank can be ended by .gbk, .gbff or .gb
       --related_fasta_files RELATED_FASTA_FILES [RELATED_FASTA_FILES ...], -cf RELATED_FASTA_FILES [RELATED_FASTA_FILES ...]
                             The paths of the fasta files of the related species.
-      --updated_fasta_files UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...], -uf UPDATED_FASTA_FILES [UPDATED_FASTA_FILES ...]
-                            The paths of updated fasta files.
+      --target_fasta_files TARGET_FASTA_FILES [TARGET_FASTA_FILES ...], -uf TARGET_FASTA_FILES [TARGET_FASTA_FILES ...]
+                            The paths of the target fasta files.
     
     additional arguments:
       --ratt_path RATT_PATH
