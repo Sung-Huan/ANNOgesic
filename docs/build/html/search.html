@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Search &mdash; ANNOgesic 0.6.9 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="ANNOgesic 0.6.9 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html" class="icon icon-home"> ANNOgesic
+        
+
+        
+          
+          <img src="_static/annogesic_logo_white.png" class="logo" />
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">ANNOgesic - THE tool for bacterial/archaeal RNA-Seq based genome annotations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#table-of-content">Table of content</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="required.html#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#github">Github</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="docker.html">Docker image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#create-create-analysis-folder">create (create analysis folder)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#get-input-files-download-required-files">get_input_files (download required files)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#update-genome-fasta-update-reference-genome-fasta-file">update_genome_fasta (update reference genome fasta file)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#annotation-transfer-annotation-transfer">annotation_transfer (annotation transfer)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#snp-snp-calling">snp (SNP calling)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#transcript-transcript-detection">transcript (transcript detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#terminator-terminator-detection">terminator (terminator detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#utr-utr-detection">utr (UTR detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#srna-srna-detection">srna (sRNA detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#sorf-sorf-detection">sorf (sORF detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#promoter-promoter-motif-detection">promoter (Promoter motif detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#operon-operon-detection">operon (Operon detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#circrna-circular-rna-detection">circrna (circular RNA detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#go-term-go-term-retrieving">go_term (GO term retrieving)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#srna-target-srna-target-prediction">srna_target (sRNA target prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#ppi-network-protein-protein-interaction-network-detection">ppi_network (protein-protein interaction network detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#localization-subcellular-localization-prediction">localization (subcellular localization prediction)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#riboswitch-thermometer-riboswitch-and-rna-thermometer-detection">riboswitch_thermometer (riboswitch and RNA thermometer detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html">Tutorial of ANNOgesic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#generating-a-project">Generating a project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#retrieving-the-genome-sequences-and-annotation-files">Retrieving the genome sequences and annotation files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#retrieving-wiggle-and-read-files">Retrieving wiggle and read files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#improving-the-reference-genome">Improving the reference genome</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#generating-annotation-files">Generating annotation files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#performing-transcript-detection">Performing transcript detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#prediction-of-terminator">Prediction of terminator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#generating-utr">Generating UTR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#detecting-operon-and-suboperon">Detecting operon and suboperon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#promoter-motif-detection">Promoter motif detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#prediction-of-srna-and-sorf">Prediction of sRNA and sORF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#performing-srna-target-prediction">Performing sRNA target prediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#mapping-and-detecting-of-circular-rna">Mapping and detecting of circular RNA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#snp-calling">SNP calling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#mapping-gene-ontology">Mapping Gene ontology</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#generating-riboswitch-and-rna-thermometer">Generating riboswitch and RNA thermometer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#detection-of-crispr">Detection of CRISPR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#producing-the-screenshots">Producing the screenshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#coloring-the-screenshots">Coloring the screenshots</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="questions.html">Q and A</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#download">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#source-code">Source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cite">Cite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#contact">Contact</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="required.html">Required tools or databases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="required.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="required.html#databases">Databases</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#github">Github</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker">Docker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#pip3">pip3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subcommands.html">ANNOgesic&#8217;s subcommands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-format-of-filename">The format of filename</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#the-input-format-of-libraries-for-running-annogesic">The input format of libraries for running ANNOgesic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#create-create-analysis-folder">create (create analysis folder)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#get-input-files-download-required-files">get_input_files (download required files)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#update-genome-fasta-update-reference-genome-fasta-file">update_genome_fasta (update reference genome fasta file)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#annotation-transfer-annotation-transfer">annotation_transfer (annotation transfer)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#snp-snp-calling">snp (SNP calling)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#tss-ps-tss-and-processing-site-prediction">tss_ps (TSS and processing site prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#transcript-transcript-detection">transcript (transcript detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#terminator-terminator-detection">terminator (terminator detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#utr-utr-detection">utr (UTR detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#srna-srna-detection">srna (sRNA detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#sorf-sorf-detection">sorf (sORF detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#promoter-promoter-motif-detection">promoter (Promoter motif detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#operon-operon-detection">operon (Operon detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#circrna-circular-rna-detection">circrna (circular RNA detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#go-term-go-term-retrieving">go_term (GO term retrieving)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#srna-target-srna-target-prediction">srna_target (sRNA target prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#ppi-network-protein-protein-interaction-network-detection">ppi_network (protein-protein interaction network detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#localization-subcellular-localization-prediction">localization (subcellular localization prediction)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#riboswitch-thermometer-riboswitch-and-rna-thermometer-detection">riboswitch_thermometer (riboswitch and RNA thermometer detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#crispr-crispr-detection">crispr (CRISPR detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#optimize-tss-ps-optimization-of-tss-and-processing-site-detection">optimize_tss_ps (optimization of TSS and processing site detection)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#screenshot-screenshot-generation">screenshot (screenshot generation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#colorize-screenshot-tracks-colorize-the-tracks-of-screenshots">colorize_screenshot_tracks (colorize the tracks of screenshots)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcommands.html#merge-features-merge-all-annotation-features">merge_features (merge all annotation features)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial of ANNOgesic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#generating-a-project">Generating a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#retrieving-the-genome-sequences-and-annotation-files">Retrieving the genome sequences and annotation files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#retrieving-wiggle-and-read-files">Retrieving wiggle and read files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#improving-the-reference-genome">Improving the reference genome</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#generating-annotation-files">Generating annotation files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#tss-and-processing-site-prediction-and-optimization">TSS and processing site prediction and optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#performing-transcript-detection">Performing transcript detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prediction-of-terminator">Prediction of terminator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#generating-utr">Generating UTR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#detecting-operon-and-suboperon">Detecting operon and suboperon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#promoter-motif-detection">Promoter motif detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prediction-of-srna-and-sorf">Prediction of sRNA and sORF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#performing-srna-target-prediction">Performing sRNA target prediction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#mapping-and-detecting-of-circular-rna">Mapping and detecting of circular RNA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#snp-calling">SNP calling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#mapping-gene-ontology">Mapping Gene ontology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prediction-of-subcellular-localization">Prediction of Subcellular localization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#generating-protein-protein-interaction-network">Generating protein-protein interaction network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#generating-riboswitch-and-rna-thermometer">Generating riboswitch and RNA thermometer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#detection-of-crispr">Detection of CRISPR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#merge-all-features-to-be-one-gff-file">Merge all features to be one gff file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#producing-the-screenshots">Producing the screenshots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#coloring-the-screenshots">Coloring the screenshots</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="questions.html">Q and A</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ANNOgesic</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li></li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <noscript>
+  <div id="fallback" class="admonition warning">
+    <p class="last">
+      Please activate JavaScript to enable the search
+      functionality.
+    </p>
+  </div>
+  </noscript>
+
+  
+  <div id="search-results">
+  
+  </div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Sung-Huan Yu.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.9',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/searchtools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+  
+  <script type="text/javascript">
+    jQuery(function() { Search.loadIndex("searchindex.js"); });
+  </script>
+  
+  <script type="text/javascript" id="searchindexloader"></script>
+   
+
+
+</body>
+</html>
