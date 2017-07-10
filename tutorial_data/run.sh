@@ -115,7 +115,7 @@ annotation_transfer(){
         annotation_transfer \
 	-ce $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.embl \
 	-cf $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-	-uf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/NC_test.1.fa \
+	-tf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/NC_test.1.fa \
 	    $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case2.fa \
 	-e chromosome \
 	-t Strain \
