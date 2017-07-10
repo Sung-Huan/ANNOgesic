@@ -11,16 +11,18 @@ coverage:
 	@echo "check uni_report.."
 
 package:
-	python3 setup.py sdist
+	rm -rf dist
+	python3 setup.py bdist_wheel
 	rm -rf ANNOgesic.egg-info
 	ls dist/*
 
 build:
-	python3 setup.py bdist
+	# python3 setup.py bdist_wheel
+	 python3 setup.py bdist
 
 package_to_pypi:
-	python setup.py sdist register upload
-	@echo "Go to https://pypi.python.org/pypi/ANNOgesic/"
+	# python3 setup.py bdist_wheel upload
+	twine upload dist/*
 
 html_doc:
 	cd docs && make html && cd ..
