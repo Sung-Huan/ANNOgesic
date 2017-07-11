@@ -34,7 +34,7 @@ Documentation
 -------------
 
 Documentation can be found on
-`here <http://pythonhosted.org/ANNOgesic/>`__.
+`here <http://annogesic.readthedocs.io/en/latest/index.html>`__.
 
 Installation
 ------------
@@ -46,7 +46,7 @@ Short version (if you have all the requirements installed):
     $ pip3 install ANNOgesic
 
 If you want to know the requirement, please refer to 
-`Documentation <http://pythonhosted.org/ANNOgesic/>`__.
+`Documentation <http://annogesic.readthedocs.io/en/latest/index.html>`__.
 
 Arguments
 -------------
@@ -113,7 +113,7 @@ License
 -------
 
 `ISC <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
-Consortium license ~ simplified BSD license) - see `LICENSE <http://pythonhosted.org/ANNOgesic/>`__
+Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.readthedocs.io/en/latest/index.html#license>`__
 
 Contact
 -------
