@@ -113,7 +113,7 @@ License
 -------
 
 `ISC <https://en.wikipedia.org/wiki/ISC_license>`__ (Internet Systems
-Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.readthedocs.io/en/latest/index.html#license>`__
+Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.readthedocs.io/en/latest/license.html>`__
 
 Contact
 -------
