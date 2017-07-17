@@ -244,7 +244,7 @@ class TSSpredator(object):
             fasta = os.path.join(self.fasta_path, tss + ".fa")
             stat_file = "stat_compare_TSSpredator_manual_{0}.csv".format(tss)
             if os.path.exists(manual):
-                print("Merging and classiflying manual-detected "
+                print("Merging and classiflying manually-detected "
                       "TSSs for {0}".format(tss))
                 merge_manual_predict_tss(
                     predict, stat_file,

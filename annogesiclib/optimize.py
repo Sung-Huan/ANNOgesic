@@ -41,7 +41,7 @@ def optimize_tss(args_ops):
                     detect = True
             if not detect:
                 print("Error: There are genomes in --genome_lengths "
-                      "which is not contained in manual-detected "
+                      "which is not contained in manually-detected "
                       "TSS gff files!")
                 sys.exit()
     for man in os.listdir(manual_path):
