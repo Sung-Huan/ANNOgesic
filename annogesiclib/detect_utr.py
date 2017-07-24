@@ -91,7 +91,7 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
                           locus_tag, ta, source, out, start, end):
     attribute_string = ";".join(
              ["=".join(items) for items in [
-              ("ID", "_".join([ta.seq_id, "utr5", str(num_utr)])),
+              ("ID", "_".join([tss.seq_id, "utr5", str(num_utr)])),
               ("Name", "_".join(["5'UTR", name_utr])),
               ("length", str(length)),
               ("associated_cds", cds_name),
@@ -146,7 +146,7 @@ def detect_cds(cdss, gene):
                 near_cds = cds
                 check_utr = True
                 cds_name = get_feature(cds)
-        else:
+        if not detect:
             if "locus_tag" in cds.attributes.keys():
                 if gene.attributes["locus_tag"] == cds.attributes["locus_tag"]:
                     near_cds = cds
@@ -215,7 +215,7 @@ def check_associated_TSSpredator(genes, tss, cdss, check_utr, cds_name, locus):
                                 near_cds = cds
                                 check_utr = True
                                 cds_name = get_feature(cds)
-                        else:
+                        if not check_utr:
                             if "locus_tag" in cds.attributes.keys():
                                 if (gene.attributes["locus_tag"] ==
                                         cds.attributes["locus_tag"]):

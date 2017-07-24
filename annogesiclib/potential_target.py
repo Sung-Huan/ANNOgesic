@@ -67,7 +67,7 @@ def check_parent_gene(cds, genes):
                     cds.attributes["Parent"].split(",")):
                 target_gene = gene
                 break
-        else:
+        if target_gene is None:
             if (gene.seq_id == cds.seq_id) and (
                     gene.strand == cds.strand):
                 if ((cds.start <= gene.start) and (
