@@ -362,8 +362,8 @@ class Controller(object):
             self._args.replicate_frag, self._args.table_best,
             self._args.min_loop_length, self._args.max_loop_length,
             self._args.min_stem_length, self._args.max_stem_length,
-            self._args.min_u_tail_length, self._args.miss_rate,
-            self._args.range_u_tail, self._args.keep_multi_term,
+            self._args.min_u_tail, self._args.miss_rate,
+            self._args.mutation_u_tail, self._args.keep_multi_term,
             self._args.window_size, self._args.window_shift)
         terminator = Terminator(args_term)
         terminator.run_terminator(args_term)
@@ -491,6 +491,12 @@ class Controller(object):
                 print("Error: The TSS has to be provided "
                       "if you want to compute UTR-derived sRNA!")
                 sys.exit()
+        if self._args.search_poly_u != 0:
+            if self._args.fasta_files is None:
+                print("Error: The fasta files have to be provided "
+                      "if you want to extend 3'end of sRNA by "
+                      "searching poly U tail!")
+                sys.exit()
         project_creator.create_subfolders(self._paths.required_folders("srna"))
         args_srna = self.args_container.container_srna(
                 self._args.rnafold_path, self._args.relplot_path,
@@ -532,7 +538,8 @@ class Controller(object):
                 self._args.ignore_hypothetical_protein, self._args.tss_source,
                 self._args.min_all_utr_coverage, self._args.promoter_tables,
                 self._args.ranking_time_promoter, self._args.promoter_names,
-                self._args.compute_sec_structures)
+                self._args.compute_sec_structures, self._args.search_poly_u,
+                self._args.min_u_poly_u, self._args.mutation_poly_u)
         srna = sRNADetection(args_srna)
         srna.run_srna_detection(args_srna)
 

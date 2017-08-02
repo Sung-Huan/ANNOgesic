@@ -70,32 +70,13 @@ class TestGetPolyT(unittest.TestCase):
         cands = gpt.detect_candidates(
             seq, sec, "test", "aaa", 30, 58,
             "gene_0", "gene_1", "+", args, "10-24", "70-100")
-        refs = [{'strain': 'aaa', 'print': False, 'l_stem': 4,
-                 'parent_m': 'gene_1', 'parent_p': 'gene_0',
-                 'detect_m': False, 'ut': 4, 'start': 27,
-                 'length': 12, 'loop': 4, 'end': 58, 'miss': 0, 'r_stem': 4,
-                 'name': 'test', 'detect_p': False, 'strand': '+',
-                 "p_pos": "10-24", "m_pos": "70-100"},
-                {'strain': 'aaa', 'print': False, 'l_stem': 5,
-                 'parent_m': 'gene_1', 'parent_p': 'gene_0',
-                 'detect_m': False, 'ut': 5, 'start': 26,
-                 'length': 14, 'loop': 4, 'end': 59, 'miss': 0, 'r_stem': 5,
-                 'name': 'test', 'detect_p': False, 'strand': '+',
-                 "p_pos": "10-24", "m_pos": "70-100"},
-                {'strain': 'aaa', 'print': False, 'l_stem': 6,
-                 'parent_m': 'gene_1', 'parent_p': 'gene_0',
-                 'detect_m': False, 'ut': 6, 'start': 25,
-                 'length': 16, 'loop': 4, 'end': 60, 'miss': 0, 'r_stem': 6,
-                 'name': 'test', 'detect_p': False, 'strand': '+',
-                 "p_pos": "10-24", "m_pos": "70-100"},
-                {'strain': 'aaa', 'print': False, 'l_stem': 7,
-                 'parent_m': 'gene_1', 'parent_p': 'gene_0',
-                 'detect_m': False, 'ut': 6, 'start': 24,
-                 'length': 20, 'loop': 4, 'end': 63, 'miss': 2, 'r_stem': 9,
-                 'name': 'test', 'detect_p': False, 'strand': '+',
-                 "p_pos": "10-24", "m_pos": "70-100"}]
-        for index in range(len(cands)):
-            self.assertDictEqual(cands[index], refs[index])
+        refs = {'strand': '+', 'parent_m': 'gene_1', 'start': 32,
+                'm_pos': '70-100', 'end': 60, 'detect_p': False,
+                'name': 'test', 'detect_m': False, 'strain': 'aaa',
+                'length': 23, 'print': False, 'ut': 6, 'loop': 4,
+                'p_pos': '10-24', 'r_stem': 10, 'parent_p': 'gene_0',
+                'miss': 2, 'l_stem': 9}
+        self.assertDictEqual(cands[0], refs)
 
     def test_check_parent(self):
         term = {"strain": "aaa", "start": 11, "end": 14}

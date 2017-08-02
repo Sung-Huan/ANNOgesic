@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.15"
+__version__ = "0.6.16"
 
 def main():
     print("""
@@ -556,14 +556,11 @@ def main():
         help="The percentage of nucleotides which can be no pair in the stem. "
         "Default is 0.25.")
     Terminator_add.add_argument(
-        "--min_u_tail_length", "-mu", default=3, type=int,
-        help="The minimum U-tail length of terminator. Default is 3 nts.")
+        "--min_u_tail", "-mu", default=5, type=int,
+        help="The minimum number of U in poly U-tail of terminator. Default is 5.")
     Terminator_add.add_argument(
-        "--range_u_tail", "-ru", default=6, type=int,
-        help="The range (nucleotides) for detection of U-tail. For example, "
-        "if --range_u_tail is 6 and --min_u_tail_length is 3, "
-        "and there are 3 Us within 6 nts, This candidate will be assigned as "
-        "the terminator which has poly U-tail. Default is 6.")
+        "--mutation_u_tail", "-uu", default=2, type=int,
+        help="The number of nts which are not U can be tolerated. Default is 2.")
     Terminator_add.add_argument(
         "--keep_multi_term", "-kp", default=False, action="store_true",
         help="Sometimes, one gene is associated with multiple terminators "
@@ -806,7 +803,7 @@ def main():
         "--fasta_files", "-f", default=None, nargs='+',
         help="paths of fasta files of reference genome, If \"sec_str\", "
         "\"blast_nr\" or \"blast_srna\" is assigned to "
-        "--filter_info, fasta files are required. ")
+        "--filter_info or --search_poly_u is not 0, fasta files are required. ")
     sRNA_basic.add_argument(
         "--compute_sec_structures", "-cs", default=False, action="store_true",
         help="Computing secondary structures of sRNAs. Default is False.")
@@ -1066,6 +1063,19 @@ def main():
         "--overlap_percent_cds", "-oc", default=0.5,
         help="The maximum ratio of overlapping between CDS and sRNA candidates. "
         "It only works if --detect_srna_in_cds is true. Default is 0.5")
+    sRNA_add.add_argument(
+        "--search_poly_u", "-sp", default=15, type=int,
+        help="The tolerance length for searching poly U tail of sRNA. "
+        "If this value is assigned by 0, the 3'end of sRNA will not be "
+        "extended by searching poly U tail. Default is 15.")
+    sRNA_add.add_argument(
+        "--min_u_poly_u", "-np", default=5, type=int,
+        help="The minimum number of U that poly U tail should contain. "
+        "Default is 5.")
+    sRNA_add.add_argument(
+        "--mutation_poly_u", "-mp", default=2, type=int,
+        help="The minimum number of nts which are not U can be tolerated. "
+        "Default is 2.")
     sRNA_add.add_argument(
         "--ignore_hypothetical_protein", "-ih", default=False,
         action="store_true",

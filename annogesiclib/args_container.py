@@ -524,8 +524,8 @@ class ArgsContainer(object):
             fuzzy_within_gene, fuzzy_downstream_gene, transtermhp_folder,
             tex_notex_libs, frag_libs, tex_notex, replicates_tex,
             replicates_frag, table_best, min_loop_length, max_loop_length,
-            min_stem_length, max_stem_length, min_AT_tail_length, miss_rate,
-            range_u, keep_multi, window, shift):
+            min_stem_length, max_stem_length, min_AT_tail, miss_rate,
+            mut_u, keep_multi, window, shift):
         self.TransTermHP_path = TransTermHP_path
         self.expterm_path = expterm_path
         self.RNAfold_path = RNAfold_path
@@ -571,9 +571,9 @@ class ArgsContainer(object):
         self.max_loop = max_loop_length
         self.min_stem = min_stem_length
         self.max_stem = max_stem_length
-        self.at_tail = min_AT_tail_length
+        self.at_tail = min_AT_tail
         self.miss_rate = miss_rate
-        self.range_u = range_u
+        self.mut_u = mut_u
         self.keep_multi = keep_multi
         self.window = window
         self.shift = shift
@@ -689,7 +689,8 @@ class ArgsContainer(object):
                        terminator_files, terminator_fuzzy_in_sRNA,
                        terminator_fuzzy_out_sRNA, ignore_hypothetical_protein,
                        TSS_source, min_utr_coverage, promoter_tables,
-                       ranking_promoter, promoter_name, compute_sec_str):
+                       ranking_promoter, promoter_name, compute_sec_str,
+                       len_u, num_u, mut_u):
         self.rnafold = rnafold
         self.compute_sec_str = compute_sec_str
         self.para_blast = para_blast
@@ -700,6 +701,9 @@ class ArgsContainer(object):
         self.blastdb = blastdb
         self.out_folder = srna_folder
         self.utr_srna = UTR_derived_sRNA
+        self.len_u = len_u
+        self.num_u = num_u
+        self.mut_u = mut_u
         self.gffs = self._gen_copy_new_folder(
                 [".gff"], srna_folder, "temp_anno", annotation_files,
                 ["--annotation_files"])

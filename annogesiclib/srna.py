@@ -25,6 +25,7 @@ from annogesiclib.sRNA_antisense import srna_antisense
 from annogesiclib.args_container import ArgsContainer
 from annogesiclib.lib_reader import read_wig, read_libs
 from annogesiclib.extract_sec_info import extract_info_sec, modify_header
+from annogesiclib.get_srna_poly_u import get_srna_poly_u
 
 
 class sRNADetection(object):
@@ -831,6 +832,14 @@ class sRNADetection(object):
                                   "_".join([prefix, "sRNA.gff"])),
                                   out_table, args_srna)
 
+    def _get_poly_u(self, prefixs, args_srna):
+        print("Searching poly U tail ...")
+        for prefix in prefixs:
+            get_srna_poly_u("_".join([self.prefixs["basic"], prefix]),
+                            os.path.join(self.fasta_path, prefix + ".fa"),
+                            "_".join([self.prefixs["merge_table"], prefix]),
+                            args_srna)
+
     def run_srna_detection(self, args_srna):
         self._check_necessary_file(args_srna)
         self.multiparser.parser_gff(args_srna.trans, "transcript")
@@ -839,6 +848,7 @@ class sRNADetection(object):
         if args_srna.import_info is not None:
             args_srna.import_info = self._import_info_format(args_srna.import_info)
         prefixs = self._run_program(args_srna)
+        self._get_poly_u(prefixs, args_srna)
         self._filter_srna(args_srna, prefixs)
         for prefix in prefixs:
             shutil.copyfile("_".join([self.prefixs["basic"], prefix]),

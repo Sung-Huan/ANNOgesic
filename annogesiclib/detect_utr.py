@@ -130,9 +130,10 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
                                 start, end, tas, length, args_utr)
     if detect:
         name_utr = '%0*d' % (5, num_utr)
-        get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
-                              locus_tag, ta, args_utr.source, out, start, end)
-        num_utr += 1
+        if length >= 0:
+            get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
+                                  locus_tag, ta, args_utr.source, out, start, end)
+            num_utr += 1
     return num_utr
 
 

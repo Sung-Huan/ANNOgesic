@@ -106,55 +106,77 @@ def check_sec(sec, nts):
     return term_features, detects
 
 
+def check_u(seq, num_sec, nts, args_term):
+    if (len(seq) - num_sec) >= args_term.at_tail:
+        tmp_seq_num = 0
+        for nt in (seq[(len(seq) - num_sec):]):
+            nts["seq_num"] += 1
+            if (nt == "U") or (nt == "T"):
+                nts["ut"] += 1
+                tmp_seq_num = nts["seq_num"]
+            else:
+                nts["no_ut"] += 1
+                if nts["no_ut"] > args_term.mut_u:
+                    break
+        nts["no_ut"] = nts["no_ut"] - (nts["seq_num"] - tmp_seq_num)
+        nts["seq_num"] = tmp_seq_num - 1
+
 def detect_candidates(seq, sec, name, strain, start, end, parent_p, parent_m,
                       strand, args_term, p_pos, m_pos):
     '''check the criteria of sec str of terminator'''
     term_len = 2 * args_term.max_stem + 2 * (
                args_term.max_stem * args_term.miss_rate) + args_term.max_loop
     cands = []
-    for nts in range(0, len(seq) - 6):
-        ut = 0
-        for nt in seq[nts:nts + args_term.range_u]:
-            if (nt == "U") or (nt == "T"):
-                ut += 1
-        if (ut >= args_term.at_tail) and (nts > 10):
-            if sec[nts - 1] == ")":
-                term_features = {"st_pos": 0, "rights": 0, "lefts": 0,
-                                 "tmp_miss": 0, "real_miss": 0, "loop": 0,
-                                 "r_stem": 0, "l_stem": 0}
-                detects = {"detect_r": False, "detect_l": False,
-                           "conflict": False}
-                term_features, detects = check_sec(sec, nts)
-                if detects["conflict"] is False:
-                    total_length = (
-                        (nts) - (nts - term_features["st_pos"] + 1) + 1)
-                    term_features["l_stem"] = (
-                        total_length - term_features["r_stem"] -
-                        term_features["loop"])
-                    if (total_length <= term_len) and (
-                            term_features["loop"] <= args_term.max_loop) and (
-                            term_features["loop"] >= args_term.min_loop) and (
-                            ((term_features["r_stem"] +
-                              term_features["l_stem"] -
-                              term_features["real_miss"]) / 2) >=
-                            args_term.min_stem) and (
-                            ((term_features["r_stem"] +
-                              term_features["l_stem"] -
-                              term_features["real_miss"]) / 2) <=
-                            args_term.max_stem):
-                        if strand == "+":
-                            import_candidate(
-                                cands, term_features, strain,
-                                start + (nts - term_features["st_pos"]) - 10,
-                                start + nts - 1 + 10, ut, name, total_length,
-                                strand, parent_p, parent_m, p_pos, m_pos)
-                        else:
-                            import_candidate(
-                                cands, term_features, strain,
-                                end - (nts - 1) - 10,
-                                end - (nts - term_features["st_pos"]) + 10,
-                                ut, name, total_length, strand,
-                                parent_p, parent_m, p_pos, m_pos)
+    nts = {"ut": 0, "no_ut": 0, "seq_num": 0, "detect": False}
+    num_sec = 0
+    for st in reversed(sec):
+        if (st == "(") or (not nts["detect"]):
+            nts = {"ut": 0, "no_ut": 0, "seq_num": 0, "detect": False}
+        if (st == ")") and (not nts["detect"]):
+            check_u(seq, num_sec, nts, args_term)
+            if nts["ut"] >= args_term.at_tail:
+                stop = len(seq) - num_sec + nts["seq_num"]
+                if stop > 10:
+                    term_features = {"st_pos": 0, "rights": 0, "lefts": 0,
+                                     "tmp_miss": 0, "real_miss": 0, "loop": 0,
+                                     "r_stem": 0, "l_stem": 0}
+                    detects = {"detect_r": False, "detect_l": False,
+                               "conflict": False}
+                    term_features, detects = check_sec(sec, stop + 1)
+                    if detects["conflict"] is False:
+                        total_length = term_features["st_pos"] - nts["seq_num"]
+                        term_features["l_stem"] = (
+                            total_length - term_features["r_stem"] -
+                            term_features["loop"])
+                        if (total_length <= term_len) and (
+                                term_features["loop"] <= args_term.max_loop) and (
+                                term_features["loop"] >= args_term.min_loop) and (
+                                ((term_features["r_stem"] +
+                                  term_features["l_stem"] -
+                                  term_features["real_miss"]) / 2) >=
+                                args_term.min_stem) and (
+                                ((term_features["r_stem"] +
+                                  term_features["l_stem"] -
+                                  term_features["real_miss"]) / 2) <=
+                                args_term.max_stem):
+                            nts["detect"] = True
+                            if strand == "+":
+                                import_candidate(
+                                    cands, term_features, strain,
+                                    start + (len(sec[0:stop + 1]) - 
+                                             term_features["st_pos"]) - 1,
+                                    start + stop, nts["ut"], name,
+                                    total_length, strand, parent_p, parent_m,
+                                    p_pos, m_pos)
+                            else:
+                                import_candidate(
+                                    cands, term_features, strain,
+                                    end - (stop),
+                                    end - (len(sec[0:stop + 1]) - 
+                                           term_features["st_pos"]) + 1,
+                                    nts["ut"], name, total_length, strand,
+                                    parent_p, parent_m, p_pos, m_pos)
+        num_sec += 1
     return cands
 
 
@@ -310,6 +332,7 @@ def merge_cands(new_cands_gene, new_cands_ta):
 def get_seq_sec(s_h, sec_seq):
     '''extract the secondary structure information'''
     for line in s_h:
+        line = line.strip()
         if ("(" in line) or ("." in line) or (")" in line):
             line = line.split(" ")
             sec_seq["sec"] = line[0]

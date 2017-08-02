@@ -1041,9 +1041,9 @@ which have coverage significant decrease.
                                 [--max_loop_length MAX_LOOP_LENGTH]
                                 [--min_stem_length MIN_STEM_LENGTH]
                                 [--max_stem_length MAX_STEM_LENGTH]
-                                [--miss_rate MISS_RATE]
-                                [--min_u_tail_length MIN_U_TAIL_LENGTH]
-                                [--range_u_tail RANGE_U_TAIL] [--keep_multi_term]
+                                [--miss_rate MISS_RATE] [--min_u_tail MIN_U_TAIL]
+                                [--mutation_u_tail MUTATION_U_TAIL]
+                                [--keep_multi_term]
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -1167,15 +1167,12 @@ which have coverage significant decrease.
       --miss_rate MISS_RATE, -mr MISS_RATE
                             The percentage of nucleotides which can be no pair in
                             the stem. Default is 0.25.
-      --min_u_tail_length MIN_U_TAIL_LENGTH, -mu MIN_U_TAIL_LENGTH
-                            The minimum U-tail length of terminator. Default is 3
-                            nts.
-      --range_u_tail RANGE_U_TAIL, -ru RANGE_U_TAIL
-                            The range (nucleotides) for detection of U-tail. For
-                            example, if --range_u_tail is 6 and
-                            --min_u_tail_length is 3, and there are 3 Us within 6
-                            nts, This candidate will be assigned as the terminator
-                            which has poly U-tail. Default is 6.
+      --min_u_tail MIN_U_TAIL, -mu MIN_U_TAIL
+                            The minimum number of U in poly U-tail of terminator.
+                            Default is 5.
+      --mutation_u_tail MUTATION_U_TAIL, -uu MUTATION_U_TAIL
+                            The number of nts which are not U can be tolerated.
+                            Default is 2.
       --keep_multi_term, -kp
                             Sometimes, one gene is associated with multiple
                             terminators In default, it will only keep the highly-
@@ -1545,6 +1542,9 @@ this candidates will be removed.
                           [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
                           [--detect_srna_in_cds]
                           [--overlap_percent_cds OVERLAP_PERCENT_CDS]
+                          [--search_poly_u SEARCH_POLY_U]
+                          [--min_u_poly_u MIN_U_POLY_U]
+                          [--mutation_poly_u MUTATION_POLY_U]
                           [--ignore_hypothetical_protein]
                           [--ranking_time_promoter RANKING_TIME_PROMOTER]
     
@@ -1592,7 +1592,8 @@ this candidates will be removed.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             paths of fasta files of reference genome, If
                             "sec_str", "blast_nr" or "blast_srna" is assigned to
-                            --filter_info, fasta files are required.
+                            --filter_info or --search_poly_u is not 0, fasta files
+                            are required.
       --compute_sec_structures, -cs
                             Computing secondary structures of sRNAs. Default is
                             False.
@@ -1815,6 +1816,17 @@ this candidates will be removed.
                             The maximum ratio of overlapping between CDS and sRNA
                             candidates. It only works if --detect_srna_in_cds is
                             true. Default is 0.5
+      --search_poly_u SEARCH_POLY_U, -sp SEARCH_POLY_U
+                            The tolerance length for searching poly U tail of
+                            sRNA. If this value is assigned by 0, the 3'end of
+                            sRNA will not be extended by searching poly U tail.
+                            Default is 15.
+      --min_u_poly_u MIN_U_POLY_U, -np MIN_U_POLY_U
+                            The minimum number of U that poly U tail should
+                            contain. Default is 5.
+      --mutation_poly_u MUTATION_POLY_U, -mp MUTATION_POLY_U
+                            The minimum number of nts which are not U can be
+                            tolerated. Default is 2.
       --ignore_hypothetical_protein, -ih
                             For ignoring hypothetical proteins in the genome
                             annotation file. Default is False.
