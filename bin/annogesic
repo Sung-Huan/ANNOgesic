@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.16"
+__version__ = "0.6.17"
 
 def main():
     print("""
@@ -1138,7 +1138,7 @@ def main():
         "For example, my_lib_frag_forward.wig:frag:1:a:+ "
         "my_lib_frag_reverse.wig:frag:1:a:-.")
     sORF_basic.add_argument(
-        "--tex_notex", "-te", default=2, type=int,
+        "--tex_notex", "-te", default=2, type=int, choices=[1, 2],
         help="If the TEX+/- libraries are provided, this value is that a "
         "sORF should be detected in both (TEX+ and TEX-) or "
         "can be detected in only one library (TEX+ or TEX-). "
@@ -1166,23 +1166,25 @@ def main():
         help="The utr length for comparing TSS with sORF. "
         "The default number is 300.")
     sORF_add.add_argument(
-        "--min_length", "-lm",default=30,
-        help="The minimum residue length of sORF. Default is 30.")
+        "--min_length", "-ml",default=30, type=int,
+        help="The minimum nucleotide length of sORF. Default is 30.")
     sORF_add.add_argument(
-        "--max_length", "-lM",default=150,
-        help="The maximum residue length of sORF. Default is 150.")
+        "--max_length", "-Ml",default=300, type=int,
+        help="The maximum nucleotide length of sORF. Default is 300.")
     sORF_add.add_argument(
         "--cutoff_intergenic_coverage", "-ci", default=10, type=float,
-        help="The minimum coverage of intergenic sORF candidates.")
+        help="The minimum coverage of intergenic sORF candidates. "
+        "Default is 10.")
     sORF_add.add_argument(
         "--cutoff_antisense_coverage", "-ai", default=10, type=float,
-        help="The minimum coverage of antisense sORF candidates.")
+        help="The minimum coverage of antisense sORF candidates. "
+        "Default is 10.")
     sORF_add.add_argument(
         "--cutoff_5utr_coverage", "-cu5", default="p_0.5",
         help="The minimum coverage for 5'UTR derived sORF candidates. "
         "This value can be assigned by percentile (\"p\") or the amount of "
-        "reads (\"n\"). For example, p_0.05 means that the coverage of sORF "
-        "candidates should be higher than the 5 percentile of all 5'UTR "
+        "reads (\"n\"). For example, p_0.5 means that the coverage of sORF "
+        "candidates should be higher than the 50 percentile of all 5'UTR "
         "transcripts. n_10 means that the coverage of sORF candidates "
         "should be higher than 10 reads. Default is p_0.5.")
     sORF_add.add_argument(
@@ -1227,6 +1229,14 @@ def main():
         "--tolerance_rbs", "-tr", default=2, type=int,
         help="The number of nucleotides of ribosome binding sites allowed "
         "to be different from AGGAGG. Default is 2.")
+    sORF_add.add_argument(
+        "--tolerance_3end", "-t3", default=30, type=int,
+        help="The number of nucleotides can be extended from the end of "
+        "transcript for searching stop codon. Default is 30.")
+    sORF_add.add_argument(
+        "--tolerance_5end", "-t5", default=5, type=int,
+        help="The number of nucleotides can be extended from the starting "
+        "point of transcript for searching start codon. Default is 5.")
     sORF_add.add_argument(
         "--print_all_combination", "-pa", default=False, action="store_true",
         help="For printing all combinations of multiple start and stop codons. "
@@ -1766,7 +1776,7 @@ def main():
         help="Path of the project folder.")
     ribos_basic.add_argument(
         "--program", "-p", default="both",
-        choices=["riboswich", "thermometer", "both"],
+        choices=["riboswitch", "thermometer", "both"],
         help="Please choose the feature for the detection. "
         "The options can be \"riboswitch\", \"thermometer\", \"both\". "
         "Default is both.")
@@ -1828,18 +1838,6 @@ def main():
         "--tolerance_rbs", "-tr", default=2, type=int,
         help="The number of nucleotides of ribosome binding site "
         "allow to be different with AGGAGG. Default is 2.")
-    ribos_add.add_argument(
-        "--start_codon", "-ac", default=["ATG"], nargs='+',
-        help="The types of start codon. If multiple types need to be "
-        "assigned, please use spaces to separate them. Default is ATG.")
-    ribos_add.add_argument(
-        "--max_dist_rbs", "-Mr", default=14, type=int,
-        help="The maximum distance (nucleotides) between the ribosome binding "
-        "site (Shine-Dalgarno sequence) and the start codon. Default is 14.")
-    ribos_add.add_argument(
-        "--min_dist_rbs", "-mr", default=5, type=int,
-        help="The minimum distance (nucleotides) between the ribosome binding "
-        "site (Shine-Dalgarno sequence) and the start codon. Default is 5.")
     ribos_parser.set_defaults(func=Ribos)
     
     # Parameters of CRISPR finder

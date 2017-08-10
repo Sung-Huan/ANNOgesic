@@ -40,7 +40,7 @@ class TestsORFIntergenic(unittest.TestCase):
         tran_file = os.path.join(self.test_folder, "tran.gff")
         gen_file(gff_file, self.example.gff_file)
         gen_file(tran_file, self.example.tran_file)
-        si.get_intergenic(gff_file, tran_file, out_file, True, False)
+        si.get_intergenic(gff_file, tran_file, out_file, True, False, 5, 75)
         datas = import_data(out_file)
         self.assertEqual("\n".join(datas), self.example.out_file)
 
@@ -50,9 +50,9 @@ class Example(object):
 aaa	Refseq	CDS	800	1100	.	+	.	ID=trna1;Name=tRNA_00001"""
     tran_file = """aaa	Refseq	transcript	19	100	.	+	.	ID=tran0;Name=Tran_00000
 aaa	Refseq	transcript	600	1800	.	+	.	ID=tran1;Name=Tran_00001"""
-    out_file = """aaa	intergenic	sORF	19	100	.	+	.	ID=aaa_sorf0;Name=sORF_00000
-aaa	UTR_derived	sORF	624	799	.	+	.	ID=aaa_sorf1;Name=sORF_00001;UTR_type=interCDS
-aaa	UTR_derived	sORF	1101	1800	.	+	.	ID=aaa_sorf2;Name=sORF_00002;UTR_type=3utr"""
+    out_file = """aaa	intergenic	sORF	14	175	.	+	.	ID=aaa_sorf0;Name=sORF_00000
+aaa	UTR_derived	sORF	619	874	.	+	.	ID=aaa_sorf1;Name=sORF_00001;UTR_type=interCDS
+aaa	UTR_derived	sORF	1096	1875	.	+	.	ID=aaa_sorf2;Name=sORF_00002;UTR_type=3utr"""
     gff_dict = [
         {"seq_id": "aaa", "source": "Refseq", "feature": "gene", "start": 150,
          "end": 200, "phase": ".", "strand": "+", "score": "."},

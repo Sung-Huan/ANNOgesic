@@ -16,7 +16,7 @@ class Mock_func(object):
                             utr_detect, test3, test2):
         pass
 
-    def mock_get_intergenic(self, gff, tran, inter, utr_detect, hypo):
+    def mock_get_intergenic(self, gff, tran, inter, utr_detect, hypo, extend_5, extend_3):
         pass
 
     def mock_check_gff(self, gffs):
@@ -131,6 +131,8 @@ class TestsORFDetection(unittest.TestCase):
         args.gffs = self.test_folder
         args.hypo = False
         args.utr_detect = True
+        args.extend_5 = 5
+        args.extend_3 = 75
         prefixs = self.sorf._compare_tran_cds(args)
         self.assertListEqual(prefixs, ["test"])
 

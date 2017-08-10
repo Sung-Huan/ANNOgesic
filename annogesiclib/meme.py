@@ -251,7 +251,8 @@ class MEME(object):
             shutil.rmtree(os.path.join(args_pro.output_folder, "tmp_wig"))
         if "allfasta" in os.listdir(os.getcwd()):
             shutil.rmtree("allfasta")
-        shutil.rmtree("tmp")
+        if "tmp" in os.listdir(os.getcwd()):
+            shutil.rmtree("tmp")
 
     def _gen_table(self, output_folder, prefixs, combine, program):
         '''generate the promoter table'''

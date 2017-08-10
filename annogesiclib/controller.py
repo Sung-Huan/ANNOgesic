@@ -574,7 +574,8 @@ class Controller(object):
             self._args.rbs_not_after_tss, self._args.print_all_combination,
             self._args.best_no_srna, self._args.best_no_tss,
             self._args.ignore_hypothetical_protein,
-            self._args.min_rbs_distance, self._args.max_rbs_distance)
+            self._args.min_rbs_distance, self._args.max_rbs_distance,
+            self._args.tolerance_3end, self._args.tolerance_5end)
         sorf = sORFDetection(args_sorf)
         sorf.run_sorf_detection(args_sorf)
 
@@ -840,8 +841,7 @@ class Controller(object):
             self._args.rfam_path, ribos_path,
             thermo_path, self._args.e_value,
             self._args.output_all, self._paths.database_folder,
-            self._args.tolerance, self._args.start_codon,
-            self._args.min_dist_rbs, self._args.max_dist_rbs,
+            self._args.tolerance,
             self._args.tolerance_rbs, self._args.utr_length)
         ribos = Ribos(args_ribo)
         ribos.run_ribos(args_ribo)

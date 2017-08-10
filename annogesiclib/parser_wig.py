@@ -24,17 +24,17 @@ class WigParser(object):
                         datas = line.split("\t")
                     if int(datas[0]) - 1 != pre_pos:
                         for pos in range(pre_pos + 1, int(datas[0])):
-                            yield assign_value(pos, 0, strand, strain, track)
+                            yield AssignValue(pos, 0, strand, strain, track)
                         pre_pos = int(datas[0])
                         first = True
                     if (int(datas[0]) - 1 == pre_pos) or (first):
                         pre_pos = int(datas[0])
                         first = False
-                        yield assign_value(datas[0], datas[1],
+                        yield AssignValue(datas[0], datas[1],
                                            strand, strain, track)
 
 
-class assign_value(object):
+class AssignValue(object):
 
     def __init__(self, pos, coverage, strand, strain, track):
         self.pos = int(pos)

@@ -44,13 +44,9 @@ def detect_site(inters, args_ribo):
                         miss += 1
                     num += 1
             if miss <= args_ribo.fuzzy_rbs:
-                for start_codon in args_ribo.start_codons:
-                    if (start_codon in inter["seq"][
-                            nts + (6 + args_ribo.start_rbs - 1):
-                            nts + (6 + args_ribo.end_rbs)]):
-                        rbss.append(inter)
-                        detect = True
-                        break
+                rbss.append(inter)
+                detect = True
+                break
             if detect:
                 break
     return rbss

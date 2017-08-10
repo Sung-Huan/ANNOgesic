@@ -63,6 +63,7 @@ class sORFDetection(object):
         '''detect the sORF based on start and stop codon 
         and ribosome binding site'''
         for prefix in prefixs:
+            print("Searching sORFs of {0}".format(prefix))
             if self.srna_path is not None:
                 srna_file = os.path.join(self.srna_path,
                                          "_".join([prefix, "sRNA.gff"]))
@@ -126,7 +127,8 @@ class sORFDetection(object):
                                "_".join([prefix, "transcript.gff"])),
                                os.path.join(args_sorf.out_folder,
                                "_".join([prefix, "inter.gff"])),
-                               args_sorf.utr_detect, args_sorf.hypo)
+                               args_sorf.utr_detect, args_sorf.hypo,
+                               args_sorf.extend_5, args_sorf.extend_3)
         return prefixs
 
     def run_sorf_detection(self, args_sorf):

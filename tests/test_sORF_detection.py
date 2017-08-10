@@ -182,10 +182,10 @@ class TestsORFDetection(unittest.TestCase):
                   "start_TSS": "2"}]
         finals = sd.merge(sorfs, seq)
         self.assertDictEqual(finals[0], {
-            'rbs': [1], 'end': 6, 'starts': ['2'], 'strand': '+',
-            'start_TSS': '1', 'type': '3utr', 'start': 2, 'seq': 'AGGAG',
-            'candidate': ['2-6_TSS:1_RBS:1'], 'ends': ['10', '6'],
-            'strain': 'aaa'})
+            'start_TSS': '1', 'rbs': [1, 2], 'strand': '+', 'strain': 'aaa',
+            'start': 2, 'candidate': ['2-6_TSS:1_RBS:1', '5-15_TSS:2_RBS:2'],
+            'ends': ['10', '6', '15'], 'starts': ['2', '5'], 'type': '3utr',
+            'end': 15, 'seq': 'AGGAGGCCGCTATG'})
 
     def test_assign_utr_cutoff(self):
         coverages = {"3utr": "median", "5utr": 20,
@@ -338,7 +338,7 @@ class TestsORFDetection(unittest.TestCase):
         args.max_len = 300
         args.table_best = True
         sd.coverage_and_output(sorfs, "median", wigs, out_g, out_t,
-                               "best", seq, "cover", args, "texs")
+                               "best", seq, "cover", args, "texs", "final")
         sd.get_coverage = copy.deepcopy(get_coverage)
         self.assertEqual(out_g.getvalue(), (
             "##gff-version 3\naaa\tANNOgesic\tsORF\t10\t15\t."

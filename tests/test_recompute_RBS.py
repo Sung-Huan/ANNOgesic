@@ -62,8 +62,9 @@ class TestRecomputeRBS(unittest.TestCase):
             "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t5\t12")
         data = import_data(out_seq)
         self.assertEqual(
-            "\n".join(data),
-            ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC")
+            "\n".join(data), (
+            ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC\n"
+            ">riboswitch_5|Staphylococcus_aureus_HG003|+|SAOUHSC_00013|14|21\nATTATTAC"))
 
     def test_compare_first_result(self):
         out = StringIO()

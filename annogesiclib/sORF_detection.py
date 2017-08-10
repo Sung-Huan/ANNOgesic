@@ -143,6 +143,10 @@ def detect_start_stop(inters, seq, args_sorf):
     '''check the length is 3 -times or not'''
     sorfs = []
     for inter in inters:
+        if inter.start <= 0:
+            inter.start = 1
+        if inter.end >= len(seq[inter.seq_id]):
+            inter.end = len(seq[inter.seq_id])
         fasta = Helper().extract_gene(
                 seq[inter.seq_id], inter.start, inter.end, inter.strand)
         starts = []
@@ -336,7 +340,6 @@ def compare_sorf_srna(sorfs, srnas, srna_gff):
 
 
 def import_overlap(sorf2, final, sorf1, first):
-    sorf2["print"] = True
     if final["start"] > sorf2["start"]:
         final["start"] = sorf2["start"]
     if final["end"] < sorf2["end"]:
@@ -379,8 +382,7 @@ def merge(sorfs, seq):
             for sorf2 in sorfs:
                 overlap = False
                 if (final["strain"] == sorf2["strain"]) and (
-                        final["strand"] == sorf2["strand"]) and (
-                        final["rbs"] == sorf2["rbs"]):
+                        final["strand"] == sorf2["strand"]):
                     if (final["start"] >= sorf2["start"]) and (
                             final["end"] <= sorf2["end"]):
                         overlap = True
@@ -398,7 +400,9 @@ def merge(sorfs, seq):
                     elif (sorf2["start"] > final["end"]):
                         break
                     if overlap:
-                        first = import_overlap(sorf2, final, sorf1, first)
+                        sorf2["print"] = True
+                        first = import_overlap(sorf2, final,
+                                               sorf1, first)
             final["seq"] = Helper().extract_gene(
                     seq[final["strain"]], final["start"],
                     final["end"], final["strand"])
@@ -607,7 +611,7 @@ def assign_sorf(sorf, starts, ends, fasta):
             sorf["end"], sorf["strand"])
 
 
-def check_start_end(sorf, args_sorf, fasta):
+def check_start_end(sorf, args_sorf, fasta, run):
     '''check the start and end point which can form proper protein 
     or not (3 times)'''
     if (len(sorf["rbs"]) == 1) and (sorf["rbs"][0] == "NA"):
@@ -661,8 +665,10 @@ def check_start_end(sorf, args_sorf, fasta):
                             start not in starts):
                         if start not in starts:
                             starts.append(start)
-        assign_sorf(sorf, starts, ends, fasta)
-        check_candidates_srnas(sorf, args_sorf.min_rbs, args_sorf.max_rbs)
+        if (len(starts) != 0) and (len(ends) != 0):
+            assign_sorf(sorf, starts, ends, fasta)
+            if run == "final":
+                check_candidates_srnas(sorf, args_sorf.min_rbs, args_sorf.max_rbs)
 
 
 def detect_frame_shift(sorf):
@@ -784,15 +790,16 @@ def detect_utr_type(inter, utr_type, med_inters, wigs, strand, background):
 def median_score(lst, cutoff):
     '''If the cutoff is assigned by percentage, 
     it will get the corresponding number'''
-    if "p_" in cutoff:
-        per = float(cutoff.split("_")[-1])
-        sortedLst = sorted(lst)
-        lstLen = len(lst)
-        index = int((lstLen - 1) * per)
-        if lstLen != 0:
-            return sortedLst[index]
-        else:
-            return 0
+    if type(cutoff) is str:
+        if "p_" in cutoff:
+            per = float(cutoff.split("_")[-1])
+            sortedLst = sorted(lst)
+            lstLen = len(lst)
+            index = int((lstLen - 1) * per)
+            if lstLen != 0:
+                return sortedLst[index]
+            else:
+                return 0
     else:
         return cutoff
 
@@ -893,7 +900,8 @@ def get_best(sorfs, tss_file, srna_file, args_sorf):
                 tmp_sorf["start_TSS"] = tsss_datas[1]
                 if srna_file is not None:
                     tmp_sorf["sRNA"] = validate_srna(starts, ends, sorf)
-                    if (args_sorf.no_srna) and (tmp_sorf["sRNA"][0] == "NA"):
+                    if (args_sorf.no_srna) and (
+                        tmp_sorf["sRNA"][0] == "NA"):
                         final_sorfs.append(tmp_sorf)
                     elif not args_sorf.no_srna:
                         final_sorfs.append(tmp_sorf)
@@ -908,32 +916,34 @@ def get_best(sorfs, tss_file, srna_file, args_sorf):
     return final_sorfs
 
 
-def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
-                        file_type, fasta, coverages, args_sorf, texs):
+def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t, file_type,
+                        fasta, coverages, args_sorf, texs, run):
     '''get the coverage of sORF and print it out'''
-    out_g.write("##gff-version 3\n")
-    if args_sorf.print_all:
-        out_t.write("\t".join([
-            "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
-            "Ribosome_binding_site", "All_start_points", "All_stop_points",
-            "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
-            "Best_highest_coverage", "Best_lowest_coverage", "Track_detail",
-            "Seq", "Combinations"]) + "\n")
-    else:
-        out_t.write("\t".join([
-            "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
-            "Ribosome_binding_site", "All_start_points", "All_stop_points",
-            "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
-            "Best_highest_coverage", "Best_lowest_coverage",
-            "Track_detail", "Seq"]) + "\n")
+    if run == "final":
+        out_g.write("##gff-version 3\n")
+        if args_sorf.print_all:
+            out_t.write("\t".join([
+                "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
+                "Ribosome_binding_site", "All_start_points", "All_stop_points",
+                "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+                "Best_highest_coverage", "Best_lowest_coverage", "Track_detail",
+                "Seq", "Combinations"]) + "\n")
+        else:
+            out_t.write("\t".join([
+                "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
+                "Ribosome_binding_site", "All_start_points", "All_stop_points",
+                "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+                "Best_highest_coverage", "Best_lowest_coverage",
+                "Track_detail", "Seq"]) + "\n")
     num = 0
+    final_sorfs = []
     for sorf in sorfs:
         if ((compare_rbs_start(sorf, args_sorf.min_rbs,
                                args_sorf.max_rbs)) and (
                 file_type == "best")) or (
                 file_type == "all"):
             if file_type == "best":
-                check_start_end(sorf, args_sorf, fasta)
+                check_start_end(sorf, args_sorf, fasta, run)
             detect_frame_shift(sorf)
             cutoffs = {}
             if sorf["strand"] == "+":
@@ -947,10 +957,14 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t,
                         args_sorf, sorf_covers, sorf["strand"], "sORF", None,
                         cutoffs, None, cutoffs, None, texs)
                 if len(sorf_info["conds"].keys()) != 0:
-                    print_file(sorf, sorf_info, num, out_g, out_t, file_type,
-                               args_sorf)
-                    num += 1
-
+                    if run != "final":
+                        final_sorfs.append(sorf)
+                    else:
+                        print_file(sorf, sorf_info, num, out_g, out_t, file_type,
+                                   args_sorf)
+                        num += 1
+    if run != "final":
+        return final_sorfs
 
 def detect_inter_type(inters, wigs, background):
     '''detect the types of intergenic sORF'''
@@ -1048,13 +1062,19 @@ def sorf_detection(fasta, srna_gff, inter_gff, tss_file, wig_f_file,
                                                  k["end"], k["strand"]))
     sorfs_best = sorted(sorfs_best, key=lambda k: (k["strain"], k["start"],
                                                    k["end"], k["strand"]))
-    sorfs_all = merge(sorfs_all, seq)
-    sorfs_best = merge(sorfs_best, seq)
-    final_best = get_best(sorfs_best, tss_file, srna_gff, args_sorf)
-    coverage_and_output(sorfs_all, mediandict, wigs, out_ag, out_at,
-                        "all", seq, coverages, args_sorf, texs)
+    final_all = coverage_and_output(
+                    sorfs_all, mediandict, wigs, out_ag, out_at,
+                    "all", seq, coverages, args_sorf, texs, "first")
+    final_best = coverage_and_output(
+                    sorfs_best, mediandict, wigs, out_bg, out_bt,
+                    "best", seq, coverages, args_sorf, texs, "first")
+    final_all = merge(final_all, seq)
+    final_best = merge(final_best, seq)
+    final_best = get_best(final_best, tss_file, srna_gff, args_sorf)
+    coverage_and_output(final_all, mediandict, wigs, out_ag, out_at,
+                        "all", seq, coverages, args_sorf, texs, "final")
     coverage_and_output(final_best, mediandict, wigs, out_bg, out_bt,
-                        "best", seq, coverages, args_sorf, texs)
+                        "best", seq, coverages, args_sorf, texs, "final")
     out_ag.close()
     out_at.close()
     out_bg.close()

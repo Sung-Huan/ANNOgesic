@@ -100,7 +100,8 @@ def compare_tran_cds(trans, gffs):
     return inters
 
 
-def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
+def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo, extend_5,
+                   extend_3):
     gffs, trans = read_gff(gff_file, tran_file, hypo)
     inters = compare_tran_cds(trans, gffs)
     num = 0
@@ -128,9 +129,15 @@ def get_intergenic(gff_file, tran_file, out_file, utr_detect, hypo):
                        ["Name", "sORF_" + name])])
         if ((source == "UTR_derived") and (utr_detect)) or (
                 source == "intergenic") or (source == "antisense"):
+            if inter["strand"] == "+":
+                start = inter["start"] - extend_5
+                end = inter["end"] + extend_3
+            else:
+                start = inter["start"] - extend_3
+                end = inter["end"] + extend_5
             out.write("\t".join([str(field) for field in [
-                        inter["strain"], source, "sORF", str(inter["start"]),
-                        str(inter["end"]), ".", inter["strand"], ".",
+                        inter["strain"], source, "sORF", str(start),
+                        str(end), ".", inter["strand"], ".",
                         attribute_string]]) + "\n")
         num += 1
     out.close()

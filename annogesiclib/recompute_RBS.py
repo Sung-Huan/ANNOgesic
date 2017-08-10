@@ -30,14 +30,13 @@ def import_ribo(line, ribos, seq_name):
                 elif (num == 8):
                     end = int(data)
                 elif (num == 9):
-                    if data == "+":
-                        ribos.append({"name": name, "detect": detect,
-                                      "e": e, "seq_name": seq_name,
-                                      "start": start, "end": end})
-                    else:
-                        ribos.append({"name": name, "detect": detect,
-                                      "e": e, "seq_name": seq_name,
-                                      "start": end, "end": start})
+                    if start > end:
+                        tmp_start = start
+                        start = end
+                        end = tmp_start
+                    ribos.append({"name": name, "detect": detect,
+                                  "e": e, "seq_name": seq_name,
+                                  "start": start, "end": end})
 
 
 def print_file(ribos, out_t, out_s, seq_name, seqs):
@@ -60,8 +59,8 @@ def print_file(ribos, out_t, out_s, seq_name, seqs):
                         else:
                             out_s.write(">" + "|".join([
                                 "|".join(tags[0:-2]),
-                                str(int(tags[-1]) - rbs["start"] + 1),
-                                str(int(tags[-1]) - rbs["end"] + 1)]) + "\n")
+                                str(int(tags[-1]) - rbs["end"] + 1),
+                                str(int(tags[-1]) - rbs["start"] + 1)]) + "\n")
                         out_s.write(seq["seq"][
                             (rbs["start"] - 1): (rbs["end"])] + "\n")
 

@@ -929,8 +929,10 @@ class ArgsContainer(object):
                        sRNA_files, start_codon, stop_codon, cutoff_background,
                        fuzzy_rbs, rbs_not_after_TSS, print_all_combination,
                        best_no_sRNA, best_no_TSS, ignore_hypothetical_protein,
-                       min_rbs_distance, max_rbs_distance):
+                       min_rbs_distance, max_rbs_distance, extend_3, extend_5):
         self.out_folder = sorf_folder
+        self.extend_3 = extend_3
+        self.extend_5 = extend_5
         self.utr_detect = UTR_derived_sORF
         self.trans = self._gen_copy_new_folder(
                 [".gff"], sorf_folder, "temp_ta", transcript_files,
@@ -1217,8 +1219,7 @@ class ArgsContainer(object):
                         riboswitch_ID, annotation_files, fasta_files,
                         tss_files, transcript_files, Rfam, ribos_output_folder,
                         thermo_output_folder, e_value, output_all,
-                        database_folder, fuzzy, start_codon, min_dist_rbs,
-                        max_dist_rbs, fuzzy_rbs, UTR_length):
+                        database_folder, fuzzy, fuzzy_rbs, UTR_length):
         self.program = program
         if (program.lower() == "riboswitch") or (
                 program.lower() == "both"):
@@ -1247,9 +1248,9 @@ class ArgsContainer(object):
         self.output_all = output_all
         self.database = database_folder
         self.fuzzy = fuzzy
-        self.start_codons = start_codon
-        self.start_rbs = min_dist_rbs
-        self.end_rbs = max_dist_rbs
+#        self.start_codons = start_codon
+#        self.start_rbs = min_dist_rbs
+#        self.end_rbs = max_dist_rbs
         self.fuzzy_rbs = fuzzy_rbs
         self.utr = UTR_length
         return self
