@@ -2004,159 +2004,170 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 
 ::
 
-    usage: annogesic sorf [-h] --project_path PROJECT_PATH [--utr_derived_sorf]
-                          --fasta_files FASTA_FILES [FASTA_FILES ...]
-                          --transcript_files TRANSCRIPT_FILES
-                          [TRANSCRIPT_FILES ...] --annotation_files
-                          ANNOTATION_FILES [ANNOTATION_FILES ...]
-                          [--tss_files TSS_FILES [TSS_FILES ...]]
-                          [--srna_files SRNA_FILES [SRNA_FILES ...]]
-                          [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                          [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                          [--tex_notex TEX_NOTEX]
-                          [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                          [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                          [--utr_length UTR_LENGTH] [--min_length MIN_LENGTH]
-                          [--max_length MAX_LENGTH]
-                          [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
-                          [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
-                          [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
-                          [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-                          [--cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE]
-                          [--cutoff_base_coverage CUTOFF_BASE_COVERAGE]
-                          [--table_best]
-                          [--start_codon START_CODON [START_CODON ...]]
-                          [--stop_codon STOP_CODON [STOP_CODON ...]]
-                          [--min_rbs_distance MIN_RBS_DISTANCE]
-                          [--max_rbs_distance MAX_RBS_DISTANCE]
-                          [--rbs_not_after_tss] [--tolerance_rbs TOLERANCE_RBS]
-                          [--print_all_combination] [--best_no_srna]
-                          [--best_no_tss]
-                          [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-    
-    basic arguments:
-      --project_path PROJECT_PATH, -pj PROJECT_PATH
-                            Path of the project folder.
-      --utr_derived_sorf, -u
-                            Detect UTR-derived sORF. Default is False.
-      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Paths of the fasta files of the reference genome.
-      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            Paths of the transcript gff files.
-      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the the genome annotation gff files.
-      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
-                            Paths of TSS gff files.
-      --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
-                            Paths of the sRNA gff files for comparing sORF and
-                            sRNA to detect the overlapping.
-      --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
-                            TEX+/- wig files. The format is:
-                            wig_file_path:TEX+/-(tex or notex):condition_id(intege
-                            r):replicate_id(alphabet):strand(+ or -). If multiple
-                            wig files need to be assigned, please use spaces to
-                            separate the wig files. For example,
-                            my_lib_tex_forward.wig:tex:1:a:+
-                            my_lib_tex_reverse.wig:tex:1:a:-.
-      --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
-                            Wig files of RNA-Seq with fragmented transcripts. The
-                            format is: wig_file_path:frag:condition_id(integer):re
-                            plicate_id(alphabet):strand(+ or -). If multiple wig
-                            files need to be assigned, please use spaces to
-                            separate the wig files. For example,
-                            my_lib_frag_forward.wig:frag:1:a:+
-                            my_lib_frag_reverse.wig:frag:1:a:-.
-      --tex_notex TEX_NOTEX, -te TEX_NOTEX
-                            If the TEX+/- libraries are provided, this value is
-                            that a sORF should be detected in both (TEX+ and TEX-)
-                            or can be detected in only one library (TEX+ or TEX-).
-                            Please assign 1 or 2. Default is 2.
-      --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
-                            This value is the minimal number of replicates that a
-                            TSS has to be detected in. The format is
-                            $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
-                            --replicate_tex values need to be assigned to
-                            different conditions, please use spaces to separate
-                            them. For example, 1_2 2_2 3_3 means that
-                            --replicate_tex is 2 in number 1 and number 2
-                            conditions. In number 3 condition, --replicate_tex is
-                            3. For assigning the same --replicate_tex to all
-                            conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
-      --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
-                            Similar to --replicates_tex. This value is for
-                            fragmented (or conventional) libraries.
-    
-    additional arguments:
-      --utr_length UTR_LENGTH, -ul UTR_LENGTH
-                            The utr length for comparing TSS with sORF. The
-                            default number is 300.
-      --min_length MIN_LENGTH, -lm MIN_LENGTH
-                            The minimum residue length of sORF. Default is 30.
-      --max_length MAX_LENGTH, -lM MAX_LENGTH
-                            The maximum residue length of sORF. Default is 150.
-      --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
-                            The minimum coverage of intergenic sORF candidates.
-      --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
-                            The minimum coverage of antisense sORF candidates.
-      --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
-                            The minimum coverage for 5'UTR derived sORF
-                            candidates. This value can be assigned by percentile
-                            ("p") or the amount of reads ("n"). For example,
-                            p_0.05 means that the coverage of sORF candidates
-                            should be higher than the 5 percentile of all 5'UTR
-                            transcripts. n_10 means that the coverage of sORF
-                            candidates should be higher than 10 reads. Default is
-                            p_0.5.
-      --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
-                            Similar to --cutoff_5utr_coverage. This value is for
-                            3'UTRs. Default is p_0.5.
-      --cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
-                            Similar to --cutoff_5utr_coverage. This value is for
-                            interCDS. Default is p_0.5.
-      --cutoff_base_coverage CUTOFF_BASE_COVERAGE, -cub CUTOFF_BASE_COVERAGE
-                            The general minimum coverage of all sORF candidates.
-                            All candidates should exceed this value. Default is
-                            10.
-      --table_best, -tb     The output table of sORF candidates only includes
-                            information of the highest expressed library. Default
-                            is False.
-      --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
-                            The types of start coden. If multiple types of start
-                            codon need to be assigned, please use spaces to
-                            separate them. Default is ATG.
-      --stop_codon STOP_CODON [STOP_CODON ...], -oc STOP_CODON [STOP_CODON ...]
-                            The types of stop codon. If multiple types of stop
-                            codon need to be assigned, please use spaces to
-                            separate them. Default is TTA TAG TGA.
-      --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
-                            The minimum distance (nucleotides) between the
-                            ribosome binding site (Shine-Dalgarno sequence) and
-                            the start codon. Default is 3.
-      --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
-                            The maximum distance (nucleotides) between the
-                            ribosome binding site (Shine-Dalgarno sequence) and
-                            the start codon. Default is 15.
-      --rbs_not_after_tss, -at
-                            Include the sORFs which are not associated with
-                            ribosome binding site to the high-confidence sORF
-                            list. Default is False.
-      --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
-                            The number of nucleotides of ribosome binding sites
-                            allowed to be different from AGGAGG. Default is 2.
-      --print_all_combination, -pa
-                            For printing all combinations of multiple start and
-                            stop codons. Default is False.
-      --best_no_srna, -bs   Excluding the sORFs which overlap with sRNAs to highly
-                            confidence sORF list. Default is False.
-      --best_no_tss, -bt    Excluding the sORFs which do not start with TSS to
-                            highly confidence sORF list. Default is False.
-      --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
-                            For ignoring hypothetical protein in the genome
-                            annotation file. Default is False.
+     usage: annogesic sorf [-h] --project_path PROJECT_PATH [--utr_derived_sorf]
+                           --fasta_files FASTA_FILES [FASTA_FILES ...]
+                           --transcript_files TRANSCRIPT_FILES
+                           [TRANSCRIPT_FILES ...] --annotation_files
+                           ANNOTATION_FILES [ANNOTATION_FILES ...]
+                           [--tss_files TSS_FILES [TSS_FILES ...]]
+                           [--srna_files SRNA_FILES [SRNA_FILES ...]]
+                           [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                           [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                           [--tex_notex {1,2}]
+                           [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                           [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
+                           [--utr_length UTR_LENGTH] [--min_length MIN_LENGTH]
+                           [--max_length MAX_LENGTH]
+                           [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
+                           [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
+                           [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
+                           [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
+                           [--cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE]
+                           [--cutoff_base_coverage CUTOFF_BASE_COVERAGE]
+                           [--table_best]
+                           [--start_codon START_CODON [START_CODON ...]]
+                           [--stop_codon STOP_CODON [STOP_CODON ...]]
+                           [--min_rbs_distance MIN_RBS_DISTANCE]
+                           [--max_rbs_distance MAX_RBS_DISTANCE]
+                           [--rbs_not_after_tss] [--tolerance_rbs TOLERANCE_RBS]
+                           [--tolerance_3end TOLERANCE_3END]
+                           [--tolerance_5end TOLERANCE_5END]
+                           [--print_all_combination] [--best_no_srna]
+                           [--best_no_tss]
+                           [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+     
+     basic arguments:
+       --project_path PROJECT_PATH, -pj PROJECT_PATH
+                             Path of the project folder.
+       --utr_derived_sorf, -u
+                             Detect UTR-derived sORF. Default is False.
+       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                             Paths of the fasta files of the reference genome.
+       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                             Paths of the transcript gff files.
+       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                             Paths of the the genome annotation gff files.
+       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                             Paths of TSS gff files.
+       --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
+                             Paths of the sRNA gff files for comparing sORF and
+                             sRNA to detect the overlapping.
+       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
+                             TEX+/- wig files. The format is:
+                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
+                             r):replicate_id(alphabet):strand(+ or -). If multiple
+                             wig files need to be assigned, please use spaces to
+                             separate the wig files. For example,
+                             my_lib_tex_forward.wig:tex:1:a:+
+                             my_lib_tex_reverse.wig:tex:1:a:-.
+       --frag_libs FRAG_LIBS [FRAG_LIBS ...], -fl FRAG_LIBS [FRAG_LIBS ...]
+                             Wig files of RNA-Seq with fragmented transcripts. The
+                             format is: wig_file_path:frag:condition_id(integer):re
+                             plicate_id(alphabet):strand(+ or -). If multiple wig
+                             files need to be assigned, please use spaces to
+                             separate the wig files. For example,
+                             my_lib_frag_forward.wig:frag:1:a:+
+                             my_lib_frag_reverse.wig:frag:1:a:-.
+       --tex_notex {1,2}, -te {1,2}
+                             If the TEX+/- libraries are provided, this value is
+                             that a sORF should be detected in both (TEX+ and TEX-)
+                             or can be detected in only one library (TEX+ or TEX-).
+                             Please assign 1 or 2. Default is 2.
+       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
+                             This value is the minimal number of replicates that a
+                             TSS has to be detected in. The format is
+                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
+                             --replicate_tex values need to be assigned to
+                             different conditions, please use spaces to separate
+                             them. For example, 1_2 2_2 3_3 means that
+                             --replicate_tex is 2 in number 1 and number 2
+                             conditions. In number 3 condition, --replicate_tex is
+                             3. For assigning the same --replicate_tex to all
+                             conditions, just use like all_1 (--replicate_tex is 1
+                             in all conditions). Default is all_1.
+       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
+                             Similar to --replicates_tex. This value is for
+                             fragmented (or conventional) libraries.
+     
+     additional arguments:
+       --utr_length UTR_LENGTH, -ul UTR_LENGTH
+                             The utr length for comparing TSS with sORF. The
+                             default number is 300.
+       --min_length MIN_LENGTH, -ml MIN_LENGTH
+                             The minimum nucleotide length of sORF. Default is 30.
+       --max_length MAX_LENGTH, -Ml MAX_LENGTH
+                             The maximum nucleotide length of sORF. Default is 300.
+       --cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE, -ci CUTOFF_INTERGENIC_COVERAGE
+                             The minimum coverage of intergenic sORF candidates.
+                             Default is 10.
+       --cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE, -ai CUTOFF_ANTISENSE_COVERAGE
+                             The minimum coverage of antisense sORF candidates.
+                             Default is 10.
+       --cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE, -cu5 CUTOFF_5UTR_COVERAGE
+                             The minimum coverage for 5'UTR derived sORF
+                             candidates. This value can be assigned by percentile
+                             ("p") or the amount of reads ("n"). For example, p_0.5
+                             means that the coverage of sORF candidates should be
+                             higher than the 50 percentile of all 5'UTR
+                             transcripts. n_10 means that the coverage of sORF
+                             candidates should be higher than 10 reads. Default is
+                             p_0.5.
+       --cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE, -cu3 CUTOFF_3UTR_COVERAGE
+                             Similar to --cutoff_5utr_coverage. This value is for
+                             3'UTRs. Default is p_0.5.
+       --cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE, -cuf CUTOFF_INTERCDS_COVERAGE
+                             Similar to --cutoff_5utr_coverage. This value is for
+                             interCDS. Default is p_0.5.
+       --cutoff_base_coverage CUTOFF_BASE_COVERAGE, -cub CUTOFF_BASE_COVERAGE
+                             The general minimum coverage of all sORF candidates.
+                             All candidates should exceed this value. Default is
+                             10.
+       --table_best, -tb     The output table of sORF candidates only includes
+                             information of the highest expressed library. Default
+                             is False.
+       --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
+                             The types of start coden. If multiple types of start
+                             codon need to be assigned, please use spaces to
+                             separate them. Default is ATG.
+       --stop_codon STOP_CODON [STOP_CODON ...], -oc STOP_CODON [STOP_CODON ...]
+                             The types of stop codon. If multiple types of stop
+                             codon need to be assigned, please use spaces to
+                             separate them. Default is TTA TAG TGA.
+       --min_rbs_distance MIN_RBS_DISTANCE, -mr MIN_RBS_DISTANCE
+                             The minimum distance (nucleotides) between the
+                             ribosome binding site (Shine-Dalgarno sequence) and
+                             the start codon. Default is 3.
+       --max_rbs_distance MAX_RBS_DISTANCE, -Mr MAX_RBS_DISTANCE
+                             The maximum distance (nucleotides) between the
+                             ribosome binding site (Shine-Dalgarno sequence) and
+                             the start codon. Default is 15.
+       --rbs_not_after_tss, -at
+                             Include the sORFs which are not associated with
+                             ribosome binding site to the high-confidence sORF
+                             list. Default is False.
+       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
+                             The number of nucleotides of ribosome binding sites
+                             allowed to be different from AGGAGG. Default is 2.
+       --tolerance_3end TOLERANCE_3END, -t3 TOLERANCE_3END
+                             The number of nucleotides can be extended from the end
+                             of transcript for searching stop codon. Default is 30.
+       --tolerance_5end TOLERANCE_5END, -t5 TOLERANCE_5END
+                             The number of nucleotides can be extended from the
+                             starting point of transcript for searching start
+                             codon. Default is 5.
+       --print_all_combination, -pa
+                             For printing all combinations of multiple start and
+                             stop codons. Default is False.
+       --best_no_srna, -bs   Excluding the sORFs which overlap with sRNAs to highly
+                             confidence sORF list. Default is False.
+       --best_no_tss, -bt    Excluding the sORFs which do not start with TSS to
+                             highly confidence sORF list. Default is False.
+       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
+                             For ignoring hypothetical protein in the genome
+                             annotation file. Default is False.
 
 - **Output files**
 
@@ -3123,92 +3134,77 @@ from our Git repository.
 
 ::
 
-    usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
-                                            [--program {riboswich,thermometer,both}]
-                                            [--riboswitch_id_file RIBOSWITCH_ID_FILE]
-                                            [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
-                                            --annotation_files ANNOTATION_FILES
-                                            [ANNOTATION_FILES ...] --tss_files
-                                            TSS_FILES [TSS_FILES ...]
-                                            --transcript_files TRANSCRIPT_FILES
-                                            [TRANSCRIPT_FILES ...] --fasta_files
-                                            FASTA_FILES [FASTA_FILES ...]
-                                            --rfam_path RFAM_PATH
-                                            [--cmscan_path CMSCAN_PATH]
-                                            [--cmpress_path CMPRESS_PATH]
-                                            [--utr_length UTR_LENGTH]
-                                            [--e_value E_VALUE] [--output_all]
-                                            [--tolerance TOLERANCE]
-                                            [--tolerance_rbs TOLERANCE_RBS]
-                                            [--start_codon START_CODON [START_CODON ...]]
-                                            [--max_dist_rbs MAX_DIST_RBS]
-                                            [--min_dist_rbs MIN_DIST_RBS]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-    
-    basic arguments:
-      --project_path PROJECT_PATH, -pj PROJECT_PATH
-                            Path of the project folder.
-      --program {riboswich,thermometer,both}, -p {riboswich,thermometer,both}
-                            Please choose the feature for the detection. The
-                            options can be "riboswitch", "thermometer", "both".
-                            Default is both.
-      --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
-                            Path of the file which contains the information of
-                            riboswitches in Rfam. Required format of the file:
-                            $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
-                            check an example in https://github.com/Sung-Huan/ANNOg
-                            esic/blob/master/database/Rfam_riboswitch_ID.csv
-      --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
-                            Same format as for -riboswitch_id_file, but for RNA
-                            thermometers. Please check an example in
-                            https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
-                            abase/Rfam_RNA_thermometer_ID.csv
-      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                            Paths of the annotation gff files.
-      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
-                            Paths of the TSS gff files.
-      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            Paths of the transcript gff files.
-      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            Paths of the genome fasta files.
-      --rfam_path RFAM_PATH, -R RFAM_PATH
-                            Path of the Rfam CM database.
-    
-    additional arguments:
-      --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
-                            Path of cmscan in Infernal package.
-      --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
-                            Path of cmpress in Infernal package.
-      --utr_length UTR_LENGTH, -u UTR_LENGTH
-                            The UTR length. Default is 300.
-      --e_value E_VALUE, -e E_VALUE
-                            The maximum e value. Default is 0.001.
-      --output_all, -o      One query sequence may fit multiple riboswitches or
-                            RNA thermometers. It can print multiple riboswitches
-                            or RNA thermometers. Otherwise, only the highest
-                            confident one will be printed. Default is False.
-      --tolerance TOLERANCE, -to TOLERANCE
-                            The 5'ends and 3'ends of potential riboswitches or RNA
-                            thermometers will be extended by this value
-                            (nucleotides) for extracting the sequences to search
-                            in Rfam. Default is 10.
-      --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
-                            The number of nucleotides of ribosome binding site
-                            allow to be different with AGGAGG. Default is 2.
-      --start_codon START_CODON [START_CODON ...], -ac START_CODON [START_CODON ...]
-                            The types of start codon. If multiple types need to be
-                            assigned, please use spaces to separate them. Default
-                            is ATG.
-      --max_dist_rbs MAX_DIST_RBS, -Mr MAX_DIST_RBS
-                            The maximum distance (nucleotides) between the
-                            ribosome binding site (Shine-Dalgarno sequence) and
-                            the start codon. Default is 14.
-      --min_dist_rbs MIN_DIST_RBS, -mr MIN_DIST_RBS
-                            The minimum distance (nucleotides) between the
-                            ribosome binding site (Shine-Dalgarno sequence) and
-                            the start codon. Default is 5.
+     usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
+                                             [--program {riboswitch,thermometer,both}]
+                                             [--riboswitch_id_file RIBOSWITCH_ID_FILE]
+                                             [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
+                                             --annotation_files ANNOTATION_FILES
+                                             [ANNOTATION_FILES ...] --tss_files
+                                             TSS_FILES [TSS_FILES ...]
+                                             --transcript_files TRANSCRIPT_FILES
+                                             [TRANSCRIPT_FILES ...] --fasta_files
+                                             FASTA_FILES [FASTA_FILES ...]
+                                             --rfam_path RFAM_PATH
+                                             [--cmscan_path CMSCAN_PATH]
+                                             [--cmpress_path CMPRESS_PATH]
+                                             [--utr_length UTR_LENGTH]
+                                             [--e_value E_VALUE] [--output_all]
+                                             [--tolerance TOLERANCE]
+                                             [--tolerance_rbs TOLERANCE_RBS]
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+     
+     basic arguments:
+       --project_path PROJECT_PATH, -pj PROJECT_PATH
+                             Path of the project folder.
+       --program {riboswitch,thermometer,both}, -p {riboswitch,thermometer,both}
+                             Please choose the feature for the detection. The
+                             options can be "riboswitch", "thermometer", "both".
+                             Default is both.
+       --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
+                             Path of the file which contains the information of
+                             riboswitches in Rfam. Required format of the file:
+                             $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
+                             check an example in https://github.com/Sung-Huan/ANNOg
+                             esic/blob/master/database/Rfam_riboswitch_ID.csv
+       --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
+                             Same format as for -riboswitch_id_file, but for RNA
+                             thermometers. Please check an example in
+                             https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
+                             abase/Rfam_RNA_thermometer_ID.csv
+       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                             Paths of the annotation gff files.
+       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                             Paths of the TSS gff files.
+       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                             Paths of the transcript gff files.
+       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                             Paths of the genome fasta files.
+       --rfam_path RFAM_PATH, -R RFAM_PATH
+                             Path of the Rfam CM database.
+     
+     additional arguments:
+       --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
+                             Path of cmscan in Infernal package.
+       --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
+                             Path of cmpress in Infernal package.
+       --utr_length UTR_LENGTH, -u UTR_LENGTH
+                             The UTR length. Default is 300.
+       --e_value E_VALUE, -e E_VALUE
+                             The maximum e value. Default is 0.001.
+       --output_all, -o      One query sequence may fit multiple riboswitches or
+                             RNA thermometers. It can print multiple riboswitches
+                             or RNA thermometers. Otherwise, only the highest
+                             confident one will be printed. Default is False.
+       --tolerance TOLERANCE, -to TOLERANCE
+                             The 5'ends and 3'ends of potential riboswitches or RNA
+                             thermometers will be extended by this value
+                             (nucleotides) for extracting the sequences to search
+                             in Rfam. Default is 10.
+       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
+                             The number of nucleotides of ribosome binding site
+                             allow to be different with AGGAGG. Default is 2.
 
 - **Output files**
 
