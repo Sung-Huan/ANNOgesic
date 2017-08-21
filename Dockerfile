@@ -2,8 +2,7 @@ FROM ubuntu
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 #ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update --yes
-RUN apt-get upgrade --yes
+RUN apt-get update --yes && apt-get upgrade --yes
 RUN apt-get install default-jre default-jdk python3 python3-scipy \
 vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
 software-properties-common python3-software-properties bioperl \
@@ -18,15 +17,14 @@ netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
 libbio-perl-perl libsqlite3-dev tree --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
-RUN apt-get update --yes && apt-get upgrade --yes 
 
 RUN pip3 install \
 matplotlib \
 networkx \
 ANNOgesic
 
-RUN mkdir tools
-WORKDIR tools
+RUN mkdir /tools /data
+WORKDIR /tools
 
 # sratoolkit
 RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz && \
@@ -186,7 +184,6 @@ bcftools-1.3.1.tar.bz2 \
 CRT1.2-CLI.jar.zip \
 PAGIT.V1.64bit.tgz
 
-
 RUN pip3 install ANNOgesic --upgrade
 
-WORKDIR /home
+WORKDIR /data

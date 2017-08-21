@@ -2,7 +2,7 @@ Docker image
 ==============
 
 `Docker <https://www.docker.com>`_ is a platform for distributing package. 
-It is light and easy to manage. ``ANNOgesic`` includes a ``Dockfile`` which 
+It is light and easy to manage. ``ANNOgesic`` includes a ``Dockerfile`` which 
 is for build up a environment and install all required tools for running ``ANNOgesic``.
 
 You can simply pull the Docker image by running
@@ -11,8 +11,8 @@ You can simply pull the Docker image by running
 
     $ docker pull silasysh/annogesic
 
-Alternatively, you can build the image by ``Dockfile``.
-Please go to the folder where ``Dockfile`` are located. Then type
+Alternatively, you can build the image by ``Dockerfile``.
+Please go to the folder where ``Dockerfile`` are located. Then type
 
 ::
 
