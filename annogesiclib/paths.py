@@ -255,6 +255,8 @@ class Paths(object):
              self.starget_base_folder)
         self.starget_RNAup_folder = "%s/RNAup_results" % (
              self.starget_base_folder)
+        self.starget_IntaRNA_folder = "%s/IntaRNA_results" % (
+             self.starget_base_folder)
         self.starget_merge_folder = "%s/merged_results" % (
              self.starget_base_folder)
         self.starget_srna_seq_folder = "%s/sRNA_seqs" % (
@@ -502,8 +504,8 @@ class Paths(object):
 
     def required_starget_folders(self):
         return [self.starget_RNAplex_folder, self.starget_RNAup_folder,
-                self.starget_merge_folder, self.starget_srna_seq_folder,
-                self.starget_target_seq_folder]
+                self.starget_IntaRNA_folder, self.starget_merge_folder,
+                self.starget_srna_seq_folder, self.starget_target_seq_folder]
 
     def required_snp_folders(self):
         return [self.ref_snp_folder, self.tar_snp_folder,

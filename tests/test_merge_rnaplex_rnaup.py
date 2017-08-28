@@ -56,9 +56,9 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         rnaup = os.path.join(self.test_folder, "rnaup")
         gen_file(rnaplex, self.example.rnaplex)
         gen_file(rnaup, self.example.rnaup)
-        srnas = mrr.read_table(self.example.srna_gffs, rnaplex, rnaup,
+        srnas = mrr.read_table(self.example.srna_gffs, rnaplex, rnaup, None,
                                self.example.genes, self.example.gffs, ["CDS"])
-        self.assertDictEqual(srnas, {'RNAup': {'srna0': [
+        self.assertDictEqual(srnas, {'IntaRNA': {}, 'RNAup': {'srna0': [
             {'srna_pos': '20,25', 'energy': -4.87, 'tar_pos': '571,576',
              'gene_id': 'gene0', 'target_id': 'cds0', 'target_locus': 'AAA_00001',
              'detail': '100-150_+'},
@@ -85,15 +85,16 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
         output = mrr.get_target_info(self.example.gffs, target)
         self.assertEqual(output.start, 100)
 
-    def test_merge_base_rnaplex(self):
+    def test_merge_result(self):
         args_tar = self.mock_args.mock()
         args_tar.top = 2
         args_tar.tar_start = 20
         args_tar.tar_end = 15
         merges = []
-        overlap = mrr.merge_base_rnaplex(
+        methods = ["RNAup", "RNAplex"]
+        overlap = mrr.merge_result(
             self.example.srnas, self.example.srna_gffs, args_tar,
-            self.example.gffs, merges, 50)
+            self.example.gffs, merges, 50, methods)
         output = [['sRNA_0', 'aaa', '6-15', '7-15', '7-15', '+', 'gene0',
                    'cds0', 'AAA_00001', '100-150', '89-50',
                    '89-50', '+', '-6.5', '1', '-6.5', '1'],
@@ -116,7 +117,7 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
                     count += 1
         self.assertEqual(count, 3)
 
-    def test_merge_base_rnaup(self):
+    def test_merge_last(self):
         args_tar = self.mock_args.mock()
         args_tar.top = 2
         args_tar.tar_start = 20
@@ -149,8 +150,9 @@ class TestMergeRNAplexRNAup(unittest.TestCase):
              "target_locus": "AAA_00001", "energy": -23.5, "rank": 1,
              "srna_pos": "2,10", "tar_pos": "10,15"}]}}
         merges = []
-        mrr.merge_base_rnaup(srnas, self.example.srna_gffs,
-                             args_tar, self.example.gffs, merges, 50)
+        mrr.merge_last(srnas, self.example.srna_gffs,
+                       args_tar, self.example.gffs, merges, 50, "RNAplex",
+                       "RNAup", 2, None, False)
         output = [['sRNA_1', 'aaa', '1258-2234', '1259-1267', '1259-1267',
                    '+', 'gene2', 'cds2', 'AAA_00003', '2348-2934', '2337-50',
                    '2337-50', '+', '-10.5', '1', '-10.5', '1'],

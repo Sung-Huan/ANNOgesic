@@ -29,7 +29,7 @@ class Mock_func(object):
 
     def mock_merge_srna_target(self, rnaplex_file, rnaup_file, top,
                                out_rnaplex, out_rnaup, merge, overlap,
-                               srna, gff, fasta):
+                               srna, gff, fasta, test1, test2):
         gen_file("test_folder/out", rnaplex_file + rnaup_file)
 
 
@@ -170,7 +170,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.srnas = self.srnas
         args.fastas = self.fastas
         args.gffs = self.gffs
-        args.program = "both"
+        args.program = ["RNAup", "RNAplex"]
         args.out_folder = self.out
         args.top = "top"
         self.star._merge_rnaplex_rnaup(["test"], args)

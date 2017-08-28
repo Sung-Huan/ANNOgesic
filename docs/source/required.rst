@@ -51,6 +51,8 @@ When you install Segemehl, please type 'make all' instead of 'make' after runnin
 `ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.2.5 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection).
 ViennaRNA contains RNAfold, RNAup, RNAplex, RNAplfold, mountain.pl, relplot.pl for executing many modules of ANNOgesic.
 
+`IntaRNA <https://github.com/BackofenLab/IntaRNA/>`_: version higher or equal to 2.0.4 (sRNA_target detection) 
+
 `IGV <https://www.broadinstitute.org/software/igv/home>`_ (for screenshot and color_png).
 
 `CRT <http://www.room220.com/crt/>`_: version higher or equal to 1.2 (for CRISPR detection).

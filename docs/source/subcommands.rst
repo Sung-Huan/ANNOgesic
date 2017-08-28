@@ -2718,6 +2718,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
 - **Required tools**
 
 `ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ .
+`IntaRNA <https://github.com/BackofenLab/IntaRNA/>`_.
 
 - **Required files**
 
@@ -2737,23 +2738,31 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                                  [FASTA_FILES ...] --srna_files SRNA_FILES
                                  [SRNA_FILES ...]
                                  [--query_srnas QUERY_SRNAS [QUERY_SRNAS ...]]
-                                 [--program {RNAplex,RNAup,both}] [--top TOP]
+                                 --program {RNAplex,RNAup,IntaRNA}
+                                 [{RNAplex,RNAup,IntaRNA} ...] [--top TOP]
                                  [--rnaplfold_path RNAPLFOLD_PATH]
                                  [--rnaplex_path RNAPLEX_PATH]
                                  [--rnaup_path RNAUP_PATH]
+                                 [--intarna_path INTARNA_PATH]
                                  [--interaction_length INTERACTION_LENGTH]
-                                 [--window_size_target WINDOW_SIZE_TARGET]
-                                 [--span_target SPAN_TARGET]
-                                 [--window_size_srna WINDOW_SIZE_SRNA]
-                                 [--span_srna SPAN_SRNA]
+                                 [--window_size_target_rnaplex WINDOW_SIZE_TARGET_RNAPLEX]
+                                 [--span_target_rnaplex SPAN_TARGET_RNAPLEX]
+                                 [--window_size_srna_rnaplfold WINDOW_SIZE_SRNA_RNAPLFOLD]
+                                 [--span_srna_rnaplfold SPAN_SRNA_RNAPLFOLD]
                                  [--unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET]
                                  [--unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA]
                                  [--unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP]
-                                 [--energy_threshold ENERGY_THRESHOLD]
-                                 [--duplex_distance DUPLEX_DISTANCE]
+                                 [--energy_threshold_rnaplex ENERGY_THRESHOLD_RNAPLEX]
+                                 [--duplex_distance_rnaplex DUPLEX_DISTANCE_RNAPLEX]
                                  [--parallels_rnaplex PARALLELS_RNAPLEX]
                                  [--parallels_rnaup PARALLELS_RNAUP]
+                                 [--parallels_intarna PARALLELS_INTARNA]
                                  [--continue_rnaup]
+                                 [--slide_window_size_srna_intarna SLIDE_WINDOW_SIZE_SRNA_INTARNA]
+                                 [--max_loop_length_srna_intarna MAX_LOOP_LENGTH_SRNA_INTARNA]
+                                 [--slide_window_size_target_intarna SLIDE_WINDOW_SIZE_TARGET_INTARNA]
+                                 [--max_loop_length_target_intarna MAX_LOOP_LENGTH_TARGET_INTARNA]
+                                 [--mode_intarna {H,E,M}]
                                  [--potential_target_start POTENTIAL_TARGET_START]
                                  [--potential_target_end POTENTIAL_TARGET_END]
                                  [--target_feature TARGET_FEATURE [TARGET_FEATURE ...]]
@@ -2778,69 +2787,95 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                             NC_007795.1:6767:6900:-. If all sRNAs of the reference
                             genome need to be used, please assign "all". Default
                             is all.
-      --program {RNAplex,RNAup,both}, -p {RNAplex,RNAup,both}
+      --program {RNAplex,RNAup,IntaRNA} [{RNAplex,RNAup,IntaRNA} ...], -p {RNAplex,RNAup,IntaRNA} [{RNAplex,RNAup,IntaRNA} ...]
                             The program for detecting sRNA-mRNA interaction.
-                            Please assign "RNAplex" or "RNAup" or "both". Default
-                            is both.
+                            Please choose "RNAplex", "RNAup" or "IntaRNA". If
+                            multiple programs need to be executed, please use
+                            space to separate them.
       --top TOP, -t TOP     The ranking number of targets which will be included
                             to final output. The ranking is based on the binding
-                            energy. Default is 20.
+                            energy. Default is 50.
     
     additional arguments:
       --rnaplfold_path RNAPLFOLD_PATH
-                            Path of RNAplfold in Vienna package.
+                            Path of RNAplfold of the Vienna package.
       --rnaplex_path RNAPLEX_PATH
-                            Path of RNAplex in Vienna package.
+                            Path of RNAplex of the Vienna package.
       --rnaup_path RNAUP_PATH
-                            Path of RNAup in Vienna package.
+                            Path of RNAup of the Vienna package.
+      --intarna_path INTARNA_PATH
+                            Path of IntaRNA.
       --interaction_length INTERACTION_LENGTH, -i INTERACTION_LENGTH
                             Maximum length of an interaction. Default is 30.
-      --window_size_target WINDOW_SIZE_TARGET, -wt WINDOW_SIZE_TARGET
+      --window_size_target_rnaplex WINDOW_SIZE_TARGET_RNAPLEX, -wt WINDOW_SIZE_TARGET_RNAPLEX
                             The average of the pair probabilities over windows for
-                            mRNA target. It only works for "RNAplex". Default is
-                            240.
-      --span_target SPAN_TARGET, -st SPAN_TARGET
+                            mRNA target. It is only applied for "RNAplex". Default
+                            is 240.
+      --span_target_rnaplex SPAN_TARGET_RNAPLEX, -st SPAN_TARGET_RNAPLEX
                             The maximum allowed separation of a base pair to span
-                            for mRNA target. It only works for "RNAplex". Default
-                            is 160.
-      --window_size_srna WINDOW_SIZE_SRNA, -ws WINDOW_SIZE_SRNA
-                            It is similar to --window_size_target, but for sRNA.
-                            Default is 30.
-      --span_srna SPAN_SRNA, -ss SPAN_SRNA
-                            It is similar to --span_target, but for sRNA. Default
+                            for mRNA target. It is only applied for "RNAplex".
+                            Default is 160.
+      --window_size_srna_rnaplfold WINDOW_SIZE_SRNA_RNAPLFOLD, -ws WINDOW_SIZE_SRNA_RNAPLFOLD
+                            Similar to --window_size_target, but for sRNA. Default
                             is 30.
+      --span_srna_rnaplfold SPAN_SRNA_RNAPLFOLD, -ss SPAN_SRNA_RNAPLFOLD
+                            Similar to --span_target, but for sRNA. Default is 30.
       --unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET, -ut UNSTRUCTURED_REGION_RNAPLEX_TARGET
                             Calculate the mean probability of the unpaired region
                             for mRNA target. It only works for "RNAplex". Default
                             is 30.
       --unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA, -us UNSTRUCTURED_REGION_RNAPLEX_SRNA
-                            It is similar to --unstructured_region_rnaplex_target,
-                            but for sRNA. Default is 30.
+                            Similar to --unstructured_region_rnaplex_target, but
+                            for sRNA. Default is 30.
       --unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP, -uu UNSTRUCTURED_REGION_RNAUP
                             Compute the mean probability of unpaired region. It
-                            only works for "RNAup". Default is 30.
-      --energy_threshold ENERGY_THRESHOLD, -e ENERGY_THRESHOLD
+                            only works for "RNAup". Default is 40.
+      --energy_threshold_rnaplex ENERGY_THRESHOLD_RNAPLEX, -e ENERGY_THRESHOLD_RNAPLEX
                             The minimum energy for a duplex. It only works for
                             "RNAplex". Default is -8.
-      --duplex_distance DUPLEX_DISTANCE, -d DUPLEX_DISTANCE
+      --duplex_distance_rnaplex DUPLEX_DISTANCE_RNAPLEX, -d DUPLEX_DISTANCE_RNAPLEX
                             Distance between target 3'ends of two consecutive
                             duplexes. It works for "RNAplex". Default is 20.
       --parallels_rnaplex PARALLELS_RNAPLEX, -pp PARALLELS_RNAPLEX
-                            The number of parallel runs for running RNAplex.
+                            The number of parallel jobs for running RNAplex.
                             Default is 5.
       --parallels_rnaup PARALLELS_RNAUP, -pu PARALLELS_RNAUP
-                            The number of parallel runs for running RNAup. Default
+                            The number of parallel jobs for running RNAup. Default
                             is 20.
+      --parallels_intarna PARALLELS_INTARNA, -pi PARALLELS_INTARNA
+                            The number of parallel jobs for running IntaRNA.
+                            Default is 10.
       --continue_rnaup, -cr
                             For running RNAup based on the previous intermediate
-                            results if the previous process was crushed. Default
-                            is False.
+                            results if the previous process stopped. Default is
+                            False.
+      --slide_window_size_srna_intarna SLIDE_WINDOW_SIZE_SRNA_INTARNA, -sw SLIDE_WINDOW_SIZE_SRNA_INTARNA
+                            The silding window size of sRNA sequences. 0 will use
+                            the full sequence to execute IntaRNA. Default is 150.
+      --max_loop_length_srna_intarna MAX_LOOP_LENGTH_SRNA_INTARNA, -ls MAX_LOOP_LENGTH_SRNA_INTARNA
+                            The maximal loop length of sRNA. If the value is
+                            assigned by 0, --slide_window_size_srna_intarna will
+                            be used for the maximal loop length of sRNA. Default
+                            is 100.
+      --slide_window_size_target_intarna SLIDE_WINDOW_SIZE_TARGET_INTARNA, -tw SLIDE_WINDOW_SIZE_TARGET_INTARNA
+                            The silding window size of target sequences. 0 will
+                            use the full sequence to execute IntaRNA. Default is
+                            150.
+      --max_loop_length_target_intarna MAX_LOOP_LENGTH_TARGET_INTARNA, -lt MAX_LOOP_LENGTH_TARGET_INTARNA
+                            The maximal loop length of target. If the value is
+                            assigned by 0, --slide_window_size_target_intarna will
+                            be used for the maximal loop length of target. Default
+                            is 100.
+      --mode_intarna {H,E,M}, -mi {H,E,M}
+                            The prediction mode of IntaRNA. 'H' is heuristic, 'M'
+                            is exact with long computational time. 'E' is exact
+                            with long computational time and high memory.
       --potential_target_start POTENTIAL_TARGET_START, -ps POTENTIAL_TARGET_START
-                            Extracting the upstream nucleotides of
+                            Distance for the extraction of upstream nucleotides of
                             --target_feature. Default is 200.
       --potential_target_end POTENTIAL_TARGET_END, -pe POTENTIAL_TARGET_END
-                            Extracting the nucleotides directly behind staring
-                            point of --target_feature. Default is 150.
+                            Distance for the extraction of downstream nucleotides
+                            of --target_feature. Default is 150.
       --target_feature TARGET_FEATURE [TARGET_FEATURE ...], -tf TARGET_FEATURE [TARGET_FEATURE ...]
                             The feature name of potential targets. If multiple
                             features need to be assigned, please use spaces to
@@ -2880,9 +2915,14 @@ The meaning of each column in ``$GENOME_RNAplex_rank.csv`` is as following:
 ``$GENOME_RNAup_rank.csv`` is the tables with details, and the targets are 
 sorted by binding energy. The meaning of each column is similar to the table of RNAplex.
 
-**merged_results:** Store the results which are merged by the results of ``RNAplex_results`` and ``RNAup_results``. 
-``$GENOME_merge.csv`` contains all candidates of the both programs. 
-``$GENOME_overlap.csv`` contains the results which are top 20 (default) in the both methods. 
+**IntaRNA_results:** Stored all results of IntaRNA. ``$GENOME_IntaRNA.txt`` is raw results of IntaRNA.
+``$GENOME_RNAup_rank.csv`` is the tables with details, and the targets are
+sorted by binding energy. The meaning of each column is similar to the table of RNAplex.
+
+**merged_results:** Store the results which are merged by the results of ``RNAplex_results``, ``RNAup_results``, 
+and ``IntaRNA_results``. 
+``$GENOME_merge.csv`` contains all candidates of the all assigned programs. 
+``$GENOME_overlap.csv`` contains the results which are top 50 (default) in the all assigned methods. 
 The meaning of each column is similar to the table of RNAplex.
 
 **sRNA_seqs:** Stores fasta sequences of the sRNAs.

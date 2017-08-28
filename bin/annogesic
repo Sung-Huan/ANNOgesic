@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.17"
+__version__ = "0.6.18"
 
 def main():
     print("""
@@ -1480,15 +1480,17 @@ def main():
         "reference genome need to be used, please assign \"all\". "
         "Default is all.")
     starget_basic.add_argument(
-        "--program", "-p", default="both",
-        choices=['RNAplex', 'RNAup', 'both'],
+        "--program", "-p", nargs='+', required=True,
+        choices=['RNAplex', 'RNAup', 'IntaRNA'],
         help="The program for detecting sRNA-mRNA interaction. "
-        "Please choose \"RNAplex\" or \"RNAup\" or \"both\". Default is both.")
+        "Please choose \"RNAplex\", \"RNAup\" or \"IntaRNA\". "
+        "If multiple programs need to be executed, please use space to "
+        "separate them.")
     starget_basic.add_argument(
-        "--top", "-t", default=20, type=int,
+        "--top", "-t", default=50, type=int,
         help="The ranking number of targets which will be included "
         "to final output. The ranking is based on the binding energy. "
-        "Default is 20.")
+        "Default is 50.")
     starget_add = starget_parser.add_argument_group(
         'additional arguments')
     starget_add.add_argument(
@@ -1501,24 +1503,27 @@ def main():
         "--rnaup_path", default="RNAup",
         help="Path of RNAup of the Vienna package.")
     starget_add.add_argument(
+        "--intarna_path", default="IntaRNA",
+        help="Path of IntaRNA.")
+    starget_add.add_argument(
         "--interaction_length", "-i", default=30, type=int,
         help="Maximum length of an interaction. Default is 30.")
     starget_add.add_argument(
-        "--window_size_target", "-wt", default=240, type=int,
+        "--window_size_target_rnaplex", "-wt", default=240, type=int,
         help="The average of the pair probabilities over "
         "windows for mRNA target. It is only applied for \"RNAplex\". "
         "Default is 240.")
     starget_add.add_argument(
-        "--span_target", "-st", default=160, type=int,
+        "--span_target_rnaplex", "-st", default=160, type=int,
         help="The maximum allowed separation of a base pair to "
         "span for mRNA target. It is only applied for \"RNAplex\". "
         "Default is 160.")
     starget_add.add_argument(
-        "--window_size_srna", "-ws", default=30, type=int,
+        "--window_size_srna_rnaplfold", "-ws", default=30, type=int,
         help="Similar to --window_size_target, but for sRNA. "
         "Default is 30.")
     starget_add.add_argument(
-        "--span_srna", "-ss", default=30, type=int,
+        "--span_srna_rnaplfold", "-ss", default=30, type=int,
         help="Similar to --span_target, but for sRNA. Default is 30.")
     starget_add.add_argument(
         "--unstructured_region_rnaplex_target", "-ut", default=30, type=int,
@@ -1529,15 +1534,15 @@ def main():
         help="Similar to --unstructured_region_rnaplex_target, "
         "but for sRNA. Default is 30.")
     starget_add.add_argument(
-        "--unstructured_region_rnaup", "-uu", default=30, type=int,
+        "--unstructured_region_rnaup", "-uu", default=40, type=int,
         help="Compute the mean probability of unpaired region. "
-        "It only works for \"RNAup\". Default is 30.")
+        "It only works for \"RNAup\". Default is 40.")
     starget_add.add_argument(
-        "--energy_threshold", "-e", default=-8, type=float,
+        "--energy_threshold_rnaplex", "-e", default=-8, type=float,
         help="The minimum energy for a duplex. It only works for "
         "\"RNAplex\". Default is -8.")
     starget_add.add_argument(
-        "--duplex_distance", "-d", default=20, type=int,
+        "--duplex_distance_rnaplex", "-d", default=20, type=int,
         help="Distance between target 3'ends of two consecutive duplexes. "
         "It works for \"RNAplex\". Default is 20.")
     starget_add.add_argument(
@@ -1549,10 +1554,37 @@ def main():
         help="The number of parallel jobs for running RNAup. "
         "Default is 20.")
     starget_add.add_argument(
+        "--parallels_intarna", "-pi", default=10, type=int,
+        help="The number of parallel jobs for running IntaRNA. "
+        "Default is 10.")
+    starget_add.add_argument(
         "--continue_rnaup", "-cr", default=False, action="store_true",
         help="For running RNAup based on the "
         "previous intermediate results if the previous process stopped. "
         "Default is False.")
+    starget_add.add_argument(
+        "--slide_window_size_srna_intarna", "-sw", default=150, type=int,
+        help="The silding window size of sRNA sequences. 0 will use the "
+        "full sequence to execute IntaRNA. Default is 150.")
+    starget_add.add_argument(
+        "--max_loop_length_srna_intarna", "-ls", default=100, type=int,
+        help="The maximal loop length of sRNA. If the value is assigned "
+        "by 0, --slide_window_size_srna_intarna will be used for the "
+        "maximal loop length of sRNA. Default is 100.")
+    starget_add.add_argument(
+        "--slide_window_size_target_intarna", "-tw", default=150, type=int,
+        help="The silding window size of target sequences. 0 will use the "
+        "full sequence to execute IntaRNA. Default is 150.")
+    starget_add.add_argument(
+        "--max_loop_length_target_intarna", "-lt", default=100, type=int,
+        help="The maximal loop length of target. If the value is assigned "
+        "by 0, --slide_window_size_target_intarna will be used for the "
+        "maximal loop length of target. Default is 100.")
+    starget_add.add_argument(
+        "--mode_intarna", "-mi", default=None, choices=['H', 'E', 'M'],
+        help="The prediction mode of IntaRNA. 'H' is heuristic, 'M' is "
+        "exact with long computational time. 'E' is exact with long "
+        "computational time and high memory.")
     starget_add.add_argument(
         "--potential_target_start", "-ps", default=200, type=int,
         help="Distance for the extraction of upstream nucleotides of "

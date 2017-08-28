@@ -78,7 +78,7 @@ class TestPaths(unittest.TestCase):
         self.assertEqual(len(self.paths.required_folders("snp")), 39)
         self.assertEqual(len(
             self.paths.required_folders("subcellular_localization")), 29)
-        self.assertEqual(len(self.paths.required_folders("srna_target")), 28)
+        self.assertEqual(len(self.paths.required_folders("srna_target")), 29)
 
 if __name__ == "__main__":
     unittest.main()    

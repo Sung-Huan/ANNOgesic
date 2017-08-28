@@ -989,17 +989,20 @@ class ArgsContainer(object):
         return self
 
     def container_srna_target(
-            self, rnaplfold_path, rnaplex_path, rnaup_path, annotation_files,
-            fasta_files, sRNA_files, query_sRNA, program, interaction_length,
-            window_size_target, span_target, window_size_srna, span_srna,
-            unstructured_region_RNAplex_target,
+            self, rnaplfold_path, rnaplex_path, rnaup_path, intarna_path,
+            annotation_files, fasta_files, sRNA_files, query_sRNA, program,
+            interaction_length, window_size_target, span_target,
+            window_size_srna, span_srna, unstructured_region_RNAplex_target,
             unstructured_region_RNAplex_srna, unstructured_region_RNAup,
             energy_threshold, duplex_distance, top, starget_output_folder,
-            process_rnaplex, process_rnaup, continue_rnaup,
-            potential_target_start, potential_target_end, target_feature):
+            process_rnaplex, process_rnaup, process_intarna, continue_rnaup,
+            slide_win_srna_intarna, max_loop_srna, slide_win_target_intarna,
+            max_loop_target, mode_intarna, potential_target_start,
+            potential_target_end, target_feature):
         self.rnaplfold_path = rnaplfold_path
         self.rnaplex_path = rnaplex_path
         self.rnaup_path = rnaup_path
+        self.intarna_path = intarna_path
         self.gffs = self._gen_copy_new_folder(
                 [".gff"], starget_output_folder, "tmp_anno",
                 annotation_files, ["--annotation_files"])
@@ -1025,6 +1028,12 @@ class ArgsContainer(object):
         self.out_folder = starget_output_folder
         self.core_plex = process_rnaplex
         self.core_up = process_rnaup
+        self.core_inta = process_intarna
+        self.slide_win_srna = slide_win_srna_intarna
+        self.slide_win_target = slide_win_target_intarna
+        self.max_loop_srna = max_loop_srna
+        self.max_loop_target = max_loop_target
+        self.mode_intarna = mode_intarna
         self.continue_rnaup = continue_rnaup
         self.tar_start = potential_target_start
         self.tar_end = potential_target_end
@@ -1248,9 +1257,6 @@ class ArgsContainer(object):
         self.output_all = output_all
         self.database = database_folder
         self.fuzzy = fuzzy
-#        self.start_codons = start_codon
-#        self.start_rbs = min_dist_rbs
-#        self.end_rbs = max_dist_rbs
         self.fuzzy_rbs = fuzzy_rbs
         self.utr = UTR_length
         return self

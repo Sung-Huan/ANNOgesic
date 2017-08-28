@@ -834,12 +834,13 @@ Now we have sRNA candidates. If we want to know targets of these sRNAs, we can u
 
 ::
 
-    $ annogesic srna_target \
+    $annogesic srna_target \
         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
         --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --srna_files ANNOgesic/output/sRNAs/gffs/best_candidates/NC_009839.1_sRNA.gff \
         --query_srnas NC_009839.1:36954:37044:- \
-        --program both \
+        --mode_intarna H \
+        --program RNAup IntaRNA RNAplex \
         --project_path ANNOgesic
 
 For testing, we only assign one sRNA to do the prediction. You can also assign several sRNAs like 
@@ -851,7 +852,7 @@ Several output folders will be generated.
 ::
 
     $ ls ANNOgesic/output/sRNA_targets/
-    merged_results  RNAplex_results  RNAup_results  sRNA_seqs  target_seqs
+    IntaRNA_results  merged_results  RNAplex_results  RNAup_results  sRNA_seqs  target_seqs
 
 ``sRNA_seqs`` and ``target_seqs`` are for sequences of the sRNAs and the potential targets.
 
@@ -862,8 +863,9 @@ Several output folders will be generated.
     $ ls ANNOgesic/output/sRNA_targets/target_seqs
     NC_009839.1_target.fa
 
-``RNAplex_results`` and ``RNAup_results`` are for the output of 
-`RNAplex and RNAup <http://www.tbi.univie.ac.at/RNA/>`_.
+``IntaRNA_results``, ``RNAplex_results`` and ``RNAup_results`` are for the output of 
+`IntaRNA <https://github.com/BackofenLab/IntaRNA/>`_, `RNAplex <http://www.tbi.univie.ac.at/RNA/RNAplex.1.html>`_ and
+`RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_.
 
 ::
 
@@ -871,10 +873,13 @@ Several output folders will be generated.
     NC_009839.1_RNAplex_rank.csv  NC_009839.1_RNAplex.txt
     $ ls ANNOgesic/output/sRNA_targets/RNAup_results/NC_009839.1/
     NC_009839.1_RNAup.log  NC_009839.1_RNAup_rank.csv  NC_009839.1_RNAup.txt
+    $ ls ANNOgesic/output/sRNA_targets/IntaRNA_results/NC_009839.1/
+    NC_009839.1_IntaRNA_rank.csv  NC_009839.1_IntaRNA.txt
 
-``merged_results`` is for the merged results of `RNAplex <http://www.tbi.univie.ac.at/RNA/RNAplex.1.html>`_ and 
+``merged_results`` is for the merged results of `IntaRNA <https://github.com/BackofenLab/IntaRNA/>`_, 
+`RNAplex <http://www.tbi.univie.ac.at/RNA/RNAplex.1.html>`_ and
 `RNAup <http://www.tbi.univie.ac.at/RNA/RNAup.1.html>`_. ``NC_009839.1_merge.csv``  contains all results of the 
-both methods, and ``NC_009839.1_overlap.csv`` only stores candidates which are top 20 (default) in the both methods.
+assigned methods, and ``NC_009839.1_overlap.csv`` only stores candidates which are top 50 (default) in the assigned methods.
 
 ::
 

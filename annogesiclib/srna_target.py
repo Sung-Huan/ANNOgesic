@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 import time
-from subprocess import Popen
+from subprocess import Popen, call
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.potential_target import potential_target
@@ -23,6 +23,7 @@ class sRNATargetPrediction(object):
         self.srna_seq_path = os.path.join(args_tar.out_folder, "sRNA_seqs")
         self.rnaplex_path = os.path.join(args_tar.out_folder, "RNAplex_results")
         self.rnaup_path = os.path.join(args_tar.out_folder, "RNAup_results")
+        self.intarna_path = os.path.join(args_tar.out_folder, "IntaRNA_results")
         self.merge_path = os.path.join(args_tar.out_folder, "merged_results")
         self.srna_path = os.path.join(args_tar.srnas, "tmp")
         self.fasta_path = os.path.join(args_tar.fastas, "tmp")
@@ -348,6 +349,26 @@ class sRNATargetPrediction(object):
                                 num_up = 0
             self._run_rnaup(num_up, processes, out_rnaup, out_log, args_tar)
 
+    def _intarna(self, prefixs, args_tar):
+        for prefix in prefixs:
+            print("Running IntaRNA of {0}".format(prefix))
+            self.helper.check_make_folder(
+                        os.path.join(self.intarna_path, prefix))
+            call([args_tar.intarna_path,
+                  "-q", os.path.join(
+                      self.srna_seq_path, "_".join([
+                          self.tmps["tmp"], prefix, "sRNA.fa"])),
+                  "-t", os.path.join(self.target_seq_path,
+                                     prefix + "_target.fa"),
+                  "--qAccW", str(args_tar.slide_win_srna),
+                  "--qAccL", str(args_tar.max_loop_srna),
+                  "--tAccW", str(args_tar.slide_win_target),
+                  "--tAccL", str(args_tar.max_loop_target),
+                  "--outMode", "C", "-m", args_tar.mode_intarna,
+                  "--threads", str(args_tar.core_inta),
+                  "--out", os.path.join(self.intarna_path, prefix,
+                                        prefix + "_IntaRNA.txt")])
+
     def _merge_rnaplex_rnaup(self, prefixs, args_tar):
         '''merge the result of RNAup and RNAplex'''
         for prefix in prefixs:
@@ -355,22 +376,29 @@ class sRNATargetPrediction(object):
             rnaup_file = None
             out_rnaplex = None
             out_rnaup = None
+            intarna_file = None
+            out_intarna = None
             self.helper.check_make_folder(os.path.join(
                                           self.merge_path, prefix))
             print("Ranking {0} now".format(prefix))
-            if (args_tar.program == "both") or (args_tar.program == "RNAplex"):
+            if ("RNAplex" in args_tar.program):
                 rnaplex_file = os.path.join(self.rnaplex_path, prefix,
                                             "_".join([prefix, "RNAplex.txt"]))
                 out_rnaplex = os.path.join(
                         self.rnaplex_path, prefix,
                         "_".join([prefix, "RNAplex_rank.csv"]))
-            if (args_tar.program == "both") or (args_tar.program == "RNAup"):
+            if ("RNAup" in args_tar.program):
                 rnaup_file = os.path.join(self.rnaup_path, prefix,
                                           "_".join([prefix, "RNAup.txt"]))
                 out_rnaup = os.path.join(self.rnaup_path, prefix,
                                          "_".join([prefix, "RNAup_rank.csv"]))
-            merge_srna_target(rnaplex_file, rnaup_file, args_tar,
-                              out_rnaplex, out_rnaup,
+            if ("IntaRNA" in args_tar.program):
+                intarna_file = os.path.join(self.intarna_path, prefix,
+                                          "_".join([prefix, "IntaRNA.txt"]))
+                out_intarna = os.path.join(self.intarna_path, prefix,
+                                         "_".join([prefix, "IntaRNA_rank.csv"]))
+            merge_srna_target(rnaplex_file, rnaup_file, intarna_file, args_tar,
+                              out_rnaplex, out_rnaup, out_intarna,
                               os.path.join(self.fasta_path, prefix + ".fa"),
                               os.path.join(self.merge_path, prefix,
                                            "_".join([prefix, "merge.csv"])),
@@ -388,20 +416,14 @@ class sRNATargetPrediction(object):
         self.multiparser.parser_gff(args_tar.srnas, "sRNA")
         prefixs = []
         self._gen_seq(prefixs, args_tar)
-        if (args_tar.program == "both") or (
-                args_tar.program == "RNAplex"):
+        if ("RNAplex" in args_tar.program):
             self._rna_plex(prefixs, args_tar)
         self.helper.remove_all_content(self.target_seq_path,
                                        "_target_", "file")
-#        if (args_tar.program == "RNAplex") or (
-#                args_tar.program == "both"):
-#            for strain in os.listdir(os.path.join(
-#                          args_tar.out_folder, "RNAplex_results")):
-#                shutil.rmtree(os.path.join(args_tar.out_folder, "RNAplex_results",
-#                                           strain, "RNAplfold"))
-        if (args_tar.program == "both") or (
-                args_tar.program == "RNAup"):
+        if ("RNAup" in args_tar.program):
             self._rnaup(prefixs, args_tar)
+        if ("IntaRNA" in args_tar.program):
+            self._intarna(prefixs, args_tar)
         self._merge_rnaplex_rnaup(prefixs, args_tar)
         self.helper.remove_all_content(args_tar.out_folder,
                                        self.tmps["tmp"], "dir")

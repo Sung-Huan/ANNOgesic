@@ -47,11 +47,12 @@ def print_batch(args_sc, out, strand, lib_t, lib_n, lib_f, strain):
     out.write("load {0}\n".format(os.path.join(os.getcwd(), args_sc.main_gff)))
     gff = args_sc.main_gff.split("/")
     out.write("{0} {1}\n".format(args_sc.present, gff[-1]))
-    for files in args_sc.side_gffs:
-        for filename in glob(files):
-            out.write("load {0}\n".format(os.path.join(os.getcwd(), filename)))
-            gff = filename.split("/")
-            out.write("{0} {1}\n".format(args_sc.present, gff[-1]))
+    if args_sc.side_gffs is not None:
+        for files in args_sc.side_gffs:
+            for filename in glob(files):
+                out.write("load {0}\n".format(os.path.join(os.getcwd(), filename)))
+                gff = filename.split("/")
+                out.write("{0} {1}\n".format(args_sc.present, gff[-1]))
     load_wigs(out, lib_t, lib_n, lib_f)
     out.write("maxPanelHeight {0}\n".format(args_sc.height))
     if strand == "+":

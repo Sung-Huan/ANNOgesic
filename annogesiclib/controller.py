@@ -683,34 +683,46 @@ class Controller(object):
                  self._args.annotation_files],
                 ["--fasta_files", "--srna_files",
                  "--annotation_files"])
-        if (self._args.program.lower() == "both"):
-            for prop in ("rnaplfold_path", "rnaplex_path", "rnaup_path"):
-                setattr(self._args, prop,
-                        self.check_execute_file(getattr(self._args, prop)))
-        elif self._args.program.lower() == "RNAup":
-            self._args.rnaup_path = self.check_execute_file(self._args.rnaup_path)
-        elif self._args.program.lower() == "RNAplex":
+        if "RNAup" in self._args.program:
+            self._args.rnaup_path = self.check_execute_file(
+                    self._args.rnaup_path)
+        if "RNAplex" in self._args.program:
             for prop in ("rnaplfold_path", "rnaplex_path"):
                 setattr(self._args, prop,
                         self.check_execute_file(getattr(self._args, prop)))
+        if "IntaRNA" in self._args.program:
+            self._args.intarna_path = self.check_execute_file(
+                    self._args.intarna_path)
+            if self._args.mode_intarna is None:
+                print("Error: --mode_IntaRNA need to be assigned!")
+                sys.exit()
         project_creator.create_subfolders(
             self._paths.required_folders("srna_target"))
         args_tar = self.args_container.container_srna_target(
             self._args.rnaplfold_path, self._args.rnaplex_path,
-            self._args.rnaup_path, self._args.annotation_files,
+            self._args.rnaup_path, self._args.intarna_path,
+            self._args.annotation_files,
             self._args.fasta_files, self._args.srna_files,
             self._args.query_srnas, self._args.program,
-            self._args.interaction_length, self._args.window_size_target,
-            self._args.span_target, self._args.window_size_srna,
-            self._args.span_srna,
+            self._args.interaction_length,
+            self._args.window_size_target_rnaplex,
+            self._args.span_target_rnaplex,
+            self._args.window_size_srna_rnaplfold,
+            self._args.span_srna_rnaplfold,
             self._args.unstructured_region_rnaplex_target,
             self._args.unstructured_region_rnaplex_srna,
-            self._args.unstructured_region_rnaup, self._args.energy_threshold,
-            self._args.duplex_distance, self._args.top,
+            self._args.unstructured_region_rnaup,
+            self._args.energy_threshold_rnaplex,
+            self._args.duplex_distance_rnaplex, self._args.top,
             self._paths.starget_output_folder, self._args.parallels_rnaplex,
-            self._args.parallels_rnaup, self._args.continue_rnaup,
-            self._args.potential_target_start, self._args.potential_target_end,
-            self._args.target_feature)
+            self._args.parallels_rnaup, self._args.parallels_intarna,
+            self._args.continue_rnaup,
+            self._args.slide_window_size_srna_intarna,
+            self._args.max_loop_length_srna_intarna,
+            self._args.slide_window_size_target_intarna,
+            self._args.max_loop_length_target_intarna,
+            self._args.mode_intarna, self._args.potential_target_start,
+            self._args.potential_target_end, self._args.target_feature)
         srnatarget = sRNATargetPrediction(args_tar)
         srnatarget.run_srna_target_prediction(args_tar)
 

@@ -47,6 +47,10 @@ tar -zxvf ViennaRNA-2.2.5.tar.gz && cd ViennaRNA-2.2.5 && ./configure  --without
 cp src/Utils/relplot.pl /usr/local/bin && \
 cp src/Utils/mountain.pl /usr/local/bin
 
+# IntaRNA
+RUN wget https://github.com/BackofenLab/IntaRNA/releases/download/v2.0.4/intaRNA-2.0.4.tar.gz && \
+tar -zxvf intaRNA-2.0.4.tar.gz && cd intaRNA-2.0.4 && ./configure && make && make install
+
 # TSSpredator
 RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/releases/org/uni-tuebingen/it/TSSpredator/1.06/TSSpredator-1.06.jar && \
 cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
@@ -178,6 +182,7 @@ RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
 ViennaRNA-2.2.5.tar.gz \
+intaRNA-2.0.4.tar.gz \
 htslib-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
 bcftools-1.3.1.tar.bz2 \
