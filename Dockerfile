@@ -11,7 +11,7 @@ libpng-dev python3-pip python-pip python3-numpy imagemagick infernal git \
 openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
 ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
 libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
-snap cpanminus mummer exonerate mafft fasttree libsvg-perl \
+snap cpanminus mummer exonerate mafft fasttree libsvg-perl libboost-all-dev \
 libgd-svg-perl python-setuptools libc6-i386 lib32stdc++6 lib32gcc1 \
 netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
 libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
@@ -25,6 +25,16 @@ ANNOgesic
 
 RUN mkdir /tools /data
 WORKDIR /tools
+
+# vienna package
+RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.3.2.tar.gz && \
+tar -zxvf ViennaRNA-2.3.2.tar.gz && cd ViennaRNA-2.3.2 && ./configure  --without-perl --without-python && make && make install && \
+cp src/Utils/relplot.pl /usr/local/bin && \
+cp src/Utils/mountain.pl /usr/local/bin
+
+# IntaRNA
+RUN wget https://github.com/BackofenLab/IntaRNA/releases/download/v2.0.4/intaRNA-2.0.4.tar.gz && \
+tar -zxvf intaRNA-2.0.4.tar.gz && cd intaRNA-2.0.4 && ./configure && make && make install
 
 # sratoolkit
 RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.5.2/sratoolkit.2.5.2-ubuntu64.tar.gz && \
@@ -40,16 +50,6 @@ sed -i '19s/$PAGIT_HOME/\/usr/' /opt/RATT/start.ratt.sh
 ENV RATT_HOME=/opt/RATT \
 PERL5LIB=/opt/RATT/:$PERL5LIB \
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
-
-# vienna package
-RUN wget http://www.tbi.univie.ac.at/RNA/packages/source/ViennaRNA-2.2.5.tar.gz && \
-tar -zxvf ViennaRNA-2.2.5.tar.gz && cd ViennaRNA-2.2.5 && ./configure  --without-perl --without-python && make && make install && \
-cp src/Utils/relplot.pl /usr/local/bin && \
-cp src/Utils/mountain.pl /usr/local/bin
-
-# IntaRNA
-RUN wget https://github.com/BackofenLab/IntaRNA/releases/download/v2.0.4/intaRNA-2.0.4.tar.gz && \
-tar -zxvf intaRNA-2.0.4.tar.gz && cd intaRNA-2.0.4 && ./configure && make && make install
 
 # TSSpredator
 RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/releases/org/uni-tuebingen/it/TSSpredator/1.06/TSSpredator-1.06.jar && \
@@ -181,7 +181,7 @@ tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make instal
 RUN rm meme_4.11.1.tar.gz \
 segemehl_0_2_0.tar.gz \
 transterm_hp_v2.09.zip \
-ViennaRNA-2.2.5.tar.gz \
+ViennaRNA-2.3.2.tar.gz \
 intaRNA-2.0.4.tar.gz \
 htslib-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
