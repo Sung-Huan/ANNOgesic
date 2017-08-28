@@ -48,7 +48,7 @@ When you install Segemehl, please type 'make all' instead of 'make' after runnin
 
 `TSSpredator <http://it.inf.uni-tuebingen.de/?page_id=190>`_ : version higher or equal to 1.06 (for TSS and processing site prediction, TSS optimization).
 
-`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.0 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection).
+`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.2 (for rho-independent terminator prediction, sRNA detection, sRNA_target detection).
 ViennaRNA contains RNAfold, RNAup, RNAplex, RNAplfold, mountain.pl, relplot.pl for executing many modules of ANNOgesic.
 
 `IntaRNA <https://github.com/BackofenLab/IntaRNA/>`_: version higher or equal to 2.0.4 (sRNA_target detection) 
