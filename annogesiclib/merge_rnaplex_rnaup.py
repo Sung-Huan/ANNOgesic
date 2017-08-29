@@ -48,34 +48,38 @@ def check_parent_gene(cds, genes):
 
 
 def mod_srna_tar_pos(gff, pos, type_, pre_target, suf_target, length):
-    start = int(pos.split(",")[0])
-    end = int(pos.split(",")[-1])
-    if (gff.strand == "+"):
-        if type_ == "srna":
-            g_start = gff.start + start - 1
-            g_end = gff.start + end - 1
-        else:
-            if (gff.start - pre_target) <= 0:
-                g_start = start
-                g_end = end
+    if "NA" not in pos:
+        start = int(pos.split(",")[0])
+        end = int(pos.split(",")[-1])
+        if (gff.strand == "+"):
+            if type_ == "srna":
+                g_start = gff.start + start - 1
+                g_end = gff.start + end - 1
             else:
-                g_start = gff.start - pre_target + start - 1
-                g_end = gff.start - pre_target + end - 1
-            if (gff.start - pre_target + end - 1) > length:
-                g_end = length
+                if (gff.start - pre_target) <= 0:
+                    g_start = start
+                    g_end = end
+                else:
+                    g_start = gff.start - pre_target + start - 1
+                    g_end = gff.start - pre_target + end - 1
+                if (gff.start - pre_target + end - 1) > length:
+                    g_end = length
+        else:
+            if type_ == "srna":
+                g_end = gff.end - start + 1
+                g_start = gff.end - end + 1
+            else:
+                if (gff.end + pre_target) > length:
+                    g_start = length - end + 1
+                    g_end = length - start + 1
+                else:
+                    g_start = gff.end + pre_target - end + 1
+                    g_end = gff.end + pre_target - start + 1
+                if (gff.end + pre_target - end + 1) <= 0:
+                    g_start = 1
     else:
-        if type_ == "srna":
-            g_end = gff.end - start + 1
-            g_start = gff.end - end + 1
-        else:
-            if (gff.end + pre_target) > length:
-                g_start = length - end + 1
-                g_end = length - start + 1
-            else:
-                g_start = gff.end + pre_target - end + 1
-                g_end = gff.end + pre_target - start + 1
-            if (gff.end + pre_target - end + 1) <= 0:
-                g_start = 1
+        g_start = "NA"
+        g_end = "NA"
     return g_start, g_end
 
 def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar, length):
@@ -193,25 +197,26 @@ def read_intarna(intarna, srnas, genes, genomes, features):
         for line in i_h:
             inter = line.strip().split(";")
             if inter[0] != "id1":
-                srna = inter[3]
-                tags = inter[0].split("|")
-                gene_id = get_gene_id(tags[-1], tags[1], genes, genomes,
-                                      features)
-                if srna in srnas["IntaRNA"].keys():
-                    srnas["IntaRNA"][srna].append({
-                        "target_id": tags[1], "target_locus": tags[0],
-                        "detail": tags[-1], "energy": float(inter[-1]),
-                        "gene_id": gene_id,
-                        "tar_pos": ",".join(inter[1:3]),
-                        "srna_pos": ",".join(inter[4:6])})
-                else:
-                    srnas["IntaRNA"][srna] = []
-                    srnas["IntaRNA"][srna].append({
-                        "target_id": tags[1], "target_locus": tags[0],
-                        "detail": tags[-1], "energy": float(inter[-1]),
-                        "gene_id": gene_id,
-                        "tar_pos": ",".join(inter[1:3]),
-                        "srna_pos": ",".join(inter[4:6])})
+                if len(inter) == 9:
+                    srna = inter[3]
+                    tags = inter[0].split("|")
+                    gene_id = get_gene_id(tags[-1], tags[1], genes, genomes,
+                                          features)
+                    if srna in srnas["IntaRNA"].keys():
+                        srnas["IntaRNA"][srna].append({
+                            "target_id": tags[1], "target_locus": tags[0],
+                            "detail": tags[-1], "energy": float(inter[-1]),
+                            "gene_id": gene_id,
+                            "tar_pos": ",".join(inter[1:3]),
+                            "srna_pos": ",".join(inter[4:6])})
+                    else:
+                        srnas["IntaRNA"][srna] = []
+                        srnas["IntaRNA"][srna].append({
+                            "target_id": tags[1], "target_locus": tags[0],
+                            "detail": tags[-1], "energy": float(inter[-1]),
+                            "gene_id": gene_id,
+                            "tar_pos": ",".join(inter[1:3]),
+                            "srna_pos": ",".join(inter[4:6])})
 
 def read_table(gffs, rnaplex, rnaup, intarna, genes, genomes, features):
     srnas = {"RNAup": {}, "RNAplex": {}, "IntaRNA": {}}
@@ -472,6 +477,7 @@ def check_method3(srna_m3, srna_m1, method3, srna, srnas):
         if "rank" not in srna_m3.keys():
             srna_m3["rank"] = "NA"
             srna_m3["energy"] = 1000
+        return srna_m3
     else:
         if method3 is not None:
             for srna_m3 in srnas[method3][srna]:
@@ -626,40 +632,6 @@ def read_fasta(seq_file):
     return length
 
 
-def compare_gff(srnas, gffs, genes, features):
-    for method, srna_list in srnas.items():
-        for srna, srna_inters in srna_list.items():
-            for gff in gffs:
-                if gff.feature == "CDS":
-                    detect = False
-                    for srna_inter in srna_inters:
-                        start = int(srna_inter["detail"].split("-")[0])
-                        end = int(srna_inter["detail"].split(
-                                      "-")[1].split("_")[0])
-                        strand = srna_inter["detail"].split("_")[-1]
-                        if (gff.strand == strand) and (
-                                gff.start == start) and (
-                                gff.end == end) and (
-                                gff.attributes["ID"] == 
-                                srna_inter["target_id"]):
-                            detect = True
-                            target_gene = check_parent_gene(gff, genes)
-                            locus = get_locus(target_gene)
-                            break
-                    if not detect:
-                        detail = "".join([str(gff.start), "-", str(gff.end),
-                                          "_", gff.strand])
-                        gene_id = get_gene_id(detail, gff.attributes["ID"],
-                                              genes, gffs, features)
-                        srnas[method][srna].append({
-                            "target_id": gff.attributes["ID"],
-                            "target_locus": locus,
-                            "detail": detail, "energy": 1000,
-                            "gene_id": gene_id,
-                            "tar_pos": "NA",
-                            "srna_pos": "NA"})
-
-
 def merge_srna_target(rnaplex, rnaup, intarna, args_tar, out_rnaplex,
                       out_rnaup, out_intarna, seq_file, output,
                       out_overlap, srna_gff_file, annotation_gff):
@@ -671,7 +643,6 @@ def merge_srna_target(rnaplex, rnaup, intarna, args_tar, out_rnaplex,
     gffs, genes = read_gff(annotation_gff)
     srnas = read_table(srna_gffs, rnaplex, rnaup, intarna, genes, gffs,
                        args_tar.features)
-    compare_gff(srnas, gffs, genes, args_tar.features)
     if out_rnaplex is not None:
         methods.append("RNAplex")
         out_p = open(out_rnaplex, "w")
