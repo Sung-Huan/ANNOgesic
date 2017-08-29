@@ -17,11 +17,9 @@ package:
 	ls dist/*
 
 build:
-	# python3 setup.py bdist_wheel
 	 python3 setup.py bdist
 
 package_to_pypi:
-	# python3 setup.py bdist_wheel upload
 	twine upload dist/*
 
 html_doc:
