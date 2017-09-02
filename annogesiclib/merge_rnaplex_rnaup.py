@@ -23,13 +23,8 @@ def get_locus(gene):
 
 def check_parent_gene(cds, genes):
     target_gene = None
-    for gene in genes:
-        if "Parent" in cds.attributes.keys():
-            if (gene.attributes["ID"] in
-                    cds.attributes["Parent"].split(",")):
-                target_gene = gene
-                break
-        if target_gene is None:
+    if target_gene is None:
+        for gene in genes:
             if (gene.seq_id == cds.seq_id) and (
                     gene.strand == cds.strand):
                 if ((cds.start <= gene.start) and (
@@ -42,6 +37,9 @@ def check_parent_gene(cds, genes):
                         (cds.start >= gene.start) and (
                         cds.start <= gene.end) and (
                         cds.end >= gene.end)):
+                    target_gene = gene
+                if (cds.start == gene.start) and (
+                        cds.end == gene.end):
                     target_gene = gene
                     break
     return target_gene

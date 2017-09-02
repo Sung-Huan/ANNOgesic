@@ -35,7 +35,7 @@ class TestGenTableTran(unittest.TestCase):
         out = StringIO()
         out_gff = StringIO()
         gtt.print_coverage(self.example.tas, out, out_gff,
-                           self.example.wigs, self.example.wigs, True)
+                           self.example.wigs, self.example.wigs, True, None)
         self.assertEqual(
             out.getvalue(),
             "aaa\tTranscript_0\t4\t20\t+\tfragmented&TEX+/-\tNA\tNA\tNA\ttrack_1(avg=33.529411764705884)\n")

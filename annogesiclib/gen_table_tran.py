@@ -50,7 +50,43 @@ def print_associate(associate, tran, out):
         out.write("\tNA")
 
 
-def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best):
+def compare_ta_genes(tran, genes, out):
+    ass_genes = []
+    if len(genes) != 0:
+        for gene in genes:
+            if (gene.seq_id == tran.seq_id) and (
+                    gene.strand == tran.strand):
+                if ((tran.start <= gene.start) and (
+                        tran.end >= gene.end)) or (
+                        (tran.start >= gene.start) and (
+                        tran.end <= gene.end)) or (
+                        (tran.start <= gene.start) and (
+                        tran.end <= gene.end) and (
+                        tran.end >= gene.start)) or (
+                        (tran.start >= gene.start) and (
+                        tran.start <= gene.end) and (
+                        tran.end >= gene.end)):
+                    if "gene" in gene.attributes.keys():
+                        ass_genes.append(gene.attributes["gene"])
+                    elif "locus_tag" in gene.attributes.keys():
+                        ass_genes.append(gene.attributes["locus_tag"])
+                    else:
+                        ass_genes.append("".join([
+                            "gene:", str(gene.start), "-",
+                            str(gene.end), "_", gene.strand]))
+    if len(ass_genes) != 0:
+        out.write("\t" + ",".join(ass_genes))
+    else:
+        out.write("\tNA")
+
+
+def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best, gff_file):
+    genes = []
+    if gff_file is not None:
+        gff_f = open(gff_file, "r")
+        for entry in Gff3Parser().entries(gff_f):
+            if (entry.feature == "gene"):
+                genes.append(entry)
     for tran in trans:
         infos = {}
         tran.attributes["detect_lib"] = tran.attributes["detect_lib"].replace(
@@ -58,7 +94,7 @@ def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best):
         out.write("\t".join([tran.seq_id, tran.attributes["Name"],
                              str(tran.start), str(tran.end), tran.strand,
                              tran.attributes["detect_lib"]]))
-        print_associate("associated_gene", tran, out)
+        compare_ta_genes(tran, genes, out)
         print_associate("associated_tss", tran, out)
         print_associate("associated_term", tran, out)
         if tran.strand == "+":
@@ -119,8 +155,15 @@ def gen_table_transcript(gff_folder, args_tran):
             gff_parser = Gff3Parser()
             for entry in gff_parser.entries(th):
                 trans.append(entry)
+            if args_tran.gffs is not None:
+                gff_file = os.path.join(args_tran.gffs,
+                                        gff.replace("_transcript", ""))
+                if not os.path.isfile(gff_file):
+                    gff_file = None
+            else:
+                gff_file = None
             print_coverage(trans, out, out_gff, wigs_f, wigs_r,
-                           args_tran.table_best)
+                           args_tran.table_best, gff_file)
             out.close()
             out_gff.close()
             shutil.move(os.path.join(args_tran.out_folder, "tmp_gff"),

@@ -1,4 +1,5 @@
 import os
+import sys
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
 from annogesiclib.parser_wig import WigParser
@@ -87,7 +88,11 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
         out.write("##gff-version 3\n")
         cdss, genes = read_gff(gff_file)
     for tss in tsss:
-        if args_pro.source is True:
+        if ("type" not in tss.attributes.keys()) and (args_pro.source):
+            print("Error: The TSS gff file may not generated from ANNOgesic."
+                  "Please run with --tss_source!")
+            sys.exit()
+        if args_pro.source:
             name = ">" + "_".join([str(tss.start), tss.strand, tss.seq_id])
             print_fasta(seq, tss, files, name, args_pro.nt_before)
         else:
