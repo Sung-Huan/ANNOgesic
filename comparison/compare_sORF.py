@@ -42,7 +42,7 @@ def main():
                     break
     print("the number of known sORFs which can be detected by ANNOgesic:" + str(detect))
     print("the total number of known sORFs:" + str(num_ref))
-    print("the detection rate:" str(float(detect) / float(num_ref)))
+    print("the detection rate:"+ str(float(detect) / float(num_ref)))
 
 
 if __name__ == "__main__":
