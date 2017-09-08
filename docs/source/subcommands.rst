@@ -2387,30 +2387,31 @@ sub-operons.
 
 - **Required files**
 
-**Gff files of the TSSs**
-
 **Gff files of the genome annotations**
 
 **Gff files of the transcripts**
+
+- **Optional input files**
+
+**Gff files of the TSSs**: We strongly recommend to input this file for detecting sub-operon.
+
+**Gff files of the terminators**
 
 **Gff files of the 5'UTRs**
 
 **Gff files of the 3'UTRs**
 
-- **Optional input files**
-
-**Gff files of the terminators**
-
 - **Arguments**
 
 ::
 
-    usage: annogesic operon [-h] --project_path PROJECT_PATH --tss_files TSS_FILES
-                            [TSS_FILES ...] --annotation_files ANNOTATION_FILES
+    usage: annogesic operon [-h] --project_path PROJECT_PATH
+                            [--tss_files TSS_FILES [TSS_FILES ...]]
+                            --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --transcript_files
-                            TRANSCRIPT_FILES [TRANSCRIPT_FILES ...] --utr5_files
-                            UTR5_FILES [UTR5_FILES ...] --utr3_files UTR3_FILES
-                            [UTR3_FILES ...]
+                            TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            [--utr5_files UTR5_FILES [UTR5_FILES ...]]
+                            [--utr3_files UTR3_FILES [UTR3_FILES ...]]
                             [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
                             [--tss_tolerance TSS_TOLERANCE]
                             [--terminator_tolerance TERMINATOR_TOLERANCE]
@@ -3151,7 +3152,6 @@ the region in `Rfam <http://rfam.xfam.org/>`_.
 
 **Gff files of the transcripts**
 
-**Gff files of the TSSs**
 
 **Fasta files of the genome sequences**
 
@@ -3170,81 +3170,85 @@ All columns are separated by ``tab``. You can also download
 `riboswitch and RNA thermometer data <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_
 from our Git repository.
 
+- **Optional input files**
+
+**Gff files of the TSSs**: For checking the ribosome binding site. We strongly recommend to input this file.
+
 - **Arguments**
 
 ::
 
-     usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
-                                             [--program {riboswitch,thermometer,both}]
-                                             [--riboswitch_id_file RIBOSWITCH_ID_FILE]
-                                             [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
-                                             --annotation_files ANNOTATION_FILES
-                                             [ANNOTATION_FILES ...] --tss_files
-                                             TSS_FILES [TSS_FILES ...]
-                                             --transcript_files TRANSCRIPT_FILES
-                                             [TRANSCRIPT_FILES ...] --fasta_files
-                                             FASTA_FILES [FASTA_FILES ...]
-                                             --rfam_path RFAM_PATH
-                                             [--cmscan_path CMSCAN_PATH]
-                                             [--cmpress_path CMPRESS_PATH]
-                                             [--utr_length UTR_LENGTH]
-                                             [--e_value E_VALUE] [--output_all]
-                                             [--tolerance TOLERANCE]
-                                             [--tolerance_rbs TOLERANCE_RBS]
-     
-     optional arguments:
-       -h, --help            show this help message and exit
-     
-     basic arguments:
-       --project_path PROJECT_PATH, -pj PROJECT_PATH
-                             Path of the project folder.
-       --program {riboswitch,thermometer,both}, -p {riboswitch,thermometer,both}
-                             Please choose the feature for the detection. The
-                             options can be "riboswitch", "thermometer", "both".
-                             Default is both.
-       --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
-                             Path of the file which contains the information of
-                             riboswitches in Rfam. Required format of the file:
-                             $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
-                             check an example in https://github.com/Sung-Huan/ANNOg
-                             esic/blob/master/database/Rfam_riboswitch_ID.csv
-       --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
-                             Same format as for -riboswitch_id_file, but for RNA
-                             thermometers. Please check an example in
-                             https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
-                             abase/Rfam_RNA_thermometer_ID.csv
-       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
-                             Paths of the annotation gff files.
-       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
-                             Paths of the TSS gff files.
-       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                             Paths of the transcript gff files.
-       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                             Paths of the genome fasta files.
-       --rfam_path RFAM_PATH, -R RFAM_PATH
-                             Path of the Rfam CM database.
-     
-     additional arguments:
-       --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
-                             Path of cmscan in Infernal package.
-       --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
-                             Path of cmpress in Infernal package.
-       --utr_length UTR_LENGTH, -u UTR_LENGTH
-                             The UTR length. Default is 300.
-       --e_value E_VALUE, -e E_VALUE
-                             The maximum e value. Default is 0.001.
-       --output_all, -o      One query sequence may fit multiple riboswitches or
-                             RNA thermometers. It can print multiple riboswitches
-                             or RNA thermometers. Otherwise, only the highest
-                             confident one will be printed. Default is False.
-       --tolerance TOLERANCE, -to TOLERANCE
-                             The 5'ends and 3'ends of potential riboswitches or RNA
-                             thermometers will be extended by this value
-                             (nucleotides) for extracting the sequences to search
-                             in Rfam. Default is 10.
-       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
-                             The number of nucleotides of ribosome binding site
-                             allow to be different with AGGAGG. Default is 2.
+    usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
+                                            [--program {riboswitch,thermometer,both}]
+                                            [--riboswitch_id_file RIBOSWITCH_ID_FILE]
+                                            [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
+                                            --annotation_files ANNOTATION_FILES
+                                            [ANNOTATION_FILES ...]
+                                            [--tss_files TSS_FILES [TSS_FILES ...]]
+                                            --transcript_files TRANSCRIPT_FILES
+                                            [TRANSCRIPT_FILES ...] --fasta_files
+                                            FASTA_FILES [FASTA_FILES ...]
+                                            --rfam_path RFAM_PATH
+                                            [--cmscan_path CMSCAN_PATH]
+                                            [--cmpress_path CMPRESS_PATH]
+                                            [--utr_length UTR_LENGTH]
+                                            [--e_value E_VALUE] [--output_all]
+                                            [--tolerance TOLERANCE]
+                                            [--tolerance_rbs TOLERANCE_RBS]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+    
+    basic arguments:
+      --project_path PROJECT_PATH, -pj PROJECT_PATH
+                            Path of the project folder.
+      --program {riboswitch,thermometer,both}, -p {riboswitch,thermometer,both}
+                            Please choose the feature for the detection. The
+                            options can be "riboswitch", "thermometer", "both".
+                            Default is both.
+      --riboswitch_id_file RIBOSWITCH_ID_FILE, -ri RIBOSWITCH_ID_FILE
+                            Path of the file which contains the information of
+                            riboswitches in Rfam. Required format of the file:
+                            $RFAM_ID{tab}$RIBOSWITCH_NAME{tab}$DESCRIPTION. Please
+                            check an example in https://github.com/Sung-Huan/ANNOg
+                            esic/blob/master/database/Rfam_riboswitch_ID.csv
+      --rna_thermometer_id_file RNA_THERMOMETER_ID_FILE, -ti RNA_THERMOMETER_ID_FILE
+                            Same format as for -riboswitch_id_file, but for RNA
+                            thermometers. Please check an example in
+                            https://github.com/Sung-Huan/ANNOgesic/blob/master/dat
+                            abase/Rfam_RNA_thermometer_ID.csv
+      --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
+                            Paths of the annotation gff files.
+      --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
+                            Paths of the TSS gff files.
+      --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
+                            Paths of the transcript gff files.
+      --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
+                            Paths of the genome fasta files.
+      --rfam_path RFAM_PATH, -R RFAM_PATH
+                            Path of the Rfam CM database.
+    
+    additional arguments:
+      --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
+                            Path of cmscan in Infernal package.
+      --cmpress_path CMPRESS_PATH, -cp CMPRESS_PATH
+                            Path of cmpress in Infernal package.
+      --utr_length UTR_LENGTH, -u UTR_LENGTH
+                            The UTR length. Default is 300.
+      --e_value E_VALUE, -e E_VALUE
+                            The maximum e value. Default is 0.001.
+      --output_all, -o      One query sequence may fit multiple riboswitches or
+                            RNA thermometers. It can print multiple riboswitches
+                            or RNA thermometers. Otherwise, only the highest
+                            confident one will be printed. Default is False.
+      --tolerance TOLERANCE, -to TOLERANCE
+                            The 5'ends and 3'ends of potential riboswitches or RNA
+                            thermometers will be extended by this value
+                            (nucleotides) for extracting the sequences to search
+                            in Rfam. Default is 10.
+      --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
+                            The number of nucleotides of ribosome binding site
+                            allow to be different with AGGAGG. Default is 2.
 
 - **Output files**
 

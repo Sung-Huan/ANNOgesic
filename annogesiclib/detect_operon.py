@@ -101,11 +101,11 @@ def detect_features(ta, inputs, feature, term_fuzzy, tss_fuzzy):
                             (ta.start >= data.start) and (
                              ta.end <= data.end)) or (
                             (ta.start >= data.start) and (
-                             ta.start < data.end) and (
-                             ta.end > data.end)) or (
-                            (ta.start < data.start) and (
+                             ta.start <= data.end) and (
+                             ta.end >= data.end)) or (
+                            (ta.start <= data.start) and (
                              ta.end <= data.end) and (
-                             ta.end > data.start)):
+                             ta.end >= data.start)):
                         features["num"] += 1
                         features["detect"] = True
                         datas.append(data)
@@ -229,8 +229,11 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
         tas.append(ta)
     for entry in gff_parser.entries(open(gff_file)):
         gffs.append(entry)
-    for entry in gff_parser.entries(open(tss_file)):
-        tss_gffs.append(entry)
+    if tss_file is not False:
+        for entry in gff_parser.entries(open(tss_file)):
+            tss_gffs.append(entry)
+        tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start,
+                                                   k.end, k.strand))
     if terminator_file is not False:
         for entry in gff_parser.entries(open(terminator_file)):
             term_gffs.append(entry)
@@ -238,8 +241,6 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
                                                      k.end, k.strand))
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     gffs = sorted(gffs, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
-    tss_gffs = sorted(tss_gffs, key=lambda k: (k.seq_id, k.start,
-                                               k.end, k.strand))
     return tas, gffs, tss_gffs, term_gffs
 
 
@@ -303,25 +304,35 @@ def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
             check_operon = True
             num_operon += 1
         genes = detect_features(ta, gffs, "gene", term_fuzzy, tss_fuzzy)
-        tsss = detect_features(ta, tss_gffs, "tss", term_fuzzy, tss_fuzzy)
+        if len(tss_gffs) != 0:
+            tsss = detect_features(ta, tss_gffs, "tss", term_fuzzy, tss_fuzzy)
+        else:
+            tsss = {"with_feature": "NA", "num_feature": "NA"}
         if terminator_file is None:
             terms = {"with_feature": "NA", "num_feature": "NA"}
         else:
             terms = detect_features(ta, term_gffs, "term",
                                     term_fuzzy, tss_fuzzy)
-        if ta.strand == "+":
-            operons = sub_operon(ta.strand, tsss, ta.start,
-                                 ta.end, genes, min_length)
-        else:
-            operons = sub_operon(ta.strand, tsss, ta.end,
-                                 ta.start, genes, min_length)
         operon_id = "Operon" + str(num_operon)
+        if len(tss_gffs) != 0:
+            if ta.strand == "+":
+                operons = sub_operon(ta.strand, tsss, ta.start,
+                                     ta.end, genes, min_length)
+            else:
+                operons = sub_operon(ta.strand, tsss, ta.end,
+                                     ta.start, genes, min_length)
+        else:
+            operons = [{"start": ta.start, "end": ta.end, "strand": ta.strand}]
         if genes["num_feature"] != 0:
             for gene in genes["data_list"]:
                 whole_gene.append(get_gene_info(gene))
         else:
             whole_gene.append("NA")
         if check_operon:
-            print_file(ta, operons, out, operon_id, whole_operon,
-                       tsss, terms, genes, whole_gene)
+            if len(tss_gffs) != 0:
+                print_file(ta, operons, out, operon_id, whole_operon,
+                           tsss, terms, genes, whole_gene)
+            else:
+                print_file(ta, operons, out, operon_id, ta,
+                           tsss, terms, genes, whole_gene)
     out.close()

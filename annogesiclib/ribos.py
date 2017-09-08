@@ -22,7 +22,10 @@ class Ribos(object):
         self.helper = Helper()
         self.gff_parser = Gff3Parser()
         self.gff_path = os.path.join(args_ribo.gffs, "tmp")
-        self.tss_path = os.path.join(args_ribo.tsss, "tmp")
+        if args_ribo.tsss is not None:
+            self.tss_path = os.path.join(args_ribo.tsss, "tmp")
+        else:
+            self.tss_path = None
         self.tran_path = os.path.join(args_ribo.trans, "tmp")
         self.fasta_path = os.path.join(args_ribo.fastas, "tmp")
         if (args_ribo.program == "both") or (
@@ -82,10 +85,13 @@ class Ribos(object):
                 prefixs.append(prefix)
                 print("Extracting sequences of candidates for {0}".format(
                       prefix))
+                if self.tss_path is not None:
+                    tss_file = os.path.join(self.tss_path, prefix + "_TSS.gff")
+                else:
+                    tss_file = None
                 extract_potential_rbs(
                       os.path.join(self.fasta_path, prefix + ".fa"),
-                      os.path.join(self.gff_path, gff),
-                      os.path.join(self.tss_path, prefix + "_TSS.gff"),
+                      os.path.join(self.gff_path, gff), tss_file,
                       os.path.join(self.tran_path, prefix + "_transcript.gff"),
                       first_seq, args_ribo, feature)
                 print("Pre-scanning of {0}".format(prefix))
@@ -202,7 +208,8 @@ class Ribos(object):
         self.multiparser.parser_gff(args_ribo.gffs, None)
         self.multiparser.parser_fasta(args_ribo.fastas)
         self.multiparser.parser_gff(args_ribo.trans, "transcript")
-        self.multiparser.parser_gff(args_ribo.tsss, "TSS")
+        if args_ribo.tsss is not None:
+            self.multiparser.parser_gff(args_ribo.tsss, "TSS")
         for gff in os.listdir(args_ribo.gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(

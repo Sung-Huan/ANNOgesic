@@ -12,10 +12,19 @@ class OperonDetection(object):
     def __init__(self, args_op):
         self.multiparser = Multiparser()
         self.helper = Helper()
-        self.tss_path = os.path.join(args_op.tsss, "tmp")
+        if args_op.tsss is not None:
+            self.tss_path = os.path.join(args_op.tsss, "tmp")
+        else:
+            self.tss_path = None
+        if args_op.utr5s is not None:
+            self.utr5_path = os.path.join(args_op.utr5s, "tmp")
+        else:
+            self.utr5_path = None
+        if args_op.utr3s is not None:
+            self.utr3_path = os.path.join(args_op.utr3s, "tmp")
+        else:
+            self.utr3_path = None
         self.tran_path = os.path.join(args_op.trans, "tmp")
-        self.utr5_path = os.path.join(args_op.utr5s, "tmp")
-        self.utr3_path = os.path.join(args_op.utr3s, "tmp")
         self.table_path = os.path.join(args_op.output_folder, "tables")
         if args_op.terms is not None:
             self._check_gff(args_op.terms, "term")
@@ -33,8 +42,11 @@ class OperonDetection(object):
             out_table = os.path.join(self.table_path,
                                      "_".join([prefix, "operon.csv"]))
             print("Detecting operons of {0}".format(prefix))
-            tss = self.helper.get_correct_file(
-                    self.tss_path, "_TSS.gff", prefix, None, None)
+            if self.tss_path is None:
+                tss = False
+            else:
+                tss = self.helper.get_correct_file(
+                        self.tss_path, "_TSS.gff", prefix, None, None)
             tran = self.helper.get_correct_file(
                     self.tran_path, "_transcript.gff", prefix, None, None)
             gff = self.helper.get_correct_file(
@@ -48,23 +60,26 @@ class OperonDetection(object):
                    args_op.term_fuzzy, args_op.length, out_table)
 
     def _check_and_parser_gff(self, args_op):
-        self._check_gff(args_op.tsss, "tss")
         self._check_gff(args_op.gffs, "gff")
         self._check_gff(args_op.trans, "tran")
-        self._check_gff(args_op.utr5s, "utr")
-        self._check_gff(args_op.utr3s, "utr")
         self.multiparser.parser_gff(args_op.gffs, None)
-        self.multiparser.parser_gff(args_op.tsss, "TSS")
-        self.multiparser.combine_gff(args_op.gffs, self.tss_path, None, "TSS")
         self.multiparser.parser_gff(args_op.trans, "transcript")
         self.multiparser.combine_gff(args_op.gffs, self.tran_path,
                                      None, "transcript")
-        self.multiparser.parser_gff(args_op.utr5s, "5UTR")
-        self.multiparser.combine_gff(args_op.gffs, self.utr5_path,
-                                     None, "5UTR")
-        self.multiparser.parser_gff(args_op.utr3s, "3UTR")
-        self.multiparser.combine_gff(args_op.gffs, self.utr3_path,
-                                     None, "3UTR")
+        if args_op.tsss is not None:
+            self._check_gff(args_op.tsss, "tss")
+            self.multiparser.parser_gff(args_op.tsss, "TSS")
+            self.multiparser.combine_gff(args_op.gffs, self.tss_path, None, "TSS")
+        if args_op.utr5s is not None:
+            self._check_gff(args_op.utr5s, "utr")
+            self.multiparser.parser_gff(args_op.utr5s, "5UTR")
+            self.multiparser.combine_gff(args_op.gffs, self.utr5_path,
+                                         None, "5UTR")
+        if args_op.utr3s is not None:
+            self._check_gff(args_op.utr3s, "utr")
+            self.multiparser.parser_gff(args_op.utr3s, "3UTR")
+            self.multiparser.combine_gff(args_op.gffs, self.utr3_path,
+                                         None, "3UTR")
         if args_op.terms is not None:
             self._check_gff(args_op.terms, "term")
             self.multiparser.parser_gff(args_op.terms, "term")
@@ -84,21 +99,30 @@ class OperonDetection(object):
             out_file = os.path.join(args_op.output_folder, "gffs",
                                     "_".join([prefix, "operon.gff"]))
             print("Generating the gff file of {0}".format(prefix))
-            tss = self.helper.get_correct_file(
-                    self.tss_path, "_TSS.gff", prefix, None, None)
+            if args_op.tsss is not None:
+                tss = self.helper.get_correct_file(
+                        self.tss_path, "_TSS.gff", prefix, None, None)
+            else:
+                tss = None
             tran = self.helper.get_correct_file(
                     self.tran_path, "_transcript.gff", prefix, None, None)
             gff = self.helper.get_correct_file(
                     args_op.gffs, ".gff", prefix, None, None)
-            utr5 = self.helper.get_correct_file(
-                    self.utr5_path, "_5UTR.gff", prefix, None, None)
-            utr3 = self.helper.get_correct_file(
-                    self.utr3_path, "_3UTR.gff", prefix, None, None)
-            if self.term_path is None:
-                term = None
+            if args_op.utr5s is not None:
+                utr5 = self.helper.get_correct_file(
+                        self.utr5_path, "_5UTR.gff", prefix, None, None)
             else:
+                utr5 = None
+            if args_op.utr3s is not None:
+                utr3 = self.helper.get_correct_file(
+                        self.utr3_path, "_3UTR.gff", prefix, None, None)
+            else:
+                utr3 = None
+            if self.term_path is not None:
                 term = self.helper.get_correct_file(
                         self.term_path, "_term.gff", prefix, None, None)
+            else:
+                term = None
             combine_gff(gff, tran, tss, utr5, utr3, term,
                         args_op.tss_fuzzy, args_op.term_fuzzy, out_file)
 

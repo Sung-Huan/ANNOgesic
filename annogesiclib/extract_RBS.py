@@ -69,18 +69,19 @@ def read_file(seq_file, gff_file, tss_file, tran_file):
     for entry in Gff3Parser().entries(g_h):
         if (entry.feature == "CDS"):
             cdss.append(entry)
-    t_h = open(tss_file)
-    for entry in Gff3Parser().entries(t_h):
-        tsss.append(entry)
+    if tss_file is not None:
+        t_h = open(tss_file)
+        for entry in Gff3Parser().entries(t_h):
+            tsss.append(entry)
+        tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
+        t_h.close()
     a_h = open(tran_file)
     for entry in Gff3Parser().entries(a_h):
         trans.append(entry)
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
-    tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     trans = sorted(trans, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     g_h.close()
     a_h.close()
-    t_h.close()
     return cdss, seq, tsss, trans
 
 
@@ -205,7 +206,8 @@ def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
     first = True
     inters = []
     for cds in cdss:
-        compare_tss(tsss, cds, inters, fuzzy, seq, utr)
+        if len(tsss) != 0:
+            compare_tss(tsss, cds, inters, fuzzy, seq, utr)
         first, start, end = compare_pre_cds(first, cdss, cds, seq)
         compare_tran(cds, trans, seq, inters, fuzzy, start, end)
     return inters

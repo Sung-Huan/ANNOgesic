@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.21"
+__version__ = "0.6.22"
 
 def main():
     print("""
@@ -1337,7 +1337,7 @@ def main():
         "--project_path", "-pj", required=True,
         help="Path of the project folder.")
     operon_basic.add_argument(
-        "--tss_files", "-t", required=True, nargs='+',
+        "--tss_files", "-t", default=None, nargs='+',
         help="Paths of the TSS gff files.")
     operon_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
@@ -1346,10 +1346,10 @@ def main():
         "--transcript_files", "-a", required=True, nargs='+',
         help="Paths of the transcript gff files.")
     operon_basic.add_argument(
-        "--utr5_files", "-u5", required=True, nargs='+',
+        "--utr5_files", "-u5", default=None, nargs='+',
         help="Paths of the 5'UTR gff files.")
     operon_basic.add_argument(
-        "--utr3_files", "-u3", required=True, nargs='+',
+        "--utr3_files", "-u3", default=None, nargs='+',
         help="Paths of the 3'UTR gff files.")
     operon_basic.add_argument(
         "--terminator_files", "-e", default=None, nargs='+',
@@ -1830,7 +1830,7 @@ def main():
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the annotation gff files.")
     ribos_basic.add_argument(
-        "--tss_files", "-t", required=True, nargs='+',
+        "--tss_files", "-t", default=None, nargs='+',
         help="Paths of the TSS gff files.")
     ribos_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
