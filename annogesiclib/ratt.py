@@ -175,7 +175,7 @@ class RATT(object):
                 files = []
                 if "_folder" in folder:
                     datas = folder.split("_folder")
-                    prefix = datas[0][:-3]
+                    prefix = ".".join(datas[0].split(".")[:-1])
                     for file_ in os.listdir(os.path.join(args_ratt.tar_fastas,
                                                          folder)):
                         files.append(file_[:-3])
@@ -201,7 +201,7 @@ class RATT(object):
                         shutil.move(self.tmp_files["rnt"], os.path.join(
                                     self.tmp_files["out_gff"], prefix + ".rnt"))
                     else:
-                        print("Error: Please check your output fasta or "
+                        print("Error: Please check your fasta or "
                               "annotation files, they should only contain "
                               "the query genome. And make sure your RATT can "
                               "work properly (check $ANNOgesic/output/"

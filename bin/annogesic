@@ -138,8 +138,9 @@ def main():
         help="Path of the start.ratt.sh file of RATT folder. "
         "Default is start.ratt.sh.")
     RATT_add.add_argument(
-        "--element", "-e", required=True,
-        help="--element will become the prefix of all output file.")
+        "--element", "-e",
+        help="--element will become the prefix of all output file."
+        "Default is \"chromosome\".")
     RATT_add.add_argument(
         "--transfer_type", "-t", default="Strain",
         help="The transfer type for running RATT. (For the details, "
