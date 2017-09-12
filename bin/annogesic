@@ -116,11 +116,15 @@ def main():
         "please use spaces to separate them.")
     RATT_basic.add_argument(
         "--related_embl_files", "-ce", default=None, nargs='+',
-        help="The paths of the embl files of the related species.")
+        help="The paths of the embl files of the related species. "
+        "If --related_embl_files is assigned, --related_gbk_files is not "
+        "needed.")
     RATT_basic.add_argument(
         "--related_gbk_files", "-cg", default=None, nargs='+',
         help="The paths of the genbank files of the related species. "
-        "The genbank can be ended by .gbk, .gbff or .gb")
+        "The genbank can be ended by .gbk, .gbff or .gb. If "
+        "--related_gbk_files is assigned, --related_embl_files is not "
+        "needed.")
     RATT_basic.add_argument(
         "--related_fasta_files", "-cf", required=True, nargs='+',
         help="The paths of the fasta files of the related species.")
