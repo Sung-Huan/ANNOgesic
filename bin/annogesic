@@ -138,7 +138,7 @@ def main():
         help="Path of the start.ratt.sh file of RATT folder. "
         "Default is start.ratt.sh.")
     RATT_add.add_argument(
-        "--element", "-e",
+        "--element", "-e", default="chromosome",
         help="--element will become the prefix of all output file."
         "Default is \"chromosome\".")
     RATT_add.add_argument(
