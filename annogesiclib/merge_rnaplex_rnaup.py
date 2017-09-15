@@ -198,17 +198,11 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                 if len(inter) == 9:
                     srna = inter[3]
                     tags = inter[0].split("|")
-                    gene_id = get_gene_id(tags[-1], tags[1], genes, genomes,
-                                          features)
-                    if srna in srnas["IntaRNA"].keys():
-                        srnas["IntaRNA"][srna].append({
-                            "target_id": tags[1], "target_locus": tags[0],
-                            "detail": tags[-1], "energy": float(inter[-1]),
-                            "gene_id": gene_id,
-                            "tar_pos": ",".join(inter[1:3]),
-                            "srna_pos": ",".join(inter[4:6])})
-                    else:
-                        srnas["IntaRNA"][srna] = []
+                    if (len(tags[0])) != 0:
+                        gene_id = get_gene_id(tags[-1], tags[1], genes,
+                                              genomes, features)
+                        if srna not in srnas["IntaRNA"].keys():
+                            srnas["IntaRNA"][srna] = []
                         srnas["IntaRNA"][srna].append({
                             "target_id": tags[1], "target_locus": tags[0],
                             "detail": tags[-1], "energy": float(inter[-1]),
@@ -255,7 +249,16 @@ def get_gene_id(detail, tar_id, genes, gffs, features):
                         tar.attributes["Parent"].split(",")):
                     gene_id = gene.attributes["ID"]
                     return gene_id
-        else:
+        if gene_id == "NA":
+            if (gene.seq_id == tar.seq_id) and (
+                    gene.strand == tar.strand) and (
+                    (tar.start == gene.start) and (
+                    tar.end == gene.end)):
+                if "ID" in gene.attributes.keys():
+                    gene_id = gene.attributes["ID"]
+                    return gene_id
+    if gene_id == "NA":
+        for gene in genes:
             if (gene.seq_id == tar.seq_id) and (
                     gene.strand == tar.strand):
                 if ((tar.start <= gene.start) and (
@@ -642,16 +645,19 @@ def merge_srna_target(rnaplex, rnaup, intarna, args_tar, out_rnaplex,
     srnas = read_table(srna_gffs, rnaplex, rnaup, intarna, genes, gffs,
                        args_tar.features)
     if out_rnaplex is not None:
+        print("Ranking for RNAplex")
         methods.append("RNAplex")
         out_p = open(out_rnaplex, "w")
         print_rank_one(srnas, out_p, "RNAplex", gffs, srna_gffs, args_tar,
                        length)
     if out_rnaup is not None:
+        print("Ranking for RNAup")
         methods.append("RNAup")
         out_u = open(out_rnaup, "w")
         print_rank_one(srnas, out_u, "RNAup", gffs, srna_gffs, args_tar,
                        length)
     if out_intarna is not None:
+        print("Ranking for IntaRNA")
         methods.append("IntaRNA")
         out_i = open(out_intarna, "w")
         print_rank_one(srnas, out_i, "IntaRNA", gffs, srna_gffs, args_tar,
