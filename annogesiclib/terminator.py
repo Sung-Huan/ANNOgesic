@@ -62,16 +62,23 @@ class Terminator(object):
     def _combine_annotation(self, combine_file, files):
         with open(combine_file, 'w') as result:
             for file_ in files:
-                check_start = False
-                fh = open(file_, 'r')
-                for line in fh:
-                    if check_start:
-                        result.write(line)
-                    if "Location" in line:
-                        check_start = True
-                if "\n" not in line:
-                    result.write("\n")
-                fh.close()
+                if (os.stat(file_).st_size == 0):
+                    print("Warning: No CDS information, "
+                          "TransTermHP can not work!")
+                    return "NO_CDS"
+                elif os.path.exists(file_) and (
+                        os.stat(file_).st_size != 0):
+                    check_start = False
+                    fh = open(file_, 'r')
+                    for line in fh:
+                        if check_start:
+                            result.write(line)
+                        if "Location" in line:
+                            check_start = True
+                    if "\n" not in line:
+                        result.write("\n")
+                    fh.close()
+        return "Normal"
 
     def _make_gff_folder(self):
         self.helper.check_make_folder(self.terms["all"])
@@ -125,13 +132,14 @@ class Terminator(object):
             if file_type == "normal":
                 files = [os.path.join(gff_path, prefix + ".ptt"),
                          os.path.join(gff_path, prefix + ".rnt")]
-                self._combine_annotation(combine_file, files)
+                check = self._combine_annotation(combine_file, files)
             elif file_type == "srna":
                 files = [os.path.join(gff_path, prefix + ".ptt"),
                          os.path.join(gff_path, prefix + ".rnt"),
                          os.path.join(srna_path,
                                       "_".join([prefix, "sRNA.rnt"]))]
-                self._combine_annotation(combine_file, files)
+                check = self._combine_annotation(combine_file, files)
+        return check
 
     def _TransTermHP(self, fasta, file_, out_path, prefix, out, args_term):
         call([args_term.TransTermHP_path, "-p", args_term.expterm_path,
@@ -437,13 +445,16 @@ class Terminator(object):
             sys.exit()
         file_types, prefixs = self._convert_gff2rntptt(
                 self.gff_path, self.fasta_path, args_term.srnas)
-        self._combine_ptt_rnt(self.gff_path, file_types, self.srna_path)
+        check = self._combine_ptt_rnt(self.gff_path, file_types,
+                                      self.srna_path)
         self._run_TransTermHP(args_term)
         self._convert_to_gff(prefixs, args_term)
         self.helper.remove_tmp(self.gff_path)
         self.multiparser.parser_gff(args_term.trans, "transcript")
         self.helper.check_make_folder(self.tmps["term_table"])
-        self.multiparser.parser_gff(self.tmps["transterm"], self.tmps["hp"])
+        if check != "NO_CDS":
+            self.multiparser.parser_gff(self.tmps["transterm"],
+                                        self.tmps["hp"])
         merge_path = self._merge_sRNA(args_term.srnas, prefixs, self.gff_path)
         self._compute_intersection_forward_reverse(
                 prefixs, merge_path, args_term.wig_path,

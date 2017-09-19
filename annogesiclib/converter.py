@@ -310,9 +310,10 @@ class Converter(object):
         seq = datas[2]
         out_p = open(ptt_file, "w")
         out_r = open(rnt_file, "w")
-        self._print_rntptt_title(out_p, str(num_cds),
-                                 cdss[0].seq_id, str(len(seq)))
-        self._print_rntptt_file(out_p, cdss, genes)
+        if len(cdss) != 0:
+            self._print_rntptt_title(out_p, str(num_cds),
+                                     cdss[0].seq_id, str(len(seq)))
+            self._print_rntptt_file(out_p, cdss, genes)
         if len(rnas) != 0:
             self._print_rntptt_title(out_r, str(num_rna),
                                      rnas[0].seq_id, str(len(seq)))
