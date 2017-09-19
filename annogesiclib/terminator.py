@@ -62,11 +62,11 @@ class Terminator(object):
     def _combine_annotation(self, combine_file, files):
         with open(combine_file, 'w') as result:
             for file_ in files:
-                if (os.stat(file_).st_size == 0):
+                if (file_.endswith(".ptt")) and (os.stat(file_).st_size == 0):
                     print("Warning: No CDS information, "
                           "TransTermHP can not work!")
                     return "NO_CDS"
-                elif os.path.exists(file_) and (
+                if os.path.exists(file_) and (
                         os.stat(file_).st_size != 0):
                     check_start = False
                     fh = open(file_, 'r')
