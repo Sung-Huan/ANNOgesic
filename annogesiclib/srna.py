@@ -396,7 +396,7 @@ class sRNADetection(object):
         detect = False
         for fasta in os.listdir(fasta_path):
             if fasta.endswith(".fa") and (
-               fasta.replace(".fa", "") == prefix):
+               ".".join(fasta.split(".")[:-1]) == prefix):
                 detect = True
                 break
         if detect:
