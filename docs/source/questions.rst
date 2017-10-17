@@ -1,5 +1,5 @@
-Q and A
-=======
+FAQ
+===
 
 - **Q1:**
 
@@ -72,3 +72,14 @@ When I run sRNA target prediction, I found many files in ``RNAplfold``. Are they
 - **A6:**
 
 These files are intermediate input for RNAplex. They will be deleted when RNAplex is done.
+
+- **Q7:**
+
+If I only have fragmented RNA-Seq libraries or conventional RNA-Seq libraries, what kinds of annotation can be generated?
+
+- **A7:**
+
+TEX treated libraries are mainly used for TSS detection. Therefore, if the user has no dRNA-Seq libraries, the annotation 
+which needs TSS information may not be able to detect. The annotations which can be detected without dRNA-Seq libraries are: 
+transcript, operon, terminator, CRISPR, sRNA (the results may be influenced, and UTR-derived sRNA can not be detected), 
+sRNA target, GO term, subcellular localization, circular RNA, SNP, protein-protein interaction, annotation transfer.
