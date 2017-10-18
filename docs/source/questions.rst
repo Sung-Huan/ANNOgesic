@@ -75,11 +75,28 @@ These files are intermediate input for RNAplex. They will be deleted when RNAple
 
 - **Q7:**
 
-If I only have fragmented RNA-Seq libraries or conventional RNA-Seq libraries, what kinds of annotation can be generated?
+If I only have fragmented RNA-Seq libraries or conventional RNA-Seq libraries, what kinds of annotations can be generated? On the 
+other hands, if only dRNA-Seq libraries are available, what kinds of annotations can be generated?
 
 - **A7:**
 
-TEX treated libraries are mainly used for TSS detection. Therefore, if the user has no dRNA-Seq libraries, the annotation 
-which needs TSS information may not be able to detect. The annotations which can be detected without dRNA-Seq libraries are: 
-transcript, operon, terminator, CRISPR, sRNA (the results may be influenced, and UTR-derived sRNA can not be detected), 
-sRNA target, GO term, subcellular localization, circular RNA, SNP, protein-protein interaction, annotation transfer.
+Only fragmented RNA-Seq or conventional RNA-Seq libraries are available:
+
+dRNA-Seq data (TEX+/-) are mainly used for TSS detection. Therefore, if the user has no dRNA-Seq data, the annotations 
+which need TSS information may not be able to detect. The annotations which can be detected without dRNA-Seq libraries are: 
+transcript, operon (sub-operon can not be detected), terminator, CRISPR, sRNA (the results may be influenced, 
+and UTR-derived sRNA can not be detected), sRNA target, GO term, subcellular localization, circular RNA, SNP, 
+protein-protein interaction, annotation transfer. For the details of sRNA detection, if TSSs can not be obtained, 
+the selection of the best sRNA candidates can only considers the information like secondary structure folding energy, 
+BLAST results, etc. Thus, the accuracy of sRNA detection (especially for the selection of the best sRNA candidates) 
+will be influenced. For operon detection, since the TSS information is not available, the sub-operons can not be detected.
+
+The other features (including UTR-derived sRNAs) which can not be detected precisely or at all by only fragmented or 
+conventional RNA-Seq data require the information of TSS or ribosome-binding site.
+
+Only dRNA-Seq libraries are available:
+
+Actually, all the genomic features can be detected by only using dRNA-Seq data. However, dRNA-Seq usually does not able 
+to detect transcript boundary. Thus, the genomic features which are related to transcript boundary will be influenced, such as 
+transcripts, sRNAs, sORFs, operon, terminators, etc. Although the 3'end of transcripts may be not clear, the genomic feature detections 
+of ANNOgesic still show high performances by comparing to the previously published data.
