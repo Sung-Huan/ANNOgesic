@@ -42,9 +42,10 @@ class Controller(object):
     def __init__(self, args):
         """Create an instance."""
         self._args = args
-        if not os.path.exists(args.project_path):
-            print("Error: --project_path does not exists!")
-            sys.exit()
+        if (len(args.__dict__) > 3):
+            if not os.path.exists(args.project_path):
+                print("Error: --project_path does not exists!")
+                sys.exit()
         self._paths = Paths(args.project_path)
         self.args_container = ArgsContainer()
         self.helper = Helper()
