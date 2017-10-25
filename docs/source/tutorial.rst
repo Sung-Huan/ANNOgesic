@@ -630,6 +630,18 @@ please assign "meme" or "glam2" to ``--program``), the process may take a while.
 
 We defined the length of the motifs as ``50`` and ``2-10``. ``2-10`` means the width can be from 2 to 10.
 
+If the software for running MEME and GLAM2 in parallels is installed, ``--parallels`` can also be assigned for
+running MEME and GLAM2 in parallels.
+
+::
+
+    $ annogesic promoter \
+        --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --motif_width 45 2-10 \
+        --parallels 10 \
+        --project_path ANNOgesic
+
 Based on different types of the TSSs and the length of the motif, numerous output files will be generated.
 
 ::
