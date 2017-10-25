@@ -228,11 +228,14 @@ operon_detection(){
 }
 
 promoter_detection(){
+    #### If MEME or GLAM2 cannot run in parallels, please install MPI (OpenMPI or MPICH).
+    #### Otherwise, please remove -pl 10.
     $ANNOGESIC_PATH \
         promoter \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -w 45 2-10 \
+        -pl 10 \
         -pj $ANNOGESIC_FOLDER
 }
 
