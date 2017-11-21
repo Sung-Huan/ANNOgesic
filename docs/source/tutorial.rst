@@ -311,7 +311,8 @@ First, we set the paths of wig files.
 
     WIG_FOLDER="ANNOgesic/input/wigs/tex_notex"
 
-Then, we can setup our libraries -- ``$WIGFILE:$TEXorNOTEX:CONDITION:REPLICATE:STRAND``.
+Then, we can setup our libraries -- ``$WIGFILE:$TEXorNOTEXorFRAG:CONDITION:REPLICATE:STRAND`` 
+(:ref:`The input format of libraries for running ANNOgesic`).
 
 ::
 
