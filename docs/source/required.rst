@@ -15,6 +15,8 @@ Tools
 
 `BioPerl <http://www.bioperl.org/wiki/Main_Page>`_:  version higher or equal to 1.6.1.
 
+`Wget <https://www.gnu.org/software/wget>`_:  version higher or equal to 1.17.1.
+
 `Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_ : version higher or equal to 2.2.28+ (for sRNA_detection).
 
 `ImageMagick <http://www.imagemagick.org/script/index.php>`_ : version higher or equal to 6.9.0-0 (for generate screenshot).
