@@ -165,10 +165,11 @@ def main():
         "\"PS\". Default is \"TSS\".")
     TSSpredator_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
-        help="Paths of the query genome fasta files.")
+        help="Paths of the genome fasta files.")
     TSSpredator_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the query genome gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc.")
     TSSpredator_basic.add_argument(
         "--tex_notex_libs", "-tl", required=True, nargs='+',
         help="TEX+/- wig files for TSSpredator. The format is: "
@@ -319,7 +320,8 @@ def main():
         help="Paths of the fasta file of the reference genome.")
     op_TSSpredator_basic.add_argument(
         "--annotation_files", "-g", nargs='+', required=True,
-        help="Paths of the gff file of the reference genome.")
+        help="Paths of the genome annotation gff file containing CDSs, "
+        "tRNAs, rRNAs, etc.")
     op_TSSpredator_basic.add_argument(
         "--manual_files", "-m", nargs='+', required=True,
         help="Paths of the manual-checked TSS or PS in gff format. It is used "
@@ -438,7 +440,10 @@ def main():
         help="Paths of the genome fasta files.")
     Terminator_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs,"
+        " tRNAs, rRNAs, etc. Transcript gff files and sRNA gff files need to "
+        "be separately assigned to --transcript_files and --srna_files, "
+        "respectively.")
     Terminator_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
         help="Paths of the transcript gff files.")
@@ -585,7 +590,9 @@ def main():
         help="Path of the project folder.")
     Transcript_basic.add_argument(
         "--annotation_files", "-g", default=None, nargs='+',
-        help="If paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc. TSS gff files and terminator gff files need to be "
+        "separately assigned to --tss_files and --terminator_files, respectively.")
     Transcript_basic.add_argument(
         "--modify_transcript", "-mt", default=["merge_overlap"], nargs='+',
         choices=["merge_overlap", "extend_3end", "extend_5end",
@@ -707,7 +714,10 @@ def main():
         help="Path of the project folder.")
     UTR_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc. Gff files of TSSs, terminators, and transcripts need "
+        "to be separately assigned to --tss_files, terminator_files, and "
+        "transcript_files, respectively.")
     UTR_basic.add_argument(
         "--tss_files", "-t", required=True, nargs='+',
         help="Paths of the TSS files.")
@@ -792,7 +802,11 @@ def main():
         help="Paths of the transcript files.")
     sRNA_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc. Gff files of transcripts, TSSs, terminators, "
+        "processing sites, and sORFs need to be separately assigned to "
+        "--transcript_files, --tss_files, --terminator_files, "
+        "--processing_site_files, and --sorf_files, respectively.")
     sRNA_basic.add_argument(
         "--tss_files", "-t", default=None, nargs='+',
         help="Paths of TSS gff files. For detecting UTR-derived sRNA or "
@@ -1118,7 +1132,10 @@ def main():
         help="Paths of the transcript gff files.")
     sORF_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the the genome annotation gff files.")
+        help="Paths of the the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc. Gff files of transcripts, sRNAs, and TSSs need to "
+        "be separately assigned to --transcript_files, --srna_files, and "
+        "--tss_files, respectively.")
     sORF_basic.add_argument(
         "--tss_files", "-t", default=None, nargs='+',
         help="Paths of TSS gff files.")
@@ -1326,7 +1343,7 @@ def main():
     promoter_add.add_argument(
         "--annotation_files", "-g", default=None, nargs='+',
         help="If --tss_source is False, please assign the paths of the "
-        "genome annotation gff files.")
+        "genome annotation gff files containing CDSs, tRNAs, rRNAs, etc.")
     promoter_add.add_argument(
         "--combine_all", "-c", default=False, action="store_true",
         help="Generate global promoter motifs across all reference "
@@ -1346,7 +1363,11 @@ def main():
         help="Paths of the TSS gff files.")
     operon_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs etc. Gff files of TSSs, transcripts, terminators, "
+        "5'UTRs, and 3'UTRs need to be separately assigned to --tss_files, "
+        "--transcript_files, --terminator_files, --utr5_files, and "
+        "--utr3_files, respectively.")
     operon_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
         help="Paths of the transcript gff files.")
@@ -1401,7 +1422,8 @@ def main():
         help="Paths of the genome fasta files. ")
     circrna_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs, "
+        "tRNAs, rRNAs, etc.")
     circrna_add = circrna_parser.add_argument_group(
         'additional arguments')
     circrna_add.add_argument(
@@ -1443,7 +1465,7 @@ def main():
         help="Path of the project folder.")
     goterm_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containg CDSs.")
     goterm_basic.add_argument(
         "--transcript_files", "-a", default=None, nargs='+',
         help="Paths of the transcript gff files which can "
@@ -1469,7 +1491,7 @@ def main():
         help="Path of the project folder.")
     starget_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files.")
+        help="Paths of the genome annotation gff files containing CDSs.")
     starget_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files.")
@@ -1719,8 +1741,8 @@ def main():
         help="Path of the project folder.")
     ppi_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of the genome annotation gff files with proper "
-        "locus_tag item in the attributes. ")
+        help="Paths of the genome annotation gff files containing genes and "
+        "CDSs with proper locus_tag items in the attributes. ")
     ppi_basic.add_argument(
         "--species_string", "-d", required=True,
         help="Path of the species table of STRING "
@@ -1776,7 +1798,7 @@ def main():
         help="Path of the project folder.")
     sub_local_basic.add_argument(
         "--annotation_files", "-g", required=True, nargs='+',
-        help="Paths of genome annotation gff files.")
+        help="Paths of genome annotation gff files containing CDSs.")
     sub_local_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of genome fasta files.")
@@ -1890,8 +1912,9 @@ def main():
         help="Paths of the genome fasta files.")
     crispr_basic.add_argument(
         "--annotation_files", "-g", default=None, nargs='+',
-        help="Paths of the genome gff files for comparing CRISPRs and the "
-        "genome annotation to remove the false positives. Default is None.")
+        help="Paths of the genome gff files containing CDSs for comparing "
+        "CRISPRs and the genome annotation to remove the false positives. "
+        "Default is None.")
     crispr_add = crispr_parser.add_argument_group(
         'additional arguments')
     crispr_add.add_argument(

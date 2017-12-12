@@ -745,7 +745,7 @@ The output folders are following:
 	``TSSstatistics.tsv`` stores the number of TSS which can be detected or missing in each condition.
 
 	**Comparing TSSs with other features:** ``stat_compare_TSS_transcript_$GENOME.csv`` is for comparing TSSs with transcripts.
-	``stat_gene_vali_$GENOME.csv`` is for comparing TSS with genome annotations.
+	``stat_gene_vali_$GENOME.csv`` is for comparing TSS with genome annotations like CDSs.
 
 	**Comparing manual detected TSSs and predicted TSSs:** In ``stat_compare_TSSpredator_manual_$GENOME.csv``, the accuracy of TSS prediction can be found.
 
@@ -784,7 +784,7 @@ given gene annotations and several parameters that can be set by the user.
 
 **TSS gff files:** If the user wants to compare transcripts with TSSs, TSS gff files are required.
 
-**Genome anntation gff files:** If the user wants to compare transcripts with genome annotations or modify transcript by genome annotations, 
+**Gff files of genome anntations containing CDSs, tRNAs, rRNAs, etc:** If the user wants to compare transcripts with genome annotations or modify transcript by genome annotations like CDSs, tRNAs, rRNAs, 
 genome annotation gff files are required. There are four options for modification of transcripts:
 
 	**merge_overlap:** If multiple transcripts overlap the same gene, they will be merged as one complete transcript.
@@ -959,7 +959,7 @@ The generated output folders are as following:
 **statistics:** Stores statistic files.
 
 	**Comparing transcript with other features:** ``stat_compare_transcript_genome_$GENOMENAME.csv`` is 
-	for comparing transcript with genome annotation, ``stat_compare_transcript_TSS_$GENOMENAME.csv`` is for comparing 
+	for comparing transcript with genome annotation like CDSs, ``stat_compare_transcript_TSS_$GENOMENAME.csv`` is for comparing 
 	transcript with TSS, and ``stat_compare_transcript_terminator_$GENOMENAME.csv`` is for comparing
         transcript with terminator.
 
@@ -1002,7 +1002,7 @@ which have coverage significant decrease.
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Fasta files of the genome sequences**
 
@@ -1272,7 +1272,7 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Gff files of the TSSs**
 
@@ -1379,7 +1379,7 @@ BLAST to nr database and sRNA database can be set as well.
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Gff files of the transcripts**
 
@@ -1987,7 +1987,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 **Gff files of the transcripts**
 
 **Wiggle files of TEX+/- or fragmented/conventional libraries:** Please refer to the section :ref:`The input format of libraries for running ANNOgesic`.
@@ -2387,7 +2387,7 @@ sub-operons.
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Gff files of the transcripts**
 
@@ -2518,7 +2518,7 @@ handle them.
 
 **Fasta files of the genome annotations**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 - **Arguments**
 
@@ -2620,7 +2620,7 @@ Based on this information, we can know the details of the specific circular RNA.
 
 	**End:** End point of the circular RNA.
 
-	**Annotation_overlap:** If there is genome annotation which overlap this circular RNA, the overlapped feature will be showed here.
+	**Annotation_overlap:** If there is a genome annotation (like a CDS) which overlap this circular RNA, the overlapped feature will be showed here.
 
 	**Supported_reads:** The number of reads which support the circular RNA.
 
@@ -2644,7 +2644,7 @@ Some analyses of GO terms can be done as well.
 
 **GO file:** `go.obo <http://geneontology.org/page/download-ontology>`_.
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 - **Optional input files**
 
@@ -2723,7 +2723,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs**
 
 **Gff files of the sRNAs**
 
@@ -2943,7 +2943,7 @@ the supported literature of the protein-protein interaction networks.
 
 **Species table of STRING:** `species.v${VERSION}.txt from STRING <http://string-db.org/cgi/download.pl>`_.
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs**
 
 - **Arguments**
 
@@ -3047,7 +3047,7 @@ Some statistics and visualization files are provided as well.
 
 - **Required files**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs**
 
 **Fasta files of the genome sequences**
 
@@ -3148,7 +3148,7 @@ the region in `Rfam <http://rfam.xfam.org/>`_.
 
 `Rfam <http://rfam.xfam.org/>`_.
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Gff files of the transcripts**
 
@@ -3299,7 +3299,7 @@ The tags are as following:
 crispr (CRISPR detection)
 -------------------------
 ``crispr`` integrates CRISPR Recognition Tool (`CRT <http://www.room220.com/crt/>`_) which can detect the repeat 
-units and spacers of CRISPR. Moreover, the false positive can be removed by comparing candidates with genome annotation.
+units and spacers of CRISPR. Moreover, the false positive can be removed by comparing candidates with genome annotations.
 
 - **Required tools**
 
@@ -3311,7 +3311,7 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
 
 - **Optional input files**
 
-**Gff files of the genome annotations:** This file can be used for removing false positive.
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc:** This file can be used for removing false positive.
 
 - **Arguments**
 
@@ -3395,7 +3395,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
 
 **Fasta files of the genome sequences**
 
-**Gff files of the genome annotations**
+**Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
 **Gff files of the manual-detected TSSs**
 
