@@ -35,7 +35,8 @@ class Mock_func(object):
                                   test1, args, type_, median,
                                   coverages, srna, notex):
         datas = {"best": 500, "track": "frag", "high": 700, "low": 400,
-                 "start": 100, "end": 202, "conds": {"frag_1": "track_1"}} 
+                 "start": 100, "end": 202, "conds": {"frag_1": "track_1"},
+                 "detail": [{"track": "frag", "high": 700, "low": 400, "avg": 200, "conds": {"frag_1": "track_1"}}]} 
         return datas
 
     def mock_get_coverage(self, wigs, inter, type_, pos, intercds, args):
@@ -550,7 +551,10 @@ class TestsRNAUTR(unittest.TestCase):
                            'type': 'frag', 'low': 10, 'high': 50,
                            "conds": ["frag"]}]},
                        'end_cleavage': 'NA',
-                       'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+'}]
+                       'strain': 'aaa', 'start_cleavage': 'Cleavage:18_+',
+                       'detail': {'avg': 41.36842105263158,
+                           'type': 'frag', 'low': 10, 'high': 50,
+                           "conds": ["frag"]}}]
         sud.detect_srna(median, args)
         self.assertEqual(args.out.getvalue(),
                          ("aaa\tANNOgesic\tncRNA\t18\t20\t.\t+\t.\t"
@@ -560,9 +564,7 @@ class TestsRNAUTR(unittest.TestCase):
                           "with_TSS=NA;start_cleavage=Cleavage:18_+;"
                           "end_cleavage=NA\n"))
         self.assertEqual(args.out_t.getvalue(),
-                         ("aaa\t00000\t18\t20\t+\tfrag_1\ttrack_1\t"
-                          "500\t700\t400\tfrag(avg=500;high=700;"
-                          "low=400)\n"))
+                         ("aaa\t00000\t18\t20\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=200;high=700;low=400)\n"))
 
     def test_print_file(self):
         args = self.mock_args.mock()
@@ -585,8 +587,10 @@ class TestsRNAUTR(unittest.TestCase):
                     'high': 50, "conds": ["frag"]}]},
                 'end_cleavage': 'NA', 'strain': 'aaa',
                 'start_cleavage': 'Cleavage:18_+'}
-        srna_datas = {"best": 500, "track": "frag", "high": 700, "low": 400,
-                      "start": 100, "end": 202, "conds": {"frag_1": "track_1"}}
+        srna_datas = {"detail": [{"best": 500, "track": "frag", "high": 700, "low": 400,
+                      "start": 100, "end": 202, "conds": {"frag_1": "track_1"}, "avg": 200}],
+                      "conds": {"frag_1": "track_1"}, "best": 500, "track": "frag", "high": 700, "low": 400,
+                      "start": 100, "end": 202}
         sud.print_file(0, srna, 2, 50, srna_datas, args)
         self.assertEqual(args.out.getvalue(), 
                          ("aaa\tANNOgesic\tncRNA\t2\t50\t.\t+\t.\t"
@@ -596,9 +600,7 @@ class TestsRNAUTR(unittest.TestCase):
                           "with_TSS=NA;start_cleavage=Cleavage:18_+;"
                           "end_cleavage=NA\n"))
         self.assertEqual(args.out_t.getvalue(),
-                         ("aaa\t00000\t2\t50\t+\tfrag_1\ttrack_1\t"
-                          "500\t700\t400\tfrag(avg=500;high=700;"
-                          "low=400)\n"))
+                         ("aaa\t00000\t2\t50\t+\tfrag_1\ttrack_1\t500\t700\t400\tfrag(avg=200;high=700;low=400)\n"))
 
 
 class Example(object):

@@ -199,7 +199,7 @@ def stat_term(term_gff, term_table, stat, output_decrease,
     out_tn = open(output_non + ".csv", "w")
     fh = open(term_table, "r")
     out_tn.write("\t".join(["Genome", "Name", "Start", "End", "Strand",
-                            "Detect", "Associated_gene", "Associated_transcript",
+                            "Method", "Associated_gene", "Associated_transcript",
                             "Coverage_decrease", "Coverage_detail"]) + "\n")
     gh = open(term_gff)
     checks = []

@@ -80,7 +80,7 @@ def compare_ta_genes(tran, genes, out):
         out.write("\tNA")
 
 
-def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best, gff_file):
+def print_coverage(trans, out, out_gff, wigs_f, wigs_r, gff_file):
     genes = []
     if gff_file is not None:
         gff_f = open(gff_file, "r")
@@ -106,18 +106,14 @@ def print_coverage(trans, out, out_gff, wigs_f, wigs_r, table_best, gff_file):
         best_track = ""
         best_cover = {}
         for track, cover in infos.items():
-            if not table_best:
-                if best != -1:
-                    out.write(";")
-                out.write("{0}(avg={1})".format(
-                          track, str(cover["avg"])))
+            if best != -1:
+                out.write(";")
+            out.write("{0}(avg={1})".format(
+                      track, str(cover["avg"])))
             if cover["avg"] > best:
                 best = cover["avg"]
                 best_track = track
                 best_cover = cover
-        if table_best:
-            out.write("{0}(avg={1})".format(
-                      best_track, str(best_cover["avg"])))
         out.write("\n")
         new_attrs = {}
         for key, value in tran.attributes.items():
@@ -162,11 +158,8 @@ def gen_table_transcript(gff_folder, args_tran):
                     gff_file = None
             else:
                 gff_file = None
-            print_coverage(trans, out, out_gff, wigs_f, wigs_r,
-                           args_tran.table_best, gff_file)
+            print_coverage(trans, out, out_gff, wigs_f, wigs_r, gff_file)
             out.close()
             out_gff.close()
             shutil.move(os.path.join(args_tran.out_folder, "tmp_gff"),
                         os.path.join(gff_folder, gff))
-    if os.path.exists(os.path.join(args_tran.out_folder, "merge_wigs")):
-        shutil.rmtree(os.path.join(args_tran.out_folder, "merge_wigs"))

@@ -234,6 +234,7 @@ def print_file(finals, out, srnas, out_gff):
                     if final["sRNA_hit"] != "NA":
                         names = change_srna_name(final)
                         srna.attributes["Name"] = "/".join(names)
+                        srna.attributes["gene"] = "/".join(names)
         attribute_string = ";".join(
             ["=".join(items) for items in srna.attributes.items()])
         out_gff.write("\t".join([srna.info_without_attributes,

@@ -11,6 +11,7 @@ from annogesiclib.fill_gap import fill_gap, longer_ta
 from annogesiclib.gen_table_tran import gen_table_transcript
 from annogesiclib.compare_tran_term import compare_term_tran
 from annogesiclib.plot_tran import plot_tran
+from annogesiclib.reorganize_table import reorganize_table
 
 
 class TranscriptDetection(object):
@@ -253,6 +254,14 @@ class TranscriptDetection(object):
                               args_tran.out_folder, "transcript",
                               args_tran.terms, self.gff_outfolder)
 
+    def _re_table(self, args_tran):
+        for gff in os.listdir(self.gff_outfolder):
+            if os.path.isfile(os.path.join(self.gff_outfolder, gff)):
+                reorganize_table(args_tran.libs, args_tran.merge_wigs,
+                                 "Coverage_details",
+                                 os.path.join(args_tran.out_folder, "tables",
+                                              gff.replace(".gff", ".csv")))
+
     def run_transcript(self, args_tran):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
             print("Error: There is no wigs file!\n")
@@ -286,4 +295,5 @@ class TranscriptDetection(object):
         print("Generating tables for the details")
         gen_table_transcript(self.gff_outfolder, args_tran)
         plot_tran(self.gff_outfolder, self.stat_path, args_tran.max_dist)
+        self._re_table(args_tran)
         self._remove_file(args_tran)

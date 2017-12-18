@@ -26,6 +26,7 @@ from annogesiclib.args_container import ArgsContainer
 from annogesiclib.lib_reader import read_wig, read_libs
 from annogesiclib.extract_sec_info import extract_info_sec, modify_header
 from annogesiclib.get_srna_poly_u import get_srna_poly_u
+from annogesiclib.reorganize_table import reorganize_table
 
 
 class sRNADetection(object):
@@ -840,6 +841,23 @@ class sRNADetection(object):
                             "_".join([self.prefixs["merge_table"], prefix]),
                             args_srna)
 
+    def _re_table(self, args_srna, prefixs):
+        for type_ in ["all_candidates", "best_candidates"]:
+            for prefix in prefixs:
+                reorganize_table(args_srna.libs, args_srna.merge_wigs,
+                                 "Track/Coverage",
+                                 os.path.join(args_srna.out_folder, "tables",
+                                              type_, "_".join([
+                                                  prefix, "sRNA.csv"])))
+        for c_table in os.listdir(os.path.join(args_srna.out_folder, "tables",
+                                               "for_classes", prefix)):
+            for prefix in prefixs:
+                reorganize_table(args_srna.libs, args_srna.merge_wigs,
+                                 "Track/Coverage",
+                                 os.path.join(args_srna.out_folder, "tables",
+                                              "for_classes", prefix,
+                                              c_table))
+
     def run_srna_detection(self, args_srna):
         self._check_necessary_file(args_srna)
         self.multiparser.parser_gff(args_srna.trans, "transcript")
@@ -863,4 +881,5 @@ class sRNADetection(object):
         if args_srna.srna_database is not None:
             if "blast_srna" in args_srna.import_info:
                 self._blast_stat(self.stat_path, self.table_output)
+        self._re_table(args_srna, prefixs)
         self._remove_file(args_srna)

@@ -443,22 +443,17 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                           ";".join(srna_datas["conds"].values()), tss_pro,
                           end_pro, srna_datas["best"], srna_datas["high"],
                           srna_datas["low"]))
-            if not args_srna.table_best:
-                first = True
-                for data in srna_datas["detail"]:
-                    if first:
-                        out.write("{0}(avg={1};high={2};low={3})".format(
-                                  data["track"], data["avg"], data["high"],
-                                  data["low"]))
-                        first = False
-                    else:
-                        out.write(";{0}(avg={1};high={2};low={3})".format(
-                                  data["track"], data["avg"], data["high"],
-                                  data["low"]))
-            else:
-                out.write("{0}(avg={1};high={2};low={3})".format(
-                          srna_datas["track"], srna_datas["best"],
-                          srna_datas["high"], srna_datas["low"]))
+            first = True
+            for data in srna_datas["detail"]:
+                if first:
+                    out.write("{0}(avg={1};high={2};low={3})".format(
+                              data["track"], data["avg"], data["high"],
+                              data["low"]))
+                    first = False
+                else:
+                    out.write(";{0}(avg={1};high={2};low={3})".format(
+                              data["track"], data["avg"], data["high"],
+                              data["low"]))
             out.write("\t{0}\t{1}\n".format(
                       srna.attributes["overlap_cds"].replace(",", ";"),
                       srna.attributes["overlap_percent"].replace(",", ";")))

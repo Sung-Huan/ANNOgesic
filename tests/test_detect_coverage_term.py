@@ -217,13 +217,13 @@ class TestCoverageTerminator(unittest.TestCase):
                     {"track": "track_2", "diff": 39, "high": 99, "low": 60}]}}
         dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set([
-            "	True	track_1(diff=70;high=100;low=30)"]))
+            "\tTrue\ttrack_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)track_1(diff=70;high=100;low=30)"]))
         out_t.close()
         out_t = StringIO()
         args.table_best = False
         dct.print_table(term, out_t, args)
         self.assertEqual(set(out_t.getvalue().split("\n")), set([
-            "	True	track_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)"]))
+            "\tTrue\ttrack_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)track_1(diff=70;high=100;low=30)"]))
         term = {"express": "False", "diff_cover": 70,
                 "diff": {"high": 100, "low": 30, "track": "track_1"},
                 "datas": {"data": [
@@ -302,7 +302,7 @@ class Example(object):
                        {"ID": "tran1", "Name": "Tran_1"},
                        {"ID": "tran2", "Name": "Tran_2"}]
     gff_file = """aaa	ANNOgesic	terminator	2	4	.	+	.	ID=aaa_terminator0;Name=terminator_00000;associated_gene=test;coverage_decrease=70;diff_coverage=track_1(high:100,low:30);express=True;method=test_method"""
-    table = """aaa	terminator_00000	2	4	+	TransTermHP	test	True	track_1(diff=70;high=100;low=30)"""
+    table = """aaa\tterminator_00000\t2\t4\t+\tTransTermHP\ttest\tTrue\ttrack_1(diff=70;high=100;low=30);track_2(diff=39;high=99;low=60)track_1(diff=70;high=100;low=30)"""
 
 if __name__ == "__main__":
     unittest.main()

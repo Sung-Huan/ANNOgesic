@@ -284,20 +284,19 @@ def print_table(term, out_t, args_term):
        (term["diff_cover"] != -1):
         if term["diff"]["high"] >= args_term.cutoff_coverage:
             out_t.write("\tTrue\t")
-            if not args_term.table_best:
-                for datas in term["datas"].values():
-                    for data in datas:
-                        if first:
-                            out_t.write(
-                                "{0}(diff={1};high={2};low={3})".format(
-                                    data["track"], data["diff"],
-                                    data["high"], data["low"]))
-                            first = False
-                        else:
-                            out_t.write(
-                                ";{0}(diff={1};high={2};low={3})".format(
-                                    data["track"], data["diff"],
-                                    data["high"], data["low"]))
+            for datas in term["datas"].values():
+                for data in datas:
+                    if first:
+                        out_t.write(
+                            "{0}(diff={1};high={2};low={3})".format(
+                                data["track"], data["diff"],
+                                data["high"], data["low"]))
+                        first = False
+                    else:
+                        out_t.write(
+                            ";{0}(diff={1};high={2};low={3})".format(
+                                data["track"], data["diff"],
+                                data["high"], data["low"]))
             else:
                 out_t.write("{0}(diff={1};high={2};low={3})".format(
                             term["diff"]["track"], term["diff_cover"],

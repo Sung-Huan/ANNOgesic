@@ -12,6 +12,7 @@ from annogesiclib.detect_coverage_term import detect_coverage
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.stat_term import stat_term
 from annogesiclib.compare_tran_term import compare_term_tran
+from annogesiclib.reorganize_table import reorganize_table
 
 
 class Terminator(object):
@@ -435,6 +436,16 @@ class Terminator(object):
                         "_".join(["stat_compare_terminator_transcript", prefix,
                                   type_ + ".csv"])))
 
+    def _re_table(self, args_term, prefixs):
+        for type_ in ["all_candidates", "best_candidates",
+                      "expressed_candidates", "non_expressed_candidates"]:
+            for prefix in prefixs:
+                reorganize_table(args_term.libs, args_term.merge_wigs,
+                                 "Coverage_detail",
+                                 os.path.join(args_term.out_folder, "tables",
+                                              type_, "_".join([
+                                                  prefix, "term.csv"])))
+
     def run_terminator(self, args_term):
         self._check_gff_file(args_term.gffs)
         self._check_gff_file(args_term.trans)
@@ -461,4 +472,5 @@ class Terminator(object):
                 args_term.merge_wigs, args_term)
         self._compute_stat(args_term)
         self._compare_term_tran(args_term, prefixs)
+        self._re_table(args_term, prefixs)
         self._remove_tmp_file(args_term.merge_wigs, args_term)

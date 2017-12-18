@@ -234,7 +234,7 @@ class TestsORFDetection(unittest.TestCase):
             "aaa\tANNOgesic\tsORF\t10\t15\t.\t+\t.\tID=aaa_sorf1;Name=sORF_00001;start_TSS=1;with_TSS=NA;sORF_type=3utr;sRNA=NA;rbs=RBS_3;frame_shift=1\n")
         self.assertEqual(
             out_t.getvalue(),
-            "aaa\tsORF_00001\t10\t15\t+\t3'UTR_derived\tNA\tRBS_3\t10\t15\tNA\t1\tFragmented\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
+            "aaa\tsORF_00001\t10\t15\t+\t3'UTR_derived\tNA\tRBS_3\t10\t15\tNA\t1\tFragmented\t20\t50\t10\t\tATGTA\tAAA\n")
 
     def test_print_table(self):
         out_t = StringIO()
@@ -252,7 +252,7 @@ class TestsORFDetection(unittest.TestCase):
         sd.print_table(out_t, sorf, "test", "3utr", "frag", sorf_datas, args)
         self.assertEqual(
             out_t.getvalue(),
-            "aaa\tsORF_test\t2\t6\t+\t3utr\tNA\t1\t2\t10\tNA\t1\tfrag\t20\t50\t10\ttrack_1(avg=20;high=50;low=10)\tATGTA\tAAA\n")
+            "aaa\tsORF_test\t2\t6\t+\t3utr\tNA\t1\t2\t10\tNA\t1\tfrag\t20\t50\t10\t\tATGTA\tAAA\n")
 
     def test_get_inter_coverage(self):
         inter_covers = {}
@@ -345,10 +345,8 @@ class TestsORFDetection(unittest.TestCase):
             "\t+\t.\tID=aaa_sorf0;Name=sORF_00000;start_TSS=1;"
             "with_TSS=TSS:3_+;sORF_type=3utr;sRNA=NA;rbs=RBS_1;frame_shift=1\n"))
         self.assertEqual(out_t.getvalue().split("\n")[1],
-                         ("aaa\tsORF_00000\t10\t15\t+\t"
-                          "3'UTR_derived\tTSS:3_+\tRBS_1\t10\t15\tNA\t1"
-                          "\tFragmented\t20\t50\t10\ttrack_1(avg=20;"
-                          "high=50;low=10)\tGCTATG\t10-15_TSS:3_+_RBS:1"))
+                         ("aaa\tsORF_00000\t10\t15\t+\t3'UTR_derived\tTSS:3_+"
+                          "\tRBS_1\t10\t15\tNA\t1\tFragmented\t20\t50\t10\t\tGCTATG\t10-15_TSS:3_+_RBS:1"))
 
     def test_detect_inter_type(self):
         inter_dict = [{"seq_id": "aaa", "source": "UTR_derived",

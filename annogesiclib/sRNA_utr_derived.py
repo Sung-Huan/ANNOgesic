@@ -606,22 +606,17 @@ def print_file(num, srna, start, end, srna_datas, args_srna):
                         srna["strain"], "ANNOgesic", "ncRNA", str(start),
                         str(end), ".", srna["strand"], ".",
                         attribute_string]]) + "\n")
-    if not args_srna.table_best:
-        first = True
-        for data in srna_datas["detail"]:
-            if first:
-                args_srna.out_t.write("{0}(avg={1};high={2};low={3})".format(
-                                      data["track"], data["avg"],
-                                      data["high"], data["low"]))
-                first = False
-            else:
-                args_srna.out_t.write(";{0}(avg={1};high={2};low={3})".format(
-                                      data["track"], data["avg"],
-                                      data["high"], data["low"]))
-    else:
-        args_srna.out_t.write("{0}(avg={1};high={2};low={3})".format(
-                              srna_datas["track"], srna_datas["best"],
-                              srna_datas["high"], srna_datas["low"]))
+    first = True
+    for data in srna_datas["detail"]:
+        if first:
+            args_srna.out_t.write("{0}(avg={1};high={2};low={3})".format(
+                                  data["track"], data["avg"],
+                                  data["high"], data["low"]))
+            first = False
+        else:
+            args_srna.out_t.write(";{0}(avg={1};high={2};low={3})".format(
+                                  data["track"], data["avg"],
+                                  data["high"], data["low"]))
     args_srna.out_t.write("\n")
 
 

@@ -48,6 +48,9 @@ class Mock_func(object):
     def mock_remove_tmp_file(self, term, tran):
         pass
 
+    def mock_re_table(self, args, prefix):
+        pass
+
 class Mock_Multiparser(object):
 
     def parser_wig(self, merge_wigs):
@@ -238,6 +241,7 @@ class TestTerminator(unittest.TestCase):
         te.stat_term = self.mock.mock_stat_term
         te.intergenic_seq = self.mock.mock_intergenic_seq
         te.poly_t = self.mock.mock_poly_t
+        self.term._re_table = self.mock.mock_re_table
         te.detect_coverage = self.mock.mock_detect_coverage
         self.term.multiparser = self.mock_parser
         self.term._run_rnafold = self.mock.mock_run_rnafold

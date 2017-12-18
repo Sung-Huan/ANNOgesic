@@ -523,7 +523,7 @@ class ArgsContainer(object):
             fuzzy_within_transcript, fuzzy_downstream_transcript,
             fuzzy_within_gene, fuzzy_downstream_gene, transtermhp_folder,
             tex_notex_libs, frag_libs, tex_notex, replicates_tex,
-            replicates_frag, table_best, min_loop_length, max_loop_length,
+            replicates_frag, min_loop_length, max_loop_length,
             min_stem_length, max_stem_length, min_AT_tail, miss_rate,
             mut_u, keep_multi, window, shift):
         self.TransTermHP_path = TransTermHP_path
@@ -566,7 +566,6 @@ class ArgsContainer(object):
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
                 replicates_tex, replicates_frag, tex_notex_libs, frag_libs)
-        self.table_best = table_best
         self.min_loop = min_loop_length
         self.max_loop = max_loop_length
         self.min_stem = min_stem_length
@@ -585,7 +584,7 @@ class ArgsContainer(object):
                              replicates_tex, replicates_frag, out_folder,
                              tss_files, TSS_fuzzy, tex_treated_libs,
                              fragmented_libs, compare_feature_genome,
-                             table_best, terminator_files, fuzzy_term, max_dist):
+                             terminator_files, fuzzy_term, max_dist):
         if (compare_feature_genome is not None) and (annotation_files is None):
             print("Error: --annotation_files needs to be assigned if "
                   "--compare_feature_genome is assigned.")
@@ -633,7 +632,6 @@ class ArgsContainer(object):
                 out_folder, fragmented_libs, self.frag_wigs, tracks)
         self.libs = self._check_libs(self.tlibs, self.flibs)
         self.c_feature = compare_feature_genome
-        self.table_best = table_best
         self.terms = self._gen_copy_new_folder(
                 [".gff"], out_folder, "tmp_term", terminator_files,
                 ["--terminator_files"])
@@ -683,7 +681,7 @@ class ArgsContainer(object):
                        run_utr_noTEX_coverage, run_utr_fragmented_coverage,
                        max_length, min_length, tex_notex_libs, frag_libs,
                        replicates_tex, replicates_frag, tex_notex, blast_e_nr,
-                       blast_e_srna, detect_sRNA_in_CDS, table_best,
+                       blast_e_srna, detect_sRNA_in_CDS,
                        decrease_intergenic, decrease_utr, fuzzy_intergenic,
                        fuzzy_utr, cutoff_nr_hit, sORF, overlap_percent_CDS,
                        terminator_files, terminator_fuzzy_in_sRNA,
@@ -783,7 +781,6 @@ class ArgsContainer(object):
         self.e_nr = blast_e_nr
         self.e_srna = blast_e_srna
         self.in_cds = detect_sRNA_in_CDS
-        self.table_best = table_best
         self.decrease_inter = decrease_intergenic
         self.decrease_utr = decrease_utr
         self.fuzzy_inter = fuzzy_intergenic
@@ -925,7 +922,7 @@ class ArgsContainer(object):
                        cutoff_antisense_coverage, cutoff_5utr_coverage,
                        cutoff_3utr_coverage, cutoff_interCDS_coverage,
                        fasta_files, tex_notex_libs, frag_libs, tex_notex,
-                       replicates_tex, replicates_frag, table_best,
+                       replicates_tex, replicates_frag,
                        sRNA_files, start_codon, stop_codon, cutoff_background,
                        fuzzy_rbs, rbs_not_after_TSS, print_all_combination,
                        best_no_sRNA, best_no_TSS, ignore_hypothetical_protein,
@@ -970,7 +967,6 @@ class ArgsContainer(object):
         self.replicates_frag = replicates_frag
         self.replicates = self._check_replicates(
                 replicates_tex, replicates_frag, tex_notex_libs, frag_libs)
-        self.table_best = table_best
         self.srnas = self._gen_copy_new_folder(
                 [".gff"], sorf_folder, "temp_srna", sRNA_files,
                 ["--srna_files"])

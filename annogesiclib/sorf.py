@@ -6,6 +6,7 @@ from annogesiclib.helper import Helper
 from annogesiclib.sORF_intergenic import get_intergenic
 from annogesiclib.sORF_detection import sorf_detection
 from annogesiclib.stat_sorf import stat
+from annogesiclib.reorganize_table import reorganize_table
 
 
 class sORFDetection(object):
@@ -131,6 +132,15 @@ class sORFDetection(object):
                                args_sorf.extend_5, args_sorf.extend_3)
         return prefixs
 
+    def _re_table(self, args_sorf, prefixs):
+        for type_ in ["all_candidates", "best_candidates"]:
+            for prefix in prefixs:
+                reorganize_table(args_sorf.libs, args_sorf.merge_wigs,
+                                 "Track_detail",
+                                 os.path.join(args_sorf.out_folder, "tables",
+                                              type_, "_".join([
+                                                  prefix, "sORF.csv"])))
+
     def run_sorf_detection(self, args_sorf):
         if args_sorf.fuzzy_rbs > 6:
             print("Error: --fuzzy_rbs should be equal or less than 6!!")
@@ -151,4 +161,5 @@ class sORFDetection(object):
                      os.path.join(args_sorf.out_folder, "statistics",
                      "_".join(["stat", sorf.replace(".gff", ".csv")])),
                      args_sorf.utr_detect)
+        self._re_table(args_sorf, prefixs)
         self._remove_tmp(args_sorf)

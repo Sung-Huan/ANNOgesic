@@ -743,22 +743,17 @@ def print_table(out_t, sorf, name, type_, lib_type, sorf_datas, args_sorf):
                            lib_type, str(sorf_datas["best"]),
                            str(sorf_datas["high"]),
                            str(sorf_datas["low"])]) + "\t")
-    if not args_sorf.table_best:
-        first = True
-        for data in sorf_datas["detail"]:
-            if first:
-                out_t.write("{0}(avg={1};high={2};low={3})".format(
-                            data["track"], data["avg"],
-                            data["high"], data["low"]))
-                first = False
-            else:
-                out_t.write(";{0}(avg={1};high={2};low={3})".format(
-                            data["track"], data["avg"],
-                            data["high"], data["low"]))
-    else:
-        out_t.write("{0}(avg={1};high={2};low={3})".format(
-                    sorf_datas["track"], sorf_datas["best"],
-                    sorf_datas["high"], sorf_datas["low"]))
+    first = True
+    for data in sorf_datas["detail"]:
+        if first:
+            out_t.write("{0}(avg={1};high={2};low={3})".format(
+                        data["track"], data["avg"],
+                        data["high"], data["low"]))
+            first = False
+        else:
+            out_t.write(";{0}(avg={1};high={2};low={3})".format(
+                        data["track"], data["avg"],
+                        data["high"], data["low"]))
     out_t.write("\t" + sorf["seq"])
     if args_sorf.print_all:
         out_t.write("\t" + ";".join(sorf["candidate"]))
