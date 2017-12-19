@@ -20,6 +20,7 @@ def get_lib_name(libs):
     for lib in libs:
         if lib["name"] not in tracks:
             tracks.append(lib["name"])
+    return tracks
 
 def reorganize_table(input_libs, wigs, cover_header, table_file):
     libs, texs = read_libs(input_libs, wigs)
