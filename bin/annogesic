@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.29"
+__version__ = "0.6.30"
 
 def main():
     print("""
@@ -1951,6 +1951,18 @@ def main():
         "--other_features_files", "-of", default=None, nargs='+',
         help="Paths of the gff files (besides transcript gff file). "
         "For assigning multiple gff files, please use spaces to separate them.")
+    merge_basic.add_argument(
+        "--source_for_overlapping", "-s", default=None, nargs='+',
+        help="If the locations of features are overlapped, the module will "
+        "only keep the feature positions which provided from "
+        "--source_for_overlapping. For example, if --source_for_overlapping is "
+        "'Ref' 'ANNOgesic', the overlapping features from these two sources "
+        "will be both kept. However, if --source_for_overlapping is 'Ref', "
+        "only the overlapping features from 'RefSeq will be kept.' The value "
+        "of --source_for_overlapping should be the same as the second column "
+        "of the gff file. if all the sources of the overlapping features "
+        "can not be found in --source_for_overlapping, all the overlapping "
+        "features will be kept. Default is keeping all overlap features.")
     merge_add = merge_parser.add_argument_group(
         'additional arguments')
     merge_add.add_argument(

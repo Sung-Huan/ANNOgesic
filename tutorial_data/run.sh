@@ -431,6 +431,7 @@ merge_features(){
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
         -of $ALL_FEATURES \
         -op NC_009839.1 \
+        -s RefSeq \
         -pj $ANNOGESIC_FOLDER
 }
 

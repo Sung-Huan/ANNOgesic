@@ -25,6 +25,7 @@ from annogesiclib.sublocal import SubLocal
 from annogesiclib.ribos import Ribos
 from annogesiclib.crispr import Crispr
 from annogesiclib.merge_feature import run_merge
+from annogesiclib.overlap import deal_overlap
 from annogesiclib.screen import Screen
 from annogesiclib.args_container import ArgsContainer
 from annogesiclib.helper import Helper
@@ -896,6 +897,8 @@ class Controller(object):
                   self._args.other_features_files,
                   self._args.terminator_tolerance, self._args.tss_tolerance,
                   os.path.join(merge_folder, self._args.output_prefix))
+        if self._args.source_for_overlapping is not None:
+            deal_overlap(merge_folder, self._args.source_for_overlapping)
 
     def screen(self):
         """generate screenshot"""

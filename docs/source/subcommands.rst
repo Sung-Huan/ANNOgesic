@@ -3738,7 +3738,9 @@ If merging multiple features of the annotation to one gff file is needed, ``merg
 - **Required files**
 
 **Gff files of features that the user wants to merge:** 
-If transcript gff files can be provided, this module will search the parent transcripts to other input features.
+If transcript gff files can be provided, this module will search the parent transcripts to other input features. 
+Moreover, if the genomic features from different gff files are overlapped, the module can select the data based on 
+user-assigned source or keep all overlapping features to the final output.
 
 - **Arguments**
 
@@ -3748,6 +3750,7 @@ If transcript gff files can be provided, this module will search the parent tran
                                     --output_prefix OUTPUT_PREFIX
                                     [--transcript_file TRANSCRIPT_FILE]
                                     [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
+                                    [--source_for_overlapping SOURCE_FOR_OVERLAPPING [SOURCE_FOR_OVERLAPPING ...]]
                                     [--terminator_tolerance TERMINATOR_TOLERANCE]
                                     [--tss_tolerance TSS_TOLERANCE]
     
@@ -3768,6 +3771,20 @@ If transcript gff files can be provided, this module will search the parent tran
                             Paths of the gff files (besides transcript gff file).
                             For assigning multiple gff files, please use spaces to
                             separate them.
+      --source_for_overlapping SOURCE_FOR_OVERLAPPING [SOURCE_FOR_OVERLAPPING ...], -s SOURCE_FOR_OVERLAPPING [SOURCE_FOR_OVERLAPPING ...]
+                            If the locations of features are overlapped, the
+                            module will only keep the feature positions which
+                            provided from --source_for_overlapping. For example,
+                            if --source_for_overlapping is 'Ref' 'ANNOgesic', the
+                            overlapping features from these two sources will be
+                            both kept. However, if --source_for_overlapping is
+                            'Ref', only the overlapping features from 'RefSeq will
+                            be kept.' The value of --source_for_overlapping should
+                            be the same as the second column of the gff file. if
+                            all the sources of the overlapping features can not be
+                            found in --source_for_overlapping, all the overlapping
+                            features will be kept. Default is keeping all overlap
+                            features.
     
     additional arguments:
       --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE

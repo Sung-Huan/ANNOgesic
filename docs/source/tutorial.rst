@@ -1350,8 +1350,10 @@ Now let's do it. We merge all features that we have.
        --transcript_file ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
        --other_features_files $ALL_FEATURES \
        --output_prefix NC_009839.1 \
+       --source_for_overlapping RefSeq \
        --project_path ANNOgesic
 
+In the tutorial, if duplicated features exist, only the data from RefSeq will be kept. 
 Output gff file is stored in ``merge_all_features``
 
 ::
