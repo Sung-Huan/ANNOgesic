@@ -275,7 +275,6 @@ def read_gff(srna_gff):
 def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
                    args_srna, out_file, term_path):
     '''generate the sRNA table for more details'''
-    print("Generating table ...")
     srnas = read_gff(srna_gff)
     srna_tables, nr_blasts, srna_blasts = read_table(
         srna_table_file, nr_blast, srna_blast_file, args_srna, term_path)

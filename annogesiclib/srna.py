@@ -771,6 +771,7 @@ class sRNADetection(object):
 
     def _gen_table(self, prefixs, args_srna):
         for prefix in prefixs:
+            print("Generating table for " + prefix)
             out_table = os.path.join(self.all_best["all_table"],
                                      "_".join([prefix, "sRNA.csv"]))
             gen_srna_table(os.path.join(self.all_best["all_gff"],
