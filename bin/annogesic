@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.30"
+__version__ = "0.6.31"
 
 def main():
     print("""
@@ -1061,6 +1061,14 @@ def main():
         "--blast_e_srna", "-es", default=0.0001, type=float,
         help="The maximum e-value for searching in sRNA database. "
         "Default is 0.0001.")
+    sRNA_add.add_argument(
+        "--blast_score_srna", "-bs", default=None, type=float,
+        help="The minimum score for searching in sRNA database. "
+        "Default is None.")
+    sRNA_add.add_argument(
+        "--blast_score_nr", "-bn", default=None, type=float,
+        help="The minimum score for searching in nr database. "
+        "Default is None.")
     sRNA_add.add_argument(
         "--detect_srna_in_cds", "-ds", default=False, action="store_true",
         help="Searching sRNA in CDS (e.g. the genome "

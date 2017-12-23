@@ -30,15 +30,15 @@ def import_data(row, type_, args_srna, term_path):
             data["track"] = row[12]
         return data
     elif type_ == "nr":
-        if len(row) == 8:
+        if len(row) == 9:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]),
-                    "hits": "|".join(row[5:8])}
+                    "hits": "|".join(row[5:9])}
         elif len(row) == 6:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]), "hits": row[5]}
     elif type_ == "sRNA":
-        if len(row) == 7:
+        if len(row) == 8:
             return {"strain": row[0], "name": row[1], "strand": row[2],
                     "start": int(row[3]), "end": int(row[4]),
                     "hits": "|".join(row[5:])}
@@ -184,17 +184,18 @@ def change_srna_name(final):
     names = []
     num = 0
     for hit in final["sRNA_hit"].split(";"):
-        hit_name = hit.split("|")[-2]
-        hit_name = hit_name[0].upper() + hit_name[1:]
-        num += 1
-        if "Sau" in hit_name:
-            sau = hit_name.split("-")
-            if len(sau) == 1:
-                hit_name = hit_name[:3] + "-" + hit_name[3:]
-        if hit_name not in names:
-            names.append(hit_name)
-        if num == 3:
-            break
+        if hit != "NA":
+            hit_name = hit.split("|")[-3]
+            hit_name = hit_name[0].upper() + hit_name[1:]
+            num += 1
+            if "Sau" in hit_name:
+                sau = hit_name.split("-")
+                if len(sau) == 1:
+                    hit_name = hit_name[:3] + "-" + hit_name[3:]
+            if hit_name not in names:
+                names.append(hit_name)
+            if num == 3:
+                break
     return names
 
 
@@ -274,6 +275,7 @@ def read_gff(srna_gff):
 def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
                    args_srna, out_file, term_path):
     '''generate the sRNA table for more details'''
+    print("Generating table ...")
     srnas = read_gff(srna_gff)
     srna_tables, nr_blasts, srna_blasts = read_table(
         srna_table_file, nr_blast, srna_blast_file, args_srna, term_path)
@@ -288,7 +290,7 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
         "Best_lowest_coverage", "Track/Coverage",
         "Normalized_secondary_energy_change(by_length)", "sRNA_types",
         "Conflict_sORF", "nr_hit_number", "sRNA_hit_number",
-        "nr_hit_top3|ID|e-value", "sRNA_hit|e-value", "Overlap_CDS",
+        "nr_hit_top3|ID|e-value|score", "sRNA_hit|e-value|score", "Overlap_CDS",
         "Overlap_percent", "End_with_terminator",
         "Associated_promoter", "sRNA_length"]) + "\n")
     nr_blasts = merge_info(nr_blasts)

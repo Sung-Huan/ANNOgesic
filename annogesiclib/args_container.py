@@ -672,7 +672,8 @@ class ArgsContainer(object):
                        TSS_interCDS_fuzzy, import_info, processing_site_files,
                        fasta_files, mountain_plot, nr_format, srna_format,
                        sRNA_database_path, nr_database_path, cutoff_energy,
-                       para_blast, run_intergenic_TEX_coverage,
+                       para_blast, blast_score_s, blast_score_n,
+                       run_intergenic_TEX_coverage,
                        run_intergenic_noTEX_coverage,
                        run_intergenic_fragmented_coverage, break_tran,
                        run_antisense_TEX_coverage,
@@ -702,6 +703,11 @@ class ArgsContainer(object):
         self.len_u = len_u
         self.num_u = num_u
         self.mut_u = mut_u
+        self.blast_score_s = blast_score_s
+        if blast_score_n is None:
+            self.blast_score_n = 0
+        else:
+            self.blast_score_n = blast_score_n
         self.gffs = self._gen_copy_new_folder(
                 [".gff"], srna_folder, "temp_anno", annotation_files,
                 ["--annotation_files"])

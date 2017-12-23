@@ -1451,7 +1451,8 @@ still be included. Following is the filter names with the required files and too
 		**Gff files of TSSs**
 
 **Searching sRNA candidate in sRNA database:** If homology of this sRNA candidate can be found in sRNA database, 
-this candidate will be included to the result without considering other filters.
+this candidate will be included to the result without considering other filters. ``--blast_score_srna`` 
+and ``--blast_e_srna`` can be used for adjustment of the prediction.
 
 	**Required tools:**
 
@@ -1469,7 +1470,7 @@ this candidate will be included to the result without considering other filters.
 
 
 **Searching sRNA candidate in nr database:** If homologs of this sRNA candidates can be found in nr database and the hit numbers are more than ``--cutoff_nr_hit``,
-this candidates will be removed.
+this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can be used for adjustment of the prediction.
 
 	**Required tools:**
 
@@ -1553,7 +1554,8 @@ this candidates will be removed.
                           [--tolerance_utr TOLERANCE_UTR]
                           [--cutoff_nr_hit CUTOFF_NR_HIT]
                           [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
-                          [--detect_srna_in_cds]
+                          [--blast_score_srna BLAST_SCORE_SRNA]
+                          [--blast_score_nr BLAST_SCORE_NR] [--detect_srna_in_cds]
                           [--overlap_percent_cds OVERLAP_PERCENT_CDS]
                           [--search_poly_u SEARCH_POLY_U]
                           [--min_u_poly_u MIN_U_POLY_U]
@@ -1824,6 +1826,12 @@ this candidates will be removed.
       --blast_e_srna BLAST_E_SRNA, -es BLAST_E_SRNA
                             The maximum e-value for searching in sRNA database.
                             Default is 0.0001.
+      --blast_score_srna BLAST_SCORE_SRNA, -bs BLAST_SCORE_SRNA
+                            The minimum score for searching in sRNA database.
+                            Default is None.
+      --blast_score_nr BLAST_SCORE_NR, -bn BLAST_SCORE_NR
+                            The minimum score for searching in nr database.
+                            Default is None.
       --detect_srna_in_cds, -ds
                             Searching sRNA in CDS (e.g. the genome annotation is
                             not correct). More sRNA candidates which overlap with
@@ -1906,7 +1914,7 @@ The meanings of the columns are as following:
 
 	**Genome:** Genome name.
 
-	**Name:** sRNA Name which is shown in gff file.
+	**Name:** sRNA Name which is shown in gff file. The sRNA name is generated from the BLAST search.
 
 	**Start:** Starting point of this sRNA.
 
@@ -1938,9 +1946,11 @@ The meanings of the columns are as following:
 
 	**sRNA_hit_number:** The hit numbers of this sRNA in sRNA database.
 
-	**nr_hit_top3|ID|e-value:** The top 3 hits of this sRNA in nr database will be showed here. The information includes protein name, ID and e-value.
+	**nr_hit_top3|ID|e-value|score:** The top 3 hits of this sRNA in nr database will be showed here. 
+	The information includes protein name, ID, e-value, and score.
 
-	**sRNA_hit|e-value:** If the homology of this sRNA can be found in sRNA database, the information will be showed here.
+	**sRNA_hit|e-value|score:** If the homology of this sRNA can be found in sRNA database, the information will be showed here.
+	The information includes sRNA name, e-value, and score.
 
 	**Overlap_CDS:** If the sRNA overlaps CDS, the information of the overlapped CDS will be showed here.
 
@@ -1965,6 +1975,8 @@ The meanings of the columns are as following:
 
 Some useful information can be found in the tags of the attributes within the sRNA gff file.
 Based on this information, we can know the details of the specific sRNA. The tags are as following:
+
+	**Name:** The sRNA name is generated from the BLAST search.
 
 	**sRNA_type:** This sRNA is from 5'UTR, 3'UTR, interCDS, intergenic, antisense or within CDS.
 

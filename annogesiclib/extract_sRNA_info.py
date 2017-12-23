@@ -1,11 +1,7 @@
 from annogesiclib.gff3 import Gff3Parser
 
 
-def line_to_dict(hit, strain, e_value):
-    return {"hit": hit, "strain": strain, "e_value": e_value}
-
-
-def get_proteins(datas, checks, blast_f):
+def get_proteins(datas, checks, blast_f, score_n):
     '''filter and import the protein hit of blast'''
     proteins = []
     nums = {"index": 0, "hypo": 0}
@@ -35,14 +31,27 @@ def get_proteins(datas, checks, blast_f):
                     if ("Expect" in line) and ("Score" in line) and (
                             "Method" in line):
                         e_value = line.split(",")[1].split(" ")[-1]
-                        checks["detect"] = True
-                        checks["print"] = True
-                        proteins.append({"name": name, "strain": strain,
-                                         "e": e_value, "tag": tag})
+                        score = line.split("Score = ")[-1].split(" bits ")[0].strip()
+                        if score_n is None:
+                            checks["detect"] = True
+                            checks["print"] = True
+                            proteins.append({"name": name, "strain": strain,
+                                             "e": e_value, "tag": tag,
+                                             "score": score})
+                        elif (score_n is not None) and (float(score) >= score_n):
+                            checks["detect"] = True
+                            checks["print"] = True
+                            proteins.append({"name": name, "strain": strain,
+                                             "e": e_value, "tag": tag,
+                                             "score": score})
                         break
             else:
-                proteins.append({"name": name, "strain": strain,
-                                 "e": e_value, "tag": tag})
+                if score_n is None:
+                    proteins.append({"name": name, "strain": strain,
+                                     "e": e_value, "tag": tag, "score": score})
+                elif (score_n is not None) and (float(score) >= score_n):
+                    proteins.append({"name": name, "strain": strain,
+                                     "e": e_value, "tag": tag, "score": score})
         nums["index"] += 1
     return proteins, nums
 
@@ -65,10 +74,10 @@ def detect_hypo(proteins, blasts, type_):
             protein_names[name].append(protein["tag"])
             if type_ != "equal":
                 blasts["blast"] = True
-    return protein_names, protein["e"]
+    return protein_names, protein["e"], protein["score"]
 
 
-def detect_nr(line, blast_f, out_t, blasts, prefix):
+def detect_nr(line, blast_f, out_t, blasts, prefix, score_n):
     '''detect the hit in nr database'''
     checks = {"print": False, "detect": False}
     if line.startswith(">"):
@@ -80,18 +89,22 @@ def detect_nr(line, blast_f, out_t, blasts, prefix):
             else:
                 break
         datas = info.split("|")
-        proteins, nums = get_proteins(datas, checks, blast_f)
+        proteins, nums = get_proteins(datas, checks, blast_f, score_n)
         if checks["print"]:
             if blasts["hit_num"] < 3:
-                protein_names, e = detect_hypo(proteins, blasts, "low")
+                protein_names, e, score = detect_hypo(proteins, blasts, "low")
                 if len(protein_names) != 0:
                     for key, value in protein_names.items():
-                        out_t.write("{0}\t{1}\t{2}\t{3}\n".format(
-                                    prefix, key, ",".join(value), e))
+                        out_t.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(
+                                    prefix, key, ",".join(value), e, score))
                     blasts["hit_num"] += 1
+    if checks["print"]:
+        return 2
+    else:
+        return 1
 
 
-def detect_srna(line, blast_f, out_t, blasts, prefix):
+def detect_srna(line, blast_f, out_t, blasts, prefix, score_s):
     '''detect hit in sRNA database'''
     print_ = False
     blasts["name"] = ""
@@ -107,13 +120,21 @@ def detect_srna(line, blast_f, out_t, blasts, prefix):
                 blasts["name"] = " ".join([blasts["name"], line])
             if "Expect =" in line:
                 e_value = line.split(" ")[-1].strip()
-                print_ = True
+                score = line.split("Score = ")[-1].split(" bits ")[0].strip()
+                if score_s is None:
+                    print_ = True
+                elif (score_s is not None) and (float(score) >= score_s):
+                    print_ = True
                 break
     if print_:
         blasts["name"] = blasts["name"].lstrip().replace("\n", "")
-        out_t.write("{0}\t{1}\t{2}\n".format(
-                    prefix, blasts["name"], e_value))
+        out_t.write("{0}\t{1}\t{2}\t{3}\n".format(
+                    prefix, blasts["name"], e_value, score))
         blasts["blast"] = True
+    if print_:
+        return 2
+    else:
+        return 1
 
 
 def read_gff(srna_file, data_type):
@@ -170,7 +191,7 @@ def get_whole_query(line, blast_f):
 
 
 def extract_blast(blast_result, srna_file, output_file,
-                  output_table, database):
+                  output_table, database, score_s, score_n):
     '''extract the result of blast'''
     out_f = open(output_file, "w")
     out_t = open(output_table, "w")
@@ -181,10 +202,16 @@ def extract_blast(blast_result, srna_file, output_file,
         names = []
         prefix = "\t".join([srna.seq_id, srna.attributes["ID"],
                            srna.strand, str(srna.start), str(srna.end)])
+        print_ = 0
         with open(blast_result, "r") as blast_f:
             for line in blast_f:
                 line = line.strip()
                 if line.startswith("Query= "):
+                    if print_ == 2:
+                        print_ = 0
+                    elif print_ == 1:
+                        print_ = 0
+                        out_t.write("{0}\tNA\n".format(prefix))
                     line = get_whole_query(line, blast_f)
                     go_out = False
                     query = line.split("=")[1].strip()
@@ -208,15 +235,21 @@ def extract_blast(blast_result, srna_file, output_file,
                                             go_out = True
                                             break
                                         if database == "sRNA":
-                                            detect_srna(line, blast_f, out_t,
-                                                        blasts, prefix)
+                                            p = detect_srna(
+                                                line, blast_f, out_t,
+                                                blasts, prefix, score_s)
+                                            if p:
+                                            	print_ = p
                                             if (len(blasts["name"]) > 0):
                                                 if blasts["name"] not in names:
                                                     names.append(
                                                         blasts["name"])
                                         elif database == "nr":
-                                            detect_nr(line, blast_f, out_t,
-                                                      blasts, prefix)
+                                            p = detect_nr(
+                                                line, blast_f, out_t, blasts,
+                                                prefix, score_n)
+                                            if p:
+                                                print_ = p
                                 gen_out_flie(blasts, out_t, prefix, out_f,
                                              database, srna, names)
                                 blasts["hit_num"] = 0

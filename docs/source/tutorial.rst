@@ -689,7 +689,9 @@ Please be aware, filters are strict. For examples, if your filters include ``ter
 associated with terminators will be included in the list of best candidates. If you want to include terminator information 
 but do not use terminator as a filter, you can remove ``term`` in filters and still assign the path of terminator gff file. 
 The results will include the sRNAs which are not associated with terminators, and terminator information can be shown 
-and checked in the results as well. For details of the filters, please check the section :ref:`srna` in ANNOgesic subcommand.
+and checked in the results as well. Many parameters can be used for adjustment the prediction, such as ``blast_e_srna``, 
+``blast_e_nr``, ``blast_score_nr``, ``blast_score_srna``, etc. 
+For details of the filters, please check the section :ref:`srna` in ANNOgesic subcommand.
 
 Before running ``srna``, we have to download sRNA database (we can use `BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_) and 
 `nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_ (if you have not downloaded before). 

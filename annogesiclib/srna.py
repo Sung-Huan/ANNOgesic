@@ -647,7 +647,9 @@ class sRNADetection(object):
                                          seq_file, blast_file, "both",
                                          args_srna.para_blast)
                 extract_blast(blast_file, srna_file, out_file,
-                              out_file + ".csv", database_type)
+                              out_file + ".csv", database_type,
+                              args_srna.blast_score_s,
+                              args_srna.blast_score_n)
                 shutil.move(out_file, srna_file)
 
     def _class_srna(self, prefixs, args_srna):

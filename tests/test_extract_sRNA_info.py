@@ -40,9 +40,9 @@ class TestExtractsRNAInfo(unittest.TestCase):
             fh.write(self.example.blast_nr_protein)
         with open(nr_file) as blast_f:
             for line in blast_f:
-                esi.detect_nr(line, blast_f.readlines(), out_t, blasts, "test")
+                esi.detect_nr(line, blast_f.readlines(), out_t, blasts, "test", None)
         self.assertEqual(out_t.getvalue(),
-                         "test	DNA replication and repair protein RecF domain protein	EHS30036.1,EHS80331.1,EID88948.1	4e-18\n")
+                         "test\tDNA replication and repair protein RecF domain protein\tEHS30036.1,EHS80331.1,EID88948.1\t4e-18\t80.5\n")
         self.assertDictEqual(blasts, {'name': '', 'hit_num': 1, 'blast': True})
         out_t.close()
         blast_f.close()
@@ -52,7 +52,7 @@ class TestExtractsRNAInfo(unittest.TestCase):
             fh.write(self.example.blast_nr_unknown)
         with open(nr_file) as blast_f:
             for line in blast_f.readlines():
-                esi.detect_nr(line, blast_f.readlines(), out_t, blasts, "test")
+                esi.detect_nr(line, blast_f.readlines(), out_t, blasts, "test", None)
         self.assertEqual(out_t.getvalue(), "")
         self.assertDictEqual(blasts, {'name': '', 'hit_num': 0,
                                       'blast': False})
@@ -67,9 +67,9 @@ class TestExtractsRNAInfo(unittest.TestCase):
             fh.write(self.example.blast_srna)
         with open(nr_file) as blast_f:
             for line in blast_f:
-                esi.detect_srna(line, blast_f, out_t, blasts, "test")
+                esi.detect_srna(line, blast_f, out_t, blasts, "test", None)
         self.assertEqual(out_t.getvalue(),
-                         "test	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89\n")
+                         "test\tssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89\t318\n")
         out_t.close()
         blast_f.close()
 
@@ -82,7 +82,7 @@ class TestExtractsRNAInfo(unittest.TestCase):
         output_file = os.path.join(self.test_folder, "out.gff")
         output_table = os.path.join(self.test_folder, "out.csv")
         esi.extract_blast(nr_blast, "test.srna", output_file,
-                          output_table, "nr")
+                          output_table, "nr", None, None)
         datas, attributes = extract_info(output_file, "file")
         refs, ref_attributes = extract_info(self.example.out_nr_gff, "string")
         self.assertEqual(set(datas), set(refs[1:]))
@@ -90,7 +90,7 @@ class TestExtractsRNAInfo(unittest.TestCase):
         self.assertEqual(set(attributes[1]), set(attributes[1]))
         datas = import_data(output_table)
         esi.extract_blast(srna_blast, "test.srna", output_file,
-                          output_table, "sRNA")
+                          output_table, "sRNA", None, None)
         datas, attributes = extract_info(output_file, "file")
         refs, ref_attributes = extract_info(
             self.example.out_srna_gff, "string")
@@ -188,7 +188,7 @@ Sequences producing significant alignments:                          (Bits)  Val
 > ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK
 Length=209
 
- Score =   318 bits (172),  Expect = 4e-89
+ Score = 318 bits (172),  Expect = 4e-89
  Identities = 172/172 (100%), Gaps = 0/172 (0%)
  Strand=Plus/Minus
 
@@ -317,6 +317,6 @@ Staphylococcus_aureus_HG003	srna1	-	4045	4159	AAA domain protein	KDP53072.1	1e-1
 Staphylococcus_aureus_HG003	Refseq	sRNA	313	417	.	+	.	Name=sRNA_candidate_0000;ID=srna0;sRNA_hit=NA
 Staphylococcus_aureus_HG003	Refseq	sRNA	4045	4159	.	-	.	Name=sRNA_candidate_0001;ID=srna1;sRNA_hit=1"""
     out_srna_csv = """Staphylococcus_aureus_HG003	srna0	+	313	417	NA
-Staphylococcus_aureus_HG003	srna1	-	4045	4159	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89"""
+Staphylococcus_aureus_HG003	srna1	-	4045	4159	ssau217.1|Staphylococcus aureus subsp. aureus N315|RsaK	4e-89	318"""
 if __name__ == "__main__":
     unittest.main()

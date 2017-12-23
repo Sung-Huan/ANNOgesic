@@ -84,7 +84,7 @@ class Mock_func(object):
         gen_file('tmp_blast.txt', "test")
 
     def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file,
-                           database_type):
+                           database_type, score_a, score_b):
         pass
 
     def mock_classify_srna(self, gff_file, out_stat, in_cds, import_info):
@@ -333,6 +333,8 @@ class TestsRNADetection(unittest.TestCase):
         args.para_blast = 1
         args.fastas = self.fastas
         args.out_folder = self.out
+        args.blast_score_s = 0
+        args.blast_score_n = 0
         self.srna._blast("database", False, "dna", args,
                          ["test"], "blast_all", "nr", 0.0001, "tss")
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
@@ -426,6 +428,8 @@ class TestsRNADetection(unittest.TestCase):
         args.e_nr = 0
         args.e_srna = 0
         args.para_blast = 1
+        args.blast_score_s = 0
+        args.blast_score_n = 0
         self.srna._filter_srna(args, ["test"])
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")
