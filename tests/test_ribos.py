@@ -38,7 +38,7 @@ class Mock_func(object):
         if not os.path.exists('test_folder/output/tmp_table/test_test.csv'):
             gen_file('test_folder/output/tmp_table/test_test.csv', "test")
 
-    def mock_reextract_rbs(sec_scan_file, first_table, sec_table, test):
+    def mock_reextract_rbs(sec_scan_file, first_table, sec_table, test, cutoff):
         gen_file('test_folder/output/tmp_table/test_test_scan.csv', "test")
         gen_file(os.path.join("test_folder/output", "tmp_fasta",
                               "test_regenerate.fa"), "test")
@@ -129,6 +129,7 @@ class TestRibos(unittest.TestCase):
         args.fuzzy_rbs = 2
         args.utr = True
         args.output_all = "test"
+        args.cutoff = "e_0.01"
         tmp_files = {"fasta": os.path.join(self.out_folder, "tmp_fasta"),
                      "scan": "tmp_scan",
                      "table": os.path.join(self.out_folder, "tmp_table")}

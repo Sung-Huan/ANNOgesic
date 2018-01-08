@@ -21,10 +21,10 @@ class TestGenSvg(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_modify_table(self):
-        result = """#ID\tGenome\tStrand\tAssociated_CDS\tStart_genome\tEnd_genome\tRfam\tE_value\tStart_align\tEnd_align
-riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t15948\t16046\tRF00162\t1.6e-18\t1\t99
-riboswitch_11\tStaphylococcus_aureus_HG003\t-\tSAOUHSC_00007\t27955\t28053\tRF00162\t1.6e-18\t1\t99
-riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098\tRF00167\t2.2e-18\t1\t103"""
+        result = """#ID\tGenome\tStrand\tAssociated_CDS\tStart_genome\tEnd_genome\tRfam\tE_value\tScore\tStart_align\tEnd_align
+riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t15948\t16046\tRF00162\t1.6e-18\t74\t1\t99
+riboswitch_11\tStaphylococcus_aureus_HG003\t-\tSAOUHSC_00007\t27955\t28053\tRF00162\t1.6e-18\t74\t1\t99
+riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098\tRF00167\t2.2e-18\t45\t1\t103"""
         table = os.path.join(self.test_folder, "test")
         gen_file(table, self.example.ribos)
         mrt.modify_table(table, True)
@@ -37,9 +37,9 @@ riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098\tR
 
 class Example(object):
 
-    ribos = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t15948\t16046\tRF00162\t1.6e-18\t1\t99
-riboswitch_11\tStaphylococcus_aureus_HG003\t-\tSAOUHSC_00007\t27955\t28053\tRF00162\t1.6e-18\t1\t99
-riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098\tRF00167\t2.2e-18\t1\t103"""
+    ribos = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t15948\t16046\tRF00162\t1.6e-18\t74\t1\t99
+riboswitch_11\tStaphylococcus_aureus_HG003\t-\tSAOUHSC_00007\t27955\t28053\tRF00162\t1.6e-18\t74\t1\t99
+riboswitch_183\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00372\t377996\t378098\tRF00167\t2.2e-18\t45\t1\t103"""
 
 if __name__ == "__main__":
     unittest.main()

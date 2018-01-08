@@ -857,7 +857,7 @@ class Controller(object):
             self._args.annotation_files, self._args.fasta_files,
             self._args.tss_files, self._args.transcript_files,
             self._args.rfam_path, ribos_path,
-            thermo_path, self._args.e_value,
+            thermo_path, self._args.cutoff,
             self._args.output_all, self._paths.database_folder,
             self._args.tolerance,
             self._args.tolerance_rbs, self._args.utr_length)

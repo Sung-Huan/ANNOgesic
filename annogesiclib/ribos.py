@@ -69,8 +69,18 @@ class Ribos(object):
         scan_file = os.path.join(tmp_files["scan"],
                                  "_".join([prefix, suffixs[type_]]))
         scan = open(scan_file, "w")
-        call([args_ribo.cmscan_path, "--incE",
-              str(args_ribo.e_value), "--acc", rfam, seq], stdout=scan)
+        if args_ribo.cutoff.split("_")[0] == "e":
+            value = args_ribo.cutoff.split("_")[-1]
+            call([args_ribo.cmscan_path, "--incE",
+                  value, "--acc", rfam, seq], stdout=scan)
+        elif args_ribo.cutoff.split("_")[0] == "s":
+            value = args_ribo.cutoff.split("_")[-1]
+            call([args_ribo.cmscan_path, "--incT",
+                  value, "--acc", rfam, seq], stdout=scan)
+        else:
+            print("Error: the --cutoff needs to start from 'e' "
+                  "(e value) or 's' (score)!")
+            sys.exit()
         scan.close()
         return scan_file
 
@@ -112,7 +122,8 @@ class Ribos(object):
                 sec_table = os.path.join(
                         tmp_files["table"],
                         "_".join([prefix, suffixs["re_csv"]]))
-                reextract_rbs(sec_scan_file, first_table, sec_table)
+                reextract_rbs(sec_scan_file, first_table, sec_table,
+                              args_ribo.cutoff)
                 shutil.move(sec_table, first_table)
                 modify_table(first_table, args_ribo.output_all)
         return prefixs

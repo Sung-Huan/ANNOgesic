@@ -3229,7 +3229,7 @@ from our Git repository.
                                             [--cmscan_path CMSCAN_PATH]
                                             [--cmpress_path CMPRESS_PATH]
                                             [--utr_length UTR_LENGTH]
-                                            [--e_value E_VALUE] [--output_all]
+                                            [--cutoff CUTOFF] [--output_all]
                                             [--tolerance TOLERANCE]
                                             [--tolerance_rbs TOLERANCE_RBS]
     
@@ -3272,8 +3272,13 @@ from our Git repository.
                             Path of cmpress in Infernal package.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The UTR length. Default is 300.
-      --e_value E_VALUE, -e E_VALUE
-                            The maximum e value. Default is 0.001.
+      --cutoff CUTOFF, -cf CUTOFF
+                            The cutoff of the infernal search. The cutoff can be
+                            assigned by e value (assigned by 'e') or score
+                            (assigned by 's'). For example, 'e_0.001' represents
+                            using e value as a cutoff and the maximum value is
+                            0.001. 's_8' represents using score as a cutoff and
+                            the minimum score is 8. Default is e_0.001.
       --output_all, -o      One query sequence may fit multiple riboswitches or
                             RNA thermometers. It can print multiple riboswitches
                             or RNA thermometers. Otherwise, only the highest

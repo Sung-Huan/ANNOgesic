@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.6.31"
+__version__ = "0.7.0"
 
 def main():
     print("""
@@ -1872,8 +1872,12 @@ def main():
         "--utr_length", "-u", default=300, type=int,
         help="The UTR length. Default is 300.")
     ribos_add.add_argument(
-        "--e_value", "-e", default=0.001, type=float,
-        help="The maximum e value. Default is 0.001.")
+        "--cutoff", "-cf", default="e_0.001",
+        help="The cutoff of the infernal search. The cutoff can be assigned "
+        "by e value (assigned by 'e') or score (assigned by 's'). "
+        "For example, 'e_0.001' represents using e value as a cutoff and the "
+        "maximum value is 0.001. 's_8' represents using score as a cutoff and "
+        "the minimum score is 8. Default is e_0.001.")
     ribos_add.add_argument(
         "--output_all", "-o", default=False, action="store_true",
         help="One query sequence may fit multiple riboswitches or "

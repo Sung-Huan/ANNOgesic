@@ -23,6 +23,8 @@ def import_ribo(line, ribos, seq_name):
                     detect = data
                 elif (num == 3):
                     e = float(data)
+                elif (num == 4):
+                    score = float(data)
                 elif (num == 6):
                     name = data
                 elif (num == 7):
@@ -35,7 +37,8 @@ def import_ribo(line, ribos, seq_name):
                         start = end
                         end = tmp_start
                     ribos.append({"name": name, "detect": detect,
-                                  "e": e, "seq_name": seq_name,
+                                  "e": e, "score": score,
+                                  "seq_name": seq_name,
                                   "start": start, "end": end})
 
 
@@ -45,7 +48,7 @@ def print_file(ribos, out_t, out_s, seq_name, seqs):
             if rbs["detect"] == "!":
                 out_t.write("\t".join(
                     seq_name.split("|") + [
-                        rbs["name"], str(rbs["e"]),
+                        rbs["name"], str(rbs["e"]), str(rbs["score"]),
                         str(rbs["start"]), str(rbs["end"])]) + "\n")
             for seq in seqs:
                 if rbs["seq_name"] == seq["name"]:
@@ -93,7 +96,14 @@ def regenerate_seq(align_file, seq_file, out_table, out_seq):
     out_s.close()
 
 
-def compare_first_result(ribos, firsts, seq_name, out, extras):
+def check_cutoff(cutoff):
+    if cutoff.split("_")[0] == "e":
+        return "e"
+    elif cutoff.split("_")[0] == "s":
+        return "score"
+
+
+def compare_first_result(ribos, firsts, seq_name, out, extras, cutoff):
     if len(ribos) != 0:
         for rbs in ribos:
             check = False
@@ -104,19 +114,21 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
                     if first["seq_name"] == "|".join(
                             rbs["seq_name"].split("|")[0:4]):
                         same = True
+                        type_ = check_cutoff(cutoff)
                         if (first["acc"] == rbs["name"]) and (
-                                first["e"] > rbs["e"]):
+                                first[type_] > rbs[type_]):
                             first["print"] = True
                             first["e"] = rbs["e"]
+                            first["score"] = rbs["score"]
                             out.write("\t".join(seq_name.split("|") + [
-                                rbs["name"], str(rbs["e"]), str(rbs["start"]),
-                                str(rbs["end"])]) + "\n")
+                                rbs["name"], str(rbs["e"]), str(rbs["score"]),
+                                str(rbs["start"]), str(rbs["end"])]) + "\n")
                             if len(info) != 0:
                                 info = ""
                         elif (first["acc"] != rbs["name"]):
                             info = "\t".join(seq_name.split("|") + [
-                                rbs["name"], str(rbs["e"]), str(rbs["start"]),
-                                str(rbs["end"])])
+                                rbs["name"], str(rbs["e"]), str(rbs["score"]),
+                                str(rbs["start"]), str(rbs["end"])])
                 if len(info) != 0:
                     out.write(info + "\n")
                 if not same:
@@ -130,9 +142,11 @@ def compare_first_result(ribos, firsts, seq_name, out, extras):
                                      rbs["seq_name"].split("|")[0:4]))):
                                 check = True
                                 if (extra["name"] == rbs["name"]):
-                                    if extra["e"] > rbs["e"]:
+                                    type_ = check_cutoff(cutoff)
+                                    if extra[type_] > rbs[type_]:
                                         extra["seq_name"] = rbs["seq_name"]
                                         extra["e"] = rbs["e"]
+                                        extra["score"] = rbs["score"]
                                         extra["start"] = rbs["start"]
                                         extra["end"] = rbs["end"]
                                 else:
@@ -154,7 +168,7 @@ def read_gff(gff_file):
     return cdss
 
 
-def reextract_rbs(align_file, first_file, output_file):
+def reextract_rbs(align_file, first_file, output_file, cutoff):
     '''based on the first detection, extract the RBS and run again'''
     hit = False
     extras = []
@@ -163,8 +177,9 @@ def reextract_rbs(align_file, first_file, output_file):
     firsts = []
     for row in csv.reader(f_h, delimiter="\t"):
         firsts.append({"seq_name": "|".join(row[0:4]), "acc": row[6],
-                       "e": float(row[7]), "start": int(row[8]),
-                       "end": int(row[9]), "print": False,
+                       "e": float(row[7]), "score": float(row[8]),
+                       "start": int(row[9]), "end": int(row[10]),
+                       "print": False,
                        "pre_start": int(row[4]), "pre_end": int(row[5])})
     with open(align_file, "r") as a_h:
         for line in a_h:
@@ -183,17 +198,18 @@ def reextract_rbs(align_file, first_file, output_file):
                     import_ribo(line, ribos, seq_name)
                 if line.startswith("Hit alignments:"):
                     hit = False
-                    compare_first_result(ribos, firsts, seq_name, out, extras)
+                    compare_first_result(ribos, firsts, seq_name, out,
+                                         extras, cutoff)
         if len(extras) != 0:
             for extra in extras:
                 out.write("\t".join(extra["seq_name"].split("|") + [
-                    extra["name"], str(extra["e"]), str(extra["start"]),
-                    str(extra["end"])]) + "\n")
+                    extra["name"], str(extra["e"]), str(extra["score"]),
+                    str(extra["start"]), str(extra["end"])]) + "\n")
     for first in firsts:
         if not first["print"]:
             out.write("\t".join(first["seq_name"].split("|") + [
                       str(first["pre_start"]), str(first["pre_end"]),
-                      first["acc"], str(first["e"]), str(first["start"]),
-                      str(first["end"])]) + "\n")
+                      first["acc"], str(first["e"]), str(first["score"]),
+                      str(first["start"]), str(first["end"])]) + "\n")
     out.close()
     f_h.close()

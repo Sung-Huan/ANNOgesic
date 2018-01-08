@@ -27,13 +27,13 @@ class TestRecomputeRBS(unittest.TestCase):
         seq_name = "test"
         rr.import_ribo(line, ribos, seq_name)
         self.assertListEqual(ribos, [
-            {'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
+            {'e': 6.2e-18, 'score': 74.3, 'start': 206, 'name': 'RF00162',
              'detect': '!', 'seq_name': 'test', 'end': 304}])
 
     def test_print_file(self):
         out_t = StringIO()
         out_s = StringIO()
-        ribos = [{'e': 6.2e-18, 'start': 206, 'name': 'RF00162',
+        ribos = [{'e': 6.2e-18, 'score': 74.3, 'start': 206, 'name': 'RF00162',
                   'detect': '!',
                   'seq_name': 'test_1|test_strain|+|AAA_0001|206|304',
                   'end': 304}]
@@ -43,7 +43,7 @@ class TestRecomputeRBS(unittest.TestCase):
         rr.print_file(ribos, out_t, out_s, seq_name, seqs)
         self.assertEqual(
             out_t.getvalue(),
-            "test_1\ttest_strain\t+\tAAA_0001\t206\t304\tRF00162\t6.2e-18\t206\t304\n")
+            "test_1\ttest_strain\t+\tAAA_0001\t206\t304\tRF00162\t6.2e-18\t74.3\t206\t304\n")
         self.assertEqual(
             out_s.getvalue(),
             ">test_1|test_strain|+|AAA_0001|411|509\n\n")
@@ -59,7 +59,7 @@ class TestRecomputeRBS(unittest.TestCase):
         data = import_data(out_table)
         self.assertEqual(
             "\n".join(data),
-            "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t5\t12")
+            "riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16\tRF00162\t6.2e-18\t74.3\t5\t12")
         data = import_data(out_seq)
         self.assertEqual(
             "\n".join(data), (
@@ -68,6 +68,7 @@ class TestRecomputeRBS(unittest.TestCase):
 
     def test_compare_first_result(self):
         out = StringIO()
+        cutoff = "e_0.01"
         ribos = [{
             'e': 6.2e-18, 'start': 206, 'name': 'RF00162', 'detect': '!',
             'seq_name': 'test_1|test_strain|+|AAA_0001|206|304', 'end': 304}]
@@ -78,7 +79,7 @@ class TestRecomputeRBS(unittest.TestCase):
         extras = [{
             'e': 6.2e-10, 'start': 100, 'name': 'RF00160', 'detect': '!',
             'seq_name': 'test_2|test_strain|+|AAA_0002|100|150', 'end': 150}]
-        rr.compare_first_result(ribos, firsts, seq_name, out, extras)
+        rr.compare_first_result(ribos, firsts, seq_name, out, extras, cutoff)
         self.assertListEqual(extras, [
             {'start': 100, 'name': 'RF00160', 'detect': '!', 'end': 150,
              'e': 6.2e-10,
@@ -91,19 +92,20 @@ class TestRecomputeRBS(unittest.TestCase):
         align_file = os.path.join(self.test_folder, "align")
         first_file = os.path.join(self.test_folder, "first")
         output_file = os.path.join(self.test_folder, "output")
-        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	5	12"""
+        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	74.3	5	12"""
         gen_file(align_file, self.example.scan_file)
         gen_file(first_file, first_content)
-        rr.reextract_rbs(align_file, first_file, output_file)
+        cutoff = "e_0.01"
+        rr.reextract_rbs(align_file, first_file, output_file, cutoff)
         data = import_data(output_file)
         self.assertEqual("\n".join(data), first_content)
-        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	13	17"""
+        first_content = """riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	74.3	13	17"""
         gen_file(first_file, first_content)
-        rr.reextract_rbs(align_file, first_file, output_file)
+        rr.reextract_rbs(align_file, first_file, output_file, cutoff)
         data = import_data(output_file)
         self.assertEqual("\n".join(data), 
-"""riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	5	12
-riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	13	17""")
+"""riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00162	6.2e-18	74.3	5	12
+riboswitch_5\tStaphylococcus_aureus_HG003\t+\tSAOUHSC_00013\t10\t16	RF00178	6.2e-20	74.3	13	17""")
 
 class Example(object):
 

@@ -5,7 +5,8 @@ def import_data(row):
     return{"strain": row[1], "strand": row[2],
            "associate": row[3], "start_seq": int(row[4]),
            "end_seq": int(row[5]), "rfam": row[6], "e": row[7],
-           "start_align": int(row[8]), "end_align": int(row[9]),
+           "score": row[8],
+           "start_align": int(row[9]), "end_align": int(row[10]),
            "info": "|".join(row[0:6]), "ID": row[0]}
 
 
@@ -47,6 +48,7 @@ def print_gff(num, ribo, out, stats, strain, feature):
                           ("Name", ribo["rfam_name"]),
                           ("rfam_id", ribo["rfam"]),
                           ("e_value", ribo["e"]),
+                          ("score", ribo["score"]),
                           ("method", "infernal_to_Rfam")]])
     out.write("\t".join([str(field) for field in [
               ribo["strain"], "ANNOgesic", feature,
@@ -164,6 +166,7 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat,
                         [pre_gff["rfam_name"], ribo["rfam_name"]])
                 pre_gff["rfam"] = ",".join([pre_gff["rfam"], ribo["rfam"]])
                 pre_gff["e"] = ",".join([pre_gff["e"], ribo["e"]])
+                pre_gff["score"] = ",".join([pre_gff["score"], ribo["score"]])
             else:
                 print_gff(num, pre_gff, out, stats, strain, feature)
                 num += 1

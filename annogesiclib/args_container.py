@@ -1229,7 +1229,7 @@ class ArgsContainer(object):
     def container_ribos(self, program, thermo_ID, cmscan_path, cmpress_path,
                         riboswitch_ID, annotation_files, fasta_files,
                         tss_files, transcript_files, Rfam, ribos_output_folder,
-                        thermo_output_folder, e_value, output_all,
+                        thermo_output_folder, cutoff, output_all,
                         database_folder, fuzzy, fuzzy_rbs, UTR_length):
         self.program = program
         if (program.lower() == "riboswitch") or (
@@ -1255,7 +1255,7 @@ class ArgsContainer(object):
         self.rfam = Rfam
         self.ribos_out_folder = ribos_output_folder
         self.thermo_out_folder = thermo_output_folder
-        self.e_value = e_value
+        self.cutoff = cutoff
         self.output_all = output_all
         self.database = database_folder
         self.fuzzy = fuzzy
