@@ -740,20 +740,16 @@ def print_table(out_t, sorf, name, type_, lib_type, sorf_datas, args_sorf):
                            ";".join(sorf["with_TSS"]), ";".join(sorf["rbs"]),
                            ";".join(sorf["starts"]), ";".join(sorf["ends"]),
                            ";".join(sorf["srna"]), str(sorf["shift"]),
-                           lib_type, str(sorf_datas["best"]),
-                           str(sorf_datas["high"]),
-                           str(sorf_datas["low"])]) + "\t")
+                           lib_type, str(sorf_datas["best"])]) + "\t")
     first = True
     for data in sorf_datas["detail"]:
         if first:
-            out_t.write("{0}(avg={1};high={2};low={3})".format(
-                        data["track"], data["avg"],
-                        data["high"], data["low"]))
+            out_t.write("{0}({1})".format(
+                        data["track"], data["avg"]))
             first = False
         else:
-            out_t.write(";{0}(avg={1};high={2};low={3})".format(
-                        data["track"], data["avg"],
-                        data["high"], data["low"]))
+            out_t.write(";{0}({1})".format(
+                        data["track"], data["avg"]))
     out_t.write("\t" + sorf["seq"])
     if args_sorf.print_all:
         out_t.write("\t" + ";".join(sorf["candidate"]))
@@ -921,14 +917,12 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t, file_type,
                 "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
                 "Ribosome_binding_site", "All_start_points", "All_stop_points",
                 "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
-                "Best_highest_coverage", "Best_lowest_coverage", "Track_detail",
-                "Seq", "Combinations"]) + "\n")
+                "Track_detail", "Seq", "Combinations"]) + "\n")
         else:
             out_t.write("\t".join([
                 "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
                 "Ribosome_binding_site", "All_start_points", "All_stop_points",
                 "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
-                "Best_highest_coverage", "Best_lowest_coverage",
                 "Track_detail", "Seq"]) + "\n")
     num = 0
     final_sorfs = []

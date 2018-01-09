@@ -108,7 +108,7 @@ def print_coverage(trans, out, out_gff, wigs_f, wigs_r, gff_file):
         for track, cover in infos.items():
             if best != -1:
                 out.write(";")
-            out.write("{0}(avg={1})".format(
+            out.write("{0}({1})".format(
                       track, str(cover["avg"])))
             if cover["avg"] > best:
                 best = cover["avg"]

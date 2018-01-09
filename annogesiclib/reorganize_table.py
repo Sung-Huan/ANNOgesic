@@ -17,17 +17,29 @@ def import_covers(row):
 
 def get_lib_name(libs):
     tracks = []
-    for lib in libs:
-        if lib["name"] not in tracks:
-            tracks.append(lib["name"])
-    return tracks
+    double_tracks = []
+    track_list = []
+    for lib1 in libs:
+        for lib2 in libs:
+            if (lib1["cond"] == lib2["cond"]) and (
+                    lib1["type"] == lib2["type"]) and (
+                    lib1["rep"] == lib2["rep"]) and (
+                    lib1["strand"] != lib2["strand"]):
+                track = "/".join([lib1["name"], lib2["name"]])
+                if track not in double_tracks:
+                    double_tracks.append(track)
+                    double_tracks.append("/".join([lib2["name"],
+                                         lib1["name"]]))
+                    tracks.append(track)
+                    track_list.append([lib1["name"], lib2["name"]])
+    return tracks, track_list
 
 def reorganize_table(input_libs, wigs, cover_header, table_file):
     libs, texs = read_libs(input_libs, wigs)
     fh = open(table_file, "r")
     first = True
     headers = []
-    tracks = get_lib_name(libs)
+    tracks, track_list = get_lib_name(libs)
     out = open(table_file + "tmp", "w")
     for row in csv.reader(fh, delimiter='\t'):
         if first:
@@ -44,7 +56,7 @@ def reorganize_table(input_libs, wigs, cover_header, table_file):
                    detect = False
             first = False
             for track in tracks:
-                headers.append("_".join(["Avg_coverage", track]))
+                headers.append("Avg_coverage:" + track)
             out.write("\t".join(headers) + "\n")
         else:
             if len(row) < (index + 1):
@@ -59,8 +71,8 @@ def reorganize_table(input_libs, wigs, cover_header, table_file):
             detects = ["Not_detect"] * len(tracks)
             for name, cover in zip(cover_names, covers):
                 num_track = 0
-                for track in tracks:
-                    if name == track:
+                for track in track_list:
+                    if name in track:
                         detects[num_track] = cover
                     num_track += 1
             out.write("\t".join(row + detects) + "\n")
