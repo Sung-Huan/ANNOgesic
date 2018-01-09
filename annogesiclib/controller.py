@@ -107,6 +107,7 @@ class Controller(object):
             full_exe = os.path.realpath(exe)
         for folder in os.environ["PATH"].split(":"):
             if os.path.exists(os.path.join(folder, exe)):
+                exe_folder = folder
                 detect = True
                 full_exe = exe
         if not detect:
@@ -116,7 +117,12 @@ class Controller(object):
                 print("Error: {0} can't be found!".format(exe))
                 print("Please assign the correct path!")
                 sys.exit()
-        return full_exe
+        if (os.path.isfile(full_exe)) or (
+                os.path.isfile(os.path.join(exe_folder, exe))):
+            return full_exe
+        else:
+            print("Error: {0} is not a file!".format(exe))
+            sys.exit()
 
     def check_file(self, files, names, require):
         '''Check the path of file'''

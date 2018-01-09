@@ -365,7 +365,7 @@ class ArgsContainer(object):
                         if file_.endswith(type_):
                             detect = True
                 if not detect:
-                    print("Error: There some files don't exist in {0} or "
+                    print("Error: Some files don't exist in {0} or "
                           "the {0} is/are not ended with {1}!".format(
                           " and ".join(flag), " ".join(file_types)))
                     sys.exit()
