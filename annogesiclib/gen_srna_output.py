@@ -10,24 +10,23 @@ def import_data(row, type_, args_srna, term_path):
         data = {"strain": row[0], "name": row[1], "start": int(row[2]),
                 "end": int(row[3]), "strand": row[4], "conds": row[5],
                 "detect": row[6], "tss_pro": row[7], "end_pro": row[8],
-                "avg": float(row[9]), "high": float(row[10]),
-                "low": float(row[11]), "overlap_CDS": row[13],
-                "overlap_percent": row[14]}
+                "avg": float(row[9]), "overlap_CDS": row[11],
+                "overlap_percent": row[12]}
         if (term_path is not None) and (args_srna.promoter_table is None):
-            data["track"] = row[12]
-            data["with_term"] = row[15]
+            data["track"] = row[10]
+            data["with_term"] = row[13]
         elif (term_path is None) and (args_srna.promoter_table is not None):
-            data["track"] = row[12]
-            data["promoter"] = row[15]
+            data["track"] = row[10]
+            data["promoter"] = row[13]
         elif (term_path is not None) and (
                 args_srna.promoter_table is not None):
-            data["track"] = row[12]
-            data["with_term"] = row[15]
-            data["promoter"] = row[16]
+            data["track"] = row[10]
+            data["with_term"] = row[13]
+            data["promoter"] = row[14]
         else:
-            data["track"] = row[12]
+            data["track"] = row[10]
         if args_srna.import_info is None:
-            data["track"] = row[12]
+            data["track"] = row[10]
         return data
     elif type_ == "nr":
         if len(row) == 9:
@@ -218,7 +217,7 @@ def print_file(finals, out, srnas, out_gff):
                   final["strain"], "/".join(names), str(final["start"]),
                   str(final["end"]), final["strand"], final["tss_pro"],
                   final["end_pro"], final["candidates"], final["type"],
-                  str(final["avg"]), str(final["high"]), str(final["low"]),
+                  str(final["avg"]),
                   final["track"], final["energy"], final["utr"], final["sORF"],
                   final["nr_hit_num"], final["sRNA_hit_num"],
                   final["nr_hit"], final["sRNA_hit"], final["overlap_CDS"],
@@ -285,8 +284,7 @@ def gen_srna_table(srna_gff, srna_table_file, nr_blast, srna_blast_file,
     out.write("\t".join([
         "Rank", "Genome", "Name", "Start", "End", "Strand",
         "Start_with_TSS/Cleavage_site", "End_with_cleavage", "Candidates",
-        "Lib_type", "Best_avg_coverage", "Best_highest_coverage",
-        "Best_lowest_coverage", "Track/Coverage",
+        "Lib_type", "Best_avg_coverage", "Track/Coverage",
         "Normalized_secondary_energy_change(by_length)", "sRNA_types",
         "Conflict_sORF", "nr_hit_number", "sRNA_hit_number",
         "nr_hit_top3|ID|e-value|score", "sRNA_hit|e-value|score", "Overlap_CDS",

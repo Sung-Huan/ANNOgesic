@@ -44,7 +44,7 @@ def reorganize_table(input_libs, wigs, cover_header, table_file):
                    detect = False
             first = False
             for track in tracks:
-                headers.append("_".join(["Coverage", track]))
+                headers.append("_".join(["Avg_coverage", track]))
             out.write("\t".join(headers) + "\n")
         else:
             if len(row) < (index + 1):

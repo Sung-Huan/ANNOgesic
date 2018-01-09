@@ -193,7 +193,7 @@ class TestMergesRNA(unittest.TestCase):
         ms.compare_table(srna, tables, "utr", wigs, wigs, texs,
                          out, [tss], args)
         self.assertEqual(out.getvalue(),
-                         "aaa\tsrna_0\t3\t4\t+\tfrag_1\t1\tTSS_1;cleavage3\tcleavage10\t22.0\t23\t21\ttrack_1(avg=22.0;high=23;low=21)\tCDS1\t0.01415\n")
+                         "aaa\tsrna_0\t3\t4\t+\tfrag_1\t1\tTSS_1;cleavage3\tcleavage10\t22.0\ttrack_1(22.0)\tCDS1\t0.01415\n")
         os.remove("tmp_median")
 
     def test_get_coverage(self):

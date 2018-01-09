@@ -436,24 +436,21 @@ def compare_table(srna, tables, type_, wigs_f, wigs_r, texs,
                 cut, srna.attributes["sRNA_type"], None, cut, texs)
         if len(srna_datas["conds"]) != 0:
             out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}"
-                      "\t{8}\t{9}\t{10}\t{11}\t".format(
+                      "\t{8}\t{9}\t".format(
                           srna.seq_id, srna.attributes["Name"], srna.start,
                           srna.end, srna.strand,
                           ";".join(srna_datas["conds"].keys()),
                           ";".join(srna_datas["conds"].values()), tss_pro,
-                          end_pro, srna_datas["best"], srna_datas["high"],
-                          srna_datas["low"]))
+                          end_pro, srna_datas["best"]))
             first = True
             for data in srna_datas["detail"]:
                 if first:
-                    out.write("{0}(avg={1};high={2};low={3})".format(
-                              data["track"], data["avg"], data["high"],
-                              data["low"]))
+                    out.write("{0}({1})".format(
+                              data["track"], data["avg"]))
                     first = False
                 else:
-                    out.write(";{0}(avg={1};high={2};low={3})".format(
-                              data["track"], data["avg"], data["high"],
-                              data["low"]))
+                    out.write(";{0}({1})".format(
+                              data["track"], data["avg"]))
             out.write("\t{0}\t{1}\n".format(
                       srna.attributes["overlap_cds"].replace(",", ";"),
                       srna.attributes["overlap_percent"].replace(",", ";")))
@@ -569,8 +566,6 @@ def free_memory(paras):
 def merge_srna_table(srna_file, csvs, wigs_f, wigs_r,
                      tss_file, args_srna):
     libs, texs = read_libs(args_srna.libs, args_srna.merge_wigs)
-#    wigs_f = read_wig(wig_f_file, "+", libs)
-#    wigs_r = read_wig(wig_r_file, "-", libs)
     srnas = read_gff(srna_file, "sRNA")
     if tss_file is not None:
         tsss = read_gff(tss_file, "tss")

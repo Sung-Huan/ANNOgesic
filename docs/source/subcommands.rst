@@ -1932,10 +1932,6 @@ The meanings of the columns are as following:
 
 	**Best_avg_coverage:** Based on coverage of all libraries, The best average coverage of this sRNA will be showed here.
 
-	**Best_highest_coverage:** Based on coverage of all libraries, The highest average coverage of this sRNA will be showed here.
-
-	**Best_lowest_coverage:** Based on coverage of all libraries, The lowest average coverage of this sRNA will be showed here.
-
 	**Normalized_secondary_energy_change(by_length):** Secondary folding energy change (normalized by length) of this sRNA.
 
 	**sRNA_types:** Shows the sRNA type.
@@ -1962,8 +1958,7 @@ The meanings of the columns are as following:
 
 	**sRNA_length:** sRNA length.
 
-	**Coverage_$LIB_NAME:** Shows the coverage information of the libraries about this sRNA. "high" means the highest coverage of the libraries,
-        "low" means the lowest coverage of the libraries, and "avg" represents the average coverage of this sRNA.
+	**Avg_coverage_$LIB_NAME:** Shows the average coverage information of the libraries about this sRNA.
 
 **gffs:** Stores gff files of the sRNA. There are also some sub-folders:
 
