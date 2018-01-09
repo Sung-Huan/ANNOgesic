@@ -3310,6 +3310,8 @@ The tags are as following:
 
 	**e-value:** E-value of searching this riboswitch/RNA_thermometer to Rfam.
 
+	**score:** Score of searching this riboswitch/RNA_thermometer to Rfam.
+
 	**method:** This riboswitch/RNA_thermometer is detected by which method.
 
 **tables:** Stores tables of riboswiches/RNA_thermometers with more details. The meaning of each column in this table is as following:
@@ -3329,6 +3331,8 @@ The tags are as following:
 	**Rfam:** Rfam ID of this riboswich/RNA_thermometer.
 
 	**E_value:** E-value of searching this riboswitch/RNA_thermometer to Rfam.
+
+	**Score:** Score of searching this riboswitch/RNA_thermometer to Rfam.
 
 	**Start_align:** Position of this riboswich/RNA_thermometer can be aligned to the genome.
 
