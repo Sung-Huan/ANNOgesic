@@ -15,8 +15,9 @@ browsers like `IGB <http://bioviz.org/igb/index.html>`_, `IGV
 <http://jbrowse.org/>`_.
 
 Before we start, please check :ref:`The format of filename` and
-:ref:`The input format of libraries for running ANNOgesic` in the
-section :ref:`ANNOgesic's subcommands` for more details.
+:ref:`The input format of libraries for running ANNOgesic`. All the 
+parameters and details can be found in the
+section :ref:`ANNOgesic's subcommands`.
 Moreover, all the requirements are listed in the section
 :ref:`Required tools or databases`.  The shell commands which we will
 present later are also combined in the shell script `run.sh
