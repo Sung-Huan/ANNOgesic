@@ -1470,7 +1470,7 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
 
 		**Tables of the promoters:** Please check the Promoter Tables of this section.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
