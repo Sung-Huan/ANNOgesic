@@ -38,7 +38,7 @@ class TestGenTableTran(unittest.TestCase):
                            self.example.wigs, self.example.wigs, None)
         self.assertEqual(
             out.getvalue(),
-            "aaa\tTranscript_0\t4\t20\t+\tfragmented&TEX+/-\tNA\tNA\tNA\ttrack_1(avg=33.529411764705884)\n")
+            "aaa\tTranscript_0\t4\t20\t+\tfragmented&TEX+/-\tNA\tNA\tNA\ttrack_1(33.529411764705884)\n")
         self.assertListEqual(out_gff.getvalue().split("\t")[:-1],
                              ["aaa", "ANNOgesic", "Transcript",
                               "4", "20", ".", "+", "."])

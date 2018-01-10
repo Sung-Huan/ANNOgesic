@@ -963,7 +963,7 @@ The generated output folders are as following:
 
 	**Associated_term:** Which terminators are associated with this transcript.
 
-	**Coverage_$LIB_NAME:** Stores the average coverage information of the libraries about this transcript.
+	**Avg_coverage:$LIB_NAME:** Stores the average coverage information of the libraries about this transcript.
 
 **statistics:** Stores statistic files.
 
@@ -1958,7 +1958,7 @@ The meanings of the columns are as following:
 
 	**sRNA_length:** sRNA length.
 
-	**Avg_coverage_$LIB_NAME:** Shows the average coverage information of the libraries about this sRNA.
+	**Avg_coverage:$LIB_NAME:** Shows the average coverage information of the libraries about this sRNA.
 
 **gffs:** Stores gff files of the sRNA. There are also some sub-folders:
 
@@ -2236,14 +2236,9 @@ The meaning of each column is as following:
 
 	**Best_avg_coverage:** Based on coverage of all libraries, The best average coverage of this sORF will be showed here.
 
-        **Best_highest_coverage:** Based on coverage of all libraries, The highest average coverage of this sORF will be showed here.
-
-        **Best_lowest_coverage:** Based on coverage of all libraries, The lowest average coverage of this sORF will be showed here.
-
 	**Seq:** Sequence of this sORF.
 
-	**Coverage_$LIB_NAME:** Shows the coverage information of the libraries about this sORF. "high" means the highest coverage of the libraries,
-        "low" means the lowest coverage of the libraries, and "avg" represents the average coverage of this sORF.
+	**Avg_coverage:$LIB_NAME:** Shows the average coverage information of the libraries about this sORF.
 
 **gffs:** Stores gff files of the sORFs. There are also some sub-folders:
 
