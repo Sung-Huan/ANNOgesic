@@ -387,6 +387,7 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
         --enrichment_factor 1.1 \
         --processing_factor 4.5 \
         --validate_gene \
+        --program TSS \
         --replicate_tex all_1 \
         --curated_sequence_length NC_009839.1:200000 \
         --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \

@@ -5,7 +5,10 @@ ANNOgesic's subcommands
 
 In general, the subcommands need at least one argument - the analysis
 folder. If it is not given, ANNOgesic assumes the current
-folder as the analysis folder.
+folder as the analysis folder. All the default settings were tested 
+on several different organisms and produced in general good results. 
+A user can perform an analysis rather easily which those default values 
+and step-wise adapt the parameters to optimize the results if needed.
 
 .. _The format of filename:
 
@@ -136,7 +139,7 @@ The folders are following:
 
 ::
 
-    usage: annogesic create [-h] [--project_path PROJECT_PATH]
+    usage: annogesic create --project_path PROJECT_PATH
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -160,18 +163,14 @@ Then, the user can assign the file type for download.
 
 **FTP source:** The IP of NCBI.
 
-- **Arguments**
+- **Basic arguments**
 
 
 ::
 
-    usage: annogesic get_input_files [-h] --project_path PROJECT_PATH
-                                     [--ftp_path FTP_PATH] [--ref_fasta]
-                                     [--ref_gff] [--ref_gbk] [--ref_ptt]
-                                     [--ref_rnt] [--convert_embl]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+    usage: annogesic get_input_files --project_path PROJECT_PATH
+                                     --ftp_path FTP_PATH [--ref_fasta]
+                                     [--ref_gff] [--ref_gbk]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -184,12 +183,19 @@ Then, the user can assign the file type for download.
       --ref_gff, -g         Download gff files of the reference. Default is False.
       --ref_gbk, -k         Download genbank files of the reference. Default is
                             False.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --ref_ptt, -p         Download ptt files of the reference. Default is False.
       --ref_rnt, -r         Download rnt files of the reference. Default is False.
       --convert_embl, -e    Convert gbk to embl files of the reference. Default is
                             False.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -233,9 +239,8 @@ For an example, please check `mutation table <https://raw.githubusercontent.com/
 
 ::
 
-    usage: annogesic update_genome_fasta [-h] --project_path PROJECT_PATH
+    usage: annogesic update_genome_fasta --project_path PROJECT_PATH
                                          --related_fasta_files RELATED_FASTA_FILES
-                                         [RELATED_FASTA_FILES ...]
                                          --mutation_table MUTATION_TABLE
                                          [--combine_to_one_fasta]
     
@@ -286,26 +291,20 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
 
 **Fasta files of the updated genomes**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic annotation_transfer [-h] --project_path PROJECT_PATH
-                                         --compare_pair COMPARE_PAIR
-                                         [COMPARE_PAIR ...]
-                                         [--related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]]
-                                         [--related_gbk_files RELATED_GBK_FILES [RELATED_GBK_FILES ...]]
-                                         --related_fasta_files RELATED_FASTA_FILES
-                                         [RELATED_FASTA_FILES ...]
-                                         --target_fasta_files TARGET_FASTA_FILES
-                                         [TARGET_FASTA_FILES ...]
-                                         [--ratt_path RATT_PATH]
-                                         [--element ELEMENT]
-                                         [--transfer_type TRANSFER_TYPE]
-                                         [--convert_to_gff_rnt_ptt]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+    usage: annogesic annotation_transfer --project_path PROJECT_PATH
+                                     --compare_pair COMPARE_PAIR
+                                     [COMPARE_PAIR ...]
+                                     [--related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]]
+                                     [--related_gbk_files RELATED_GBK_FILES [RELATED_GBK_FILES ...]]
+                                     --related_fasta_files RELATED_FASTA_FILES
+                                     [RELATED_FASTA_FILES ...]
+                                     --target_fasta_files TARGET_FASTA_FILES
+                                     [TARGET_FASTA_FILES ...]
+                                     [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -331,7 +330,11 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             The paths of the fasta files of the related species.
       --target_fasta_files TARGET_FASTA_FILES [TARGET_FASTA_FILES ...], -tf TARGET_FASTA_FILES [TARGET_FASTA_FILES ...]
                             The paths of the target fasta files.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --ratt_path RATT_PATH
                             Path of the start.ratt.sh file of RATT folder. Default
@@ -346,6 +349,10 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
       --convert_to_gff_rnt_ptt, -g
                             Convert the annotation to gff, rnt and ptt. Default is
                             False.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+
 
 - **Output files**
 
@@ -381,7 +388,7 @@ For an example, the user has four bam files of one genome. Then the input will b
 
 **Fasta files of the closely related genomes** or **Fasta files of the reference genomes**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
@@ -390,16 +397,7 @@ For an example, the user has four bam files of one genome. Then the input will b
                          {with_BAQ,without_BAQ,extend_BAQ}
                          [{with_BAQ,without_BAQ,extend_BAQ} ...] --fasta_files
                          FASTA_FILES [FASTA_FILES ...] --bam_files BAM_FILES
-                         [BAM_FILES ...] [--samtools_path SAMTOOLS_PATH]
-                         [--bcftools_path BCFTOOLS_PATH] [--quality QUALITY]
-                         [--read_depth_range READ_DEPTH_RANGE]
-                         [--ploidy {haploid,diploid}] [--rg_tag] [--caller {c,m}]
-                         [--dp4_cutoff DP4_CUTOFF]
-                         [--indel_fraction INDEL_FRACTION]
-                         [--filter_tag_info FILTER_TAG_INFO [FILTER_TAG_INFO ...]]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                         [BAM_FILES ...] [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -424,7 +422,11 @@ For an example, the user has four bam files of one genome. Then the input will b
                             Path of input BAM files. Required format:
                             $SET_NAME:$BAM1,$BAM2,... . If multiple sets need to
                             be assigned, please use spaces to separate them.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --samtools_path SAMTOOLS_PATH
                             Path of samtools.
@@ -486,6 +488,9 @@ For an example, the user has four bam files of one genome. Then the input will b
                             example, "RPB_b0.1,MQ0F_s0" means that RPB should be
                             bigger than 0.1 and MQ0F should be smaller than 0.
                             Default is RPB_b0.1,MQSB_b0.1,MQB_b0.1,BQB_b0.1.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -571,37 +576,18 @@ and TSSpredator predicted ones.
 **Gff files of transcripts:** If comparing TSSs with transcripts is required, gff files of the transcripts need to be assigned.
 For the transcripts, please check the section :ref:`transcript`.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic tss_ps [-h] --project_path PROJECT_PATH [--program {TSS,PS}]
+    usage: annogesic tss_ps --project_path PROJECT_PATH --program {TSS,PS}
                             --fasta_files FASTA_FILES [FASTA_FILES ...]
                             --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --tex_notex_libs TEX_NOTEX_LIBS
                             [TEX_NOTEX_LIBS ...]
-                            [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                             --condition_names CONDITION_NAMES
                             [CONDITION_NAMES ...]
-                            [--tsspredator_path TSSPREDATOR_PATH]
-                            [--height HEIGHT]
-                            [--height_reduction HEIGHT_REDUCTION]
-                            [--factor FACTOR]
-                            [--factor_reduction FACTOR_REDUCTION]
-                            [--enrichment_factor ENRICHMENT_FACTOR]
-                            [--processing_factor PROCESSING_FACTOR]
-                            [--base_height BASE_HEIGHT] [--utr_length UTR_LENGTH]
-                            [--tolerance TOLERANCE] [--cluster CLUSTER]
-                            [--manual_files MANUAL_FILES [MANUAL_FILES ...]]
-                            [--curated_sequence_length CURATED_SEQUENCE_LENGTH [CURATED_SEQUENCE_LENGTH ...]]
-                            [--validate_gene]
-                            [--compare_transcript_files COMPARE_TRANSCRIPT_FILES [COMPARE_TRANSCRIPT_FILES ...]]
-                            [--re_check_orphan] [--remove_overlap_feature]
-                            [--compare_overlap_gff COMPARE_OVERLAP_GFF [COMPARE_OVERLAP_GFF ...]]
-                            [--remove_low_expression REMOVE_LOW_EXPRESSION]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                            [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -639,7 +625,11 @@ For the transcripts, please check the section :ref:`transcript`.
                             conditions need to be assigned, please use spaces to
                             separate them. For an example, prefix_condition1
                             prefix_condition2.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --tsspredator_path TSSPREDATOR_PATH
                             Path of TSSpredator. Default is
@@ -734,6 +724,9 @@ For the transcripts, please check the section :ref:`transcript`.
                             manual detected TSSs and predicted ones. Please assign
                             the manual-checked TSS in gff format.
 
+    optional arguments:
+      -h, --help            show this help message and exit
+
 - **Output files**
 
 The results of TSS are stored in ``$ANNOgesic/output/TSSs``, and the results of processing site 
@@ -808,30 +801,18 @@ genome annotation gff files are required. There are four options for modificatio
 
 	**none:** Transcripts will not be modified by the genome annotations
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic transcript [-h] --project_path PROJECT_PATH
-                                [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
-                                [--modify_transcript {merge_overlap,extend_3end,extend_5end,within_extend_ends,none} [{merge_overlap,extend_3end,extend_5end,within_extend_ends,none} ...]]
-                                [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
-                                [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                                [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
-                                [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                                [--tex_notex {1,2}] [--length LENGTH]
-                                [--height HEIGHT] [--width WIDTH]
-                                [--tolerance TOLERANCE]
-                                [--tolerance_coverage TOLERANCE_COVERAGE]
-                                [--tss_files TSS_FILES [TSS_FILES ...]]
-                                [--compare_feature_genome COMPARE_FEATURE_GENOME [COMPARE_FEATURE_GENOME ...]]
-                                [--tss_tolerance TSS_TOLERANCE]
-                                [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                                [--terminator_tolerance TERMINATOR_TOLERANCE]
-                                [--max_length_distribution MAX_LENGTH_DISTRIBUTION]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+    usage: annogesic transcript --project_path PROJECT_PATH
+                            [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
+                            [--modify_transcript {merge_overlap,extend_3end,extend_5end,within_extend_ends,none} [{merge_overlap,extend_3end,extend_5end,within_extend_ends,none} ...]]
+                            [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
+                            [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
+                            [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
+                            [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
+                            [--tex_notex {1,2}] [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -896,7 +877,11 @@ genome annotation gff files are required. There are four options for modificatio
                             transcript should be detected in both (TEX+ and TEX-)
                             or can be detected in only one library (TEX+ or TEX-).
                             Please assign 1 or 2. Default is 1.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --length LENGTH, -l LENGTH
                             The minimum length of the transcript after modifying
@@ -936,6 +921,9 @@ genome annotation gff files are required. There are four options for modificatio
                             For generating the figure of distribution of
                             transcript length, please assign the maximum length.
                             Default is 2000.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -1019,11 +1007,11 @@ which have coverage significant decrease.
 
 **Gff files of the transcripts**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic terminator [-h] --project_path PROJECT_PATH --fasta_files
+    usage: annogesic terminator --project_path PROJECT_PATH --fasta_files
                                 FASTA_FILES [FASTA_FILES ...] --annotation_files
                                 ANNOTATION_FILES [ANNOTATION_FILES ...]
                                 --transcript_files TRANSCRIPT_FILES
@@ -1033,29 +1021,8 @@ which have coverage significant decrease.
                                 [--tex_notex {1,2}]
                                 [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                                 [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                                [--transterm_path TRANSTERM_PATH]
-                                [--expterm_path EXPTERM_PATH]
-                                [--rnafold_path RNAFOLD_PATH]
-                                [--srna_files SRNA_FILES [SRNA_FILES ...]]
-                                [--decrease DECREASE]
-                                [--tolerance_detect_coverage TOLERANCE_DETECT_COVERAGE]
-                                [--tolerance_within_transcript TOLERANCE_WITHIN_TRANSCRIPT]
-                                [--tolerance_downstream_transcript TOLERANCE_DOWNSTREAM_TRANSCRIPT]
-                                [--tolerance_within_gene TOLERANCE_WITHIN_GENE]
-                                [--tolerance_downstream_gene TOLERANCE_DOWNSTREAM_GENE]
-                                [--highest_coverage HIGHEST_COVERAGE]
-                                [--window_size WINDOW_SIZE]
-                                [--window_shift WINDOW_SHIFT]
-                                [--min_loop_length MIN_LOOP_LENGTH]
-                                [--max_loop_length MAX_LOOP_LENGTH]
-                                [--min_stem_length MIN_STEM_LENGTH]
-                                [--max_stem_length MAX_STEM_LENGTH]
-                                [--miss_rate MISS_RATE] [--min_u_tail MIN_U_TAIL]
-                                [--mutation_u_tail MUTATION_U_TAIL]
-                                [--keep_multi_term]
+                                [--additional arguments]
     
-    optional arguments:
-      -h, --help            show this help message and exit
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -1105,7 +1072,11 @@ which have coverage significant decrease.
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --transterm_path TRANSTERM_PATH
                             Path of "transterm" in TransTermHP.
@@ -1188,6 +1159,8 @@ which have coverage significant decrease.
                             confidence one. This flag can keep all terminators
                             which are associated with the same gene. Default is
                             False.
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -1291,24 +1264,16 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
 
 **Gff files of the terminators:** If the information of terminators is needed, the gff files of terminators are required.
 
-- **Arguments**
+- **Basic Arguments**
 
 ::
 
-    usage: annogesic utr [-h] --project_path PROJECT_PATH --annotation_files
+    usage: annogesic utr --project_path PROJECT_PATH --annotation_files
                          ANNOTATION_FILES [ANNOTATION_FILES ...] --tss_files
                          TSS_FILES [TSS_FILES ...] --transcript_files
                          TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                          [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                         [--tss_source] [--base_5utr {both,transcript,TSS}]
-                         [--utr_length UTR_LENGTH]
-                         [--base_3utr {both,transcript,terminator}]
-                         [--terminator_tolerance TERMINATOR_TOLERANCE]
-                         [--tolerance_3utr TOLERANCE_3UTR]
-                         [--tolerance_5utr TOLERANCE_5UTR]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                         [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -1326,7 +1291,11 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             If the paths of terminator files are assigned,
                             terminator will be used to detect 3'UTR.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --tss_source, -s      The TSS gff file is generated by ANNOgesic or not.
                             Default is True (from ANNOgesic).
@@ -1351,6 +1320,9 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
                             The length of 5'UTR can be extended or withdrew by
                             this value (nucleotides). It only works when
                             transcript information is provided. Default is 5.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -1502,19 +1474,14 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
 
 ::
 
-    usage: annogesic srna [-h] --project_path PROJECT_PATH [--utr_derived_srna]
+    usage: annogesic srna --project_path PROJECT_PATH [--utr_derived_srna]
                           [--filter_info {tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} [{tss,sec_str,blast_nr,blast_srna,sorf,term,promoter,none} ...]]
                           --transcript_files TRANSCRIPT_FILES
                           [TRANSCRIPT_FILES ...] --annotation_files
                           ANNOTATION_FILES [ANNOTATION_FILES ...]
                           [--tss_files TSS_FILES [TSS_FILES ...]]
-                          [--processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]]
-                          [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
                           [--fasta_files FASTA_FILES [FASTA_FILES ...]]
                           [--compute_sec_structures]
-                          [--promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...]]
-                          [--promoter_names PROMOTER_NAMES [PROMOTER_NAMES ...]]
-                          [--sorf_files SORF_FILES [SORF_FILES ...]]
                           [--srna_database_path SRNA_DATABASE_PATH]
                           [--nr_database_path NR_DATABASE_PATH]
                           [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
@@ -1522,49 +1489,7 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                           [--tex_notex {1,2}]
                           [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                           [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                          [--rnafold_path RNAFOLD_PATH]
-                          [--relplot_path RELPLOT_PATH]
-                          [--mountain_path MOUNTAIN_PATH]
-                          [--blastn_path BLASTN_PATH] [--blastx_path BLASTX_PATH]
-                          [--makeblastdb_path MAKEBLASTDB_PATH]
-                          [--parallel_blast PARALLEL_BLAST] [--tss_source]
-                          [--tss_intergenic_antisense_tolerance TSS_INTERGENIC_ANTISENSE_TOLERANCE]
-                          [--tss_5utr_tolerance TSS_5UTR_TOLERANCE]
-                          [--tss_3utr_tolerance TSS_3UTR_TOLERANCE]
-                          [--tss_intercds_tolerance TSS_INTERCDS_TOLERANCE]
-                          [--terminator_tolerance_in_srna TERMINATOR_TOLERANCE_IN_SRNA]
-                          [--terminator_tolerance_out_srna TERMINATOR_TOLERANCE_OUT_SRNA]
-                          [--min_length MIN_LENGTH] [--max_length MAX_LENGTH]
-                          [--min_intergenic_tex_coverage MIN_INTERGENIC_TEX_COVERAGE]
-                          [--min_intergenic_notex_coverage MIN_INTERGENIC_NOTEX_COVERAGE]
-                          [--min_intergenic_fragmented_coverage MIN_INTERGENIC_FRAGMENTED_COVERAGE]
-                          [--min_complete_5utr_transcript_coverage MIN_COMPLETE_5UTR_TRANSCRIPT_COVERAGE]
-                          [--min_antisense_tex_coverage MIN_ANTISENSE_TEX_COVERAGE]
-                          [--min_antisense_notex_coverage MIN_ANTISENSE_NOTEX_COVERAGE]
-                          [--min_antisense_fragmented_coverage MIN_ANTISENSE_FRAGMENTED_COVERAGE]
-                          [--min_utr_tex_coverage MIN_UTR_TEX_COVERAGE]
-                          [--min_utr_notex_coverage MIN_UTR_NOTEX_COVERAGE]
-                          [--min_utr_fragmented_coverage MIN_UTR_FRAGMENTED_COVERAGE]
-                          [--min_all_utr_coverage MIN_ALL_UTR_COVERAGE]
-                          [--cutoff_energy CUTOFF_ENERGY] [--mountain_plot]
-                          [--nr_format] [--srna_format]
-                          [--decrease_intergenic_antisense DECREASE_INTERGENIC_ANTISENSE]
-                          [--decrease_utr DECREASE_UTR]
-                          [--tolerance_intergenic_antisense TOLERANCE_INTERGENIC_ANTISENSE]
-                          [--tolerance_utr TOLERANCE_UTR]
-                          [--cutoff_nr_hit CUTOFF_NR_HIT]
-                          [--blast_e_nr BLAST_E_NR] [--blast_e_srna BLAST_E_SRNA]
-                          [--blast_score_srna BLAST_SCORE_SRNA]
-                          [--blast_score_nr BLAST_SCORE_NR] [--detect_srna_in_cds]
-                          [--overlap_percent_cds OVERLAP_PERCENT_CDS]
-                          [--search_poly_u SEARCH_POLY_U]
-                          [--min_u_poly_u MIN_U_POLY_U]
-                          [--mutation_poly_u MUTATION_POLY_U]
-                          [--ignore_hypothetical_protein]
-                          [--ranking_time_promoter RANKING_TIME_PROMOTER]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                          [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -1605,11 +1530,6 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             Paths of TSS gff files. For detecting UTR-derived sRNA
                             or "tss" in --filter_info, TSS gff files MUST be
                             provided.
-      --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
-                            Paths of the processing site gff files. It can improve
-                            the detection of UTR-derived sRNAs.
-      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
-                            Paths of the terminator gff files.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
                             paths of fasta files of reference genome, If
                             "sec_str", "blast_nr" or "blast_srna" is assigned to
@@ -1618,16 +1538,6 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
       --compute_sec_structures, -cs
                             Computing secondary structures of sRNAs. Default is
                             False.
-      --promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...], -pt PROMOTER_TABLES [PROMOTER_TABLES ...]
-                            Paths of promoter tables, The format of the table is
-                            $GENOME $TSS_POSITION $TSS_STRAND $PROMOTER_NAME.
-      --promoter_names PROMOTER_NAMES [PROMOTER_NAMES ...], -pn PROMOTER_NAMES [PROMOTER_NAMES ...]
-                            If --promoter_tables is provided, please assign the
-                            promoter name (the last column of promoter table). For
-                            multiple promoters, please put spaces between the
-                            promoters. Default is None.
-      --sorf_files SORF_FILES [SORF_FILES ...], -O SORF_FILES [SORF_FILES ...]
-                            Paths of sORF gff files
       --srna_database_path SRNA_DATABASE_PATH, -sd SRNA_DATABASE_PATH
                             Path of sRNA database with proper headers of
                             sequences. Format of the header should be
@@ -1672,7 +1582,11 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             libraries with fragmented transcripts.
-    
+
+- **Additional argument**
+
+::
+
     additional arguments:
       --rnafold_path RNAFOLD_PATH
                             Path of RNAfold of the Vienna package
@@ -1686,6 +1600,23 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             Path of blastx of the BLAST+ package.
       --makeblastdb_path MAKEBLASTDB_PATH
                             Path of makeblastdb of the BLAST+ package.
+      --processing_site_files PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...], -p PROCESSING_SITE_FILES [PROCESSING_SITE_FILES ...]
+                            Paths of the processing site gff files. It can improve
+                            the detection of UTR-derived sRNAs.
+      --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
+                            Paths of the terminator gff files.
+      --promoter_tables PROMOTER_TABLES [PROMOTER_TABLES ...], -pt PROMOTER_TABLES [PROMOTER_TABLES ...]
+                            If promoter tables can be provided, please assign the
+                            paths of promoter tables, The format of the table is
+                            $GENOME $TSS_POSITION $TSS_STRAND $PROMOTER_NAME.
+      --promoter_names PROMOTER_NAMES [PROMOTER_NAMES ...], -pn PROMOTER_NAMES [PROMOTER_NAMES ...]
+                            If --promoter_tables is provided, please assign the
+                            promoter name (the last column of promoter table). For
+                            multiple promoters, please put spaces between the
+                            promoters. Default is None.
+      --sorf_files SORF_FILES [SORF_FILES ...], -O SORF_FILES [SORF_FILES ...]
+                            If comparison between sRNAs and sORFs needs to be
+                            done, Please assign the paths of sORF gff files
       --parallel_blast PARALLEL_BLAST, -pb PARALLEL_BLAST
                             The number of parallel jobs. Default is 10.
       --tss_source, -ts     The TSS gff files are generated from ANNOgesic or not.
@@ -1866,6 +1797,8 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             --ranking_time_promoter will be 1. Therefore,
                             --ranking_time_promoter can not be smaller than 1.
                             Default is 2.
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -2023,43 +1956,22 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 
 **Gff files of sRNAs:** For checking the overlap of sRNAs and sORFs.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic sorf [-h] --project_path PROJECT_PATH [--utr_derived_sorf]
+    usage: annogesic sorf --project_path PROJECT_PATH [--utr_derived_sorf]
                           --fasta_files FASTA_FILES [FASTA_FILES ...]
                           --transcript_files TRANSCRIPT_FILES
                           [TRANSCRIPT_FILES ...] --annotation_files
                           ANNOTATION_FILES [ANNOTATION_FILES ...]
                           [--tss_files TSS_FILES [TSS_FILES ...]]
-                          [--srna_files SRNA_FILES [SRNA_FILES ...]]
                           [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                           [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
                           [--tex_notex {1,2}]
                           [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                           [--replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...]]
-                          [--utr_length UTR_LENGTH] [--min_length MIN_LENGTH]
-                          [--max_length MAX_LENGTH]
-                          [--cutoff_intergenic_coverage CUTOFF_INTERGENIC_COVERAGE]
-                          [--cutoff_antisense_coverage CUTOFF_ANTISENSE_COVERAGE]
-                          [--cutoff_5utr_coverage CUTOFF_5UTR_COVERAGE]
-                          [--cutoff_3utr_coverage CUTOFF_3UTR_COVERAGE]
-                          [--cutoff_intercds_coverage CUTOFF_INTERCDS_COVERAGE]
-                          [--cutoff_base_coverage CUTOFF_BASE_COVERAGE]
-                          [--start_codon START_CODON [START_CODON ...]]
-                          [--stop_codon STOP_CODON [STOP_CODON ...]]
-                          [--min_rbs_distance MIN_RBS_DISTANCE]
-                          [--max_rbs_distance MAX_RBS_DISTANCE]
-                          [--rbs_not_after_tss] [--tolerance_rbs TOLERANCE_RBS]
-                          [--tolerance_3end TOLERANCE_3END]
-                          [--tolerance_5end TOLERANCE_5END]
-                          [--print_all_combination] [--best_no_srna]
-                          [--best_no_tss]
-                          [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                          [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -2078,9 +1990,6 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             --tss_files, respectively.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
                             Paths of TSS gff files.
-      --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
-                            Paths of the sRNA gff files for comparing sORF and
-                            sRNA to detect the overlapping.
       --tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...], -tl TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]
                             TEX+/- wig files. The format is:
                             wig_file_path:TEX+/-(tex or notex):condition_id(intege
@@ -2117,8 +2026,15 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
+      --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
+                            Paths of the sRNA gff files for comparing sORF and
+                            sRNA to detect the overlapping.
       --utr_length UTR_LENGTH, -ul UTR_LENGTH
                             The utr length for comparing TSS with sORF. The
                             default number is 300.
@@ -2191,6 +2107,9 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
                             For ignoring hypothetical protein in the genome
                             annotation file. Default is False.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -2290,26 +2209,18 @@ the libraries and wiggle files are necessary.
 Please refer to the :ref:`The input format of libraries for running ANNOgesic` 
 in order to assign the correct format.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic promoter [-h] [--program {meme,glam2,both}] --project_path
+    usage: annogesic promoter [--program {meme,glam2,both}] --project_path
                               PROJECT_PATH --fasta_files FASTA_FILES
                               [FASTA_FILES ...] --tss_files TSS_FILES
                               [TSS_FILES ...]
                               [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
                               [--num_motifs NUM_MOTIFS]
                               [--nt_before_tss NT_BEFORE_TSS]
-                              [--meme_path MEME_PATH] [--glam2_path GLAM2_PATH]
-                              [--e_value E_VALUE] [--end_run END_RUN]
-                              [--parallels PARALLELS] [--tss_source]
-                              [--tex_libs TEX_LIBS [TEX_LIBS ...]]
-                              [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
-                              [--combine_all]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                              [--additional arguments]
     
     basic arguments:
       --program {meme,glam2,both}, -p {meme,glam2,both}
@@ -2333,7 +2244,11 @@ in order to assign the correct format.
       --nt_before_tss NT_BEFORE_TSS, -b NT_BEFORE_TSS
                             The number of nucleotides upstream of the TSSs for
                             promoter prediction. Default is 50.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --meme_path MEME_PATH
                             path of MEME.
@@ -2363,6 +2278,9 @@ in order to assign the correct format.
                             tRNAs, rRNAs, etc.
       --combine_all, -c     Generate global promoter motifs across all reference
                             sequences in the TSS files. Default is False.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -2419,11 +2337,11 @@ sub-operons.
 
 **Gff files of the 3'UTRs**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic operon [-h] --project_path PROJECT_PATH
+    usage: annogesic operon --project_path PROJECT_PATH
                             [--tss_files TSS_FILES [TSS_FILES ...]]
                             --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --transcript_files
@@ -2431,12 +2349,7 @@ sub-operons.
                             [--utr5_files UTR5_FILES [UTR5_FILES ...]]
                             [--utr3_files UTR3_FILES [UTR3_FILES ...]]
                             [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
-                            [--tss_tolerance TSS_TOLERANCE]
-                            [--terminator_tolerance TERMINATOR_TOLERANCE]
-                            [--min_length MIN_LENGTH]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                            [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -2458,7 +2371,11 @@ sub-operons.
                             Paths of the 3'UTR gff files.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             Paths of terminator gff files.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --tss_tolerance TSS_TOLERANCE, -tt TSS_TOLERANCE
                             The 5'ends of transcripts will be extended or withdrew
@@ -2470,6 +2387,9 @@ sub-operons.
                             associated terminators. Default is 30.
       --min_length MIN_LENGTH, -l MIN_LENGTH
                             The minimum length of operon. Default is 20.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -2543,25 +2463,16 @@ handle them.
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
-- **Arguments**
+- **Basic Arguments**
 
 ::
 
-    usage: annogesic circrna [-h] --project_path PROJECT_PATH
+    usage: annogesic circrna --project_path PROJECT_PATH
                              [--read_files READ_FILES [READ_FILES ...]]
                              [--bam_files BAM_FILES [BAM_FILES ...]] --fasta_files
                              FASTA_FILES [FASTA_FILES ...] --annotation_files
                              ANNOTATION_FILES [ANNOTATION_FILES ...]
-                             [--segemehl_path SEGEMEHL_PATH]
-                             [--testrealign_path TESTREALIGN_PATH]
-                             [--samtools_path SAMTOOLS_PATH]
-                             [--parallels PARALLELS]
-                             [--support_reads SUPPORT_READS]
-                             [--start_ratio START_RATIO] [--end_ratio END_RATIO]
-                             [--ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                             [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -2584,7 +2495,11 @@ handle them.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files containing
                             CDSs, tRNAs, rRNAs, etc.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --segemehl_path SEGEMEHL_PATH
                             Path of segemehl.x in segemehl package.
@@ -2607,6 +2522,9 @@ handle them.
       --ignore_hypothetical_protein IGNORE_HYPOTHETICAL_PROTEIN, -ih IGNORE_HYPOTHETICAL_PROTEIN
                             For ignoring hypothetical protein in the genome
                             annotation file. Default is False.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -2754,11 +2672,11 @@ programs. ``srna_target`` can also compare the results of both programs and prov
 
 **Fasta files of the genomes**
 
-- Arguments
+- **Basic arguments**
 
 ::
 
-    usage: annogesic srna_target [-h] --project_path PROJECT_PATH
+    usage: annogesic srna_target --project_path PROJECT_PATH
                                  --annotation_files ANNOTATION_FILES
                                  [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                                  [FASTA_FILES ...] --srna_files SRNA_FILES
@@ -2766,35 +2684,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                                  [--query_srnas QUERY_SRNAS [QUERY_SRNAS ...]]
                                  --program {RNAplex,RNAup,IntaRNA}
                                  [{RNAplex,RNAup,IntaRNA} ...] [--top TOP]
-                                 [--rnaplfold_path RNAPLFOLD_PATH]
-                                 [--rnaplex_path RNAPLEX_PATH]
-                                 [--rnaup_path RNAUP_PATH]
-                                 [--intarna_path INTARNA_PATH]
-                                 [--interaction_length INTERACTION_LENGTH]
-                                 [--window_size_target_rnaplex WINDOW_SIZE_TARGET_RNAPLEX]
-                                 [--span_target_rnaplex SPAN_TARGET_RNAPLEX]
-                                 [--window_size_srna_rnaplfold WINDOW_SIZE_SRNA_RNAPLFOLD]
-                                 [--span_srna_rnaplfold SPAN_SRNA_RNAPLFOLD]
-                                 [--unstructured_region_rnaplex_target UNSTRUCTURED_REGION_RNAPLEX_TARGET]
-                                 [--unstructured_region_rnaplex_srna UNSTRUCTURED_REGION_RNAPLEX_SRNA]
-                                 [--unstructured_region_rnaup UNSTRUCTURED_REGION_RNAUP]
-                                 [--energy_threshold_rnaplex ENERGY_THRESHOLD_RNAPLEX]
-                                 [--duplex_distance_rnaplex DUPLEX_DISTANCE_RNAPLEX]
-                                 [--parallels_rnaplex PARALLELS_RNAPLEX]
-                                 [--parallels_rnaup PARALLELS_RNAUP]
-                                 [--parallels_intarna PARALLELS_INTARNA]
-                                 [--continue_rnaup]
-                                 [--slide_window_size_srna_intarna SLIDE_WINDOW_SIZE_SRNA_INTARNA]
-                                 [--max_loop_length_srna_intarna MAX_LOOP_LENGTH_SRNA_INTARNA]
-                                 [--slide_window_size_target_intarna SLIDE_WINDOW_SIZE_TARGET_INTARNA]
-                                 [--max_loop_length_target_intarna MAX_LOOP_LENGTH_TARGET_INTARNA]
-                                 [--mode_intarna {H,E,M}]
-                                 [--potential_target_start POTENTIAL_TARGET_START]
-                                 [--potential_target_end POTENTIAL_TARGET_END]
-                                 [--target_feature TARGET_FEATURE [TARGET_FEATURE ...]]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                 [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -2822,6 +2712,10 @@ programs. ``srna_target`` can also compare the results of both programs and prov
       --top TOP, -t TOP     The ranking number of targets which will be included
                             to final output. The ranking is based on the binding
                             energy. Default is 50.
+
+- **Additional arguments**
+
+::
     
     additional arguments:
       --rnaplfold_path RNAPLFOLD_PATH
@@ -2908,6 +2802,9 @@ programs. ``srna_target`` can also compare the results of both programs and prov
                             features need to be assigned, please use spaces to
                             separate them. For example, CDS exon. Default is CDS.
 
+    optional arguments:
+      -h, --help            show this help message and exit
+
 - **Output files**
 
 Output files are stored in ``$ANNOgesic/output/sRNA_targets``.
@@ -2971,20 +2868,16 @@ the supported literature of the protein-protein interaction networks.
 
 **Gff files of the genome annotations containing CDSs**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic ppi_network [-h] --project_path PROJECT_PATH
+    usage: annogesic ppi_network --project_path PROJECT_PATH
                                  --annotation_files ANNOTATION_FILES
                                  [ANNOTATION_FILES ...] --species_string
                                  SPECIES_STRING --query_strains QUERY_STRAINS
                                  [QUERY_STRAINS ...] [--query QUERY [QUERY ...]]
-                                 [--without_strain_pubmed] [--score SCORE]
-                                 [--node_size NODE_SIZE]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                 [--without_strain_pubmed] [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3026,13 +2919,20 @@ the supported literature of the protein-protein interaction networks.
                             For retrieving the literature from Pubmed only based
                             on protein name without assigning strains. Default is
                             False.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --score SCORE, -ps SCORE
                             The minimum PIE score for searching literature. The
                             value is from -1 (worst) to 1 (best). Default is 0.
       --node_size NODE_SIZE, -ns NODE_SIZE
                             The size of nodes in figure, default is 4000.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3082,21 +2982,17 @@ Some statistics and visualization files are provided as well.
 
 **Gff files of the transcripts:** For detecting subcellular localization only based on expressed CDSs.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic localization [-h] --project_path PROJECT_PATH
+    usage: annogesic localization --project_path PROJECT_PATH
                                   --annotation_files ANNOTATION_FILES
                                   [ANNOTATION_FILES ...] --fasta_files FASTA_FILES
                                   [FASTA_FILES ...]
                                   [--transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]]
                                   --bacteria_type {positive,negative}
-                                  [--psortb_path PSORTB_PATH]
-                                  [--difference_multi DIFFERENCE_MULTI]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                  [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3112,7 +3008,11 @@ Some statistics and visualization files are provided as well.
       --bacteria_type {positive,negative}, -b {positive,negative}
                             The type of bacteria (Gram-positive or Gram-negative).
                             Please assign 'positive' or 'negative'.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --psortb_path PSORTB_PATH
                             Path of Psortb.
@@ -3121,6 +3021,9 @@ Some statistics and visualization files are provided as well.
                             locations, if the difference of psorb scores is
                             smaller than this value, all locations will be printed
                             out. Default is 0.5. The maximum value is 10.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3201,11 +3104,11 @@ from our Git repository.
 
 **Gff files of the TSSs**: For checking the ribosome binding site. We strongly recommend to input this file.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic riboswitch_thermometer [-h] --project_path PROJECT_PATH
+    usage: annogesic riboswitch_thermometer --project_path PROJECT_PATH
                                             [--program {riboswitch,thermometer,both}]
                                             [--riboswitch_id_file RIBOSWITCH_ID_FILE]
                                             [--rna_thermometer_id_file RNA_THERMOMETER_ID_FILE]
@@ -3216,15 +3119,7 @@ from our Git repository.
                                             [TRANSCRIPT_FILES ...] --fasta_files
                                             FASTA_FILES [FASTA_FILES ...]
                                             --rfam_path RFAM_PATH
-                                            [--cmscan_path CMSCAN_PATH]
-                                            [--cmpress_path CMPRESS_PATH]
-                                            [--utr_length UTR_LENGTH]
-                                            [--cutoff CUTOFF] [--output_all]
-                                            [--tolerance TOLERANCE]
-                                            [--tolerance_rbs TOLERANCE_RBS]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                            [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3254,7 +3149,11 @@ from our Git repository.
                             Paths of the genome fasta files.
       --rfam_path RFAM_PATH, -R RFAM_PATH
                             Path of the Rfam CM database.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --cmscan_path CMSCAN_PATH, -cs CMSCAN_PATH
                             Path of cmscan in Infernal package.
@@ -3281,6 +3180,9 @@ from our Git repository.
       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
                             The number of nucleotides of ribosome binding site
                             allow to be different with AGGAGG. Default is 2.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3349,23 +3251,14 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc:** This file can be used for removing false positive.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic crispr [-h] --project_path PROJECT_PATH --fasta_files
+    usage: annogesic crispr --project_path PROJECT_PATH --fasta_files
                             FASTA_FILES [FASTA_FILES ...]
                             [--annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...]]
-                            [--crt_path CRT_PATH] [--window_size WINDOW_SIZE]
-                            [--min_number_repeats MIN_NUMBER_REPEATS]
-                            [--min_length_repeat MIN_LENGTH_REPEAT]
-                            [--Max_length_repeat MAX_LENGTH_REPEAT]
-                            [--min_length_spacer MIN_LENGTH_SPACER]
-                            [--Max_length_spacer MAX_LENGTH_SPACER]
-                            [--ignore_hypothetical_protein]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                            [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3376,7 +3269,11 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
                             Paths of the genome gff files containing CDSs for
                             comparing CRISPRs and the genome annotation to remove
                             the false positives. Default is None.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --crt_path CRT_PATH   Path of CRT.jar. Default is /usr/local/bin/CRT.jar
       --window_size WINDOW_SIZE, -w WINDOW_SIZE
@@ -3395,6 +3292,9 @@ units and spacers of CRISPR. Moreover, the false positive can be removed by comp
                             Maximum length of CRISPR spacers. Default is 50.
       --ignore_hypothetical_protein, -in
                             To ignore hypothetical proteins. Default is inactive.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3434,11 +3334,11 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
 
 **Gff files of the manual-detected TSSs**
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic optimize_tss_ps [-h] --project_path PROJECT_PATH
+    usage: annogesic optimize_tss_ps --project_path PROJECT_PATH
                                      [--program {TSS,PS}] --fasta_files
                                      FASTA_FILES [FASTA_FILES ...]
                                      --annotation_files ANNOTATION_FILES
@@ -3450,19 +3350,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                                      [--replicate_tex REPLICATE_TEX [REPLICATE_TEX ...]]
                                      --condition_names CONDITION_NAMES
                                      [CONDITION_NAMES ...]
-                                     [--tsspredator_path TSSPREDATOR_PATH]
-                                     [--max_height MAX_HEIGHT]
-                                     [--max_height_reduction MAX_HEIGHT_REDUCTION]
-                                     [--max_factor MAX_FACTOR]
-                                     [--max_factor_reduction MAX_FACTOR_REDUCTION]
-                                     [--max_base_height MAX_BASE_HEIGHT]
-                                     [--max_enrichment_factor MAX_ENRICHMENT_FACTOR]
-                                     [--max_processing_factor MAX_PROCESSING_FACTOR]
-                                     [--utr_length UTR_LENGTH] [--cluster CLUSTER]
-                                     [--parallels PARALLELS] [--steps STEPS]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                     [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3516,7 +3404,11 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             need to be assigned, please use spaces to separate
                             them. For an example, prefix_condition1
                             prefix_condition2.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --tsspredator_path TSSPREDATOR_PATH
                             Path of TSSpredator. Default is
@@ -3575,6 +3467,9 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             Number of tota runs for the optimization. Default is
                             4000 runs.
 
+    optional arguments:
+      -h, --help            show this help message and exit
+
 - **Output files**
 
 Based on the programs (TSS/processing site), Output files are stored in 
@@ -3619,20 +3514,17 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
 
 **Wiggle files of TEX+/- or fragmented/conventional libraries:** Please check the section ``The format of libraries for import to ANNOgesic``.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic screenshot [-h] --project_path PROJECT_PATH --fasta_file
+    usage: annogesic screenshot --project_path PROJECT_PATH --fasta_file
                                 FASTA_FILE --main_gff MAIN_GFF
                                 [--side_gffs SIDE_GFFS [SIDE_GFFS ...]]
                                 [--tex_notex_libs TEX_NOTEX_LIBS [TEX_NOTEX_LIBS ...]]
                                 [--frag_libs FRAG_LIBS [FRAG_LIBS ...]]
-                                --output_folder OUTPUT_FOLDER [--height HEIGHT]
-                                [--present {expand,collapse,squish}]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                --output_folder OUTPUT_FOLDER
+                                [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3664,13 +3556,20 @@ If comparing ``--main_gff`` with other features is required, please assign gff f
                             Path of the output folder. A sub-folder "screenshots"
                             in the --output_folder will be created to store the
                             results.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --height HEIGHT, -he HEIGHT
                             Height of the screenshot. Default is 1500.
       --present {expand,collapse,squish}, -p {expand,collapse,squish}
                             The presentation types (expand, collapse, or squish)
                             of the features in the screenshot. Default is expand.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3709,18 +3608,15 @@ for improving the checking process.
 **The screenshots folder:** Please make sure the folders of ``forward`` and ``reverse`` 
 exist in the folder of ``screenshots``.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic colorize_screenshot_tracks [-h] --project_path PROJECT_PATH
+    usage: annogesic colorize_screenshot_tracks --project_path PROJECT_PATH
                                                 --screenshot_folder
                                                 SCREENSHOT_FOLDER --track_number
                                                 TRACK_NUMBER
-                                                [--imagemagick_covert_path IMAGEMAGICK_COVERT_PATH]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                                [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3730,10 +3626,17 @@ exist in the folder of ``screenshots``.
                             generated from the subcommand "screenshot".
       --track_number TRACK_NUMBER, -t TRACK_NUMBER
                             The number of tracks.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --imagemagick_covert_path IMAGEMAGICK_COVERT_PATH, -m IMAGEMAGICK_COVERT_PATH
                             Path of "convert" in the ImageMagick package.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 
@@ -3753,20 +3656,16 @@ If transcript gff files can be provided, this module will search the parent tran
 Moreover, if the genomic features from different gff files are overlapped, the module can select the data based on 
 user-assigned source or keep all overlapping features to the final output.
 
-- **Arguments**
+- **Basic arguments**
 
 ::
 
-    usage: annogesic merge_features [-h] --project_path PROJECT_PATH
+    usage: annogesic merge_features --project_path PROJECT_PATH
                                     --output_prefix OUTPUT_PREFIX
                                     [--transcript_file TRANSCRIPT_FILE]
                                     [--other_features_files OTHER_FEATURES_FILES [OTHER_FEATURES_FILES ...]]
                                     [--source_for_overlapping SOURCE_FOR_OVERLAPPING [SOURCE_FOR_OVERLAPPING ...]]
-                                    [--terminator_tolerance TERMINATOR_TOLERANCE]
-                                    [--tss_tolerance TSS_TOLERANCE]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
+                                    [--additional arguments]
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -3796,7 +3695,11 @@ user-assigned source or keep all overlapping features to the final output.
                             found in --source_for_overlapping, all the overlapping
                             features will be kept. Default is keeping all overlap
                             features.
-    
+
+- **Additional arguments**
+
+::
+
     additional arguments:
       --terminator_tolerance TERMINATOR_TOLERANCE, -et TERMINATOR_TOLERANCE
                             The 3'ends of transcripts will be extended or withdrew
@@ -3806,6 +3709,9 @@ user-assigned source or keep all overlapping features to the final output.
                             The 5'ends of transcripts will be extended or withdrew
                             by this value (nucleotides) for searching the
                             associated TSSs. Default is 5.
+
+    optional arguments:
+      -h, --help            show this help message and exit
 
 - **Output files**
 

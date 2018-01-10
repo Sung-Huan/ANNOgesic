@@ -159,6 +159,7 @@ TSS_prediction(){
         -v \
         -rt all_1 \
         -le NC_009839.1:200000 \
+	-p TSS \
         -m $ANNOGESIC_FOLDER/input/manual_TSSs/NC_009839_manual_TSS.gff \
         -pj $ANNOGESIC_FOLDER
 }

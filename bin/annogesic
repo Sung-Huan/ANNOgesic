@@ -49,7 +49,7 @@ def main():
         "--project_path", "-pj", required=True,
         help="Path of the project folder.")
     get_input_basic.add_argument(
-        "--ftp_path", "-F",
+        "--ftp_path", "-F", required=True,
         help="Path of folder on the NCBI FTP server where the required files "
         "are located.")
     get_input_basic.add_argument(
@@ -160,9 +160,9 @@ def main():
         "--project_path", "-pj", required=True,
         help="Path of the project folder.")
     TSSpredator_basic.add_argument(
-        "--program", "-p", default="TSS", choices=['TSS', 'PS'],
+        "--program", "-p", required=True, choices=['TSS', 'PS'],
         help="The feature to predict. Please assign \"TSS\" or "
-        "\"PS\". Default is \"TSS\".")
+        "\"PS\". ")
     TSSpredator_basic.add_argument(
         "--fasta_files", "-f", required=True, nargs='+',
         help="Paths of the genome fasta files.")
@@ -804,13 +804,6 @@ def main():
         help="Paths of TSS gff files. For detecting UTR-derived sRNA or "
         "\"tss\" in --filter_info, TSS gff files MUST be provided.")
     sRNA_basic.add_argument(
-        "--processing_site_files", "-p", default=None, nargs='+',
-        help="Paths of the processing site gff files. It can improve the "
-        "detection of UTR-derived sRNAs.")
-    sRNA_basic.add_argument(
-        "--terminator_files", "-e", default=None, nargs='+',
-        help="Paths of the terminator gff files.")
-    sRNA_basic.add_argument(
         "--fasta_files", "-f", default=None, nargs='+',
         help="paths of fasta files of reference genome, If \"sec_str\", "
         "\"blast_nr\" or \"blast_srna\" is assigned to "
@@ -818,18 +811,6 @@ def main():
     sRNA_basic.add_argument(
         "--compute_sec_structures", "-cs", default=False, action="store_true",
         help="Computing secondary structures of sRNAs. Default is False.")
-    sRNA_basic.add_argument(
-        "--promoter_tables", "-pt", default=None, nargs='+',
-        help="Paths of promoter tables, The format of the table is "
-        "$GENOME\t$TSS_POSITION\t$TSS_STRAND\t$PROMOTER_NAME.")
-    sRNA_basic.add_argument(
-        "--promoter_names", "-pn", default=None, nargs='+',
-        help="If --promoter_tables is provided, please assign the promoter "
-        "name (the last column of promoter table). For multiple promoters, "
-        "please put spaces between the promoters. Default is None.")
-    sRNA_basic.add_argument(
-        "--sorf_files", "-O", default=None, nargs='+',
-        help="Paths of sORF gff files")
     sRNA_basic.add_argument(
         "--srna_database_path", "-sd", default=None,
         help="Path of sRNA database with proper headers of sequences. "
@@ -896,6 +877,27 @@ def main():
     sRNA_add.add_argument(
         "--makeblastdb_path", default="makeblastdb",
         help="Path of makeblastdb of the BLAST+ package.")
+    sRNA_add.add_argument(
+        "--processing_site_files", "-p", default=None, nargs='+',
+        help="Paths of the processing site gff files. It can improve the "
+        "detection of UTR-derived sRNAs.")
+    sRNA_add.add_argument(
+        "--terminator_files", "-e", default=None, nargs='+',
+        help="Paths of the terminator gff files.")
+    sRNA_add.add_argument(
+        "--promoter_tables", "-pt", default=None, nargs='+',
+        help="If promoter tables can be provided, please assign the paths of "
+        "promoter tables, The format of the table is "
+        "$GENOME\t$TSS_POSITION\t$TSS_STRAND\t$PROMOTER_NAME.")
+    sRNA_add.add_argument(
+        "--promoter_names", "-pn", default=None, nargs='+',
+        help="If --promoter_tables is provided, please assign the promoter "
+        "name (the last column of promoter table). For multiple promoters, "
+        "please put spaces between the promoters. Default is None.")
+    sRNA_add.add_argument(
+        "--sorf_files", "-O", default=None, nargs='+',
+        help="If comparison between sRNAs and sORFs needs to be done, "
+        "Please assign the paths of sORF gff files")
     sRNA_add.add_argument(
         "--parallel_blast", "-pb", type=int, default=10,
         help="The number of parallel jobs. Default is 10.")
@@ -1136,10 +1138,6 @@ def main():
         "--tss_files", "-t", default=None, nargs='+',
         help="Paths of TSS gff files.")
     sORF_basic.add_argument(
-        "--srna_files", "-s", default=None, nargs='+',
-        help="Paths of the sRNA gff files for comparing sORF and sRNA to "
-        "detect the overlapping.")
-    sORF_basic.add_argument(
         "--tex_notex_libs", "-tl", default=None, nargs='+',
         help="TEX+/- wig files. The format is: "
         "wig_file_path:TEX+/-(tex or notex):condition_id(integer):"
@@ -1179,6 +1177,10 @@ def main():
         "This value is for fragmented (or conventional) libraries.")
     sORF_add = sORF_parser.add_argument_group(
         'additional arguments')
+    sORF_add.add_argument(
+        "--srna_files", "-s", default=None, nargs='+',
+        help="Paths of the sRNA gff files for comparing sORF and sRNA to "
+        "detect the overlapping.")
     sORF_add.add_argument(
         "--utr_length", "-ul", default=300, type=int,
         help="The utr length for comparing TSS with sORF. "
