@@ -112,7 +112,10 @@ def main():
         "NC_007795:NEW_NC_007795. The related genome is NC_007795 and "
         "the target genome is NEW_NC_007795. The assigned names are the "
         "headers of the fasta file (start with \">\"), not the "
-        "filename of fasta file. If multiple sequences need to be assigned, "
+        "filename of fasta file. If the headers contain space or '|', only "
+        "the string from '>' to the first space or '|' will be considered "
+        "as the name for --compare_pair (normally this part is the "
+        "accession number). If multiple sequences need to be assigned, "
         "please use spaces to separate them.")
     RATT_basic.add_argument(
         "--related_embl_files", "-ce", default=None, nargs='+',

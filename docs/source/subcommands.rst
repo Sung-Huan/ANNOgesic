@@ -315,8 +315,11 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             NC_007795 and the target genome is NEW_NC_007795. The
                             assigned names are the headers of the fasta file
                             (start with ">"), not the filename of fasta file. If
-                            multiple sequences need to be assigned, please use
-                            spaces to separate them.
+                            the headers contain space or '|', only the string from
+                            '>' to the first space or '|' will be considered as
+                            the name for --compare_pair (normally this part is the
+                            accession number). If multiple sequences need to be
+                            assigned, please use spaces to separate them.
       --related_embl_files RELATED_EMBL_FILES [RELATED_EMBL_FILES ...], -ce RELATED_EMBL_FILES [RELATED_EMBL_FILES ...]
                             The paths of the embl files of the related species. If
                             --related_embl_files is assigned, --related_gbk_files
