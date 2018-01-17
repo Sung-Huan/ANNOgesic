@@ -86,13 +86,13 @@ class RATT(object):
                         datas = line.split(" ")
                         for data in datas:
                             if (len(data) != 0) and (data != "LOCUS"):
-                                filename = ".".join([data, "gbk"])
+                                filename = ".".join([data.strip(), "gbk"])
                                 break
                     elif (line.startswith("VERSION")):
                         datas = line.split(" ")
                         for data in datas:
                             if (len(data) != 0) and (data != "VERSION"):
-                                new_filename = ".".join([data, "gbk"])
+                                new_filename = ".".join([data.strip(), "gbk"])
                                 break
                         if new_filename.find(filename):
                             filename = new_filename
@@ -129,6 +129,15 @@ class RATT(object):
         return out_gbk
 
     def _run_ratt(self, args_ratt, tar, ref, out):
+        if (not os.path.exists(self.embl)) or (
+                not os.path.exists(os.path.join(
+                    self.tmp_files["tar"], tar + ".fa"))) or (
+                not os.path.exists(os.path.join(
+                    self.tmp_files["ref"], ref + ".fa"))):
+            print("Error: Please check --compare_pair, the strain names "
+                  "should be the same as the strain names in fasta files "
+                  "genbank or embl file!")
+            sys.exit()
         call([args_ratt.ratt_path, self.embl,
               os.path.join(self.tmp_files["tar"], tar + ".fa"),
               args_ratt.element, args_ratt.transfer_type,
