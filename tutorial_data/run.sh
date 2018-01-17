@@ -119,7 +119,6 @@ annotation_transfer(){
 	    $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case2.fa \
 	-t Strain \
 	-p NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
-	-g \
 	-pj $ANNOGESIC_FOLDER
 }
 

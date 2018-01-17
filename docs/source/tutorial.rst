@@ -274,7 +274,6 @@ After setting the environment, we can try it.
         --element chromosome \
         --transfer_type Strain \
         --compare_pair NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
-        --convert_to_gff_rnt_ptt \
         --project_path ANNOgesic
 
 

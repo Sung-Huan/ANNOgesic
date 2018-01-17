@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.2"
+__version__ = "0.7.3"
 
 def main():
     print("""
@@ -148,9 +148,6 @@ def main():
         "--transfer_type", "-t", default="Strain",
         help="The transfer type for running RATT. (For the details, "
         "please refer to the manual of RATT.) Default is Strain.")
-    RATT_add.add_argument(
-        "--convert_to_gff_rnt_ptt", "-g", default=False, action="store_true",
-        help="Convert the annotation to gff, rnt and ptt. Default is False.")
     RATT_parser.set_defaults(func=run_RATT)
 
     # Parameters of TSSpredator

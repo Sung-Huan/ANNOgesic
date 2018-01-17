@@ -135,8 +135,8 @@ class RATT(object):
                 not os.path.exists(os.path.join(
                     self.tmp_files["ref"], ref + ".fa"))):
             print("Error: Please check --compare_pair, the strain names "
-                  "should be the same as the strain names in fasta files "
-                  "genbank or embl file!")
+                  "should be the same as the strain names in fasta, "
+                  "genbank or embl files!")
             sys.exit()
         call([args_ratt.ratt_path, self.embl,
               os.path.join(self.tmp_files["tar"], tar + ".fa"),
@@ -173,46 +173,45 @@ class RATT(object):
         if args_ratt.ref_embls is None:
             out_gbk = self._convert_embl(args_ratt.ref_gbk)
         self._format_and_run(args_ratt)
-        if args_ratt.convert:
+        files = []
+        for data in os.listdir(args_ratt.output_path):
+            if "final.embl" in data:
+                self._convert_to_gff(data, args_ratt, files)
+                self._convert_to_pttrnt(args_ratt.gff_outfolder, files)
+        self.helper.check_make_folder(self.tmp_files["out_gff"])
+        for folder in os.listdir(args_ratt.tar_fastas):
             files = []
-            for data in os.listdir(args_ratt.output_path):
-                if "final.embl" in data:
-                    self._convert_to_gff(data, args_ratt, files)
-                    self._convert_to_pttrnt(args_ratt.gff_outfolder, files)
-            self.helper.check_make_folder(self.tmp_files["out_gff"])
-            for folder in os.listdir(args_ratt.tar_fastas):
-                files = []
-                if "_folder" in folder:
-                    datas = folder.split("_folder")
-                    prefix = ".".join(datas[0].split(".")[:-1])
-                    for file_ in os.listdir(os.path.join(args_ratt.tar_fastas,
-                                                         folder)):
-                        files.append(file_[:-3])
-                    for gff in os.listdir(args_ratt.gff_outfolder):
-                        for file_ in files:
-                            if (".gff" in gff) and (file_ == gff[:-4]):
-                                self.helper.merge_file(os.path.join(
-                                     args_ratt.gff_outfolder, gff),
-                                     self.tmp_files["gff"])
-                            if (".ptt" in gff) and (file_ == gff[:-4]):
-                                self.helper.merge_file(os.path.join(
-                                     args_ratt.gff_outfolder, gff),
-                                     self.tmp_files["ptt"])
-                            if (".rnt" in gff) and (file_ == gff[:-4]):
-                                self.helper.merge_file(os.path.join(
-                                     args_ratt.gff_outfolder, gff),
-                                     self.tmp_files["rnt"])
-                    if os.path.exists(self.tmp_files["gff"]):
-                        shutil.move(self.tmp_files["gff"], os.path.join(
-                                    self.tmp_files["out_gff"], prefix + ".gff"))
-                        shutil.move(self.tmp_files["ptt"], os.path.join(
-                                    self.tmp_files["out_gff"], prefix + ".ptt"))
-                        shutil.move(self.tmp_files["rnt"], os.path.join(
-                                    self.tmp_files["out_gff"], prefix + ".rnt"))
-                    else:
-                        print("Error: Please check your fasta or "
-                              "annotation files, they should only contain "
-                              "the query genome. And make sure your RATT can "
-                              "work properly (check $ANNOgesic/output/"
-                              "annotation_transfer/ratt_log.txt).")
+            if "_folder" in folder:
+                datas = folder.split("_folder")
+                prefix = ".".join(datas[0].split(".")[:-1])
+                for file_ in os.listdir(os.path.join(args_ratt.tar_fastas,
+                                                     folder)):
+                    files.append(file_[:-3])
+                for gff in os.listdir(args_ratt.gff_outfolder):
+                    for file_ in files:
+                        if (".gff" in gff) and (file_ == gff[:-4]):
+                            self.helper.merge_file(os.path.join(
+                                 args_ratt.gff_outfolder, gff),
+                                 self.tmp_files["gff"])
+                        if (".ptt" in gff) and (file_ == gff[:-4]):
+                            self.helper.merge_file(os.path.join(
+                                 args_ratt.gff_outfolder, gff),
+                                 self.tmp_files["ptt"])
+                        if (".rnt" in gff) and (file_ == gff[:-4]):
+                            self.helper.merge_file(os.path.join(
+                                 args_ratt.gff_outfolder, gff),
+                                 self.tmp_files["rnt"])
+                if os.path.exists(self.tmp_files["gff"]):
+                    shutil.move(self.tmp_files["gff"], os.path.join(
+                                self.tmp_files["out_gff"], prefix + ".gff"))
+                    shutil.move(self.tmp_files["ptt"], os.path.join(
+                                self.tmp_files["out_gff"], prefix + ".ptt"))
+                    shutil.move(self.tmp_files["rnt"], os.path.join(
+                                self.tmp_files["out_gff"], prefix + ".rnt"))
+                else:
+                    print("Error: Please check your fasta or "
+                          "annotation files, they should only contain "
+                          "the query genome. And make sure your RATT can "
+                          "work properly (check $ANNOgesic/output/"
+                          "annotation_transfer/ratt_log.txt).")
         self._remove_files(args_ratt, out_gbk)

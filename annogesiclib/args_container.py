@@ -376,8 +376,7 @@ class ArgsContainer(object):
 
     def container_ratt(self, ratt_path, element, transfer_type,
                        ref_embl, ref_gbk, target_fasta, ref_fasta, ratt_folder,
-                       convert_to_gff_rnt_ptt, tar_annotation_folder,
-                       compare_pair):
+                       tar_annotation_folder, compare_pair):
         self.ratt_path = ratt_path
         self.element = element
         self.transfer_type = transfer_type
@@ -395,7 +394,6 @@ class ArgsContainer(object):
                 file_types, ratt_folder, "temp_ref", ref_fasta,
                 ["--target_fasta_files"])
         self.output_path = ratt_folder
-        self.convert = convert_to_gff_rnt_ptt
         self.gff_outfolder = tar_annotation_folder
         self.pairs = compare_pair
         return self

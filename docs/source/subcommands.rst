@@ -349,9 +349,6 @@ If you use Dockerfile to execute ANNOgesic, the path modification can be skipped
                             The transfer type for running RATT. (For the details,
                             please refer to the manual of RATT.) Default is
                             Strain.
-      --convert_to_gff_rnt_ptt, -g
-                            Convert the annotation to gff, rnt and ptt. Default is
-                            False.
 
     optional arguments:
       -h, --help            show this help message and exit

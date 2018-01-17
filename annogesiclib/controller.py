@@ -243,7 +243,7 @@ class Controller(object):
             self._args.ratt_path, self._args.element, self._args.transfer_type,
             self._args.related_embl_files, self._args.related_gbk_files,
             self._args.target_fasta_files, self._args.related_fasta_files,
-            self._paths.ratt_folder, self._args.convert_to_gff_rnt_ptt,
+            self._paths.ratt_folder,
             self._paths.tar_annotation_folder, self._args.compare_pair)
         ratt = RATT(args_ratt)
         ratt.annotation_transfer(args_ratt)
