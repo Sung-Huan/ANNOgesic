@@ -439,12 +439,12 @@ class Terminator(object):
     def _re_table(self, args_term, prefixs):
         for type_ in ["all_candidates", "best_candidates",
                       "expressed_candidates", "non_expressed_candidates"]:
-            for prefix in prefixs:
+            for table in os.listdir(os.path.join(
+                    args_term.out_folder, "tables", type_)):
                 reorganize_table(args_term.libs, args_term.merge_wigs,
                                  "Coverage_detail",
                                  os.path.join(args_term.out_folder, "tables",
-                                              type_, "_".join([
-                                                  prefix, "term.csv"])))
+                                              type_, table))
 
     def run_terminator(self, args_term):
         self._check_gff_file(args_term.gffs)
