@@ -2,16 +2,19 @@ import os
 import csv
 import shutil
 from annogesiclib.gff3 import Gff3Parser
+from annogesiclib.helper import Helper
 
 
-def read_gff(gff_file):
+def read_gff(gff_file, type_):
     cdss = []
     g_h = open(gff_file)
     for entry in Gff3Parser().entries(g_h):
-        if (entry.feature == "CDS") or (
-                entry.feature == "tRNA") or (
-                entry.feature == "rRNA"):
-            cdss.append(entry)
+        if (Helper().feature_without_notgene(entry)):
+            if (type_ == "riboswitch") and (entry.feature != "riboswitch"):
+                cdss.append(entry)
+            elif (type_ == "thermometer") and (
+                    entry.feature != "RNA_thermometer"):
+                cdss.append(entry)
     cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     g_h.close()
     return cdss
@@ -33,9 +36,9 @@ def check_repeat(tab, strain, strand, start, end):
             return True
 
 
-def rbs_overlap(table_file, gff_file):
+def rbs_overlap(table_file, gff_file, type_):
     tmp_tab = table_file + "_tmp"
-    cdss = read_gff(gff_file)
+    cdss = read_gff(gff_file, type_)
     out = open(tmp_tab, "w")
     fh = open(table_file, "r")
     tables = []

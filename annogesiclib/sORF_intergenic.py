@@ -1,4 +1,5 @@
 from annogesiclib.gff3 import Gff3Parser
+from annogesiclib.helper import Helper
 
 
 def get_type(inter, gffs):
@@ -49,10 +50,8 @@ def read_gff(gff_file, tran_file, hypo):
     gffs = []
     gh = open(gff_file)
     for entry in Gff3Parser().entries(gh):
-        if (entry.feature == "CDS") or \
-           (entry.feature == "rRNA") or \
-           (entry.feature == "tRNA") or \
-           (entry.feature == "sRNA"):
+        if (Helper().feature_without_notgene(entry)) and (
+                entry.feature != "sORF"):
             if ("product" in entry.attributes.keys()) and (hypo):
                 if "hypothetical protein" not in entry.attributes["product"]:
                     gffs.append(entry)

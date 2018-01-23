@@ -154,38 +154,38 @@ class TestsORFDetection(unittest.TestCase):
              'start': 2, 'strain': 'aaa', 'type': '3utr'}])
 
     def test_import_overlap(self):
-        sorf1 = {"strain": "aaa", "strand": "+", "start": 2, "end": 6,
+        sorf1 = {"strain": "aaa", "strand": "+", "start": 2, "end": 6, "srna": ["NA"],
                  "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                  "type": "3utr", "print": False, "rbs": [1], "start_TSS": "1"}
-        sorf2 = {"strain": "aaa", "strand": "+", "start": 5, "end": 15,
+        sorf2 = {"strain": "aaa", "strand": "+", "start": 5, "end": 15, "srna": ["NA"],
                  "starts": [str(5)], "ends": [str(15)], "seq": "ATGTA",
                  "type": "3utr", "print": False, "rbs": [2], "start_TSS": "2"}
-        final = {"strain": "aaa", "strand": "+", "start": 2, "end": 6,
+        final = {"strain": "aaa", "strand": "+", "start": 2, "end": 6, "srna": ["NA"],
                  "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                  "type": "3utr", "print": False, "rbs": [1], "start_TSS": "1"}
         sd.import_overlap(sorf2, final, sorf1, True)
         self.assertDictEqual(final, {
             'end': 15, 'candidate': ['2-6_TSS:1_RBS:1', '5-15_TSS:2_RBS:2'],
             'start': 2, 'rbs': [1, 2], 'strand': '+', 'strain': 'aaa',
-            'print': False, 'seq': 'ATGTA', 'ends': ['10', '15'],
+            'print': False, 'seq': 'ATGTA', 'ends': ['10', '15'], "srna": ["NA"],
             'start_TSS': '1', 'type': '3utr', 'starts': ['2', '5']})
 
     def test_merge(self):
         seq = {"aaa": "TAGGAGGCCGCTATGCCATTA"}
         sorfs = [{"strain": "aaa", "strand": "+", "start": 2, "end": 6,
                   "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
-                  "type": "3utr", "print": False, "rbs": [1],
+                  "type": "3utr", "print": False, "rbs": [1], "srna": ["sRNA1"],
                   "start_TSS": "1"},
-                 {"strain": "aaa", "strand": "+", "start": 5, "end": 15,
+                 {"strain": "aaa", "strand": "+", "start": 5 , "end": 15,
                   "starts": [str(5)], "ends": [str(15)], "seq": "ATGTA",
-                  "type": "3utr", "print": False, "rbs": [2],
+                  "type": "3utr", "print": False, "rbs": [2], "srna": ["sRNA2"],
                   "start_TSS": "2"}]
         finals = sd.merge(sorfs, seq)
         self.assertDictEqual(finals[0], {
             'start_TSS': '1', 'rbs': [1, 2], 'strand': '+', 'strain': 'aaa',
             'start': 2, 'candidate': ['2-6_TSS:1_RBS:1', '5-15_TSS:2_RBS:2'],
             'ends': ['10', '6', '15'], 'starts': ['2', '5'], 'type': '3utr',
-            'end': 15, 'seq': 'AGGAGGCCGCTATG'})
+            'end': 15, 'seq': 'AGGAGGCCGCTATG', "srna": ["sRNA1", "sRNA2"]})
 
     def test_assign_utr_cutoff(self):
         coverages = {"3utr": "median", "5utr": 20,

@@ -34,12 +34,10 @@ def read_gffs(gff_files, feature):
                 gff_f = open(gff_file, "r")
                 for entry in Gff3Parser().entries(gff_f):
                     parent = None
-                    if (entry.feature == "CDS") or (
-                            entry.feature == "exon") or (
-                            entry.feature == "repeat_unit") or (
-                            entry.feature == "tRNA") or (
-                            entry.feature == "rRNA") or (
-                            entry.feature == "ncRNA"):
+                    if (entry.feature != "gene") and (
+                            entry.feature != "transcript") and (
+                            entry.feature != "source") and (
+                            entry.feature != "region"):
                         if "Parent" in entry.attributes.keys():
                             parent = entry.attributes["Parent"]
                     del_attributes(entry, ["associated_tran", "parent_tran",

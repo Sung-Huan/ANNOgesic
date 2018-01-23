@@ -368,7 +368,14 @@ def import_overlap(sorf2, final, sorf1, first):
         else:
             if sorf2["rbs"][0] not in final["rbs"]:
                 final["rbs"] = final["rbs"] + sorf2["rbs"]
-    return first
+    if sorf2["srna"] != "NA":
+        if final["srna"] == "NA":
+            final["srna"] = sorf2["srna"]
+        else:
+            for over_srna in sorf2["srna"]:
+                if (over_srna not in final["srna"]):
+                    final["srna"].append(over_srna)
+    return first, final
 
 
 def merge(sorfs, seq):
@@ -401,8 +408,8 @@ def merge(sorfs, seq):
                         break
                     if overlap:
                         sorf2["print"] = True
-                        first = import_overlap(sorf2, final,
-                                               sorf1, first)
+                        first, final = import_overlap(sorf2, final,
+                                                      sorf1, first)
             final["seq"] = Helper().extract_gene(
                     seq[final["strain"]], final["start"],
                     final["end"], final["strand"])
@@ -575,25 +582,26 @@ def check_candidates_srnas(sorf, min_rbs, max_rbs):
         pass
     else:
         for srna in sorf["srna"]:
-            srna_strand = srna.split("_")[-1]
-            if srna_strand == "r":
-                strand = "-"
-            else:
-                strand = "+"
-            srna_end = int(srna.split("_")[-2].split("-")[-1])
-            srna_start = int(srna.split("_")[-2].split("-")[0].split(":")[-1])
-            if (strand == sorf["strand"]):
-                if ((srna_start <= int(sorf["start"])) and (
-                         srna_end >= int(sorf["end"]))) or (
-                        (srna_start >= int(sorf["start"])) and (
-                         srna_end <= int(sorf["end"]))) or (
-                        (srna_start <= int(sorf["start"])) and (
-                         srna_end >= int(sorf["start"])) and (
-                         srna_end <= int(sorf["end"]))) or (
-                        (srna_start >= int(sorf["start"])) and (
-                         srna_start <= int(sorf["end"])) and (
-                         srna_end >= int(sorf["end"]))):
-                    new_srnas.append(srna)
+            if srna != "NA":
+                srna_strand = srna.split("_")[-1]
+                if srna_strand == "r":
+                    strand = "-"
+                else:
+                    strand = "+"
+                srna_end = int(srna.split("_")[-2].split("-")[-1])
+                srna_start = int(srna.split("_")[-2].split("-")[0].split(":")[-1])
+                if (strand == sorf["strand"]):
+                    if ((srna_start <= int(sorf["start"])) and (
+                             srna_end >= int(sorf["end"]))) or (
+                            (srna_start >= int(sorf["start"])) and (
+                             srna_end <= int(sorf["end"]))) or (
+                            (srna_start <= int(sorf["start"])) and (
+                             srna_end >= int(sorf["start"])) and (
+                             srna_end <= int(sorf["end"]))) or (
+                            (srna_start >= int(sorf["start"])) and (
+                             srna_start <= int(sorf["end"])) and (
+                             srna_end >= int(sorf["end"]))):
+                        new_srnas.append(srna)
     sorf["candidate"] = new_candidates
     if len(new_srnas) != 0:
         sorf["srna"] = new_srnas
@@ -916,13 +924,13 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t, file_type,
             out_t.write("\t".join([
                 "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
                 "Ribosome_binding_site", "All_start_points", "All_stop_points",
-                "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+                "Conflict_sRNA", "Frame_shift", "Lib_type", "Best_avg_coverage",
                 "Track_detail", "Seq", "Combinations"]) + "\n")
         else:
             out_t.write("\t".join([
                 "Genome", "Name", "Start", "End", "Strand", "Type", "TSS",
                 "Ribosome_binding_site", "All_start_points", "All_stop_points",
-                "sRNA_conflict", "Frame_shift", "Lib_type", "Best_avg_coverage",
+                "Conflict_sRNA", "Frame_shift", "Lib_type", "Best_avg_coverage",
                 "Track_detail", "Seq"]) + "\n")
     num = 0
     final_sorfs = []

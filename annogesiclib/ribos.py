@@ -182,7 +182,7 @@ class Ribos(object):
         self.helper.remove_tmp_dir(args_ribo.trans)
         self.helper.remove_tmp_dir(args_ribo.tsss)
 
-    def _remove_overlap(self, gff_path, tmp_files, suffixs):
+    def _remove_overlap(self, gff_path, tmp_files, suffixs, type_):
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
                 rbs_overlap(
@@ -190,11 +190,11 @@ class Ribos(object):
                         tmp_files["table"],
                         "_".join([gff.replace(".gff", ""),
                                   suffixs["csv"]]))),
-                    os.path.join(gff_path, gff))
+                    os.path.join(gff_path, gff), type_)
 
     def _core_prediction(self, args_ribo, feature_id, rfam, tmp_files,
                          table_folder, feature, scan_folder, suffixs,
-                         stat_folder, gff_outfolder, out_folder):
+                         stat_folder, gff_outfolder, out_folder, type_):
         '''main part of detection'''
         rbs_from_rfam(feature_id, args_ribo.rfam, rfam)
         print("Compressing Rfam of " + feature)
@@ -205,7 +205,7 @@ class Ribos(object):
         self.helper.check_make_folder(tmp_files["table"])
         prefixs = self._scan_extract_rfam(
                 prefixs, args_ribo, tmp_files, suffixs, feature, rfam)
-        self._remove_overlap(self.gff_path, tmp_files, suffixs)
+        self._remove_overlap(self.gff_path, tmp_files, suffixs, type_)
         self._merge_results(args_ribo, scan_folder, suffixs, tmp_files,
                             table_folder, stat_folder, feature_id,
                             gff_outfolder, feature)
@@ -233,7 +233,7 @@ class Ribos(object):
                     self.ribos_tmp_files, self.ribos_table_folder,
                     "riboswitch", self.ribos_scan_folder, self.ribos_suffixs,
                     self.ribos_stat_folder, self.ribos_gff_outfolder,
-                    args_ribo.ribos_out_folder)
+                    args_ribo.ribos_out_folder, "riboswitch")
         if (args_ribo.program.lower() == "both") or (
                 args_ribo.program.lower() == "thermometer"):
             print("Detecting RNA thermometers now")
@@ -242,5 +242,6 @@ class Ribos(object):
                     self.thermo_tmp_files, self.thermo_table_folder,
                     "RNA_thermometer", self.thermo_scan_folder,
                     self.thermo_suffixs, self.thermo_stat_folder,
-                    self.thermo_gff_outfolder, args_ribo.thermo_out_folder)
+                    self.thermo_gff_outfolder, args_ribo.thermo_out_folder,
+                    "thermometer")
         self._remove_tmp(args_ribo)

@@ -48,10 +48,7 @@ class Crispr(object):
         gh = open(os.path.join(self.gff_path,
                                txt.replace(".txt", ".gff")), "r")
         for entry in Gff3Parser().entries(gh):
-            if (entry.feature == "gene") or (
-                    entry.feature == "CDS") or (
-                    entry.feature == "tRNA") or (
-                    entry.feature == "rRNA"):
+            if (self.helper.feature_without_notgene(entry)):
                 gffs.append(entry)
         gh.close()
         return gffs

@@ -3,6 +3,7 @@ import sys
 import copy
 import shutil
 import csv
+import re
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 from annogesiclib.gff3 import Gff3Parser
@@ -13,6 +14,23 @@ class Helper(object):
 
     def __init__(self):
         self.gff3parser = Gff3Parser()
+
+    def feature_without_notgene(self, entry):
+        if (entry.feature != "gene") and (
+            entry.feature != "exon") and (
+            entry.feature != "source") and (
+            entry.feature != "region") and (
+            entry.feature != "repeat_region") and (
+            entry.feature != "transcript") and (
+            entry.feature != "STS"):
+            utr_markers = r'[^\'\ \-35]'
+            for sub_f in entry.feature.lower().split("utr"):
+                match = (re.search(utr_markers, sub_f))
+                if match is None:
+                    pass
+                else:
+                    return True
+        return False
 
     def get_strand_name(self, strand):
         '''change the strand name to f/r'''

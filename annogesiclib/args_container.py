@@ -687,8 +687,9 @@ class ArgsContainer(object):
                        terminator_fuzzy_out_sRNA, ignore_hypothetical_protein,
                        TSS_source, min_utr_coverage, promoter_tables,
                        ranking_promoter, promoter_name, compute_sec_str,
-                       len_u, num_u, mut_u):
+                       len_u, num_u, mut_u, ex_srna):
         self.rnafold = rnafold
+        self.ex_srna = ex_srna
         self.compute_sec_str = compute_sec_str
         self.para_blast = para_blast
         self.relplot_pl = relplot_pl

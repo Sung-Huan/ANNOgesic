@@ -15,7 +15,7 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_read_gff(self, gff_file, type_):
+    def mock_read_gff(self, gff_file, type_, ex_srna):
         if gff_file == "UTR":
             return self.example.srnas_utr
         elif gff_file == "inter":
@@ -147,7 +147,7 @@ class TestMergesRNA(unittest.TestCase):
         ms.read_gff = Mock_func().mock_read_gff
         gffs = {"merge": out_file, "utr": "UTR", "normal": "inter"}
         ms.merge_srna_gff(gffs, False, 0.5,
-                          os.path.join(self.test_folder, "aaa.gff"))
+                          os.path.join(self.test_folder, "aaa.gff"), False)
         datas, attributes = extract_info(out_file, "file")
         self.assertListEqual(datas,
                              ['aaa\tANNOgesic\tncRNA\t54\t254\t.\t+\t.'])

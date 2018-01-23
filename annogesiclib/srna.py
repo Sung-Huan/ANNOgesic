@@ -383,7 +383,7 @@ class sRNADetection(object):
                     gff_file, tss, tex_datas):
         print("Merging data of sRNA")
         merge_srna_gff(gffs, args_srna.in_cds,
-                       args_srna.cutoff_overlap, gff_file)
+                       args_srna.cutoff_overlap, gff_file, args_srna.ex_srna)
         merge_srna_table(gffs["merge"], csvs, tex_datas[2], tex_datas[3],
                          tss, args_srna)
 

@@ -51,7 +51,7 @@ class Mock_func(object):
     def mock_merge_tex_frag_datas(self, tex_datas, frag_datas):
         return [None, None, 1, 2]
 
-    def mock_merge_srna_gff(self, utr_gff, normal_gff, in_cds, merge_gff):
+    def mock_merge_srna_gff(self, utr_gff, normal_gff, in_cds, merge_gff, ex_srna):
         shutil.copy("test_folder/gffs/test.gff",
                     "test_folder/output/tmp_merge_test")
 
@@ -246,6 +246,7 @@ class TestsRNADetection(unittest.TestCase):
         args.gffs = self.gffs
         args.in_cds = False
         args.utr_srna = True
+        args.ex_srna = False
         args.cutoff_overlap = 0.5
         prefixs = self.srna._run_program(args)
         self.assertListEqual(prefixs, ['test'])

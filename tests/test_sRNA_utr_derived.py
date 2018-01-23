@@ -538,6 +538,8 @@ class TestsRNAUTR(unittest.TestCase):
         args.texs = "template_texs"
         args.tex_notex = "tex_notex"
         args.replicates = "rep"
+        gffs = []
+        ncs = []
         args.table_best = True
         args.out = StringIO()
         args.out_t = StringIO()

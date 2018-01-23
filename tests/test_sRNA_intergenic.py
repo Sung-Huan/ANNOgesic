@@ -74,6 +74,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.gff_file = gff_file
         args.tran_file = tran_file
         args.pro_file = pro_file
+        args.ex_srna = False
         nums, cdss, tas, pros, genes, ncs = si.read_data(args)
         self.assertDictEqual(nums, {'ta': 3, 'cds': 3, 'pro': 3, 'uni': 0} )
         self.assertEqual(cdss[0].start, 140)
@@ -474,6 +475,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.in_cds = False
         args.wigs_f = None
         args.wigs_r = None
+        args.ex_srna = False
         si.intergenic_srna(args, args.input_libs, None,
                            args.wigs_f, args.wigs_r)
         self.assertTrue(os.path.exists(output_file))

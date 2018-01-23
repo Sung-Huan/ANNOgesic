@@ -4,6 +4,7 @@ import math
 import copy
 import numpy as np
 from annogesiclib.gff3 import Gff3Parser
+from annogesiclib.helper import Helper
 from annogesiclib.coverage_detection import coverage_comparison
 from annogesiclib.coverage_detection import replicate_comparison
 from annogesiclib.lib_reader import read_wig, read_libs
@@ -139,7 +140,7 @@ def merge_srna(srnas, srna_type):
     return final_srnas
 
 
-def read_gff(gff_file, type_):
+def read_gff(gff_file, type_, ex_srna):
     datas = []
     if os.path.exists(gff_file):
         for entry in Gff3Parser().entries(open(gff_file)):
@@ -148,10 +149,11 @@ def read_gff(gff_file, type_):
             elif type_ == "tss":
                 datas.append(entry)
             else:
-                if (entry.feature == "CDS") or (
-                        entry.feature == "tRNA") or (
-                        entry.feature == "rRNA"):
-                    datas.append(entry)
+                if (Helper().feature_without_notgene(entry)):
+                    if (ex_srna) and (entry.feature != "ncRNA"):
+                        datas.append(entry)
+                    elif not ex_srna:
+                        datas.append(entry)
         datas = sorted(datas, key=lambda k: (k.seq_id, k.start,
                                              k.end, k.strand))
     return datas
@@ -245,13 +247,13 @@ def compare_srna_cds(srna, cdss, cutoff_overlap):
         return None
 
 
-def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file):
+def merge_srna_gff(gffs, in_cds, cutoff_overlap, gff_file, ex_srna):
     '''merge all types of sRNA and print to one gff files'''
     out = open(gffs["merge"], "w")
     out.write("##gff-version 3\n")
-    utrs = read_gff(gffs["utr"], "sRNA")
-    inters = read_gff(gffs["normal"], "sRNA")
-    cdss = read_gff(gff_file, "CDS")
+    utrs = read_gff(gffs["utr"], "sRNA", ex_srna)
+    inters = read_gff(gffs["normal"], "sRNA", ex_srna)
+    cdss = read_gff(gff_file, "CDS", ex_srna)
     num_srna = 0
     srnas = None
     if (in_cds) and (len(utrs) != 0) and (len(inters) != 0):
@@ -566,9 +568,9 @@ def free_memory(paras):
 def merge_srna_table(srna_file, csvs, wigs_f, wigs_r,
                      tss_file, args_srna):
     libs, texs = read_libs(args_srna.libs, args_srna.merge_wigs)
-    srnas = read_gff(srna_file, "sRNA")
+    srnas = read_gff(srna_file, "sRNA", args_srna.ex_srna)
     if tss_file is not None:
-        tsss = read_gff(tss_file, "tss")
+        tsss = read_gff(tss_file, "tss", args_srna.ex_srna)
     else:
         tsss = None
     inters = read_table(csvs["normal"], "inter")

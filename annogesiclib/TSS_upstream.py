@@ -63,9 +63,7 @@ def read_gff(gff_file):
     genes = []
     g_f = open(gff_file, "r")
     for entry in Gff3Parser().entries(g_f):
-        if (entry.feature == "CDS") or \
-           (entry.feature == "rRNA") or \
-           (entry.feature == "tRNA"):
+        if (Helper().feature_without_notgene(entry)):
             cdss.append(entry)
         if entry.feature == "gene":
             genes.append(entry)

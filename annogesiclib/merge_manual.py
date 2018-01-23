@@ -450,9 +450,7 @@ def read_gff(tss_predict_file, tss_manual_file, gff_file, lengths):
     tsss["tsss_m"] = sorted(tsss["tsss_m"], key=lambda k: (k.seq_id, k.start,
                                                            k.end, k.strand))
     for entry in gff_parser.entries(g_f):
-        if (entry.feature == "CDS") or (
-                entry.feature == "rRNA") or (
-                entry.feature == "tRNA"):
+        if (Helper().feature_without_notgene(entry)):
             cdss.append(entry)
         if entry.feature == "gene":
             genes.append(entry)

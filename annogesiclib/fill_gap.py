@@ -1,4 +1,5 @@
 from annogesiclib.gff3 import Gff3Parser
+from annogesiclib.helper import Helper
 
 
 def uni(tas, genes, out):
@@ -136,10 +137,10 @@ def fill_gap(gff_file, ta_file, type_, output, modify):
     ta_f.close()
     tas = sorted(tas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     for entry in Gff3Parser().entries(gff_f):
-        if (entry.feature == "gene") or (
-                entry.feature == "CDS") or (
-                entry.feature == "rRNA") or (
-                entry.feature == "tRNA"):
+        if (entry.feature != "source") and (
+                entry.feature != "region") and (
+                entry.feature != "repeat_region") and (
+                entry.feature != "STS"):
             genes.append(entry)
     gff_f.close()
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))

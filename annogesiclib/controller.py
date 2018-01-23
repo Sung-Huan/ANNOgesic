@@ -106,7 +106,7 @@ class Controller(object):
             detect = True
             full_exe = os.path.realpath(exe)
         for folder in os.environ["PATH"].split(":"):
-            if os.path.exists(os.path.join(folder, exe)):
+            if os.path.isfile(os.path.join(folder, exe)):
                 exe_folder = folder
                 detect = True
                 full_exe = exe
@@ -551,7 +551,8 @@ class Controller(object):
                 self._args.min_all_utr_coverage, self._args.promoter_tables,
                 self._args.ranking_time_promoter, self._args.promoter_names,
                 self._args.compute_sec_structures, self._args.search_poly_u,
-                self._args.min_u_poly_u, self._args.mutation_poly_u)
+                self._args.min_u_poly_u, self._args.mutation_poly_u,
+                self._args.exclude_srna_in_annotation_file)
         srna = sRNADetection(args_srna)
         srna.run_srna_detection(args_srna)
 

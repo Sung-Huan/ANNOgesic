@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.4"
+__version__ = "0.7.5"
 
 def main():
     print("""
@@ -1109,6 +1109,11 @@ def main():
         "For the candidate which are not associated with a promoter, the "
         "--ranking_time_promoter will be 1. Therefore, --ranking_time_promoter "
         "can not be smaller than 1. Default is 2.")
+    sRNA_add.add_argument(
+        "--exclude_srna_in_annotation_file", "-ea", default=False,
+        action="store_true",
+        help="For excluding the sRNAs which are already annotated in "
+        "--annotation_files. Default is False.")
     sRNA_parser.set_defaults(func=run_sRNA_detection)
     
     # Parameters of small ORF

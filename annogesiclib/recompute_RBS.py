@@ -155,19 +155,6 @@ def compare_first_result(ribos, firsts, seq_name, out, extras, cutoff):
                             extras.append(rbs)
 
 
-def read_gff(gff_file):
-    cdss = []
-    g_h = open(gff_file)
-    for entry in Gff3Parser().entries(g_h):
-        if (entry.feature == "CDS") or (
-                entry.feature == "tRNA") or (
-                entry.feature == "rRNA"):
-            cdss.append(entry)
-    cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
-    g_h.close()
-    return cdss
-
-
 def reextract_rbs(align_file, first_file, output_file, cutoff):
     '''based on the first detection, extract the RBS and run again'''
     hit = False

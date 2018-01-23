@@ -7,6 +7,7 @@ from annogesiclib.coverage_detection import coverage_comparison
 from annogesiclib.coverage_detection import replicate_comparison, get_repmatch
 from annogesiclib.lib_reader import read_wig, read_libs
 from annogesiclib.gen_TSS_type import compare_tss_cds, fix_primary_type
+from annogesiclib.helper import Helper
 from annogesiclib.args_container import ArgsContainer
 
 
@@ -590,21 +591,23 @@ def read_data(args_srna):
     gff_parser = Gff3Parser()
     g_f = open(args_srna.gff_file, "r")
     for entry in gff_parser.entries(g_f):
-        if (entry.feature == "CDS") or (
-                entry.feature == "pCDS") or (
-                entry.feature == "tRNA") or (
-                entry.feature == "rRNA"):
-            if ("product" in entry.attributes.keys()) and (args_srna.hypo):
-                if "hypothetical protein" not in entry.attributes["product"]:
+        if (Helper().feature_without_notgene(entry)):
+            import_ = False
+            if args_srna.ex_srna:
+                import_ = True
+            else:
+                if entry.feature != "ncRNA":
+                    import_ = True
+            if import_:
+                if ("product" in entry.attributes.keys()) and (args_srna.hypo):
+                    if "hypothetical protein" not in entry.attributes["product"]:
+                        cdss.append(entry)
+                        num_cds += 1
+                else:
                     cdss.append(entry)
                     num_cds += 1
-            else:
-                cdss.append(entry)
-                num_cds += 1
         if (entry.feature == "gene"):
             genes.append(entry)
-        if (entry.feature == "ncRNA"):
-            ncs.append(entry)
     if args_srna.pro_file is not None:
         pro_f = open(args_srna.pro_file, "r")
         for entry in gff_parser.entries(pro_f):
@@ -768,20 +771,6 @@ def free_memory(paras):
     for data in paras:
         del(data)
     gc.collect()
-
-
-def check_ncRNA(gene, ncs):
-    detect = False
-    for nc in ncs:
-        if "Parent" in nc.attributes.keys():
-            if gene.attributes["ID"] in nc.attributes["Parent"]:
-                detect = True
-        elif (nc.seq_id == gene.seq_id) and (
-                nc.strand == gene.strand):
-            if (gene.start <= nc.start) and (
-                    gene.end >= nc.end):
-                detect = True
-    return detect
 
 
 def intergenic_srna(args_srna, libs, texs, wigs_f, wigs_r):

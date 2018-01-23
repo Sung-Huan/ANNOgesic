@@ -1797,6 +1797,9 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             --ranking_time_promoter will be 1. Therefore,
                             --ranking_time_promoter can not be smaller than 1.
                             Default is 2.
+      --exclude_srna_in_annotation_file, -ea
+                            For excluding the sRNAs which are already annotated in
+                            --annotation_files. Default is False.
     optional arguments:
       -h, --help            show this help message and exit
 
@@ -2145,7 +2148,7 @@ The meaning of each column is as following:
 
 	**All_stop_points:** Positions of all stop codons which can be found in the region of this sORF.
 
-	**sRNA_conflict:** If this sORF overlaps sRNA, the overlapped sRNA will be showed here.
+	**Conflict_sRNA:** If this sORF overlaps sRNA, the overlapped sRNA will be showed here.
 
 	**Frame_shift:** If there are sORF candidates which can be found by frame shift, 
 	the number of frame shift will be showed here. "1" means there 
