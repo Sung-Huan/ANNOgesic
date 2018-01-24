@@ -91,8 +91,9 @@ class Converter(object):
             with open(fasta_file, "r") as f_f:
                 for line in f_f:
                     line = line.strip()
-                    if line[0] != ">":
-                        seq = seq + line
+                    if len(line) != 0:
+                        if line[0] != ">":
+                            seq = seq + line
         return (num_cds, num_rna, seq)
 
     def _srna2rntptt(self, srna_input_file, srna_output_file, srnas, length):
