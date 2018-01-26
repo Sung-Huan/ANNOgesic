@@ -3,6 +3,10 @@
 Required tools or databases
 ===========================
 
+Each module has different required tools or databases. **For running a module, the 
+users just need to install the specific tools for it.** For examples, running 
+TSS prediction only needs TSSpredator.
+
 Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
 Via Docker image, all the required tools are installed.
 
