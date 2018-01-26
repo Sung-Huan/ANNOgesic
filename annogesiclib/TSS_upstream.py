@@ -22,7 +22,8 @@ def get_upstream(seq, tss, out, name, nt_before):
             end = tss.start + nt_before - 1
         fasta = Helper().extract_gene(seq, tss.start,
                                       end, tss.strand)
-    out.write("{0}\n{1}\n".format(name, fasta))
+    if len(fasta) >= nt_before:
+        out.write("{0}\n{1}\n".format(name, fasta))
 
 
 def print_fasta(seq, tss, files, name, nt_before):
