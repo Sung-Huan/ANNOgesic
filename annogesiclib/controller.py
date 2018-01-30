@@ -141,7 +141,7 @@ class Controller(object):
                 if files[i] is not None:
                     if not os.path.isfile(files[i]):
                         print("Error: There is a wrong path of {0}. "
-                              "Please check it!".format(names[i]))
+                              "Please check it!".format(files[i]))
                         sys.exit()
 
     def create_project(self, version):
@@ -897,9 +897,8 @@ class Controller(object):
                                     "merge_all_features")
         self.helper.check_make_folder(merge_folder)
         other_features = self._args.other_features_files
-        self.check_file([self._args.transcript_file] + other_features,
-                        ["--transcript_file", "--other_features_files"],
-                        False)
+        self.check_multi_files([[self._args.transcript_file], other_features],
+                                ["--transcript_file", "--other_features_files"])
         self.check_parameter([self._args.output_prefix], ["--output_prefix"])
         run_merge(merge_folder, self._args.transcript_file,
                   self._args.other_features_files,
