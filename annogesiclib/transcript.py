@@ -233,6 +233,8 @@ class TranscriptDetection(object):
     def _remove_file(self, args_tran):
         if "tmp_wig" in os.listdir(args_tran.out_folder):
             shutil.rmtree(os.path.join(args_tran.out_folder, "tmp_wig"))
+        if "merge_wigs" in os.listdir(args_tran.out_folder):
+            shutil.rmtree(os.path.join(args_tran.out_folder, "merge_wigs"))
         self.helper.remove_tmp_dir(args_tran.gffs)
         self.helper.remove_tmp_dir(args_tran.compare_tss)
         self.helper.remove_tmp_dir(args_tran.terms)
