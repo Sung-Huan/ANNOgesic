@@ -159,7 +159,7 @@ class Crispr(object):
                 if entry.feature == "CRISPR":
                     id_ = "CRISPR_" + str(cr_num)
                     attribute = ";".join(["ID=" + entry.seq_id + "_" + id_,
-                                          "method=CRT"])
+                                          "method=CRT", "Name=" + id_])
                     cr_num += 1
                     if first:
                         first = False
@@ -177,7 +177,8 @@ class Crispr(object):
                     stats[prefix]["all"]["cri"] += 1
                 elif entry.feature == "repeat_unit":
                     attribute = ";".join(["ID=" + entry.seq_id + "_Repeat_" + str(re_num),
-                                          "method=CRT", "Parent=" + id_])
+                                          "method=CRT", "Parent=" + id_,
+                                          "Name=Repeat_" + str(re_num)])
                     re_num += 1
                     repeat += 1
                 oh.write("\t".join([entry.info_without_attributes,

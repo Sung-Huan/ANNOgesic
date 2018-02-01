@@ -3305,7 +3305,7 @@ Output files are stored in ``$ANNOgesic/output/crisprs``. The folders which are 
 
 **CRT_results:** Stores the output of `CRT <http://www.room220.com/crt/>`_.
 
-**gffs:** Stores CRSIPR gff files. Two sub-folders are under this folder:
+**gffs:** Stores CRSIPR gff files. **Please aware CRISPR has no strand information (shows '.' in gff files)**. Two sub-folders are under this folder:
 
 	**all_candidates:** Stores gff files which contains all CRISPRs.
  
