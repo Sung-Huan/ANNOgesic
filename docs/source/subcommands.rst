@@ -1884,9 +1884,13 @@ The meanings of the columns are as following:
 	**sRNA_hit|e-value|score:** If the homology of this sRNA can be found in sRNA database, the information will be showed here.
 	The information includes sRNA name, e-value, and score.
 
-	**Overlap_CDS:** If the sRNA overlaps CDS, the information of the overlapped CDS will be showed here.
+	**Overlap_CDS_forward:** If the sRNA overlaps genomic features, the information of the overlapped features will be showed here (for forward strand).
 
-	**Overlap_percent:** If the sRNA overlaps CDS, the percentage of overlap between sRNA and CDS will be showed here.
+	**Overlap_nts_forward:** If the sRNA overlaps genomic features, the length and percentage of the overlapping regions will be showed here (for forward strand).
+
+	**Overlap_CDS_reverse:** If the sRNA overlaps genomic features, the information of the overlapped features will be showed here (for reverse strand).
+
+	**Overlap_nts_reverse:** If the sRNA overlaps genomic features, the length and percentage of the overlapping regions will be showed here (for reverse strand).
 
 	**End_with_terminator:** The terminator which is associated with this sRNA.
 
