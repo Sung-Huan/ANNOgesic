@@ -50,7 +50,7 @@ def check_overlap(table_file, gff_file):
                          gff.start <= start)) or (
                         (gff.end <= end) and (
                          gff.start >= start)):
-                    overlap = min(gff.end, end) - max(gff.start, start)
+                    overlap = min(gff.end, end) - max(gff.start, start) + 1
                     percent = "{0:.0f}%".format((float(overlap) / float(end - start + 1)) * 100)
                     if gff.strand == "+":
                         overlaps["forward"].append(str(overlap) + "(" + str(percent) + ")")
@@ -58,6 +58,12 @@ def check_overlap(table_file, gff_file):
                     else:
                         overlaps["reverse"].append(str(overlap) + "(" + str(percent) + ")")
                         overlaps["CDS_r"].append(import_cds(gff))
+            if len(overlaps["forward"]) == 0:
+                overlaps["forward"] = ["NA"]
+                overlaps["CDS_f"] = ["NA"]
+            if len(overlaps["reverse"]) == 0:
+                overlaps["reverse"] = ["NA"]
+                overlaps["CDS_r"] = ["NA"]
             out.write("\t".join(row[0:19] + [";".join(overlaps["CDS_f"]), ";".join(overlaps["forward"]),
                                              ";".join(overlaps["CDS_r"]), ";".join(overlaps["reverse"])] +
                                 row[21:]) + "\n")
