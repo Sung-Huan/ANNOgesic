@@ -41,7 +41,10 @@ class AssignValue(object):
         if strand == "+":
             self.coverage = float(coverage)
         else:
-            self.coverage = -1 * float(coverage)
+            if float(coverage) < 0:
+                self.coverage = -1 * float(coverage)
+            else:
+                self.coverage = float(coverage)
         self.strand = strand
         self.strain = strain
         self.track = track

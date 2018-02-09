@@ -138,8 +138,9 @@ class Multiparser(object):
                                 os.path.join(tar_merge,
                                              prefix + "_reverse.wig"))
                 else:
-                    print("Error: .wig files should be compose of "
-                          "forward or reverse files.")
+                    print("Error: .wig files is not compose of "
+                          "forward or reverse files or the Seq IDs are no "
+                          "consistent in all gff and fasta files.")
                     sys.exit()
         self.helper.remove_all_content(tar_folder, ".wig", "file")
         self.helper.move_all_content(tar_merge, tar_folder, None)

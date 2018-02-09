@@ -248,8 +248,9 @@ class ArgsContainer(object):
                             os.path.join(merge_folder,
                                          strain + "_reverse.wig"))
             else:
-                print("Error: .wig files should be compose of "
-                      "forward or reverse files.")
+                print("Error: .wig files is not compose of "
+                      "forward or reverse files or the Seq IDs are no "
+                      "consistent in all gff and fasta files.")
                 sys.exit()
         self.helper.remove_all_content(wig_path, ".wig", "file")
         self.helper.move_all_content(merge_folder, wig_path, None)
