@@ -1,6 +1,9 @@
 FAQ
 ===
 
+No matter which kinds of error messages occur, please always make sure **the seq IDs or strain names of 
+all Gff files, fasta files, BAM files and wiggle files must be consistent.**
+
 - **Q1:**
 
 I got the error about complaining no module can be found as following:
