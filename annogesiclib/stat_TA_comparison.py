@@ -371,7 +371,8 @@ def read_tag_file(gff_file, ta_file, c_feature):
                 stats[entry.seq_id]["gene"] += 1
                 stats["All"]["gene"] += 1
         if (entry.feature.lower() != "region") and (
-                entry.feature.lower() != "source"):
+                entry.feature.lower() != "source") and (
+                entry.feature.lower() != "remark"):
             gffs.append(entry)
         else:
             region = entry

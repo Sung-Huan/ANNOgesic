@@ -37,7 +37,8 @@ def read_gffs(gff_files, feature):
                     if (entry.feature != "gene") and (
                             entry.feature != "transcript") and (
                             entry.feature != "source") and (
-                            entry.feature != "region"):
+                            entry.feature != "region") and (
+                            entry.feature != "remark"):
                         if "Parent" in entry.attributes.keys():
                             parent = entry.attributes["Parent"]
                     del_attributes(entry, ["associated_tran", "parent_tran",
@@ -70,7 +71,8 @@ def compare_tran(tran_gffs, other_gffs, fuzzy_tss, fuzzy_term):
                 if (tran.seq_id == other.seq_id) and (
                         tran.strand == other.strand) and (
                         other.feature != "source") and (
-                        other.feature != "region"):
+                        other.feature != "region") and (
+                        other.feature != "remark"):
                     if other.feature == "TSS":
                         if (other.start >= tran.start - fuzzy_tss) and (
                                 other.end <= tran.end + fuzzy_tss):
@@ -135,7 +137,8 @@ def combine_gffs(tran_gffs, other_gffs):
     for num, others in other_gffs.items():
         for other in others:
             if (other.feature == "source") or (
-                    other.feature == "region"):
+                    other.feature == "region") or (
+                    other.feature == "remark"):
                 s_gffs.append(other)
             if not other.attributes["print"]:
                 attributes = {}

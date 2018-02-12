@@ -54,7 +54,8 @@ def deal_overlap(out_folder, source):
                                                x.end, x.strand))
         for final in finals:
             if (final.feature == "region") or (
-                    final.feature == "source"):
+                    final.feature == "source") or (
+                    final.feature == "remark"):
                 out.write(final.info + "\n")
                 break
         for final in finals:

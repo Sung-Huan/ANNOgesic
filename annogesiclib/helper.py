@@ -22,7 +22,8 @@ class Helper(object):
             entry.feature != "region") and (
             entry.feature != "repeat_region") and (
             entry.feature != "transcript") and (
-            entry.feature != "STS"):
+            entry.feature != "STS") and (
+            entry.feature != "remark"):
             utr_markers = r'[^\'\ \-35]'
             for sub_f in entry.feature.lower().split("utr"):
                 match = (re.search(utr_markers, sub_f))
@@ -265,7 +266,8 @@ class Helper(object):
         fh = open(gff_file)
         for entry in self.gff3parser.entries(fh):
             if (entry.feature == "source") or (
-                    entry.feature == "region"):
+                    entry.feature == "region") or (
+                    entry.feature == "remark"):
                 length = entry.end
             else:
                 length = None
@@ -277,7 +279,8 @@ class Helper(object):
         pre_gff = None
         for gff in gffs:
             if (gff.feature != "source") and (
-                    gff.feature != "region"):
+                    gff.feature != "region") and (
+                    gff.feature != "remark"):
                 if length is not None:
                     if gff.end > length:
                         name = "".join([gff.feature, ":", str(gff.start), "-",

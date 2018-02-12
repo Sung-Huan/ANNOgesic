@@ -140,7 +140,8 @@ def fill_gap(gff_file, ta_file, type_, output, modify):
         if (entry.feature != "source") and (
                 entry.feature != "region") and (
                 entry.feature != "repeat_region") and (
-                entry.feature != "STS"):
+                entry.feature != "STS") and (
+                entry.feature != "remark"):
             genes.append(entry)
     gff_f.close()
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))

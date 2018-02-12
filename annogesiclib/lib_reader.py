@@ -16,7 +16,7 @@ def read_libs(input_libs, wig_folder):
                     for line in w_h:
                         line = line.strip()
                         if line.startswith("track"):
-                            name = line.split("=")[-1][1:-1]
+                            name = line.split("=")[-1].replace("\"", "")
                             break
         if name is None:
             print("Error: The {0} can not be found in lib names!!!".format(wig)) 
