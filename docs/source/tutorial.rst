@@ -462,6 +462,7 @@ recommend that the user should provide the libraries of RNA-Seq with transcript 
 of 3'end. However, we only use TEX +/- for testing since we have no fragmented libraries.
 
 There are several options for modifying transcripts by comparing transcripts and genome annotations like CDSs (``--modify_transcript``). 
+By assigning ``--modify_transcript``, transcripts can be merged or extended based on the genome annotations.
 If you want to know the details, please check :ref:`transcript`. Now, we use default setting to run this module: 
 
 ::

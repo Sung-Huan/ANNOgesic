@@ -785,8 +785,8 @@ given gene annotations and several parameters that can be set by the user.
 
 **TSS gff files:** If the user wants to compare transcripts with TSSs, TSS gff files are required.
 
-**Gff files of genome anntations containing CDSs, tRNAs, rRNAs, etc:** If the user wants to compare transcripts with genome annotations or modify transcript by genome annotations like CDSs, tRNAs, rRNAs, 
-genome annotation gff files are required. There are four options for modification of transcripts:
+**Gff files of genome anntations containing CDSs, tRNAs, rRNAs, etc:** If the user wants to compare transcripts with genome annotations or modify transcript based on genome annotations 
+like CDSs, tRNAs, rRNAs, genome annotation gff files are required. There are four options for modification of transcripts:
 
 	**merge_overlap:** If multiple transcripts overlap the same gene, they will be merged as one complete transcript.
 
