@@ -27,9 +27,7 @@ Tools
 
 	`BioPerl <http://www.bioperl.org/wiki/Main_Page>`_:  version higher or equal to 1.6.1.
 
-	`RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal to 1.64.
-Please be attention, before you start to run RATT (annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. It will
-modify the path for execute RATT. If you run ANNOgesic through Docker container, you can skip this step.
+	`RATT <http://www.sanger.ac.uk/resources/software/pagit/>`_ : version higher or equal to 1.64. Please be attention, before you start to run RATT (annotation transfer), run ``source $PAGIT_HOME/sourceme.pagit`` first. It will modify the path for execute RATT. If you run ANNOgesic through Docker container, you can skip this step.
 
 **SNP calling:**
 
@@ -49,15 +47,13 @@ modify the path for execute RATT. If you run ANNOgesic through Docker container,
 
 	`Blast+ <ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/>`_ : version higher or equal to 2.2.28+.
 
-	`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.2. RNAfold, mountain.pl and relplot.pl
-are needed for sRNA prediction.
+	`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.2. RNAfold, mountain.pl and relplot.pl are needed for sRNA prediction.
 
 **Terminator detection:**
 
 	`TranstermHP <http://transterm.cbcb.umd.edu/>`_ : version higher or equal to 2.09.
 
-	`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.2. RNAfold 
-is needed for terminator prediction.
+	`ViennaRNA <http://www.tbi.univie.ac.at/RNA/>`_ : version higher or equal to 2.3.2. RNAfold is needed for terminator prediction.
 
 **Promoter search:**
 
@@ -78,8 +74,7 @@ RNAup, RNAplex, RNAplfold are required for executing many modules of ANNOgesic.
 
 	`Samtools <https://github.com/samtools>`_ : version higher or equal to 1.3.1 (using htslib 1.3.1).
 
-	`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ : version higher or equal to 0.1.9.
-When you install Segemehl, please type 'make all' instead of 'make' after running configure. Otherwise, the testrealign.x won't appear.
+	`Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_ : version higher or equal to 0.1.9. When you install Segemehl, please type 'make all' instead of 'make' after running configure. Otherwise, the testrealign.x won't appear.
 
 **Riboswitch and RNA thermometer identification:**
 
