@@ -105,13 +105,13 @@ Databases
 
 **sRNA detection:**
 
-	`BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ (A suggestion for sRNA prediction)
+	`BSRD <http://www.bac-srna.org/BSRD/index.jsp>`_ (A suggestion for sRNA prediction and can be found `here <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.)
 
 	`nr database <ftp://ftp.ncbi.nih.gov/blast/db/FASTA/>`_
 
 **Riboswitch and RNA thermometer prediction:**
 
-	`Rfam <http://rfam.xfam.org/>`_
+	`Rfam <http://rfam.xfam.org/>`_ (Only including Rfam IDs of riboswitches and RNA thermometers -- the datasets can be found `here <https://github.com/Sung-Huan/ANNOgesic/tree/master/database>`_.)
 
 **GO term identification:**
 
@@ -123,4 +123,4 @@ Databases
 
 **Protein-protein interaction detection:**
 
-	`species.v${VERSION}.txt from STRING <http://string-db.org/cgi/download.pl>`_ ${VERSION} represents the version number.
+	`species.v${VERSION}.txt from STRING <http://string-db.org/cgi/download.pl>`_ (${VERSION} represents the version number.)
