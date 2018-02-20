@@ -467,7 +467,8 @@ def del_repeat_term(terms):
             else:
                 new_terms.append(pre_term)
                 pre_term = term
-    new_terms.append(term)
+    if len(terms) != 0:
+        new_terms.append(term)
     return new_terms
 
 
