@@ -216,7 +216,7 @@ def print_file(classes, total_nums, out_folder, stat):
     for strain, datas in classes.items():
         if (strain == "All_genome") and len(classes) <= 2:
             printed = False
-        if printed:
+        if (printed) and (total_nums[strain]["total"] != 0):
             plot(total_nums[strain], strain, "three_roots",
                  total_nums[strain]["total"], out_folder)
             out_stat.write("{0}:\n".format(strain))

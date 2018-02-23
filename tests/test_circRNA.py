@@ -78,7 +78,7 @@ class TestCircRNA(unittest.TestCase):
         circ.detect_conflict(gffs, circrna, 0, out, out_best, args)
         self.assertEqual(
             out.getvalue(),
-            "circRNA_0\taaa\t+\t100\t467\tAAA_00001\t30\t1.0\t0.8571428571428571\n")
+            "aaa\t+\t100\t467\tAAA_00001\t30\t1.0\t0.8571428571428571\n")
         out.close()
 
     def test_get_circrna(self):
@@ -163,10 +163,10 @@ class Example(object):
         {"ID": "CDS1", "Name": "CDS_1", "locus_tag": "AAA_00002",
          "product": "hypothetical protein"},
         {"ID": "CDS2", "Name": "CDS_2", "locus_tag": "BBB_00001"}]
-    out_file = """ID	Genome	Strand	Start	End	Annotation_overlap	Supported_reads	Supported_reads/Reads_at_start	Supported_reads/Reads_at_end
-circRNA_0	aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571
-circRNA_1	aaa	+	1330	1564	NA	10	0.3333333333333333	0.25
-circRNA_2	bbb	-	30	167	NA	5	1.0	0.8333333333333334"""
+    out_file = """Genome	Strand	Start	End	Annotation_overlap	Supported_reads	Supported_reads/Reads_at_start	Supported_reads/Reads_at_end
+aaa	+	100	467	AAA_00001	30	1.0	0.8571428571428571
+aaa	+	1330	1564	NA	10	0.3333333333333333	0.25
+bbb	-	30	167	NA	5	1.0	0.8333333333333334"""
 
     stat_file = """All genomes:
 	Before filtering:

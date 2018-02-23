@@ -118,7 +118,7 @@ class TestsRNATargetPrediction(unittest.TestCase):
         self.assertEqual("\n".join(datas), '>srna0|aaa|5|8|+\nTAAT')
         datas = import_data(os.path.join(tar_seq, "aaa_target_1.fa"))
         self.assertEqual("\n".join(datas),
-                         '>AAA_000001|cds0|12-16_+\nTAAATTCC')
+                         '>AAA_000001_cds0_12-16_+\nTAAATTCC')
 
     def test_rna_plex(self):
         self.star._run_rnaplex = self.mock.mock_run_rnaplex

@@ -1,5 +1,6 @@
 import os
 import sys
+import csv
 import shutil
 from subprocess import call
 from annogesiclib.multiparser import Multiparser
@@ -136,6 +137,18 @@ class SubLocal(object):
                 prefix, self.endfix_table])),
             None, None, args_sub.fuzzy)
 
+    def _remove_header(self, out_all):
+        out = open(out_all + "_tmp", "w")
+        fh = open(out_all, "r")
+        out.write("\t".join(["#Genome", "Protein", "Strand", "Start",
+                             "End", "Location", "Score"]) + "\n")
+        for row in csv.reader(fh, delimiter='\t'):
+            if row[0] != "#Genome":
+                out.write("\t".join(row) + "\n")
+        out.close()
+        fh.close()
+        shutil.move(out_all + "_tmp", out_all)
+
     def _merge_and_stat(self, gffs, tmp_psortb_path, stat_path, psortb_result):
         for folder in os.listdir(gffs):
             if folder.endswith(".gff_folder"):
@@ -154,6 +167,7 @@ class SubLocal(object):
                             tmp_psortb_path, "_" + self.endfix_table,
                             gff.replace(".gff", ""), None, None)
                     self.helper.merge_file(result, merge_table)
+                self._remove_header(merge_table)
                 self.helper.check_make_folder(os.path.join(stat_path, prefix))
                 stat_sublocal(merge_table,
                               os.path.join(

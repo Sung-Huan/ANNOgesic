@@ -26,7 +26,7 @@ def del_attributes(entry):
 
 def print_file(entry, tran, out):
     if "Parent" in entry.attributes.keys():
-        if str(tran.attributes["ID"]) not in ntry.attributes["Parent"]:
+        if str(tran.attributes["ID"]) not in entry.attributes["Parent"]:
             entry.attributes["Parent"] = ",".join([
                 entry.attributes["Parent"], str(tran.attributes["ID"])])
     else:

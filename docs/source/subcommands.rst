@@ -2485,11 +2485,13 @@ handle them.
       --project_path PROJECT_PATH, -pj PROJECT_PATH
                             Path of the project folder.
       --read_files READ_FILES [READ_FILES ...], -rp READ_FILES [READ_FILES ...]
-                            Paths of read fasta files. ANNOgesic will map the
-                            reads via segemehl (with -S). Required format:
+                            Paths of read fasta or fastq files. ANNOgesic will map
+                            the reads via segemehl (with -S). Required format:
                             $SET_NAME:$READ1,$READ2,... If multiple data sets need
-                            to be assigned, please separated them by spaces. For
-                            using BAM files, please check --bam_files.
+                            to be assigned, please separated them by spaces. The
+                            read files compressed by bz2 or gz files can be
+                            accepted as well. For using BAM files, please check
+                            --bam_files.
       --bam_files BAM_FILES [BAM_FILES ...], -b BAM_FILES [BAM_FILES ...]
                             Path of input BAM files. Required format:
                             $SET_NAME:$BAM1,$BAM2,... . BAM files need to be
@@ -2558,8 +2560,6 @@ Based on this information, we can know the details of the specific circular RNA.
 	**method:** The circular RNA is detected by which method.
 
 **circRNA_tables:** Stores tables of the circular RNAs with more details. The meaning of each column is as following:
-
-	**ID:** ID of this circular RNA.
 
 	**Genome:** Genome name.
 
@@ -2900,9 +2900,9 @@ the supported literature of the protein-protein interaction networks.
                             The name of the input file of the query genomes.
                             Required format: $GFF_FILE:$STRAIN_IN_GFF:$STRAIN_IN_S
                             TRING:$STRAIN_FOR_PUBMED. $GFF_FILE is the name of the
-                            gff file, $STRAIN_IN_GFF is the name of the strain in
-                            the gff file, $STRAIN_IN_STRING is the strain name in
-                            species table of STRING (species.$VERSION.txt), and
+                            gff file, $STRAIN_IN_GFF is the name/ID of the strain
+                            in the gff file, $STRAIN_IN_STRING is the strain name
+                            in species table of STRING (species.$VERSION.txt), and
                             $STRAIN_FOR_PUBMED is the strain name for searching in
                             Pubmed. If the strain is not available in STRING
                             database, it can be relaced by a related strain. For

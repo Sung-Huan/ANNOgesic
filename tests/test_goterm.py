@@ -56,9 +56,11 @@ class TestGetPolyT(unittest.TestCase):
         self.go._merge_files(self.gffs, self.go_folder, self.test_folder)
         out_file = os.path.join(self.go_folder, "test", self.all_strain)
         self.assertTrue(os.path.exists(out_file))
+        data = []
         with open(out_file) as fh:
             for line in fh:
-                self.assertEqual(line, "test1test2")
+                data.append(line)
+        self.assertEqual("".join(data), "Genome	Strand	Start	End	Protein_id	Go_term\ntest1\ntest2\n")
 
 if __name__ == "__main__":
     unittest.main()

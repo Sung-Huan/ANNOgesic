@@ -169,6 +169,7 @@ class sRNATargetPrediction(object):
                     for line in t_f:
                         line = line.strip()
                         if line.startswith(">"):
+#                            line = line.replace("|", "_")
                             num += 1
                         if (num == 100):
                             num = 0

@@ -49,31 +49,39 @@ class CircRNADetection(object):
             time.sleep(5)
 
     def _deal_zip_file(self, read_files):
+        tmp_datas = []
         tmp_reads = []
         for reads in read_files:
-            for read in glob(reads):
+            tmp_datas = reads["files"]
+            for read in reads["files"]:
                 if read.endswith(".bz2"):
                     mod_read = read.replace(".bz2", "")
                     if (".fa" not in mod_read) and (
                             ".fasta" not in mod_read) and (
-                            ".fna" not in mod_read):
+                            ".fna" not in mod_read) and (
+                            ".fq" not in mod_read) and (
+                            ".fastq" not in mod_read):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
-                    tmp_reads.append(mod_read)
-                    print(" ".join(["Unzipping", read]))
+                    tmp_datas.append(mod_read)
+                    print(" ".join(["Uncompressing", read]))
                     call(["bzcat", read], stdout=read_out)
                     read_out.close()
                 elif read.endswith(".gz"):
                     mod_read = read.replace(".gz", "")
                     if (".fa" not in mod_read) and (
                             ".fasta" not in mod_read) and (
-                            ".fna" not in mod_read):
+                            ".fna" not in mod_read) and (
+                            ".fq" not in mod_read) and (
+                            ".fastq" not in mod_read):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
-                    tmp_reads.append(mod_read)
-                    print(" ".join(["Unzipping", read]))
+                    tmp_datas.append(mod_read)
+                    print(" ".join(["Uncompressing", read]))
                     call(["zcat", read], stdout=read_out)
                     read_out.close()
+            tmp_reads.append({"sample": reads["sample"],
+                              "files": tmp_datas})   
         return tmp_reads
 
     def _run_segemehl_fasta_index(self, segemehl_path, fasta_path,
@@ -115,7 +123,9 @@ class CircRNADetection(object):
                     read_name = read.split("/")[-1]
                     if read_name.endswith(".fa") or \
                        read_name.endswith(".fna") or \
-                       read_name.endswith("fasta"):
+                       read_name.endswith(".fasta") or \
+                       read_name.endswith(".fq") or \
+                       read_name.endswith(".fastq"):
                         filename = read_name.split(".")
                         read_prefix = ".".join(filename[:-1])
                         sam_file = "_".join([read_prefix, fasta_prefix + ".sam"])
@@ -163,7 +173,8 @@ class CircRNADetection(object):
     def _run_samtools_merge_sort(self, samtools_path, prefix,
                                  out_folder, bam_datas):
         for bam_data in bam_datas:
-            print("Merging bam files for " + bam_data["sample"])
+            print("Merging bam files for {0} of {1}".format(
+                prefix, bam_data["sample"]))
             sample_bam = os.path.join(out_folder, "_".join([
                 prefix, bam_data["sample"] + ".bam"]))
             if len(bam_data["files"]) <= 1:
@@ -172,12 +183,14 @@ class CircRNADetection(object):
                 file_line = " ".join(bam_data["files"])
                 os.system(" ".join([samtools_path, "merge",
                                     sample_bam, file_line]))
-            print("Sorting bam files for " + bam_data["sample"])
+            print("Sorting bam files for {0} of {1}".format(
+                prefix, bam_data["sample"]))
             sort_sample = os.path.join(out_folder,
                   "_".join([prefix, bam_data["sample"] + "_sort.bam"]))
             call([samtools_path, "sort", "-o", sort_sample, sample_bam])
             os.remove(sample_bam)
-            print("Converting bam files to sam files for " + bam_data["sample"])
+            print("Converting bam files to sam files for {0} of {1}".format(
+                prefix, bam_data["sample"]))
             call([samtools_path, "view", "-h", "-o",
                   sort_sample.replace(".bam", ".sam"), sort_sample])
 
@@ -189,6 +202,9 @@ class CircRNADetection(object):
             for read_data in read_datas:
                 bam_files = []
                 for read in read_data["files"]:
+                    if read.endswith(".gz") or read.endswith(".bz2"):
+                        read = ".".join(
+                                read.split("/")[-1].split(".")[:-1])
                     read_prefix = ".".join(
                         read.split("/")[-1].split(".")[:-1])
                     bam_files.append(os.path.join(
@@ -217,9 +233,6 @@ class CircRNADetection(object):
             os.remove(bam)
         for sam in remove_ones:
             os.remove(sam)
-        if len(tmp_reads) != 0:
-            for read in tmp_reads:
-                os.remove(read)
 
     def _run_testrealign(self, prefix, testrealign_path, out_folder):
         sub_splice_path = os.path.join(self.splice_path, prefix)
@@ -343,7 +356,7 @@ class CircRNADetection(object):
                 sys.exit()
             for file_ in datas[-1].split(","):
                 if not os.path.exists(file_):
-                    print("Error: some files in -bam_files or "
+                    print("Error: some files in --bam_files or "
                           "--read_files do not exist!")
                     sys.exit()
             input_datas.append({"sample": datas[0],
@@ -408,8 +421,8 @@ class CircRNADetection(object):
                                      "fasta", None)
         tmp_reads = []
         if args_circ.read_files:
-            tmp_reads = self._deal_zip_file(args_circ.read_files)
-            align_files, prefixs = self._align(args_circ, read_datas)
+            tmp_reads = self._deal_zip_file(read_datas)
+            align_files, prefixs = self._align(args_circ, tmp_reads)
         else:
             align_files = None
         prefixs = []
@@ -434,4 +447,8 @@ class CircRNADetection(object):
         samples, fa_prefixs = self._merge_bed(
             args_circ.fastas, self.splice_path, args_circ.output_folder)
         self._stat_and_gen_gff(fa_prefixs, samples, args_circ)
+        if len(tmp_reads) != 0:
+            for reads in tmp_reads:
+                for read in reads["files"]:
+                    os.remove(read)
         self._remove_tmp_files(args_circ, fa_prefixs)

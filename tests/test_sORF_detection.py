@@ -16,7 +16,7 @@ get_coverage = copy.deepcopy(sd.get_coverage)
 class Mock_func(object):
 
     def mock_get_coverage(self, inter_datas, wigs, strand,
-                          background, test1, test2):
+                          background, test1, test2, back):
         return "2"
 
     def mock_replicate_comparison(
@@ -68,7 +68,7 @@ class TestsORFDetection(unittest.TestCase):
                 "starts": [str(2)], "ends": [str(10)], "seq": "ATGTA",
                 "type": "3utr", "print": False, "rbs": [1]}
         covers = sd.get_coverage(sorf, self.example.wigs, "+", coverages,
-                                 medianlist, cutoffs)
+                                 medianlist, cutoffs, 10)
         self.assertDictEqual(covers, {'frag_1': [
             {'low': 2, 'avg': 33.4, 'high': 100, 'pos': 2,
              'track': 'track_1', 'type': 'frag'}]})
@@ -190,8 +190,8 @@ class TestsORFDetection(unittest.TestCase):
     def test_assign_utr_cutoff(self):
         coverages = {"3utr": "median", "5utr": 20,
                      "interCDS": 11, "intergenic": 59}
-        medians = {"median": 50, "mean": 20}
-        cutoff =sd.assign_utr_cutoff(coverages, "3utr", medians)
+        medians = {"track": {"median": 50, "mean": 20}}
+        cutoff =sd.assign_utr_cutoff(coverages, "3utr", medians, "track", 10)
         self.assertEqual(cutoff, 50)
 
     def test_get_cutoff(self):
@@ -201,7 +201,7 @@ class TestsORFDetection(unittest.TestCase):
         coverages = {"3utr": "median", "5utr": 20,
                      "interCDS": 11, "intergenic": 59}
         medians = {"aaa": {"3utr": {"track_1": {"median": 50, "mean": 20}}}}
-        cutoff = sd.get_cutoff(sorf, "track_1", coverages, medians)
+        cutoff = sd.get_cutoff(sorf, "track_1", coverages, medians, 10)
         self.assertEqual(cutoff, 50)
 
     def test_get_attribute(self):
@@ -337,6 +337,7 @@ class TestsORFDetection(unittest.TestCase):
         args.min_len = 0
         args.max_len = 300
         args.table_best = True
+        args.background = 10
         sd.coverage_and_output(sorfs, "median", wigs, out_g, out_t,
                                "best", seq, "cover", args, "texs", "final")
         sd.get_coverage = copy.deepcopy(get_coverage)

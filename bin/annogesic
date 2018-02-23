@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.11"
+__version__ = "0.7.12"
 
 def main():
     print("""
@@ -1405,10 +1405,11 @@ def main():
         help="Path of the project folder.")
     circrna_basic.add_argument(
         "--read_files", "-rp", default=None, nargs='+',
-        help="Paths of read fasta files. ANNOgesic will map the reads via "
+        help="Paths of read fasta or fastq files. ANNOgesic will map the reads via "
         "segemehl (with -S). Required format: $SET_NAME:$READ1,$READ2,... "
         "If multiple data sets need to be assigned, please separated them "
-        "by spaces. For using BAM files, please check --bam_files.")
+        "by spaces. The read files compressed by bz2 or gz files can be accepted as well. "
+        "For using BAM files, please check --bam_files.")
     circrna_basic.add_argument(
         "--bam_files", "-b", default=None, nargs='+',
         help="Path of input BAM files. Required format: "
@@ -1751,7 +1752,7 @@ def main():
         help="The name of the input file of the query genomes. "
         "Required format: "
         "$GFF_FILE:$STRAIN_IN_GFF:$STRAIN_IN_STRING:$STRAIN_FOR_PUBMED. "
-        "$GFF_FILE is the name of the gff file, $STRAIN_IN_GFF is the name "
+        "$GFF_FILE is the name of the gff file, $STRAIN_IN_GFF is the name/ID "
         "of the strain in the gff file, $STRAIN_IN_STRING is the strain name "
         "in species table of STRING (species.$VERSION.txt), and "
         "$STRAIN_FOR_PUBMED is the strain name for searching in Pubmed. "

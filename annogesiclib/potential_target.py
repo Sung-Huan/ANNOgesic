@@ -18,14 +18,14 @@ def print_fasta(entry, seq, out, gene):
     else:
         locus = "NA"
     if ("ID" in entry.attributes.keys()):
-        out.write(">{0}|{1}-{2}_{3}\n{4}\n".format(
-                  "|".join([locus,
+        out.write(">{0}_{1}-{2}_{3}\n{4}\n".format(
+                  "_".join([locus,
                             entry.attributes["ID"]]),
                   entry.start, entry.end,
                   entry.strand, seq))
     else:
-        out.write(">{0}|{1}-{2}_{3}\n{4}\n".format(
-                  "|".join([locus, "NA"]) , entry.start, entry.end,
+        out.write(">{0}_{1}-{2}_{3}\n{4}\n".format(
+                  "_".join([locus, "NA"]) , entry.start, entry.end,
                   entry.strand, seq))
 
 

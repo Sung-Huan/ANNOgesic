@@ -260,6 +260,13 @@ class TestConverter(unittest.TestCase):
         datas = import_data(gff_file)
         self.assertEqual(set(datas), set(self.term_file.split("\n")))
 
+    def get_info(datas):
+        f_datas = []
+        for data in datas:
+            if not data.startswith("#"):
+                f_datas.append("\t".join(data.split("\t")[:8]))
+        return f_datas
+
     def test_convert_circ2gff(self):
         circ_file = os.path.join(self.test_folder, "circ.csv")
         out_all = os.path.join(self.test_folder, "all.gff")
@@ -272,9 +279,25 @@ class TestConverter(unittest.TestCase):
         args.support = 5
         self.converter.convert_circ2gff(circ_file, args, out_all, out_filter)
         datas = import_data(out_all)
-        self.assertEqual(set(datas), set(self.circ_all.split("\n")))
+        f_datas = []
+        for data in datas:
+            if not data.startswith("#"):
+                f_datas.append("\t".join(data.split("\t")[:8]))
+        c_datas = []
+        for data in self.circ_all.split("\n"):
+            if not data.startswith("#"):
+                c_datas.append("\t".join(data.split("\t")[:8]))
+        self.assertListEqual(f_datas, c_datas)
         datas = import_data(out_filter)
-        self.assertEqual(set(datas), set(self.circ_best.split("\n")))
+        f_datas = []
+        for data in datas:
+            if not data.startswith("#"):
+                f_datas.append("\t".join(data.split("\t")[:8]))
+        c_datas = []
+        for data in self.circ_best.split("\n"):
+            if not data.startswith("#"):
+                c_datas.append("\t".join(data.split("\t")[:8]))
+        self.assertListEqual(f_datas, c_datas)
 
 class Example(object):
 
@@ -510,11 +533,11 @@ SAOUHSC_00014 NONE"""
 test	TransTermHP	terminator	9676	9705	.	+	.	associated_gene=SAOUHSC_00006;ID=test_terminator0;Name=terminator_00000
 test	TransTermHP	terminator	14156	14177	.	+	.	associated_gene=SAOUHSC_00009;ID=test_terminator1;Name=terminator_00001"""
 
-    circrna_table = """ID	strain	strand	start	end	annotation_overlap	supported_reads	supported_reads/reads_at_start	supported_reads/reads_at_end
-circRNA_0	Staphylococcus_aureus_HG003	+	497897	498038	SAOUHSC_R0007	36	0.56822429906542055	0.52040133779264214
-circRNA_1	Staphylococcus_aureus_HG003	+	492193	495089	NA	32	1.0	1.0
-circRNA_2	Staphylococcus_aureus_HG003	+	492	4956	NA	2	0.5106796116504854	0.11940298507462686
-circRNA_3	Staphylococcus_aureus_HG003	+	23442	49504	NA	52	0.2106796116504854	0.81940298507462686
+    circrna_table = """Genome	strand	start	end	annotation_overlap	supported_reads	supported_reads/reads_at_start	supported_reads/reads_at_end
+Staphylococcus_aureus_HG003	+	497897	498038	SAOUHSC_R0007	36	0.56822429906542055	0.52040133779264214
+Staphylococcus_aureus_HG003	+	492193	495089	NA	32	1.0	1.0
+Staphylococcus_aureus_HG003	+	492	4956	NA	2	0.5106796116504854	0.11940298507462686
+Staphylococcus_aureus_HG003	+	23442	49504	NA	52	0.2106796116504854	0.81940298507462686
 """
 
     circrna_all = """##gff-version 3

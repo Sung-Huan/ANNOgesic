@@ -144,10 +144,10 @@ def read_rnaplex(rnaplex, genes, genomes, features, srnas):
                 start = True
                 count_seq += 1
                 if count_seq == 1:
-                    tags = line[1:].split("|")
-                    target_locus = tags[0]
-                    target_id = tags[1]
-                    detail = tags[-1]
+                    tags = line[1:].split("_")
+                    target_locus = "_".join(tags[:-3])
+                    target_id = tags[-3]
+                    detail = "_".join(tags[-2:])
                     gene_id = get_gene_id(detail, target_id,
                                           genes, genomes, features)
                 elif count_seq == 2:
@@ -172,19 +172,22 @@ def read_rnaup(rnaup, srna_names, srnas, genes, genomes, features):
                 if line[1:] in srna_names:
                     srna = line[1:]
                 else:
-                    tags = line[1:].split("|")
-                    gene_id = get_gene_id(tags[-1], tags[1], genes, genomes,
+                    tags = line[1:].split("_")
+                    target_locus = "_".join(tags[:-3])
+                    target_id = tags[-3]
+                    detail = "_".join(tags[-2:])
+                    gene_id = get_gene_id(detail, target_id, genes, genomes,
                                           features)
                     if srna in srnas["RNAup"].keys():
                         srnas["RNAup"][srna].append({
-                            "target_id": tags[1], "target_locus": tags[0],
-                            "detail": tags[-1], "energy": 0,
+                            "target_id": target_id, "target_locus": target_locus,
+                            "detail": detail, "energy": 0,
                             "gene_id": gene_id})
                     else:
                         srnas["RNAup"][srna] = []
                         srnas["RNAup"][srna].append({
-                            "target_id": tags[1], "target_locus": tags[0],
-                            "detail": tags[-1], "energy": 0,
+                            "target_id": target_id, "target_locus": target_locus,
+                            "detail": detail, "energy": 0,
                             "gene_id": gene_id})
             else:
                 detect_energy(line, srnas["RNAup"][srna][-1])
@@ -197,15 +200,18 @@ def read_intarna(intarna, srnas, genes, genomes, features):
             if inter[0] != "id1":
                 if len(inter) == 9:
                     srna = inter[3]
-                    tags = inter[0].split("|")
+                    tags = inter[0].split("_")
+                    target_locus = "_".join(tags[:-3])
+                    target_id = tags[-3]
+                    detail = "_".join(tags[-2:])
                     if (len(tags[0])) != 0:
-                        gene_id = get_gene_id(tags[-1], tags[1], genes,
+                        gene_id = get_gene_id(detail, target_id, genes,
                                               genomes, features)
                         if srna not in srnas["IntaRNA"].keys():
                             srnas["IntaRNA"][srna] = []
                         srnas["IntaRNA"][srna].append({
-                            "target_id": tags[1], "target_locus": tags[0],
-                            "detail": tags[-1], "energy": float(inter[-1]),
+                            "target_id": target_id, "target_locus": target_locus,
+                            "detail": detail, "energy": float(inter[-1]),
                             "gene_id": gene_id,
                             "tar_pos": ",".join(inter[1:3]),
                             "srna_pos": ",".join(inter[4:6])})
@@ -236,7 +242,7 @@ def get_gene_id(detail, tar_id, genes, gffs, features):
             else:
                 start = int(detail.split("-")[0])
                 end = int(detail.split("-")[-1].split("_")[0])
-                strand = int(detail.split("_")[-1])
+                strand = detail.split("_")[-1]
                 if (gff.start == start) and (gff.end == end) and (
                         gff.strand == strand):
                     tar = gff

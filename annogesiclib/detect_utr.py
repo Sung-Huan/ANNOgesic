@@ -548,6 +548,7 @@ def get_near_cds(cdss, genes, ta, attributes):
     '''Get the associated CDS of terminator'''
     first = True
     detect = False
+    near_cds = None
     for cds in cdss:
         if (ta.seq_id == cds.seq_id) and \
            (ta.strand == cds.strand):
@@ -668,8 +669,9 @@ def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
             if ta.seq_id != pre_seq_id:
                 pre_seq_id = ta.seq_id
                 utr_strain[ta.seq_id] = []
-            num_utr = get_3utr(ta, near_cds, utr_all, utr_strain,
-                               attributes, num_utr, out, args_utr)
+            if near_cds is not None:
+                num_utr = get_3utr(ta, near_cds, utr_all, utr_strain,
+                                   attributes, num_utr, out, args_utr)
     else:
         compare_term_3utr(terms, cdss, genes, utr_all,
                           utr_strain, args_utr, out)

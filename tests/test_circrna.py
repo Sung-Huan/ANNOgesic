@@ -85,8 +85,8 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(out2, self.example.fasta_file)
         os.system("gzip " + out1)
         os.system("bzip2 -z " + out2)
-        reads = self.circ._deal_zip_file([out1 + ".gz", out2 + ".bz2"])
-        self.assertEqual(set(reads), set([out1, out2 + ".fa"]))
+        reads = self.circ._deal_zip_file([{"sample": "all", "files": [out1 + ".gz", out2 + ".bz2"]}])
+        self.assertEqual(reads, [{'sample': 'all', 'files': ['test_folder/test1.fa.gz', 'test_folder/test2.bz2', 'test_folder/test1.fa', 'test_folder/test2.fa']}])
         self.assertTrue(os.path.exists(out1))
         self.assertTrue(os.path.exists(out2 + ".fa"))
 
@@ -196,7 +196,6 @@ class TestCircRNADetection(unittest.TestCase):
                      os.path.join(self.out_folder,
                                   "segemehl_alignment_files", "aaa3.bam")]
         self.circ._combine_read_bam(bam_files, bam_datas, read_datas)
-        print(bam_datas[0])
         self.assertDictEqual(bam_datas[0], {'files': [
             'test_folder/output/segemehl_alignment_files/aaa1.bam', 'aaa2.bam',
             'test_folder/output/segemehl_alignment_files/aaa3.bam'], 'sample': 'aaa'})

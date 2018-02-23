@@ -1,4 +1,5 @@
 import os
+import csv
 import shutil
 from annogesiclib.helper import Helper
 from annogesiclib.multiparser import Multiparser
@@ -43,6 +44,18 @@ class GoTermFinding(object):
             retrieve_uniprot(uniprot, os.path.join(self.gff_path, gff),
                              out_file, tran_file, type_)
 
+    def _remove_header(self, out_all):
+        out = open(out_all + "_tmp", "w")
+        fh = open(out_all, "r")
+        out.write("\t".join(["Genome", "Strand", "Start", "End",
+                             "Protein_id", "Go_term"]) + "\n")
+        for row in csv.reader(fh, delimiter='\t'):
+            if row[0] != "Genome":
+                out.write("\t".join(row) + "\n")
+        out.close()
+        fh.close()
+        shutil.move(out_all + "_tmp", out_all)
+
     def _merge_files(self, gffs, out_path, out_folder):
         '''merge the files according to the input genome folder'''
         folders = []
@@ -64,6 +77,7 @@ class GoTermFinding(object):
                         csv_file = "_".join([filename, "uniprot.csv"])
                         self.helper.merge_file(os.path.join(out_path,
                                                filename, csv_file), out_all)
+                        self._remove_header(out_all)
                         shutil.copy(os.path.join(out_path, filename, csv_file),
                                     folder_path)
                 else:

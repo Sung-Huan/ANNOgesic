@@ -43,8 +43,8 @@ def detect_conflict(gffs, circ, num, out, out_best, args_circ):
                 break
     if detect:
         feature = get_feature(gff)
-        out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-                  "_".join(["circRNA", str(num)]), circ.strain, circ.strand,
+        out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\n".format(
+                  circ.strain, circ.strand,
                   circ.start, circ.end, feature, circ.supported_reads,
                   float(circ.supported_reads) / float(circ.start_site_reads),
                   float(circ.supported_reads) / float(circ.end_site_reads)))
@@ -55,12 +55,12 @@ def detect_conflict(gffs, circ, num, out, out_best, args_circ):
                 start_read >= args_circ.start_ratio) and (
                 end_read >= args_circ.end_ratio):
             out_best.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}"
-                           "\t{6}\t{7}\t{8}\n".format(
-                            "_".join(["circRNA", str(num)]), circ.strain,
+                           "\t{6}\t{7}\n".format(
+                            circ.strain,
                             circ.strand, circ.start, circ.end, "NA",
                             circ.supported_reads, start_read, end_read))
-        out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-                  "_".join(["circRNA", str(num)]), circ.strain, circ.strand,
+        out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\n".format(
+                  circ.strain, circ.strand,
                   circ.start, circ.end, "NA", circ.supported_reads,
                   start_read, end_read))
     return detect
@@ -145,13 +145,13 @@ def get_circrna(circs, gffs, high, out, out_best, args_circ):
 def detect_circrna(input_file, gff_file, output_file, args_circ, statistics):
     circs, gffs, high = read_file(input_file, gff_file, args_circ.hypo)
     out = open(output_file, "w")
-    out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-               "ID", "Genome", "Strand", "Start", "End", "Annotation_overlap",
+    out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\n".format(
+               "Genome", "Strand", "Start", "End", "Annotation_overlap",
                "Supported_reads", "Supported_reads/Reads_at_start",
                "Supported_reads/Reads_at_end"))
     out_best = open(output_file.replace("_all.csv", "_best.csv"), "w")
-    out_best.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(
-               "ID", "Genome", "Strand", "Start", "End", "Annotation_overlap",
+    out_best.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\n".format(
+               "Genome", "Strand", "Start", "End", "Annotation_overlap",
                "Supported_reads", "Supported_reads/Reads_at_start",
                "Supported_reads/Reads_at_end"))
     nums = get_circrna(circs, gffs, high, out, out_best, args_circ)

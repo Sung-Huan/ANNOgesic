@@ -126,6 +126,8 @@ def compare_pre_cds(first, cdss, cds, seq):
     '''Search the front position CDS of the query one 
     to get the pre-CDS region'''
     detect_cds = False
+    start = None
+    end = None
     for pre_cds in cdss:
         if (pre_cds.seq_id == cds.seq_id) and (
                 pre_cds.strand == cds.strand):
@@ -209,7 +211,8 @@ def extract_seq(cdss, seq, tsss, trans, fuzzy, utr):
         if len(tsss) != 0:
             compare_tss(tsss, cds, inters, fuzzy, seq, utr)
         first, start, end = compare_pre_cds(first, cdss, cds, seq)
-        compare_tran(cds, trans, seq, inters, fuzzy, start, end)
+        if (start is not None) and (end is not None):
+            compare_tran(cds, trans, seq, inters, fuzzy, start, end)
     return inters
 
 

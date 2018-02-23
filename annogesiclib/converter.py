@@ -471,20 +471,20 @@ class Converter(object):
         out_f.write("##gff-version 3\n")
         f_h = open(circ_file, "r")
         for row in csv.reader(f_h, delimiter='\t'):
-            if row[0] != "ID":
-                circs.append({"name": row[0], "strain": row[1],
-                              "strand": row[2], "start": int(row[3]),
-                              "end": int(row[4]), "conflict": row[5],
-                              "depth": int(row[6]), "per_start": float(row[7]),
-                              "per_end": float(row[8])})
+            if row[0] != "Genome":
+                circs.append({"strain": row[0],
+                              "strand": row[1], "start": int(row[2]),
+                              "end": int(row[3]), "conflict": row[4],
+                              "depth": int(row[5]), "per_start": float(row[6]),
+                              "per_end": float(row[7])})
         circs = sorted(circs, key=lambda k: (k["strain"], k["start"],
                                              k["end"], k["strand"]))
+        id_ = 0
         for circ in circs:
-            id_ = circ["name"].split("_")[1]
             attribute_string = ";".join(["=".join(items) for items in [
                                            ("ID", circ["strain"] +
-                                            "_circrna" + id_),
-                                           ("name", circ["name"]),
+                                            "_circrna" + str(id_)),
+                                           ("name", "circRNA_" + str(id_)),
                                            ("support_reads",
                                             str(circ["depth"])),
                                            ("read_at_start",
@@ -507,6 +507,7 @@ class Converter(object):
                             str(circ["start"]), str(circ["end"]),
                             ".", circ["strand"], ".",
                             attribute_string]]) + "\n")
+            id_ += 1
         f_h.close()
         out_a.close()
         out_f.close()

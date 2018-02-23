@@ -18,7 +18,7 @@ def check_start_and_end(start, end, covers):
     return c_start, c_end
 
 
-def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
+def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs, min_cutoff):
     high_cover = -1
     low_cover = -1
     sorf_covers = {}
@@ -59,8 +59,8 @@ def get_coverage(sorf, wigs, strand, coverages, medianlist, cutoffs):
                         pos += 1
                     avg = total_cover / float(sorf["end"] - sorf["start"] + 1)
                     if medianlist is not None:
-                        cutoff_cover = get_cutoff(sorf, track,
-                                                  coverages, medianlist)
+                        cutoff_cover = get_cutoff(sorf, track, coverages,
+                                                  medianlist, min_cutoff)
                     else:
                         cutoff_cover = coverages
                     if cutoffs is not None:
@@ -422,37 +422,49 @@ def merge(sorfs, seq):
     return finals
 
 
-def assign_utr_cutoff(coverages, utr_type, medians):
-    if coverages[utr_type] == "median":
-        cutoff = medians["median"]
-    elif coverages[utr_type] == "mean":
-        cutoff = medians["mean"]
+def assign_utr_cutoff(coverages, utr_type, medians, track, min_cutoff):
+    if track in medians.keys():
+        if coverages[utr_type] == "median":
+            cutoff = medians[track]["median"]
+        elif coverages[utr_type] == "mean":
+            cutoff = medians[track]["mean"]
+        else:
+            cutoff = float(coverages[utr_type])
     else:
-        cutoff = float(coverages[utr_type])
+        if (coverages[utr_type] != "median") and (
+                coverages[utr_type] != "mean"):
+            cutoff = float(coverages[utr_type])
+        else:
+            cutoff = min_cutoff
     return cutoff
 
 
-def get_cutoff(sorf, track, coverages, medians):
+def get_cutoff(sorf, track, coverages, medians, min_cutoff):
     if sorf["type"] == "intergenic":
         cutoff_cover = float(coverages["inter"])
     elif sorf["type"] == "antisense":
         cutoff_cover = float(coverages["anti"])
     elif ("5utr" in sorf["type"]) and ("3utr" in sorf["type"]):
         cutoff_utr3 = assign_utr_cutoff(
-                coverages, "3utr", medians[sorf["strain"]]["3utr"][track])
+                coverages, "3utr", medians[sorf["strain"]]["3utr"],
+                track, min_cutoff)
         cutoff_utr5 = assign_utr_cutoff(
-                coverages, "5utr", medians[sorf["strain"]]["5utr"][track])
+                coverages, "5utr", medians[sorf["strain"]]["5utr"],
+                track, min_cutoff)
         cutoff_cover = min(cutoff_utr5, cutoff_utr3)
     elif ("5utr" in sorf["type"]):
         cutoff_cover = assign_utr_cutoff(
-                coverages, "5utr", medians[sorf["strain"]]["5utr"][track])
+                coverages, "5utr", medians[sorf["strain"]]["5utr"],
+                track, min_cutoff)
     elif ("3utr" in sorf["type"]):
         cutoff_cover = assign_utr_cutoff(
-                coverages, "3utr", medians[sorf["strain"]]["3utr"][track])
+                coverages, "3utr", medians[sorf["strain"]]["3utr"],
+                track, min_cutoff)
     elif ("interCDS" in sorf["type"]):
         cutoff_cover = assign_utr_cutoff(
                 coverages, "interCDS",
-                medians[sorf["strain"]]["interCDS"][track])
+                medians[sorf["strain"]]["interCDS"],
+                track, min_cutoff)
     return cutoff_cover
 
 
@@ -782,7 +794,7 @@ def detect_utr_type(inter, utr_type, med_inters, wigs, strand, background):
         inter_datas["start"] = inter.start
         inter_datas["end"] = inter.end
         inter_datas = get_coverage(inter_datas, wigs,
-                                   strand, background, None, None)
+                                   strand, background, None, None, background)
         med_inters[inter.seq_id][utr_type].append(inter_datas)
 
 
@@ -945,10 +957,12 @@ def coverage_and_output(sorfs, mediandict, wigs, out_g, out_t, file_type,
             cutoffs = {}
             if sorf["strand"] == "+":
                 sorf_covers = get_coverage(sorf, wigs["forward"], "+",
-                                           coverages, mediandict, cutoffs)
+                                           coverages, mediandict, cutoffs,
+                                           args_sorf.background)
             else:
                 sorf_covers = get_coverage(sorf, wigs["reverse"], "-",
-                                           coverages, mediandict, cutoffs)
+                                           coverages, mediandict, cutoffs,
+                                           args_sorf.background)
             if len(sorf_covers) != 0:
                 sorf_info = replicate_comparison(
                         args_sorf, sorf_covers, sorf["strand"], "sORF", None,

@@ -248,7 +248,7 @@ class Example(object):
     for index in range(0, 2):
         genes.append(Create_generator(
             gene_dict[index], attributes_gene[index], "gff"))
-    out_rna_txt = """>AAA_00001|cds0|100-150_+
+    out_rna_txt = """>AAA_00001_cds0_100-150_+
 >srna1023
 ((((((&)))))) 571,576 :  20,25  (-5.30 = -7.89 +  0.18 +  2.41)"""
     out_print = """sRNA	Genome	sRNA_position	sRNA_interacted_position_RNAplex	sRNA_strand	Target_gene_ID	Target_ID	Target_locus_tag	Target_position	Target_interacted_position_RNAplex	Target_strand	Energy_RNAplex	Rank_RNAplex
@@ -257,17 +257,17 @@ sRNA_2	aaa	3544-6517	6508-6516	-	gene0	cds0	AAA_00001	100-150	89-50	+	-23.5	1
 sRNA_2	aaa	3544-6517	6508-6516	-	gene2	cds2	AAA_00003	2348-2934	2337-50	+	-6.5	2
 sRNA_0	aaa	6-15	7-15	+	gene0	cds0	AAA_00001	100-150	89-50	+	-6.5	1"""
     rnaup = """>srna0
->AAA_00001|cds0|100-150_+
+>AAA_00001_cds0_100-150_+
 .(((((&))))). 571,576 :  20,25  (-4.87 = -8.00 + 0.31 + 2.81)
 AACCUC&GGGGUU
->AAA_00003|cds1|2348-2934_+
+>AAA_00003_cds1_2348-2934_+
 (((..((((((((((((&)))))))))))).)))  14,30  :  11,26  (-5.91 = -13.15 + 4.20 + 3.05)
 GAAGAUCCUAUUUUUAA&UUAAAAAUGGGGGUUC
 """
-    rnaplex = """>AAA_00001|cds0|100-150_+
+    rnaplex = """>AAA_00001_cds0_100-150_+
 >srna0
 ((((((&)))))) 571,576 :  20,25  (-5.30 = -7.89 +  0.18 +  2.41)
->AAA_00001|cds0|100-150_+
+>AAA_00001_cds0_100-150_+
 >srna1
 ((((((((&)))))))) 163,170 :  24,31  (-1.91 = -8.31 +  0.60 +  5.80)
 """    
