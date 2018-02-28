@@ -106,11 +106,11 @@ to detect transcript boundary. Thus, the genomic features which are related to t
 transcripts, sRNAs, sORFs, operon, terminators, etc. Although the 3'end of transcripts may be not clear, the genomic feature detections 
 of ANNOgesic still show high performances by comparing to the previously published data.
 
-- **Q7:**
+- **Q8:**
 
 An error message related to 'defined(@array)' shows when I run annotation_transfer.
 
-- **A7:**
+- **A8:**
 
 This issue is caused by different version of Perl. RATT is written by the old version of Perl. 
 Please do the following steps to fix this error.
