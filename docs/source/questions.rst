@@ -1,3 +1,5 @@
+.. _FAQ:
+
 FAQ
 ===
 
@@ -103,3 +105,18 @@ Actually, all the genomic features can be detected by only using dRNA-Seq data. 
 to detect transcript boundary. Thus, the genomic features which are related to transcript boundary will be influenced, such as 
 transcripts, sRNAs, sORFs, operon, terminators, etc. Although the 3'end of transcripts may be not clear, the genomic feature detections 
 of ANNOgesic still show high performances by comparing to the previously published data.
+
+- **Q7:**
+
+An error message related to 'defined(@array)' shows when I run annotation_transfer.
+
+- **A7:**
+
+This issue is caused by different version of Perl. RATT is written by the old version of Perl. 
+Please do the following steps to fix this error.
+
+1. Download RATT via `PAGIT <http://www.sanger.ac.uk/resources/software/pagit/>`_
+2. Set environment path.
+3. Run sed -i '244s/defined//' $RATT_FOLDER/main.ratt.pl && sed -i '19s/$PAGIT_HOME/\/usr/' $RATT_FOLDER/start.ratt.sh (Please specify the folder of your RATT to $RATT_FOLDER)
+
+We also suggest the user running ANNOgesic via our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_. This issue was fixed in our Docker image.

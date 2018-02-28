@@ -260,7 +260,8 @@ target genome -- NC_test.1 and test_case2.
 Before we running this subcommand, we have to modify environment paths of `RATT <http://ratt.sourceforge.net/>`_. 
 If you run ANNOgesic in docker container, the path is already set. 
 Otherwise, please check 
-`RATT <http://ratt.sourceforge.net/>`_ to set your environment paths properly.
+`RATT <http://ratt.sourceforge.net/>`_ to set your environment paths properly. Moreover, if 
+the error message related to 'defined(@array)' occurs, please check :ref:`FAQ`.
 
 After setting the environment, we can try it.
 

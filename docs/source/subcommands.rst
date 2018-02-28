@@ -278,6 +278,7 @@ is integrated in ANNOgesic. The higher similarity between closely related genome
 the more precise the performance is. Before running ``annotation transfer``, 
 please run ``source $PAGIT_HOME/sourceme.pagit`` first. it will modify the path for executing RATT. 
 If you use Dockerfile to execute ANNOgesic, the path modification can be skipped.
+If the error message related to 'defined(@array)' shows, please check :ref:`FAQ`.
 
 - **Required tools**
 
