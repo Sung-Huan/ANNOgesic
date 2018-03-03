@@ -2326,8 +2326,8 @@ TSS gff files with TSS types will be stored here.
 operon (Operon detection)
 -------------------------
 
-``operon`` will group TSSs, genes/CDSs/tRNAs/rRNAs, transcripts, terminators and UTRs to operons and 
-sub-operons.
+``operon`` will search operons and sub-operons based on TSSs, transcripts, and genes. If the transcripts 
+are not associated with genes, they would not be counted as operons.
 
 - **Required files**
 
@@ -2341,10 +2341,6 @@ sub-operons.
 
 **Gff files of the terminators**
 
-**Gff files of the 5'UTRs**
-
-**Gff files of the 3'UTRs**
-
 - **Basic arguments**
 
 ::
@@ -2354,8 +2350,6 @@ sub-operons.
                             --annotation_files ANNOTATION_FILES
                             [ANNOTATION_FILES ...] --transcript_files
                             TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
-                            [--utr5_files UTR5_FILES [UTR5_FILES ...]]
-                            [--utr3_files UTR3_FILES [UTR3_FILES ...]]
                             [--terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...]]
                             [--additional arguments]
     
@@ -2367,16 +2361,10 @@ sub-operons.
       --annotation_files ANNOTATION_FILES [ANNOTATION_FILES ...], -g ANNOTATION_FILES [ANNOTATION_FILES ...]
                             Paths of the genome annotation gff files containing
                             CDSs, tRNAs, rRNAs etc. Gff files of TSSs,
-                            transcripts, terminators, 5'UTRs, and 3'UTRs need to
-                            be separately assigned to --tss_files,
-                            --transcript_files, --terminator_files, --utr5_files,
-                            and --utr3_files, respectively.
+                            transcripts, terminators, need to be separately
+                            assigned to --tss_files, --transcript_files,
       --transcript_files TRANSCRIPT_FILES [TRANSCRIPT_FILES ...], -a TRANSCRIPT_FILES [TRANSCRIPT_FILES ...]
                             Paths of the transcript gff files.
-      --utr5_files UTR5_FILES [UTR5_FILES ...], -u5 UTR5_FILES [UTR5_FILES ...]
-                            Paths of the 5'UTR gff files.
-      --utr3_files UTR3_FILES [UTR3_FILES ...], -u3 UTR3_FILES [UTR3_FILES ...]
-                            Paths of the 3'UTR gff files.
       --terminator_files TERMINATOR_FILES [TERMINATOR_FILES ...], -e TERMINATOR_FILES [TERMINATOR_FILES ...]
                             Paths of terminator gff files.
 
@@ -2403,9 +2391,7 @@ sub-operons.
 
 Output files are stored in ``$ANNOgesic/output/operons``. The output folders are as following:
 
-**gffs:** Stores gff files which are integrated the information of TSSs, annotations, 
-transcripts, 5'UTRs, and 3'UTRs and assign parent transcript to all features (presented by 
-**Parent** in attributes of gff files).
+**gffs:** The gff files of operons. **associated_gene** shows the genes located in the operon.
 
 **tables:** The tables of operons which store all information of operons and sub-operons.
 

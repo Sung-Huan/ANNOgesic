@@ -626,17 +626,14 @@ class Controller(object):
         print("Running operon detection")
         self.check_multi_files(
                 [self._args.tss_files, self._args.annotation_files,
-                 self._args.transcript_files, self._args.utr5_files,
-                 self._args.utr3_files, self._args.terminator_files],
+                 self._args.transcript_files, self._args.terminator_files],
                 ["--tss_files", "--annotation_files",
-                 "--transcript_files", "--utr5_files",
-                 "--utr3_files", "--terminator_files"])
+                 "--transcript_files", "--terminator_files"])
         project_creator.create_subfolders(
             self._paths.required_folders("operon"))
         args_op = self.args_container.container_operon(
             self._args.tss_files, self._args.annotation_files,
-            self._args.transcript_files, self._args.utr5_files,
-            self._args.utr3_files, self._args.terminator_files,
+            self._args.transcript_files, self._args.terminator_files,
             self._args.tss_tolerance, self._args.terminator_tolerance,
             self._args.min_length, self._paths.operon_output_folder,
             self._paths.operon_statistics_folder)

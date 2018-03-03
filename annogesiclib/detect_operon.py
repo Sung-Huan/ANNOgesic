@@ -245,7 +245,16 @@ def read_gff(ta_file, gff_file, tss_file, terminator_file):
 
 
 def print_file(ta, operons, out, operon_id, whole_operon, tsss,
-               terms, genes, whole_gene):
+               terms, genes, whole_gene, out_g):
+    attribute_string = ";".join(
+             ["=".join(items) for items in [
+              ("ID", "_".join([ta.seq_id, operon_id.replace("_", "")])),
+              ("Name", operon_id),
+              ("associated_gene", ",".join(whole_gene))]])
+    out_g.write("{0}\tANNOgesic\toperon\t{1}"
+                "\t{2}\t.\t{3}\t.\t{4}\n".format(
+                    ta.seq_id, str(whole_operon.start), str(whole_operon.end),
+                    whole_operon.strand, attribute_string))
     if len(operons) <= 1:
         out.write("\t".join([operon_id, ta.seq_id,
                   "-".join([str(whole_operon.start), str(whole_operon.end)]),
@@ -283,9 +292,11 @@ def print_file(ta, operons, out, operon_id, whole_operon, tsss,
 
 
 def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
-           term_fuzzy, min_length, out_file):
+           term_fuzzy, min_length, out_file, out_gff):
     '''main part for detection of operon'''
     out = open(out_file, "w")
+    out_g = open(out_gff, "w")
+    out_g.write("##gff-version 3\n")
     out.write("Operon_ID\tGenome\tOperon_position\tStrand\t")
     out.write("Number_of_suboperon\tPosition_of_suboperon\tStart_with_TSS\t")
     out.write("Number_of_TSS\tTerminated_with_terminator\t")
@@ -302,7 +313,6 @@ def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
         if (math.fabs(ta.start - ta.end) >= min_length):
             whole_operon = ta
             check_operon = True
-            num_operon += 1
         genes = detect_features(ta, gffs, "gene", term_fuzzy, tss_fuzzy)
         if len(tss_gffs) != 0:
             tsss = detect_features(ta, tss_gffs, "tss", term_fuzzy, tss_fuzzy)
@@ -313,7 +323,6 @@ def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
         else:
             terms = detect_features(ta, term_gffs, "term",
                                     term_fuzzy, tss_fuzzy)
-        operon_id = "Operon" + str(num_operon)
         if len(tss_gffs) != 0:
             if ta.strand == "+":
                 operons = sub_operon(ta.strand, tsss, ta.start,
@@ -329,10 +338,14 @@ def operon(ta_file, tss_file, gff_file, terminator_file, tss_fuzzy,
         else:
             whole_gene.append("NA")
         if check_operon:
-            if len(tss_gffs) != 0:
-                print_file(ta, operons, out, operon_id, whole_operon,
-                           tsss, terms, genes, whole_gene)
-            else:
-                print_file(ta, operons, out, operon_id, ta,
-                           tsss, terms, genes, whole_gene)
+            if whole_gene != ["NA"]:
+                operon_id = "Operon" + str(num_operon)
+                num_operon += 1
+                if len(tss_gffs) != 0:
+                    print_file(ta, operons, out, operon_id, whole_operon,
+                               tsss, terms, genes, whole_gene, out_g)
+                else:
+                    print_file(ta, operons, out, operon_id, ta,
+                               tsss, terms, genes, whole_gene, out_g)
     out.close()
+    out_g.close()

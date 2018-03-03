@@ -221,8 +221,6 @@ operon_detection(){
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        -u5 $ANNOGESIC_FOLDER/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff \
-        -u3 $ANNOGESIC_FOLDER/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff \
         -e $ANNOGESIC_FOLDER/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
         -pj $ANNOGESIC_FOLDER
 }

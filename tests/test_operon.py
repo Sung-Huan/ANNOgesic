@@ -13,7 +13,7 @@ from mock_args_container import MockClass
 class Mock_func(object):
 
     def mock_operon(self, tran, tss, gff, term, tss_fuzzy,
-                    term_fuzzy, length, out_table):
+                    term_fuzzy, length, out_table, out_gff):
         gen_file(out_table, "test")
 
     def mock_stat(self, table, out_stat):
@@ -88,21 +88,6 @@ class TestOperonDetection(unittest.TestCase):
         self.operon._stat(os.path.join(self.output, "tables"), self.stat)
         self.assertTrue(os.path.exists(os.path.join(
             self.stat, "stat_test_operon.csv")))
-
-    def test_combine_gff(self):
-        op.combine_gff = self.mock.mock_combine_gff
-        gen_file(os.path.join(self.tsss, "tmp", "test_TSS.gff"), "test")
-        gen_file(os.path.join(self.trans, "tmp", "test_transcript.gff"), "test")
-        gen_file(os.path.join(self.gffs, "test.gff"), "test")
-        gen_file(os.path.join(self.utr5s, "tmp", "test_5UTR.gff"), "test")
-        gen_file(os.path.join(self.utr3s, "tmp", "test_3UTR.gff"), "test")
-        args = self.mock_args.mock()
-        args.gffs = self.out_gff
-        args.term_fuzzy = 3
-        args.tss_fuzzy = 3
-        self.operon._combine_gff(["test"], args)
-        self.assertTrue(os.path.exists(os.path.join(
-            self.out_gff, "test_operon.gff")))
 
 if __name__ == "__main__":
     unittest.main()

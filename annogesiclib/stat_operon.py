@@ -32,7 +32,7 @@ def plus_num(num_total, strain, type_):
 
 def print_stat(operons, total_num, class_operon, out):
     num_features = {}
-    out.write("Total number of Operons is {0}\n".format(total_num))
+    out.write("Total number of operons is {0}\n".format(total_num))
     out.write("The sub operon and features:\n")
     for operon in operons:
         for it in range(1, 5):
@@ -56,9 +56,6 @@ def print_stat(operons, total_num, class_operon, out):
         out.write("\tthe number of operons which {0} = {1} ({2})\n".format(
                   key, value, float(value) / float(total_num)))
     out.write("mono/polycistronic:\n")
-    out.write("\tno associated with genes/CDSs: {0} ({1})\n".format(
-              class_operon["na"],
-              float(class_operon["na"]) / float(class_operon["total"])))
     out.write("\tmonocistronic: {0} ({1})\n".format(
               class_operon["mono"],
               float(class_operon["mono"]) / float(class_operon["total"])))

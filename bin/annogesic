@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.13"
+__version__ = "0.7.14"
 
 def main():
     print("""
@@ -1364,18 +1364,11 @@ def main():
         "--annotation_files", "-g", required=True, nargs='+',
         help="Paths of the genome annotation gff files containing CDSs, "
         "tRNAs, rRNAs etc. Gff files of TSSs, transcripts, terminators, "
-        "5'UTRs, and 3'UTRs need to be separately assigned to --tss_files, "
-        "--transcript_files, --terminator_files, --utr5_files, and "
-        "--utr3_files, respectively.")
+        "need to be separately assigned to --tss_files, "
+        "--transcript_files, --terminator_files, respectively.")
     operon_basic.add_argument(
         "--transcript_files", "-a", required=True, nargs='+',
         help="Paths of the transcript gff files.")
-    operon_basic.add_argument(
-        "--utr5_files", "-u5", default=None, nargs='+',
-        help="Paths of the 5'UTR gff files.")
-    operon_basic.add_argument(
-        "--utr3_files", "-u3", default=None, nargs='+',
-        help="Paths of the 3'UTR gff files.")
     operon_basic.add_argument(
         "--terminator_files", "-e", default=None, nargs='+',
         help="Paths of terminator gff files.")

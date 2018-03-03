@@ -601,12 +601,12 @@ detect operons and suboperons by executing subcommand ``operon``.
         --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
         --project_path ANNOgesic
 
-Three folders will be generated to store gff files, tables and statistics files.
+Three folders will be generated to store table and statistics files.
 
 ::
 
     $ ls ANNOgesic/output/operons/
-    gffs  statistics  tables
+    gffs  statistics  tables 
     $ ls ANNOgesic/output/operons/gffs/
     NC_009839.1_operon.gff
     $ ls ANNOgesic/output/operons/tables/

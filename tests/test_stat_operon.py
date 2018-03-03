@@ -54,9 +54,6 @@ class TestStatOpern(unittest.TestCase):
                     'have sub-operons': True,
                     'have no sub-operons': False}]
         so.print_stat(operons, 100, class_operon, out)
-        na = out.getvalue().split(
-            "no associated with genes/CDSs: ")[-1].split(" (0.2)")[0]
-        self.assertEqual(na, "20")
         na = out.getvalue().split("monocistronic: ")[-1].split(" (0.7)")[0]
         self.assertEqual(na, "70")
         na = out.getvalue().split("polycistronic: ")[-1].split(" (0.1)")[0]

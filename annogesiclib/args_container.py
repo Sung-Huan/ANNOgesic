@@ -1143,7 +1143,7 @@ class ArgsContainer(object):
         return self
 
     def container_operon(self, TSS_files, annotation_files,
-                         transcript_files, UTR5_files, UTR3_files,
+                         transcript_files,
                          term_files, TSS_fuzzy, term_fuzzy, min_length,
                          operon_output_folder, operon_statistics_folder):
         self.tsss = self._gen_copy_new_folder(
@@ -1155,12 +1155,6 @@ class ArgsContainer(object):
         self.trans = self._gen_copy_new_folder(
                 [".gff"], operon_output_folder, "tmp_ta",
                 transcript_files, ["--transcript_files"])
-        self.utr5s = self._gen_copy_new_folder(
-                [".gff"], operon_output_folder, "tmp_utr5",
-                UTR5_files, ["--utr5_files"])
-        self.utr3s = self._gen_copy_new_folder(
-                [".gff"], operon_output_folder, "tmp_utr3",
-                UTR3_files, ["--utr3_files"])
         self.terms = self._gen_copy_new_folder(
                 [".gff"], operon_output_folder, "tmp_term",
                 term_files, ["--term_files"])

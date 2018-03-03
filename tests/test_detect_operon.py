@@ -121,8 +121,9 @@ class TestDetectOperon(unittest.TestCase):
     def test_operon(self):
         op.read_gff = Mock_func().mock_read_gff
         out_file = os.path.join(self.test_folder, "test.out")
+        out_g = os.path.join(self.test_folder, "test.gff")
         op.operon("test_ta", "test_tss", "test_gff", "test_term", 3,
-                  5, 5, out_file)
+                  5, 5, out_file, out_g)
         datas = import_data(out_file)
         self.assertEqual(set(datas), set(self.example.out_file.split("\n")))
 
@@ -203,9 +204,9 @@ class Example(object):
         {"ID": "cds2", "Name": "CDS_2", "locus_tag": "BBB_00002",
          "protein_id": "YP_000003"}]
     out_file = """Operon_ID	Genome	Operon_position	Strand	Number_of_suboperon	Position_of_suboperon	Start_with_TSS	Number_of_TSS	Terminated_with_terminator	Number_of_terminator	Number_of_gene_associated_suboperon	Number_of_gene_associated_operon	Associated_genes_with_suboperon	Associated_genes_with_whole_operon
-Operon1	aaa	140-367	+	0	NA	True	2	True	1	NA	2	NA	AAA_00001, AAA_00002
-Operon2	aaa	230-240	+	0	NA	True	1	False	0	NA	2	NA	AAA_00001, AAA_00002
-Operon3	bbb	430-5167	-	0	NA	True	1	True	1	NA	1	NA	BBB_00001"""
+Operon0	aaa	140-367	+	0	NA	True	2	True	1	NA	2	NA	AAA_00001, AAA_00002
+Operon1	aaa	230-240	+	0	NA	True	1	False	0	NA	2	NA	AAA_00001, AAA_00002
+Operon2	bbb	430-5167	-	0	NA	True	1	True	1	NA	1	NA	BBB_00001"""
 
     tas = []
     tsss = []
