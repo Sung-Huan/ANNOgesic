@@ -157,6 +157,7 @@ def print_gff(gffs, o_gffs, s_gffs, output):
     sort_others = sorted(o_gffs, key=lambda x: (x.seq_id, x.start,
                                                 x.end, x.strand))
     out = open(output, "w")
+    out.write("##gff-version 3\n")
     if len(gffs) != 0:
         pre_strain = None
         for gff in gffs:
