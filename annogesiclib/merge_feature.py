@@ -60,8 +60,9 @@ def assign_parent(other, tran):
     if "Parent" not in other.attributes.keys():
         other.attributes["Parent"] = tran.attributes["ID"]
     else:
-        other.attributes["Parent"] = ",".join([
-            other.attributes["Parent"], tran.attributes["ID"]])
+        if tran.attributes["ID"] not in other.attributes["Parent"].split(","):
+            other.attributes["Parent"] = ",".join([
+                other.attributes["Parent"], tran.attributes["ID"]])
 
 
 def compare_tran(tran_gffs, other_gffs, fuzzy_tss, fuzzy_term):
@@ -121,19 +122,20 @@ def combine_gffs(tran_gffs, other_gffs):
             gffs.append(tran)
             for num, others in other_gffs.items():
                 for other in others:
-                    if tran.seq_id == other.seq_id:
-                        if "Parent" in other.attributes.keys():
-                            attributes = {}
-                            for key, value in other.attributes.items():
-                                if key != "print":
-                                    attributes[key] = value
-                            if (tran.attributes["ID"] in 
-                                    other.attributes["Parent"].split(",")):
-                                other.attribute_string = ";".join(
-                                    ["=".join(items) for items in 
-                                        attributes.items()])
-                                other.attributes["print"] = True
-                                gffs.append(other)
+                    if not other.attributes["print"]:
+                    	if tran.seq_id == other.seq_id:
+                    	    if "Parent" in other.attributes.keys():
+                    	        attributes = {}
+                    	        for key, value in other.attributes.items():
+                    	            if key != "print":
+                    	                attributes[key] = value
+                    	        if (tran.attributes["ID"] in 
+                    	                other.attributes["Parent"].split(",")):
+                    	            other.attribute_string = ";".join(
+                    	                ["=".join(items) for items in 
+                    	                    attributes.items()])
+                    	            other.attributes["print"] = True
+                    	            gffs.append(other)
     for num, others in other_gffs.items():
         for other in others:
             if (other.feature == "source") or (
