@@ -583,7 +583,8 @@ class Controller(object):
             self._args.replicate_tex, self._args.replicate_frag,
             self._args.srna_files,
             self._args.start_codon, self._args.stop_codon,
-            self._args.cutoff_base_coverage, self._args.tolerance_rbs,
+            self._args.cutoff_base_coverage, self._args.rbs_seq,
+            self._args.tolerance_rbs,
             self._args.rbs_not_after_tss, self._args.print_all_combination,
             self._args.best_no_srna, self._args.best_no_tss,
             self._args.ignore_hypothetical_protein,
@@ -863,7 +864,8 @@ class Controller(object):
             self._args.rfam_path, ribos_path,
             thermo_path, self._args.cutoff,
             self._args.output_all, self._paths.database_folder,
-            self._args.tolerance,
+            self._args.tolerance, self._args.without_rbs,
+            self._args.rbs_seq,
             self._args.tolerance_rbs, self._args.utr_length)
         ribos = Ribos(args_ribo)
         ribos.run_ribos(args_ribo)

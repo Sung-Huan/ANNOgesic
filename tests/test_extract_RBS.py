@@ -39,6 +39,8 @@ class TestExtractRBS(unittest.TestCase):
         args.end_rbs = 14
         args.start_rbs = 5
         args.fuzzy_rbs = 2
+        args.without_rbs = False
+        args.rbs_seq = ["AGGAGG"]
         ribos = er.detect_site(inters, args)
         self.assertListEqual(ribos, [
             {'seq': 'ATGGTGACCCAGGAGGTTGATCCCAGACGTAGGACCTGTTT'},

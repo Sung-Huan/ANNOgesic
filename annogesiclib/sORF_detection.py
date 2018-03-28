@@ -90,36 +90,31 @@ def import_sorf(inter, sorfs, start, end, type_, fasta, rbs):
 def detect_rbs_site(fasta, start, inter, args_sorf):
     '''detect the ribosome binding site'''
     detect = []
-    pre_miss = 5
-    for nts in range(0, start):
-        num = 0
-        miss = 0
-        for nt in fasta[nts:nts + 6]:
-            if miss > args_sorf.fuzzy_rbs:
-                break
-            else:
-                if (num == 0) and (nt != "A"):
-                    miss += 1
-                elif (num == 1) and (nt != "G"):
-                    miss += 1
-                elif (num == 2) and (nt != "G"):
-                    miss += 1
-                elif (num == 3) and (nt != "A"):
-                    miss += 1
-                elif (num == 4) and (nt != "G"):
-                    miss += 1
-                elif (num == 5) and (nt != "G"):
-                    miss += 1
-                num += 1
-        if miss <= args_sorf.fuzzy_rbs:
-            if (miss <= pre_miss):
-                if miss < pre_miss:
-                    detect = []
-                if inter.strand == "+":
-                    detect.append(inter.start + nts)
+    for ribo_seq in args_sorf.rbs_seq:
+        pre_miss = len(ribo_seq)
+        get = False
+        for nts in range(0, start):
+            num = 0
+            miss = 0
+            for index in range(len(ribo_seq)):
+                if miss > args_sorf.fuzzy_rbs:
+                    break
                 else:
-                    detect.append(inter.start + (len(fasta) - nts) - 1)
-                pre_miss = miss
+                    if fasta[nts:(nts + len(ribo_seq))][index] != ribo_seq[index]:
+                        miss += 1
+            if (miss <= args_sorf.fuzzy_rbs) and (
+                    len(fasta[nts:(nts + len(ribo_seq))]) >= len(ribo_seq)):
+                get = True
+                if (miss <= pre_miss):
+                    if miss < pre_miss:
+                        detect = []
+                    if inter.strand == "+":
+                        detect.append(inter.start + nts)
+                    else:
+                        detect.append(inter.start + (len(fasta) - nts) - 1)
+                    pre_miss = miss
+        if get:
+            break
     if len(detect) == 0:
         detect = ["NA"]
     return detect

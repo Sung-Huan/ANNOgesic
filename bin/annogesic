@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.16"
+__version__ = "0.7.17"
 
 def main():
     print("""
@@ -1247,9 +1247,14 @@ def main():
         help="Include the sORFs which are not associated with ribosome "
         "binding site to the high-confidence sORF list. Default is False.")
     sORF_add.add_argument(
+        "--rbs_seq", "-rs", default=["AGGAGG"], nargs='+',
+        help="The sequence of ribosome binding site. If multiple sequences "
+        "need to be assigned, please use space to split them. "
+        "Default is AGGAGG.")
+    sORF_add.add_argument(
         "--tolerance_rbs", "-tr", default=2, type=int,
         help="The number of nucleotides of ribosome binding sites allowed "
-        "to be different from AGGAGG. Default is 2.")
+        "to be different from --rbs_seq. Default is 2.")
     sORF_add.add_argument(
         "--tolerance_3end", "-t3", default=30, type=int,
         help="The number of nucleotides can be extended from the end of "
@@ -1891,9 +1896,18 @@ def main():
         "thermometers will be extended by this value (nucleotides) for "
         "extracting the sequences to search in Rfam. Default is 10.")
     ribos_add.add_argument(
+        "--without_rbs", "-wr", default=False, action="store_true",
+        help="Running the prediction without considering ribosome binding site."
+        "Default is False.")
+    ribos_add.add_argument(
+        "--rbs_seq", "-rs", default=["AGGAGG"], nargs='+',
+        help="The sequences of ribosome binding site. If the multiple sequences "
+        "needs to be assigned, please use space to split them. Default is AGGAGG.")
+    ribos_add.add_argument(
         "--tolerance_rbs", "-tr", default=2, type=int,
         help="The number of nucleotides of ribosome binding site "
-        "allow to be different with AGGAGG. Default is 2.")
+        "allow to be different with --rbs_seq. It works only when --without_rbs "
+        "is True. Default is 2.")
     ribos_parser.set_defaults(func=Ribos)
     
     # Parameters of CRISPR finder

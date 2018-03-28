@@ -928,12 +928,13 @@ class ArgsContainer(object):
                        cutoff_antisense_coverage, cutoff_5utr_coverage,
                        cutoff_3utr_coverage, cutoff_interCDS_coverage,
                        fasta_files, tex_notex_libs, frag_libs, tex_notex,
-                       replicates_tex, replicates_frag,
-                       sRNA_files, start_codon, stop_codon, cutoff_background,
+                       replicates_tex, replicates_frag, sRNA_files,
+                       start_codon, stop_codon, cutoff_background, rbs_seq,
                        fuzzy_rbs, rbs_not_after_TSS, print_all_combination,
                        best_no_sRNA, best_no_TSS, ignore_hypothetical_protein,
                        min_rbs_distance, max_rbs_distance, extend_3, extend_5):
         self.out_folder = sorf_folder
+        self.rbs_seq = rbs_seq
         self.extend_3 = extend_3
         self.extend_5 = extend_5
         self.utr_detect = UTR_derived_sORF
@@ -1224,8 +1225,11 @@ class ArgsContainer(object):
                         riboswitch_ID, annotation_files, fasta_files,
                         tss_files, transcript_files, Rfam, ribos_output_folder,
                         thermo_output_folder, cutoff, output_all,
-                        database_folder, fuzzy, fuzzy_rbs, UTR_length):
+                        database_folder, fuzzy, without_rbs, rbs_seq,
+                        fuzzy_rbs, UTR_length):
         self.program = program
+        self.without_rbs = without_rbs
+        self.rbs_seq = rbs_seq
         if (program.lower() == "riboswitch") or (
                 program.lower() == "both"):
             output = ribos_output_folder

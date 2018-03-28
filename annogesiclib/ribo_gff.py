@@ -134,6 +134,7 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat,
     pre_strain = ""
     stats["total"] = {"total": 0}
     num = 0
+    strain = None
     ribos, rfams = read_file(ribo_table, rfam_table)
     out = open(gff_file, "w")
     out.write("##gff-version 3\n")
@@ -173,6 +174,11 @@ def stat_and_covert2gff(ribo_table, rfam_table, gff_file, fuzzy, out_stat,
                 pre_gff = ribo
         else:
             pre_gff = ribo
-    print_gff(num, pre_gff, out, stats, strain, feature)
-    print_stat(stats, out_stat, overlaps, feature)
+    if strain is not None:
+        print_gff(num, pre_gff, out, stats, strain, feature)
+        print_stat(stats, out_stat, overlaps, feature)
+    else:
+        out_s = open(out_stat, "w")
+        out_s.write("Nothing can be detected.")
+        out_s.close()
     out.close()

@@ -171,6 +171,60 @@ wiggle files are the same, you don't need to do this step.
 
 Since this is a tutorial, we only download one replicate to reduce the running time.
 
+Mapping (optional)
+------------------
+
+ANNOgesic needs several input files, such as alignment files and wiggle files. In this tutorial, all 
+the required files can be downloaded from public database. However, the users may have their own dataset. 
+In order to generate these required files, we recommand the users to use READemption for mapping their reads. 
+The following example is for  mapping the read files of NC_009839.1 that we just retrieved from SRA.
+
+First of all, we need to create an folder for the analysis.
+
+::
+
+    $ reademption create READemption
+
+Then, we need to move or copy the required input files to the corresponding folders.
+
+::
+
+    $ cp ANNOgesic/input/reads/* READemption/input/reads
+    $ cp ANNOgesic/input/references/fasta_files/*.fa READemption/input/reference_sequences
+    $ cp ANNOgesic/input/references/annotations/*.gff READemption/input/annotations
+
+Now, the mapping can be performed..
+
+::
+    $ reademption \
+        align \
+        -r \
+        -S \
+        -a 95 \
+        -l 12 \
+        --poly_a_clipping \
+        --progress \
+        READemption
+
+We can assign ``-p`` for running parallel, such as ``-p 20``.
+
+When the alignment is done, the alignemnt files in BAM format can be foung in 
+``READemption_analysis/output/align/alignments/``.
+
+Now, we can generate coverage files in wiggle format.
+
+::
+
+    $ reademption \
+        coverage \
+        READemption
+
+``-p`` can be assigned for ``coverage`` as well. The raw and normalized coverage files can be 
+found in ``READemption_analysis/output/coverage``.
+
+For the details of using READemption, please check 
+`READemption <http://pythonhosted.org/READemption/>`_
+
 Improving the reference genome
 ------------------------------
 

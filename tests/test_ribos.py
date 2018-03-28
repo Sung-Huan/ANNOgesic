@@ -128,6 +128,8 @@ class TestRibos(unittest.TestCase):
         args.fuzzy = 5
         args.fuzzy_rbs = 2
         args.utr = True
+        args.without_rbs = False
+        args.rbs_seq = ["AGGAGG"]
         args.output_all = "test"
         args.cutoff = "e_0.01"
         tmp_files = {"fasta": os.path.join(self.out_folder, "tmp_fasta"),

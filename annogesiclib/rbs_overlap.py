@@ -20,7 +20,9 @@ def read_gff(gff_file, type_):
     return cdss
 
 
-def check_repeat(tab, strain, strand, start, end):
+def check_repeat(tab, strain, strand, start, end, fuzzy):
+    start = start + fuzzy
+    end = end - fuzzy
     if (tab["strain"] == strain) and (
             tab["strand"] == strand):
         if ((tab["start"] <= start) and (
@@ -34,9 +36,10 @@ def check_repeat(tab, strain, strand, start, end):
                  tab["start"] <= end) and (
                  tab["end"] >= end)):
             return True
+    return False
 
 
-def rbs_overlap(table_file, gff_file, type_):
+def rbs_overlap(table_file, gff_file, type_, fuzzy):
     tmp_tab = table_file + "_tmp"
     cdss = read_gff(gff_file, type_)
     out = open(tmp_tab, "w")
@@ -52,11 +55,13 @@ def rbs_overlap(table_file, gff_file, type_):
         overlap = False
         for cds in cdss:
             overlap = check_repeat(tab, cds.seq_id, cds.strand,
-                                   cds.start, cds.end)
+                                   cds.start, cds.end, fuzzy)
+            if overlap:
+                break
         for com in tables:
             if tab != com:
                 repeat = check_repeat(tab, com["strain"], com["strand"],
-                                      com["start"], com["end"])
+                                      com["start"], com["end"], 0)
                 if (not overlap):
                     if ((repeat) and (
                             "print" not in tab.keys()) and (

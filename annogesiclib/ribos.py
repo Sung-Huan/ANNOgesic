@@ -182,7 +182,7 @@ class Ribos(object):
         self.helper.remove_tmp_dir(args_ribo.trans)
         self.helper.remove_tmp_dir(args_ribo.tsss)
 
-    def _remove_overlap(self, gff_path, tmp_files, suffixs, type_):
+    def _remove_overlap(self, gff_path, tmp_files, suffixs, type_, fuzzy):
         for gff in os.listdir(gff_path):
             if gff.endswith(".gff"):
                 rbs_overlap(
@@ -190,7 +190,7 @@ class Ribos(object):
                         tmp_files["table"],
                         "_".join([gff.replace(".gff", ""),
                                   suffixs["csv"]]))),
-                    os.path.join(gff_path, gff), type_)
+                    os.path.join(gff_path, gff), type_, fuzzy)
 
     def _core_prediction(self, args_ribo, feature_id, rfam, tmp_files,
                          table_folder, feature, scan_folder, suffixs,
@@ -205,7 +205,8 @@ class Ribos(object):
         self.helper.check_make_folder(tmp_files["table"])
         prefixs = self._scan_extract_rfam(
                 prefixs, args_ribo, tmp_files, suffixs, feature, rfam)
-        self._remove_overlap(self.gff_path, tmp_files, suffixs, type_)
+        self._remove_overlap(self.gff_path, tmp_files, suffixs, type_,
+                             args_ribo.fuzzy)
         self._merge_results(args_ribo, scan_folder, suffixs, tmp_files,
                             table_folder, stat_folder, feature_id,
                             gff_outfolder, feature)

@@ -78,6 +78,7 @@ class TestsORFDetection(unittest.TestCase):
         args.max_len = 20
         args.min_len = 3
         args.fuzzy_rbs = 2
+        args.rbs_seq = ["AGGAGG"]
         detect = sd.detect_rbs_site("AGGAGGCCGCTATGCCACACGT", 2,
                                     self.example.tas[0], args)
         self.assertListEqual(detect, [1])
@@ -90,6 +91,7 @@ class TestsORFDetection(unittest.TestCase):
         args.max_len = 20
         args.min_len = 3
         args.fuzzy_rbs = 2
+        args.rbs_seq = ["AGGAGG"]
         sorf = sd.detect_start_stop(self.example.tas, seq, args)
         self.assertListEqual(sorf, [
             {'strand': '+', 'type': 'intergenic', 'starts': ['13'],

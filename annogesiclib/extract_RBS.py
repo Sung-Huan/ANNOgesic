@@ -22,33 +22,26 @@ def detect_site(inters, args_ribo):
     '''Detection of ribosome binding site'''
     rbss = []
     for inter in inters:
-        for nts in range(0, len(inter["seq"]) - 6):
-            num = 0
-            miss = 0
-            detect = False
-            for nt in inter["seq"][nts:nts + 6]:
-                if miss > args_ribo.fuzzy_rbs:
+        if args_ribo.without_rbs:
+            rbss.append(inter)
+        else:
+            for ribo_seq in args_ribo.rbs_seq:
+                detect = False
+                for nts in range(0, (len(inter["seq"]) - len(ribo_seq))):
+                    miss = 0
+                    for index in range(len(ribo_seq)):
+                        if miss > args_ribo.fuzzy_rbs:
+                            break
+                        else:
+                            if inter["seq"][nts:(nts + len(ribo_seq))][index] != ribo_seq[index]:
+                                miss += 1
+                    if (miss <= args_ribo.fuzzy_rbs) and (
+                            len(inter["seq"][nts:(nts + len(ribo_seq))]) >= len(ribo_seq)):
+                        rbss.append(inter)
+                        detect = True
+                        break
+                if detect:
                     break
-                else:
-                    if (num == 0) and (nt != "A"):
-                        miss += 1
-                    elif (num == 1) and (nt != "G"):
-                        miss += 1
-                    elif (num == 2) and (nt != "G"):
-                        miss += 1
-                    elif (num == 3) and (nt != "A"):
-                        miss += 1
-                    elif (num == 4) and (nt != "G"):
-                        miss += 1
-                    elif (num == 5) and (nt != "G"):
-                        miss += 1
-                    num += 1
-            if miss <= args_ribo.fuzzy_rbs:
-                rbss.append(inter)
-                detect = True
-                break
-            if detect:
-                break
     return rbss
 
 

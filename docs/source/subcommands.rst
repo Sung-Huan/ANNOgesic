@@ -2095,6 +2095,10 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             Include the sORFs which are not associated with
                             ribosome binding site to the high-confidence sORF
                             list. Default is False.
+      --rbs_seq RBS_SEQ [RBS_SEQ ...], -rs RBS_SEQ [RBS_SEQ ...]
+                            The sequence of ribosome binding site. If multiple
+                            sequences need to be assigned, please use space to
+                            split them. Default is AGGAGG.
       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
                             The number of nucleotides of ribosome binding sites
                             allowed to be different from AGGAGG. Default is 2.
@@ -3171,6 +3175,12 @@ from our Git repository.
                             thermometers will be extended by this value
                             (nucleotides) for extracting the sequences to search
                             in Rfam. Default is 10.
+      --without_rbs, -wr    Running the prediction without considering ribosome
+                            binding site.Default is False.
+      --rbs_seq RBS_SEQ [RBS_SEQ ...], -rs RBS_SEQ [RBS_SEQ ...]
+                            The sequences of ribosome binding site. If the
+                            multiple sequences needs to be assigned, please use
+                            space to split them. Default is AGGAGG.
       --tolerance_rbs TOLERANCE_RBS, -tr TOLERANCE_RBS
                             The number of nucleotides of ribosome binding site
                             allow to be different with AGGAGG. Default is 2.
