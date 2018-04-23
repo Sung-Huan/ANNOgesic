@@ -251,11 +251,12 @@ get_segemehl(){
 
 get_samtools_bcftools_htslib(){
     cd $TOOL_PATH
-    git clone git://github.com/samtools/samtools.git
-    git clone git://github.com/samtools/htslib.git
-    git clone git://github.com/samtools/bcftools.git
-    cd samtools && make && make prefix=$HOME install && cd ..
-    cd bcftools && make && make prefix=$HOME install && cd ..
+    wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
+    tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && ./configure --prefix=$HOME && make && make install && cd ..
+    wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+    tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && ./configure --prefix=$HOME && make && make install && cd ..
+    wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+    tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make && make prefix=$HOME install && cd ..
     cd $PATH_FILE
 }
 

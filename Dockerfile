@@ -2,11 +2,12 @@ FROM ubuntu
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
 #ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update --yes && apt-get upgrade --yes
-RUN apt-get install default-jre default-jdk python3 python3-scipy \
-vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython \
-software-properties-common python3-software-properties bioperl \
-ncbi-blast+ pkg-config python3-dev libfreetype6-dev libxft-dev \
+RUN apt-get update --yes
+RUN apt-get upgrade --yes
+RUN apt-get install default-jre default-jdk python3 python3-setuptools python3-scipy \
+vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython cython3 \
+software-properties-common python3-software-properties bioperl zlib1g-dev \
+ncbi-blast+ pkg-config python3-dev libfreetype6-dev libxft-dev r-base libxml2-dev \
 libpng-dev python3-pip python-pip python3-numpy imagemagick infernal git \
 openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
 ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
@@ -21,6 +22,7 @@ RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
 RUN pip3 install \
 matplotlib \
 networkx \
+READemption \
 ANNOgesic
 
 RUN mkdir /tools /data
@@ -87,7 +89,7 @@ make all && cp *.x /usr/local/bin
 # transtermHP
 RUN wget http://transterm.cbcb.umd.edu/transterm_hp_v2.09.zip && \
 unzip transterm_hp_v2.09.zip && cd transterm_hp_v2.09 && \
-make && cp transterm /usr/local/bin && cp expterm.dat /usr/local/bin
+cp transterm /usr/local/bin && cp expterm.dat /usr/local/bin
 
 # CRT
 RUN wget http://www.room220.com/crt/CRT1.2-CLI.jar.zip && \
@@ -168,27 +170,25 @@ RUN cp /usr/local/psortb/bin/psort /usr/local/bin
 
 WORKDIR /tools
 
-# htslib, samtools, bcftools
-RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2 && \
-tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && make all && make install && cd ..
+## htslib, samtools, bcftools
+RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
+RUN tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && ./configure && make && make install && cd ..
+RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+RUN tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && ./configure && make && make install && cd ..
+RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+RUN tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make && make install && cd ..
 
-RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2 && \
-tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && make all && make install && cd ..
-
-RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2 && \
-tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make all && make install && cd ..
-
-RUN rm meme_4.11.1.tar.gz \
-segemehl_0_2_0.tar.gz \
+RUN rm segemehl_0_2_0.tar.gz \
+meme_4.11.1.tar.gz \
 transterm_hp_v2.09.zip \
 ViennaRNA-2.3.2.tar.gz \
 intaRNA-2.0.4.tar.gz \
-htslib-1.3.1.tar.bz2 \
-samtools-1.3.1.tar.bz2 \
-bcftools-1.3.1.tar.bz2 \
 CRT1.2-CLI.jar.zip \
+htslib-1.3.1.tar.bz2 \
+bcftools-1.3.1.tar.bz2 \
+samtools-1.3.1.tar.bz2 \
 PAGIT.V1.64bit.tgz
 
-RUN pip3 install ANNOgesic --upgrade
-
 WORKDIR /data
+
+RUN pip3 install ANNOgesic --upgrade
