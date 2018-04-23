@@ -105,21 +105,23 @@ update_genome_fasta(){
 
     $ANNOGESIC_PATH \
         update_genome_fasta \
-	-c $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-	-m $ANNOGESIC_FOLDER/input/mutation_table/mutation.csv \
-	-pj $ANNOGESIC_FOLDER
+        -c $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
+        -m $ANNOGESIC_FOLDER/input/mutation_table/mutation.csv \
+        -u NC_test.1 \
+        -pj $ANNOGESIC_FOLDER
 }
 
 annotation_transfer(){
     $ANNOGESIC_PATH \
         annotation_transfer \
-	-ce $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.embl \
-	-cf $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-	-tf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/NC_test.1.fa \
-	    $ANNOGESIC_FOLDER/output/updated_references/fasta_files/test_case2.fa \
-	-t Strain \
-	-p NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
-	-pj $ANNOGESIC_FOLDER
+        -ce $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.embl \
+        -cf $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
+        -tf $ANNOGESIC_FOLDER/output/updated_references/fasta_files/NC_test.1.fa \
+        -t Strain \
+        -p NC_009839.1:NC_test.1 \
+        --ratt_path /home/silas/ANNOgesic/tools/PAGIT/RATT/start.ratt.sh \
+        -pj $ANNOGESIC_FOLDER
+
 }
 
 Optimize_TSSpredator(){

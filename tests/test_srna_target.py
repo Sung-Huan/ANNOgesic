@@ -15,16 +15,16 @@ class Mock_func(object):
     def __init__(self):
         self.example = Example()
 
-    def mock_run_rnaplex(self, target_seq_path, prefix, rnaplex_path):
+    def mock_run_rnaplex(self, target_seq_path, prefix, rnaplex_path, log):
         return 1
 
     def mock_run_rnaplfold(self, vienna_path, type_, win_size_s, span_s,
                            unstr_region_rnaplex_s, srna_seq_path,
-                           prefix, rnaplfold_path):
+                           prefix, rnaplfold_path, log):
         pass
 
     def mock_run_rnaup(self, num_up, unstr_region_rnaup,
-                       out_folder, out_rnaup, out_log):
+                       out_folder, out_rnaup, out_log, log, ttt):
         pass
 
     def mock_merge_srna_target(self, rnaplex_file, rnaup_file, top,
@@ -136,7 +136,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.unstr_region_rnaplex_s = 5
         args.rnaplfold_path = None
         args.unstr_region_rnaplex_t = 5
-        self.star._rna_plex(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.star._rna_plex(["test"], args, log)
         datas = import_data("test_folder/test/test_RNAplex.txt")
         self.assertEqual("\n".join(datas), "test")
 
@@ -159,7 +160,8 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.vienna_path = "test"
         args.out_folder = self.out
         args.core_up = 4
-        self.star._rnaup(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.star._rnaup(["test"], args, log)
         datas = import_data(os.path.join(self.out, "tmp_srna_target1.fa"))
         self.assertEqual("\n".join(datas),
                          ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
@@ -172,8 +174,9 @@ class TestsRNATargetPrediction(unittest.TestCase):
         args.gffs = self.gffs
         args.program = ["RNAup", "RNAplex"]
         args.out_folder = self.out
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.top = "top"
-        self.star._merge_rnaplex_rnaup(["test"], args)
+        self.star._merge_rnaplex_rnaup(["test"], args, log)
         datas = import_data(os.path.join(self.test_folder, "out"))
         self.assertEqual("\n".join(datas),
                          ("test_folder/output/RNAplex_results/test/test_RNAplex"

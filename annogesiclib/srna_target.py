@@ -38,7 +38,7 @@ class sRNATargetPrediction(object):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
     def _run_rnaplfold(self, rnaplfold_path, file_type, win_size, span,
-                       unstr_region, seq_path, prefix, out_path):
+                       unstr_region, seq_path, prefix, out_path, log):
         current = os.getcwd()
         os.chdir(out_path)
         command = " ".join([rnaplfold_path,
@@ -47,10 +47,15 @@ class sRNATargetPrediction(object):
                             "-u", str(unstr_region),
                             "-O"])
         if file_type == "sRNA":
+            log.write("<".join([command, os.path.join(current, seq_path,
+                                "_".join([self.tmps["tmp"], prefix,
+                                          file_type + ".fa"]))]) + "\n")
             os.system("<".join([command, os.path.join(current, seq_path,
                                 "_".join([self.tmps["tmp"], prefix,
                                           file_type + ".fa"]))]))
         else:
+            log.write("<".join([command, os.path.join(current, seq_path,
+                                "_".join([prefix, file_type + ".fa"]))]) + "\n")
             os.system("<".join([command, os.path.join(current, seq_path,
                                 "_".join([prefix, file_type + ".fa"]))]))
         os.chdir(current)
@@ -180,7 +185,7 @@ class sRNATargetPrediction(object):
                         sub_out.write(line + "\n")
                 sub_out.close()
 
-    def _run_rnaplex(self, prefix, rnaplfold_folder, args_tar):
+    def _run_rnaplex(self, prefix, rnaplfold_folder, args_tar, log):
         print("Running RNAplex of {0}".format(prefix))
         num_process = 0
         processes = []
@@ -191,6 +196,15 @@ class sRNATargetPrediction(object):
                     self.rnaplex_path, prefix, "_".join([
                         prefix, "RNAplex", str(num_process) + ".txt"])), "w")
                 num_process += 1
+                log.write(" ".join([args_tar.rnaplex_path,
+                           "-q", os.path.join(
+                               self.srna_seq_path, "_".join([
+                                   self.tmps["tmp"], prefix, "sRNA.fa"])),
+                           "-t", os.path.join(self.target_seq_path, seq),
+                           "-l", str(args_tar.inter_length),
+                           "-e", str(args_tar.energy),
+                           "-z", str(args_tar.duplex_dist),
+                           "-a", rnaplfold_folder]) + "\n")
                 p = Popen([args_tar.rnaplex_path,
                            "-q", os.path.join(
                                self.srna_seq_path, "_".join([
@@ -204,9 +218,17 @@ class sRNATargetPrediction(object):
                 if num_process % args_tar.core_plex == 0:
                     self._wait_process(processes)
         self._wait_process(processes)
+        log.write("The prediction for {0} is done.\n".format(prefix))
+        log.write("The following temporary files for storing results of {0} are "
+                  "generated:\n".format(prefix))
+        for file_ in os.listdir(os.path.join(self.rnaplex_path, prefix)):
+            log.write("\t" + os.path.join(self.rnaplex_path, prefix, file_) + "\n")
         return num_process
 
-    def _rna_plex(self, prefixs, args_tar):
+    def _rna_plex(self, prefixs, args_tar, log):
+        log.write("Using RNAplex and RNAplfold to predict sRNA targets.\n")
+        log.write("Please make sure the version of Vienna RNA package is "
+                  "at least 2.3.2.\n")
         for prefix in prefixs:
             print("Running RNAplfold of {0}".format(prefix))
             self.helper.check_make_folder(
@@ -217,29 +239,32 @@ class sRNATargetPrediction(object):
             self._run_rnaplfold(
                 args_tar.rnaplfold_path, "sRNA", args_tar.win_size_s,
                 args_tar.span_s, args_tar.unstr_region_rnaplex_s,
-                self.srna_seq_path, prefix, rnaplfold_folder)
+                self.srna_seq_path, prefix, rnaplfold_folder, log)
             self._run_rnaplfold(
                 args_tar.rnaplfold_path, "target", args_tar.win_size_t,
                 args_tar.span_t, args_tar.unstr_region_rnaplex_t,
-                self.target_seq_path, prefix, rnaplfold_folder)
-            num_process = self._run_rnaplex(prefix, rnaplfold_folder, args_tar)
+                self.target_seq_path, prefix, rnaplfold_folder, log)
+            num_process = self._run_rnaplex(prefix, rnaplfold_folder, args_tar, log)
             rnaplex_file = os.path.join(self.rnaplex_path, prefix,
                                         "_".join([prefix, "RNAplex.txt"]))
             if ("_".join([prefix, "RNAplex.txt"]) in
                     os.listdir(os.path.join(self.rnaplex_path, prefix))):
                 os.remove(rnaplex_file)
             for index in range(0, num_process):
+                log.write("Using helper.py to merge the temporary files.\n")
                 self.helper.merge_file(os.path.join(
                     self.rnaplex_path, prefix, "_".join([
                         prefix, "RNAplex", str(index) + ".txt"])),
                     rnaplex_file)
+            log.write("\t" + rnaplex_file + " is generated.\n")
             self.helper.remove_all_content(os.path.join(
                  self.rnaplex_path, prefix), "_RNAplex_", "file")
             self.fixer.fix_rnaplex(rnaplex_file, self.tmps["tmp"])
             shutil.move(self.tmps["tmp"], rnaplex_file)
             shutil.rmtree(rnaplfold_folder)
 
-    def _run_rnaup(self, num_up, processes, out_rnaup, out_log, args_tar):
+    def _run_rnaup(self, num_up, processes, prefix, out_rnaup, out_log,
+                   args_tar, log):
         for index in range(1, num_up + 1):
             out_tmp_up = open(os.path.join(
                 args_tar.out_folder, "".join([self.tmps["rnaup"],
@@ -250,6 +275,9 @@ class sRNATargetPrediction(object):
             in_up = open(os.path.join(
                 args_tar.out_folder, "".join([self.tmps["tmp"],
                                               str(index), ".fa"])), "r")
+            log.write(" ".join([args_tar.rnaup_path,
+                       "-u", str(args_tar.unstr_region_rnaup),
+                       "-o", "--interaction_first"]) + "\n")
             p = Popen([args_tar.rnaup_path,
                        "-u", str(args_tar.unstr_region_rnaup),
                        "-o", "--interaction_first"],
@@ -258,6 +286,10 @@ class sRNATargetPrediction(object):
         if len(processes) != 0:
             time.sleep(5)
             self._wait_process(processes)
+            log.write("The following temporary files for storing results of {0} are "
+                      "generated:\n".format(prefix))
+            for file_ in os.listdir(os.path.join(args_tar.out_folder)):
+                log.write("\t" + os.path.join(args_tar.out_folder, file_) + "\n")
             os.system("rm " + os.path.join(args_tar.out_folder,
                                            self.tmps["all_fa"]))
             self._merge_txt(num_up, out_rnaup, out_log, args_tar.out_folder)
@@ -299,7 +331,10 @@ class sRNATargetPrediction(object):
         shutil.move("tmp.txt", out_rnaup)
         return srnas
 
-    def _rnaup(self, prefixs, args_tar):
+    def _rnaup(self, prefixs, args_tar, log):
+        log.write("Using RNAup to predict sRNA targets.\n")
+        log.write("Please make sure the version of Vienna RNA package is "
+                  "at least 2.3.2.\n")
         for prefix in prefixs:
             srnas = []
             print("Running RNAup of {0}".format(prefix))
@@ -317,7 +352,9 @@ class sRNATargetPrediction(object):
                     os.remove(out_rnaup)
                     os.remove(out_log)
                 else:
+                    log.write("The data from the previous run is found.\n")
                     srnas = self._get_continue(out_rnaup)
+                    log.write("The previous data is loaded.\n")
             with open(os.path.join(self.srna_seq_path, "_".join([
                     self.tmps["tmp"], prefix, "sRNA.fa"])), "r") as s_f:
                 for line in s_f:
@@ -344,15 +381,22 @@ class sRNATargetPrediction(object):
                                              "".join([self.tmps["tmp"],
                                                       str(num_up), ".fa"])))
                             if num_up == args_tar.core_up:
-                                self._run_rnaup(num_up, processes,
-                                                out_rnaup, out_log, args_tar)
+                                self._run_rnaup(num_up, processes, prefix,
+                                                out_rnaup, out_log, args_tar, log)
                                 processes = []
                                 num_up = 0
-            self._run_rnaup(num_up, processes, out_rnaup, out_log, args_tar)
+            self._run_rnaup(num_up, processes, prefix, out_rnaup, out_log,
+                            args_tar, log)
+            log.write("The prediction for {0} is done.\n".format(prefix))
+            log.write("\t" + out_rnaup + " is complete generated and updated.\n")
 
-    def _intarna(self, prefixs, args_tar):
+    def _intarna(self, prefixs, args_tar, log):
+        log.write("Using IntaRNA to predict sRNA targets.\n")
+        log.write("Please make sure the version of IntaRNA is at least 2.0.4.\n")
         for prefix in prefixs:
             print("Running IntaRNA of {0}".format(prefix))
+            intarna_file = os.path.join(self.intarna_path, prefix,
+                                        prefix + "_IntaRNA.txt")
             self.helper.check_make_folder(
                         os.path.join(self.intarna_path, prefix))
             call([args_tar.intarna_path,
@@ -367,11 +411,15 @@ class sRNATargetPrediction(object):
                   "--tAccL", str(args_tar.max_loop_target),
                   "--outMode", "C", "-m", args_tar.mode_intarna,
                   "--threads", str(args_tar.core_inta),
-                  "--out", os.path.join(self.intarna_path, prefix,
-                                        prefix + "_IntaRNA.txt")])
+                  "--out", intarna_file])
+            log.write("The prediction for {0} is done.\n".format(prefix))
+            log.write("\t" + intarna_file + " is generated.\n")
 
-    def _merge_rnaplex_rnaup(self, prefixs, args_tar):
-        '''merge the result of RNAup and RNAplex'''
+    def _merge_rnaplex_rnaup(self, prefixs, args_tar, log):
+        '''merge the result of IntaRNA, RNAup and RNAplex'''
+        log.write("Running merge_rnaplex_rnaup.py to merge the results from "
+                  "RNAplex, RNAup, and IntaRNA for generating finanl output.\n")
+        log.write("The following files are generated:\n")
         for prefix in prefixs:
             rnaplex_file = None
             rnaup_file = None
@@ -395,21 +443,32 @@ class sRNATargetPrediction(object):
                                          "_".join([prefix, "RNAup_rank.csv"]))
             if ("IntaRNA" in args_tar.program):
                 intarna_file = os.path.join(self.intarna_path, prefix,
-                                          "_".join([prefix, "IntaRNA.txt"]))
+                                            "_".join([prefix, "IntaRNA.txt"]))
                 out_intarna = os.path.join(self.intarna_path, prefix,
-                                         "_".join([prefix, "IntaRNA_rank.csv"]))
+                                           "_".join([prefix, "IntaRNA_rank.csv"]))
+            overlap_file = os.path.join(self.merge_path, prefix,
+                                        "_".join([prefix, "overlap.csv"]))
+            merge_file = os.path.join(self.merge_path, prefix,
+                                      "_".join([prefix, "merge.csv"]))
             merge_srna_target(rnaplex_file, rnaup_file, intarna_file, args_tar,
                               out_rnaplex, out_rnaup, out_intarna,
                               os.path.join(self.fasta_path, prefix + ".fa"),
-                              os.path.join(self.merge_path, prefix,
-                                           "_".join([prefix, "merge.csv"])),
-                              os.path.join(self.merge_path, prefix,
-                                           "_".join([prefix, "overlap.csv"])),
+                              merge_file, overlap_file,
                               os.path.join(self.srna_path,
                                            "_".join([prefix, "sRNA.gff"])),
                               os.path.join(self.gff_path, prefix + ".gff"))
+            if ("RNAplex" in args_tar.program):
+                log.write("\t" + out_rnaplex + "\n")
+            if ("RNAup" in args_tar.program):
+                log.write("\t" + out_rnaup + "\n")
+            if ("IntaRNA" in args_tar.program):
+                log.write("\t" + out_intarna + "\n")
+            if (os.path.exists(merge_file)):
+                log.write("\t" + merge_file + "\n")
+            if (os.path.exists(overlap_file)):
+                log.write("\t" + overlap_file + "\n")
 
-    def run_srna_target_prediction(self, args_tar):
+    def run_srna_target_prediction(self, args_tar, log):
         self._check_gff(args_tar.gffs)
         self._check_gff(args_tar.srnas)
         self.multiparser.parser_gff(args_tar.gffs, None)
@@ -418,14 +477,15 @@ class sRNATargetPrediction(object):
         prefixs = []
         self._gen_seq(prefixs, args_tar)
         if ("RNAplex" in args_tar.program):
-            self._rna_plex(prefixs, args_tar)
+            self._rna_plex(prefixs, args_tar, log)
         self.helper.remove_all_content(self.target_seq_path,
                                        "_target_", "file")
+        log.write("The temporary files for running RNAplex are deleted.\n")
         if ("RNAup" in args_tar.program):
-            self._rnaup(prefixs, args_tar)
+            self._rnaup(prefixs, args_tar, log)
         if ("IntaRNA" in args_tar.program):
-            self._intarna(prefixs, args_tar)
-        self._merge_rnaplex_rnaup(prefixs, args_tar)
+            self._intarna(prefixs, args_tar, log)
+        self._merge_rnaplex_rnaup(prefixs, args_tar, log)
         self.helper.remove_all_content(args_tar.out_folder,
                                        self.tmps["tmp"], "dir")
         self.helper.remove_all_content(args_tar.out_folder,

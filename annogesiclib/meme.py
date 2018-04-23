@@ -40,7 +40,7 @@ class MEME(object):
         return sub_out_folder
 
     def _run_normal_motif(self, input_path, out_path, filename,
-                          fasta, width, args_pro):
+                          fasta, width, args_pro, log):
         '''run MEME with specific width'''
         folder = "_".join(["promoter_motifs", filename,
                            str(width), "nt"])
@@ -54,12 +54,20 @@ class MEME(object):
                        "-evt", str(args_pro.e_value)]
             if args_pro.para is not None:
                 command = command + ["-p", args_pro.para]
+            log.write(" ".join(command + ["-oc", os.path.join(
+                      meme_folder, folder),
+                      os.path.join(input_path, fasta)]) + "\n")
             call(command + ["-oc", os.path.join(meme_folder, folder),
                             os.path.join(input_path, fasta)])
         if (args_pro.program.lower() == "glam2") or (
                 args_pro.program.lower() == "both"):
             glam_folder = self._gen_and_check_folder(
                             out_path, folder, "GLAM2")
+            log.write(" ".join([args_pro.glam2_path,
+                  "-O", os.path.join(glam_folder, folder), "-w",
+                  str(width), "-b", str(width), "-r",
+                  str(args_pro.num_motif), "-n", str(args_pro.end_run),
+                  "n", os.path.join(input_path, fasta)]) + "\n")
             call([args_pro.glam2_path,
                   "-O", os.path.join(glam_folder, folder), "-w",
                   str(width), "-b", str(width), "-r",
@@ -67,7 +75,7 @@ class MEME(object):
                   "n", os.path.join(input_path, fasta)])
 
     def _run_small_motif(self, input_path, out_path, filename,
-                         fasta, width, args_pro):
+                         fasta, width, args_pro, log):
         '''run MEME with range of width'''
         data = width.split("-")
         min_width = data[0]
@@ -86,12 +94,20 @@ class MEME(object):
                        "-evt", str(args_pro.e_value)]
             if args_pro.para is not None:
                 command = command + ["-p", args_pro.para]
+            log.write(" ".join(command + ["-oc", os.path.join(
+                      meme_folder, folder),
+                      os.path.join(input_path, fasta)]) + "\n")
             call(command + ["-oc", os.path.join(meme_folder, folder),
                             os.path.join(input_path, fasta)])
         if (args_pro.program.lower() == "glam2") or (
                 args_pro.program.lower() == "both"):
             glam_folder = self._gen_and_check_folder(
                             out_path, folder, "GLAM2")
+            log.write(" ".join([args_pro.glam2_path,
+                  "-O", os.path.join(glam_folder, folder), "-a",
+                  str(min_width), "-b", str(max_width), "-r",
+                  str(args_pro.num_motif), "-n", str(args_pro.end_run),
+                  "n", os.path.join(input_path, fasta)]) + "\n")
             call([args_pro.glam2_path,
                   "-O", os.path.join(glam_folder, folder), "-a",
                   str(min_width), "-b", str(max_width), "-r",
@@ -182,7 +198,11 @@ class MEME(object):
                               "".join([filename[0], strain, filename[-1]])))
         out.close()
 
-    def _run_program(self, prefixs, args_pro):
+    def _run_program(self, prefixs, args_pro, log):
+        log.write("Using MEME or GLAM2 to predict promoter.\n")
+        log.write("Please make sure their versions are at least 4.11.1.\n")
+        log.write("If you are running for parallel, please make sure you "
+                  "have install MPICH and its version is at least 3.2.\n")
         for prefix in prefixs:
             input_path = os.path.join(self.out_fasta, prefix)
             out_path = os.path.join(args_pro.output_folder, prefix)
@@ -198,12 +218,17 @@ class MEME(object):
                 for width in args_pro.widths:
                     print("Computing promoters of {0} - {1}".format(
                           fasta, width))
+                    log.write("Computing promoters of {0} - length {1}.\n".format(
+                              fasta, width))
                     if "-" in width:
                         self._run_small_motif(input_path, out_path, filename,
-                                              fasta, width, args_pro)
+                                              fasta, width, args_pro, log)
                     else:
                         self._run_normal_motif(input_path, out_path, filename,
-                                               fasta, width, args_pro)
+                                               fasta, width, args_pro, log)
+            log.write("Promoter search for {0} is done.\n".format(prefix))
+            log.write("All the output files from MEME or GLAM2 are generated "
+                      "and stored in {0}.\n".format(out_path))
 
     def _combine_file(self, prefixs, args_pro):
         '''combine all TSS file in the input folder to generate the 
@@ -254,8 +279,11 @@ class MEME(object):
         if "tmp" in os.listdir(os.getcwd()):
             shutil.rmtree("tmp")
 
-    def _gen_table(self, output_folder, prefixs, combine, program):
+    def _gen_table(self, output_folder, prefixs, combine, program, log):
         '''generate the promoter table'''
+        log.write("Running gen_promoter_table.py to generate promoter "
+                  "table which is useful for sRNA prediction.\n")
+        log.write("The following files are generated:\n")
         if combine:
             strains = prefixs + ["allfasta"]
         else:
@@ -266,20 +294,22 @@ class MEME(object):
                     program.lower() == "meme"):
                 for folder in os.listdir(os.path.join(output_folder,
                                                       strain, "MEME")):
+                    csv_file = os.path.join(output_folder, strain,
+                                            "MEME", folder, "meme.csv")
                     gen_promoter_table(os.path.join(output_folder, strain,
                                        "MEME", folder, "meme.txt"),
-                                       os.path.join(output_folder, strain,
-                                       "MEME", folder, "meme.csv"), tss_file,
-                                       "meme")
+                                       csv_file, tss_file, "meme")
+                    log.write("\t" + csv_file + "\n")
             if (program.lower() == "both") or (
                     program.lower() == "glam2"):
                 for folder in os.listdir(os.path.join(output_folder,
                                                       strain, "GLAM2")):
+                    csv_file = os.path.join(output_folder, strain,
+                                            "GLAM2", folder, "glam2.csv")
                     gen_promoter_table(os.path.join(output_folder, strain,
                                         "GLAM2", folder, "glam2.txt"),
-                                        os.path.join(output_folder, strain,
-                                        "GLAM2", folder, "glam2.csv"),
-                                        tss_file, "glam2")
+                                        csv_file, tss_file, "glam2")
+                    log.write("\t" + csv_file + "\n")
 
     def _get_upstream(self, args_pro, prefix, tss, fasta):
         '''get upstream sequence of TSS'''
@@ -305,7 +335,7 @@ class MEME(object):
                      os.path.join(args_pro.output_folder, "TSS_classes",
                      "_".join([prefix, "TSS.gff"])), args_pro, prefix)
 
-    def run_meme(self, args_pro):
+    def run_meme(self, args_pro, log):
         if "allfasta.fa" in os.listdir(args_pro.fastas):
             os.remove(self.all_fasta)
             if "allfasta.fa_folder" in os.listdir(args_pro.fastas):
@@ -326,6 +356,9 @@ class MEME(object):
         self.helper.check_make_folder(self.out_fasta)
         self.helper.check_make_folder(self.tmp_folder)
         prefixs = []
+        log.write("Running .TSS_upstream.py to extract the upstream "
+                  "sequences of TSSs.\n")
+        log.write("The following files are generated:\n")
         for tss in os.listdir(self.tss_path):
             prefix = tss.replace("_TSS.gff", "")
             prefixs.append(prefix)
@@ -338,10 +371,15 @@ class MEME(object):
             self._get_upstream(args_pro, prefix, tss, fasta)
             self._move_and_merge_fasta(input_path, prefix)
             self._split_fasta_by_strain(input_path)
+            for file_ in os.listdir(input_path):
+                log.write("\t" + os.path.join(input_path, file_) + "\n")
         if args_pro.combine:
             self._combine_file(prefixs, args_pro)
-        self._run_program(prefixs, args_pro)
+            for file_ in os.listdir(os.path.join(self.out_fasta, "allfasta")):
+                log.write("\t" + os.path.join(
+                    self.out_fasta, "allfasta", file_) + "\n")
+        self._run_program(prefixs, args_pro, log)
         print("Generating the tables")
         self._gen_table(args_pro.output_folder, prefixs,
-                        args_pro.combine, args_pro.program)
+                        args_pro.combine, args_pro.program, log)
         self._remove_files(args_pro)

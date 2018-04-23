@@ -40,11 +40,12 @@ class PPINetwork(object):
         os.mkdir(os.path.join(path, strain))
         os.mkdir(os.path.join(path, strain, ptt))
 
-    def _run_wget(self, source, folder, log):
-        call(["wget", source, "-O", folder], stderr=log)
+    def _run_wget(self, source, folder, err, log):
+        log.write(" ".join(["wget", source, "-O", folder]) + "\n")
+        call(["wget", source, "-O", folder], stderr=err)
         time.sleep(2)
 
-    def _wget_id(self, strain, locus, strain_id, files):
+    def _wget_id(self, strain, locus, strain_id, files, log):
         detect_id = False
         if strain == strain_id["ptt"]:
             print("Retrieving STRING ID for {0} of {1} -- {2}".format(
@@ -53,30 +54,37 @@ class PPINetwork(object):
                          "identifier={0}&species={1}").format(
                          locus, strain_id["string"])
             self._run_wget(id_source, os.path.join(files["id_list"], locus),
-                           files["id_log"])
+                           files["id_log"], log)
             detect_id = True
         return detect_id
 
-    def _retrieve_id(self, strain_id, genes, files):
+    def _retrieve_id(self, strain_id, genes, files, log):
+        log.write("Retrieving STRING ID for {0}.\n".format(strain_id["ptt"]))
         for gene in genes:
             if gene["gene"] != "-":
                 detect_id = self._wget_id(gene["strain"], gene["gene"],
-                                          strain_id, files)
+                                          strain_id, files, log)
                 self.ref_tags[gene["gene"]] = gene["locus_tag"]
             else:
                 detect_id = self._wget_id(gene["strain"], gene["locus_tag"],
-                                          strain_id, files)
+                                          strain_id, files, log)
                 self.ref_tags[gene["locus_tag"]] = gene["locus_tag"]
             if not detect_id:
+                log.write("{0} is not found in {1}.\n".format(
+                    gene, strain_id["file"]))
                 print("Error: There is no {0} in {1}".format(
                        gene, strain_id["file"]))
+        log.write("The temporary files are generated and stored in the "
+                  "following folders:\n")
+        log.write("\t" + os.path.join(
+            files["id_list"], gene["locus_tag"]) + "\n")
 
-    def _get_prefer_name(self, row_a, strain_id, files, querys):
+    def _get_prefer_name(self, row_a, strain_id, files, querys, log):
         prefername = ""
         filename = row_a.split(".")
         if ((filename[1] not in os.listdir(files["id_list"])) and (
                 "all" not in querys)) or ("all" in querys):
-            self._wget_id(strain_id["ptt"], filename[1], strain_id, files)
+            self._wget_id(strain_id["ptt"], filename[1], strain_id, files, log)
         if (filename[1] in os.listdir(files["id_list"])) or (
                 "all" in querys):
             if (filename[1] in os.listdir(files["id_list"])):
@@ -103,11 +111,11 @@ class PPINetwork(object):
                   "STRING_action_score\tPubmed_id\tPubmed_score\n")
 
     def _get_pubmed(self, row, strain_id, mode, actor, id_file, first_output,
-                    ptt, files, paths, args_ppi):
+                    ptt, files, paths, args_ppi, log):
         prefer1 = self._get_prefer_name(row[0], strain_id,
-                                        files, args_ppi.querys)
+                                        files, args_ppi.querys, log)
         prefer2 = self._get_prefer_name(row[1], strain_id,
-                                        files, args_ppi.querys)
+                                        files, args_ppi.querys, log)
         if (len(prefer1) > 0) and (len(prefer2) > 0):
             if args_ppi.no_specific:
                 pubmed_source = (
@@ -115,14 +123,14 @@ class PPINetwork(object):
                     "Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}").format(
                         prefer1, prefer2)
                 self._run_wget(pubmed_source, self.tmp_files["nospecific"],
-                               files["pubmed_log"])
+                               files["pubmed_log"], log)
             strain_id["pie"] = "+".join(strain_id["pie"].split(" "))
             pubmed_source = (
                 "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur"
                 "/IRET/PIE/getppi.cgi?term={0}+{1}+{2}").format(
                     prefer1, prefer2, strain_id["pie"])
             self._run_wget(pubmed_source, self.tmp_files["specific"],
-                           files["pubmed_log"])
+                           files["pubmed_log"], log)
             row[2] = mode
             row[4] = actor
             row[0] = prefer1
@@ -296,7 +304,7 @@ class PPINetwork(object):
             sys.exit()
         return genes
 
-    def _wget_actions(self, files, id_file, strain_id, out_folder):
+    def _wget_actions(self, files, id_file, strain_id, out_folder, log):
         detect = False
         t_h = open(os.path.join(files["id_list"], id_file), "r")
         print("Retrieving STRING actions for {0} of {1} -- {2}".format(
@@ -312,18 +320,21 @@ class PPINetwork(object):
                                      row[0], row[1])
                     self._run_wget(
                         action_source, self.tmp_files["wget_action"],
-                        files["action_log"])
+                        files["action_log"], log)
         t_h.close()
         if not detect:
+            log.write(id_file + " can not be found in STRING.\n")
             print("Warning: " + id_file + " can not be found in STRING!")
         return detect
 
-    def _retrieve_actions(self, files, strain_id, paths, args_ppi):
+    def _retrieve_actions(self, files, strain_id, paths, args_ppi, log):
         '''get the interaction of proteins'''
+        log.write("Using STRING and PIE to retrieve the interaction "
+                  "information for {0}.\n".format(strain_id["ptt"]))
         for id_file in os.listdir(files["id_list"]):
             if id_file != self.tmp_files["log"]:
                 detect_id = self._wget_actions(files, id_file, strain_id,
-                                               args_ppi.out_folder)
+                                               args_ppi.out_folder, log)
                 if detect_id:
                     a_h = open(self.tmp_files["wget_action"], "r")
                     pre_row = []
@@ -354,7 +365,7 @@ class PPINetwork(object):
                                         pre_row, strain_id, mode, actor,
                                         id_file, first_output,
                                         strain_id["ptt"], files, paths,
-                                        args_ppi)
+                                        args_ppi, log)
                                     mode = row_a[2]
                                     actor = row_a[4]
                                 else:
@@ -366,11 +377,42 @@ class PPINetwork(object):
                         self._get_pubmed(
                             row_a, strain_id, mode, actor, id_file,
                             first_output, strain_id["ptt"], files,
-                            paths, args_ppi)
+                            paths, args_ppi, log)
+        self._list_files(args_ppi, paths, files, log)
         if detect_id:
             a_h.close()
 
-    def _plot(self, args_ppi, files):
+    def _list_files(self, args_ppi, paths, files, log):
+        log.write("The temporary files are generated and stored in the "
+                  "following folders:\n")
+        if args_ppi.no_specific:
+            folders = [files["id_list"],
+                       self.tmp_files["wget_action"],
+                       self.tmp_files["specific"],
+                       self.tmp_files["nospecific"]]
+        else:
+            folders = [files["id_list"],
+                       self.tmp_files["wget_action"],
+                       self.tmp_files["specific"]]
+        for folder in folders:
+            log.write("\t" + os.path.join(folder) + "\n")
+        log.write("The files for storing the interaction information are "
+                  "generated and stored in the following folders:\n")
+        for data in (paths["all"], paths["best"]):
+            for files in os.listdir(data):
+                if os.path.isdir(os.path.join(data, files)):
+                    for file_ in os.listdir(os.path.join(data, files)):
+                        log.write("\t" + os.path.join(data, files, file_) + "\n")
+        log.write("The merged tables are generated:\n")
+        for data in (paths["all"], paths["best"]):
+            for files in os.listdir(data):
+                if os.path.isfile(os.path.join(data, files)):
+                    log.write("\t" + os.path.join(data, files) + "\n")
+
+    def _plot(self, args_ppi, files, log):
+        log.write("Running plot_PPI.py to generate plots of PPI.\n")
+        log.write("The figures of PPI networks are generated and stored in the "
+                  "following folders:\n")
         if args_ppi.no_specific:
             files["all_nospecific"].close()
             files["best_nospecific"].close()
@@ -379,16 +421,23 @@ class PPINetwork(object):
         for folder in os.listdir(self.all_result):
             if folder in os.listdir(self.fig):
                 print("Plotting {0}".format(folder))
+                out_folder_spe = os.path.join(self.fig, folder,
+                                          self.with_strain)
                 plot_ppi(os.path.join(self.all_result, folder,
                          "_".join([folder, self.with_strain + ".csv"])),
-                         args_ppi.score, os.path.join(self.fig, folder,
-                         self.with_strain), args_ppi.size)
+                         args_ppi.score, out_folder_spe, args_ppi.size)
+                for file_ in os.listdir(out_folder_spe):
+                    log.write("\t" + os.path.join(
+                        out_folder_spe, file_) + "\n")
                 if args_ppi.no_specific:
+                    out_folder_nospe = os.path.join(self.fig, folder,
+                                          self.without_strain)
                     plot_ppi(os.path.join(self.all_result, folder,
                              "_".join([folder, self.without_strain + ".csv"])),
-                             args_ppi.score,
-                             os.path.join(self.fig, folder,
-                             self.without_strain), args_ppi.size)
+                             args_ppi.score, out_folder_nospe, args_ppi.size)
+                    for file_ in os.listdir(out_folder_nospe):
+                        log.write("\t" + os.path.join(
+                            out_folder_nospe, file_) + "\n")
 
     def _remove_tmps(self, args_ppi):
         self.helper.remove_all_content(os.path.join(args_ppi.out_folder),
@@ -401,7 +450,7 @@ class PPINetwork(object):
         self.helper.remove_all_content(os.path.join(args_ppi.out_folder),
                                        "temp", "dir")
 
-    def check_query(self, args_ppi):
+    def check_query(self, args_ppi, log):
         for query in args_ppi.querys:
             detect = False
             datas = query.split(":")
@@ -415,15 +464,18 @@ class PPINetwork(object):
                         detect = True
                         break
                 if not detect:
-                    print("Error: Some of the query proteins do not exist!")
+                    log.write(query + " is not found in gff file.\n")
+                    print("Error: {0} is not found in gff file!".format(query))
                     sys.exit()
 
-    def retrieve_ppi_network(self, args_ppi):
+    def retrieve_ppi_network(self, args_ppi, log):
         '''retrieve PPI from STRING with PIE and draw network'''
         strain_ids = []
         paths = {}
         files = {}
-        self.check_query(args_ppi)
+        self.check_query(args_ppi, log)
+        log.write("Running converter.py to generate ptt and rnt files.\n")
+        log.write("The following files are generated:\n")
         for strain in args_ppi.strains:
             datas = strain.split(":")
             ptt_file = "PPI_" + datas[0].replace(".gff", ".ptt")
@@ -436,6 +488,8 @@ class PPINetwork(object):
                                "ptt": datas[1],
                                "string": datas[2],
                                "pie": datas[3]})
+            log.write("\t" + os.path.join(args_ppi.ptts, ptt_file) + "\n")
+            log.write("\t" + os.path.join(args_ppi.ptts, rnt_file) + "\n")
         strain_ids.sort(key=lambda x: x["file"])
         pre_file = ""
         for strain_id in strain_ids:
@@ -452,7 +506,7 @@ class PPINetwork(object):
                     elif row[3] == strain_id["string"]:
                         strain_id["string"] = row[0]
                         break
-            self._retrieve_id(strain_id, genes, files)
-            self._retrieve_actions(files, strain_id, paths, args_ppi)
-        self._plot(args_ppi, files)
-#        self._remove_tmps(args_ppi)
+            self._retrieve_id(strain_id, genes, files, log)
+            self._retrieve_actions(files, strain_id, paths, args_ppi, log)
+        self._plot(args_ppi, files, log)
+        self._remove_tmps(args_ppi)

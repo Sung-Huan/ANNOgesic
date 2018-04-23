@@ -5,9 +5,10 @@ from subprocess import call
 from annogesiclib.seq_editer import SeqEditer
 
 
-def wget(input_folder, ftp, files_type):
+def wget(input_folder, ftp, files_type, log):
+    log.write("\t" + " ".join(["wget", "-cP", input_folder, ftp + "/*" + files_type]) + "\n")
     os.system(" ".join(["wget", "-cP", input_folder, ftp + "/*" + files_type]))
-
+    log.write("Done!\n")
 
 def deal_detect(input_file, file_path, change, input_folder):
     '''deal with the header of fasta file and 
@@ -26,11 +27,11 @@ def deal_detect(input_file, file_path, change, input_folder):
     return change, seq_name
 
 
-def get_file(ftp, input_folder, files_type):
+def get_file(ftp, input_folder, files_type, log):
     checks = {"detect": False, "change": None}
     filename = None
     files = []
-    wget(input_folder, ftp, files_type)
+    wget(input_folder, ftp, files_type, log)
     for file_ in os.listdir(input_folder):
         input_file = os.path.join(input_folder, file_)
         if (file_[-3:] == "fna"):
@@ -49,10 +50,12 @@ def get_file(ftp, input_folder, files_type):
             else:
                 filename = file_[0:-6] + "fa"
                 checks = {"detect": True, "change": True}
+                log.write("\tgunzip " + input_file + "\n")
                 call(["gunzip", input_file])
                 input_file = input_file[:-3]
         elif (file_[-6:] == "gff.gz") or (file_[-3:] == "gff"):
             if ("_genomic" in file_) and (file_[-6:] == "gff.gz"):
+                log.write("\tgunzip " + input_file + "\n")
                 call(["gunzip", input_file])
                 input_file = input_file[:-3]
             fh = open(input_file, "r")
@@ -66,6 +69,7 @@ def get_file(ftp, input_folder, files_type):
         elif (file_[-3:] == "gbk") or (file_[-7:] == "gbff.gz") or (
                 file_[-4:] == "gbff"):
             if (file_[-7:] == "gbff.gz") and ("_genomic" in file_):
+                log.write("\tgunzip " + input_file + "\n")
                 call(["gunzip", input_file])
                 input_file = input_file[:-3]
             with open(input_file, "r") as g_f:

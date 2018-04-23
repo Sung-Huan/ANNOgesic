@@ -12,13 +12,13 @@ from mock_args_container import MockClass
 class Mock_segemehl(object):
 
     def mock_fasta_index(self, segemehl_path, fasta_path,
-                         index, fasta):
+                         index, fasta, log):
         pass
 
     def mock_align(self, args,
                    index, fasta, read,
                    sam_file, log_file,
-                   fasta_prefix):
+                   fasta_prefix, log):
         return "test"
 
     def mock_wait_processes(self, processes):
@@ -26,7 +26,7 @@ class Mock_segemehl(object):
 
 class Mock_samtools(object):
 
-    def mock_covert_bam(self, samtools_path, out_bam, pre_sam):
+    def mock_covert_bam(self, samtools_path, out_bam, pre_sam, log):
         pass
 
 class TestCircRNADetection(unittest.TestCase):
@@ -85,8 +85,12 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(out2, self.example.fasta_file)
         os.system("gzip " + out1)
         os.system("bzip2 -z " + out2)
-        reads = self.circ._deal_zip_file([{"sample": "all", "files": [out1 + ".gz", out2 + ".bz2"]}])
-        self.assertEqual(reads, [{'sample': 'all', 'files': ['test_folder/test1.fa.gz', 'test_folder/test2.bz2', 'test_folder/test1.fa', 'test_folder/test2.fa']}])
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        reads = self.circ._deal_zip_file([{"sample": "all", "files": [out1 + ".gz", out2 + ".bz2"]}], log)
+        self.assertEqual(reads, [{'files': ['test_folder/test1.fa.gz', 'test_folder/test2.bz2',
+                                            'test_folder/test1.fa', 'test_folder/test2.fa'],
+                                  'zips': ['test_folder/test1.fa', 'test_folder/test2.fa'],
+                                  'sample': 'all'}])
         self.assertTrue(os.path.exists(out1))
         self.assertTrue(os.path.exists(out2 + ".fa"))
 
@@ -111,8 +115,9 @@ class TestCircRNADetection(unittest.TestCase):
         args.segemehl_path = None
         args.read_files = [read1, read2]
         args.cores = 2
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         read_datas = [{"sample": "test", "files": [read1, read2]}]
-        align_results, prefixs = self.circ._align(args, read_datas)
+        align_results, prefixs = self.circ._align(args, read_datas, log)
         self.assertEqual(set(align_results), set(['read1_test1', 'read2_test1',
                                                   'read1_test2', 'read2_test2']))
         self.assertEqual(set(prefixs), set(['test1', 'test2']))
@@ -126,15 +131,16 @@ class TestCircRNADetection(unittest.TestCase):
         gen_file(sam2, self.example.align_file)
         gen_file(bam, self.example.align_file)
         align_files = ["test1"]
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         bam_files, convert_ones, remove_ones = self.circ._convert_sam2bam(
-            self.test_folder, None, align_files)
+            self.test_folder, None, align_files, log)
         self.assertEqual(set(bam_files), set([bam, sam1.replace("sam", "bam"),
                                               sam2.replace("sam", "bam")]))
         self.assertEqual(set(convert_ones), set([sam2.replace("sam", "bam")]))
         self.assertEqual(set(remove_ones), set([sam1]))
         align_files = ["test3"]
         bam_files, convert_ones, remove_ones = self.circ._convert_sam2bam(
-            self.test_folder, None, align_files)
+            self.test_folder, None, align_files, log)
         self.assertEqual(set(convert_ones), set([sam2.replace("sam", "bam"),
                                                  sam1.replace("sam", "bam")]))
         self.assertEqual(set(remove_ones), set([]))

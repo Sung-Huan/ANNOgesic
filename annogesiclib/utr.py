@@ -28,7 +28,8 @@ class UTRDetection(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(folder, gff))
 
-    def _compute_utr(self, args_utr):
+    def _compute_utr(self, args_utr, log):
+        log.write("Running detect_utr.py to detect UTRs.\n")
         for gff in os.listdir(args_utr.gffs):
             if gff.endswith(".gff"):
                 prefix = gff[:-4]
@@ -54,8 +55,14 @@ class UTRDetection(object):
                     os.getcwd(), self.utr5_stat_path, ["_5utr_length.png"])
                 self.helper.move_all_content(
                     os.getcwd(), self.utr3_stat_path, ["_3utr_length.png"])
+        log.write("The following files are generated:\n")
+        for folder in (os.path.join(self.utr5_path, "gffs"),
+                       os.path.join(self.utr3_path, "gffs"),
+                       self.utr5_stat_path, self.utr3_stat_path):
+            for file_ in os.listdir(folder):
+                log.write("\t" + os.path.join(folder, file_) + "\n")
 
-    def run_utr_detection(self, args_utr):
+    def run_utr_detection(self, args_utr, log):
         self._check_folder(args_utr.tsss)
         self._check_folder(args_utr.gffs)
         self._check_folder(args_utr.trans)
@@ -74,7 +81,7 @@ class UTRDetection(object):
             self.multiparser.combine_gff(args_utr.gffs,
                                          os.path.join(args_utr.terms, "tmp"),
                                          None, "term")
-        self._compute_utr(args_utr)
+        self._compute_utr(args_utr, log)
         self.helper.remove_tmp_dir(args_utr.gffs)
         self.helper.remove_tmp_dir(args_utr.tsss)
         self.helper.remove_tmp_dir(args_utr.trans)

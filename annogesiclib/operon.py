@@ -29,7 +29,9 @@ class OperonDetection(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
-    def _detect_operon(self, prefixs, args_op):
+    def _detect_operon(self, prefixs, args_op, log):
+        log.write("Running detect_operon.py to detect operon.\n")
+        log.write("The the following files are generated:\n")
         for prefix in prefixs:
             out_gff = os.path.join(args_op.output_folder, "gffs",
                                     "_".join([prefix, "operon.gff"]))
@@ -52,6 +54,8 @@ class OperonDetection(object):
                         self.term_path, "_term.gff", prefix, None, None)
             operon(tran, tss, gff, term, args_op.tss_fuzzy,
                    args_op.term_fuzzy, args_op.length, out_table, out_gff)
+            log.write("\t" + out_table + "\n")
+            log.write("\t" + out_gff + "\n")
 
     def _check_and_parser_gff(self, args_op):
         self._check_gff(args_op.gffs, "gff")
@@ -70,22 +74,24 @@ class OperonDetection(object):
             self.multiparser.combine_gff(args_op.gffs, self.term_path,
                                          None, "term")
 
-    def _stat(self, table_path, stat_folder):
+    def _stat(self, table_path, stat_folder, log):
+        log.write("Running stat_operon.py to do statistics.\n")
         for table in os.listdir(table_path):
             if table.endswith("_operon.csv"):
                 filename = "_".join(["stat", table])
                 out_stat = os.path.join(stat_folder, filename)
                 stat(os.path.join(table_path, table), out_stat)
+                log.write("\t" + out_stat + "\n")
 
 
-    def run_operon(self, args_op):
+    def run_operon(self, args_op, log):
         self._check_and_parser_gff(args_op)
         prefixs = []
         for gff in os.listdir(args_op.gffs):
             if gff.endswith(".gff"):
                 prefixs.append(gff.replace(".gff", ""))
-        self._detect_operon(prefixs, args_op)
-        self._stat(self.table_path, args_op.stat_folder)
+        self._detect_operon(prefixs, args_op, log)
+        self._stat(self.table_path, args_op.stat_folder, log)
         self.helper.remove_tmp_dir(args_op.gffs)
         self.helper.remove_tmp_dir(args_op.tsss)
         self.helper.remove_tmp_dir(args_op.trans)

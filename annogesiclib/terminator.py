@@ -91,7 +91,7 @@ class Terminator(object):
         self.helper.check_make_folder(self.terms["non"])
         self.helper.check_make_folder(self.csvs["non"])
 
-    def _convert_gff2rntptt(self, gff_path, fasta_path, sRNAs):
+    def _convert_gff2rntptt(self, gff_path, fasta_path, sRNAs, log):
         file_types = {}
         prefixs = []
         for gff in os.listdir(gff_path):
@@ -105,6 +105,7 @@ class Terminator(object):
                 fasta = self.helper.get_correct_file(
                              fasta_path, ".fa", prefix, None, None)
                 if not fasta:
+                    log.write("{0}.fa can not be found.\n".format(prefix))
                     print("Error: {0}.fa can not be found!".format(prefix))
                     sys.exit()
                 if sRNAs:
@@ -112,18 +113,35 @@ class Terminator(object):
                     srna = self.helper.get_correct_file(
                             self.srna_path, "_sRNA.gff", prefix, None, None)
                     if (srna) and (fasta):
+                        log.write("Running converter.py to convert {0} and "
+                                  "{1} to {2}, {3}, and {4}.\n".format(
+                            gff_file, srna, ptt_file, rnt_file,
+                            srna.replace(".gff", ".rnt")))
                         self.converter.convert_gff2rntptt(
                             gff_file, fasta, ptt_file, rnt_file, srna,
                             srna.replace(".gff", ".rnt"))
                         file_types[prefix] = "srna"
+                        log.write("The following files are generated:\n")
+                        log.write("\t{0}\n\t{1}\n\t{2}\n".format(
+                            ptt_file, rnt_file, srna.replace(".gff", ".rnt")))
                     if (not srna) and (fasta):
+                        log.write("Running converter.py to convert {0} "
+                                  "to {1}, and {2}.\n".format(
+                            gff_file, ptt_file, rnt_file))
                         self.converter.convert_gff2rntptt(
                             gff_file, fasta, ptt_file, rnt_file, None, None)
                         file_types[prefix] = "normal"
+                        log.write("The following files are generated:\n")
+                        log.write("\t{0}\n\t{1}\n".format(ptt_file, rnt_file))
                 else:
+                    log.write("Running converter.py to convert {0} "
+                              "to {1}, and {2}.\n".format(
+                        gff_file, ptt_file, rnt_file))
                     self.converter.convert_gff2rntptt(
                         gff_file, fasta, ptt_file, rnt_file, None, None)
                     file_types[prefix] = "normal"
+                    log.write("The following files are generated:\n")
+                    log.write("\t{0}\n\t{1}\n".format(ptt_file, rnt_file))
         return file_types, prefixs
 
     def _combine_ptt_rnt(self, gff_path, file_types, srna_path):
@@ -142,7 +160,7 @@ class Terminator(object):
                 check = self._combine_annotation(combine_file, files)
         return check
 
-    def _TransTermHP(self, fasta, file_, out_path, prefix, out, args_term):
+    def _TransTermHP(self, fasta, file_, out_path, prefix, out, args_term, log):
         call([args_term.TransTermHP_path, "-p", args_term.expterm_path,
               fasta, os.path.join(self.combine_path, file_), "--t2t-perf",
               os.path.join(out_path, "_".join([
@@ -151,15 +169,25 @@ class Terminator(object):
               "--bag-output", os.path.join(out_path, "_".join([
                   prefix, "best_terminator_after_gene.bag"]))],
              stdout=out)
+        log.write(" ".join([args_term.TransTermHP_path, "-p", args_term.expterm_path,
+              fasta, os.path.join(self.combine_path, file_), "--t2t-perf",
+              os.path.join(out_path, "_".join([
+                  prefix,
+                  "terminators_within_robust_tail-to-tail_regions.t2t"])),
+              "--bag-output", os.path.join(out_path, "_".join([
+                  prefix, "best_terminator_after_gene.bag"]))]) + "\n")
 
-    def _run_TransTermHP(self, args_term):
+    def _run_TransTermHP(self, args_term, log):
         self.helper.check_make_folder(self.tmps["transterm"])
+        log.write("Running TransTermHP.\n")
+        log.write("Make sure the version is at least 2.09.\n")
         for file_ in os.listdir(self.combine_path):
             if ".ptt" in file_:
                 prefix = file_.replace(".ptt", "")
                 fasta = self.helper.get_correct_file(
                              self.fasta_path, ".fa", prefix, None, None)
                 if not fasta:
+                    log.write("{0}.fa can not be found!.\n".format(prefix))
                     print("Error: {0}.fa can not be found!".format(prefix))
                     sys.exit()
                 out_path = os.path.join(args_term.hp_folder, prefix)
@@ -167,11 +195,18 @@ class Terminator(object):
                 out = open(os.path.join(out_path,
                            "_".join([prefix, "terminators.txt"])), "w")
                 self._TransTermHP(fasta, file_, out_path,
-                                  prefix, out, args_term)
+                                  prefix, out, args_term, log)
+                log.write("Done!\n")
+                log.write("The following files are generated in {0}.\n".format(
+                    out_path))
+                for file_ in os.listdir(out_path):
+                    log.write("\t" + file_ + "\n")
                 out.close()
         shutil.rmtree(self.combine_path)
 
-    def _convert_to_gff(self, prefixs, args_term):
+    def _convert_to_gff(self, prefixs, args_term, log):
+        log.write("Running coverter.py to convert the results of TransTermHP "
+                  "to gff3 format.\n")
         for prefix in prefixs:
             for folder in os.listdir(args_term.hp_folder):
                 if prefix == folder:
@@ -183,6 +218,7 @@ class Terminator(object):
                                     "_".join([prefix, self.tmps["hp_gff"]]))
                             self.converter.convert_transtermhp2gff(
                                  os.path.join(out_path, file_), out_file)
+                            log.write("\t" + out_file + " is generated.\n")
         self.multiparser.combine_gff(args_term.gffs, self.tmps["transterm"],
                                      None, self.tmps["hp"])
 
@@ -277,19 +313,28 @@ class Terminator(object):
                     pre_strain = entry.seq_id
                 fh.close()
 
-    def _run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix):
+    def _run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix, log):
+        log.write("Computing secondray structures of {0}.\n".format(prefix))
+        log.write("Make sure the version of Vienna RNA package is at least 2.3.2.\n")
         print("Computing secondray structures of {0}".format(prefix))
         self.helper.check_make_folder(self.tmps["folder"])
         pre_cwd = os.getcwd()
         os.chdir(self.tmps["folder"])
+        log.write(" ".join([RNAfold_path, "<", os.path.join("..", tmp_seq),
+                  ">", os.path.join("..", tmp_sec)]) + "\n")
         os.system(" ".join([RNAfold_path, "<", os.path.join("..", tmp_seq),
                   ">", os.path.join("..", tmp_sec)]))
+        log.write("Done!\n")
+        log.write("\t" + tmp_sec + " is generated for storing secondary "
+                  "structure.\n")
         os.chdir(pre_cwd)
         shutil.rmtree(self.tmps["folder"])
 
     def _compute_intersection_forward_reverse(
-            self, prefixs, merge_path, wig_path, merge_wigs, args_term):
+            self, prefixs, merge_path, wig_path, merge_wigs, args_term, log):
         '''the approach for searching gene converged region terminator'''
+        log.write("Searching terminators which located in gene converged "
+                  "region.\n")
         for prefix in prefixs:
             tmp_seq = os.path.join(args_term.out_folder,
                                    "_".join(["inter_seq", prefix]))
@@ -304,13 +349,27 @@ class Terminator(object):
                                      "_".join(["term_candidates", prefix]))
             if os.path.exists(tran_file):
                 print("Extracting sequences of {0}".format(prefix))
+                log.write("Running get_inter_seq.py to extract the potential "
+                          "sequences from {0}.\n".format(prefix))
                 intergenic_seq(os.path.join(self.fasta_path, prefix + ".fa"),
                                tran_file, gff_file, tmp_seq, tmp_index, args_term)
-                self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec, prefix)
+                log.write("\t" + tmp_seq + " is generated for storing the "
+                          "potential sequences.\n")
+                self._run_rnafold(args_term.RNAfold_path, tmp_seq, tmp_sec,
+                                  prefix, log)
+                log.write("Running extract_sec_info.py to extract the "
+                          "information of secondary structure from {0}.\n".format(
+                          prefix))
                 extract_info_sec(tmp_sec, tmp_seq, tmp_index)
                 os.remove(tmp_index)
+                log.write("Running get_polyT.py to detect the "
+                          "terminator candidates for {0}.\n".format(prefix))
                 poly_t(tmp_seq, tmp_sec, gff_file, tran_file, tmp_cand, args_term)
+                log.write("\t" + tmp_cand + " which temporary stores terminator "
+                          "candidates is generated.\n")
             print("Detecting terminators for " + prefix)
+            log.write("Running detect_coverage_term.py to gain "
+                      "high-confidence terminators for {0}.\n".format(prefix))
             detect_coverage(
                 tmp_cand, os.path.join(merge_path, prefix + ".gff"),
                 os.path.join(self.tran_path, "_".join([
@@ -352,7 +411,7 @@ class Terminator(object):
         self.helper.remove_all_content(args_term.out_folder,
                                        "term_candidates_", "file")
 
-    def _compute_stat(self, args_term):
+    def _compute_stat(self, args_term, log):
         new_prefixs = []
         for gff in os.listdir(self.terms["all"]):
             if gff.endswith("_term_all.gff"):
@@ -376,7 +435,9 @@ class Terminator(object):
                 fh.close()
                 shutil.move(self.tmps["gff"], os.path.join(self.terms["all"],
                             "_".join([new_prefix, self.suffixs["gff"]])))
+        log.write("Running stat_term.py to do statistics.\n")
         stat_path = os.path.join(args_term.out_folder, "statistics")
+        log.write("The following files are generated:\n")
         for prefix in new_prefixs:
             stat_term(os.path.join(self.terms["all"],
                       "_".join([prefix, self.suffixs["gff"]])),
@@ -404,13 +465,31 @@ class Terminator(object):
                         "_".join([prefix, self.suffixs["csv"]])))
             os.remove(os.path.join(self.terms["all"],
                       "_".join([prefix, self.suffixs["allgff"]])))
+            log.write("\t" + os.path.join(self.terms["all"],
+                      "_".join([prefix, self.suffixs["gff"]])) + "\n")
+            log.write("\t" + os.path.join(self.terms["best"],
+                      "_".join([prefix, self.suffixs["gff"]])) + "\n")
+            log.write("\t" + os.path.join(self.terms["express"],
+                      "_".join([prefix, self.suffixs["gff"]])) + "\n")
+            log.write("\t" + os.path.join(self.terms["non"],
+                      "_".join([prefix, self.suffixs["gff"]])) + "\n")
+            log.write("\t" + os.path.join(self.csvs["all"],
+                      "_".join([prefix, self.suffixs["csv"]])) + "\n")
+            log.write("\t" + os.path.join(stat_path,
+                      "_".join(["stat", prefix + ".csv"])) + "\n")
+            log.write("\t" + os.path.join(self.csvs["best"],
+                        "_".join([prefix, self.suffixs["csv"]])) + "\n")
+            log.write("\t" + os.path.join(self.csvs["express"],
+                        "_".join([prefix, self.suffixs["csv"]])) + "\n")
+            log.write("\t" + os.path.join(self.csvs["non"],
+                        "_".join([prefix, self.suffixs["csv"]])) + "\n")
 
     def _check_gff_file(self, folder):
         for file_ in os.listdir(folder):
             if file_.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(folder, file_))
 
-    def _compare_term_tran(self, args_term, prefixs):
+    def _compare_term_tran(self, args_term, prefixs, log):
         '''searching the associated terminator to transcript'''
         self.multiparser.combine_gff(args_term.gffs, self.tran_path,
                                      None, "transcript")
@@ -419,6 +498,9 @@ class Terminator(object):
         for file_ in os.listdir(self.tran_path):
             if file_.endswith("_transcript.gff"):
                 prefixs.append(file_.replace("_transcript.gff", ""))
+        log.write("Running compare_tran_term.py for comparing transcripts "
+                  "and terminators.\n")
+        log.write("The following files are generated:\n")
         for type_ in ("best_candidates", "expressed_candidates",
                       "all_candidates"):
             compare_term_tran(self.tran_path,
@@ -435,18 +517,25 @@ class Terminator(object):
                         args_term.out_folder, "statistics",
                         "_".join(["stat_compare_terminator_transcript", prefix,
                                   type_ + ".csv"])))
+                log.write("\t" + os.path.join(
+                        args_term.out_folder, "statistics",
+                        "_".join(["stat_compare_terminator_transcript", prefix,
+                                  type_ + ".csv"])) + "\n")
 
-    def _re_table(self, args_term, prefixs):
+    def _re_table(self, args_term, prefixs, log):
+        log.write("Running re_table.py to generate coverage information.\n")
+        log.write("The following files are updated:\n")
         for type_ in ["all_candidates", "best_candidates",
                       "expressed_candidates", "non_expressed_candidates"]:
             for table in os.listdir(os.path.join(
                     args_term.out_folder, "tables", type_)):
+                term_table = os.path.join(args_term.out_folder, "tables",
+                                          type_, table)
                 reorganize_table(args_term.libs, args_term.merge_wigs,
-                                 "Coverage_detail",
-                                 os.path.join(args_term.out_folder, "tables",
-                                              type_, table))
+                                 "Coverage_detail", term_table)
+                log.write("\t" + term_table + "\n")
 
-    def run_terminator(self, args_term):
+    def run_terminator(self, args_term, log):
         self._check_gff_file(args_term.gffs)
         self._check_gff_file(args_term.trans)
         self.multiparser.parser_fasta(args_term.fastas)
@@ -455,11 +544,11 @@ class Terminator(object):
                   "and fasta files!")
             sys.exit()
         file_types, prefixs = self._convert_gff2rntptt(
-                self.gff_path, self.fasta_path, args_term.srnas)
+                self.gff_path, self.fasta_path, args_term.srnas, log)
         check = self._combine_ptt_rnt(self.gff_path, file_types,
                                       self.srna_path)
-        self._run_TransTermHP(args_term)
-        self._convert_to_gff(prefixs, args_term)
+        self._run_TransTermHP(args_term, log)
+        self._convert_to_gff(prefixs, args_term, log)
         self.helper.remove_tmp(self.gff_path)
         self.multiparser.parser_gff(args_term.trans, "transcript")
         self.helper.check_make_folder(self.tmps["term_table"])
@@ -469,8 +558,8 @@ class Terminator(object):
         merge_path = self._merge_sRNA(args_term.srnas, prefixs, self.gff_path)
         self._compute_intersection_forward_reverse(
                 prefixs, merge_path, args_term.wig_path,
-                args_term.merge_wigs, args_term)
-        self._compute_stat(args_term)
-        self._compare_term_tran(args_term, prefixs)
-        self._re_table(args_term, prefixs)
+                args_term.merge_wigs, args_term, log)
+        self._compute_stat(args_term, log)
+        self._compare_term_tran(args_term, prefixs, log)
+        self._re_table(args_term, prefixs, log)
         self._remove_tmp_file(args_term.merge_wigs, args_term)

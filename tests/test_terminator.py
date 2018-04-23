@@ -20,7 +20,7 @@ class Mock_func(object):
         pass
 
     def mock_TransTermHP(self, fasta, combine_path, file_,
-                         out_path, prefix, out):
+                         out_path, prefix, out, log):
         pass
 
     def mock_intergenic_seq(self, fasta, tran_file, gff_file,
@@ -35,20 +35,20 @@ class Mock_func(object):
                              fuzzy, cutoff_coverage, hp, merge_wigs, libs):
         pass
 
-    def mock_run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix):
+    def mock_run_rnafold(self, RNAfold_path, tmp_seq, tmp_sec, prefix, log):
         gen_file(tmp_seq, "test")
         gen_file(tmp_sec, "test")
 
     def mock_stat_term(self, gff, table, stat, detect, express, non):
         pass
 
-    def mock_compare_term_tran(self, args, test1):
+    def mock_compare_term_tran(self, args, test1, log):
         pass
 
     def mock_remove_tmp_file(self, term, tran):
         pass
 
-    def mock_re_table(self, args, prefix):
+    def mock_re_table(self, args, prefix, log):
         pass
 
 class Mock_Multiparser(object):
@@ -120,8 +120,9 @@ class TestTerminator(unittest.TestCase):
         gen_file(os.path.join(self.srnas, "aaa_sRNA.gff"),
                  self.example.srna_file)
         gen_file(os.path.join(self.fastas, "aaa.fa"), self.example.fasta_file)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         file_types, prefixs = self.term._convert_gff2rntptt(
-            self.gffs, self.fastas, self.srnas)
+            self.gffs, self.fastas, self.srnas, log)
         self.assertDictEqual(file_types, {'aaa': 'srna'})
         self.assertListEqual(prefixs, ['aaa'])
 
@@ -147,8 +148,9 @@ class TestTerminator(unittest.TestCase):
         args = self.mock_args.mock()
         args.gffs = self.gffs
         args.fastas = self.fastas
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.hp_folder = self.out
-        self.term._run_TransTermHP(args)
+        self.term._run_TransTermHP(args, log)
         self.assertTrue(os.path.exists(os.path.join(self.out, "aaa")))
 
     def test_convert_to_gff(self):
@@ -162,7 +164,8 @@ class TestTerminator(unittest.TestCase):
         args = self.mock_args.mock()
         args.hp_folder = self.out
         args.gffs = self.gffs
-        self.term._convert_to_gff(["aaa"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.term._convert_to_gff(["aaa"], args, log)
         datas = import_data(os.getcwd() + "/tmp_transterm/aaa_transtermhp.gff")
         self.assertEqual("\n".join(datas), self.example.gff_bag)
 
@@ -206,9 +209,10 @@ class TestTerminator(unittest.TestCase):
         args.libs = "libs"
         args.replicates = "rep"
         args.RNAfold_path = "test"
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.term._compute_intersection_forward_reverse(
            ["aaa"], self.test_folder,
-           "wig_path", "merge_wigs", args)
+           "wig_path", "merge_wigs", args, log)
         self.assertTrue(os.path.join(self.out, "inter_seq_aaa"))
         self.assertTrue(os.path.join(self.out, "inter_sec_aaa"))
 
@@ -229,7 +233,8 @@ class TestTerminator(unittest.TestCase):
         args = self.mock_args.mock()
         args.stat = True
         args.out_folder = self.out
-        self.term._compute_stat(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.term._compute_stat(args, log)
         self.assertTrue(os.path.exists(os.path.join(
             csv_outfolder, "expressed_candidates/aaa_term.csv")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -281,7 +286,8 @@ class TestTerminator(unittest.TestCase):
         args.fuzzy_up_gene = 2
         args.fuzzy_down_ta = 2
         args.fuzzy_down_gene = 2
-        self.term.run_terminator(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.term.run_terminator(args, log)
         self.assertTrue(os.path.exists(
             os.path.join(self.out, "tables/all_candidates")))
         self.assertTrue(os.path.exists(

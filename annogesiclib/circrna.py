@@ -48,10 +48,11 @@ class CircRNADetection(object):
                 pass
             time.sleep(5)
 
-    def _deal_zip_file(self, read_files):
+    def _deal_zip_file(self, read_files, log):
         tmp_datas = []
         tmp_reads = []
         for reads in read_files:
+            zips = []
             tmp_datas = reads["files"]
             for read in reads["files"]:
                 if read.endswith(".bz2"):
@@ -64,8 +65,11 @@ class CircRNADetection(object):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
                     tmp_datas.append(mod_read)
+                    zips.append(mod_read)
                     print(" ".join(["Uncompressing", read]))
+                    log.write(" ".join(["bzcat", read]) + "\n")
                     call(["bzcat", read], stdout=read_out)
+                    log.write("\t" + mod_read + " is generated.\n")
                     read_out.close()
                 elif read.endswith(".gz"):
                     mod_read = read.replace(".gz", "")
@@ -77,25 +81,35 @@ class CircRNADetection(object):
                         mod_read = mod_read + ".fa"
                     read_out = open(mod_read, "w")
                     tmp_datas.append(mod_read)
+                    zips.append(mod_read)
                     print(" ".join(["Uncompressing", read]))
+                    log.write(" ".join(["zcat", read]) + "\n")
                     call(["zcat", read], stdout=read_out)
                     read_out.close()
+                    log.write("\t" + mod_read + " is generated.\n")
             tmp_reads.append({"sample": reads["sample"],
-                              "files": tmp_datas})   
+                              "files": tmp_datas, "zips": zips})   
         return tmp_reads
 
     def _run_segemehl_fasta_index(self, segemehl_path, fasta_path,
-                                  index, fasta):
+                                  index, fasta, log):
+        log.write(" ".join([segemehl_path,
+                  "-x", os.path.join(fasta_path, index),
+                  "-d", os.path.join(fasta_path, fasta)]) + "\n")
         call([segemehl_path,
               "-x", os.path.join(fasta_path, index),
               "-d", os.path.join(fasta_path, fasta)])
 
     def _run_segemehl_align(self, args_circ, index, fasta, read,
-                            sam_file, log_file, fasta_prefix):
+                            sam_file, log_file, fasta_prefix, log):
         out = open(os.path.join(self.alignment_path,
                    fasta_prefix, sam_file), "w")
         log = open(os.path.join(self.alignment_path,
                    fasta_prefix, log_file), "w")
+        log.write(" ".join([args_circ.segemehl_path,
+                   "-i", os.path.join(self.fasta_path, index),
+                   "-d", os.path.join(self.fasta_path, fasta),
+                   "-q", read, "-S"]) + "\n")
         p = Popen([args_circ.segemehl_path,
                    "-i", os.path.join(self.fasta_path, index),
                    "-d", os.path.join(self.fasta_path, fasta),
@@ -103,20 +117,23 @@ class CircRNADetection(object):
                   stdout=out, stderr=log)
         return p
 
-    def _align(self, args_circ, read_datas):
+    def _align(self, args_circ, read_datas, log):
         '''align the read. if the bam files are provided, it can be skipped.'''
         prefixs = []
         align_files = []
+        log.write("Using segemehl to align the read.\n")
+        log.write("Please make sure the version of segemehl is at least 0.1.9.\n")
         for fasta in os.listdir(self.fasta_path):
             index = fasta.replace(".fa", ".idx")
             self._run_segemehl_fasta_index(args_circ.segemehl_path,
-                                           self.fasta_path, index, fasta)
+                                           self.fasta_path, index, fasta, log)
             processes = []
             num_process = 0
             fasta_prefix = fasta.replace(".fa", "")
             prefixs.append(fasta_prefix)
             self.helper.check_make_folder(os.path.join(
                                 self.alignment_path, fasta_prefix))
+            log.write("Running for {0}.\n".format(fasta_prefix))
             for reads in read_datas:
                 for read in reads["files"]:
                     num_process += 1
@@ -134,28 +151,39 @@ class CircRNADetection(object):
                         print("Mapping {0}".format(sam_file))
                         p = self._run_segemehl_align(
                                 args_circ, index, fasta, read,
-                                sam_file, log_file, fasta_prefix)
+                                sam_file, log_file, fasta_prefix, log)
                         processes.append(p)
                         if num_process == args_circ.cores:
                             self._wait_process(processes)
                             num_process = 0
-            self._wait_process(processes)
+                self._wait_process(processes)
+            log.write("Done!\n")
+            log.write("The following files are generated in {0}:\n".format(
+                  os.path.join(self.alignment_path, fasta_prefix)))
+            for file_ in os.listdir(os.path.join(
+                   self.alignment_path, fasta_prefix)):
+                log.write("\t" + file_ + "\n")
         return align_files, prefixs
 
-    def _run_samtools_convert_bam(self, samtools_path, pre_sam, out_bam):
+    def _run_samtools_convert_bam(self, samtools_path, pre_sam, out_bam, log):
+        log.write(" ".join([samtools_path, "view",
+                            "-bS", pre_sam, "-o", out_bam]) + "\n")
         call([samtools_path, "view", "-bS", pre_sam, "-o", out_bam])
 
-    def _convert_sam2bam(self, sub_alignment_path, samtools_path, align_files):
+    def _convert_sam2bam(self, sub_alignment_path, samtools_path, align_files, log):
         bam_files = []
         convert_ones = []
         remove_ones = []
+        log.write("Using Samtools to convert SAM files to BAM files.\n")
+        log.write("Please make sure the version of Samtools is at least 1.3.1.\n")
         for sam in os.listdir(sub_alignment_path):
             pre_sam = os.path.join(sub_alignment_path, sam)
             if sam.endswith(".sam"):
                 bam_file = sam.replace(".sam", ".bam")
                 print("Converting {0} to {1}".format(sam, bam_file))
                 out_bam = os.path.join(sub_alignment_path, bam_file)
-                self._run_samtools_convert_bam(samtools_path, pre_sam, out_bam)
+                self._run_samtools_convert_bam(samtools_path, pre_sam,
+                                               out_bam, log)
                 bam_files.append(out_bam)
                 if align_files:
                     if bam_file.replace(".bam", "") not in align_files:
@@ -168,10 +196,18 @@ class CircRNADetection(object):
                     bam_files.append(pre_sam)
             elif sam.endswith(".log"):
                 os.remove(pre_sam)
+        log.write("Done!\n")
+        log.write("The following files are generated:\n")
+        for file_ in os.listdir(sub_alignment_path):
+            if file_.endswith(".bam"):
+                log.write("\t" + os.path.join(sub_alignment_path, file_) + "\n")
         return bam_files, convert_ones, remove_ones
 
     def _run_samtools_merge_sort(self, samtools_path, prefix,
-                                 out_folder, bam_datas):
+                                 out_folder, bam_datas, log):
+        log.write("Using Samtools for merging, sorting and converting "
+                  "the BAM files.\n")
+        log.write("Make sure the version Samtools is at least 1.3.1.\n")
         for bam_data in bam_datas:
             print("Merging bam files for {0} of {1}".format(
                 prefix, bam_data["sample"]))
@@ -181,22 +217,30 @@ class CircRNADetection(object):
                 shutil.copyfile(bam_data["files"][0], sample_bam)
             else:
                 file_line = " ".join(bam_data["files"])
+                log.write(" ".join([samtools_path, "merge",
+                                    sample_bam, file_line]) + "\n")
                 os.system(" ".join([samtools_path, "merge",
                                     sample_bam, file_line]))
             print("Sorting bam files for {0} of {1}".format(
                 prefix, bam_data["sample"]))
             sort_sample = os.path.join(out_folder,
                   "_".join([prefix, bam_data["sample"] + "_sort.bam"]))
+            log.write(" ".join([samtools_path, "sort",
+                      "-o", sort_sample, sample_bam]) + "\n")
             call([samtools_path, "sort", "-o", sort_sample, sample_bam])
             os.remove(sample_bam)
             print("Converting bam files to sam files for {0} of {1}".format(
                 prefix, bam_data["sample"]))
+            log.write(" ".join([samtools_path, "view", "-h", "-o",
+                      sort_sample.replace(".bam", ".sam"), sort_sample]) + "\n")
             call([samtools_path, "view", "-h", "-o",
                   sort_sample.replace(".bam", ".sam"), sort_sample])
+        log.write("Done!\n")
+        log.write("\t" + sort_sample.replace(".bam", ".sam") + " is generated.\n")
 
     def _merge_sort_aligment_file(
             self, bam_datas, read_datas, samtools_path,
-            out_folder, convert_ones, tmp_reads, remove_ones, prefix):
+            out_folder, convert_ones, tmp_reads, remove_ones, prefix, log):
         if bam_datas is None:
             merge_bam_datas = []
             for read_data in read_datas:
@@ -228,13 +272,17 @@ class CircRNADetection(object):
         else:
             merge_bam_datas = copy.deepcopy(bam_datas)
         self._run_samtools_merge_sort(samtools_path, prefix,
-                                      out_folder, merge_bam_datas)
+                                      out_folder, merge_bam_datas, log)
         for bam in convert_ones:
             os.remove(bam)
         for sam in remove_ones:
             os.remove(sam)
 
-    def _run_testrealign(self, prefix, testrealign_path, out_folder):
+    def _run_testrealign(self, prefix, testrealign_path, out_folder, log):
+        log.write("Using Segemehl to detect circular RNAs.\n")
+        log.write("Please make sure the version of Segemehl is at least 0.1.9.\n")
+        log.write("Please make sure your testrealign.x exists. If it does not "
+                  "exists, please reinstall your Segemehl via using make all.\n")
         sub_splice_path = os.path.join(self.splice_path, prefix)
         if not os.path.exists(sub_splice_path):
             os.mkdir(sub_splice_path)
@@ -251,7 +299,12 @@ class CircRNADetection(object):
                                        sample_prefix + "_splicesites.bed"),
                     "-T", os.path.join(sub_splice_path,
                                        sample_prefix + "_transrealigned.bed")])
+                log.write(command + " 2>" + err_log + "\n")
                 os.system(command + " 2>" + err_log)
+        log.write("Done!\n")
+        log.write("The following files are generated:\n")
+        for file_ in os.listdir(sub_splice_path):
+            log.write("\t" + os.path.join(sub_splice_path, file_) + "\n")
         self.helper.remove_all_content(out_folder, ".sam", "file")
 
     def _merge_bed(self, fastas, splice_path, output_folder):
@@ -309,8 +362,10 @@ class CircRNADetection(object):
         self.helper.remove_all_content(splice_path, None, "dir")
         return samples, fa_prefixs
 
-    def _stat_and_gen_gff(self, prefixs, samples, args_circ):
+    def _stat_and_gen_gff(self, prefixs, samples, args_circ, log):
         '''do statistics and print the result to gff file'''
+        log.write("Running circRNA.py to do statistics and generate gff files.\n")
+        log.write("The following files are generated:\n")
         for prefix in prefixs:
             self.helper.check_make_folder(os.path.join(self.gff_folder,
                                                        prefix))
@@ -330,21 +385,29 @@ class CircRNADetection(object):
                 splice_file = os.path.join(
                     self.splice_path, prefix,
                     "".join([prefix, sample, self.splices["file"]]))
-                detect_circrna(splice_file, os.path.join(
-                               self.gff_path, prefix + ".gff"),
-                               os.path.join(self.candidate_path, prefix,
-                               "".join([prefix, sample, "circRNA_all.csv"])),
-                               args_circ, os.path.join(args_circ.stat_folder,
+                stat_file = os.path.join(args_circ.stat_folder,
                                "".join(["stat_", prefix, sample,
-                                        "circRNA.csv"])))
+                                        "circRNA.csv"]))
+                csv_all = os.path.join(self.candidate_path, prefix,
+                               "".join([prefix, sample, "circRNA_all.csv"]))
+                csv_best = os.path.join(self.candidate_path, prefix,
+                               "".join([prefix, sample, "circRNA_best.csv"]))
+                gff_all = os.path.join(self.gff_folder, prefix,
+                                "".join([prefix, sample, "circRNA_all.gff"]))
+                gff_best = os.path.join(self.gff_folder, prefix,
+                                  "".join([prefix, sample, "circRNA_best.gff"]))
+                detect_circrna(splice_file, os.path.join(
+                               self.gff_path, prefix + ".gff"), csv_all,
+                               args_circ, stat_file)
                 self.converter.convert_circ2gff(
                      os.path.join(self.candidate_path, prefix,
                                   "".join([prefix, sample, "circRNA_all.csv"])),
-                     args_circ, os.path.join(
-                                self.gff_folder, prefix,
-                                "".join([prefix, sample, "circRNA_all.gff"])),
-                     os.path.join(self.gff_folder, prefix,
-                                  "".join([prefix, sample, "circRNA_best.gff"])))
+                     args_circ, gff_all, gff_best)
+                log.write("\t" + stat_file + "\n")
+                log.write("\t" + csv_all + "\n")
+                log.write("\t" + csv_best + "\n")
+                log.write("\t" + gff_all + "\n")
+                log.write("\t" + gff_best + "\n")
 
     def _extract_input_files(self, inputs):
         input_datas = []
@@ -397,11 +460,12 @@ class CircRNADetection(object):
         for prefix in fa_prefixs:
             shutil.rmtree(os.path.join(args_circ.output_folder, prefix))
 
-    def run_circrna(self, args_circ):
+    def run_circrna(self, args_circ, log):
         '''detection of circRNA'''
         bam_datas = None
         read_datas = None
         if (args_circ.bams is None) and (args_circ.read_files is None):
+            log.write("--bam_files and --read_files can not be both emtpy.\n")
             print("Error: --bam_files or --read_files should be assigned.")
             sys.exit()
         if args_circ.bams is not None:
@@ -413,6 +477,7 @@ class CircRNADetection(object):
                 self.helper.check_uni_attributes(os.path.join(
                                                  args_circ.gffs, gff))
         if args_circ.segemehl_path is None:
+            log.write("segemehl does not exists.\n")
             print("Error: please assign segemehl path!!")
             sys.exit()
         self.multiparser.parser_fasta(args_circ.fastas)
@@ -421,8 +486,9 @@ class CircRNADetection(object):
                                      "fasta", None)
         tmp_reads = []
         if args_circ.read_files:
-            tmp_reads = self._deal_zip_file(read_datas)
-            align_files, prefixs = self._align(args_circ, tmp_reads)
+            log.write("Raw read files are found.\n")
+            tmp_reads = self._deal_zip_file(read_datas, log)
+            align_files, prefixs = self._align(args_circ, tmp_reads, log)
         else:
             align_files = None
         prefixs = []
@@ -434,21 +500,21 @@ class CircRNADetection(object):
             if args_circ.read_files:
                 sub_alignment_path = os.path.join(self.alignment_path, prefix)
                 bam_files, convert_ones, remove_ones = self._convert_sam2bam(
-                    sub_alignment_path, args_circ.samtools_path, align_files)
+                sub_alignment_path, args_circ.samtools_path, align_files, log)
             else:
                 convert_ones = []
                 remove_ones = []
             self._merge_sort_aligment_file(
                 bam_datas, read_datas, args_circ.samtools_path,
                 args_circ.output_folder,
-                convert_ones, tmp_reads, remove_ones, prefix)
+                convert_ones, tmp_reads, remove_ones, prefix, log)
             self._run_testrealign(prefix, args_circ.testrealign_path,
-                                  args_circ.output_folder)
+                                  args_circ.output_folder, log)
         samples, fa_prefixs = self._merge_bed(
             args_circ.fastas, self.splice_path, args_circ.output_folder)
-        self._stat_and_gen_gff(fa_prefixs, samples, args_circ)
+        self._stat_and_gen_gff(fa_prefixs, samples, args_circ, log)
         if len(tmp_reads) != 0:
             for reads in tmp_reads:
-                for read in reads["files"]:
+                for read in reads["zips"]:
                     os.remove(read)
         self._remove_tmp_files(args_circ, fa_prefixs)

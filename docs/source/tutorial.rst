@@ -87,7 +87,7 @@ and convert the the gff files to embl format (``--convert_embl``).
 
     $ annogesic get_input_files \
         --ftp_path ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/ \
-        --ftp_path --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
+        --ref_gff --ref_fasta --ref_gbk --ref_ptt --ref_rnt --convert_embl \
         --project_path ANNOgesic
 
 The file will be place in the following locations:
@@ -255,6 +255,7 @@ will be generated in ``ANNOgesic/output/updated_references/fasta_files``.
      $ annogesic update_genome_fasta \
         --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
+        --updated_seq_name NC_test.1 \
         --project_path ANNOgesic
 
 ``--related_fasta_files`` is path of the fasta file of closely related genome. 
@@ -297,7 +298,6 @@ Now we can check the results.
     TGGAAATGGGAAAAAAAGTGATTTATGCTACGAGTGAAAATTTTATCAATGATTTTACTT
 
 We can see the third nucleotide of ``NC_test.1.fa`` is replaced from G to c. Moreover, The sixth nucleotide T is deleted.
-If we check ``test_case2.fa``, the modification is also according to the mutation table and our setting.
 
 If the mutation table can not be provided, we can also use subcommand ``snp`` to detect mutations and generate 
 fasta files automatically. For ``snp``, we will go through it later.
@@ -324,11 +324,10 @@ After setting the environment, we can try it.
     anngesic annotation_transfer \
         --related_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
         --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        --target_fasta_files ANNOgesic/output/updated_references/fasta_files/test_case1.fa \
-                              ANNOgesic/output/updated_references/fasta_files/test_case2.fa \
+        --target_fasta_files ANNOgesic/output/updated_references/fasta_files/NC_test.1.fa \
         --element chromosome \
         --transfer_type Strain \
-        --compare_pair NC_009839.1:NC_test.1 NC_009839.1:test_case2 \
+        --compare_pair NC_009839.1:NC_test.1 \
         --project_path ANNOgesic
 
 
@@ -345,9 +344,9 @@ Once the transfer is done, we can see
 ::
 
     $ ls ANNOgesic/output/updated_references/annotations/
-    test_case1.gff  test_case1.ptt  test_case1.rnt  test_case2.gff  test_case2.ptt  test_case2.rnt
+    NC_test.1.gff  NC_test.1.ptt  NC_test.1.rnt
     $ ls ANNOgesic/output/annotation_transfer/
-    chromosome.NC_test.1.final.embl  chromosome.test_case2.final.embl  NC_test.1.gff  ratt_log.txt  test_case2.gff
+    chromosome.NC_test.1.final.embl  log.txt  NC_test.1.gff  ratt_log.txt
 
 In ``ANNOgesic/output/updated_references/annotations``, we can find ptt, rnt and gff files. In ``ANNOgesic/output/annotation_transfer``,
 we can find the output of `RATT <http://ratt.sourceforge.net/>`_.
@@ -418,7 +417,7 @@ Once the optimization is done, you can find several files.
 ::
 
     $ ls ANNOgesic/output/TSSs/optimized_TSSpredator/
-    best_NC_009839.1.csv  log.txt  stat_NC_009839.1.csv
+    best_NC_009839.1.csv  log.txt  results_all_steps.txt   stat_NC_009839.1.csv
 
 ``best_NC_009839.1.csv`` is for the results of the optimized parameters; ``stat_NC_009839.1.csv`` is for the results of each step.
 
@@ -455,7 +454,7 @@ The output files are gff file, MasterTable and statistic files.
 ::
 
     $ ls ANNOgesic/output/TSSs/
-    configs  gffs  MasterTables  optimized_TSSpredator  screenshots  statistics
+    configs  gffs  MasterTables  log.txt  optimized_TSSpredator  screenshots  statistics
     $ ls ANNOgesic/output/TSSs/configs/
     config_NC_009839.1.ini
     $ ls ANNOgesic/output/TSSs/gffs/
@@ -494,7 +493,7 @@ The output files are following:
 ::
 
     $ ls ANNOgesic/output/processing_sites/
-    configs  gffs  MasterTables  statistics
+    configs  gffs  MasterTables  log.txt  statistics
     $ ls ANNOgesic/output/processing_sites/configs/
     config_NC_009839.1.ini
     $ ls ANNOgesic/output/processing_sites/gffs/
@@ -660,7 +659,7 @@ Three folders will be generated to store table and statistics files.
 ::
 
     $ ls ANNOgesic/output/operons/
-    gffs  statistics  tables 
+    gffs  log.txt  statistics  tables 
     $ ls ANNOgesic/output/operons/gffs/
     NC_009839.1_operon.gff
     $ ls ANNOgesic/output/operons/tables/
@@ -705,7 +704,7 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
 ::
 
     $ ls ANNOgesic/output/promoters/
-    fasta_classes  NC_009839.1
+    fasta_classes  NC_009839.1   log.txt
     $ ls ANNOgesic/output/promoters/fasta_classes/NC_009839.1
     NC_009839.1_allgenome_all_types.fa  NC_009839.1_allgenome_internal.fa  NC_009839.1_allgenome_primary.fa    NC_009839.1_allgenome_without_orphan.fa
     NC_009839.1_allgenome_antisense.fa  NC_009839.1_allgenome_orphan.fa    NC_009839.1_allgenome_secondary.fa
@@ -924,7 +923,7 @@ Several output folders will be generated.
 ::
 
     $ ls ANNOgesic/output/sRNA_targets/
-    IntaRNA_results  merged_results  RNAplex_results  RNAup_results  sRNA_seqs  target_seqs
+    IntaRNA_results  merged_results  log.txt  RNAplex_results  RNAup_results  sRNA_seqs  target_seqs
 
 ``sRNA_seqs`` and ``target_seqs`` are for sequences of the sRNAs and the potential targets.
 
@@ -1012,7 +1011,7 @@ Several output folders will be generated.
 ::
 
     $ ls ANNOgesic/output/circRNAs/
-    circRNA_tables  gffs  segemehl_alignment_files  segemehl_splice_results  statistics
+    circRNA_tables  gffs  log.txt  segemehl_alignment_files  segemehl_splice_results  statistics
 
 ``segemehl_alignment_files`` and ``segemehl_splice_results`` are for output of 
 `Segemehl <http://www.bioinf.uni-leipzig.de/Software/segemehl/>`_. ``segemehl_alignment_files`` stores Bam files of 
@@ -1091,7 +1090,7 @@ and reference genome, ``mutations_of_reference_genomes`` is for results of detec
 ::
 
     $ ls ANNOgesic/output/SNP_calling/                                                                                                      
-    compare_related_and_reference_genomes  mutations_of_reference_genomes
+    compare_related_and_reference_genomes  mutations_of_reference_genomes  log.txt
 
 Since we run ``reference_genome``,  the output folders are generated under ``mutations_of_reference_genomes``.
 
@@ -1172,7 +1171,7 @@ figures are stored in ``statistics``.
 ::
 
     $ ls ANNOgesic/output/GO_terms/
-    all_CDSs  expressed_CDSs
+    all_CDSs  expressed_CDSs  log.txt
     $ ls ANNOgesic/output/GO_terms/all_CDSs/
     GO_term_results  statistics
     $ ls ANNOgesic/output/GO_terms/all_CDSs/GO_term_results/NC_009839.1/
@@ -1206,7 +1205,7 @@ statistic files and figures.
 ::
 
     $ ls ANNOgesic/output/subcellular_localization/
-    all_CDSs  expressed_CDSs
+    all_CDSs  expressed_CDSs  log.txt
     $ ls ANNOgesic/output/subcellular_localization/all_CDSs/
     psortb_results  statistics
     $ ls ANNOgesic/output/subcellular_localization/all_CDSs/psortb_results/NC_009839.1/
@@ -1250,7 +1249,7 @@ Three output folders were generated.
 ::
 
     $ ls ANNOgesic/output/PPI_networks/
-    all_results/  best_results/ figures/
+    all_results/  best_results/ figures/  log.txt
 
 ``all_results`` is for all interactions without filtering. ``best_results`` is for the interactions with 
 the high `PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_ score. ``figures`` is for 
@@ -1329,7 +1328,7 @@ Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_t
 ::
 
      $ ls ANNOgesic/output/riboswitches/
-     gffs  scan_Rfam_results  statistics  tables
+     gffs  log.txt  scan_Rfam_results  statistics  tables
      $ ls ANNOgesic/output/riboswitches/gffs/
      NC_009839.1_riboswitch.gff
      $ ls ANNOgesic/output/riboswitches/scan_Rfam_results/NC_009839.1/
@@ -1339,7 +1338,7 @@ Output files are following, ``gffs`` stores gff files of the riboswitchs / RNA_t
      $ ls ANNOgesic/output/riboswitches/statistics/
      stat_NC_009839.1_riboswitch.txt
      $ ls ANNOgesic/output/RNA_thermometers/
-     gffs  scan_Rfam_results  statistics  tables
+     gffs  log.txt  scan_Rfam_results  statistics  tables
      $ ls ANNOgesic/output/RNA_thermometers/gffs/
      NC_009839.1_RNA_thermometer.gff
      $ ls ANNOgesic/output/RNA_thermometers/scan_Rfam_results/NC_009839.1/
@@ -1367,7 +1366,7 @@ Output are as following, ``CRT_results`` stores output of `CRT <http://www.room2
 ::
 
      $ ls ANNOgesic/output/crisprs/
-     CRT_results  gffs  statistics
+     CRT_results  gffs  log.txt  statistics
      $ ls ANNOgesic/output/crisprs/CRT_results
      NC_009839.1.txt
      $ ls ANNOgesic/output/crisprs/gffs
@@ -1418,7 +1417,7 @@ Output gff file is stored in ``merge_all_features``
 ::
 
     $ ls ANNOgesic/output/merge_all_features/
-    NC_009839.1_merge_features.gff
+    NC_009839.1_merge_features.gff  log.txt
 
 Producing the screenshots
 -------------------------

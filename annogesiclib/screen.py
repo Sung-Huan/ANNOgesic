@@ -7,15 +7,8 @@ from annogesiclib.helper import Helper
 class Screen(object):
     '''generation of screenshot'''
 
-    def __init__(self, args_sc):
+    def __init__(self, args_sc, out_folder):
         self.helper = Helper()
-        out_folder = os.path.join(args_sc.output_folder, "screenshots")
-        if os.path.exists(out_folder):
-            print("Error: The {0} already exists!".format(
-                  out_folder))
-            sys.exit()
-        else:
-            os.mkdir(out_folder)
         args_sc.output_folder = out_folder
         filename = args_sc.fasta.split("/")[-1]
         self.strain = ".".join(filename.split(".")[0:-1])
@@ -44,7 +37,7 @@ class Screen(object):
                        (flib[3] == nlib[3]):
                         lib_dict[notex].append(nlib[0])
 
-    def screenshot(self, args_sc):
+    def screenshot(self, args_sc, log):
         lib_dict = {"ft": [], "fn": [], "rt": [], "rn": [], "ff": [], "rf": []}
         f_texs = []
         r_texs = []
@@ -52,6 +45,7 @@ class Screen(object):
             for lib in args_sc.tlibs:
                 lib_datas = lib.split(":")
                 if not lib_datas[0].endswith(".wig"):
+                    log.write("Wiggle files should end with .wig.\n")
                     print("Error: Wiggle files should end with .wig!")
                     sys.exit()
                 else:
@@ -67,6 +61,7 @@ class Screen(object):
             for lib in args_sc.flibs:
                 lib_datas = lib.split(":")
                 if not lib_datas[0].endswith(".wig"):
+                    log.write("Wiggle files should end with .wig.\n")
                     print("Error: Wiggle files should end with .wig!")
                     sys.exit()
                 else:
@@ -74,8 +69,12 @@ class Screen(object):
                         lib_dict["ff"].append(lib_datas[0])
                     else:
                         lib_dict["rf"].append(lib_datas[0])
+        log.write("Running gen_screenshots.py to generate IGV batch script.\n")
         gen_screenshot(args_sc, lib_dict, self.forward_file + ".txt",
                        self.reverse_file + ".txt", self.strain)
+        log.write("\t" + self.forward_file + ".txt is generated.\n")
+        log.write("\t" + self.reverse_file + ".txt is generated.\n")
         if (args_sc.tlibs is None) and (args_sc.flibs is None):
+            log.write("No wig files can be found.\n")
             print("Error: There is no wig file assigned!")
             sys.exit()

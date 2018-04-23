@@ -11,7 +11,7 @@ from annogesiclib.ppi import PPINetwork
 
 class Mock_func(object):
 
-    def mock_run_wget(self, source, folder, log):
+    def mock_run_wget(self, source, folder, err, log):
         pass
 
 class TestPPI(unittest.TestCase):
@@ -45,7 +45,8 @@ class TestPPI(unittest.TestCase):
         strain_id = {"ptt": "test_strain", "string": "string_test",
                      "file": "file_test"}
         files = {"id_list": "test", "id_log": "test"}
-        detect = self.ppi._wget_id(strain, locus, strain_id, files)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        detect = self.ppi._wget_id(strain, locus, strain_id, files, log)
         self.assertTrue(detect)
 
     def test_retrieve_id(self):
@@ -55,14 +56,16 @@ class TestPPI(unittest.TestCase):
         files = {"id_list": "test", "id_log": "test"}
         genes = [{"strain": "test_strain", "locus_tag": "test_locus",
                   "gene": "dnaA"}]
-        self.ppi._retrieve_id(strain_id, genes, files)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.ppi._retrieve_id(strain_id, genes, files, log)
 
     def test_get_prefer_name(self):
         row_a = "999.aaa"
         files = {"id_list": self.test_folder}
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         gen_file(os.path.join(self.test_folder, "aaa"),
                  "999.aaa\t222\t333\ttest_aaa")
-        name = self.ppi._get_prefer_name(row_a, "test", files, "test")
+        name = self.ppi._get_prefer_name(row_a, "test", files, "test", log)
         self.assertEqual(name, "test_aaa")
 
     def test_get_pubmed(self):
@@ -101,8 +104,9 @@ class TestPPI(unittest.TestCase):
         args.querys = "all"
         args.no_specific = True
         args.score = 0
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.ppi._get_pubmed(row, strain_id, mode, actor, id_file, first_output,
-                             ptt, files, paths, args)
+                             ptt, files, paths, args, log)
         data = import_data(
             "test_folder/without_strain/test_ptt/test_aaa_test_bbb.csv")
         self.assertEqual("\n".join(data), self.example.without_out)
@@ -212,8 +216,9 @@ class TestPPI(unittest.TestCase):
                  "all_nospecific": "", "best_nospecific": "", "action_log": ""}
         strain_id = {"file": "test.ptt","ptt": "test_ptt",
                      "string": "test_string", "pie": "test_pie"}
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         id_file = "test.txt"
-        self.ppi._wget_actions(files, id_file, strain_id, self.test_folder)
+        self.ppi._wget_actions(files, id_file, strain_id, self.test_folder, log)
 
     def test_retrieve_actions(self):
         self.ppi._run_wget = self.mock.mock_run_wget
@@ -234,7 +239,8 @@ class TestPPI(unittest.TestCase):
         args.no_specific = True
         args.querys = "all"
         args.out_folder = self.test_folder
-        self.ppi._retrieve_actions(files, strain_id, paths, args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.ppi._retrieve_actions(files, strain_id, paths, args, log)
 
 class Example(object):
 

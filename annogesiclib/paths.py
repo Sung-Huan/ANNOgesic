@@ -73,7 +73,7 @@ class Paths(object):
         self.crispr_output_folder = "%s/crisprs" % self.output_folder
 
     def _set_transcript_folder_names(self):
-        self.reference_base_folder = "%s/transcripts" % (
+        self.transcript_base_folder = "%s/transcripts" % (
              self.output_folder)
         self.transcript_gff_folder = "%s/gffs" % self.reference_base_folder
         self.transcript_stat_folder = "%s/statistics" % (

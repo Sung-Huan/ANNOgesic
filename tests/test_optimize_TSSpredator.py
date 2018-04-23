@@ -109,8 +109,9 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         gen_file(stat_file, self.example.stat)
         list_num = []
         best_para = {}
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         datas = ot.reload_data(self.test_folder, list_num, self.example.best,
-                               best_para, self.example.indexs, 1000, stat_file)
+                               best_para, self.example.indexs, 1000, stat_file, log)
         self.assertDictEqual(datas[0], {
             'base_height': 0.086, 'processing': 5.2,
             'height': 2.4, 'enrichment': 3.1, 're_factor': 5.5,
@@ -258,12 +259,13 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.project_strain = "aaa"
         args.manual = os.path.join(self.test_folder, "manual.gff")
         args.gene_length = 2000
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         gen_file(args.manual, self.example.manual_file)
-        datas = ot.run_tss_and_stat(
+        datas, set_config, run_tss = ot.run_tss_and_stat(
             self.example.indexs, list_num, seeds, 0.4, 0.3,
             self.test_folder, stat_out, best_para, current_para,
             wig, fasta, gff, self.example.best, 3, args, "aaa",
-            self.example.mans, 2000)
+            self.example.mans, 2000, log, True, True)
         self.assertFalse(datas[0])
 
     def test_gen_config(self):
@@ -396,10 +398,11 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.tsspredator_path = "test"
         args.gene_length = 2000
         args.manual = os.path.join(self.test_folder, "manual.gff")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         ot.optimization_process(
             indexs, current_para, list_num, self.example.max_nums, best_para,
             self.test_folder, stat_out, self.example.best, wig_folder,
-            "aaa.fa", "aaa.gff", 2, True, args, "aaa", self.example.mans, 2000)
+            "aaa.fa", "aaa.gff", 2, True, args, "aaa", self.example.mans, 2000, log)
         self.assertDictEqual(best_para, {
             're_height': 0.2, 'factor': 0.7, 'processing': 3.3,
             'height': 0.6, 'base_height': 0.0, 're_factor': 0.3,
@@ -440,8 +443,10 @@ class TestOptimizeTSSpredator(unittest.TestCase):
         args.tsspredator_path = "test"
         args.manual = os.path.join(self.test_folder, "manual.gff")
         gen_file(args.manual, self.example.manual_file)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.output_folder = self.test_folder
-        ot.optimization(wig_folder, fasta, gff, args, args.manual, 2000, "aaa")
+        os.mkdir(os.path.join(self.test_folder, "optimized_TSSpredator"))
+        ot.optimization(wig_folder, fasta, gff, args, args.manual, 2000, "aaa", log)
         self.assertTrue(os.path.exists(os.path.join(
             self.test_folder, "optimized_TSSpredator", "stat_aaa.csv")))
 

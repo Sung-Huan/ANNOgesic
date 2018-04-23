@@ -25,7 +25,7 @@ class Mock_func(object):
     def mock_remove_tmp(self, out_folder):
         pass
 
-    def mock_check_necessary_files(self, gffs):
+    def mock_check_necessary_files(self, gffs, log):
         pass
     
 
@@ -113,7 +113,8 @@ class TestsORFDetection(unittest.TestCase):
         args.background = "background"
         args.wig_path = "wig_path"
         args.merge_wigs = "merge_wigs"
-        self.sorf._start_stop_codon(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.sorf._start_stop_codon(["test"], args, log)
         self.assertTrue(os.path.exists(os.path.join(
             gff_path, "best_candidates/test_sORF.gff")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -122,6 +123,7 @@ class TestsORFDetection(unittest.TestCase):
             table_path, "best_candidates/test_sORF.csv")))
         self.assertTrue(os.path.exists(os.path.join(
             table_path, "all_candidates/test_sORF.csv")))        
+        log.close()
 
     def test_compare_tran_cds(self):
         so.get_intergenic = self.mock.mock_get_intergenic
@@ -133,8 +135,10 @@ class TestsORFDetection(unittest.TestCase):
         args.utr_detect = True
         args.extend_5 = 5
         args.extend_3 = 75
-        prefixs = self.sorf._compare_tran_cds(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        prefixs = self.sorf._compare_tran_cds(args, log)
         self.assertListEqual(prefixs, ["test"])
+        log.close()
 
     def test_run_sorf_detection(self):
         gff_path = os.path.join(self.out, "gffs")
@@ -165,7 +169,9 @@ class TestsORFDetection(unittest.TestCase):
         args.wig_path = "wig_path"
         args.merge_wigs = "merge_wigs"
         args.fuzzy_rbs = 2
-        self.sorf.run_sorf_detection(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.sorf.run_sorf_detection(args, log)
+        log.close()
 
 if __name__ == "__main__":
     unittest.main()

@@ -86,6 +86,12 @@ or for fragmented libraries (RNA-Seq generated after transcript fragmentation):
 If only conventional RNA-seq data without fragmentation or TEX treated can be provided, 
 it can still be assigned to fragmented libraries. However, it may influence the results.
 
+log file for storing the details of each module
+===============================================
+
+If the user needs to check the details of the running of each module, ``log.txt`` can 
+be found in the output folder of each module.
+
 .. _create:
 
 create (create analysis folder)
@@ -218,12 +224,7 @@ via searching the mutations.
 Therefore, a table of mutation information is required. For the format of the table, please check 
 `mutation table <https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv>`_.
 Titles of the columns are presented on the top and they need to start with ``#``. 
-Each column is separated by ``tab``. If the mutation type is deletion or insertion, 
-the user can type ``-`` to represent them. The information of ``Target_ids`` 
-(the reference genome names), ``Reference_ids``, (the names of closely related genomes) 
-``Reference_nts`` (the nucleotides of the closely related genomes), ``Positions``, ``Target_nts`` 
-(the nucleotides of the reference genomes) are required. The other columns can be blank. 
-Please use ``tab`` to separate all columns including blank ones.
+The format is basically the same as VCF format.
 
 If no mutation information is provided, ``snp`` can be used for detecting mutations. 
 (one module of ``ANNOgesic``). Please check the section of :ref:`snp`.
@@ -238,11 +239,12 @@ For an example, please check `mutation table <https://raw.githubusercontent.com/
 - **Arguments**
 
 ::
-
-    usage: annogesic update_genome_fasta --project_path PROJECT_PATH
+    
+    usage: annogesic update_genome_fasta [-h] --project_path PROJECT_PATH
                                          --related_fasta_files RELATED_FASTA_FILES
+                                         [RELATED_FASTA_FILES ...]
                                          --mutation_table MUTATION_TABLE
-                                         [--combine_to_one_fasta]
+                                         --updated_seq_name UPDATED_SEQ_NAME
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -259,9 +261,9 @@ For an example, please check `mutation table <https://raw.githubusercontent.com/
                             the closely related species. For an example check
                             https://github.com/Sung-
                             Huan/ANNOgesic/blob/master/tutorial_data/mutation.csv
-      --combine_to_one_fasta, -cm
-                            Combinine all updated sequences in --mutation_table to
-                            one fasta file. Default is False.
+      --updated_seq_name UPDATED_SEQ_NAME, -u UPDATED_SEQ_NAME
+                            The file name of the updated sequence. The output
+                            fasta file name will be --updated_seq_name.fa.
 
 - **Output files**
 
@@ -306,6 +308,9 @@ If the error message related to 'defined(@array)' shows, please check :ref:`FAQ`
                                      --target_fasta_files TARGET_FASTA_FILES
                                      [TARGET_FASTA_FILES ...]
                                      [--additional arguments]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
     
     basic arguments:
       --project_path PROJECT_PATH, -pj PROJECT_PATH
@@ -518,10 +523,10 @@ The output folders and results are following:
   Staphylococcus_aureus_HG003     1632630 .       aA      a       57      .
   Staphylococcus_aureus_HG003     1499572 .       T       TT,TTTTT        43.8525 .
 
-The example contains "position conflict" and "mutation conflict".
+The example contains ``position conflict`` and ``mutation conflict``.
 As a result, the conflicts will affect the other mutation's positions.
-Therefore, it will generate four different fasta files. The first two lines are "position conflict", and 
-the last line is "mutation conflict".
+Therefore, it will generate four different fasta files. The first two lines are ``position conflict``, and 
+the last line is ``mutation conflict``.
 ``$GENOME_$PROGRAM_$SET_seq_reference.csv`` is the index for these four fasta files.
 
 ::
@@ -531,9 +536,9 @@ the last line is "mutation conflict".
    2       1632630 1       1499572:TT      Staphylococcus_aureus_HG003
    2       1632630 2       1499572:TTTTT   Staphylococcus_aureus_HG003
 
-The first column is the index of the "position conflict". 
+The first column is the index of the ``position conflict``. 
 The second column is the selected position.
-The third one is the index of the "mutations conflict". 
+The third one is the index of the ``mutations conflict``. 
 The fourth one is the selected position and nucleotides. 
 The last column is the genome name.
 
@@ -968,7 +973,7 @@ The generated output folders are as following:
 Based on this information, we can know the details of the specific transcript. The tags are as following:
 
 	**compare_$FEATURE:** State of overlap between transcripts and features
-	(If ``--compare_feature_genome`` and ``--annotation_files`` are assigned). The value may be "cover", "right_shift", "left_shift", "within" or "no_related".
+	(If ``--compare_feature_genome`` and ``--annotation_files`` are assigned). The value may be ``cover``, ``right_shift``, ``left_shift``, ``within`` or ``no_related``.
 
 	**associated_tss:** Shows which TSSs are located on this transcript (If ``--tss_files`` is assigned).
 
@@ -1238,9 +1243,9 @@ The meanings of the columns are as following:
 
 	**Coverage_decrease:** This terminator shows dramatic decrease of its coverage or not.
 
-	**Coverage_$LIB_NAME:** Shows the coverage information of the libraries about this terminator. "high" means the highest coverage of the libraries, 
-	"low" means the lowest coverage of the libraries, and "diff" represents the difference between "high" and "low". If "No_coverage_decreasing" is showed, 
-	it means this terminator reveal gene expression but no coverage decrease. If "NA" is showed, it means that this terminator has no gene expression.
+	**Coverage_$LIB_NAME:** Shows the coverage information of the libraries about this terminator. ``high`` means the highest coverage of the libraries, 
+	``low`` means the lowest coverage of the libraries, and ``diff`` represents the difference between ``high`` and ``low``. If ``No_coverage_decreasing`` is showed, 
+	it means this terminator reveal gene expression but no coverage decrease. If ``NA`` is showed, it means that this terminator has no gene expression.
 
 .. _utr:
 
@@ -1821,15 +1826,15 @@ Output files are stored in ``$ANNOgesic/output/sRNAs``. the output folders and f
 **figs:** Stores the figures about secondary structures of sRNAs.
 
 	**mountain_plots:** Stores mountain plots of the sRNA candidates. Filename is as ``srna10_NC_009839.1_335339_335435_+_mountain.pdf``.
-	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
+	``srna10``, ``NC_009839.1``, ``335339``, ``335435``, ``+`` are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 	**sec_plots:** Stores the secondary structure plots of sRNA candidates. 
 	Filename of is as ``srna10_NC_009839.1_335339_335435_+_rss.ps``.
-	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
+	``srna10``, ``NC_009839.1``, ``335339``, ``335435``, ``+`` are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 	**dot_plots:** Stores the dot plots of sRNA candidates. 
 	Filename of dot plot is as ``srna10_NC_009839.1_335339_335435_+_dp.ps``.
-	"srna10", "NC_009839.1", "335339", "335435", "+" are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
+	``srna10``, ``NC_009839.1``, ``335339``, ``335435``, ``+`` are ID of sRNA gff file, genome name, starting point, end point and strand, respectively.
 
 **statistics:** Stores statistics files. ``stat_$GENOME_sRNA_blast.csv`` is the analysis result of BLAST for sRNA databases.
 ``stat_sRNA_class_Staphylococcus_aureus_HG003.csv`` is the classification of sRNA candidates.
@@ -2160,8 +2165,8 @@ The meaning of each column is as following:
 	**Conflict_sRNA:** If this sORF overlaps sRNA, the overlapped sRNA will be showed here.
 
 	**Frame_shift:** If there are sORF candidates which can be found by frame shift, 
-	the number of frame shift will be showed here. "1" means there 
-	are some candidates can be found by frame shift once. "2" means there are some candidates can be found by frame shift twice.
+	the number of frame shift will be showed here. ``1`` means there 
+	are some candidates can be found by frame shift once. ``2`` means there are some candidates can be found by frame shift twice.
 
 	**Lib_type:** This sORF can be detected in TEX+/- or fragmented/conventional libraries.
 
@@ -2311,9 +2316,9 @@ to generate promoter motifs. The results will be stored in this folder.
 
 	The format of folders which under these two folders is ``promoter_motifs_$FILENAME_$GENOME_$TSSTYPE_$PROMOTERLEGNTH``,
 	ex: ``promoter_motifs_NC_000915.1_allgenome_internal_45_nt``.
-	"NC_000915.1", "allgenome", "primary" and "45_nt" are gff filename, genome name, TSS type and upstream nucleotides of TSS, respectively.
-	If genome name is "allgenome", this means that the result is generated by the information of all genomes of gff files. 
-	If there is only one genome in the gff file, the genome name will be assigned as "allgenome" as well. Several files are stored in the sub-folder:
+	``NC_000915.1``, ``allgenome``, ``primary`` and ``45_nt`` are gff filename, genome name, TSS type and upstream nucleotides of TSS, respectively.
+	If genome name is ``allgenome``, this means that the result is generated by the information of all genomes of gff files. 
+	If there is only one genome in the gff file, the genome name will be assigned as ``allgenome`` as well. Several files are stored in the sub-folder:
 	
 		**Figures of the promoter motifs:** Contains EPS and PNG files.
 	
@@ -2942,7 +2947,7 @@ for supported literature are higher than ``--score``.
 **all_results:** Stores the results of all protein-protein interactions
 (including the low score(`PIE <http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur/IRET/PIE/>`_) literature).
 
-Under "best_results" and "all_results", several files and folders are generated:
+Under ``best_results`` and ``all_results``, several files and folders are generated:
 
 	**Results of searching literatures without assigning a specific strain:** ``$STRAIN_without_strain.csv``. 
 

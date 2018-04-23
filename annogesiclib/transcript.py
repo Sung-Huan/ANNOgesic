@@ -58,13 +58,15 @@ class TranscriptDetection(object):
                                      strain, libs, args_tran)
         return strains
 
-    def _compare_tss(self, tas, args_tran):
+    def _compare_tss(self, tas, args_tran, log):
         self.multiparser.parser_gff(args_tran.compare_tss, "TSS")
         self.multiparser.combine_gff(
                 self.gff_outfolder,
                 os.path.join(args_tran.compare_tss, "tmp"),
                 "transcript", "TSS")
         print("Comaring of transcripts and TSSs")
+        log.write("Running stat_TA_comparison.py to compare transcripts "
+                  "with TSSs.\n")
         tss_folder = os.path.join(args_tran.compare_tss, "tmp")
         for ta in tas:
             ta_file = os.path.join(self.gff_outfolder,
@@ -87,14 +89,17 @@ class TranscriptDetection(object):
                                 args_tran.compare_tss, tss))
                     os.remove(self.tmps["tss_ta"])
                     os.remove(self.tmps["ta_tss"])
+            log.write("\t" + stat_tss_out + "\n")
 
-    def _compare_cds(self, tas, args_tran):
+    def _compare_cds(self, tas, args_tran, log):
         self.multiparser.parser_gff(args_tran.gffs, None)
         self.multiparser.combine_gff(
             self.gff_outfolder, os.path.join(args_tran.gffs, "tmp"),
             "transcript", None)
         print("Comaring of transcripts and genome annotations")
         cds_folder = os.path.join(args_tran.gffs, "tmp")
+        log.write("Running stat_TA_comparison.py to compare transcripts "
+                  "with genome annotations.\n")
         for ta in tas:
             ta_file = os.path.join(self.gff_outfolder,
                                    "_".join([ta, self.endfix_tran]))
@@ -113,22 +118,23 @@ class TranscriptDetection(object):
                         args_tran.gffs, gff))
                     os.remove(self.tmps["ta_gff"])
                     os.remove(self.tmps["gff_ta"])
+            log.write("\t" + stat_gff_out + ".\n")
 
-    def _compare_tss_cds(self, tas, args_tran):
+    def _compare_tss_cds(self, tas, args_tran, log):
         '''compare transcript with CDS and TSS'''
         if (args_tran.compare_tss is not None) and (
                 args_tran.c_feature is not None):
             self.multiparser.parser_gff(self.gff_outfolder, "transcript")
-            self._compare_cds(tas, args_tran)
-            self._compare_tss(tas, args_tran)
+            self._compare_cds(tas, args_tran, log)
+            self._compare_tss(tas, args_tran, log)
         elif (args_tran.c_feature is not None) and (
                 args_tran.compare_tss is None):
             self.multiparser.parser_gff(self.gff_outfolder, "transcript")
-            self._compare_cds(tas, args_tran)
+            self._compare_cds(tas, args_tran, log)
         elif (args_tran.c_feature is None) and (
                 args_tran.compare_tss is not None):
             self.multiparser.parser_gff(self.gff_outfolder, "transcript")
-            self._compare_tss(tas, args_tran)
+            self._compare_tss(tas, args_tran, log)
 
     def _for_one_wig(self, type_, args_tran):
         '''running transcript detection to one type of wig files'''
@@ -149,10 +155,12 @@ class TranscriptDetection(object):
                                    "_".join([strain, type_])))
         return strains
 
-    def _for_two_wigs(self, strains, args_tran):
+    def _for_two_wigs(self, strains, args_tran, log):
         '''merge the results of fragemented and tex treated libs'''
         if (args_tran.frag_wigs is not None) and (
                 args_tran.tex_wigs is not None):
+            log.write("Running combine_frag_tex.py to merge the results from "
+                      "fragmented libs and dRNA-Seq libs.\n")
             print("Merging fragmented and tex treated ones")
             for strain in strains:
                 frag_gff = os.path.join(self.gff_outfolder,
@@ -177,6 +185,7 @@ class TranscriptDetection(object):
                                      "_".join([strain, self.endfix_tran])))
                 os.remove(frag_gff)
                 os.remove(tex_gff)
+                log.write("\t" + final_gff + " is generated.\n")
         else:
             if args_tran.frag_wigs is not None:
                 for strain in strains:
@@ -186,6 +195,7 @@ class TranscriptDetection(object):
                             self.gff_outfolder,
                             "_".join([strain, self.endfix_tran]))
                     shutil.move(frag_gff, final_gff)
+                    log.write("\t" + final_gff + " is generated.\n")
             elif args_tran.tex_wigs is not None:
                 for strain in strains:
                     tex_gff = os.path.join(
@@ -194,6 +204,7 @@ class TranscriptDetection(object):
                             self.gff_outfolder,
                             "_".join([strain, self.endfix_tran]))
                     shutil.move(tex_gff, final_gff)
+                    log.write("\t" + final_gff + " is generated.\n")
 
     def _post_modify(self, tas, args_tran):
         '''modify the transcript by comparing with genome annotation'''
@@ -241,7 +252,7 @@ class TranscriptDetection(object):
         self.helper.remove_tmp(os.path.join(args_tran.out_folder, "gffs"))
         self.helper.remove_tmp(self.gff_outfolder)
 
-    def _compare_term_tran(self, args_tran):
+    def _compare_term_tran(self, args_tran, log):
         '''searching the associated terminator to transcript'''
         if args_tran.terms is not None:
             print("Comparing between terminators and transcripts")
@@ -250,29 +261,51 @@ class TranscriptDetection(object):
                 self.multiparser.combine_gff(
                     args_tran.gffs,
                     os.path.join(args_tran.terms, "tmp"), None, "term")
+            log.write("Running compare_tran_term.py to compare transcripts "
+                      "with terminators.\n")
             compare_term_tran(self.gff_outfolder,
                               os.path.join(args_tran.terms, "tmp"),
                               args_tran.fuzzy_term, args_tran.fuzzy_term,
                               args_tran.out_folder, "transcript",
                               args_tran.terms, self.gff_outfolder)
+            for file_ in os.listdir(os.path.join(args_tran.out_folder, "statistics")):
+                if file_.startswith("stat_compare_transcript_terminator_"):
+                    log.write("\t" + file_ + " is generated.\n")
 
-    def _re_table(self, args_tran):
+    def _re_table(self, args_tran, log):
+        log.write("Running re_table.py to generate coverage information.\n")
+        log.write("The following files are updated:\n")
         for gff in os.listdir(self.gff_outfolder):
             if os.path.isfile(os.path.join(self.gff_outfolder, gff)):
+                tran_table = os.path.join(args_tran.out_folder, "tables",
+                                          gff.replace(".gff", ".csv"))
                 reorganize_table(args_tran.libs, args_tran.merge_wigs,
-                                 "Coverage_details",
-                                 os.path.join(args_tran.out_folder, "tables",
-                                              gff.replace(".gff", ".csv")))
+                                 "Coverage_details", tran_table)
+                log.write("\t" + tran_table + "\n")
 
-    def run_transcript(self, args_tran):
+    def _list_files(self, folder, log, end):
+        log.write("The following files in {0} are generated:\n".format(folder))
+        for file_ in os.listdir(folder):
+            if (end is not None) and (file_.endswith(end)):
+                log.write("\t" + file_ + "\n")
+            elif end is None:
+                log.write("\t" + file_ + "\n")
+
+
+    def run_transcript(self, args_tran, log):
         if (args_tran.frag_wigs is None) and (args_tran.tex_wigs is None):
-            print("Error: There is no wigs file!\n")
+            log.write("No wig file is assigned.\n")
+            print("Error: There is no wiggle file!\n")
             sys.exit()
         if args_tran.frag_wigs is not None:
+            log.write("Running transcript_detection.py for detecting "
+                      "transcripts based on fragmented libs.\n")
             strains = self._for_one_wig("fragment", args_tran)
         if args_tran.tex_wigs is not None:
+            log.write("Running transcript_detection.py for detecting "
+                      "transcripts based on dRNA-Seq libs.\n")
             strains = self._for_one_wig("tex_notex", args_tran)
-        self._for_two_wigs(strains, args_tran)
+        self._for_two_wigs(strains, args_tran, log)
         tas = []
         if "none" not in args_tran.modify:
             for gff in os.listdir(args_tran.gffs):
@@ -291,11 +324,18 @@ class TranscriptDetection(object):
                 if ta.endswith(".gff"):
                     if os.path.getsize(os.path.join(self.tran_path, ta)) != 0:
                         tas.append(ta.replace("_" + self.endfix_tran, ""))
+            log.write("Running fill_gap.py to modify transcripts "
+                      "based on genome annotations.\n")
             self._post_modify(tas, args_tran)
-        self._compare_tss_cds(tas, args_tran)
-        self._compare_term_tran(args_tran)
+        self._compare_tss_cds(tas, args_tran, log)
+        self._compare_term_tran(args_tran, log)
         print("Generating tables for the details")
+        log.write("Running gen_table_tran.py to generate the table of transcripts.\n")
         gen_table_transcript(self.gff_outfolder, args_tran)
+        self._list_files(os.path.join(args_tran.out_folder, "tables"), log, None)
+        log.write("Running plot_tran to plot the distribution of the length of "
+                  "the transcripts.\n")
         plot_tran(self.gff_outfolder, self.stat_path, args_tran.max_dist)
-        self._re_table(args_tran)
+        self._list_files(self.stat_path, log, ".png")
+        self._re_table(args_tran, log)
         self._remove_file(args_tran)

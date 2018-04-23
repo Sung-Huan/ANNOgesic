@@ -64,7 +64,7 @@ class SNPCalling(object):
             bcf_para = "-vmO"
         return bcf_para
 
-    def _run_tools(self, fasta_file, type_, args_snp, bam_datas):
+    def _run_tools(self, fasta_file, type_, args_snp, bam_datas, log):
         bcf_para = self._get_para(args_snp)
         for bam in bam_datas:
             bam_file = os.path.join(args_snp.out_folder,
@@ -79,19 +79,30 @@ class SNPCalling(object):
                 command = command + ["-ugf", fasta_file, bam_file]
             else:
                 command = command + ["--ignore-RG", "-ugf", fasta_file, bam_file]
+            log.write(" ".join(command) + ">" + self.outputs["tmp"] + "\n")
             os.system(" ".join(command) + ">" + self.outputs["tmp"])
             bam["vcf"] = os.path.join(self.outputs["raw"], "_".join(
                 [self.baqs[type_], bam["sample"] + ".vcf"]))
             if args_snp.chrom == "1":
+                log.write(" ".join([
+                      args_snp.bcftools_path, "call", "--ploidy", args_snp.chrom,
+                      self.outputs["tmp"], bcf_para, "v", "-o", bam["vcf"]]) + "\n")
                 call([args_snp.bcftools_path, "call", "--ploidy", args_snp.chrom,
                       self.outputs["tmp"], bcf_para, "v", "-o", bam["vcf"]])
             elif args_snp.chrom == "2":
+                log.write(" ".join([args_snp.bcftools_path, "call",
+                      self.outputs["tmp"], bcf_para, "v", "-o", bam["vcf"]]) + "\n")
                 call([args_snp.bcftools_path, "call",
                       self.outputs["tmp"], bcf_para, "v", "-o", bam["vcf"]])
+        log.write("Done!\n")
+        log.write("The following files are generated:\n")
+        for file_ in os.listdir(self.outputs["raw"]):
+            log.write("\t" + os.path.join(self.outputs["raw"], file_) + "\n")
 
-    def _parse_vcf_by_fa(self, args_snp, type_, num_prog):
+    def _parse_vcf_by_fa(self, args_snp, type_, num_prog, log):
         seq_names = []
         fa_prefixs = []
+        log.write("Parsing Vcf files by comparing fasta information.\n")
         for fa in os.listdir(args_snp.fastas):
             if (fa != "all.fa") and (not fa.endswith(".fai")):
                 with open(os.path.join(args_snp.fastas, fa)) as fh:
@@ -123,14 +134,19 @@ class SNPCalling(object):
                                     if line.split("\t")[0] in seq_names:
                                         out.write(line + "\n")
                         out.close()
+                        log.write("\t" + os.path.join(vcf_folder, "_".join(
+                            [fa_prefix, vcf])) + " is generated.\n")
         for vcf in os.listdir(self.outputs["raw"]):
             if vcf.endswith(".vcf"):
                 os.remove(os.path.join(self.outputs["raw"], vcf))
         return fa_prefixs
 
-    def _run_sub(self, args_snp, all_fasta, type_, bam_datas, num_prog):
-        self._run_tools(all_fasta, type_, args_snp, bam_datas)
-        fa_prefixs = self._parse_vcf_by_fa(args_snp, type_, num_prog)
+    def _run_sub(self, args_snp, all_fasta, type_, bam_datas, num_prog, log):
+        self._run_tools(all_fasta, type_, args_snp, bam_datas, log)
+        fa_prefixs = self._parse_vcf_by_fa(args_snp, type_, num_prog, log)
+        log.write("Running transcript_SNP.py to do statistics, filter SNPs, "
+                  "and generate potential sequences.")
+        log.write("The following files are generated:\n")
         for fa_prefix in fa_prefixs:
             for fasta in os.listdir(args_snp.fastas):
                 if fa_prefix in fasta:
@@ -141,27 +157,41 @@ class SNPCalling(object):
             self._transcript_snp(
                 fasta_file, table_prefix,
                 type_, fa_prefix, bam_datas, table_path, args_snp)
+            seq_path = os.path.join(self.seq_path, self.baqs[type_], fa_prefix)
+            for folder in (table_path, self.stat_path, seq_path, self.fig_path):
+                for file_ in os.listdir(folder):
+                    if os.path.isfile(os.path.join(folder, file_)):
+                        log.write("\t" + os.path.join(folder, file_) + "\n")
 
-    def _run_program(self, all_fasta, bam_datas, args_snp):
+    def _run_program(self, all_fasta, bam_datas, args_snp, log):
         num_prog = 0
+        log.write("Running Samtools to mpileup, and using Bcftools to "
+                  "call snp.\n")
+        log.write("Please make sure the version of Samtools and Bcftools "
+                  "are both at least 1.3.1.\n")
         for index in args_snp.program:
             if index == "with_BAQ":
                 type_ = "with"
                 print("Running SNP calling with BAQ")
+                log.write("Running SNP calling with BAQ.\n")
             elif index == "without_BAQ":
                 type_ = "without"
                 print("Running SNP calling without BAQ")
+                log.write("Running SNP calling without BAQ.\n")
             elif index == "extend_BAQ":
                 print("Running SNP calling extend BAQ")
+                log.write("Running SNP calling extend BAQ.\n")
                 type_ = "extend"
             else:
                 print("Error: No correct program, please assign "
                       "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\"!")
+                log.write("No valid program can be found, please assign"
+                          "\"with_BAQ\", \"without_BAQ\", \"extend_BAQ\".\n")
                 sys.exit()
-            self._run_sub(args_snp, all_fasta, type_, bam_datas, num_prog)
+            self._run_sub(args_snp, all_fasta, type_, bam_datas, num_prog, log)
             num_prog += 1
 
-    def _run_bam(self, samtools_path, sub_command, bam_file, type_file):
+    def _run_bam(self, samtools_path, sub_command, bam_file, type_file, log):
         if sub_command == "merge":
             command = (" ".join([samtools_path, sub_command,
                        self.bams["whole"], bam_file]))
@@ -173,12 +203,15 @@ class SNPCalling(object):
                 command = (" ".join([samtools_path, sub_command,
                                      "-o",
                                      bam_file, type_file]))
+        log.write(command + "\n")
         os.system(command)
 
-    def _merge_bams(self, args_snp, bam_datas):
+    def _merge_bams(self, args_snp, bam_datas, log):
         bams = []
         num_normal = 0
         num_frag = 0
+        log.write("Using Samtools to merge and sort BAM files.\n")
+        log.write("Please make sure the version of Samtools is at least 1.3.1.\n")
         for bam in bam_datas:
             bam["bam_number"] = 0
             out_bam = os.path.join(args_snp.out_folder, bam["sample"] + ".bam")
@@ -186,24 +219,34 @@ class SNPCalling(object):
                 print("Sorting BAM files of " + bam["sample"])
                 self._run_bam(
                     args_snp.samtools_path, "sort",
-                    out_bam, bam["bams"][0])
+                    out_bam, bam["bams"][0], log)
                 bam["bam_number"] = 1
             else:
                 print("Merging BAM files of " + bam["sample"])
                 self._run_bam(args_snp.samtools_path, "merge",
-                              " ".join(bam["bams"]), "all")
+                              " ".join(bam["bams"]), "all", log)
                 print("Sorting BAM files of " + bam["sample"])
                 self._run_bam(
                     args_snp.samtools_path, "sort",
-                    out_bam, "all")
+                    out_bam, "all", log)
                 bam["bam_number"] += 1
             if os.path.exists(self.bams["whole"]):
                 os.remove(self.bams["whole"])
             out_depth = open(self.outputs["depth"] + bam["sample"], "w")
+            log.write(" ".join([args_snp.samtools_path, "index",  out_bam]) + "\n")
             call([args_snp.samtools_path, "index",  out_bam])
+            log.write(" ".join([args_snp.samtools_path, "depth",  out_bam]) + "\n")
             call([args_snp.samtools_path, "depth",  out_bam],
                  stdout=out_depth)
             out_depth.close()
+        log.write("Done!\n")
+        log.write("The following files are generated:\n")
+        log.write("\t" + self.bams["whole"] + " is temporary generated "
+                  "(be deleted afterward).\n")
+        for file_ in os.listdir(args_snp.out_folder):
+            if os.path.isfile(os.path.join(args_snp.out_folder, file_)):
+                log.write("\t" + os.path.join(args_snp.out_folder, file_) + "\n")
+        
 
     def _modify_header(self, fastas):
         for fasta in os.listdir(fastas):
@@ -243,24 +286,26 @@ class SNPCalling(object):
                 os.remove(self.header)
             os.remove(self.outputs["depth"] + bam["sample"])
 
-    def _extract_bams(self, bams):
+    def _extract_bams(self, bams, log):
         bam_datas = []
         for bam in bams:
             datas = bam.split(":")
             if len(datas) != 2:
+                log.write("the format of --bam_files is wrong!\n")
                 print("Error: the format of --bam_files is wrong!")
                 sys.exit()
             for file_ in datas[-1].split(","):
                 if not os.path.exists(file_):
                     print("Error: there are some Bam files "
                           "which do not exist!")
+                    log.write(file_ + " is not found.\n")
                     sys.exit()
             bam_datas.append({"sample": datas[0],
                               "rep": len(datas[-1].split(",")),
                               "bams": datas[-1].split(",")})
         return bam_datas
 
-    def _merge_fasta(self, fastas):
+    def _merge_fasta(self, fastas, log):
         all_fasta = os.path.join(fastas, "all.fa")
         names = []
         out = open(all_fasta, "w")
@@ -280,14 +325,15 @@ class SNPCalling(object):
                                 print_ = False
                         if print_:
                             out.write(line + "\n")
+                log.write(os.path.join(fastas, fasta) + " is loaded.\n")
         out.close()
         return all_fasta
 
-    def run_snp_calling(self, args_snp):
+    def run_snp_calling(self, args_snp, log):
         self._modify_header(args_snp.fastas)
-        all_fasta = self._merge_fasta(args_snp.fastas)
-        bam_datas = self._extract_bams(args_snp.bams)
-        self._merge_bams(args_snp, bam_datas)
+        all_fasta = self._merge_fasta(args_snp.fastas, log)
+        bam_datas = self._extract_bams(args_snp.bams, log)
+        self._merge_bams(args_snp, bam_datas, log)
         if ("with_BAQ" not in args_snp.program) and (
                 "without_BAQ" not in args_snp.program) and (
                 "extend_BAQ" not in args_snp.program):
@@ -296,9 +342,10 @@ class SNPCalling(object):
             sys.exit()
         else:
             print("Detecting mutations now")
-            self._run_program(all_fasta, bam_datas, args_snp)
+            self._run_program(all_fasta, bam_datas, args_snp, log)
             os.remove(self.outputs["tmp"])
             os.remove(all_fasta)
             os.remove(all_fasta + ".fai")
         self.helper.remove_tmp_dir(args_snp.fastas)
         self._remove_bams(bam_datas, args_snp)
+        log.write("Remove all the temporary files.\n")

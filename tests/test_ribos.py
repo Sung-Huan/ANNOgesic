@@ -17,7 +17,7 @@ class Mock_func(object):
         self.example = Example()
 
     def mock_run_cmscan(self, e_value,
-                        seq, type_, prefix, test1, test2, test3):
+                        seq, type_, prefix, test1, test2, test3, log):
         suffixs = {"csv": "test.csv",
                    "txt": "test_prescan.txt",
                    "re_txt": "test_scan.txt",
@@ -140,8 +140,9 @@ class TestRibos(unittest.TestCase):
                    "txt": "test_prescan.txt",
                    "re_txt": "test_scan.txt",
                    "re_csv": "test_scan.csv"}
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.ribo._scan_extract_rfam(prefixs, args, tmp_files,
-                                     suffixs, "test", rfam)
+                                     suffixs, "test", rfam, log)
         self.assertListEqual(prefixs, ["test"])
         self.assertTrue(os.path.exists(os.path.join(
             self.out_folder, "tmp_fasta", "test_regenerate.fa")))
@@ -184,12 +185,13 @@ class TestRibos(unittest.TestCase):
                      "scan": os.path.join(self.out_folder, "tmp_scan"),
                      "table": os.path.join(self.out_folder, "tmp_table")}
         rfam = "Rfam_.cm"
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.ribo._merge_results(
             args, os.path.join(self.out_folder, "tmp_scan"), suffixs,
             tmp_files, os.path.join(self.out_folder, "tmp_scan"),
             os.path.join(self.out_folder, "scan_Rfam"),
             os.path.join(self.out_folder, "scan_Rfam"),
-            os.path.join(self.out_folder, "gffs"), "riboswitch")
+            os.path.join(self.out_folder, "gffs"), "riboswitch", log)
 
 class Example(object):
 

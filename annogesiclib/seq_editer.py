@@ -11,12 +11,12 @@ from annogesiclib.seqmodifier import SeqModifier
 class SeqEditer(object):
     '''Edit the sequence if it is needed'''
 
-    def _row_to_location(self, row):
-        return({"target_id": row[1], "ref_id": row[0],
-                "datas": [{"ref_nt": row[2],
-                           "tar_nt": row[4], "position": row[3]}]})
+    def _row_to_location(self, row, out_name):
+        return({"ref_id": row[0], "target_id": "_".join([out_name, row[0]]),
+                "datas": [{"ref_nt": row[3],
+                           "tar_nt": row[4], "position": row[1]}]})
 
-    def _import_data(self, mod_table_file):
+    def _import_data(self, mod_table_file, out_name):
         datas = []
         first = True
         num_index = 0
@@ -26,27 +26,24 @@ class SeqEditer(object):
                 continue
             else:
                 if first:
-                    datas.append(self._row_to_location(row))
+                    datas.append(self._row_to_location(row, out_name))
                     pre_ref_id = row[0].strip()
-                    pre_tar_id = row[1].strip()
                     first = False
                 else:
-                    if (row[0] == pre_ref_id) and \
-                       (row[1] == pre_tar_id):
+                    if (row[0] == pre_ref_id):
                         datas[num_index]["datas"].append(
-                              {"ref_nt": row[2].strip(),
+                              {"ref_nt": row[3].strip(),
                                "tar_nt": row[4].strip(),
-                               "position": row[3].strip()})
+                               "position": row[1].strip()})
                     else:
-                        datas.append(self._row_to_location(row))
+                        datas.append(self._row_to_location(row, out_name))
                         num_index += 1
                         pre_ref_id = row[0].strip()
-                        pre_tar_id = row[1].strip()
         fh.close()
         return datas
 
-    def modify_seq(self, fasta_folder, mod_table_file, output_folder):
-        datas = self._import_data(mod_table_file)
+    def modify_seq(self, fasta_folder, mod_table_file, output_folder, out_name):
+        datas = self._import_data(mod_table_file, out_name)
         for data in datas:
             seq = ""
             if (data["ref_id"] + ".fa") in os.listdir(fasta_folder):
@@ -54,8 +51,9 @@ class SeqEditer(object):
                 with open(filename, "r") as fasta:
                     for line in fasta:
                         line = line.strip()
-                        if line[0] != ">":
-                            seq = seq + line
+                        if len(line) != 0:
+                            if line[0] != ">":
+                                seq = seq + line
                 seq_modifier = SeqModifier(seq)
                 for change in data["datas"]:
                     if change["ref_nt"] == "-":

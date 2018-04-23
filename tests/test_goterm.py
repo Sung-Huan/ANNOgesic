@@ -53,7 +53,8 @@ class TestGetPolyT(unittest.TestCase):
             fh.write("test1")
         with open(os.path.join(test2_folder, "test2_uniprot.csv"), "w") as fh:
             fh.write("test2")
-        self.go._merge_files(self.gffs, self.go_folder, self.test_folder)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.go._merge_files(self.gffs, self.go_folder, self.test_folder, log)
         out_file = os.path.join(self.go_folder, "test", self.all_strain)
         self.assertTrue(os.path.exists(out_file))
         data = []
@@ -61,6 +62,7 @@ class TestGetPolyT(unittest.TestCase):
             for line in fh:
                 data.append(line)
         self.assertEqual("".join(data), "Genome	Strand	Start	End	Protein_id	Go_term\ntest1\ntest2\n")
+        log.close()
 
 if __name__ == "__main__":
     unittest.main()

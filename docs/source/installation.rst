@@ -2,14 +2,17 @@ Installation
 ============
 
 There are three ways to install ANNOgesic. Please refer to the following 
-sections. Only via the requirements are also installed. If
-you install ANNOgesic through on of the other ways, 
-please install the pre-required 
+sections. ANNOgesic can only work when the requirements are installed properly. If
+you install ANNOgesic through source code or ``pip3``, please install the pre-required 
 tools by yourself.
 
 
 Github
 ----------
+
+All the source code including a run script (contains all the commands which are presented in tutorial) 
+of ANNOgesic can be retrieve from our Git repository. Using the following commands can clone the 
+source code easily.
 
 ::
 
@@ -21,7 +24,7 @@ or
 
     $ git clone git@github.com:Sung-Huan/ANNOgesic.git
 
-Then create a soft link of ``annogesiclib`` in ``bin``.
+In order to make ANNOgesic runnable, we should create a soft link of ``annogesiclib`` in ``bin``.
 
 ::
 
@@ -31,7 +34,10 @@ Then create a soft link of ``annogesiclib`` in ``bin``.
 Docker
 ----------
 
-You can simply pull the Docker image as following
+Some modules of ANNOgesic need third-party tools. In order to avoid all the possible issue caused by the dependencies, 
+a Docker image is provided. For the details of Docker image, please check `here <https://www.docker.com/>`_.
+
+For using Docker image, You can simply pull the Docker image as following
 
 ::
 
@@ -47,7 +53,23 @@ If you want to check other commands of Docker, please refer to  `here <https://d
 pip3
 ----------
 
+ANNOgesic is also hosted in PyPI server. Thus, it can be simply installed via ``pip3``.
+
 ::
 
     $ pip3 install ANNOgesic
     $ pip3 install ANNOgesic --upgrade
+
+You can also install ANNOgesic without root permission.
+
+::
+
+    $ pip3 install --user ANNOgesic
+    $ pip3 install ANNOgesic --user --upgrade
+
+Install Dependencies
+====================
+
+If the user want to install ANNOgesic via source code, ``get_package_database.sh`` can 
+provide a way to install tools and download database automatically. The required versions 
+of the tools will be shown on the screen as well.

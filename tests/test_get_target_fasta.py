@@ -39,7 +39,7 @@ GCCGCTTCATTTTTTTCCAAGGGCTTCCTTCAGGATATCCGTCTGCATGCTCAAATCCGCATACATGCGC"""
 
 class Mock_seq_editer(object):
 
-    def modify_seq(ref, mut_table, tar):
+    def modify_seq(ref, mut_table, tar, test):
         Mock_multiparser().parser_fasta()
         shutil.copyfile("a_test_project/ref/tmp/aaa.fa",
                         os.path.join(tar, "aaa.fa"))
@@ -85,13 +85,15 @@ class TestTargetFasta(unittest.TestCase):
     def test_get_target_fasta(self):
         gen_file("a_test_project/ref/bbb.fa", self.example.fasta_file2)
         gen_file("a_test_project/mut", self.example.mutation_table)
+        log = open(os.path.join(self.root_folder, "test.log"), "w")
         self.target_fasta.get_target_fasta("a_test_project/mut",
                                            self.tar_folder,
                                            ["a_test_project/ref/bbb.fa"],
-                                           False,
-                                           self.root_folder)
+                                           "test",
+                                           self.root_folder,log)
         self.assertTrue(os.path.exists(
-            os.path.join(self.fasta_folder, "aaa.fa")))
+            os.path.join(self.fasta_folder, "test.fa")))
+        log.close()
 
 class ExampleData(object):
 

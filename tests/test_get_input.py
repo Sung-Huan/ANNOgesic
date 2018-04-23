@@ -10,7 +10,7 @@ import annogesiclib.get_input as get_input
 
 class Mock_func(object):
 
-    def mock_wget(self, ftp, input_folder, file_type):
+    def mock_wget(self, ftp, input_folder, file_type, log):
         pass
 
     def modify_header(self):
@@ -34,25 +34,31 @@ class TestGetFile(unittest.TestCase):
             shutil.rmtree(self.test_folder)
 
     def test_fasta(self):
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         f_h = open(os.path.join(self.test_folder, "test.fasta"), "w")
         f_h.write(self.example.fasta_file)
         f_h.close()
-        get_input.get_file(None, self.test_folder, "fna")
+        get_input.get_file(None, self.test_folder, "fna", log)
         self.assertTrue("aa.fa" in os.listdir(self.test_folder))
+        log.close()
 
     def test_gff(self):
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         g_h = open(os.path.join(self.test_folder, "test.gff"), "w")
         g_h.write(self.example.gff_file)
         g_h.close()
-        get_input.get_file(None, self.test_folder, "gff")
+        get_input.get_file(None, self.test_folder, "gff", log)
         self.assertTrue("ddd.gff" in os.listdir(self.test_folder))
+        log.close()
 
     def test_gbk(self):
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         g_h = open(os.path.join(self.test_folder, "test.gbk"), "w")
         g_h.write(self.example.gbk_file)
         g_h.close()
-        get_input.get_file(None, self.test_folder, "gbk")
+        get_input.get_file(None, self.test_folder, "gbk", log)
         self.assertTrue("NC_007795.1.gbk" in os.listdir(self.test_folder))
+        log.close()
 
 class ExampleData(object):
 

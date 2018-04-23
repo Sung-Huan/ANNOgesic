@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.17"
+__version__ = "0.7.18"
 
 def main():
     print("""
@@ -92,9 +92,9 @@ def main():
         "https://github.com/Sung-Huan/ANNOgesic/"
         "blob/master/tutorial_data/mutation.csv")
     get_target_fasta_basic.add_argument(
-        "--combine_to_one_fasta", "-cm", default=False, action="store_true",
-        help="Combinine all updated sequences in --mutation_table to "
-        "one fasta file. Default is False.")
+        "--updated_seq_name", "-u", required=True,
+        help="The file name of the updated sequence. The output fasta file name "
+        "will be --updated_seq_name.fa.")
     get_target_fasta_parser.set_defaults(func=get_target_fasta)    
 
     # run RATT
@@ -1606,7 +1606,7 @@ def main():
         "by 0, --slide_window_size_target_intarna will be used for the "
         "maximal loop length of target. Default is 100.")
     starget_add.add_argument(
-        "--mode_intarna", "-mi", default=None, choices=['H', 'E', 'M'],
+        "--mode_intarna", "-mi", default="H", choices=['H', 'E', 'M'],
         help="The prediction mode of IntaRNA. 'H' is heuristic, 'M' is "
         "exact with long computational time. 'E' is exact with long "
         "computational time and high memory.")

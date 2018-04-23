@@ -190,10 +190,11 @@ def print_gff(gffs, o_gffs, s_gffs, output):
     out.close()
 
 
-def run_merge(out_folder, tran, others, fuzzy_term, fuzzy_tss, strain):
+def run_merge(out_folder, tran, others, fuzzy_term, fuzzy_tss, strain, log):
     '''merge all features to be one gff file'''
     output = "_".join([strain, "merge_features.gff"])
     if tran is None and others is None:
+        lgo.write("No input files are found.\n")
         print("Error: There is no input file...")
         sys.exit()
     elif (tran is not None) and (others is None):
@@ -202,8 +203,12 @@ def run_merge(out_folder, tran, others, fuzzy_term, fuzzy_tss, strain):
         if (tran is not None):
             tran_gffs = read_gffs(tran, "transcript")
             other_gffs = read_gffs(others, "others")
+            log.write("Comparing transripts and other features to get "
+                      "parental transcripts.\n")
             compare_tran(tran_gffs, other_gffs, fuzzy_tss, fuzzy_term)
         else:
             other_gffs = read_gffs(others, "others")
+        log.write("Combining all the gff files and merge the features.\n")
         gffs, o_gffs, s_gffs = combine_gffs(tran_gffs, other_gffs)
         print_gff(gffs, o_gffs, s_gffs, output)
+        log.write("\t" + output + " is generated.\n")

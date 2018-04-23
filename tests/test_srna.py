@@ -20,7 +20,7 @@ class Mock_func(object):
     def mock_run_filter_frag(self, merge_table, merge_gff):
         pass
 
-    def mock_run_format(self, blast_path, database, type_, db_file, err):
+    def mock_run_format(self, blast_path, database, type_, db_file, err, log):
         pass
 
     def mock_change_format(self, database, file_):
@@ -37,7 +37,7 @@ class Mock_func(object):
         pass
 
     def mock_run_normal(self, import_info, tss_path,
-                        pro_path, prefix, gff_path):
+                        pro_path, prefix, gff_path, log):
         return None, [None, None, 1, 2], [None, None, 1, 2]
 
     def mock_run_utrsrna(
@@ -66,7 +66,7 @@ class Mock_func(object):
     def mock_extract_energy(self, gff_file, sec_file, energy_file):
         pass
 
-    def mock_run_RNAfold(self, seq_file, vienna_path, sec_file):
+    def mock_run_RNAfold(self, seq_file, vienna_path, sec_file, log):
         pass
 
     def mock_run_replot(self, vienna_util, tmp_paths, file_,
@@ -76,11 +76,11 @@ class Mock_func(object):
     def mock_convert_pdf(self, ps2pdf14_path, tmp_paths, file_, pdf_file):
         pass
 
-    def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out):
+    def mock_run_mountain(self, vienna_util, tmp_paths, dot_file, out, log):
         pass
 
     def mock_run_blast(self, program, database, e, seq_file, blast_file,
-                       strand, para, test):
+                       strand, para, test, log):
         gen_file('tmp_blast.txt', "test")
 
     def mock_extract_blast(self, blast_file, srna_file, out_file, csv_file,
@@ -185,9 +185,10 @@ class TestsRNADetection(unittest.TestCase):
     def test_formatdb(self):
         database = "test_folder/test.fa"
         gen_file(database, "test")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         sr.change_format = self.mock.mock_change_format
         self.srna._run_format = self.mock.mock_run_format
-        self.srna._formatdb(database, "type_", self.out, "blast_path", "sRNA")
+        self.srna._formatdb(database, "type_", self.out, "blast_path", "sRNA", log)
         self.assertTrue(os.path.exists(os.path.join(self.out, "log.txt")))
 
     def test_check_necessary_file(self):
@@ -210,7 +211,8 @@ class TestsRNADetection(unittest.TestCase):
         args.srna_format = True
         args.nr_database = "test"
         args.srna_database = "test"
-        self.srna._check_necessary_file(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.srna._check_necessary_file(args, log)
 
     def test_run_program(self):
         self.srna.multiparser = Mock_multiparser
@@ -248,7 +250,8 @@ class TestsRNADetection(unittest.TestCase):
         args.utr_srna = True
         args.ex_srna = False
         args.cutoff_overlap = 0.5
-        prefixs = self.srna._run_program(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        prefixs = self.srna._run_program(args, log)
         self.assertListEqual(prefixs, ['test'])
 
     def test_get_seq_sec(self):
@@ -257,9 +260,10 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._run_RNAfold = self.mock.mock_run_RNAfold
         os.mkdir(os.path.join(self.out, "tmp_srna"))
         gen_file(os.path.join(self.fastas, "test.fa"), ">test\nAAATTTGGGCCC")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         datas = self.srna._get_seq_sec(
             self.fastas, self.out, "test", self.test_folder,
-            self.test_folder, "vienna_path")
+            self.test_folder, "vienna_path", log)
         self.assertEqual(datas["sec"].split("/")[-1], "test_folder")
         self.assertEqual(datas["dot"].split("/")[-1], "test_folder")
         self.assertEqual(datas["main"].split("/")[-1],
@@ -271,8 +275,9 @@ class TestsRNADetection(unittest.TestCase):
         self.srna._convert_pdf = self.mock.mock_convert_pdf
         gen_file(os.path.join(self.tsss, "test.rss.ps"), "test")
         gen_file(os.path.join(self.tsss, "test.dp.ps"), "test")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         tmp_paths = {"dot": self.out, "sec": self.fastas, "tmp": self.tsss}
-        self.srna._replot_sec("vienna_util", tmp_paths, "test")
+        self.srna._replot_sec("vienna_util", tmp_paths, "test", log)
         self.assertTrue(os.path.exists(os.path.join(
             tmp_paths["dot"], "test/test.dp.ps")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -283,10 +288,11 @@ class TestsRNADetection(unittest.TestCase):
         tmp_paths = {"main": self.test_folder, "tmp": self.tsss,
                      "dot": self.sorf}
         moun_path = "fastas"
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         os.mkdir(os.path.join(tmp_paths["dot"], "test"))
         gen_file(os.path.join(tmp_paths["dot"], "test/test.dp.ps"), "test")
         self.srna._plot_mountain(True, moun_path,
-                                 tmp_paths, "test", "vienna_util")
+                                 tmp_paths, "test", "vienna_util", log)
         self.assertTrue("test_folder/fastas/test/test.mountain.pdf")
 
     def test_compute_2d_and_energy(self):
@@ -307,6 +313,7 @@ class TestsRNADetection(unittest.TestCase):
         gen_file(os.path.join(self.out, "tmp_basic_test"),
                  self.example.srna_file)
         gen_file(os.path.join(self.out, "tmp_energy_test"), "test")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args = self.mock_args.mock()
         args.out_folder = self.out
         args.fastas = self.fastas
@@ -315,7 +322,7 @@ class TestsRNADetection(unittest.TestCase):
         args.mountain_pl = "test"
         args.mountain = True
         args.ps2pdf14_path = "test"
-        self.srna._compute_2d_and_energy(args, ["test"])
+        self.srna._compute_2d_and_energy(args, ["test"], log)
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")
 
@@ -332,12 +339,13 @@ class TestsRNADetection(unittest.TestCase):
         args = self.mock_args.mock()
         args.blast_path = "test"
         args.para_blast = 1
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.fastas = self.fastas
         args.out_folder = self.out
         args.blast_score_s = 0
         args.blast_score_n = 0
         self.srna._blast("database", False, "dna", args,
-                         ["test"], "blast_all", "nr", 0.0001, "tss")
+                         ["test"], "blast_all", "nr", 0.0001, "tss", log)
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")
 
@@ -350,13 +358,14 @@ class TestsRNADetection(unittest.TestCase):
         os.mkdir(gff_out)
         os.mkdir(table_out)
         os.mkdir(stat_out)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         os.mkdir(os.path.join(table_out, "for_classes"))
         os.mkdir(os.path.join(gff_out, "for_classes"))
         args = self.mock_args.mock()
         args.max_len = 300
         args.min_len = 30
         args.import_info = ["tss", "blast_nr", "blast_srna", "sec_str", "sorf"]
-        self.srna._class_srna(["test"], args)
+        self.srna._class_srna(["test"], args, log)
         self.assertTrue(os.path.exists(os.path.join(
             gff_out, "for_classes/test")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -424,6 +433,7 @@ class TestsRNADetection(unittest.TestCase):
         args.blastx = "blast_path"
         args.blastn = "blast_path"
         args.nr_format = False
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.srna_format = False
         args.compute_sec_str = False
         args.e_nr = 0
@@ -431,7 +441,7 @@ class TestsRNADetection(unittest.TestCase):
         args.para_blast = 1
         args.blast_score_s = 0
         args.blast_score_n = 0
-        self.srna._filter_srna(args, ["test"])
+        self.srna._filter_srna(args, ["test"], log)
         datas = import_data(os.path.join(self.out, "tmp_basic_test"))
         self.assertEqual("\n".join(datas), "test")
 

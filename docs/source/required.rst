@@ -10,6 +10,8 @@ TSS prediction only needs TSSpredator.
 Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
 Via Docker image, all the required tools are installed.
 
+All the used tools are compatible with the ISC license of ANNOgesic or open resource.
+
 Tools
 -----
 
@@ -22,6 +24,8 @@ Tools
 	`Wget <https://www.gnu.org/software/wget>`_:  version higher or equal to 1.17.1.
 
 	`Matplotlib <http://matplotlib.org/>`_ : version higher or equal to 1.5.0.
+
+	`NumPy <http://www.numpy.org/>`_ : version higher or equal to 1.9.2. 
 
 **Annotation transfer:**
 

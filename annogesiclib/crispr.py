@@ -29,11 +29,22 @@ class Crispr(object):
         self.helper.check_make_folder(self.data_folder)
         self.helper.check_make_folder(self.stat_folder)
 
-    def _run_crt(self, args_cris):
+    def _run_crt(self, args_cris, log):
         '''Running CRT'''
         print("Running CRT")
+        log.write("Using CRT to predict CRISPRs.\n")
+        log.write("Please make sure the version of CRT is at least 1.2.\n")
         for seq in os.listdir(self.fasta_path):
             prefix = ".".join(seq.split(".")[:-1])
+            log.write(" ".join([
+                "java", "-cp", args_cris.crt_path, "crt", "-minNR",
+                str(args_cris.min_num_r), "-minRL",
+                str(args_cris.min_len_r), "-maxRL",
+                str(args_cris.max_len_r), "-minSL",
+                str(args_cris.min_len_s), "-maxSL",
+                str(args_cris.max_len_s), "-searchWL",
+                str(args_cris.win_size), os.path.join(self.fasta_path, seq),
+                os.path.join(self.data_folder, prefix + ".txt")]) + "\n")
             call(["java", "-cp", args_cris.crt_path, "crt", "-minNR",
                   str(args_cris.min_num_r), "-minRL",
                   str(args_cris.min_len_r), "-maxRL",
@@ -42,6 +53,8 @@ class Crispr(object):
                   str(args_cris.max_len_s), "-searchWL",
                   str(args_cris.win_size), os.path.join(self.fasta_path, seq),
                   os.path.join(self.data_folder, prefix + ".txt")])
+            log.write("\t" + os.path.join(self.data_folder, prefix + ".txt") + 
+                      " is generated.\n")
 
     def _read_gff(self, txt):
         gffs = []
@@ -236,11 +249,13 @@ class Crispr(object):
                                          stats["best"][prefix][strain])
             sh.close()
 
-    def run_crispr(self, args_cris):
+    def run_crispr(self, args_cris, log):
         '''detection of CRISPR'''
         self.multiparser.parser_fasta(args_cris.fastas)
         self.multiparser.parser_gff(args_cris.gffs, None)
-        self._run_crt(args_cris)
+        self._run_crt(args_cris, log)
+        log.write("Converting the results to gff3 format.\n")
+        log.write("The following files are generated:\n")
         self._convert_gff(args_cris.ignore_hypo)
         print("All candidates:")
         self.multiparser.combine_gff(args_cris.gffs, self.all_out,
@@ -248,9 +263,20 @@ class Crispr(object):
         print("Best candidates:")
         self.multiparser.combine_gff(args_cris.gffs, self.best_out,
                                      None, "CRISPR")
+        for folder in (self.all_out, self.best_out):
+            for file_ in os.listdir(folder):
+                log.write("\t" + os.path.join(folder, file_) + "\n")
         stats = {"all": {}, "best": {}}
+        log.write("Doing statistics and update results.\n")
         self._stat_and_correct(stats["all"], self.all_out)
         self._stat_and_correct(stats["best"], self.best_out)
         self._print_stat(stats)
+        log.write("The following files are generated:\n")
+        for file_ in os.listdir(self.stat_folder):
+            log.write("\t" + os.path.join(self.stat_folder, file_) + "\n")
+        log.write("The following files are updated:\n")
+        for folder in (self.all_out, self.best_out):
+            for file_ in os.listdir(folder):
+                log.write("\t" + os.path.join(folder, file_) + "\n")
         self.helper.remove_tmp_dir(args_cris.gffs)
         self.helper.remove_tmp_dir(args_cris.fastas)

@@ -76,18 +76,22 @@ class TestOperonDetection(unittest.TestCase):
         args.term_fuzzy = 3
         args.tss_fuzzy = 3
         args.length = 100
-        self.operon._detect_operon(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.operon._detect_operon(["test"], args, log)
         self.assertTrue(os.path.exists(os.path.join(self.output, "tables",
                         "test_operon.csv")))
-    
+        log.close()
+
     def test_stat(self):
         op.stat = self.mock.mock_stat
         table_file = os.path.join(self.output, "tables", "test_operon.csv")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         if not os.path.exists(table_file):
             gen_file(table_file, "test")
-        self.operon._stat(os.path.join(self.output, "tables"), self.stat)
+        self.operon._stat(os.path.join(self.output, "tables"), self.stat, log)
         self.assertTrue(os.path.exists(os.path.join(
             self.stat, "stat_test_operon.csv")))
+        log.close()
 
 if __name__ == "__main__":
     unittest.main()

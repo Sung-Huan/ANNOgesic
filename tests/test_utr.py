@@ -74,9 +74,9 @@ class TestsTSSpredator(unittest.TestCase):
         args.out_folder = self.out
         self.utr = UTRDetection(args)
 
-#    def tearDown(self):
-#        if os.path.exists(self.test_folder):
-#            shutil.rmtree(self.test_folder)
+    def tearDown(self):
+        if os.path.exists(self.test_folder):
+            shutil.rmtree(self.test_folder)
 
     def test_compute_utr(self):
         ut.detect_5utr = self.mock.mock_detect_5utr
@@ -87,6 +87,8 @@ class TestsTSSpredator(unittest.TestCase):
         utr3_path = os.path.join(self.out, "3UTRs")
         os.mkdir(utr5_path)
         os.mkdir(utr3_path)
+        os.mkdir(os.path.join(utr5_path, "gffs"))
+        os.mkdir(os.path.join(utr3_path, "gffs"))
         utr5_stat_path = os.path.join(utr5_path, "statistics")
         utr3_stat_path = os.path.join(utr3_path, "statistics")
         os.mkdir(utr5_stat_path)
@@ -103,7 +105,8 @@ class TestsTSSpredator(unittest.TestCase):
         args.tsss = self.tsss
         args.trans = self.trans
         args.terms = self.terms
-        self.utr._compute_utr(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.utr._compute_utr(args, log)
         self.assertTrue(os.path.exists(os.path.join(
             utr5_stat_path, "test_5utr_length.png")))
         self.assertTrue(os.path.exists(os.path.join(
@@ -119,6 +122,8 @@ class TestsTSSpredator(unittest.TestCase):
         utr3_path = os.path.join(self.out, "3UTRs")
         os.mkdir(utr5_path)
         os.mkdir(utr3_path)
+        os.mkdir(os.path.join(utr5_path, "gffs"))
+        os.mkdir(os.path.join(utr3_path, "gffs"))
         utr5_stat_path = os.path.join(utr5_path, "statistics")
         utr3_stat_path = os.path.join(utr3_path, "statistics")
         os.mkdir(utr5_stat_path)
@@ -136,7 +141,8 @@ class TestsTSSpredator(unittest.TestCase):
         args.trans = self.trans
         args.terms = self.terms
         args.out_folder = self.out
-        self.utr.run_utr_detection(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.utr.run_utr_detection(args, log)
         self.assertTrue(os.path.exists(os.path.join(
             utr5_stat_path, "test_5utr_length.png")))
         self.assertTrue(os.path.exists(os.path.join(

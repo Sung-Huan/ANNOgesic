@@ -13,12 +13,12 @@ class Mock_func(object):
         self.color = ColorPNG()
 
     def mock_convert_svg(self, imagemagick_path, out_path,
-                         screenshot, svg_file):
+                         screenshot, svg_file, log):
         gen_file(os.path.join(out_path, svg_file),
                  "<svg width=1111 hight=2222")
 
     def mock_convert_png(self, imagemagick_path, out_path,
-                         screenshot, png_file):
+                         screenshot, png_file, log):
         gen_file(os.path.join(out_path, png_file), "test")
         pass
 
@@ -51,11 +51,13 @@ class TestColorPng(unittest.TestCase):
     def test_generate_color_png(self):
         self.color._convert_svg = self.mock.mock_convert_svg
         self.color._convert_png = self.mock.mock_convert_png
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.color.gen_svg = self.mock.mock_gen_svg
-        self.color.generate_color_png(4, self.test_folder, "test")
+        self.color.generate_color_png(4, self.test_folder, "test", log)
         data = import_data(os.path.join(self.test_folder, "screenshots",
                                         "aaa", "forward", "test_f.png"))
         self.assertListEqual(data, ["test"])
+        log.close()
 
 if __name__ == "__main__":
     unittest.main()

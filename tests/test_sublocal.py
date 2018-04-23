@@ -13,7 +13,7 @@ from mock_args_container import MockClass
 class Mock_func(object):
 
     def mock_psortb(self, psortb_path, strain_type, prot_seq_file,
-                   out_raw, out_err):
+                   out_raw, out_err, log):
         pass
 
     def mock_stat_sublocal(self, merge_table, stat, table):
@@ -81,8 +81,11 @@ class TestSubLocal(unittest.TestCase):
                  self.example.gff_file)
         gen_file(os.path.join(self.trans, "aaa_transcript.gff"),
                  self.example.tran_file)
+        args = self.mock_args.mock()
+        args.out_folder = self.test_folder
+        log = open(os.path.join(self.test_folder, "test.log"), "w") 
         prefix = self.sub._get_protein_seq(
-            gff, self.test_folder, self.trans)
+            gff, self.test_folder, self.trans, args, log)
         self.assertEqual(prefix, "aaa")
 
     def test_run_psortb(self):
@@ -92,8 +95,9 @@ class TestSubLocal(unittest.TestCase):
         args = self.mock_args.mock()
         args.psortb_path = "psortb_path"
         args.gram = "positive"
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.sub._run_psortb(args, "aaa", self.out,
-                             self.test_folder, tmp_result)
+                             self.test_folder, tmp_result, log)
         self.assertTrue(os.path.exists(os.path.join(self.out, "tmp_log")))
         self.assertTrue(os.path.exists(os.path.join(tmp_result,
                        "_".join(["aaa", "raw.txt"]))))
@@ -105,8 +109,9 @@ class TestSubLocal(unittest.TestCase):
         os.mkdir(os.path.join(self.out, "psortb_results"))
         gen_file(os.path.join(self.out, "aaa_raw.txt"), "test")
         gen_file(os.path.join(self.out, "aaa_table.csv"), "test")
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.sub._merge_and_stat(self.gffs, self.out,
-                                 self.test_folder, self.stat)
+                                 self.test_folder, self.stat, log)
         self.assertTrue(os.path.exists(os.path.join(self.stat, "aaa")))
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "aaa")))
 
@@ -115,7 +120,8 @@ class TestSubLocal(unittest.TestCase):
         tran_file = os.path.join(self.test_folder, "aaa_transcript.gff")
         gen_file(gff_file, self.example.gff_file)
         gen_file(tran_file, self.example.tran_file)
-        self.sub._compare_cds_tran(gff_file, tran_file)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.sub._compare_cds_tran(gff_file, tran_file, log)
         datas, string = extract_info(
             "test_folder/output/all_CDSs/tmp_cds.gff", "file")
         self.assertEqual(

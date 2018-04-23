@@ -24,10 +24,10 @@ class Mock_func(object):
         pass
 
     def mock_run_sub(self, fasta_file, type_, out_raw_prefix,
-                     prefix, table_path):
+                     prefix, table_path, log):
         gen_file("test_folder/test", "test")
 
-    def mock_run_bam(self, samtools_path, sub_command, bam_files, test):
+    def mock_run_bam(self, samtools_path, sub_command, bam_files, test, log):
         pass
 
     def mock_get_header(self, samtools_path, test1, test2):
@@ -124,7 +124,8 @@ class TestSNPCalling(unittest.TestCase):
         bam_datas = [{"sample": "NC_007795.1", "bam_number": 1,
                       "bams": "test", "rep": 1}]
         args.program = ["with_BAQ"]
-        self.snp._run_program("fasta", bam_datas, args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.snp._run_program("fasta", bam_datas, args, log)
         self.assertTrue(os.path.exists(os.path.join(self.test_folder, "test")))
 
     def test_merge_bams(self):
@@ -141,7 +142,8 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(os.path.join(args.frag_bams, "farg.bam"), "test")
         args.bams = [args.frag_bams, args.normal_bams]
         args.samtools_path = "test"
-        self.snp._merge_bams(args, bam_datas)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.snp._merge_bams(args, bam_datas, log)
         self.assertEqual(bam_datas[0]["bam_number"], 1)
 
     def test_modify_header(self):
@@ -187,7 +189,8 @@ class TestSNPCalling(unittest.TestCase):
         gen_file(os.path.join(args.normal_bams, "notex.bam"), "test")
         gen_file(os.path.join(args.frag_bams, "farg.bam"), "test")
         args.samtools_path = "test"
-        self.snp.run_snp_calling(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.snp.run_snp_calling(args, log)
 
 
 class Example(object):

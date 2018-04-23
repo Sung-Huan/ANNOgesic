@@ -28,7 +28,7 @@ class TestScreen(unittest.TestCase):
         args = self.mock_args.mock()
         args.output_folder = self.output
         args.fasta = self.fasta
-        self.screen = Screen(args)
+        self.screen = Screen(args, self.output)
 
     def tearDown(self):
         if os.path.exists(self.test_folder):
@@ -61,15 +61,16 @@ class TestScreen(unittest.TestCase):
                       "test_folder/frag/frag_r.wig:frag:1:a:-"]
         args.present = "expand"
         args.output_folder = self.output
-        self.screen.screenshot(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.screen.screenshot(args, log)
         self.assertTrue(os.path.exists(os.path.join(
-            self.output, "screenshots", "aaa", "forward")))
+            self.output, "aaa", "forward")))
         self.assertTrue(os.path.exists(os.path.join(
-            self.output, "screenshots", "aaa", "reverse")))
+            self.output, "aaa", "reverse")))
         datas = import_data(os.path.join(
-            self.output, "screenshots", "aaa", "forward.txt"))
+            self.output, "aaa", "forward.txt"))
         datas = import_data(os.path.join(
-            self.output, "screenshots", "aaa", "reverse.txt"))
+            self.output, "aaa", "reverse.txt"))
         self.assertEqual("\n".join(datas), self.example.out_r)
 
     def test_import_libs(self):

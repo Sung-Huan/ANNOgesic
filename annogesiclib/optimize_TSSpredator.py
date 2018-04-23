@@ -227,7 +227,7 @@ def convert2gff(out_path, gff_files, args_ops, strain):
 def run_TSSpredator(tsspredator_path, config_file):
     folders = config_file.split("/")
     out_path = "/".join(folders[:-1])
-    out = open(os.path.join(out_path, "log.txt"), "w")
+    out = open(os.path.join(out_path, "TSSpredator_log.txt"), "w")
     p = Popen(["java", "-jar",
                tsspredator_path, config_file], stdout=out)
     return p
@@ -423,7 +423,7 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops, strain):
 def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
                      out_path, stat_out, best_para, current_para,
                      wig, fasta, gff, best, num_manual, args_ops, strain,
-                     manuals, length):
+                     manuals, length, log, set_config, run_tss):
     '''run TSS and do statistics'''
     if indexs["step"] > args_ops.steps + int(args_ops.cores):
         return (True, best_para)
@@ -443,12 +443,25 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
             gff_files = []
             for para in list_num[-1 * args_ops.cores:]:
                 index += 1
+                if not set_config:
+                    log.write("Checking the process of generating config files.\n")
                 config_files.append(gen_config(para, out_path, index, wig,
                                     fasta, gff, args_ops, strain))
+                if not set_config:
+                    set_config = True
+                    log.write("config files can be generated and stored in "
+                              "{0} successfully.\n".format(out_path))
             indexs["count"] = 0
             processes = []
+            if not run_tss:
+                log.write("Checking the setup of TSSpredator.\n")
+                log.write("Please make sure your version of TSSpredator "
+                          "is at least 1.06.\n")
             run_TSSpredator_paralle(config_files, args_ops.tsspredator_path,
                                     processes)
+            if not run_tss:
+                run_tss = True
+                log.write("TSSpredator is running successfully.\n")
             convert2gff(out_path, gff_files, args_ops, strain)
             stat_values = compare_manual_predict(
                               indexs["step"], list_num[-1 * args_ops.cores:],
@@ -470,7 +483,7 @@ def run_tss_and_stat(indexs, list_num, seeds, diff_h, diff_f,
             indexs["switch"] += 1
             stat_values = []
             indexs["num"] = 0
-    return (False, best_para, best)
+    return (False, best_para, best), set_config, run_tss
 
 
 def minus_process(num_type, new_para, max_num, best_num,
@@ -763,12 +776,15 @@ def run_random_part(current_para, list_num, max_num, steps, indexs):
 
 
 def optimization_process(indexs, current_para, list_num, max_num, best_para,
-                         out_path, stat_out, best, wig, fasta, gff,
-                         num_manual, new, args_ops, strain, manuals, length):
+                         out_path, stat_out, best, wig, fasta, gff, num_manual,
+                         new, args_ops, strain, manuals, length, log):
     '''main part of opimize TSSpredator'''
     features = {"pre_feature": "", "feature": ""}
     seeds = {"pre_seed": [], "seed": 0}
     tmp_step = 0
+    log.write("The optimization starts.\n")
+    set_config = False
+    run_tss = False
     while True:
         if indexs["exist"] is False:
             indexs["exist"] = True
@@ -804,16 +820,19 @@ def optimization_process(indexs, current_para, list_num, max_num, best_para,
                     current_para["re_height"])
             diff_f = float(current_para["factor"]) - float(
                     current_para["re_factor"])
-            datas = run_tss_and_stat(
+            datas, set_config, run_tss = run_tss_and_stat(
                     indexs, list_num, seeds, diff_h, diff_f, out_path,
                     stat_out, best_para, current_para, wig, fasta, gff,
-                    best, num_manual, args_ops, strain, manuals, length)
+                    best, num_manual, args_ops, strain, manuals, length,
+                    log, set_config, run_tss)
             tmp_step = 0
         else:
             indexs["step"] = indexs["step"] - 1
         if tmp_step >= 2:
             print("The number of steps may be enough, it "
                   "may not be able to find more parameters\n")
+            log.write("The optimization stop because no more combination "
+                      "of parameters can be found.\n")
             sys.exit()
         best_para = datas[1]
         if datas[0]:
@@ -868,6 +887,10 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs,
     first_line = True
     line_num = 0
     for row in csv.reader(f_h, delimiter="\t"):
+        if (line_num == 0) and (len(row) < 8):
+             print("Error: {0} has something wrong, "
+                   "please check it or remove it!!!".format(stat_file))
+             sys.exit()
         line_num += 1
         paras = row[1].split("_")
         if len(row) == 8:
@@ -907,7 +930,7 @@ def load_stat_csv(out_path, list_num, best, best_para, indexs,
 
 
 def reload_data(out_path, list_num, best, best_para, indexs,
-                num_manual, stat_file):
+                num_manual, stat_file, log):
     '''if is based on previous run, it is for reload the previous results'''
     indexs["switch"] = 1
     indexs["exist"] = True
@@ -919,8 +942,9 @@ def reload_data(out_path, list_num, best, best_para, indexs,
     if len(list_num) > 0:
         indexs["extend"] = True
     else:
-        print("Error: stat_$STRAIN.csv may be empty or has something wrong, "
-              "please check it or remove it!!!")
+        print("Error: {0} has something wrong, "
+              "please check it or remove it!!!".format(stat_file))
+        log.write(stat_file + " is brocken. Please check it or remove it.\n")
         sys.exit()
     new_line = 0
     new_stat = open("tmp.csv", "w")
@@ -960,7 +984,16 @@ def initiate(args_ops):
     return max_num, best_para, current_para, indexs
 
 
-def optimization(wig, fasta, gff, args_ops, manual, length, strain):
+def check_empty(stat_file):
+    empty_file = True
+    with open(stat_file) as fh:
+        for line in fh:
+            if len(line) != 0:
+                empty_file = False
+                break
+    return empty_file
+
+def optimization(wig, fasta, gff, args_ops, manual, length, strain, log):
     '''opimize TSSpredator'''
     best = {}
     new = True
@@ -969,26 +1002,40 @@ def optimization(wig, fasta, gff, args_ops, manual, length, strain):
     files = os.listdir(args_ops.output_folder)
     stat_file = os.path.join(out_path, "stat_" + strain + ".csv")
     num_manual, manuals = read_predict_manual_gff(manual, length)
-    if "optimized_TSSpredator" not in files:
-        os.mkdir(out_path)
+    log.write(manual + " is loaded successfully.\n")
+    if len(os.listdir(out_path)) == 1:
         list_num = []
         stat_out = open(stat_file, "w")
     else:
         if (("stat_" + strain + ".csv") in os.listdir(out_path)):
-            list_num = []
-            new = False
-            datas = reload_data(out_path, list_num, best, best_para, indexs,
-                                num_manual, stat_file)
-            best_para = datas[0]
-            best = datas[1]
-            current_para = extend_data(out_path, best,
-                                       best_para, indexs["step"], strain)
-            stat_out = open(stat_file, "a")
-            indexs["first"] = False
+            empty_file = check_empty(stat_file)
+            if empty_file:
+                os.remove(stat_file)
+                list_num = []
+                stat_out = open(stat_file, "w")
+            else:
+                list_num = []
+                new = False
+                log.write("Checking the previous results.\n")
+                datas = reload_data(out_path, list_num, best, best_para, indexs,
+                                    num_manual, stat_file, log)
+                log.write("The intermediate results of the previous "
+                          "optimization is loaded. The optimization will start "
+                          "from {0}\n".format(indexs["step"]))
+                best_para = datas[0]
+                best = datas[1]
+                current_para = extend_data(out_path, best,
+                                           best_para, indexs["step"], strain)
+                stat_out = open(stat_file, "a")
+                indexs["first"] = False
         else:
             list_num = []
             stat_out = open(stat_file, "w")
     optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
-                         num_manual, new, args_ops, strain, manuals, length)
+                         num_manual, new, args_ops, strain, manuals, length, log)
+    log.write("The optimization is done. The following files are generated:\n")
+    for file_ in os.listdir(out_path):
+        if not file_.startswith("Master") and not file_.startswith("config"):
+            log.write("\t" + file_ + "\n")
     stat_out.close()

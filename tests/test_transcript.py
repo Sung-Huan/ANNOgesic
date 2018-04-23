@@ -75,6 +75,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
         self.terms = "test_folder/terms"
         self.stat = "test_folder/output/statistics"
         self.out_gff = "test_folder/output/gffs"
+        self.out_table = "test_folder/output/tables"
         if (not os.path.exists(self.test_folder)):
             os.mkdir(self.test_folder)
             os.mkdir(self.trans)
@@ -88,6 +89,7 @@ class TestsTranscriptAssembly(unittest.TestCase):
             os.mkdir(self.terms)
             os.mkdir(self.stat)
             os.mkdir(self.out_gff)
+            os.mkdir(self.out_table)
         args = self.mock_args.mock()
         args.out_folder = self.out
         self.tran = TranscriptDetection(args)
@@ -141,7 +143,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.tex_wigs = self.tex
         args.gffs = self.gffs
         args.tolerance = 5
-        self.tran._for_two_wigs(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.tran._for_two_wigs(["test"], args, log)
         self.assertTrue(os.path.exists(
             os.path.join(self.out_gff, "test_transcript.gff")))
         tr.combine = pre_combine
@@ -183,8 +186,9 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.out_folder = self.out
         args.trans = self.trans
         args.gffs = self.gffs
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args.c_feature = ["CDS"]
-        self.tran._compare_cds(["test"], args)
+        self.tran._compare_cds(["test"], args, log)
         datas = import_data(os.path.join(self.gffs, "test.gff"))
         self.assertEqual("\n".join(datas),
                          "##gff-version 3\n" + self.example.gff_file)
@@ -209,7 +213,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.trans = self.trans
         args.compare_tss = self.gffs
         args.fuzzy = 2
-        self.tran._compare_tss(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.tran._compare_tss(["test"], args, log)
         datas = import_data(os.path.join(self.gffs, "test_TSS.gff"))
         self.assertEqual("\n".join(datas),
                          "##gff-version 3\n" + self.example.gff_file)
@@ -256,7 +261,8 @@ class TestsTranscriptAssembly(unittest.TestCase):
         args.fuzzy_term = 1
         args.max_dist = 2000
         args.modify = "merge_overlap"
-        self.tran.run_transcript(args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.tran.run_transcript(args, log)
         tr.assembly = pre_assembly
 
 

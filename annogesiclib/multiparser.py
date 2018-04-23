@@ -252,8 +252,10 @@ class Multiparser(object):
                             else:
                                 out.write(line)
                                 out_t.write(line)
-        out.close()
-        out_t.close()
+        if out is not None:
+            out.close()
+        if out_t is not None:
+            out_t.close()
 
     def parser_gff(self, gff_folder, feature):
         '''parser gff file based on strain'''
@@ -305,8 +307,10 @@ class Multiparser(object):
             sys.exit()
         if os.path.exists(os.path.join(gff_folder, "tmp.gff")):
             os.remove(os.path.join(gff_folder, "tmp.gff"))
-        out.close()
-        out_t.close()
+        if out is not None:
+            out.close()
+        if out_t is not None:
+            out_t.close()
 
     def parser_wig(self, wig_folder):
         '''parser the wig file based on strain'''
@@ -356,5 +360,7 @@ class Multiparser(object):
             print("Error: There are folders which contain no wig files! "
                   "The files should end with .wig!")
             sys.exit()
-        out.close()
-        out_t.close()
+        if out is not None:
+            out.close()
+        if out_t is not None:
+            out_t.close()

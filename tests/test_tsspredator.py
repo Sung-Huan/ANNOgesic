@@ -16,10 +16,10 @@ class Mock_func(object):
         self.example = Example()
 
     def mock_start_to_run(self, tsspredator_path, config_file,
-                          out_path, prefix):
+                          out_path, prefix, log):
         gen_file(os.path.join(out_path, "TSSstatistics.tsv"), "test")
 
-    def mock_check_orphan(sel, pre_tss, gff, wig_f, wig_r, tmp_tss):
+    def mock_check_orphan(self, pre_tss, gff, wig_f, wig_r, tmp_tss):
         gen_file(tmp_tss, "test")
 
     def mock_filter_low_expression(self, gff, manual, wig_f, wig_r,
@@ -177,9 +177,10 @@ class TestsTSSpredator(unittest.TestCase):
         args.libs = libs
         args.output_prefixs = ["test1"]
         args.specify_strains = None
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         self.tss._gen_config(
             "test", args, self.gffs + "/tmp/test.gff",
-            self.wigs + "/tmp", self.fastas + "/tmp/test.fa", config_file)
+            self.wigs + "/tmp", self.fastas + "/tmp/test.fa", config_file, log)
         datas = import_data(config_file)
         self.assertEqual("\n".join(datas), self.example.config)
 
@@ -202,6 +203,7 @@ class TestsTSSpredator(unittest.TestCase):
                 "test1_reverse.wig:notex:1:a:-",
                 "test1_TEX_forward.wig:tex:1:a:+",
                 "test1_TEX_reverse.wig:tex:1:a:-"]
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         args = self.mock_args.mock()
         args.program = "TSS"
         args.height = 0.3
@@ -218,7 +220,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.repmatch = ["all_2"]
         args.specify_strains = None
         args.output_prefixs = ["test1"]
-        self.tss._set_gen_config(args, self.test_folder)
+        self.tss._set_gen_config(args, self.test_folder, log)
         datas = import_data(os.path.join(self.test_folder, "config_test.ini"))
         self.assertEqual("\n".join(datas), self.example.config)
 
@@ -233,7 +235,8 @@ class TestsTSSpredator(unittest.TestCase):
         args = self.mock_args.mock()
         args.out_folder = self.out
         args.program = "TSS"
-        self.tss._convert_gff(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.tss._convert_gff(["test"], args, log)
         datas = import_data(os.path.join(self.out, "gffs/test_TSS.gff"))
         self.assertEqual("\n".join(datas), self.example.master_gff)
 
@@ -338,17 +341,19 @@ class TestsTSSpredator(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.out, "test_TSS.gff")))
 
     def test_stat_tss(self):
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         ts.stat_tsspredator = self.mock.mock_stat_tsspredator
         ts.plot_venn = self.mock.mock_plot_venn
         os.mkdir(os.path.join(self.out, "statistics"))
         os.mkdir(os.path.join(self.out, "statistics/test"))
-        self.tss._stat_tss(["test"], "TSS")
+        self.tss._stat_tss(["test"], "TSS", log)
         self.assertTrue(os.path.exists(os.path.join(
             self.out, "statistics/test/test_venn.png")))
         self.assertTrue(os.path.exists(os.path.join(
             self.out, "statistics/test/test_class.png")))
 
     def test_validate(self):
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
         gen_file(os.path.join(self.gffs, "test.gff"), self.example.tss_file)
         os.mkdir(os.path.join(self.out, "gffs"))
         ts.validate_gff = self.mock.mock_validate_gff
@@ -357,7 +362,7 @@ class TestsTSSpredator(unittest.TestCase):
         args.utr_length = 300
         args.out_folder = self.out
         args.program = "tss"
-        self.tss._validate(["test"], args)
+        self.tss._validate(["test"], args, log)
 
     def test_compare_ta(self):
         self.tss.multiparser = self.mock_parser
@@ -371,77 +376,12 @@ class TestsTSSpredator(unittest.TestCase):
         args.fuzzy = 3
         args.trans = self.trans
         args.gffs = self.gffs
-        self.tss._compare_ta(["test"], args)
+        log = open(os.path.join(self.test_folder, "test.log"), "w")
+        self.tss._compare_ta(["test"], args ,log)
         self.assertTrue(os.path.exists(os.path.join(
             self.trans, "test_transcript.gff")))
         self.assertTrue(os.path.exists(os.path.join(
             self.out, "gffs/test_TSS.gff")))
-
-    def test_run_tsspredator(self):
-        os.mkdir(os.path.join(self.out, "gffs"))
-        os.mkdir(os.path.join(self.out, "statistics"))
-        os.mkdir(os.path.join(self.out, "statistics/test"))
-        os.mkdir(os.path.join(self.out, "MasterTables"))
-        os.mkdir(os.path.join(self.out, "MasterTables/MasterTable_test"))
-        os.mkdir(os.path.join(self.out, "configs"))
-        ts.stat_tsspredator = self.mock.mock_stat_tsspredator
-        ts.plot_venn = self.mock.mock_plot_venn
-        ts.validate_gff = self.mock.mock_validate_gff
-        ts.stat_ta_tss = self.mock.mock_stat_ta_tss
-        ts.filter_tss_pro = self.mock.mock_filter_tss_pro
-        ts.merge_manual_predict_tss = self.mock.mock_merge_manual_predict_tss
-        ts.filter_low_expression = self.mock.mock_filter_low_expression
-        ts.check_orphan = self.mock.mock_check_orphan
-        self.tss._start_to_run = self.mock.mock_start_to_run
-        gen_file(os.path.join(self.wigs, "test1_forward.wig"),
-                 self.example.wig_f)
-        gen_file(os.path.join(self.wigs, "test1_reverse.wig"),
-                 self.example.wig_r)
-        gen_file(os.path.join(self.wigs, "test1_TEX_forward.wig"),
-                 self.example.wig_f)
-        gen_file(os.path.join(self.wigs, "test1_TEX_reverse.wig"),
-                 self.example.wig_r)
-        gen_file(os.path.join(self.trans, "test_transcript.gff"),
-                 self.example.tran_file)
-        gen_file(os.path.join(self.gffs, "test.gff"), self.example.gff_file)
-        gen_file(os.path.join(self.fastas, "test.fa"),
-                 ">test\nAAATATATATATATAAATTTATATATATATA")
-        libs = ["test1_forward.wig:notex:1:a:+",
-                "test1_reverse.wig:notex:1:a:-",
-                "test1_TEX_forward.wig:tex:1:a:+",
-                "test1_TEX_reverse.wig:tex:1:a:-"]
-        args = self.mock_args.mock()
-        args.tsspredator_path = "test"
-        args.program = "TSS"
-        args.height = 0.3
-        args.height_reduction = 0.2
-        args.factor = 2.0
-        args.factor_reduction = 0.5
-        args.base_height = 0.00
-        args.enrichment_factor = 2.0
-        args.processing_factor = 1.5
-        args.utr_length = 300
-        args.libs = libs
-        args.out_folder = self.out
-        args.cluster = 3
-        args.repmatch = "all_2"
-        args.output_prefixs = "test"
-        args.check_orphan = True
-        args.manual = "test_folder/manuals"
-        args.remove_low_expression = True
-        gen_file("test_folder/manuals/test.gff", self.example.tss_file)
-        args.overlap_feature = "TSS"
-        args.stat = True
-        args.overlap_gffs = self.gffs
-        args.validate = True
-        args.fuzzy = 2
-        args.specify_strains = None
-        self.tss.run_tsspredator(args)
-        self.assertTrue(os.path.exists(os.path.join(
-            self.out, "gffs/test_TSS.gff")))
-        self.assertTrue(
-            os.path.exists(os.path.join(self.out,
-            "statistics/test/stat_compare_TSSpredator_manual_test.csv")))
 
 
 class Example(object):

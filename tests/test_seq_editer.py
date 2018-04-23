@@ -26,26 +26,19 @@ class TestSeqEditer(unittest.TestCase):
     def test_import_data(self):
         mod_table = os.path.join(self.test_folder, "mod")
         gen_file(mod_table, self.example.mutation)
-        datas = self.seq._import_data(mod_table)
-        self.assertListEqual(datas, [
-            {'ref_id': 'NC_000915.1',
-             'datas': [{'tar_nt': 'c', 'ref_nt': 'a', 'position': '3'},
-                       {'tar_nt': '-', 'ref_nt': 'a', 'position': '6'}],
-             'target_id': 'NC_test.1'},
-            {'ref_id': 'NC_000915.1',
-             'datas': [{'tar_nt': 'g', 'ref_nt': '-', 'position': '6'}],
-             'target_id': 'test_case2'}])
+        datas = self.seq._import_data(mod_table, "test")
+        self.assertListEqual(datas, [{'target_id': 'test_NC_000915.1',
+             'datas': [{'ref_nt': 'c', 'tar_nt': '', 'position': '3'},
+             {'ref_nt': '-', 'tar_nt': 'deletion', 'position': '6'}], 'ref_id': 'NC_000915.1'}])
 
     def test_modify_seq(self):
         mod_table = os.path.join(self.test_folder, "mod")
         gen_file(mod_table, self.example.mutation)
         gen_file(os.path.join(self.fasta, "NC_000915.1.fa"),
                  self.example.fasta)
-        self.seq.modify_seq(self.fasta, mod_table, self.test_folder)
-        datas = import_data(os.path.join(self.test_folder, "NC_test.1.fa"))
+        self.seq.modify_seq(self.fasta, mod_table, self.test_folder, "test")
+        datas = import_data(os.path.join(self.test_folder, "test_NC_000915.1.fa"))
         self.assertEqual("\n".join(datas), self.example.out_1)
-        datas = import_data(os.path.join(self.test_folder, "test_case2.fa"))
-        self.assertEqual("\n".join(datas), self.example.out_2)
 
     def test_modify_header(self):
         input_file = os.path.join(self.test_folder, "test.fa")
@@ -59,14 +52,13 @@ class Example(object):
 
     fasta = """>NC_000915.1
 ATAGATAACCCAAGTACGACTCAGGTCCCTCACA"""
-    out_1 = """>NC_test.1
-ATcGAAACCCAAGTACGACTCAGGTCCCTCACA"""
+    out_1 = """>test_NC_000915.1
+ATGATdeletionAACCCAAGTACGACTCAGGTCCCTCACA"""
     out_2 = """>test_case2
 ATAGAgTAACCCAAGTACGACTCAGGTCCCTCACA"""
     mutation = """#refernce_id	target_id	reference_nt	position	target_nt	impact of correction	locus tag	gene	Description
-NC_000915.1	NC_test.1	a	3	c		SAOUHSC_00002	dnaA	XXXXXX
-NC_000915.1	NC_test.1	a	6	-	deletion			YYYYYY
-NC_000915.1	test_case2	-	6	g	insertion	SAOUHSC_00132		"""
+NC_000915.1	3	a	c		SAOUHSC_00002	dnaA	XXXXXX
+NC_000915.1	6	a	-	deletion			YYYYYY"""
 
 if __name__ == "__main__":
     unittest.main()

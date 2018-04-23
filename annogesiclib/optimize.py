@@ -15,7 +15,7 @@ def get_length(fasta_file):
     return length 
 
 
-def optimize_tss(args_ops):
+def optimize_tss(args_ops, log):
     if len(os.listdir(args_ops.gffs)) == 0:
         print("Error: There is no gff file!")
         sys.exit()
@@ -39,7 +39,12 @@ def optimize_tss(args_ops):
             for man in os.listdir(manual_path):
                 if strain == man.replace(".gff", ""):
                     detect = True
+                    log.write("The manually-curated set is found - "
+                              "{0}\n".format(
+                              os.path.join(manual_path, man)))
             if not detect:
+                log.write("The manually-curated set of {0} is not found.\n"
+                          .format(strain))
                 print("Error: There are genomes in --genome_lengths "
                       "which is not contained in manually-detected "
                       "TSS gff files!")
@@ -54,6 +59,8 @@ def optimize_tss(args_ops):
         elif("all" in args_ops.strain_lengths.keys()):
             length = "all"
             run = True
+        log.write("The comparing sequence region of {0} is ".format(
+            prefix, length))
         if run:
             for gff in os.listdir(gff_path):
                 if (gff[:-4] == prefix) and (".gff" in gff):
@@ -66,9 +73,11 @@ def optimize_tss(args_ops):
                     break
             if length == "all":
                 length = get_length(fasta_file)
+            log.write(str(length) + "\n")
             Helper().check_uni_attributes(gff_file)
+            log.write("Running optimize_TSSpredator.py for optimization.\n")
             optimization(wig_path, fasta_file, gff_file, args_ops,
-                         man_file, length, prefix)
+                         man_file, length, prefix, log)
             Helper().remove_all_content(os.path.join(
                 args_ops.output_folder,
                 "optimized_TSSpredator"), "config", "file")
