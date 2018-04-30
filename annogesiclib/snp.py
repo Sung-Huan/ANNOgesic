@@ -145,7 +145,7 @@ class SNPCalling(object):
         self._run_tools(all_fasta, type_, args_snp, bam_datas, log)
         fa_prefixs = self._parse_vcf_by_fa(args_snp, type_, num_prog, log)
         log.write("Running transcript_SNP.py to do statistics, filter SNPs, "
-                  "and generate potential sequences.")
+                  "and generate potential sequences.\n")
         log.write("The following files are generated:\n")
         for fa_prefix in fa_prefixs:
             for fasta in os.listdir(args_snp.fastas):

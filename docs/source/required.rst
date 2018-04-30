@@ -10,7 +10,7 @@ TSS prediction only needs TSSpredator.
 Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
 Via Docker image, all the required tools are installed.
 
-All the used tools are compatible with the ISC license of ANNOgesic or open resource.
+All the used tools are compatible with the ISC license of ANNOgesic or open source.
 
 Tools
 -----

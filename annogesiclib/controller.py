@@ -55,8 +55,10 @@ class Controller(object):
         '''Check the emtpy or wrong assigned folder'''
         for folder, flag in zip(folders, flags):
             if folder is None:
-                log.write("{0} is wrong. Please check it!".format(flag))
-                print("Error: {0} is wrong. Please check it!".format(flag))
+                log.write("{0} of {1} is not found. Please check it!".format(
+                          folder, flag))
+                print("Error: {0} of {1} is not found. Please check it!".format(
+                      folder, flag))
                 sys.exit()
             else:
                 if os.path.exists(folder):
@@ -65,10 +67,10 @@ class Controller(object):
                         print("Error: {0} is a empty folder!".format(flag))
                         sys.exit()
                 else:
-                    log.write("{0} is wrong. Please check it!".format(
-                               flag))
-                    print("Error: {0} is wrong. Please check it!".format(
-                          flag))
+                    log.write("{0} of {1} is not found. Please check it!".format(
+                               folder, flag))
+                    print("Error: {0} of {1} is not found. Please check it!".format(
+                          folder, flag))
                     sys.exit()
 
     def check_multi_files(self, input_files, flags, log):
@@ -92,21 +94,6 @@ class Controller(object):
                       "Please check it!".format(names[i]))
                 log.write(file_ + " need to be assigned.\n")
                 sys.exit()
-
-    def check_no_require_folder(self, folders):
-        '''Check the folders which are not necessary.
-        It should not be assigned a empty or wrong folder'''
-        for folder in folders:
-            if folder is not None:
-                if os.path.exists(folder):
-                    if len(os.listdir(folder)) == 0:
-                        print("Error: There is a empty folder. "
-                              "Please check it!")
-                        sys.exit()
-                else:
-                    print("Error: There is a wrong folder. "
-                          "Please check it!")
-                    sys.exit()
 
     def check_execute_file(self, exe, log):
         detect = False
@@ -148,20 +135,20 @@ class Controller(object):
         for i in range(len(files)):
             if require:
                 if files[i] is None:
-                    print("Error: {0} is wrong. "
+                    print("Error: {0} can not be None. "
                           "Please check it!".format(names[i]))
                     log.write(names[i] + " is None.\n")
                     sys.exit()
                 else:
                     if not os.path.isfile(files[i]):
-                        print("Error: {0} is a wrong path. "
+                        print("Error: {0} is not found. "
                               "Please check it!".format(files[i]))
                         log.write(files[i] + " does not exist.\n")
                         sys.exit()
             else:
                 if files[i] is not None:
                     if not os.path.isfile(files[i]):
-                        print("Error: {0} is a wrong path. "
+                        print("Error: {0} is not found. "
                               "Please check it!".format(files[i]))
                         log.write(files[i] + " does not exist.\n")
                         sys.exit()
@@ -396,8 +383,6 @@ class Controller(object):
                                            "screenshots")):
             print("The folder -- screenshots needs to be found in "
                   "{0}.".format(self._args.screenshot_folder))
-            log.write("The folder -- screenshots needs to be found in "
-                      "{0}.\n".format(self._args.screenshot_folder))
             sys.exit()
         log = open(os.path.join(self._args.screenshot_folder, "screenshots",
                                 "color_log.txt"), "w")

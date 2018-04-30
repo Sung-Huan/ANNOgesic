@@ -1941,6 +1941,9 @@ Based on this information, we can know the details of the specific sRNA. The tag
 
 	**promoter:** Promoters which are associated with the sRNA.
 
+If the amount of sRNA candidates are too many for the user, please check the :ref:`FAQ Q9` to do the further filtering.
+
+
 .. _sorf:
 
 sorf (sORF detection)

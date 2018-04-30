@@ -29,7 +29,8 @@ class ArgsContainer(object):
 
     def _check_track_name(self, lib, tracks, strand):
         if lib.split("/")[-1] in tracks["file"]:
-            print("Error: Some filenames of the wiggle files are repeated!")
+            print("Error: {0} of the wiggle files is repeated!".format(
+                  lib.split("/")[-1]))
             sys.exit()
         else:
             tracks["file"].append(lib.split("/")[-1])
@@ -39,8 +40,8 @@ class ArgsContainer(object):
                 if line.startswith("track"):
                     track_name = line.split(" ")[-1]
                     if track_name in tracks["track"][strand]:
-                        print("Error: Some names of the tracks in the "
-                              "wiggle files are repeated!")
+                        print("Error: {0} of the tracks in the "
+                              "wiggle files is repeated!".format(track_name))
                         sys.exit()
                     else:
                         tracks["track"][strand].append(track_name) 
@@ -50,6 +51,10 @@ class ArgsContainer(object):
         if libs is not None:
             self.helper.check_make_folder(wig_folder)
             for lib in libs:
+                if not os.path.exists(lib.split(":")[0]):
+                    print("Error: {0} of the wiggle files is not found!".format(
+                          lib.split(":")[0]))
+                    sys.exit()
                 self._check_track_name(lib.split(":")[0], tracks,
                                        lib.split(":")[-1])
                 shutil.copy(lib.split(":")[0], wig_folder)
@@ -140,7 +145,7 @@ class ArgsContainer(object):
         for lib in libs:
             datas = lib.split(":")
             if not datas[0].endswith(".wig"):
-                print("Error: The input wiggle files should end with .wig!")
+                print("Error: {0} should end with .wig!".format(datas[0]))
                 sys.exit()
             if (datas[1] != "notex") and (
                     datas[1] != "tex") and (
@@ -248,9 +253,11 @@ class ArgsContainer(object):
                             os.path.join(merge_folder,
                                          strain + "_reverse.wig"))
             else:
-                print("Error: .wig files is not compose of "
-                      "forward or reverse files or the Seq IDs are no "
-                      "consistent in all gff and fasta files.")
+                print("Error: comparing input files of {0} failed. "
+                      "Please check the seq IDs of all gff and fasta "
+                      "files, they should be the same.\nPlease also "
+                      "check the wiggle files which should contain "
+                      "forward and reverse files.".format(strain))
                 sys.exit()
         self.helper.remove_all_content(wig_path, ".wig", "file")
         self.helper.move_all_content(merge_folder, wig_path, None)
@@ -366,9 +373,9 @@ class ArgsContainer(object):
                         if file_.endswith(type_):
                             detect = True
                 if not detect:
-                    print("Error: Some files don't exist in {0} or "
+                    print("Error: {0} doesn't exist or "
                           "the {0} is/are not ended with {1}!".format(
-                          " and ".join(flag), " ".join(file_types)))
+                          files, " ".join(file_types)))
                     sys.exit()
                 shutil.copy(file_, new_ref_folder)
             return new_ref_folder

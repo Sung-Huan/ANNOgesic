@@ -19,9 +19,13 @@ Before we start, please check :ref:`The format of filename` and
 parameters and details can be found in the
 section :ref:`ANNOgesic's subcommands`.
 Moreover, all the requirements are listed in the section
-:ref:`Required tools or databases`.  The shell commands which we will
-present later are also combined in the shell script `run.sh
+:ref:`Required tools or databases`. 
+
+The shell commands which we will
+present later are also provided in the shell script `run.sh
 <https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
+You can run/comment the commands by simply add/remove ``#`` in front of 
+the command.
 
 If a subcommand requires third-party softwares (e.g. TSSpredator in
 the subcommand ``tss_ps``) make sure that path of the executable file
@@ -865,6 +869,7 @@ without filtering; ``best_candidates`` is for the candidates after filtering;
     class_1_class_2_all.csv                                  class_1_class_3_all.csv                          class_2_class_3_all.csv                          class_3_class_4_all.csv
     ...
 
+If the amount of sRNA candidates are too many for the user, please check the :ref:`FAQ Q9` to do the further filtering.
 As we know, expressed regions without annotations may be sORFs as well. 
 In order to get information of sORFs, we can use subcommand ``sorf``.
 

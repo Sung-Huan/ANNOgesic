@@ -120,3 +120,29 @@ Please do the following steps to fix this error.
 3. Run sed -i '244s/defined//' $RATT_FOLDER/main.ratt.pl && sed -i '19s/$PAGIT_HOME/\/usr/' $RATT_FOLDER/start.ratt.sh (Please specify the folder of your RATT to $RATT_FOLDER)
 
 We also suggest the user running ANNOgesic via our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_. This issue was fixed in our Docker image.
+
+.. _FAQ Q9:
+
+- **Q9:**
+
+After running sRNA prediction of ANNOgesic, I got a huge number of sRNA candidates. The amount is too many for me, how can I remove some low-confidence ones?
+
+- **A9:**
+
+Although the sRNA prediction of ANNOgesic was tested by RNA-Seq data from different strains of bacteria, 
+the setting may not be able to apply to some other specific RNA-Seq data. 
+If the amount of candidates are too many, it may be due to the low coverage rate of RNA-Seq data.
+Therefore, many short transcripts are genearted. There are several ways to further filted out the
+sRNAs.
+
+- Using promoter and terminator for ``--filter_info``: We suggest the user to put promoter information first.
+If terminator information is still needed to add to ``--filter_info``, please run ``terminator`` with sRNA files
+(``--srna_files``) first. Then using that terminator output file to run ``srna``.
+
+- Using ranking number: The output table of sRNAs contains the ranking number based on coverage and promoter information.
+The user can select top ranking ones to do the following analyses.
+
+- Adjusting coverage cutoff (not recommended): There are some coverage cutoffs can be modified by the user. The
+default setting is tested based on some RNA-Seq data from different bacteria. Thus, changing these parameters may
+influence the accuracy of the prediction.
+
