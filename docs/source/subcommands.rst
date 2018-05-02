@@ -87,10 +87,12 @@ If only conventional RNA-seq data without fragmentation or TEX treated can be pr
 it can still be assigned to fragmented libraries. However, it may influence the results.
 
 log file for storing the details of each module
-===============================================
+-----------------------------------------------
 
 If the user needs to check the details of the running of each module, ``log.txt`` can 
-be found in the output folder of each module.
+be found in the output folder of each module. These files include the full paths of the 
+external tools, the required versions of the tools, the running commands of the tools and 
+the full paths of the output files.
 
 .. _create:
 
