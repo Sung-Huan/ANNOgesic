@@ -153,46 +153,47 @@ def detect_start_stop(inters, seq, args_sorf):
                 elif fasta[index:index + 3] in args_sorf.stop_codon:
                     stops.append(index)
         for start in starts:
-            pre_sorf_len = len(sorfs)
+            get_stop = False
             for stop in stops:
                 if ((stop - start) > 0) and \
-                   (((stop - start) % 3) == 0) and \
-                   ((stop - start) <= args_sorf.max_len) and \
-                   ((stop - start) >= args_sorf.min_len):
-                    rbs = detect_rbs_site(fasta, start, inter, args_sorf)
-                    if (not args_sorf.multi_stop) and (
-                            len(sorfs) != pre_sorf_len):
+                   (((stop - start) % 3) == 0):
+                    if (not args_sorf.multi_stop) and (get_stop):
                         break
-                    if (len(rbs) == 1) and (rbs[0] == "NA"):
-                        pass
                     else:
-                        if (inter.source == "intergenic") or (
-                                inter.source == "antisense"):
-                            if inter.strand == "+":
-                                check_terminal_seq(
-                                    seq[inter.seq_id], inter.start + start,
-                                    inter.start + stop + 2, args_sorf,
-                                    inter.source, inter, sorfs, rbs)
-                            else:
-                                check_terminal_seq(
-                                    seq[inter.seq_id],
-                                    inter.start + (len(fasta) - stop - 3),
-                                    inter.start + (len(fasta) - start - 1),
-                                    args_sorf, inter.source, inter, sorfs, rbs)
-                        elif inter.source == "UTR_derived":
-                            if inter.strand == "+":
-                                check_terminal_seq(
-                                    seq[inter.seq_id], inter.start + start,
-                                    inter.start + stop + 2, args_sorf,
-                                    inter.attributes["UTR_type"],
-                                    inter, sorfs, rbs)
-                            else:
-                                check_terminal_seq(
-                                    seq[inter.seq_id],
-                                    inter.start + (len(fasta) - stop - 3),
-                                    inter.start + (len(fasta) - start - 1),
-                                    args_sorf, inter.attributes["UTR_type"],
-                                    inter, sorfs, rbs)
+                        get_stop = True
+                    if ((stop - start) <= args_sorf.max_len) and \
+                       ((stop - start) >= args_sorf.min_len):
+                        rbs = detect_rbs_site(fasta, start, inter, args_sorf)
+                        if (len(rbs) == 1) and (rbs[0] == "NA"):
+                            pass
+                        else:
+                            if (inter.source == "intergenic") or (
+                                    inter.source == "antisense"):
+                                if inter.strand == "+":
+                                    check_terminal_seq(
+                                        seq[inter.seq_id], inter.start + start,
+                                        inter.start + stop + 2, args_sorf,
+                                        inter.source, inter, sorfs, rbs)
+                                else:
+                                    check_terminal_seq(
+                                        seq[inter.seq_id],
+                                        inter.start + (len(fasta) - stop - 3),
+                                        inter.start + (len(fasta) - start - 1),
+                                        args_sorf, inter.source, inter, sorfs, rbs)
+                            elif inter.source == "UTR_derived":
+                                if inter.strand == "+":
+                                    check_terminal_seq(
+                                        seq[inter.seq_id], inter.start + start,
+                                        inter.start + stop + 2, args_sorf,
+                                        inter.attributes["UTR_type"],
+                                        inter, sorfs, rbs)
+                                else:
+                                    check_terminal_seq(
+                                        seq[inter.seq_id],
+                                        inter.start + (len(fasta) - stop - 3),
+                                        inter.start + (len(fasta) - start - 1),
+                                        args_sorf, inter.attributes["UTR_type"],
+                                        inter, sorfs, rbs)
     return sorfs
 
 
