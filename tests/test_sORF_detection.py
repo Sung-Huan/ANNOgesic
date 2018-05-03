@@ -92,6 +92,7 @@ class TestsORFDetection(unittest.TestCase):
         args.min_len = 3
         args.fuzzy_rbs = 2
         args.rbs_seq = ["AGGAGG"]
+        args.multi_stop = True
         sorf = sd.detect_start_stop(self.example.tas, seq, args)
         self.assertListEqual(sorf, [
             {'strand': '+', 'type': 'intergenic', 'starts': ['13'],

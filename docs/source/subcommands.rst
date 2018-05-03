@@ -2053,6 +2053,15 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
       --srna_files SRNA_FILES [SRNA_FILES ...], -s SRNA_FILES [SRNA_FILES ...]
                             Paths of the sRNA gff files for comparing sORF and
                             sRNA to detect the overlapping.
+      --contain_multi_stop, -ms
+                            If --contain_multi_stop is True, the outpu files will
+                            only contain the non-annotated transcripts (potential
+                            sORFs) which have single stop codon (but may still
+                            contain multiple sORFs from different reading frames).
+                            If --contain_multi_stop is False, the output files
+                            will assign the longest open reading frame which may
+                            contain multiple stop codons to be sORFs. Default is
+                            False.
       --utr_length UTR_LENGTH, -ul UTR_LENGTH
                             The utr length for comparing TSS with sORF. The
                             default number is 300.

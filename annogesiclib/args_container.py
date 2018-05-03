@@ -939,7 +939,9 @@ class ArgsContainer(object):
                        start_codon, stop_codon, cutoff_background, rbs_seq,
                        fuzzy_rbs, rbs_not_after_TSS, print_all_combination,
                        best_no_sRNA, best_no_TSS, ignore_hypothetical_protein,
-                       min_rbs_distance, max_rbs_distance, extend_3, extend_5):
+                       min_rbs_distance, max_rbs_distance, extend_3, extend_5,
+                       multi_stop):
+        self.multi_stop = multi_stop
         self.out_folder = sorf_folder
         self.rbs_seq = rbs_seq
         self.extend_3 = extend_3

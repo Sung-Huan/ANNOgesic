@@ -153,12 +153,16 @@ def detect_start_stop(inters, seq, args_sorf):
                 elif fasta[index:index + 3] in args_sorf.stop_codon:
                     stops.append(index)
         for start in starts:
+            pre_sorf_len = len(sorfs)
             for stop in stops:
                 if ((stop - start) > 0) and \
                    (((stop - start) % 3) == 0) and \
                    ((stop - start) <= args_sorf.max_len) and \
                    ((stop - start) >= args_sorf.min_len):
                     rbs = detect_rbs_site(fasta, start, inter, args_sorf)
+                    if (not args_sorf.multi_stop) and (
+                            len(sorfs) != pre_sorf_len):
+                        break
                     if (len(rbs) == 1) and (rbs[0] == "NA"):
                         pass
                     else:

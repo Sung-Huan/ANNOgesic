@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.19"
+__version__ = "0.7.20"
 
 def main():
     print("""
@@ -1186,6 +1186,14 @@ def main():
         "--srna_files", "-s", default=None, nargs='+',
         help="Paths of the sRNA gff files for comparing sORF and sRNA to "
         "detect the overlapping.")
+    sORF_add.add_argument(
+        "--contain_multi_stop", "-ms", default=False, action="store_true",
+        help=" If --contain_multi_stop is True, the outpu files will only "
+        "contain the non-annotated transcripts (potential sORFs) which have "
+        "single stop codon (but may still contain multiple sORFs from "
+        "different reading frames). If --contain_multi_stop is False, the "
+        "output files will assign the longest open reading frame which may "
+        "contain multiple stop codons to be sORFs. Default is False.")
     sORF_add.add_argument(
         "--utr_length", "-ul", default=300, type=int,
         help="The utr length for comparing TSS with sORF. "

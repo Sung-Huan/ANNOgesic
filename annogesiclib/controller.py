@@ -665,7 +665,8 @@ class Controller(object):
             self._args.best_no_srna, self._args.best_no_tss,
             self._args.ignore_hypothetical_protein,
             self._args.min_rbs_distance, self._args.max_rbs_distance,
-            self._args.tolerance_3end, self._args.tolerance_5end)
+            self._args.tolerance_3end, self._args.tolerance_5end,
+            self._args.contain_multi_stop)
         sorf = sORFDetection(args_sorf)
         sorf.run_sorf_detection(args_sorf, log)
 
