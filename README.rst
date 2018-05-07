@@ -39,7 +39,8 @@ Documentation can be found on
 Installation
 ------------
 
-### Pip3
+Pip3
+^^^^
 
 If you have all the requirements installed, installation can be done by 
 using pip3.
@@ -59,7 +60,8 @@ without root permission
 If you want to know the requirement, please refer to 
 `Documentation <http://annogesic.readthedocs.io/en/latest/index.html>`__.
 
-### Docker and Singularity
+Docker and Singularity
+^^^^^^^^^^^^^^^^^^^^^^
 
 In order to solve the issue of installing the dependencies, a Docker image of ANNOgesic is provided in 
 `Docker Hub <https://hub.docker.com/r/silasysh/annogesic/>`__. 
