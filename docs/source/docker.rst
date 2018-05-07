@@ -53,3 +53,22 @@ If you want to copy the files from container to host, you can use ``cp``.
 ::
 
     $ docker cp <containerId>:/file/path/within/container /host/path/target
+
+If you have no root permission for running Docker, Singularity is another way to 
+build up the image without root permission.
+
+::
+
+    $ singularity build \
+        annogesic.img \
+        docker://silasysh/annogesic:latest
+
+After building Singularity image of ANNOgesic, the user just needs to put the following line before
+the command that needs to be executed.
+
+::
+
+    singularity exec -B $STORAGE_PATH annogesic.img
+
+Please put the storage path of your home directory to ``$STORAGE_PATH``. ``df`` can be used to check the
+storage system.
