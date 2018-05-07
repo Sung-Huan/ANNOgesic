@@ -75,11 +75,11 @@ class Paths(object):
     def _set_transcript_folder_names(self):
         self.transcript_base_folder = "%s/transcripts" % (
              self.output_folder)
-        self.transcript_gff_folder = "%s/gffs" % self.reference_base_folder
+        self.transcript_gff_folder = "%s/gffs" % self.transcript_base_folder
         self.transcript_stat_folder = "%s/statistics" % (
-             self.reference_base_folder)
+             self.transcript_base_folder)
         self.transcript_table_folder = "%s/tables" % (
-             self.reference_base_folder)
+             self.transcript_base_folder)
 
     def _set_reference_input_folder_names(self):
         self.reference_base_folder = "%s/references" % self.input_folder
