@@ -39,14 +39,33 @@ Documentation can be found on
 Installation
 ------------
 
-Short version (if you have all the requirements installed):
+### Pip3
+
+If you have all the requirements installed, installation can be done by 
+using pip3.
+
+With root permission: 
 
 ::
 
     $ pip3 install ANNOgesic
 
+without root permission
+
+::
+
+    $ pip3 install --user ANNOgesic
+
 If you want to know the requirement, please refer to 
 `Documentation <http://annogesic.readthedocs.io/en/latest/index.html>`__.
+
+### Docker and Singularity
+
+In order to solve the issue of installing the dependencies, a Docker image of ANNOgesic is provided in 
+`Docker Hub <https://hub.docker.com/r/silasysh/annogesic/>`__. 
+The image can be pulled by using `Docker <https://www.docker.com/>`__ or `Singularity <https://singularity.lbl.gov/index.html>`__. 
+Moreover, the users can build an Docker image from the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`__ by themselves. 
+For the details, please check the `documentation <http://annogesic.readthedocs.io/en/latest/installation.html>`__.
 
 Arguments
 -------------

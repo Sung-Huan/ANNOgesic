@@ -57,6 +57,7 @@ Singularity
 Docker image without root permission.
 
 ::
+
     $ singularity build \
         annogesic.img \
         docker://silasysh/annogesic:latest
