@@ -8,7 +8,9 @@ users just need to install the specific tools for it.** For examples, running
 TSS prediction only needs TSSpredator.
 
 Please also check our `Docker image <https://hub.docker.com/r/silasysh/annogesic/>`_.
-Via Docker image, all the required tools are installed.
+Via Docker image, all the required tools and environment can be installed and set automaticaly.
+Moreover, `Singularity <https://singularity.lbl.gov/index.html>`_
+can be used for building and running Docker image without root permission.
 
 All the used tools are compatible with the ISC license of ANNOgesic or open source.
 

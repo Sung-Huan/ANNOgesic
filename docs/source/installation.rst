@@ -50,6 +50,27 @@ refer to `here <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/d
 
 If you want to check other commands of Docker, please refer to  `here <https://docs.docker.com/>`_.
 
+Singularity
+-----------
+
+`Singularity <https://singularity.lbl.gov/index.html>`_ is another way to install ANNOgesic via 
+Docker image without root permission.
+
+::
+    $ singularity build \
+        annogesic.img \
+        docker://silasysh/annogesic:latest
+
+After building Singularity image of ANNOgesic, the user just needs to put the following line before 
+the command that needs to be executed.
+
+::
+
+    singularity exec -B $STORAGE_PATH annogesic.img
+
+Please put the storage path of your home directory to ``$STORAGE_PATH``. ``df`` can be used to check the 
+storage system. 
+
 pip3
 ----------
 

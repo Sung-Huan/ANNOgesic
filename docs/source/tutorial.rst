@@ -21,17 +21,57 @@ section :ref:`ANNOgesic's subcommands`.
 Moreover, all the requirements are listed in the section
 :ref:`Required tools or databases`. 
 
-The shell commands which we will
-present later are also provided in the shell script `run.sh
-<https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_.
-You can run/comment the commands by simply add/remove ``#`` in front of 
-the command.
-
 If a subcommand requires third-party softwares (e.g. TSSpredator in
 the subcommand ``tss_ps``) make sure that path of the executable file
 is properly specified or is part of the environmental variable
 ``$PATH``. Moreover, if ``annogesic`` (executable file of ANNOgesic)
 is not in your ``$PATH``, please specify its full path.
+
+Using Singularity (optional)
+----------------------------
+
+Using `Singularity <https://singularity.lbl.gov/index.html>`_  to build an 
+image of ANNOgesic can install all required tools and 
+environment automatically. If you would like to use Singularity to run ANNOgesic, 
+please check the following commands.
+
+
+First of all, we need to build up an image of ANNOgesic via Docker image.
+
+
+::
+
+    $ singularity build \
+        annogesic.img \
+        docker://silasysh/annogesic:latest
+
+Now, we can use Singularity to run ANNOgesic. You just need to add the following 
+line before the command that you want to run.
+
+::
+
+    singularity exec -B $STORAGE_PATH annogesic.img
+
+Please put the storage path of your home directory to ``$STORAGE_PATH``. ``df`` can be used to check the
+storage system.
+
+For example, if you want to creat the analyzing folder called ``ANNOgesic`` and your storage path is ``storage1``, you can 
+use the following command to run ANNOgesic via Singularity.
+
+::
+
+     singularity exec -B /storage1 annogesic.img \
+        annogesic create -pj ANNOgesic
+
+Run scripts for tutorial
+------------------------
+
+We also provide a shell script which stores all commands that were used in 
+this tutorial. You can run/comment the module by simply add/remove ``#`` in front of
+the module. The run script (file name is run.sh) can be found `here
+<https://github.com/Sung-Huan/ANNOgesic/tree/master/tutorial_data>`_. If you are 
+using Singularity, the file name of run script is run_with_singularity.sh which can 
+be found in the same folder.
 
 Generating a project
 --------------------
