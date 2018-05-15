@@ -288,7 +288,7 @@ Each column of the table is separated by tab.
 ::
 
      $ wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
-     $ mv mutation.csv ANNOgesic/input/mutation_table
+     $ mv mutation.csv ANNOgesic/input/mutation_tables
 
 We assume NC_009839.1.fa is a related genome of our     
 target genome -- NC_test.1 and test_case2. The fasta files of the new genomes (NC_test.1 and test_case2)
@@ -298,7 +298,7 @@ will be generated in ``ANNOgesic/output/updated_references/fasta_files``.
 
      $ annogesic update_genome_fasta \
         --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
-        --mutation_table ANNOgesic/input/mutation_table/mutation.csv \
+        --mutation_table ANNOgesic/input/mutation_tables/mutation.csv \
         --updated_seq_name NC_test.1 \
         --project_path ANNOgesic
 
@@ -693,8 +693,6 @@ detect operons and suboperons by executing subcommand ``operon``.
         --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
         --tss_files ANNOgesic/output/TSSs/gffs/NC_009839.1_TSS.gff \
         --transcript_files ANNOgesic/output/transcripts/gffs/NC_009839.1_transcript.gff \
-        --utr5_files ANNOgesic/output/UTRs/5UTRs/gffs/NC_009839.1_5UTR.gff \
-        --utr3_files ANNOgesic/output/UTRs/3UTRs/gffs/NC_009839.1_3UTR.gff \
         --terminator_files ANNOgesic/output/terminators/gffs/best_candidates/NC_009839.1_term.gff \
         --project_path ANNOgesic
 

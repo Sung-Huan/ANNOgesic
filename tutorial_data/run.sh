@@ -101,12 +101,12 @@ get_input_files(){
 update_genome_fasta(){
     #### The mutation.csv is only for our tutorial.
     wget https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/mutation.csv
-    mv mutation.csv ANNOgesic/input/mutation_table 
+    mv mutation.csv ANNOgesic/input/mutation_tables 
 
     $ANNOGESIC_PATH \
         update_genome_fasta \
         -c $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
-        -m $ANNOGESIC_FOLDER/input/mutation_table/mutation.csv \
+        -m $ANNOGESIC_FOLDER/input/mutation_tables/mutation.csv \
         -u NC_test.1 \
         -pj $ANNOGESIC_FOLDER
 }
