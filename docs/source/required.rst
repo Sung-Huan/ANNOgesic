@@ -12,7 +12,7 @@ Via Docker image, all the required tools and environment can be installed and se
 Moreover, `Singularity <https://singularity.lbl.gov/index.html>`_
 can be used for building and running Docker image without root permission.
 
-All the used tools are compatible with the ISC license of ANNOgesic or open source.
+All the used tools are eithor compatible with the ISC license of ANNOgesic or open source.
 
 Tools
 -----
