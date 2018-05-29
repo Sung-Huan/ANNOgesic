@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.22"
+__version__ = "0.7.23"
 
 def main():
     print("""
@@ -179,7 +179,7 @@ def main():
         "For example, my_lib_tex_forward.wig:tex:1:a:+ "
         "my_lib_tex_reverse.wig:tex:1:a:-.")
     TSSpredator_basic.add_argument(
-        "--replicate_tex", "-rt", default=["all_1"], nargs='+',
+        "--replicate_tex", "-rt", required=True, nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
         "to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
@@ -189,7 +189,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     TSSpredator_basic.add_argument(
         "--condition_names", "-cn", required=True, nargs='+',
         help="The output prefix of all conditions. If multiple conditions "
@@ -347,7 +347,7 @@ def main():
         "For example, my_lib_tex_forward.wig:tex:1:a:+ "
         "my_lib_tex_reverse.wig:tex:1:a:-.")
     op_TSSpredator_basic.add_argument(
-        "--replicate_tex", "-rt", default=["all_1"], nargs='+',
+        "--replicate_tex", "-rt", required=True, nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
         "to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
@@ -357,7 +357,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     op_TSSpredator_basic.add_argument(
         "--condition_names", "-cn", required=True, nargs='+',
         help="The prefixs of output filename."
@@ -479,7 +479,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     Terminator_basic.add_argument(
         "--replicate_frag", "-rf", default=None, nargs='+',
         help="Similar to --replicates_tex. "
@@ -635,7 +635,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     Transcript_basic.add_argument(
         "--replicate_frag", "-rf", default=None, nargs='+',
         help="Similar to --replicates_tex. "
@@ -852,7 +852,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, use all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     sRNA_basic.add_argument(
         "--replicate_frag", "-rf", default=None, nargs='+',
         help="Similar to --replicates_tex. "
@@ -1175,7 +1175,7 @@ def main():
         "number 1 and number 2 conditions. In number 3 condition, "
         "--replicate_tex is 3. For assigning the same --replicate_tex to all "
         "conditions, just use like all_1 (--replicate_tex is 1 in all "
-        "conditions). Default is all_1.")
+        "conditions).")
     sORF_basic.add_argument(
         "--replicate_frag", "-rf", default=None, nargs='+',
         help="Similar to --replicates_tex. "

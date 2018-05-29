@@ -627,7 +627,7 @@ For the transcripts, please check the section :ref:`transcript`.
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            in all conditions).
       --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The output prefix of all conditions. If multiple
                             conditions need to be assigned, please use spaces to
@@ -876,7 +876,7 @@ like CDSs, tRNAs, rRNAs, genome annotation gff files are required. There are fou
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            in all conditions).
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
@@ -1076,7 +1076,7 @@ which have coverage significant decrease.
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            in all conditions).
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
@@ -1586,7 +1586,7 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, use all_1 (--replicate_tex is 1 in all
-                            conditions). Default is all_1.
+                            conditions).
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             libraries with fragmented transcripts.
@@ -2040,7 +2040,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            in all conditions).
       --replicate_frag REPLICATE_FRAG [REPLICATE_FRAG ...], -rf REPLICATE_FRAG [REPLICATE_FRAG ...]
                             Similar to --replicates_tex. This value is for
                             fragmented (or conventional) libraries.
@@ -3421,7 +3421,7 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             conditions. In number 3 condition, --replicate_tex is
                             3. For assigning the same --replicate_tex to all
                             conditions, just use like all_1 (--replicate_tex is 1
-                            in all conditions). Default is all_1.
+                            in all conditions).
       --condition_names CONDITION_NAMES [CONDITION_NAMES ...], -cn CONDITION_NAMES [CONDITION_NAMES ...]
                             The prefixs of output filename.If multiple conditions
                             need to be assigned, please use spaces to separate
