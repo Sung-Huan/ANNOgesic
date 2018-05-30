@@ -37,13 +37,15 @@ Docker
 Some modules of ANNOgesic need third-party tools. In order to avoid all the possible issue caused by the dependencies, 
 a Docker image is provided. For the details of Docker image, please check `here <https://www.docker.com/>`_.
 
-For using Docker image, You can simply pull the Docker image as following
+For using Docker image, please use one of the following commands:
+
+1. You can simply pull the Docker image as following
 
 ::
 
     $ docker pull silasysh/annogesic
 
-Alternatively, you can build the image via Dockerfile.
+2. Alternatively, you can build the image via Dockerfile.
 Please Download the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`_ from our Git repository.
 Then switch to the folder which Dockerfile are located. For the following commands, please 
 refer to `here <https://github.com/Sung-Huan/ANNOgesic/blob/master/docs/source/docker.rst>`_.

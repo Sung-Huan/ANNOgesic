@@ -5,13 +5,15 @@ Docker image
 It is light and easy to manage. ``ANNOgesic`` includes a ``Dockerfile`` which 
 is for build up a environment and install all required tools for running ``ANNOgesic``.
 
-You can simply pull the Docker image by running
+Two ways can be used to build or pull Docker image:
+
+1. You can simply pull the Docker image by running
 
 ::
 
     $ docker pull silasysh/annogesic
 
-Alternatively, you can build the image by ``Dockerfile``.
+2. Alternatively, you can build the image by ``Dockerfile``.
 Please go to the folder where ``Dockerfile`` are located. Then type
 
 ::
@@ -20,30 +22,43 @@ Please go to the folder where ``Dockerfile`` are located. Then type
 
 It will build up an image called annogesic. You can see the images by typing ``docker images``
 
+Based on different ways of installing docker image of ANNOgesic, the name of the docker image 
+will be different. Pulling from DockerHub is:
+
+::
+
+   REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+   silasysh/annogesic  latest              d35f555694ad        3 days ago          2.782 GB
+   ubuntu              14.04               d2a0ecffe6fa        11 days ago         188.4 MB
+
+Building Docker image by ``Dockerfile`` is:
+
 ::
 
    REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
    annogesic           latest              d35f555694ad        3 days ago          2.782 GB
    ubuntu              14.04               d2a0ecffe6fa        11 days ago         188.4 MB
 
-Then we can use the image to create a container for running ``ANNOgesic``. Please type 
+Then we can use the image to create a container for running ``ANNOgesic``. Now, we used ``silasysh/annogesic`` 
+to represent Docker image. If you built Docker image by yourself, please replace ``silasysh/annogesic`` by ``annogesic``.
+Please type 
 
 ::
 
-    $ docker run -t -i annogesic bash
+    $ docker run -t -i silasysh/annogesic bash
 
 Then you will jump into the container.
 
 ::
 
-    root@c9de31fcd7e3:~# ls
+    root@c9de31fcd7e3:~ ls
     ANNOgesic
 
 If you want to mount the files from your host to the container, just add ``-v`` to the command.
 
 ::
 
-    $ docker run -t -i -v /host/path/target:/file/path/within/container annogesic bash
+    $ docker run -t -i -v /host/path/target:/file/path/within/container silasysh/annogesic bash
 
 The paths should be absolute path. If we go to ``root`` in container. We can see the file.
 
