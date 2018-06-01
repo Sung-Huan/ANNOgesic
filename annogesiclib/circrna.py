@@ -8,7 +8,7 @@ from subprocess import call, Popen
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.converter import Converter
-from annogesiclib.circRNA import detect_circrna
+from annogesiclib.circRNA_detection import detect_circrna
 
 
 class CircRNADetection(object):

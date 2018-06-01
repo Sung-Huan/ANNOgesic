@@ -3,7 +3,7 @@ import csv
 from Bio import SeqIO
 from collections import defaultdict
 from annogesiclib.gff3 import Gff3Parser, Gff3Entry
-from annogesiclib.TSSpredator import TSSPredatorReader
+from annogesiclib.TSSpredator_parser import TSSPredatorReader
 from annogesiclib.helper import Helper
 
 
