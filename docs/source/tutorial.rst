@@ -421,7 +421,8 @@ Then, we can setup our libraries -- ``$WIGFILE:$TEXorNOTEXorFRAG:CONDITION:REPLI
 
 Now, we can start to test other subcommands.
  
-Before running ``tss_ps``, we can use ``optimize_tss_ps`` to optimize the parameters. 
+Before running ``tss_ps``, we can use ``optimize_tss_ps`` to optimize the parameters 
+(It is an optional step, but we highly recommand you to do it). 
 The optimization requires a small set of the manual-detected TSSs in GFF3 format. 
 In our experience, we recommend you to detect at least 50 TSSs and check more than 200kb of the genome. 
 
@@ -490,9 +491,29 @@ base_height is 0.039, enrichment_factor is 1.1, processing_factor is 4.5. We can
         --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
         --project_path ANNOgesic
 
-We assigned the manual-checked TSS gff file to ``--manual_files``. Therefore, 
-the output gff file will contain the manual-detected TSSs and predicted TSSs. 
-If we didn't assign it, Only the predicted TSSs will be included in output gff file. 
+We assigned the manual-checked TSS gff file to ``--manual_files``. Therefore,
+the output gff file will contain the manual-detected TSSs and predicted TSSs.
+If we didn't assign it, Only the predicted TSSs will be included in output gff file.
+
+If you did not run ``optimize_tss_ps`` before and just want to do TSS prediction with 
+default parameters, ``--height``, ``--height_reduction``, ``--factor``, ``--factor_reduction``,
+``--base_height``, and ``--enrichment_factor`` do not need to be assigned.
+
+::
+
+    $ annogesic tss_ps \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --condition_names test \
+        --validate_gene \
+        --program TSS \
+        --replicate_tex all_1 \
+        --curated_sequence_length NC_009839.1:200000 \
+        --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+        --project_path ANNOgesic
+
+
 The output files are gff file, MasterTable and statistic files.
 
 ::
