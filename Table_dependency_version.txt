@@ -1,0 +1,59 @@
+Basic requirement:
+Python : version higher or equal to 3.4.
+BioPython: version higher or equal to 1.65.
+Wget: version higher or equal to 1.17.1.
+Matplotlib : version higher or equal to 1.5.0.
+
+Annotation transfer:
+BioPerl: version higher or equal to 1.6.1.
+RATT : version higher or equal to 1.64.
+
+SNP calling:
+Samtools : version higher or equal to 1.3.1 (using htslib 1.3.1).
+Bcftools : version higher or equal to 1.3.1 (using htslib 1.3.1).
+
+TSS and PS prediction:
+TSSpredator : version higher or equal to 1.06.
+
+TSS and PS parameter optimization:
+TSSpredator : version higher or equal to 1.06.
+
+sRNA detection:
+Blast+ : version higher or equal to 2.2.28+.
+ViennaRNA : version higher or equal to 2.3.2. RNAfold, mountain.pl and relplot.pl are needed for sRNA prediction.
+
+Terminator detection:
+TranstermHP : version higher or equal to 2.09.
+ViennaRNA : version higher or equal to 2.3.2. RNAfold is needed for terminator prediction.
+
+Promoter search:
+MEME : version higher or equal to 4.11.1.
+GLAM2 : version higher or equal to 4.11.1.
+MPICH : version higher or equal to 3.2. It is for parallel version of promoter detection.
+
+sRNA target prediction:
+ViennaRNA : version higher or equal to 2.3.2.
+RNAup, RNAplex, RNAplfold are required for executing many modules of ANNOgesic.
+IntaRNA: version higher or equal to 2.0.4.
+
+Circular RNA detection:
+Samtools : version higher or equal to 1.3.1 (using htslib 1.3.1).
+Segemehl : version higher or equal to 0.1.9.
+
+Riboswitch and RNA thermometer identification:
+Infernal : version higher or equal to 1.1.1.
+
+CRISPR detection:
+CRT: version higher or equal to 1.2.
+
+Subcellular localization prediction:
+Psortb : version higher or equal to 3.0.
+
+Protein-protein interaction detection:
+Networkx : version higher or equal to 1.10.
+
+Generating screenshots of IGV:
+IGV : version higher or equal to 2.3.20.
+
+Colorization of screenshots:
+ImageMagick : version higher or equal to 6.9.0-0.
