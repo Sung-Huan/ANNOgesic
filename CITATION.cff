@@ -1,0 +1,16 @@
+cff-version: 1.0.3
+message: If you use ANNOgesic, please cite it as below.
+authors:
+  - family-names: Yu
+    given-names: Sung-Huan
+    orcid: https://orcid.org/0000-0001-7955-8645
+  - family-names: Vogel
+    given-names: Jörg
+    orcid: https://orcid.org/0000-0003-2220-1404 
+  - family-names: Förstner
+    given-names: Konrad
+    orcid: https://orcid.org/0000-0002-1481-2996
+title: ANNOgesic
+version: 0.7.23
+doi: 10.5281/zenodo.1254843
+date-released: 2018-05-29
