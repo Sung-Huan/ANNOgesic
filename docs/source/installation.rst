@@ -92,7 +92,7 @@ You can also install ANNOgesic without root permission.
     $ pip3 install ANNOgesic --user --upgrade
 
 Install Dependencies
-====================
+--------------------
 
 If the user want to install ANNOgesic via source code, ``get_package_database.sh`` can 
 provide a way to install tools and download database automatically. The required versions 
