@@ -6,7 +6,7 @@ from io import StringIO
 sys.path.append(".")
 from mock_gff3 import Create_generator
 from mock_helper import import_data
-import annogesiclib.circRNA as circ
+import annogesiclib.circRNA_detection as circ
 from mock_args_container import MockClass
 
 

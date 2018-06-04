@@ -97,6 +97,7 @@ class Controller(object):
 
     def check_execute_file(self, exe, log):
         detect = False
+        exe_folder = ""
         log.write("Checking " + exe + "\n")
         if os.path.exists(exe):
             detect = True

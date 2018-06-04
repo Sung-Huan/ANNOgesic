@@ -51,6 +51,8 @@ def filter_frag(srna_table, srna_gff):
                 out.write(gff.info + "\n")
     g_f.close()
     fh.close()
+    out.close()
+    out_ta.close()
     os.remove(srna_gff)
     os.remove(srna_table)
     shutil.move("tmp_srna.gff", srna_gff)

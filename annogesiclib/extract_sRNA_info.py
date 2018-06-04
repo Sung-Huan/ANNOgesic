@@ -298,5 +298,4 @@ def extract_energy(srna_file, sec_file, out_file):
                               srna.info, (energy / float(length))))
                     break
     s_f.close()
-    d_f.close()
     out.close()

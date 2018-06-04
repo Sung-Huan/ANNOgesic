@@ -264,13 +264,17 @@ class Helper(object):
         print("Checking gff file of {0}".format(gff_file.split("/")[-1]))
         gffs = []
         fh = open(gff_file)
+        lens = {}
         for entry in self.gff3parser.entries(fh):
             if (entry.feature == "source") or (
                     entry.feature == "region") or (
                     entry.feature == "remark"):
-                length = entry.end
-            else:
-                length = None
+                if entry.seq_id not in lens.keys():
+                    lens[entry.seq_id] = entry.end
+                else:
+                    print("Error: Detect repeated source/region/remark of {0}!".format(
+                          entry.seq_id))
+                    sys.exit()
             gffs.append(entry)
         gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
         first = True
@@ -281,8 +285,8 @@ class Helper(object):
             if (gff.feature != "source") and (
                     gff.feature != "region") and (
                     gff.feature != "remark"):
-                if length is not None:
-                    if gff.end > length:
+                if gff.seq_id in lens.keys():
+                    if (gff.end > lens[gff.seq_id]):
                         name = "".join([gff.feature, ":", str(gff.start), "-",
                                         str(gff.end), "_", gff.strand])
                         print("Error: The end point of " + name +

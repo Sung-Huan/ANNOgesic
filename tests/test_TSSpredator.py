@@ -7,7 +7,7 @@ import shutil
 import unittest
 from io import StringIO
 sys.path.append(".")
-from annogesiclib.TSSpredator import TSSPredatorReader
+from annogesiclib.TSSpredator_parser import TSSPredatorReader
 
 
 class TestTSSPredatorReader(unittest.TestCase):
