@@ -252,7 +252,7 @@ Now, the mapping can be performed..
 
 We can assign ``-p`` for running parallel, such as ``-p 20``.
 
-When the alignment is done, the alignemnt files in BAM format can be foung in 
+When the alignment is done, the alignemnt files in BAM format can be found in 
 ``READemption_analysis/output/align/alignments/``.
 
 Now, we can generate coverage files in wiggle format.
