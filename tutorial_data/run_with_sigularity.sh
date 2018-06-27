@@ -1,7 +1,6 @@
 main(){
     PATH_FILE=$(pwd)
     PYTHON_PATH=python3
-    ANNOGESIC_PATH=annogesic #### specify the path of annogesic
     ANNOGESIC_FOLDER=${PATH_FILE}/ANNOgesic
     STORAGE=/havana #### specify the storage path of your system
     FTP_SOURCE="ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Campylobacter_jejuni/latest_assembly_versions/GCF_000017905.1_ASM1790v1/"
@@ -51,7 +50,7 @@ set_up_analysis_folder(){
     if ! [ -d $ANNOGESIC_FOLDER ]
     then
         singularity exec -B $STORAGE annogesic.img \
-        $ANNOGESIC_PATH create \
+        annogesic create \
 	-pj $ANNOGESIC_FOLDER
     fi
 }
@@ -95,7 +94,7 @@ get_wig_and_read_files(){
 
 get_input_files(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
 	get_input_files \
 	-F $FTP_SOURCE \
 	-g \
@@ -113,7 +112,7 @@ update_genome_fasta(){
     mv mutation.csv ANNOgesic/input/mutation_tables 
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         update_genome_fasta \
         -c $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -m $ANNOGESIC_FOLDER/input/mutation_tables/mutation.csv \
@@ -123,7 +122,7 @@ update_genome_fasta(){
 
 annotation_transfer(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         annotation_transfer \
         -ce $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.embl \
         -cf $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -140,7 +139,7 @@ Optimize_TSSpredator(){
     wget -cP ANNOgesic/input/manual_TSSs/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         optimize_tss_ps \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -157,7 +156,7 @@ TSS_prediction(){
     wget -cP ANNOgesic/input/manual_TSS/ https://raw.githubusercontent.com/Sung-Huan/ANNOgesic/master/tutorial_data/NC_009839_manual_TSS.gff
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         tss_ps \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -181,7 +180,7 @@ TSS_prediction(){
 processing_site_prediction()
 {
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         tss_ps \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -201,7 +200,7 @@ processing_site_prediction()
 
 Transcript_detection(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         transcript \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -tl $TEX_LIBS \
@@ -213,7 +212,7 @@ Transcript_detection(){
 
 Terminator_prediction(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         terminator \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -225,7 +224,7 @@ Terminator_prediction(){
 
 utr_detection(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         utr \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
@@ -236,7 +235,7 @@ utr_detection(){
 
 operon_detection(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         operon \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
@@ -249,7 +248,7 @@ promoter_detection(){
     #### If MEME or GLAM2 cannot run in parallels, please install MPI (OpenMPI or MPICH).
     #### Otherwise, please remove -pl 10.
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         promoter \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -267,7 +266,7 @@ sRNA_detection(){
     mv ANNOgesic/input/databases/nr ANNOgesic/input/databases/nr.fa
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         srna \
         -d tss blast_srna sec_str blast_nr \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -292,7 +291,7 @@ sRNA_detection(){
 
 sORF_detection(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         sorf \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -t $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
@@ -306,7 +305,7 @@ sORF_detection(){
 
 sRNA_target(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         srna_target \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -334,7 +333,7 @@ $ANNOGESIC_FOLDER/input/reads/SRR515256_50000.fasta,\
 $ANNOGESIC_FOLDER/input/reads/SRR515257_50000.fasta
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         circrna \
 	-f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
         -p 10 \
@@ -353,7 +352,7 @@ $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515256_5000
 $ANNOGESIC_FOLDER/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515257_50000_NC_009839.1.bam 
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
          snp \
 	-t reference_genome \
 	-p with_BAQ without_BAQ extend_BAQ \
@@ -370,7 +369,7 @@ GO_term(){
     gunzip ANNOgesic/input/databases/idmapping_selected.tab.gz
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         go_term \
 	-g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
 	-a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
@@ -382,7 +381,7 @@ GO_term(){
 
 Subcellular_localization(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         localization \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -396,7 +395,7 @@ PPI_network(){
     wget -cP ANNOgesic/input/databases https://string-db.org/download/species.v10.5.txt
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         ppi_network \
 	-s NC_009839.1.gff:NC_009839.1:'Campylobacter jejuni 81176':'Campylobacter jejuni' \
 	-g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -418,7 +417,7 @@ riboswitch_and_RNA_thermometer(){
     cd ../../../
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         riboswitch_thermometer \
 	-g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
 	-f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -432,7 +431,7 @@ riboswitch_and_RNA_thermometer(){
 
 crispr(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         crispr \
         -g $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
         -f $ANNOGESIC_FOLDER/input/references/fasta_files/NC_009839.1.fa \
@@ -453,7 +452,7 @@ merge_features(){
                   $ANNOGESIC_FOLDER/output/crisprs/gffs/best_candidates/NC_009839.1_CRISPR.gff"
 
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         merge_features \
         -a $ANNOGESIC_FOLDER/output/transcripts/gffs/NC_009839.1_transcript.gff \
         -of $ALL_FEATURES \
@@ -464,7 +463,7 @@ merge_features(){
 
 gen_screenshot(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         screenshot \
 	-mg $ANNOGESIC_FOLDER/output/TSSs/gffs/NC_009839.1_TSS.gff \
 	-sg $ANNOGESIC_FOLDER/input/references/annotations/NC_009839.1.gff \
@@ -485,7 +484,7 @@ gen_screenshot(){
 
 color_png(){
     singularity exec -B $STORAGE annogesic.img \
-    $ANNOGESIC_PATH \
+    annogesic \
         colorize_screenshot_tracks \
 	-t 2 \
 	-f $ANNOGESIC_FOLDER/output/TSSs \
