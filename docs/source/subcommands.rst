@@ -882,9 +882,10 @@ like CDSs, tRNAs, rRNAs, genome annotation gff files are required. There are fou
                             fragmented (or conventional) libraries.
       --tex_notex {1,2}, -te {1,2}
                             The value is for TEX+/- libraries to decide the
-                            transcript should be detected in both (TEX+ and TEX-)
-                            or can be detected in only one library (TEX+ or TEX-).
-                            Please assign 1 or 2. Default is 1.
+                            transcript should be detected in both (TEX+ and TEX-,
+                            assigned by 2) or can be detected in only one library
+                            (TEX+ or TEX-, assigned by 1). Please assign 1 or 2.
+                            Default is 1.
 
 - **Additional arguments**
 
@@ -1062,9 +1063,10 @@ which have coverage significant decrease.
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex {1,2}, -te {1,2}
                             The value is for TEX+/- libraries to decide the
-                            terminator should be detected in both (TEX+ and TEX-)
-                            or can be detected in only one library (TEX+ or TEX-).
-                            Please assign 1 or 2. Default is 1.
+                            terminator should be detected in both (TEX+ and TEX-,
+                            assigned by 2) or can be detected in only one library
+                            (TEX+ or TEX-, assigned by 1). Please assign 1 or 2.
+                            Default is 1.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected in. The format is
@@ -1572,9 +1574,9 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex {1,2}, -te {1,2}
                             If TEX+/- libraries are assigned, a sRNA should be
-                            detected in both (TEX+ and TEX-) or needs to be
-                            detected in only one library (TEX+ or TEX-). Default
-                            is 2.
+                            detected in both (TEX+ and TEX-, assigned by 2) or
+                            needs to be detected in only one library (TEX+ or
+                            TEX-, assigned by 1). Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected in. The format is
@@ -2026,9 +2028,10 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --tex_notex {1,2}, -te {1,2}
                             If the TEX+/- libraries are provided, this value is
-                            that a sORF should be detected in both (TEX+ and TEX-)
-                            or can be detected in only one library (TEX+ or TEX-).
-                            Please assign 1 or 2. Default is 2.
+                            that a sORF should be detected in both (TEX+ and TEX-,
+                            assigned by 2) or can be detected in only one library
+                            (TEX+ or TEX-, assigned by 1). Please assign 1 or 2.
+                            Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
                             TSS has to be detected in. The format is

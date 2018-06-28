@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.26"
+__version__ = "0.7.27"
 
 def main():
     print("""
@@ -466,8 +466,9 @@ def main():
     Terminator_basic.add_argument(
         "--tex_notex", "-te", default=1, type=int, choices=[1, 2],
         help="The value is for TEX+/- libraries to decide the terminator "
-        "should be detected in both (TEX+ and TEX-) or can be detected in "
-        "only one library (TEX+ or TEX-). Please assign 1 or 2. Default is 1.")
+        "should be detected in both (TEX+ and TEX-, assigned by 2) or can "
+        "be detected in only one library (TEX+ or TEX-, assigned by 1). "
+        "Please assign 1 or 2. Default is 1.")
     Terminator_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
@@ -643,8 +644,9 @@ def main():
     Transcript_basic.add_argument(
         "--tex_notex", "-te", default=1, type=int, choices=[1, 2],
         help="The value is for TEX+/- libraries to decide the transcript "
-        "should be detected in both (TEX+ and TEX-) or can be detected in "
-        "only one library (TEX+ or TEX-). Please assign 1 or 2. Default is 1.")
+        "should be detected in both (TEX+ and TEX-, assigned by 2) or can "
+        "be detected in only one library (TEX+ or TEX-, assigned by 1). "
+        "Please assign 1 or 2. Default is 1.")
     Transcript_add = Transcript_parser.add_argument_group(
         'additional arguments')
     Transcript_add.add_argument(
@@ -839,8 +841,9 @@ def main():
     sRNA_basic.add_argument(
         "--tex_notex", "-te", default=2, type=int, choices=[1, 2],
         help="If TEX+/- libraries are assigned, a sRNA "
-        "should be detected in both (TEX+ and TEX-) or needs to be detected "
-        " in only one library (TEX+ or TEX-). Default is 2.")
+        "should be detected in both (TEX+ and TEX-, assigned by 2) or needs "
+        "to be detected in only one library (TEX+ or TEX-, assigned by 1). "
+        "Default is 2.")
     sRNA_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
         help="This value is the minimal number of replicates that a TSS has "
@@ -1161,8 +1164,8 @@ def main():
     sORF_basic.add_argument(
         "--tex_notex", "-te", default=2, type=int, choices=[1, 2],
         help="If the TEX+/- libraries are provided, this value is that a "
-        "sORF should be detected in both (TEX+ and TEX-) or "
-        "can be detected in only one library (TEX+ or TEX-). "
+        "sORF should be detected in both (TEX+ and TEX-, assigned by 2) or "
+        "can be detected in only one library (TEX+ or TEX-, assigned by 1). "
         "Please assign 1 or 2. Default is 2.")
     sORF_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',

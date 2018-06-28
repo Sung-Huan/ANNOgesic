@@ -62,6 +62,7 @@ def optimize_tss(args_ops, log):
         log.write("The comparing sequence region of {0} is ".format(
             prefix, length))
         if run:
+            gff_file = None
             for gff in os.listdir(gff_path):
                 if (gff[:-4] == prefix) and (".gff" in gff):
                     gff_file = os.path.join(gff_path, gff)
@@ -74,6 +75,10 @@ def optimize_tss(args_ops, log):
             if length == "all":
                 length = get_length(fasta_file)
             log.write(str(length) + "\n")
+            if gff_file is None:
+                print("Error: No corresponding genome annotation gff file "
+                      "of {0} can be found!".format(prefix))
+                sys.exit()
             Helper().check_uni_attributes(gff_file)
             log.write("Running optimize_TSSpredator.py for optimization.\n")
             optimization(wig_path, fasta_file, gff_file, args_ops,
