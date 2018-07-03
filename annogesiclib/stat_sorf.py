@@ -82,12 +82,17 @@ def print_stat(nums, nums_best, strain, out, utr_detect):
                 out.write("without overlap with "
                           "sRNA candidates are {0}".format(num))
                 print_num(out, num, nums, strain, type_)
-        out.write("\t\tThe best sORF are {0}\n".format(
-            nums_best[strain][type_]["all"]))
-        out.write("\t\tThe best sORF which without overlap with "
-                  "sRNA are {0}".format(nums_best[strain][type_]["sRNA"]))
-        print_num(out, nums_best[strain][type_]["sRNA"],
-                  nums_best, strain, type_)
+        if strain in nums_best.keys():
+            out.write("\t\tThe best sORF are {0}\n".format(
+                nums_best[strain][type_]["all"]))
+            out.write("\t\tThe best sORF which without overlap with "
+                      "sRNA are {0}".format(nums_best[strain][type_]["sRNA"]))
+            print_num(out, nums_best[strain][type_]["sRNA"],
+                      nums_best, strain, type_)
+        else:
+            out.write("\t\tThe best sORF are 0\n")
+            out.write("\t\tThe best sORF which without overlap with "
+                      "sRNA are 0\n")
 
 
 def read_file(sorf_gff):
