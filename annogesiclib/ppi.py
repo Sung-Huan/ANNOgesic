@@ -451,22 +451,23 @@ class PPINetwork(object):
                                        "temp", "dir")
 
     def check_query(self, args_ppi, log):
-        for query in args_ppi.querys:
-            detect = False
-            datas = query.split(":")
-            for gff in os.listdir(args_ppi.ptts):
-                gff_f = open(os.path.join(args_ppi.ptts, gff), "r")
-                for entry in Gff3Parser().entries(gff_f):
-                    if (entry.seq_id == datas[0]) and (
-                            entry.start == int(datas[1])) and (
-                            entry.end == int(datas[2])) and (
-                            entry.strand == datas[3]):
-                        detect = True
-                        break
-                if not detect:
-                    log.write(query + " is not found in gff file.\n")
-                    print("Error: {0} is not found in gff file!".format(query))
-                    sys.exit()
+        if "all" not in args_ppi.querys:
+            for query in args_ppi.querys:
+                detect = False
+                datas = query.split(":")
+                for gff in os.listdir(args_ppi.ptts):
+                    gff_f = open(os.path.join(args_ppi.ptts, gff), "r")
+                    for entry in Gff3Parser().entries(gff_f):
+                        if (entry.seq_id == datas[0]) and (
+                                entry.start == int(datas[1])) and (
+                                entry.end == int(datas[2])) and (
+                                entry.strand == datas[3]):
+                            detect = True
+                            break
+                    if not detect:
+                        log.write(query + " is not found in gff file.\n")
+                        print("Error: {0} is not found in gff file!".format(query))
+                        sys.exit()
 
     def retrieve_ppi_network(self, args_ppi, log):
         '''retrieve PPI from STRING with PIE and draw network'''
