@@ -69,6 +69,30 @@ The image can be pulled by using `Docker <https://www.docker.com/>`__ or `Singul
 Moreover, the users can build an Docker image from the `Dockerfile <https://github.com/Sung-Huan/ANNOgesic>`__ by themselves. 
 For the details, please check the `documentation <http://annogesic.readthedocs.io/en/latest/installation.html>`__.
 
+Github
+^^^^^^
+
+The alternative way for installing ANNOgesic is directly clone the Git repository.
+
+::
+
+    $ git clone https://github.com/Sung-Huan/ANNOgesic.git
+
+or
+
+::
+
+    $ git clone git@github.com:Sung-Huan/ANNOgesic.git
+
+In order to make ANNOgesic runnable, we should create a soft link of ``annogesiclib`` in ``bin``.
+
+::
+
+    $ cd ANNOgesic/bin
+    $ ln -s ../annogesiclib .
+
+Then, you can run ANNOgesic via specifying the installed path.
+
 Arguments
 -------------
 
