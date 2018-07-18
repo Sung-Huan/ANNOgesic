@@ -153,12 +153,12 @@ aaa\tRefseq\ttRNA\t29\t40\t.\t+\t.\tID=rrna_0;Name=rRNA_00000;locus_tag=AAA_0000
     rnt_file = """aaa - 1..53
 2 proteins
 Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
-16..24	+	9	-	-	AAA_00002	-	-	-
-29..40	+	12	-	-	AAA_00003	-	-	-"""
+16..24	+	9	-	AAA_00002	-	-	-	-
+29..40	+	12	-	AAA_00003	-	-	-	-"""    
     ptt_file = """aaa - 1..53
 1 proteins
 Location	Strand	Length	PID	Gene	Synonym	Code	COG	Product
-1..14	+	14	YP.90090	-	AAA_00001	-	-	-"""
+1..14	+	14	YP.90090	AAA_00001	-	-	-	-"""
     embl_file = """ID                   aaa ; ; ; ; ; 2821337 BP.
 FH   Key             Location/Qualifiers
 FH

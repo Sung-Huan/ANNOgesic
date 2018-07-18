@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "0.7.29"
+__version__ = "0.7.30"
 
 def main():
     print("""
@@ -1309,6 +1309,14 @@ def main():
     promoter_basic.add_argument(
         "--tss_files", "-t", required=True, nargs='+',
         help="Paths of the TSS gff files.")
+    promoter_basic.add_argument(
+        "--use_tss_type", "-u", default=[1], nargs='+',
+        help="The types of TSSs for generating promoter information. "
+        "The options are: 1. all TSSs, 2. primary TSSs, 3. secondary TSSs, "
+        "4. internal TSSs, 5. antisense TSSs, 6. orphan TSSs, 7. all TSSs "
+        "without orphan ones. Multi-choices are allowed (split by space), "
+        "ex: if 1 2 3 are assigned, the prediction will run three times for "
+        "all TSSs, primary TSSs and secondary TSSs. Default is 1.")
     promoter_basic.add_argument(
         "--motif_width", "-w", default=[50], nargs='+',
         help="Length of the motifs to detects. "

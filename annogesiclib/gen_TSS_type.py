@@ -298,7 +298,7 @@ def get_primary_locus_tag(tss):
         if "Primary" in tss_type:
             tsss.append({"locus": tss_locus_tags[index],
                          "utr": int(tss_utr_lengths[index].split("_")[1]),
-                         "type": tss_type})
+                         "type": tss_type, "pos": tss.start})
         index += 1
     return tsss
 
@@ -324,24 +324,32 @@ def fix_primary_type(tsss, wigs_f, wigs_r):
                                         tss_entry["type"] == "Primary") and (
                                         ref_entry["type"] == "Primary") and (
                                         tss.seq_id == ref.seq_id):
-                                    if tss.strand == "+":
-                                        covers = detect_coverage(
-                                            wigs_f, tss, ref)
-                                    else:
-                                        covers = detect_coverage(
-                                            wigs_r, tss, ref)
-                                    tss_cover = covers[0]
-                                    ref_cover = covers[1]
-                                    if tss_cover < ref_cover:
-                                        fix_attributes(tss, tss_entry)
-                                    elif tss_cover > ref_cover:
-                                        fix_attributes(ref, ref_entry)
-                                    elif tss_cover == ref_cover:
-                                        if (tss_entry["utr"] <
-                                                ref_entry["utr"]):
-                                            fix_attributes(ref, ref_entry)
-                                        elif (tss_entry["utr"] >
-                                              ref_entry["utr"]):
+                                    if wigs_f is not None:
+                                        if tss.strand == "+":
+                                            covers = detect_coverage(
+                                                wigs_f, tss, ref)
+                                        else:
+                                            covers = detect_coverage(
+                                                wigs_r, tss, ref)
+                                        tss_cover = covers[0]
+                                        ref_cover = covers[1]
+                                        if tss_cover < ref_cover:
                                             fix_attributes(tss, tss_entry)
+                                        elif tss_cover > ref_cover:
+                                            fix_attributes(ref, ref_entry)
+                                        elif tss_cover == ref_cover:
+                                            if (tss_entry["utr"] <
+                                                    ref_entry["utr"]):
+                                                fix_attributes(ref, ref_entry)
+                                            elif (tss_entry["utr"] >
+                                                  ref_entry["utr"]):
+                                                fix_attributes(tss, tss_entry)
+                                    else:
+                                         if (tss_entry["utr"] <
+                                                 ref_entry["utr"]):
+                                             fix_attributes(ref, ref_entry)
+                                         elif (tss_entry["utr"] >
+                                               ref_entry["utr"]):
+                                             fix_attributes(tss, tss_entry)
     del_repeat(tsss)
     return tsss

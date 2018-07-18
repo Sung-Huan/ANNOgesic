@@ -47,14 +47,15 @@ def read_data(tss_file, fasta_file):
     t_f = open(tss_file, "r")
     for entry in Gff3Parser().entries(t_f):
         tsss.append(entry)
-    with open(fasta_file, "r") as f_h:
-        for line in f_h:
-            line = line.strip()
-            if line[0] == ">":
-                seq[line[1:]] = ""
-                seq_id = line[1:]
-            else:
-                seq[seq_id] = seq[seq_id] + line
+    if fasta_file is not None:
+        with open(fasta_file, "r") as f_h:
+            for line in f_h:
+                line = line.strip()
+                if line[0] == ">":
+                    seq[line[1:]] = ""
+                    seq_id = line[1:]
+                else:
+                    seq[seq_id] = seq[seq_id] + line
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return tsss, seq
 
@@ -75,11 +76,12 @@ def read_gff(gff_file):
 
 def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
     '''get the upstream sequence of TSS'''
-    files = {"pri": open("tmp/primary.fa", "w"),
-             "sec": open("tmp/secondary.fa", "w"),
-             "inter": open("tmp/internal.fa", "w"),
-             "anti": open("tmp/antisense.fa", "w"),
-             "orph": open("tmp/orphan.fa", "w")}
+    if fasta_file is not None:
+        files = {"pri": open("tmp/primary.fa", "w"),
+                 "sec": open("tmp/secondary.fa", "w"),
+                 "inter": open("tmp/internal.fa", "w"),
+                 "anti": open("tmp/antisense.fa", "w"),
+                 "orph": open("tmp/orphan.fa", "w")}
     tsss, seq = read_data(tss_file, fasta_file)
     num_tss = 0
     if not args_pro.source:
@@ -102,11 +104,15 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
                 tss_type[0], ";ID=", tss.seq_id, "_tss", str(num_tss)])
             num_tss += 1
     if not args_pro.source:
-        libs, texs = read_libs(args_pro.input_libs, args_pro.tex_wigs)
-        wigs_f = read_wig(os.path.join(
-            args_pro.wig_path, prefix + "_forward.wig"), "+", libs)
-        wigs_r = read_wig(os.path.join(
-            args_pro.wig_path, prefix + "_reverse.wig"), "+", libs)
+        if args_pro.tex_wigs is not None:
+            libs, texs = read_libs(args_pro.input_libs, args_pro.tex_wigs)
+            wigs_f = read_wig(os.path.join(
+                args_pro.wig_path, prefix + "_forward.wig"), "+", libs)
+            wigs_r = read_wig(os.path.join(
+                args_pro.wig_path, prefix + "_reverse.wig"), "+", libs)
+        else:
+            wigs_f = None
+            wigs_r = None
         sort_tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start,
                                                 k.end, k.strand))
         final_tsss = fix_primary_type(sort_tsss, wigs_f, wigs_r)
@@ -118,7 +124,8 @@ def upstream(tss_file, fasta_file, gff_file, out_class, args_pro, prefix):
                             tss.seq_id, tss.source, tss.feature, tss.start,
                             tss.end, tss.score, tss.strand, tss.phase,
                             tss.attribute_string]]) + "\n")
-            print_fasta(seq, tss, files, name, args_pro.nt_before)
+            if fasta_file is not None:
+                print_fasta(seq, tss, files, name, args_pro.nt_before)
 
 
 def del_repeat_fasta(input_file, out_file):

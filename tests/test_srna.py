@@ -250,6 +250,7 @@ class TestsRNADetection(unittest.TestCase):
         args.utr_srna = True
         args.ex_srna = False
         args.cutoff_overlap = 0.5
+        args.source = True
         log = open(os.path.join(self.test_folder, "test.log"), "w")
         prefixs = self.srna._run_program(args, log)
         self.assertListEqual(prefixs, ['test'])

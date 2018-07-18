@@ -89,6 +89,9 @@ def import_utr(tss, utr_strain, utr_all, start, end, tas, length, args_utr):
 
 def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
                           locus_tag, ta, source, out, start, end):
+    if "Name" not in tss.attributes.keys():
+        tss.attributes["Name"] = (tss.feature + ":" + str(tss.start) + "-" + 
+                                  str(tss.end) + "_" + tss.strand)
     attribute_string = ";".join(
              ["=".join(items) for items in [
               ("ID", "_".join([tss.seq_id, "utr5", str(num_utr)])),
@@ -192,8 +195,9 @@ def read_file(tss_file, gff_file, ta_file, term_file):
                                              k.end, k.strand))
     if tss_file is not None:
         for entry in Gff3Parser().entries(open(tss_file)):
-            if entry.attributes["type"] != "Orphan":
-                source = True
+            if "type" in entry.attributes.keys():
+                if (entry.attributes["type"] != "Orphan"):
+                    source = True
             tsss.append(entry)
         tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
@@ -571,8 +575,14 @@ def get_near_cds(cdss, genes, ta, attributes):
         for gene in genes:
             if ("Parent" in near_cds.attributes.keys()):
                 if gene.attributes["ID"] in near_cds.attributes["Parent"].split(","):
-                    attributes.append("=".join(["associated_gene",
-                                      gene.attributes["locus_tag"]]))
+                    if "locus_tag" in gene.attributes.keys():
+                        attributes.append("=".join(["associated_gene",
+                                          gene.attributes["locus_tag"]]))
+                    else:
+                        gene_string = (gene.feature + ":" + str(gene.start) +
+                                       "-" + str(gene.end) + "_" + gene.strand)
+                        attributes.append("=".join(["associated_gene",
+                                         gene_string]))
         if "protein_id" in near_cds.attributes.keys():
             attributes.append("=".join(["associated_cds",
                               near_cds.attributes["protein_id"]]))
@@ -580,10 +590,9 @@ def get_near_cds(cdss, genes, ta, attributes):
             attributes.append("=".join(["associated_cds",
                               near_cds.attributes["locus_tag"]]))
         else:
-            attributes.append("=".join(["associated_cds",
-                              "_".join([near_cds.feature,
-                                        str(near_cds.start), str(near_cds.end),
-                                        near_cds.strand])]))
+            cds_string = (near_cds.feature + ":" + str(near_cds.start) + 
+                          "-" + str(near_cds.end) + "_" + near_cds.strand)
+            attributes.append("=".join(["associated_cds", cds_string]))
     return near_cds
 
 

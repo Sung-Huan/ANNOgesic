@@ -6,6 +6,7 @@ from subprocess import call, Popen
 from annogesiclib.multiparser import Multiparser
 from annogesiclib.helper import Helper
 from annogesiclib.sRNA_intergenic import intergenic_srna
+from annogesiclib.TSS_upstream import upstream
 from annogesiclib.sRNA_utr_derived import utr_derived_srna
 from annogesiclib.merge_sRNA import merge_srna_gff
 from annogesiclib.merge_sRNA import merge_srna_table
@@ -170,8 +171,13 @@ class sRNADetection(object):
                  "tex_gff": None, "tex_csv": None,
                  "merge_gff": None, "merge_csv": None}
         if self.tss_path is not None:
-            tss = self.helper.get_correct_file(self.tss_path, "_TSS.gff",
-                                               prefix, None, None)
+            if ("TSS_classes" in os.listdir(args_srna.out_folder)) and (
+                not args_srna.source):
+                tss = os.path.join(args_srna.out_folder,
+                                   "TSS_classes", prefix + "_TSS.gff")
+            else:
+                tss = self.helper.get_correct_file(self.tss_path, "_TSS.gff",
+                                                   prefix, None, None)
         else:
             tss = None
         if self.pro_path is not None:
@@ -192,7 +198,7 @@ class sRNADetection(object):
             log.write("Running sRNA_intergenic.py to detecting intergenic "
                       "sRNA for {0} based on fragmented libs.\n".format(prefix))
             intergenic_srna(args_srna, frag_datas[0], frag_datas[1],
-                            frag_datas[2], frag_datas[3])
+                            frag_datas[2], frag_datas[3], tss)
         if args_srna.tex_wigs is not None:
             files["tex_gff"] = os.path.join(
                     args_srna.out_folder, "_".join(["tmp_tex", prefix]))
@@ -206,14 +212,10 @@ class sRNADetection(object):
             log.write("Running sRNA_intergenic.py to detecting intergenic "
                       "sRNA for {0} based on dRNA-Seq libs.\n".format(prefix))
             intergenic_srna(args_srna, tex_datas[0], tex_datas[1],
-                            tex_datas[2], tex_datas[3])
+                            tex_datas[2], tex_datas[3], tss)
         files["merge_csv"] = "_".join([self.prefixs["normal_table"], prefix])
         files["merge_gff"] = "_".join([self.prefixs["normal"], prefix])
         self._merge_frag_tex_file(files, args_srna)
-        if ("TSS_classes" in os.listdir(args_srna.out_folder)) and (
-                not args_srna.tss_source):
-            tss = os.path.join(args_srna.out_folder,
-                               "TSS_classes", prefix + "_TSS.gff")
         return tss, frag_datas, tex_datas
 
     def _run_utrsrna(self, gff, tran, prefix, tss, pro, args_srna,
@@ -361,7 +363,6 @@ class sRNADetection(object):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
                 prefixs.append(prefix)
-                print("Running sRNA detection of {0}".format(prefix))
                 tran = self.helper.get_correct_file(
                         self.tran_path, "_transcript.gff", prefix, None, None)
                 gffs = {"merge": "_".join([self.prefixs["merge"], prefix]),
@@ -372,6 +373,16 @@ class sRNADetection(object):
                         "utr": "_".join([self.prefixs["utr_table"], prefix]),
                         "normal": "_".join([
                             self.prefixs["normal_table"], prefix])}
+                if not args_srna.source:
+                    if "TSS_classes" not in os.listdir(args_srna.out_folder):
+                        os.mkdir(os.path.join(args_srna.out_folder, "TSS_classes"))
+                    print("Classifying TSSs of {0}".format(prefix))
+                    upstream(os.path.join(self.tss_path, prefix + "_TSS.gff"),
+                             None,
+                             os.path.join(args_srna.gffs, prefix + ".gff"),
+                             os.path.join(args_srna.out_folder, "TSS_classes",
+                             "_".join([prefix, "TSS.gff"])), args_srna, prefix)
+                print("Running sRNA detection of {0}".format(prefix))
                 tss, frag_datas, tex_datas = self._run_normal(
                         prefix, gff, tran, args_srna.fuzzy_tsss["inter"],
                         args_srna, log)

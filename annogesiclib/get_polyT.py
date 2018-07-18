@@ -219,7 +219,6 @@ def parents(terms, genes, args_term):
             tmp_p = check_parent(genes, term, detects, "+",
                                  args_term.fuzzy_up_gene,
                                  args_term.fuzzy_down_gene, "parent_p")
-#            pos = term["parent_p"].split(":")[-1].split("_")[0].split("-")[-1]
             pos = term["p_pos"].split("-")[-1]
             if ((term["start"] - int(pos) <= args_term.fuzzy_down_ta) and (
                  term["start"] - int(pos) >= 0)) or (
@@ -233,7 +232,6 @@ def parents(terms, genes, args_term):
                                  args_term.fuzzy_up_gene,
                                  args_term.fuzzy_down_gene, "parent_m")
             pos = term["m_pos"].split("-")[0]
-#            pos = term["parent_m"].split(":")[-1].split("_")[0].split("-")[0]
             if ((int(pos) - term["end"] <= args_term.fuzzy_down_ta) and (
                  int(pos) - term["end"] >= 0)) or (
                 (term["start"] - int(pos) <= args_term.fuzzy_up_ta) and (

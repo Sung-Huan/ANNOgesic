@@ -172,7 +172,6 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
     stats = []
     count = 0
     total_step = total_step - int(args_ops.cores) + 1
-#    num_manual, manuals = read_predict_manual_gff(manual, length)
     if num_manual != 0:
         for gff_file in gff_files:
             nums = {"overlap": 0, "predict": 0, "manual": 0}
@@ -207,7 +206,6 @@ def compare_manual_predict(total_step, para_list, gff_files, out_path,
                               nums["manual"]) / float(num_manual)})
             total_step += 1
             count += 1
-#    manual_fh.close()
     return stats
 
 

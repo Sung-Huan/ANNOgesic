@@ -774,17 +774,9 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
     $ ls ANNOgesic/output/promoters/NC_009839.1
     MEME GLAM2
     $ ls ANNOgesic/output/promoters/NC_009839.1/MEME
-    promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_internal_45_nt   promoter_motifs_NC_009839.1_allgenome_secondary_2-10_nt
-    promoter_motifs_NC_009839.1_allgenome_all_types_45_nt    promoter_motifs_NC_009839.1_allgenome_orphan_2-10_nt   promoter_motifs_NC_009839.1_allgenome_secondary_45_nt
-    promoter_motifs_NC_009839.1_allgenome_antisense_2-10_nt  promoter_motifs_NC_009839.1_allgenome_orphan_45_nt     promoter_motifs_NC_009839.1_allgenome_without_orphan_2-10_nt
-    promoter_motifs_NC_009839.1_allgenome_antisense_45_nt    promoter_motifs_NC_009839.1_allgenome_primary_2-10_nt  promoter_motifs_NC_009839.1_allgenome_without_orphan_45_nt
-    promoter_motifs_NC_009839.1_allgenome_internal_2-10_nt   promoter_motifs_NC_009839.1_allgenome_primary_45_nt
+    promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_all_types_45_nt
     $ ls ANNOgesic/output/promoters/NC_009839.1/GLAM2
-    promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_internal_45_nt   promoter_motifs_NC_009839.1_allgenome_secondary_2-10_nt
-    promoter_motifs_NC_009839.1_allgenome_all_types_45_nt    promoter_motifs_NC_009839.1_allgenome_orphan_2-10_nt   promoter_motifs_NC_009839.1_allgenome_secondary_45_nt
-    promoter_motifs_NC_009839.1_allgenome_antisense_2-10_nt  promoter_motifs_NC_009839.1_allgenome_orphan_45_nt     promoter_motifs_NC_009839.1_allgenome_without_orphan_2-10_nt
-    promoter_motifs_NC_009839.1_allgenome_antisense_45_nt    promoter_motifs_NC_009839.1_allgenome_primary_2-10_nt  promoter_motifs_NC_009839.1_allgenome_without_orphan_45_nt
-    promoter_motifs_NC_009839.1_allgenome_internal_2-10_nt   promoter_motifs_NC_009839.1_allgenome_primary_45_nt
+    promoter_motifs_NC_009839.1_allgenome_all_types_2-10_nt  promoter_motifs_NC_009839.1_allgenome_all_types_45_nt
     $ ls ANNOgesic/output/promoters/NC_009839.1/MEME/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/
     logo1.eps  logo1.png  logo2.eps  logo2.png  logo3.eps  logo3.png  logo_rc1.eps  logo_rc1.png  logo_rc2.eps  logo_rc2.png  logo_rc3.eps  logo_rc3.png  meme.csv  meme.html  meme.txt  meme.xml
     $ ls ANNOgesic/output/promoters/NC_009839.1/GLAM2/promoter_motifs_NC_009839.1_allgenome_all_types_45_nt/

@@ -91,7 +91,7 @@ In order to make ANNOgesic runnable, we should create a soft link of ``annogesic
     $ cd ANNOgesic/bin
     $ ln -s ../annogesiclib .
 
-Then, you can run ANNOgesic via specifying the installed path.
+Then, you can run ANNOgesic via specifying the installed path if all the requirements are setup properly.
 
 Arguments
 -------------

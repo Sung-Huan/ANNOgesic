@@ -2251,6 +2251,7 @@ in order to assign the correct format.
                               PROJECT_PATH --fasta_files FASTA_FILES
                               [FASTA_FILES ...] --tss_files TSS_FILES
                               [TSS_FILES ...]
+                              [--use_tss_type USE_TSS_TYPE [USE_TSS_TYPE ...]]
                               [--motif_width MOTIF_WIDTH [MOTIF_WIDTH ...]]
                               [--num_motifs NUM_MOTIFS]
                               [--nt_before_tss NT_BEFORE_TSS]
@@ -2266,6 +2267,15 @@ in order to assign the correct format.
                             Paths of the genome fasta files.
       --tss_files TSS_FILES [TSS_FILES ...], -t TSS_FILES [TSS_FILES ...]
                             Paths of the TSS gff files.
+      --use_tss_type USE_TSS_TYPE [USE_TSS_TYPE ...], -u USE_TSS_TYPE [USE_TSS_TYPE ...]
+                        The types of TSSs for generating promoter information.
+                        The options are: 1. all TSSs, 2. primary TSSs, 3.
+                        secondary TSSs, 4. internal TSSs, 5. antisense TSSs,
+                        6. orphan TSSs, 7. all TSSs without orphan ones.
+                        Multi-choices are allowed (split by space), ex: if 1 2
+                        3 are assigned, the prediction will run three times
+                        for all TSSs, primary TSSs and secondary TSSs. Default
+                        is 1.
       --motif_width MOTIF_WIDTH [MOTIF_WIDTH ...], -w MOTIF_WIDTH [MOTIF_WIDTH ...]
                             Length of the motifs to detects. For a range insert
                             "-" between two values. Moreover, if multiple lengths

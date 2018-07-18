@@ -198,7 +198,7 @@ class MEME(object):
                               "".join([filename[0], strain, filename[-1]])))
         out.close()
 
-    def _run_program(self, prefixs, args_pro, log):
+    def _run_program(self, prefixs, args_pro, log, input_fastas):
         log.write("Using MEME or GLAM2 to predict promoter.\n")
         log.write("Please make sure their versions are at least 4.11.1.\n")
         log.write("If you are running for parallel, please make sure you "
@@ -215,17 +215,23 @@ class MEME(object):
                 self.helper.check_make_folder(os.path.join(out_path, "GLAM2"))
             for fasta in os.listdir(input_path):
                 filename = fasta.replace(".fa", "")
-                for width in args_pro.widths:
-                    print("Computing promoters of {0} - {1}".format(
-                          fasta, width))
-                    log.write("Computing promoters of {0} - length {1}.\n".format(
+                names = filename.split("_")
+                if (names[-1] in input_fastas) or (
+                        ("_".join(names[-2:]) == "all_types") and (
+                         "all_types" in input_fastas)) or (
+                        ("_".join(names[-2:]) == "without_orphan") and (
+                         "without_orphan" in input_fastas)):
+                    for width in args_pro.widths:
+                        print("Computing promoters of {0} - {1}".format(
                               fasta, width))
-                    if "-" in width:
-                        self._run_small_motif(input_path, out_path, filename,
-                                              fasta, width, args_pro, log)
-                    else:
-                        self._run_normal_motif(input_path, out_path, filename,
-                                               fasta, width, args_pro, log)
+                        log.write("Computing promoters of {0} - length {1}.\n".format(
+                                  fasta, width))
+                        if "-" in width:
+                            self._run_small_motif(input_path, out_path, filename,
+                                                  fasta, width, args_pro, log)
+                        else:
+                            self._run_normal_motif(input_path, out_path, filename,
+                                                   fasta, width, args_pro, log)
             log.write("Promoter search for {0} is done.\n".format(prefix))
             log.write("All the output files from MEME or GLAM2 are generated "
                       "and stored in {0}.\n".format(out_path))
@@ -319,21 +325,39 @@ class MEME(object):
                      os.path.join(args_pro.fastas, fasta),
                      None, None, args_pro, prefix)
         else:
-            if (args_pro.gffs is None) or (
-                    args_pro.tex_wigs is None) or (
-                    args_pro.input_libs is None):
-                print("Error: Please assign proper annotation, tex +/- "
-                      "wig files and tex treated libs!!!")
+            if (args_pro.gffs is None):
+                print("Error: Please assign proper annotation!!!")
                 sys.exit()
             if "TSS_classes" not in os.listdir(args_pro.output_folder):
-                os.mkdir(os.path.join(args_pro.output_folder, "TSS_classes"))
-            
+                os.mkdir(os.path.join(args_pro.output_folder, "TSS_classes"))            
             print("Classifying TSSs and extracting sequence of {0}".format(prefix))
             upstream(os.path.join(self.tss_path, tss),
                      os.path.join(args_pro.fastas, fasta),
                      os.path.join(self.gff_path, prefix + ".gff"),
                      os.path.join(args_pro.output_folder, "TSS_classes",
                      "_".join([prefix, "TSS.gff"])), args_pro, prefix)
+
+    def _get_used_tss_type(self, args_pro):
+        input_fastas = []
+        for tss in args_pro.use_tss:
+            if int(tss) == 1:
+                input_fastas.append("all_types")
+            elif int(tss) == 2:
+                input_fastas.append("primary")
+            elif int(tss) == 3:
+                input_fastas.append("secondary")
+            elif int(tss) == 4:
+                input_fastas.append("internal")
+            elif int(tss) == 5:
+                input_fastas.append("antisense")
+            elif int(tss) == 6:
+                input_fastas.append("orphan")
+            elif int(tss) == 7:
+                input_fastas.append("without_orphan")
+            else:
+                print("Error: The assignment of --use_tss_typ is wrong!")
+                sys.exit()
+        return input_fastas
 
     def run_meme(self, args_pro, log):
         if "allfasta.fa" in os.listdir(args_pro.fastas):
@@ -378,7 +402,8 @@ class MEME(object):
             for file_ in os.listdir(os.path.join(self.out_fasta, "allfasta")):
                 log.write("\t" + os.path.join(
                     self.out_fasta, "allfasta", file_) + "\n")
-        self._run_program(prefixs, args_pro, log)
+        input_fastas = self._get_used_tss_type(args_pro)
+        self._run_program(prefixs, args_pro, log, input_fastas)
         print("Generating the tables")
         self._gen_table(args_pro.output_folder, prefixs,
                         args_pro.combine, args_pro.program, log)

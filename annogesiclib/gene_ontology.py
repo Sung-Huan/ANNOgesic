@@ -152,7 +152,6 @@ def plot(total_nums, strain, filename, total, out_folder):
         num = total_num[1]
         if class_ != "total":
             percent = (float(num) / float(total)) * 100
-#            if percent >= 3:
             classes.append(class_.replace("_", " "))
             nums.append(num)
     ind = np.arange(len(nums))

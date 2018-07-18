@@ -14,11 +14,29 @@ class Converter(object):
         self.gff3parser = Gff3Parser()
         self.tssparser = TSSPredatorReader()
 
+    def _check_locus_tag(self, entry, genes):
+        gene_tag = "-"
+        locus_tag = "-"
+        if "locus_tag" in entry.attributes.keys():
+            locus_tag = entry.attributes["locus_tag"]
+        elif "Parent" in entry.attributes.keys():
+            for gene in genes:
+                if (gene.attributes["ID"] in
+                        entry.attributes["Parent"].split(",")):
+                    if "gene" in gene.attributes.keys():
+                        gene_tag = gene.attributes["gene"]
+                    if "locus_tag" in gene.attributes.keys():
+                        locus_tag = gene.attributes["locus_tag"]
+        if locus_tag == "-":
+            locus_tag = "".join([
+                entry.feature, ":", str(entry.start), "-",
+                str(entry.end), "_", entry.strand])
+        return locus_tag, gene_tag
+
+
     def _print_rntptt_file(self, out, entrys, genes):
         '''output to rnt and ptt file'''
         for entry in entrys:
-            gene_tag = "-"
-            locus_tag = "-"
             location = "..".join([str(entry.start), str(entry.end)])
             length = str(entry.end - entry.start + 1)
             if entry.feature == "CDS":
@@ -26,35 +44,11 @@ class Converter(object):
                     pid = entry.attributes["protein_id"]
                 else:
                     pid = "-"
-                if "locus_tag" in entry.attributes.keys():
-                    locus_tag = entry.attributes["locus_tag"]
-                elif "Parent" in entry.attributes.keys():
-                    for gene in genes:
-                        if (gene.attributes["ID"] in 
-                                entry.attributes["Parent"].split(",")):
-                            if "gene" in gene.attributes.keys():
-                                gene_tag = gene.attributes["gene"]
-                            locus_tag = gene.attributes["locus_tag"]
-                else:
-                    locus_tag = "".join([
-                        entry.feature, ":", str(entry.start), "-",
-                        str(entry.end), "_", entry.strand])
+                gene_tag, locus_tag = self._check_locus_tag(entry, genes)
             else:
                 pid = "-"
                 gene_tag = "-"
-                if "locus_tag" in entry.attributes.keys():
-                    locus_tag = entry.attributes["locus_tag"]
-                elif "Parent" in entry.attributes.keys():
-                    for gene in genes:
-                        if (gene.attributes["ID"] in 
-                                entry.attributes["Parent"].split(",")):
-                            if "gene" in gene.attributes.keys():
-                                gene_tag = gene.attributes["gene"]
-                            locus_tag = gene.attributes["locus_tag"]
-                else:
-                    locus_tag = "".join([
-                        entry.feature, ":", str(entry.start), "-",
-                        str(entry.end), "_", entry.strand])
+                gene_tag, locus_tag = self._check_locus_tag(entry, genes)
             if "product" in entry.attributes.keys():
                 product = entry.attributes["product"]
             else:

@@ -477,7 +477,7 @@ class TestsRNAIntergenic(unittest.TestCase):
         args.wigs_r = None
         args.ex_srna = False
         si.intergenic_srna(args, args.input_libs, None,
-                           args.wigs_f, args.wigs_r)
+                           args.wigs_f, args.wigs_r, tss_file)
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists(output_table))
        

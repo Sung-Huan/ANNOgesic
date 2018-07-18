@@ -697,7 +697,7 @@ class Controller(object):
             self._args.motif_width, self._args.tss_source,
             self._args.annotation_files, self._args.end_run,
             self._args.combine_all, self._args.e_value,
-            self._args.parallels, self._args.program)
+            self._args.parallels, self._args.program, self._args.use_tss_type)
         meme = MEME(args_pro)
         meme.run_meme(args_pro, log)
 

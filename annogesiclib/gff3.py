@@ -78,8 +78,10 @@ Gff3Entry({
                 key = key_value_pair[0]
                 if len(key_value_pair) > 2:
                     value = "=".join(key_value_pair[1:])
-                else:
+                elif len(key_value_pair) == 2:
                     value = key_value_pair[1]
+                else:
+                    value = ""
                 attributes[key] = value
             return attributes
         else:

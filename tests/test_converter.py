@@ -153,9 +153,9 @@ class TestConverter(unittest.TestCase):
         self.converter._print_rntptt_file(out_p, cdss, genes)
         self.converter._print_rntptt_file(out_r, rnas, genes)
         self.assertEqual(out_p.getvalue().split("\n")[:-1],
-                         self.ptt_out.split("\n"))
+                         self.example.ptt_out_list)
         self.assertEqual(out_r.getvalue().split("\n")[:-1],
-                         self.rnt_out.split("\n"))
+                         self.example.rnt_out_list)
         out_p.close()
         out_r.close()
 
@@ -343,10 +343,10 @@ class Example(object):
                   "start": 100, "end": 244, "phase": ".", "strand": "+",
                   "score": ".", "attributes": {
                       "Name": "sRNA_candidate_0002", "ID": "rna0"}}]
-
+    ptt_out_list = ['517..1878\t+\t1362\tYP_498609.1\tAAA_00001\tdnaA\t-\t-\tchromosomal replication initiation protein', '2156..3289\t-\t1134\tYP_498610.1\tAAA_00002\t-\t-\t-\t-']
     ptt_out = """517..1878	+	1362	YP_498609.1	dnaA	AAA_00001	-	-	chromosomal replication initiation protein
 2156..3289	-	1134	YP_498610.1	-	AAA_00002	-	-	-"""
-
+    rnt_out_list = ['4444..5444\t+\t1001\t-\tAAA_T00004\t-\t-\t-\t-']
     rnt_out = """4444..5444	+	1001	-	-	AAA_T00004	-	-	-"""
 
     gff_file = """
