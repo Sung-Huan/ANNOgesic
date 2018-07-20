@@ -240,6 +240,7 @@ Then, we need to move or copy the required input files to the corresponding fold
 Now, the mapping can be performed..
 
 ::
+
     $ reademption \
         align \
         -r \
