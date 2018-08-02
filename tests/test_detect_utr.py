@@ -131,8 +131,9 @@ class TestDetectUTR(unittest.TestCase):
         utr_all = {"pri": [], "all": [], "sec": []}
         utr_strain = {"pri": {"aaa": []}, "all": {"aaa": []},
                       "sec": {"aaa": []}}
+        utr_tss = []
         du.compare_ta(self.example.tas, self.example.genes,
-                      self.example.cdss, utr_strain, utr_all, out, args)
+                      self.example.cdss, utr_strain, utr_all, out, args, utr_tss)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]),
                          set([self.example.out_5utr]))
         out.close()

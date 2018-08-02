@@ -1,4 +1,5 @@
 import math
+import shutil
 import matplotlib as mpl
 from annogesiclib.gff3 import Gff3Parser
 from annogesiclib.helper import Helper
@@ -88,7 +89,7 @@ def import_utr(tss, utr_strain, utr_all, start, end, tas, length, args_utr):
 
 
 def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
-                          locus_tag, ta, source, out, start, end):
+                          locus_tag, ta, source, out, start, end, utrs_tss):
     if "Name" not in tss.attributes.keys():
         tss.attributes["Name"] = (tss.feature + ":" + str(tss.start) + "-" + 
                                   str(tss.end) + "_" + tss.strand)
@@ -114,28 +115,43 @@ def get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
     out.write("{0}\tANNOgesic\t5UTR\t{1}\t{2}\t.\t{3}\t.\t{4}\n".format(
               tss.seq_id, start, end,
               tss.strand, attribute_string))
+    utrs_tss.append({"strain": tss.seq_id, "start": start, "end": end,
+                     "strand": tss.strand})
 
 
 def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
-             cds_name, locus_tag, out, args_utr):
+             num, num_tss, cds_name, locus_tag, out, args_utr,
+             utrs_tss, check_cdss, pres):
     '''print and import the 5UTR information'''
+    detect = False
     if tss.strand == "+":
         start = tss.start
         end = near_cds.start
         length = end - start
-        detect, ta = import_utr(tss, utr_strain, utr_all,
-                                start, end, tas, length, args_utr)
+        if str(near_cds.start) + "+" not in check_cdss:
+            detect, ta = import_utr(tss, utr_strain, utr_all,
+                                    start, end, tas, length, args_utr)
+            check_cdss.append(str(near_cds.start) + "+")
     else:
         start = near_cds.end
         end = tss.end
         length = end - start
-        detect, ta = import_utr(tss, utr_strain, utr_all,
-                                start, end, tas, length, args_utr)
+        if (str(near_cds.end) + "-" not in check_cdss) or [num == num_tss]:
+            check_cdss.append(str(near_cds.end) + "-")
+            if pres["tss"] is not None:
+                detect, ta = import_utr(pres["tss"], utr_strain, utr_all,
+                                        pres["start"], pres["end"], tas,
+                                        pres["len"], args_utr)
+        pres["start"] = start
+        pres["end"] = end
+        pres["len"] = length
+        pres["tss"] = tss
     if detect:
         name_utr = '%0*d' % (5, num_utr)
         if length >= 0:
             get_print_string_5utr(num_utr, name_utr, length, tss, cds_name,
-                                  locus_tag, ta, args_utr.source, out, start, end)
+                                  locus_tag, ta, args_utr.source, out,
+                                  start, end, utrs_tss)
             num_utr += 1
     return num_utr
 
@@ -386,7 +402,25 @@ def set_utr_strain(ta, type_, utr_strain):
         utr_strain[type_][ta.seq_id] = []
 
 
-def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
+def check_repeat(start, end, strain, strand, utrs_tss):
+    for utr in utrs_tss:
+        if (utr["strain"] == strain) and (
+                utr["strand"] == strand):
+            if ((utr["start"] >= start) and (
+                utr["end"] <= end)) or (
+                (utr["start"] <= start) and (
+                utr["end"] >= end)) or (
+                (utr["start"] >= start) and (
+                utr["start"] <= end) and (
+                utr["end"] >= end)) or (
+                (utr["start"] <= start) and (
+                utr["end"] >= start) and (
+                utr["end"] <= end)):
+                return True
+    return False
+
+def compare_ta(tas, genes, cdss, utr_strain, utr_all, out,
+               args_utr, utrs_tss):
     '''Comparing CDS and trancript to find the 5UTR'''
     num_utr = 0
     for ta in tas:
@@ -405,17 +439,19 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
                                 (ta.start <= cds.start) and (
                                 ta.end <= cds.end) and (
                                 ta.end >= cds.start)):
-                            length = cds.start - ta.start
-                            utr_strain["all"][ta.seq_id].append(length)
-                            utr_all["all"].append(length)
-                            gene_name = get_gene_name(genes, cds)
-                            string = get_attribute_string(
-                                num_utr, length, cds, gene_name, ta, "utr5",
-                                "5'UTR", "Parent", "Transcript:")
-                            detect = True
-                            start = ta.start
-                            end = cds.start
-                            break
+                            if (not check_repeat(ta.start, cds.start, ta.seq_id,
+                                                 ta.strand, utrs_tss)):
+                                length = cds.start - ta.start
+                                utr_strain["all"][ta.seq_id].append(length)
+                                utr_all["all"].append(length)
+                                gene_name = get_gene_name(genes, cds)
+                                string = get_attribute_string(
+                                    num_utr, length, cds, gene_name, ta, "utr5",
+                                    "5'UTR", "Parent", "Transcript:")
+                                detect = True
+                                start = ta.start
+                                end = cds.start
+                                break
                 else:
                     if ((ta.end - cds.end) <= args_utr.length) and (
                             (ta.end - cds.end) >= 0):
@@ -424,8 +460,10 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out, args_utr):
                                 (ta.start >= cds.start) and (
                                 ta.start <= cds.end) and (
                                 ta.end >= cds.end)):
-                            near_cds = cds
-                            detect = True
+                            if (not check_repeat(cds.end, ta.end, ta.seq_id,
+                                                 ta.strand, utrs_tss)):
+                                near_cds = cds
+                                detect = True
         if (ta.strand == "-") and (detect):
             length = ta.end - near_cds.end
             utr_strain["all"][ta.seq_id].append(length)
@@ -454,11 +492,16 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
     out.write("##gff-version 3\n")
     genes, cdss, terms, tsss, tas, source = read_file(
             tss_file, gff_file, ta_file, None)
+    utrs_tss = []
+    check_cdss = []
+    pres = {"check": None, "tss": None, "start": -1, "end": -1, "len": -1}
     if (args_utr.source) and (not source):
         args_utr.source = False
     if (args_utr.base_5utr.upper() == "TSS") or (
             args_utr.base_5utr.lower() == "both"):
+        num = 0
         for tss in tsss:
+            num = num + 1
             if args_utr.source:
                 utr_datas = get_5utr_from_TSSpredator(tss, genes, cdss)
             else:
@@ -471,12 +514,16 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
                     utr_strain["sec"][tss.seq_id] = []
                     utr_strain["all"][tss.seq_id] = []
                 num_utr = get_5utr(tss, utr_datas["near_cds"], utr_strain,
-                                   utr_all, tas, num_utr,
+                                   utr_all, tas, num_utr, num, len(tsss),
                                    utr_datas["cds_name"], utr_datas["locus"],
-                                   out, args_utr)
-    if args_utr.base_5utr.lower() == "transcript":
+                                   out, args_utr, utrs_tss, check_cdss, pres)
+    if (args_utr.base_5utr.lower() == "transcript") or (
+            args_utr.base_5utr.lower() == "both"):
         compare_ta(tas, genes, cdss, utr_strain,
-                   utr_all, out, args_utr)
+                   utr_all, out, args_utr, utrs_tss)
+    out.close()
+    Helper().sort_gff(out_file, out_file + "sort")
+    shutil.move(out_file + "sort", out_file)
     name = (gff_file.split("/"))[-1].replace(".gff", "")
     plot(utr_all["all"], utr_all["pri"], utr_all["sec"], "_".join([name,
          "all_5utr_length.png"]), args_utr.source, "5utr", args_utr.base_5utr)
@@ -486,7 +533,6 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
                  utr_strain["sec"][strain],
                  "_".join([strain, "5utr_length.png"]), args_utr.source,
                  "5utr", args_utr.base_5utr)
-    out.close()
 
 
 def compare_term(ta, terms, fuzzy):
