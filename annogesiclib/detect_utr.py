@@ -606,7 +606,6 @@ def get_gene_string(gene, attributes):
 
 def get_near_cds(cdss, genes, ta, attributes, utr_length):
     '''Get the associated CDS of terminator'''
-#    first = True
     detect = False
     near_cds = None
     for cds in cdss:
@@ -633,25 +632,6 @@ def get_near_cds(cdss, genes, ta, attributes, utr_length):
                         if (cds.start < near_cds.start):
                             near_cds = cds
                     detect = True
-
-#    for cds in cdss:
-#        if (ta.seq_id == cds.seq_id) and \
-#           (ta.strand == cds.strand):
-#            if first:
-#                near_cds = cds
-#                first = False
-#            if ta.strand == "+":
-#                if (cds.end <= ta.end) and \
-#                   (cds.start >= ta.start) and \
-#                   (cds.end > near_cds.end):
-#                    near_cds = cds
-#                    detect = True
-#            else:
-#                if (cds.start >= ta.start) and \
-#                   (cds.end <= ta.end):
-#                    near_cds = cds
-#                    detect = True
-#                    break
     if detect:
         check_gene = False
         for gene in genes:
