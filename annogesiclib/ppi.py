@@ -211,8 +211,8 @@ class PPINetwork(object):
                 name = (row[0].split("-"))[0].strip().split(",")[0].strip()
             if ("all" in args_ppi.querys):
                 if (len(row) > 1) and (row[0] != "Location"):
-                    genes.append({"strain": name, "locus_tag": row[5],
-                                  "gene": row[4]})
+                    genes.append({"strain": name, "locus_tag": row[4],
+                                  "gene": row[5]})
             else:
                 for query in args_ppi.querys:
                     datas = query.split(":")
@@ -225,8 +225,8 @@ class PPINetwork(object):
                             start == row[0].split("..")[0]) and (
                             end == row[0].split("..")[1]) and (
                             strand == row[1]):
-                        genes.append({"strain": name, "locus_tag": row[5],
-                                      "gene": row[4]})
+                        genes.append({"strain": name, "locus_tag": row[4],
+                                      "gene": row[5]})
         fh.close()
         return genes
 

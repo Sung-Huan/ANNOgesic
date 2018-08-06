@@ -144,12 +144,9 @@ class TestPPI(unittest.TestCase):
         args.querys = "all"
         genes = self.ppi._detect_protein(strain_id, args)
         self.assertListEqual(genes, [
-            {'locus_tag': 'SAOUHSC_00001', 'gene': 'dnaA',
-             'strain': 'Staphylococcus_aureus_HG003'},
-            {'locus_tag': 'SAOUHSC_00002', 'gene': '-',
-             'strain': 'Staphylococcus_aureus_HG003'},
-            {'locus_tag': 'SAOUHSC_00003', 'gene': '-',
-             'strain': 'Staphylococcus_aureus_HG003'}])
+             {'gene': 'SAOUHSC_00001', 'locus_tag': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003'},
+             {'gene': 'SAOUHSC_00002', 'locus_tag': '-', 'strain': 'Staphylococcus_aureus_HG003'},
+             {'gene': 'SAOUHSC_00003', 'locus_tag': '-', 'strain': 'Staphylococcus_aureus_HG003'}])
 
     def test_setup_nospecific(self):
         out_all = StringIO()
@@ -201,12 +198,9 @@ class TestPPI(unittest.TestCase):
         self.assertTrue(os.path.exists("test_folder/best_results/test"))
         self.assertTrue(os.path.exists("test_folder/all_results/test"))
         self.assertListEqual(genes, [
-            {'gene': 'dnaA', 'strain': 'Staphylococcus_aureus_HG003',
-             'locus_tag': 'SAOUHSC_00001'},
-            {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003',
-             'locus_tag': 'SAOUHSC_00002'},
-            {'gene': '-', 'strain': 'Staphylococcus_aureus_HG003',
-             'locus_tag': 'SAOUHSC_00003'}])
+             {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': 'dnaA', 'gene': 'SAOUHSC_00001'},
+             {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': '-', 'gene': 'SAOUHSC_00002'},
+             {'strain': 'Staphylococcus_aureus_HG003', 'locus_tag': '-', 'gene': 'SAOUHSC_00003'}])
 
     def test_wget_actions(self):
         gen_file(os.path.join(self.test_folder, "test.txt"), "93061\ttest")

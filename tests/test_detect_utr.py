@@ -132,8 +132,9 @@ class TestDetectUTR(unittest.TestCase):
         utr_strain = {"pri": {"aaa": []}, "all": {"aaa": []},
                       "sec": {"aaa": []}}
         utr_tss = []
+        num_utr = 0
         du.compare_ta(self.example.tas, self.example.genes,
-                      self.example.cdss, utr_strain, utr_all, out, args, utr_tss)
+                      self.example.cdss, utr_strain, utr_all, out, args, utr_tss, num_utr)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]),
                          set([self.example.out_5utr]))
         out.close()
@@ -192,7 +193,8 @@ class TestDetectUTR(unittest.TestCase):
         args.length = 300
         args.base_3utr = "transcript"
         args.fuzzy_3utr = 10
-        du.get_3utr(ta, cds, utr_all, utr_strain, attributes, 0, out, args)
+        utr_ta = []
+        du.get_3utr(ta, cds, utr_all, utr_strain, attributes, 0, out, args, utr_ta)
         self.assertEqual(set(out.getvalue().split("\n")[:-1]),
                          set(self.example.out_3utr.split("\n")))
         out.close()
@@ -205,7 +207,7 @@ class TestDetectUTR(unittest.TestCase):
         ta = Create_generator(ta_dict, attributes_ta, "gff")
         attributes = ["ID=3utr0"]
         near_cds = du.get_near_cds(self.example.cdss,
-                                   self.example.genes, ta, attributes)
+                                   self.example.genes, ta, attributes, 300)
         self.assertEqual(near_cds.start, 148)
 
     def test_detect_3utr(self):
@@ -304,12 +306,12 @@ class Example(object):
                       {"ID": "rna0", "Name": "rRNA_0",
                        "locus_tag": "AAA_00002"},
                       {"ID": "cds2", "Name": "CDS_1"}]
-    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;Parent=tran0"""
+    out_5utr = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;Parent=tran0;associated_tss=NA;tss_type=NA"""
     out_5utr_tsspredator = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;tss_type=Primary;Parent=tran0"""
     out_5utr_other = """aaa\tANNOgesic\t5UTR\t140\t148\t.\t+\t.\tID=aaa_utr5_0;Name=5'UTR_00000;length=8;associated_cds=YP_000001;associated_gene=AAA_00001;associated_tss=TSS_0;Parent=tran0"""
     out_3utr = """aaa\tANNOgesic\t3UTR\t500\t540\t.\t+\t.\tID=aaa_utr3_0;Name=3'UTR_00000;ID=3utr0;length=40;Parent=tran0"""
     out_3utr_gff = """##gff-version 3
-aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=aaa_utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;length=7;Parent=tran0"""
+aaa	ANNOgesic	3UTR	360	367	.	+	.	ID=aaa_utr3_0;Name=3'UTR_00000;associated_term=Terminator:360-367_+;associated_gene=AAA_00001;associated_cds=YP_000001;length=7;Parent=tran0"""
     tas = []
     tsss = []
     terms = []

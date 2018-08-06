@@ -369,6 +369,11 @@ def get_attribute_string(num_utr, length, cds, gene_name, ta, id_name, name,
                 [attribute_string,
                  "Parent=" + (feature, feature_name + str(ta.start) + "-" +
                  str(ta.end) + "_" + ta.strand)])
+    elif feature == "associated_term":
+            attribute_string = ";".join(
+                [attribute_string,
+                 "associated_term=" + (feature_name + str(ta.start) + "-" +
+                 str(ta.end) + "_" + ta.strand)])
     return attribute_string
 
 
@@ -420,9 +425,8 @@ def check_repeat(start, end, strain, strand, utrs_tss):
     return False
 
 def compare_ta(tas, genes, cdss, utr_strain, utr_all, out,
-               args_utr, utrs_tss):
+               args_utr, utrs_tss, num_utr):
     '''Comparing CDS and trancript to find the 5UTR'''
-    num_utr = 0
     for ta in tas:
         detect = False
         set_utr_strain(ta, "all", utr_strain)
@@ -476,11 +480,12 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out,
             end = ta.end
         if detect:
             if end - start > 0:
+                string = ";".join([string, "associated_tss=NA", "tss_type=NA"])
                 out.write("{0}\tANNOgesic\t5UTR\t{1}"
                           "\t{2}\t.\t{3}\t.\t{4}\n".format(
                               ta.seq_id, start, end, ta.strand, string))
                 num_utr += 1
-
+    return num_utr
 
 def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
     '''detection of 5UTR'''
@@ -519,8 +524,8 @@ def detect_5utr(tss_file, gff_file, ta_file, out_file, args_utr):
                                    out, args_utr, utrs_tss, check_cdss, pres)
     if (args_utr.base_5utr.lower() == "transcript") or (
             args_utr.base_5utr.lower() == "both"):
-        compare_ta(tas, genes, cdss, utr_strain,
-                   utr_all, out, args_utr, utrs_tss)
+        num_utr = compare_ta(tas, genes, cdss, utr_strain,
+                             utr_all, out, args_utr, utrs_tss, num_utr)
     out.close()
     Helper().sort_gff(out_file, out_file + "sort")
     shutil.move(out_file + "sort", out_file)
@@ -551,7 +556,7 @@ def compare_term(ta, terms, fuzzy):
 
 
 def get_3utr(ta, near_cds, utr_all, utr_strain,
-             attributes, num_utr, out, args_utr):
+             attributes, num_utr, out, args_utr, utrs_ta):
     '''print the 3UTR'''
     if ta.strand == "+":
         start = near_cds.end
@@ -580,55 +585,99 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
         id_ = "ID=" + ta.seq_id + "_utr3_" + str(num_utr)
         num_utr += 1
         attribute_string = ";".join([id_, name, attribute])
-        if args_utr.base_3utr == "transcript":
-            out.write("\t".join([ta.seq_id, "ANNOgesic", "3UTR",
-                                 str(start), str(end),
-                                 ta.score, ta.strand, ta.phase,
-                                 attribute_string]) + "\n")
-        elif args_utr.base_3utr == "both":
-            if "associated_term=NA" not in attributes:
-                out.write("\t".join([ta.seq_id, "ANNOgesic", "3UTR",
-                                     str(start), str(end),
-                                     ta.score, ta.strand, ta.phase,
-                                     attribute_string]) + "\n")
+        out.write("\t".join([ta.seq_id, "ANNOgesic", "3UTR",
+                             str(start), str(end),
+                             ta.score, ta.strand, ta.phase,
+                             attribute_string]) + "\n")
+        utrs_ta.append({"strain": ta.seq_id, "start": start, "end": end,
+                        "strand": ta.strand})
     return num_utr
 
+def get_gene_string(gene, attributes):
+    if "locus_tag" in gene.attributes.keys():
+        attributes.append("=".join(["associated_gene",
+                          gene.attributes["locus_tag"]]))
+    else:
+        gene_string = (gene.feature + ":" + str(gene.start) +
+                       "-" + str(gene.end) + "_" + gene.strand)
+        attributes.append("=".join(["associated_gene",
+                         gene_string]))
 
-def get_near_cds(cdss, genes, ta, attributes):
+
+def get_near_cds(cdss, genes, ta, attributes, utr_length):
     '''Get the associated CDS of terminator'''
-    first = True
+#    first = True
     detect = False
     near_cds = None
     for cds in cdss:
-        if (ta.seq_id == cds.seq_id) and \
-           (ta.strand == cds.strand):
-            if first:
-                near_cds = cds
-                first = False
+        if (ta.seq_id == cds.seq_id) and (
+                ta.strand == cds.strand) and (
+                cds.feature == "CDS"):
             if ta.strand == "+":
-                if (cds.end <= ta.end) and \
-                   (cds.start >= ta.start) and \
-                   (cds.end > near_cds.end):
-                    near_cds = cds
+                if (cds.end < ta.end) and (
+                        (ta.end - cds.end) <= utr_length) and (
+                        (ta.end - cds.end) > 0):
+                    if (near_cds == None):
+                        near_cds = cds
+                    else:
+                        if (cds.end > near_cds.end):
+                            near_cds = cds
                     detect = True
             else:
-                if (cds.start >= ta.start) and \
-                   (cds.end <= ta.end):
-                    near_cds = cds
+                if (cds.start > ta.start) and (
+                        (cds.start - ta.start) <= utr_length) and (
+                        (cds.start - ta.start) > 0):
+                    if (near_cds == None):
+                        near_cds = cds
+                    else:
+                        if (cds.start < near_cds.start):
+                            near_cds = cds
                     detect = True
-                    break
+
+#    for cds in cdss:
+#        if (ta.seq_id == cds.seq_id) and \
+#           (ta.strand == cds.strand):
+#            if first:
+#                near_cds = cds
+#                first = False
+#            if ta.strand == "+":
+#                if (cds.end <= ta.end) and \
+#                   (cds.start >= ta.start) and \
+#                   (cds.end > near_cds.end):
+#                    near_cds = cds
+#                    detect = True
+#            else:
+#                if (cds.start >= ta.start) and \
+#                   (cds.end <= ta.end):
+#                    near_cds = cds
+#                    detect = True
+#                    break
     if detect:
+        check_gene = False
         for gene in genes:
             if ("Parent" in near_cds.attributes.keys()):
                 if gene.attributes["ID"] in near_cds.attributes["Parent"].split(","):
-                    if "locus_tag" in gene.attributes.keys():
-                        attributes.append("=".join(["associated_gene",
-                                          gene.attributes["locus_tag"]]))
-                    else:
-                        gene_string = (gene.feature + ":" + str(gene.start) +
-                                       "-" + str(gene.end) + "_" + gene.strand)
-                        attributes.append("=".join(["associated_gene",
-                                         gene_string]))
+                    get_gene_string(gene, attributes)
+                    check_gene = True
+                    break
+            else:
+                if (gene.seq_id == near_cds.seq_id) and (
+                    gene.strand == near_cds.strand):
+                    if ((gene.start >= near_cds.start) and (
+                        gene.end <= near_cds.end)) or (
+                        (gene.start <= near_cds.start) and (
+                        gene.end >= near_cds.end)) or (
+                        (gene.start >= near_cds.start) and (
+                        gene.start <= near_cds.end) and (
+                        gene.end >= near_cds.end)) or (
+                        (gene.start <= near_cds.start) and (
+                        gene.end >= near_cds.start) and (
+                        gene.end <= near_cds.end)):
+                        get_gene_string(gene, attributes)
+                        check_gene = True
+                        break
+        if not check_gene:
+            attributes.append("assoicated_gene=NA")
         if "protein_id" in near_cds.attributes.keys():
             attributes.append("=".join(["associated_cds",
                               near_cds.attributes["protein_id"]]))
@@ -639,12 +688,14 @@ def get_near_cds(cdss, genes, ta, attributes):
             cds_string = (near_cds.feature + ":" + str(near_cds.start) + 
                           "-" + str(near_cds.end) + "_" + near_cds.strand)
             attributes.append("=".join(["associated_cds", cds_string]))
+    else:
+        near_cds = None
     return near_cds
 
 
-def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
+def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr,
+                      out, utrs_ta, num_utr):
     '''Comparing of terminator and 3UTR to get the relationship'''
-    num_utr = 0
     for term in terms:
         detect = False
         if term.seq_id not in utr_strain.keys():
@@ -657,24 +708,28 @@ def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
                             ((term.end - cds.end) <= args_utr.length) or (
                             ((term.start - cds.end) <= args_utr.length) and (
                             term.start >= cds.end))):
-                        detect = True
-                        near_cds = cds
+                        if (not check_repeat(cds.end, term.end, cds.seq_id, 
+                            cds.strand, utrs_ta)):
+                            detect = True
+                            near_cds = cds
                 else:
                     if (term.start <= cds.start) and (
                             ((cds.start - term.start) <= args_utr.length) or (
                             ((cds.start - term.end) <= args_utr.length) and (
                             cds.start >= term.end))):
-                        length = term.start - cds.start
-                        utr_strain[term.seq_id].append(length)
-                        utr_all.append(length)
-                        gene_name = get_gene_name(genes, cds)
-                        string = get_attribute_string(
-                            num_utr, length, cds, gene_name, term, "utr3",
-                            "3'UTR", "associated_term", "Terminator:")
-                        detect = True
-                        start = term.start
-                        end = cds.start
-                        break
+                        if (not check_repeat(term.start, cds.start, cds.seq_id,
+                            cds.strand, utrs_ta)):
+                            length = term.start - cds.start
+                            utr_strain[term.seq_id].append(length)
+                            utr_all.append(length)
+                            gene_name = get_gene_name(genes, cds)
+                            string = get_attribute_string(
+                                num_utr, length, cds, gene_name, term, "utr3",
+                                "3'UTR", "associated_term", "Terminator:")
+                            detect = True
+                            start = term.start
+                            end = cds.start
+                            break
             if (term.strand == "+") and detect:
                 length = term.end - near_cds.end
                 utr_strain[term.seq_id].append(length)
@@ -688,10 +743,11 @@ def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr, out):
                 end = term.end
         if detect:
             if end - start > 0:
-                out.write("{0}\tANNOgesic\t5UTR\t{1}\t"
+                out.write("{0}\tANNOgesic\t3UTR\t{1}\t"
                           "{2}\t.\t{3}\t.\t{4}\n".format(
                               term.seq_id, start, end, term.strand, string))
                 num_utr += 1
+    return num_utr
 
 
 def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
@@ -704,6 +760,7 @@ def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
     out.write("##gff-version 3\n")
     genes, cdss, terms, tsss, tas, args_utr.source = read_file(
             None, gff_file, ta_file, term_file)
+    utrs_ta = []
     if (args_utr.base_3utr == "transcript") or (
             args_utr.base_3utr == "both"):
         for ta in tas:
@@ -720,20 +777,23 @@ def detect_3utr(ta_file, gff_file, term_file, out_file, args_utr):
                                   str(term.end) + "_" + term.strand]))
                 else:
                     attributes.append("=".join(["associated_term", "NA"]))
-            near_cds = get_near_cds(cdss, genes, ta, attributes)
+            near_cds = get_near_cds(cdss, genes, ta, attributes, args_utr.length)
             if ta.seq_id != pre_seq_id:
                 pre_seq_id = ta.seq_id
                 utr_strain[ta.seq_id] = []
             if near_cds is not None:
                 num_utr = get_3utr(ta, near_cds, utr_all, utr_strain,
-                                   attributes, num_utr, out, args_utr)
-    else:
-        compare_term_3utr(terms, cdss, genes, utr_all,
-                          utr_strain, args_utr, out)
+                                   attributes, num_utr, out, args_utr, utrs_ta)
+    if (args_utr.base_3utr == "terminator") or (
+            args_utr.base_3utr == "both"):
+        num_utr = compare_term_3utr(terms, cdss, genes, utr_all, utr_strain,
+                                    args_utr, out, utrs_ta, num_utr)
+    out.close()
+    Helper().sort_gff(out_file, out_file + "sort")
+    shutil.move(out_file + "sort", out_file)
     name = (gff_file.split("/"))[-1].replace(".gff", "")
     plot(utr_all, None, None, "_".join([name, "all_3utr_length.png"]),
          None, "3utr", "3utr")
-    out.close()
     if len(utr_strain) > 1:
         for strain in utr_strain.keys():
             plot(utr_strain[strain], None, None,
