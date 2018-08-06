@@ -154,6 +154,14 @@ Arguments
       -h, --help            show this help message and exit
       --version, -v         show version
 
+Citation
+--------
+
+SH Yu, J. Vogel, KU Förstner. 2018, GigaScience, accepted.
+`Pre-print at bioRxiv
+<https://www.biorxiv.org/content/early/2018/01/27/143081>`_.
+
+
 License
 -------
 
