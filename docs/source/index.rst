@@ -129,6 +129,10 @@ Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.re
 Cite
 ====
 
+SH Yu, J. Vogel, KU Förstner. 2018, GigaScience, accepted.
+`Pre-print at bioRxiv
+<https://www.biorxiv.org/content/early/2018/01/27/143081>`_.
+
 Contact
 =======
 
