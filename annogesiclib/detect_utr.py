@@ -126,16 +126,16 @@ def get_5utr(tss, near_cds, utr_strain, utr_all, tas, num_utr,
     detect = False
     if tss.strand == "+":
         start = tss.start
-        end = near_cds.start
-        length = end - start
+        end = near_cds.start - 1
+        length = end - start + 1
         if str(near_cds.start) + "+" not in check_cdss:
             detect, ta = import_utr(tss, utr_strain, utr_all,
                                     start, end, tas, length, args_utr)
             check_cdss.append(str(near_cds.start) + "+")
     else:
-        start = near_cds.end
+        start = near_cds.end + 1
         end = tss.end
-        length = end - start
+        length = end - start + 1
         if (str(near_cds.end) + "-" not in check_cdss) or [num == num_tss]:
             check_cdss.append(str(near_cds.end) + "-")
             if pres["tss"] is not None:
@@ -454,7 +454,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out,
                                     "5'UTR", "Parent", "Transcript:")
                                 detect = True
                                 start = ta.start
-                                end = cds.start
+                                end = cds.start - 1
                                 break
                 else:
                     if ((ta.end - cds.end) <= args_utr.length) and (
@@ -476,7 +476,7 @@ def compare_ta(tas, genes, cdss, utr_strain, utr_all, out,
             string = get_attribute_string(
                 num_utr, length, near_cds, gene_name,
                 ta, "utr5", "5'UTR", "Parent", "Transcript:")
-            start = near_cds.end
+            start = near_cds.end + 1
             end = ta.end
         if detect:
             if end - start > 0:
@@ -559,14 +559,14 @@ def get_3utr(ta, near_cds, utr_all, utr_strain,
              attributes, num_utr, out, args_utr, utrs_ta):
     '''print the 3UTR'''
     if ta.strand == "+":
-        start = near_cds.end
+        start = near_cds.end + 1
         end = ta.end
         length = ta.end - near_cds.end
         utr_all.append(length)
         utr_strain[ta.seq_id].append(length)
     else:
         start = ta.start
-        end = near_cds.start
+        end = near_cds.start - 1
         length = near_cds.start - ta.start
         utr_all.append(length)
         utr_strain[ta.seq_id].append(length)
@@ -708,7 +708,7 @@ def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr,
                                 "3'UTR", "associated_term", "Terminator:")
                             detect = True
                             start = term.start
-                            end = cds.start
+                            end = cds.start - 1
                             break
             if (term.strand == "+") and detect:
                 length = term.end - near_cds.end
@@ -719,7 +719,7 @@ def compare_term_3utr(terms, cdss, genes, utr_all, utr_strain, args_utr,
                     num_utr, length, near_cds, gene_name, term, "utr3",
                     "3'UTR", "associated_term", "Terminator:")
                 detect = True
-                start = near_cds.end
+                start = near_cds.end + 1
                 end = term.end
         if detect:
             if end - start > 0:
