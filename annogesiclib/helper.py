@@ -272,9 +272,11 @@ class Helper(object):
                 if entry.seq_id not in lens.keys():
                     lens[entry.seq_id] = entry.end
                 else:
-                    print("Error: Detect repeated source/region/remark of {0}!".format(
-                          entry.seq_id))
-                    sys.exit()
+                    if entry.end > lens[entry.seq_id]:
+                        lens[entry.seq_id] = entry.end 
+                    print("Warning: Detect repeated source/region/remark of {0}! "
+                          "The longest end point is used as the length of the genome.".format(
+                           entry.seq_id))
             gffs.append(entry)
         gffs = sorted(gffs, key=lambda x: (x.seq_id, x.start, x.end, x.strand))
         first = True

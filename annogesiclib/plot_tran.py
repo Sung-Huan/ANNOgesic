@@ -13,7 +13,8 @@ def plot(lens, out_figure):
     ticks = max(lens) / 50
     bin_num = np.arange(0, max(lens), ticks)
     n, bins, hist1 = plt.hist(lens, bin_num,
-                              color="#FF9999", label='Transcript')
+                              color="#FF9999", label='Transcript',
+                              edgecolor='black', linewidth=1)
     plt.xlabel("Transcript_length (nt)")
     plt.ylabel("Amount")
     plt.savefig(out_figure)

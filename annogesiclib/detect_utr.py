@@ -15,16 +15,19 @@ def plot(utr, utr_pri, utr_sec, filename, source, utr_type, base_5utr):
     if utr_type == "5utr":
         if source and (base_5utr != "transcript"):
             n, bins, hist1 = plt.hist(utr, bin_num,
-                                      color="#FF9999", label='secondary')
+                                      color="#FF9999", label='secondary',
+                                      edgecolor='black', linewidth=1)
             n, bins, hist2 = plt.hist(utr_pri, bin_num,
-                                      color="#9999FF", label='primary')
+                                      color="#9999FF", label='primary',
+                                      edgecolor='black', linewidth=1)
             plt.legend((hist2[0], hist1[0]),
                        ("Primary TSSs", "Secondary TSSs"))
         else:
             n, bins, hist1 = plt.hist(utr, bin_num, color="#FF9999")
         plt.xlabel("5'UTR_length")
     elif utr_type == "3utr":
-        n, bins, hist = plt.hist(utr, bin_num, color="#9999FF", label='3\'UTR')
+        n, bins, hist = plt.hist(utr, bin_num, color="#9999FF", label='3\'UTR',
+                                 edgecolor='black', linewidth=1)
         plt.legend([hist[0]], ["3'UTR"])
         plt.xlabel("3'UTR_length")
     plt.ylabel("Amount")
