@@ -131,7 +131,7 @@ Cite
 
 SH Yu, J. Vogel, KU Förstner. 2018, GigaScience,
 `DOI:10.1093/gigascience/giy096 <https://academic.oup.com/gigascience/advance-article/doi/10.1093/gigascience/giy096/5087959>`_,
-`PMID:30169674 <https://www.biorxiv.org/content/early/2018/01/27/143081>`_.
+`PMID:30169674 <https://www.ncbi.nlm.nih.gov/pubmed/30169674>`_.
 
 Contact
 =======
