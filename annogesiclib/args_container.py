@@ -649,7 +649,7 @@ class ArgsContainer(object):
     def container_utr(self, tss_files, annotation_files,
                       transcript_assembly_files, terminator_files,
                       terminator_fuzzy, utr_folder, tss_source, base_5utr,
-                      length, base_3utr, fuzzy_3utr, fuzzy_5utr):
+                      length, base_3utr):
         self.tsss = self._gen_copy_new_folder(
                 [".gff", ".gff3"], utr_folder, "tmp_tss", tss_files, ["--tss_files"])
         self.gffs = self._gen_copy_new_folder(
@@ -667,8 +667,6 @@ class ArgsContainer(object):
         self.base_5utr = base_5utr
         self.base_3utr = base_3utr
         self.length = length
-        self.fuzzy_3utr = fuzzy_3utr
-        self.fuzzy_5utr = fuzzy_5utr
         return self
 
     def container_srna(self, rnafold, relplot_pl, mountain_pl, blastn, blastx,

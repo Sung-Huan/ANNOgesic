@@ -616,7 +616,7 @@ def get_near_cds(cdss, genes, ta, attributes, utr_length):
                 ta.strand == cds.strand) and (
                 cds.feature == "CDS"):
             if ta.strand == "+":
-                if (cds.end < ta.end) and (
+                if (cds.end <= ta.end) and (
                         (ta.end - cds.end) <= utr_length) and (
                         (ta.end - cds.end) > 0):
                     if (near_cds == None):
@@ -626,7 +626,7 @@ def get_near_cds(cdss, genes, ta, attributes, utr_length):
                             near_cds = cds
                     detect = True
             else:
-                if (cds.start > ta.start) and (
+                if (cds.start >= ta.start) and (
                         (cds.start - ta.start) <= utr_length) and (
                         (cds.start - ta.start) > 0):
                     if (near_cds == None):

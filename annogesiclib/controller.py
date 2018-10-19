@@ -476,8 +476,7 @@ class Controller(object):
                 self._args.transcript_files, self._args.terminator_files,
                 self._args.terminator_tolerance, self._paths.utr_folder,
                 self._args.tss_source, self._args.base_5utr,
-                self._args.utr_length, self._args.base_3utr,
-                self._args.tolerance_3utr, self._args.tolerance_5utr)
+                self._args.utr_length, self._args.base_3utr)
         utr = UTRDetection(args_utr)
         utr.run_utr_detection(args_utr, log)
 

@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 def main():
     print("""
@@ -747,16 +747,6 @@ def main():
         help="The 3'ends of transcripts will be extended or withdrew by this "
         "value (nucleotides) for searching the associated terminators. "
         "Default is 30.")
-    UTR_add.add_argument(
-        "--tolerance_3utr", "-t3", default=10, type=int,
-        help="The length of 3'UTR can be extended or withdrew by this "
-        "value (nucleotides). It only works when transcript information "
-        "is provided. Default is 10.")
-    UTR_add.add_argument(
-        "--tolerance_5utr", "-t5", default=5, type=int,
-        help="The length of 5'UTR can be extended or withdrew by this "
-        "value (nucleotides). It only works when transcript information "
-        "is provided. Default is 5.")
     UTR_parser.set_defaults(func=run_UTR_detection)
 
     # Parameter of sRNA detection
