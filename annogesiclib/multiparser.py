@@ -332,32 +332,33 @@ class Multiparser(object):
                     self.helper.check_make_folder(out_path)
                     with open(os.path.join(wig_folder, filename), "r") as w_f:
                         for line in w_f:
-                            line = line.split(" ")
-                            if (line[0] == "track"):
-                                track_info = " ".join(line)
-                            if (line[0] == "variableStep"):
-                                strain = line[1].split("=")
-                                if first:
-                                    first = False
-                                else:
-                                    out.close()
-                                    out_t.close()
-                                out = open("".join([
-                                    os.path.join(out_path, filename[:-4]),
-                                    "_STRAIN_", strain[1], ".wig"]), "w")
-                                out_t = open("".join([
-                                    os.path.join(wig_folder, "tmp",
-                                                 filename[:-4]),
-                                    "_STRAIN_", strain[1], ".wig"]), "w")
-                                if track_info != "":
-                                    out.write(track_info)
-                                    out_t.write(track_info)
-                                out.write(" ".join(line))
-                                out_t.write(" ".join(line))
-                            if (line[0] != "track") and (
-                                    line[0] != "variableStep"):
-                                out.write(" ".join(line))
-                                out_t.write(" ".join(line))
+                            if (not line.startswith("#")) and (len(line) != 0):
+                                line = line.split(" ")
+                                if (line[0] == "track"):
+                                    track_info = " ".join(line)
+                                if (line[0] == "variableStep") or (line[0] == "fixedStep"):
+                                    strain = line[1].split("=")
+                                    if first:
+                                        first = False
+                                    else:
+                                        out.close()
+                                        out_t.close()
+                                    out = open("".join([
+                                        os.path.join(out_path, filename[:-4]),
+                                        "_STRAIN_", strain[1], ".wig"]), "w")
+                                    out_t = open("".join([
+                                        os.path.join(wig_folder, "tmp",
+                                                     filename[:-4]),
+                                        "_STRAIN_", strain[1], ".wig"]), "w")
+                                    if track_info != "":
+                                        out.write(track_info)
+                                        out_t.write(track_info)
+                                    out.write(" ".join(line))
+                                    out_t.write(" ".join(line))
+                                if (line[0] != "track") and (
+                                        line[0] != "variableStep"):
+                                    out.write(" ".join(line))
+                                    out_t.write(" ".join(line))
         if not detect:
             print("Error: There are folders which contain no wig files! "
                   "The files should end with .wig!")
