@@ -1,114 +1,114 @@
-NC_009839.1	manual	TSS	856	856	.	-	.	ID=tss0;Name=TSS_0;type=Antisense
-NC_009839.1	manual	TSS	1396	1396	.	+	.	ID=tss2;Name=TSS_2;type=Primary
-NC_009839.1	manual	TSS	4464	4464	.	-	.	ID=tss6;Name=TSS_6;type=Antisense
-NC_009839.1	manual	TSS	6676	6676	.	+	.	ID=tss8;Name=TSS_8;type=Secondary
-NC_009839.1	manual	TSS	8098	8098	.	+	.	ID=tss10;Name=TSS_10;type=Secondary
-NC_009839.1	manual	TSS	14976	14976	.	+	.	ID=tss18;Name=TSS_18;type=Antisense, Antisense
-NC_009839.1	manual	TSS	15670	15670	.	-	.	ID=tss20;Name=TSS_20;type=Primary
-NC_009839.1	manual	TSS	17738	17738	.	+	.	ID=tss22;Name=TSS_22;type=Antisense
-NC_009839.1	manual	TSS	18053	18053	.	-	.	ID=tss23;Name=TSS_23;type=Primary
-NC_009839.1	manual	TSS	18360	18360	.	-	.	ID=tss24;Name=TSS_24;type=Internal
-NC_009839.1	manual	TSS	19385	19385	.	-	.	ID=tss25;Name=TSS_25;type=Primary, Antisense
-NC_009839.1	manual	TSS	24473	24473	.	+	.	ID=tss29;Name=TSS_29;type=Antisense
-NC_009839.1	manual	TSS	24637	24637	.	-	.	ID=tss30;Name=TSS_30;type=Primary
-NC_009839.1	manual	TSS	26617	26617	.	+	.	ID=tss35;Name=TSS_35;type=Primary, Antisense
-NC_009839.1	manual	TSS	26627	26627	.	-	.	ID=tss36;Name=TSS_36;type=Primary, Antisense
-NC_009839.1	manual	TSS	28296	28296	.	+	.	ID=tss37;Name=TSS_37;type=Internal
-NC_009839.1	manual	TSS	31867	31867	.	-	.	ID=tss39;Name=TSS_39;type=Primary
-NC_009839.1	manual	TSS	35870	35870	.	-	.	ID=tss44;Name=TSS_44;type=Antisense
-NC_009839.1	manual	TSS	35886	35886	.	+	.	ID=tss45;Name=TSS_45;type=Primary
-NC_009839.1	manual	TSS	36655	36655	.	+	.	ID=tss46;Name=TSS_46;type=Internal
-NC_009839.1	manual	TSS	37044	37044	.	-	.	ID=tss47;Name=TSS_47;type=Antisense
-NC_009839.1	manual	TSS	37191	37191	.	+	.	ID=tss48;Name=TSS_48;type=Orphan
-NC_009839.1	manual	TSS	39057	39057	.	+	.	ID=tss50;Name=TSS_50;type=Secondary, Internal
-NC_009839.1	manual	TSS	39182	39182	.	+	.	ID=tss51;Name=TSS_51;type=Secondary
-NC_009839.1	manual	TSS	39808	39808	.	-	.	ID=tss52;Name=TSS_52;type=Antisense
-NC_009839.1	manual	TSS	40054	40054	.	+	.	ID=tss53;Name=TSS_53;type=Internal
-NC_009839.1	manual	TSS	43101	43101	.	+	.	ID=tss54;Name=TSS_54;type=Primary
-NC_009839.1	manual	TSS	43543	43543	.	+	.	ID=tss55;Name=TSS_55;type=Primary
-NC_009839.1	manual	TSS	48072	48072	.	-	.	ID=tss56;Name=TSS_56;type=Antisense
-NC_009839.1	manual	TSS	52776	52776	.	-	.	ID=tss59;Name=TSS_59;type=Primary
-NC_009839.1	manual	TSS	57965	57965	.	-	.	ID=tss61;Name=TSS_61;type=Antisense
-NC_009839.1	manual	TSS	58122	58122	.	-	.	ID=tss62;Name=TSS_62;type=Antisense
-NC_009839.1	manual	TSS	58597	58597	.	+	.	ID=tss65;Name=TSS_65;type=Internal
-NC_009839.1	manual	TSS	59923	59923	.	+	.	ID=tss68;Name=TSS_68;type=Internal
-NC_009839.1	manual	TSS	64856	64856	.	+	.	ID=tss74;Name=TSS_74;type=Antisense
-NC_009839.1	manual	TSS	68260	68260	.	-	.	ID=tss77;Name=TSS_77;type=Primary
-NC_009839.1	manual	TSS	75282	75282	.	+	.	ID=tss85;Name=TSS_85;type=Antisense
-NC_009839.1	manual	TSS	75317	75317	.	+	.	ID=tss86;Name=TSS_86;type=Antisense
-NC_009839.1	manual	TSS	75684	75684	.	+	.	ID=tss87;Name=TSS_87;type=Antisense
-NC_009839.1	manual	TSS	75722	75722	.	-	.	ID=tss88;Name=TSS_88;type=Primary
-NC_009839.1	manual	TSS	75845	75845	.	+	.	ID=tss89;Name=TSS_89;type=Orphan
-NC_009839.1	manual	TSS	75877	75877	.	+	.	ID=tss90;Name=TSS_90;type=Orphan
-NC_009839.1	manual	TSS	76099	76099	.	+	.	ID=tss91;Name=TSS_91;type=Primary
-NC_009839.1	manual	TSS	76450	76450	.	-	.	ID=tss92;Name=TSS_92;type=Antisense
-NC_009839.1	manual	TSS	76473	76473	.	+	.	ID=tss93;Name=TSS_93;type=Internal
-NC_009839.1	manual	TSS	78706	78706	.	+	.	ID=tss94;Name=TSS_94;type=Antisense, Antisense
-NC_009839.1	manual	TSS	79832	79832	.	+	.	ID=tss95;Name=TSS_95;type=Antisense
-NC_009839.1	manual	TSS	84110	84110	.	+	.	ID=tss98;Name=TSS_98;type=Antisense
-NC_009839.1	manual	TSS	85614	85614	.	-	.	ID=tss101;Name=TSS_101;type=Primary, Antisense
-NC_009839.1	manual	TSS	85659	85659	.	+	.	ID=tss102;Name=TSS_102;type=Primary, Antisense
-NC_009839.1	manual	TSS	87152	87152	.	+	.	ID=tss103;Name=TSS_103;type=Internal
-NC_009839.1	manual	TSS	87844	87844	.	+	.	ID=tss104;Name=TSS_104;type=Primary
-NC_009839.1	manual	TSS	89115	89115	.	-	.	ID=tss107;Name=TSS_107;type=Orphan
-NC_009839.1	manual	TSS	89961	89961	.	+	.	ID=tss108;Name=TSS_108;type=Antisense
-NC_009839.1	manual	TSS	90458	90458	.	-	.	ID=tss111;Name=TSS_111;type=Secondary
-NC_009839.1	manual	TSS	93427	93427	.	-	.	ID=tss112;Name=TSS_112;type=Primary
-NC_009839.1	manual	TSS	95234	95234	.	-	.	ID=tss114;Name=TSS_114;type=Primary
-NC_009839.1	manual	TSS	95342	95342	.	+	.	ID=tss116;Name=TSS_116;type=Antisense
-NC_009839.1	manual	TSS	97624	97624	.	+	.	ID=tss119;Name=TSS_119;type=Primary, Antisense
-NC_009839.1	manual	TSS	100466	100466	.	+	.	ID=tss123;Name=TSS_123;type=Primary, Internal
-NC_009839.1	manual	TSS	100738	100738	.	+	.	ID=tss124;Name=TSS_124;type=Antisense
-NC_009839.1	manual	TSS	102327	102327	.	-	.	ID=tss127;Name=TSS_127;type=Primary
-NC_009839.1	manual	TSS	102509	102509	.	+	.	ID=tss129;Name=TSS_129;type=Primary
-NC_009839.1	manual	TSS	105406	105406	.	+	.	ID=tss130;Name=TSS_130;type=Primary
-NC_009839.1	manual	TSS	110536	110536	.	+	.	ID=tss134;Name=TSS_134;type=Primary
-NC_009839.1	manual	TSS	113257	113257	.	+	.	ID=tss137;Name=TSS_137;type=Primary
-NC_009839.1	manual	TSS	116412	116412	.	+	.	ID=tss141;Name=TSS_141;type=Secondary, Internal
-NC_009839.1	manual	TSS	116475	116475	.	+	.	ID=tss142;Name=TSS_142;type=Primary
-NC_009839.1	manual	TSS	118451	118451	.	+	.	ID=tss143;Name=TSS_143;type=Internal
-NC_009839.1	manual	TSS	119530	119530	.	-	.	ID=tss145;Name=TSS_145;type=Antisense, Antisense
-NC_009839.1	manual	TSS	120203	120203	.	+	.	ID=tss146;Name=TSS_146;type=Primary, Internal
-NC_009839.1	manual	TSS	124108	124108	.	+	.	ID=tss148;Name=TSS_148;type=Internal
-NC_009839.1	manual	TSS	128737	128737	.	+	.	ID=tss151;Name=TSS_151;type=Primary, Internal
-NC_009839.1	manual	TSS	131199	131199	.	+	.	ID=tss153;Name=TSS_153;type=Primary
-NC_009839.1	manual	TSS	131783	131783	.	-	.	ID=tss154;Name=TSS_154;type=Antisense
-NC_009839.1	manual	TSS	131954	131954	.	-	.	ID=tss155;Name=TSS_155;type=Antisense
-NC_009839.1	manual	TSS	133497	133497	.	+	.	ID=tss158;Name=TSS_158;type=Antisense, Antisense
-NC_009839.1	manual	TSS	134601	134601	.	-	.	ID=tss159;Name=TSS_159;type=Primary, Internal
-NC_009839.1	manual	TSS	136166	136166	.	-	.	ID=tss161;Name=TSS_161;type=Primary, Internal
-NC_009839.1	manual	TSS	136704	136704	.	-	.	ID=tss162;Name=TSS_162;type=Internal
-NC_009839.1	manual	TSS	139117	139117	.	-	.	ID=tss166;Name=TSS_166;type=Primary, Antisense
-NC_009839.1	manual	TSS	139357	139357	.	+	.	ID=tss167;Name=TSS_167;type=Internal
-NC_009839.1	manual	TSS	140034	140034	.	+	.	ID=tss169;Name=TSS_169;type=Primary
-NC_009839.1	manual	TSS	142746	142746	.	+	.	ID=tss171;Name=TSS_171;type=Primary, Internal
-NC_009839.1	manual	TSS	148088	148088	.	+	.	ID=tss175;Name=TSS_175;type=Antisense
-NC_009839.1	manual	TSS	149290	149290	.	-	.	ID=tss176;Name=TSS_176;type=Primary, Antisense
-NC_009839.1	manual	TSS	152376	152376	.	+	.	ID=tss180;Name=TSS_180;type=Secondary, Antisense
-NC_009839.1	manual	TSS	157420	157420	.	+	.	ID=tss184;Name=TSS_184;type=Antisense
-NC_009839.1	manual	TSS	158964	158964	.	-	.	ID=tss185;Name=TSS_185;type=Primary
-NC_009839.1	manual	TSS	160150	160150	.	-	.	ID=tss187;Name=TSS_187;type=Primary
-NC_009839.1	manual	TSS	165841	165841	.	-	.	ID=tss188;Name=TSS_188;type=Primary
-NC_009839.1	manual	TSS	166910	166910	.	-	.	ID=tss189;Name=TSS_189;type=Primary
-NC_009839.1	manual	TSS	167000	167000	.	+	.	ID=tss190;Name=TSS_190;type=Antisense
-NC_009839.1	manual	TSS	169059	169059	.	-	.	ID=tss191;Name=TSS_191;type=Primary, Internal
-NC_009839.1	manual	TSS	172002	172002	.	+	.	ID=tss195;Name=TSS_195;type=Antisense
-NC_009839.1	manual	TSS	174154	174154	.	-	.	ID=tss196;Name=TSS_196;type=Primary
-NC_009839.1	manual	TSS	174243	174243	.	+	.	ID=tss198;Name=TSS_198;type=Primary
-NC_009839.1	manual	TSS	174436	174436	.	+	.	ID=tss199;Name=TSS_199;type=Antisense
-NC_009839.1	manual	TSS	174694	174694	.	-	.	ID=tss200;Name=TSS_200;type=Primary
-NC_009839.1	manual	TSS	174904	174904	.	+	.	ID=tss201;Name=TSS_201;type=Primary
-NC_009839.1	manual	TSS	180526	180526	.	-	.	ID=tss207;Name=TSS_207;type=Primary
-NC_009839.1	manual	TSS	180678	180678	.	+	.	ID=tss208;Name=TSS_208;type=Primary
-NC_009839.1	manual	TSS	181796	181796	.	-	.	ID=tss212;Name=TSS_212;type=Antisense
-NC_009839.1	manual	TSS	181964	181964	.	+	.	ID=tss213;Name=TSS_213;type=Primary
-NC_009839.1	manual	TSS	185512	185512	.	-	.	ID=tss214;Name=TSS_214;type=Primary
-NC_009839.1	manual	TSS	185674	185674	.	+	.	ID=tss215;Name=TSS_215;type=Antisense
-NC_009839.1	manual	TSS	187117	187117	.	-	.	ID=tss218;Name=TSS_218;type=Internal
-NC_009839.1	manual	TSS	188281	188281	.	-	.	ID=tss219;Name=TSS_219;type=Secondary, Internal
-NC_009839.1	manual	TSS	192245	192245	.	+	.	ID=tss225;Name=TSS_225;type=Primary, Antisense
-NC_009839.1	manual	TSS	193930	193930	.	-	.	ID=tss227;Name=TSS_227;type=Antisense
-NC_009839.1	manual	TSS	196338	196338	.	-	.	ID=tss229;Name=TSS_229;type=Primary
-NC_009839.1	manual	TSS	198638	198638	.	+	.	ID=tss231;Name=TSS_231;type=Antisense
-NC_009839.1	manual	TSS	198709	198709	.	-	.	ID=tss232;Name=TSS_232;type=Primary
-NC_009839.1	manual	TSS	199193	199193	.	-	.	ID=tss234;Name=TSS_234;type=Primary
+NC_009839.1	manual	TSS	856	856	.	-	.	ID=tss0;Name=TSS_0
+NC_009839.1	manual	TSS	1396	1396	.	+	.	ID=tss2;Name=TSS_2
+NC_009839.1	manual	TSS	4464	4464	.	-	.	ID=tss6;Name=TSS_6
+NC_009839.1	manual	TSS	6676	6676	.	+	.	ID=tss8;Name=TSS_8
+NC_009839.1	manual	TSS	8098	8098	.	+	.	ID=tss10;Name=TSS_10
+NC_009839.1	manual	TSS	14976	14976	.	+	.	ID=tss18;Name=TSS_18
+NC_009839.1	manual	TSS	15670	15670	.	-	.	ID=tss20;Name=TSS_20
+NC_009839.1	manual	TSS	17738	17738	.	+	.	ID=tss22;Name=TSS_22
+NC_009839.1	manual	TSS	18053	18053	.	-	.	ID=tss23;Name=TSS_23
+NC_009839.1	manual	TSS	18360	18360	.	-	.	ID=tss24;Name=TSS_24
+NC_009839.1	manual	TSS	19385	19385	.	-	.	ID=tss25;Name=TSS_25
+NC_009839.1	manual	TSS	24473	24473	.	+	.	ID=tss29;Name=TSS_29
+NC_009839.1	manual	TSS	24637	24637	.	-	.	ID=tss30;Name=TSS_30
+NC_009839.1	manual	TSS	26617	26617	.	+	.	ID=tss35;Name=TSS_35
+NC_009839.1	manual	TSS	26627	26627	.	-	.	ID=tss36;Name=TSS_36
+NC_009839.1	manual	TSS	28296	28296	.	+	.	ID=tss37;Name=TSS_37
+NC_009839.1	manual	TSS	31867	31867	.	-	.	ID=tss39;Name=TSS_39
+NC_009839.1	manual	TSS	35870	35870	.	-	.	ID=tss44;Name=TSS_44
+NC_009839.1	manual	TSS	35886	35886	.	+	.	ID=tss45;Name=TSS_45
+NC_009839.1	manual	TSS	36655	36655	.	+	.	ID=tss46;Name=TSS_46
+NC_009839.1	manual	TSS	37044	37044	.	-	.	ID=tss47;Name=TSS_47
+NC_009839.1	manual	TSS	37191	37191	.	+	.	ID=tss48;Name=TSS_48
+NC_009839.1	manual	TSS	39057	39057	.	+	.	ID=tss50;Name=TSS_50
+NC_009839.1	manual	TSS	39182	39182	.	+	.	ID=tss51;Name=TSS_51
+NC_009839.1	manual	TSS	39808	39808	.	-	.	ID=tss52;Name=TSS_52
+NC_009839.1	manual	TSS	40054	40054	.	+	.	ID=tss53;Name=TSS_53
+NC_009839.1	manual	TSS	43101	43101	.	+	.	ID=tss54;Name=TSS_54
+NC_009839.1	manual	TSS	43543	43543	.	+	.	ID=tss55;Name=TSS_55
+NC_009839.1	manual	TSS	48072	48072	.	-	.	ID=tss56;Name=TSS_56
+NC_009839.1	manual	TSS	52776	52776	.	-	.	ID=tss59;Name=TSS_59
+NC_009839.1	manual	TSS	57965	57965	.	-	.	ID=tss61;Name=TSS_61
+NC_009839.1	manual	TSS	58122	58122	.	-	.	ID=tss62;Name=TSS_62
+NC_009839.1	manual	TSS	58597	58597	.	+	.	ID=tss65;Name=TSS_65
+NC_009839.1	manual	TSS	59923	59923	.	+	.	ID=tss68;Name=TSS_68
+NC_009839.1	manual	TSS	64856	64856	.	+	.	ID=tss74;Name=TSS_74
+NC_009839.1	manual	TSS	68260	68260	.	-	.	ID=tss77;Name=TSS_77
+NC_009839.1	manual	TSS	75282	75282	.	+	.	ID=tss85;Name=TSS_85
+NC_009839.1	manual	TSS	75317	75317	.	+	.	ID=tss86;Name=TSS_86
+NC_009839.1	manual	TSS	75684	75684	.	+	.	ID=tss87;Name=TSS_87
+NC_009839.1	manual	TSS	75722	75722	.	-	.	ID=tss88;Name=TSS_88
+NC_009839.1	manual	TSS	75845	75845	.	+	.	ID=tss89;Name=TSS_89
+NC_009839.1	manual	TSS	75877	75877	.	+	.	ID=tss90;Name=TSS_90
+NC_009839.1	manual	TSS	76099	76099	.	+	.	ID=tss91;Name=TSS_91
+NC_009839.1	manual	TSS	76450	76450	.	-	.	ID=tss92;Name=TSS_92
+NC_009839.1	manual	TSS	76473	76473	.	+	.	ID=tss93;Name=TSS_93
+NC_009839.1	manual	TSS	78706	78706	.	+	.	ID=tss94;Name=TSS_94
+NC_009839.1	manual	TSS	79832	79832	.	+	.	ID=tss95;Name=TSS_95
+NC_009839.1	manual	TSS	84110	84110	.	+	.	ID=tss98;Name=TSS_98
+NC_009839.1	manual	TSS	85614	85614	.	-	.	ID=tss101;Name=TSS_101
+NC_009839.1	manual	TSS	85659	85659	.	+	.	ID=tss102;Name=TSS_102
+NC_009839.1	manual	TSS	87152	87152	.	+	.	ID=tss103;Name=TSS_103
+NC_009839.1	manual	TSS	87844	87844	.	+	.	ID=tss104;Name=TSS_104
+NC_009839.1	manual	TSS	89115	89115	.	-	.	ID=tss107;Name=TSS_107
+NC_009839.1	manual	TSS	89961	89961	.	+	.	ID=tss108;Name=TSS_108
+NC_009839.1	manual	TSS	90458	90458	.	-	.	ID=tss111;Name=TSS_111
+NC_009839.1	manual	TSS	93427	93427	.	-	.	ID=tss112;Name=TSS_112
+NC_009839.1	manual	TSS	95234	95234	.	-	.	ID=tss114;Name=TSS_114
+NC_009839.1	manual	TSS	95342	95342	.	+	.	ID=tss116;Name=TSS_116
+NC_009839.1	manual	TSS	97624	97624	.	+	.	ID=tss119;Name=TSS_119
+NC_009839.1	manual	TSS	100466	100466	.	+	.	ID=tss123;Name=TSS_123
+NC_009839.1	manual	TSS	100738	100738	.	+	.	ID=tss124;Name=TSS_124
+NC_009839.1	manual	TSS	102327	102327	.	-	.	ID=tss127;Name=TSS_127
+NC_009839.1	manual	TSS	102509	102509	.	+	.	ID=tss129;Name=TSS_129
+NC_009839.1	manual	TSS	105406	105406	.	+	.	ID=tss130;Name=TSS_130
+NC_009839.1	manual	TSS	110536	110536	.	+	.	ID=tss134;Name=TSS_134
+NC_009839.1	manual	TSS	113257	113257	.	+	.	ID=tss137;Name=TSS_137
+NC_009839.1	manual	TSS	116412	116412	.	+	.	ID=tss141;Name=TSS_141
+NC_009839.1	manual	TSS	116475	116475	.	+	.	ID=tss142;Name=TSS_142
+NC_009839.1	manual	TSS	118451	118451	.	+	.	ID=tss143;Name=TSS_143
+NC_009839.1	manual	TSS	119530	119530	.	-	.	ID=tss145;Name=TSS_145
+NC_009839.1	manual	TSS	120203	120203	.	+	.	ID=tss146;Name=TSS_146
+NC_009839.1	manual	TSS	124108	124108	.	+	.	ID=tss148;Name=TSS_148
+NC_009839.1	manual	TSS	128737	128737	.	+	.	ID=tss151;Name=TSS_151
+NC_009839.1	manual	TSS	131199	131199	.	+	.	ID=tss153;Name=TSS_153
+NC_009839.1	manual	TSS	131783	131783	.	-	.	ID=tss154;Name=TSS_154
+NC_009839.1	manual	TSS	131954	131954	.	-	.	ID=tss155;Name=TSS_155
+NC_009839.1	manual	TSS	133497	133497	.	+	.	ID=tss158;Name=TSS_158
+NC_009839.1	manual	TSS	134601	134601	.	-	.	ID=tss159;Name=TSS_159
+NC_009839.1	manual	TSS	136166	136166	.	-	.	ID=tss161;Name=TSS_161
+NC_009839.1	manual	TSS	136704	136704	.	-	.	ID=tss162;Name=TSS_162
+NC_009839.1	manual	TSS	139117	139117	.	-	.	ID=tss166;Name=TSS_166
+NC_009839.1	manual	TSS	139357	139357	.	+	.	ID=tss167;Name=TSS_167
+NC_009839.1	manual	TSS	140034	140034	.	+	.	ID=tss169;Name=TSS_169
+NC_009839.1	manual	TSS	142746	142746	.	+	.	ID=tss171;Name=TSS_171
+NC_009839.1	manual	TSS	148088	148088	.	+	.	ID=tss175;Name=TSS_175
+NC_009839.1	manual	TSS	149290	149290	.	-	.	ID=tss176;Name=TSS_176
+NC_009839.1	manual	TSS	152376	152376	.	+	.	ID=tss180;Name=TSS_180
+NC_009839.1	manual	TSS	157420	157420	.	+	.	ID=tss184;Name=TSS_184
+NC_009839.1	manual	TSS	158964	158964	.	-	.	ID=tss185;Name=TSS_185
+NC_009839.1	manual	TSS	160150	160150	.	-	.	ID=tss187;Name=TSS_187
+NC_009839.1	manual	TSS	165841	165841	.	-	.	ID=tss188;Name=TSS_188
+NC_009839.1	manual	TSS	166910	166910	.	-	.	ID=tss189;Name=TSS_189
+NC_009839.1	manual	TSS	167000	167000	.	+	.	ID=tss190;Name=TSS_190
+NC_009839.1	manual	TSS	169059	169059	.	-	.	ID=tss191;Name=TSS_191
+NC_009839.1	manual	TSS	172002	172002	.	+	.	ID=tss195;Name=TSS_195
+NC_009839.1	manual	TSS	174154	174154	.	-	.	ID=tss196;Name=TSS_196
+NC_009839.1	manual	TSS	174243	174243	.	+	.	ID=tss198;Name=TSS_198
+NC_009839.1	manual	TSS	174436	174436	.	+	.	ID=tss199;Name=TSS_199
+NC_009839.1	manual	TSS	174694	174694	.	-	.	ID=tss200;Name=TSS_200
+NC_009839.1	manual	TSS	174904	174904	.	+	.	ID=tss201;Name=TSS_201
+NC_009839.1	manual	TSS	180526	180526	.	-	.	ID=tss207;Name=TSS_207
+NC_009839.1	manual	TSS	180678	180678	.	+	.	ID=tss208;Name=TSS_208
+NC_009839.1	manual	TSS	181796	181796	.	-	.	ID=tss212;Name=TSS_212
+NC_009839.1	manual	TSS	181964	181964	.	+	.	ID=tss213;Name=TSS_213
+NC_009839.1	manual	TSS	185512	185512	.	-	.	ID=tss214;Name=TSS_214
+NC_009839.1	manual	TSS	185674	185674	.	+	.	ID=tss215;Name=TSS_215
+NC_009839.1	manual	TSS	187117	187117	.	-	.	ID=tss218;Name=TSS_218
+NC_009839.1	manual	TSS	188281	188281	.	-	.	ID=tss219;Name=TSS_219
+NC_009839.1	manual	TSS	192245	192245	.	+	.	ID=tss225;Name=TSS_225
+NC_009839.1	manual	TSS	193930	193930	.	-	.	ID=tss227;Name=TSS_227
+NC_009839.1	manual	TSS	196338	196338	.	-	.	ID=tss229;Name=TSS_229
+NC_009839.1	manual	TSS	198638	198638	.	+	.	ID=tss231;Name=TSS_231
+NC_009839.1	manual	TSS	198709	198709	.	-	.	ID=tss232;Name=TSS_232
+NC_009839.1	manual	TSS	199193	199193	.	-	.	ID=tss234;Name=TSS_234
