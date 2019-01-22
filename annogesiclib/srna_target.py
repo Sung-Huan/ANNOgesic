@@ -436,16 +436,19 @@ class sRNATargetPrediction(object):
                 out_rnaplex = os.path.join(
                         self.rnaplex_path, prefix,
                         "_".join([prefix, "RNAplex_rank.csv"]))
+                self._remove_repeat(rnaplex_file, "RNAplex")
             if ("RNAup" in args_tar.program):
                 rnaup_file = os.path.join(self.rnaup_path, prefix,
                                           "_".join([prefix, "RNAup.txt"]))
                 out_rnaup = os.path.join(self.rnaup_path, prefix,
                                          "_".join([prefix, "RNAup_rank.csv"]))
+                self._remove_repeat(rnaup_file, "RNAup")
             if ("IntaRNA" in args_tar.program):
                 intarna_file = os.path.join(self.intarna_path, prefix,
                                             "_".join([prefix, "IntaRNA.txt"]))
                 out_intarna = os.path.join(self.intarna_path, prefix,
                                            "_".join([prefix, "IntaRNA_rank.csv"]))
+                self._remove_repeat(intarna_file, "IntaRNA")
             overlap_file = os.path.join(self.merge_path, prefix,
                                         "_".join([prefix, "overlap.csv"]))
             merge_file = os.path.join(self.merge_path, prefix,
@@ -467,6 +470,114 @@ class sRNATargetPrediction(object):
                 log.write("\t" + merge_file + "\n")
             if (os.path.exists(overlap_file)):
                 log.write("\t" + overlap_file + "\n")
+
+    def _remove_rnaplex(self, line, num, pre_num, pre, checks,
+                        out_tmp, print_):
+        if (line.startswith(">")):
+            if (num % 2 == 1):
+                print_ = False
+                pre = line
+                if (line not in checks):
+                    checks[line] = []
+                    print_ = True
+            elif (num % 2 == 0) and (line not in checks[pre]):
+                checks[pre].append(line)
+                print_ = True
+            num = num + 1
+        else:
+            if (print_):
+                if (num != pre_num):
+                    out_tmp.write(pre + "\n")
+                    out_tmp.write(checks[pre][-1] + "\n")
+                out_tmp.write(line + "\n")
+                pre_num = num
+        return num, pre_num, print_, pre,
+
+    def _remove_rnaup(self, line, pre, num, pre_num, srna_info,
+                      checks, out_tmp, print_, tar):
+        if (line.startswith(">")):
+            print_ = False
+            tar = False
+            if (pre.startswith(">")):
+                if (pre not in checks):
+                    checks[pre] = [line]
+                    srna_info = pre
+                    print_ = True
+                else:
+                    if (line not in checks[pre]):
+                        checks[pre].append(line)
+                        print_ = True
+            else:
+                if (num != 1):
+                    if (line not in checks[srna_info]):
+                        checks[srna_info].append(line)
+                        print_ = True
+        else:
+            if (print_):
+                if (pre_num != len(checks)):
+                    out_tmp.write(srna_info + "\n")
+                    out_tmp.write(checks[srna_info][-1] + "\n")
+                    out_tmp.write(line + "\n")
+                else:
+                    if (not tar):
+                        out_tmp.write(checks[srna_info][-1] + "\n")
+                    out_tmp.write(line + "\n")
+                pre_num = len(checks)
+                tar = True
+        pre = line
+        num = num + 1
+        return num, pre_num, print_, pre, tar, srna_info
+
+    def _remove_intarna(self, line, checks, tar, srna_info, seq, out_tmp):
+        if (line.startswith(".")) or (
+                line.startswith("(")) or (
+                line.startswith(")")):
+            seq = line.split(";")[0]
+            if (seq not in checks[tar][srna_info]):
+                checks[tar][srna_info].append(seq)
+                out_tmp.write(line + "\n")
+        else:
+            if (len(line.split(";")) >= 8):
+                tar = line.split(";")[0]
+                srna_info = line.split(";")[3]
+                seq = line.split(";")[7]
+                if (tar not in checks):
+                    checks[tar] = {}
+                    checks[tar][srna_info] = [seq]
+                    out_tmp.write(line + "\n")
+                else:
+                    if (srna_info not in checks[tar]):
+                        checks[tar][srna_info] = [seq]
+                        out_tmp.write(line + "\n")
+        return tar, srna_info, seq
+
+    def _remove_repeat(self, interact_file, type_):
+        checks = {}
+        seq = ""
+        pre = ""
+        srna_info = ""
+        num = 1
+        tar = False
+        pre_num = 0
+        print_ = False
+        out_tmp = open(interact_file + "tmp", "w")
+        with open(interact_file) as fh:
+            for line in fh:
+                line = line.strip()
+                if (type_ == "RNAplex"):
+                    num, pre_num, print_, pre = self._remove_rnaplex(
+                            line, num, pre_num, pre, checks, out_tmp, print_)
+                elif (type_ == "RNAup"):
+                    num, pre_num, print_, pre, tar, srna_info = (
+                            self._remove_rnaup(
+                                line, pre, num, pre_num,
+                                srna_info, checks, out_tmp, print_, tar))
+                elif (type_ == "IntaRNA"):
+                    tar, srna_info, seq = self._remove_intarna(
+                            line, checks, tar, srna_info, seq, out_tmp)
+        out_tmp.close()
+        shutil.move(interact_file + "tmp", interact_file)
+
 
     def run_srna_target_prediction(self, args_tar, log):
         self._check_gff(args_tar.gffs)
