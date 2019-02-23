@@ -1,6 +1,6 @@
 FROM ubuntu
 MAINTAINER Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>
-#ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update --yes
 RUN apt-get upgrade --yes
@@ -14,8 +14,8 @@ ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
 libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
 snap cpanminus mummer exonerate mafft fasttree libsvg-perl libboost-all-dev \
 libgd-svg-perl python-setuptools libc6-i386 lib32stdc++6 lib32gcc1 \
-netcat genometools last-align libboost-iostreams-dev libgsl2 libgsl-dev \
-libcolamd2.9.1 liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
+netcat genometools last-align libboost-iostreams-dev libgsl-dev \
+liblpsolve55-dev libstdc++6 aragorn tantan libstorable-perl \
 libbio-perl-perl libsqlite3-dev tree --yes --fix-missing
 RUN ln -fs /usr/bin/fasttree /usr/bin/FastTree
 
@@ -81,10 +81,17 @@ RUN cd meme_4.11.1 && ./configure --prefix=/tools/meme \
 --enable-build-libxslt && \
 make && make test && make install && cp /tools/meme/bin/* /usr/local/bin
 
-# segemehl
-RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_0_2_0.tar.gz && \
-tar -zxvf segemehl_0_2_0.tar.gz && cd segemehl_0_2_0/segemehl && \
-make all && cp *.x /usr/local/bin
+## htslib, samtools, bcftools
+RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
+RUN tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && ./configure && make && make install && cd ..
+RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
+RUN tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && ./configure && make && make install && cd ..
+RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
+RUN tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make && make install && cd ..
+
+# segemehl TODO:update to latest version. Some parameters are changed
+RUN wget http://www.bioinf.uni-leipzig.de/Software/segemehl/old/segemehl_0_2_0.tar.gz && \
+tar -zxvf segemehl_0_2_0.tar.gz && cd segemehl_0_2_0/segemehl && make all && cp *.x /usr/local/bin
 
 # transtermHP
 RUN wget http://transterm.cbcb.umd.edu/transterm_hp_v2.09.zip && \
@@ -170,25 +177,23 @@ RUN cp /usr/local/psortb/bin/psort /usr/local/bin
 
 WORKDIR /tools
 
-## htslib, samtools, bcftools
-RUN wget https://github.com/samtools/htslib/releases/download/1.3.1/htslib-1.3.1.tar.bz2
-RUN tar -jxvf htslib-1.3.1.tar.bz2 && cd htslib-1.3.1 && ./configure && make && make install && cd ..
-RUN wget https://github.com/samtools/samtools/releases/download/1.3.1/samtools-1.3.1.tar.bz2
-RUN tar -jxvf samtools-1.3.1.tar.bz2 && cd samtools-1.3.1 && ./configure && make && make install && cd ..
-RUN wget https://github.com/samtools/bcftools/releases/download/1.3.1/bcftools-1.3.1.tar.bz2
-RUN tar -jxvf bcftools-1.3.1.tar.bz2 && cd bcftools-1.3.1 && make && make install && cd ..
+# sometimes the pypi does not update to latest version.
+# may need to re-write the code
+RUN pip3 install ANNOgesic --upgrade --force-reinstall
 
 RUN rm segemehl_0_2_0.tar.gz \
 meme_4.11.1.tar.gz \
 transterm_hp_v2.09.zip \
-ViennaRNA-2.3.2.tar.gz \
-intaRNA-2.0.4.tar.gz \
-CRT1.2-CLI.jar.zip \
 htslib-1.3.1.tar.bz2 \
 bcftools-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
+ViennaRNA-2.3.2.tar.gz \
+intaRNA-2.0.4.tar.gz \
+CRT1.2-CLI.jar.zip \
 PAGIT.V1.64bit.tgz
 
-WORKDIR /data
+# a patch for language setting, need to re-write the code.
+RUN apt-get update && apt-get -y install locales
+RUN locale-gen en_US.UTF-8
 
-RUN pip3 install ANNOgesic --upgrade
+WORKDIR /data
