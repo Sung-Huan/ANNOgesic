@@ -332,9 +332,6 @@ class sRNADetection(object):
                     print("Error: Fasta file is not assinged!")
                     log.write("Fasta file is not assinged.\n")
                     sys.exit()
-                self.multiparser.parser_fasta(args_srna.fastas)
-                self.multiparser.combine_fasta(args_srna.gffs,
-                                               self.fasta_path, None)
         if args_srna.terms is not None:
             self._check_gff(args_srna.terms)
             self.multiparser.parser_gff(args_srna.terms, "term")
@@ -1021,6 +1018,9 @@ class sRNADetection(object):
         self.multiparser.parser_gff(args_srna.trans, "transcript")
         self.multiparser.combine_gff(args_srna.gffs, self.tran_path,
                                      None, "transcript")
+        self.multiparser.parser_fasta(args_srna.fastas)
+        self.multiparser.combine_fasta(args_srna.gffs,
+                                       self.fasta_path, None)
         if args_srna.import_info is not None:
             args_srna.import_info = self._import_info_format(args_srna.import_info)
         prefixs = self._run_program(args_srna, log)

@@ -1541,10 +1541,7 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             or "tss" in --filter_info, TSS gff files MUST be
                             provided.
       --fasta_files FASTA_FILES [FASTA_FILES ...], -f FASTA_FILES [FASTA_FILES ...]
-                            paths of fasta files of reference genome, If
-                            "sec_str", "blast_nr" or "blast_srna" is assigned to
-                            --filter_info or --search_poly_u is not 0, fasta files
-                            are required.
+                            paths of fasta files of reference genome.
       --compute_sec_structures, -cs
                             Computing secondary structures of sRNAs. Default is
                             False.

@@ -785,6 +785,8 @@ Based on different types of the TSSs and the length of the motif, numerous outpu
     glam2.html  logo10.eps  logo1.png  logo3.eps  logo4.png  logo6.eps  logo7.png  logo9.eps  logo_ssc10.png  logo_ssc2.eps  logo_ssc3.png  logo_ssc5.eps  logo_ssc6.png  logo_ssc8.eps  logo_ssc9.png
     glam2.meme  logo10.png  logo2.eps  logo3.png  logo5.eps  logo6.png  logo8.eps  logo9.png  logo_ssc1.eps   logo_ssc2.png  logo_ssc4.eps  logo_ssc5.png  logo_ssc7.eps  logo_ssc8.png
 
+If you want to detect promoters based on a specific type of TSSs, ``fasta_classes`` stores different types of TSSs. You can use these fasta files to run promoter detection again.
+
 Prediction of sRNA and sORF
 ---------------------------
 

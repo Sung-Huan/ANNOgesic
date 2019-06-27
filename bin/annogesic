@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 def main():
     print("""
@@ -796,10 +796,8 @@ def main():
         help="Paths of TSS gff files. For detecting UTR-derived sRNA or "
         "\"tss\" in --filter_info, TSS gff files MUST be provided.")
     sRNA_basic.add_argument(
-        "--fasta_files", "-f", default=None, nargs='+',
-        help="paths of fasta files of reference genome, If \"sec_str\", "
-        "\"blast_nr\" or \"blast_srna\" is assigned to "
-        "--filter_info or --search_poly_u is not 0, fasta files are required. ")
+        "--fasta_files", "-f", default=None, nargs='+', required=True,
+        help="paths of fasta files of reference genome.")
     sRNA_basic.add_argument(
         "--compute_sec_structures", "-cs", default=False, action="store_true",
         help="Computing secondary structures of sRNAs. Default is False.")
@@ -1308,7 +1306,7 @@ def main():
         "ex: if 1 2 3 are assigned, the prediction will run three times for "
         "all TSSs, primary TSSs and secondary TSSs. Default is 1.")
     promoter_basic.add_argument(
-        "--motif_width", "-w", default=[50], nargs='+',
+        "--motif_width", "-w", default=["50"], nargs='+',
         help="Length of the motifs to detects. "
         "For a range insert \"-\" between "
         "two values. Moreover, if multiple lengths need to be assigned, "

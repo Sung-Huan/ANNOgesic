@@ -552,9 +552,14 @@ def intersection(tsss, cluster, nums, lengths, cdss, genes, seqs):
                     overlap = True
                     pre_tss = tss_p
         if start:
-            if tss_p.seq_id not in num_strain.keys():
-                num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0,
-                                            "manual": 0}
+            if pre_tss is None:
+                if tss_p.seq_id not in num_strain.keys():
+                    num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                                "manual": 0}
+            else:
+                if pre_tss.seq_id not in num_strain.keys():
+                    num_strain[pre_tss.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                                "manual": 0}
             datas = check_overlap(overlap, pre_tss, nums, length, num_strain,
                                   overlap_num, tss_m, tss_p, tsss, pre_pos,
                                   cdss, genes)
