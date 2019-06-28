@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
 __email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 def main():
     print("""
@@ -317,10 +317,10 @@ def main():
         "\"PS\". Default is TSS.")
     op_TSSpredator_basic.add_argument(
         "--fasta_files", "-f", nargs='+', required=True,
-        help="Paths of the fasta file of the reference genome.")
+        help="Paths of the fasta files of the reference genome.")
     op_TSSpredator_basic.add_argument(
         "--annotation_files", "-g", nargs='+', required=True,
-        help="Paths of the genome annotation gff file containing CDSs, "
+        help="Paths of the genome annotation gff files containing CDSs, "
         "tRNAs, rRNAs, etc.")
     op_TSSpredator_basic.add_argument(
         "--manual_files", "-m", nargs='+', required=True,

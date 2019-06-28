@@ -507,17 +507,16 @@ def check_overlap(overlap, pre_tss, nums, length, num_strain, overlap_num,
         overlap = False
         pre_pos = tss.start
     else:
-        if tss_m.seq_id == tss_p.seq_id:
-            tss_entry = compare_tss_gene(tss_m, genes)
-            tss_m.attributes = tss_entry[1]
-            tss_m.attribute_string = tss_entry[0]
-            tss_m.attributes["method"] = "manual"
-            tsss["merge"].append(tss_m)
-            if (not length) or \
-               (tss_m.start <= int(length)):
-                num_strain[tss_m.seq_id]["manual"] += 1
-                nums["tss_m"] += 1
-                nums["tss"] += 1
+        tss_entry = compare_tss_gene(tss_m, genes)
+        tss_m.attributes = tss_entry[1]
+        tss_m.attribute_string = tss_entry[0]
+        tss_m.attributes["method"] = "manual"
+        tsss["merge"].append(tss_m)
+        if (not length) or \
+           (tss_m.start <= int(length)):
+            num_strain[tss_m.seq_id]["manual"] += 1
+            nums["tss_m"] += 1
+            nums["tss"] += 1
     return (overlap, pre_pos, overlap_num)
 
 
@@ -551,21 +550,24 @@ def intersection(tsss, cluster, nums, lengths, cdss, genes, seqs):
                 elif (math.fabs(tss_p.start - tss_m.start) <= cluster):
                     overlap = True
                     pre_tss = tss_p
-        if start:
-            if pre_tss is None:
-                if tss_p.seq_id not in num_strain.keys():
-                    num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0,
-                                                "manual": 0}
-            else:
-                if pre_tss.seq_id not in num_strain.keys():
-                    num_strain[pre_tss.seq_id] = {"overlap": 0, "tsspredator": 0,
-                                                "manual": 0}
-            datas = check_overlap(overlap, pre_tss, nums, length, num_strain,
-                                  overlap_num, tss_m, tss_p, tsss, pre_pos,
-                                  cdss, genes)
-            overlap = datas[0]
-            pre_pos = datas[1]
-            overlap_num = datas[2]
+        if (start) or (not overlap):
+            if tss_m.seq_id not in num_strain.keys():
+                num_strain[tss_m.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                            "manual": 0}
+        if pre_tss is None:
+            if tss_p.seq_id not in num_strain.keys():
+                num_strain[tss_p.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                            "manual": 0}
+        else:
+            if pre_tss.seq_id not in num_strain.keys():
+                num_strain[pre_tss.seq_id] = {"overlap": 0, "tsspredator": 0,
+                                            "manual": 0}
+        datas = check_overlap(overlap, pre_tss, nums, length, num_strain,
+                              overlap_num, tss_m, tss_p, tsss, pre_pos,
+                              cdss, genes)
+        overlap = datas[0]
+        pre_pos = datas[1]
+        overlap_num = datas[2]
     if (start) or (len(tsss["tsss_m"]) == 0):
         for tss_p in tsss["tsss_p"]:
             run = False
