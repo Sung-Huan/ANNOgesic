@@ -6,9 +6,9 @@ import argparse
 import os
 from annogesiclib.controller import Controller
 
-__author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
-__email__ = "sung-huan.yu@uni-wuerzburg.de"
-__version__ = "1.0.4"
+__author__ = "Sung-Huan Yu <shyu@.biochem.mpg.dede>"
+__email__ = "shyu@biochem.mpg.de"
+__version__ = "1.0.5"
 
 def main():
     print("""

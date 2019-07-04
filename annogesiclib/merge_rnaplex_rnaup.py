@@ -473,11 +473,12 @@ def merge_three(srnas, method3, srna, detect, srna_m1, top):
         for srna_m3 in srnas[method3][srna]:
             if (srna_m1["detail"] == srna_m3["detail"]) and (
                     "rank" in srna_m3.keys()):
-                if (srna_m3["rank"] <= top) and (
-                        "print" not in srna_m3.keys()) and (
-                        srna_m3["tar_pos"] != "NA"):
-                    srna_m3["print"] = True
-                    detect["3"] = True
+                if (srna_m3["rank"] != "NA"):
+                    if (srna_m3["rank"] <= top) and (
+                            "print" not in srna_m3.keys()) and (
+                            srna_m3["tar_pos"] != "NA"):
+                        srna_m3["print"] = True
+                        detect["3"] = True
                 return srna_m3
     else:
         return srna_m3
@@ -528,44 +529,46 @@ def merge_result(srnas, srna_gffs, args_tar, gffs, merges, length, methods):
         name = srna_datas[0]
         srna_info = srna_datas[1]
         for srna_m1 in srna_m1s:
-            if "rank" in srna_m1.keys():
-                if ("print" not in srna_m1.keys()) and (
-                        srna_m1["rank"] <= args_tar.top) and (
-                        srna_m1["tar_pos"] != "NA"):
-                    detect = {"2": False, "3": False}
-                    srna_m3 = None
-                    for srna_m2 in srnas[method2][srna]:
-                        if (srna_m1["detail"] == srna_m2["detail"]):
-                            if ("rank" in srna_m2.keys()):
-                                if (srna_m2["rank"] <= args_tar.top) and (
-                                        "print" not in srna_m2.keys()) and (
-                                         srna_m2["tar_pos"] != "NA"):
-                                    detect["2"] = True
-                                    srna_m3 = merge_three(srnas, method3, srna,
-                                                          detect, srna_m1,
-                                                          args_tar.top)
-                                    if (len(methods) == 2) or (
-                                            (len(methods) == 3) and detect["3"]):
-                                        target_info = get_target_info(
-                                            gffs, srna_m1)
-                                        import_merge(
-                                            overlaps, name, srna_info, srna_m1,
-                                            srna_m2, srna_m3, target_info,
-                                            args_tar.tar_start,
-                                            args_tar.tar_end, length,
-                                            len(methods))
-                                        srna_m1["print"] = True
-                                        srna_m2["print"] = True
-                                        import_merge(
-                                            merges, name, srna_info, srna_m1,
-                                            srna_m2, srna_m3, target_info,
-                                            args_tar.tar_start,
-                                            args_tar.tar_end, length,
-                                            len(methods))
-                            break
-                    check_non_overlap(detect, methods, srna_m1, srna_m2,
-                                      srna_m3, gffs, merges, name, srna_info,
-                                      args_tar, length, method3, srna, srnas)
+            if ("rank" in srna_m1.keys()):
+                if (srna_m1["rank"] != "NA"):
+                    if ("print" not in srna_m1.keys()) and (
+                            srna_m1["rank"] <= args_tar.top) and (
+                            srna_m1["tar_pos"] != "NA"):
+                        detect = {"2": False, "3": False}
+                        srna_m3 = None
+                        for srna_m2 in srnas[method2][srna]:
+                            if (srna_m1["detail"] == srna_m2["detail"]):
+                                if ("rank" in srna_m2.keys()):
+                                    if (srna_m2["rank"] != "NA"):
+                                        if (srna_m2["rank"] <= args_tar.top) and (
+                                                "print" not in srna_m2.keys()) and (
+                                                 srna_m2["tar_pos"] != "NA"):
+                                            detect["2"] = True
+                                            srna_m3 = merge_three(srnas, method3, srna,
+                                                                  detect, srna_m1,
+                                                                  args_tar.top)
+                                            if (len(methods) == 2) or (
+                                                    (len(methods) == 3) and detect["3"]):
+                                                target_info = get_target_info(
+                                                    gffs, srna_m1)
+                                                import_merge(
+                                                    overlaps, name, srna_info, srna_m1,
+                                                    srna_m2, srna_m3, target_info,
+                                                    args_tar.tar_start,
+                                                    args_tar.tar_end, length,
+                                                    len(methods))
+                                                srna_m1["print"] = True
+                                                srna_m2["print"] = True
+                                                import_merge(
+                                                    merges, name, srna_info, srna_m1,
+                                                    srna_m2, srna_m3, target_info,
+                                                    args_tar.tar_start,
+                                                    args_tar.tar_end, length,
+                                                    len(methods))
+                                break
+                        check_non_overlap(detect, methods, srna_m1, srna_m2,
+                                          srna_m3, gffs, merges, name, srna_info,
+                                          args_tar, length, method3, srna, srnas)
     return overlaps
 
 
