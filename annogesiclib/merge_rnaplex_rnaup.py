@@ -148,8 +148,8 @@ def read_rnaplex(rnaplex, genes, genomes, features, srnas):
                     target_locus = "_".join(tags[:-3])
                     target_id = tags[-3]
                     detail = "_".join(tags[-2:])
-                    gene_id, tar = get_gene_id(detail, target_id,
-                                               genes, genomes, features)
+                    gene_id, tar, target_id, target_locus = get_gene_id(
+                            detail, genes, genomes, features)
                 elif count_seq == 2:
                     srna = line[1:]
                     if srna not in srnas["RNAplex"].keys():
@@ -173,11 +173,9 @@ def read_rnaup(rnaup, srna_names, srnas, genes, genomes, features):
                     srna = line[1:]
                 else:
                     tags = line[1:].split("_")
-                    target_locus = "_".join(tags[:-3])
-                    target_id = tags[-3]
                     detail = "_".join(tags[-2:])
-                    gene_id, tar = get_gene_id(detail, target_id, genes, genomes,
-                                               features)
+                    gene_id, tar, target_id, target_locus = get_gene_id(
+                            detail, genes, genomes, features)
                     if srna in srnas["RNAup"].keys():
                         srnas["RNAup"][srna].append({
                             "target_id": target_id, "target_locus": target_locus,
@@ -202,12 +200,10 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                     srna = inter[3]
                     tags = inter[0].split("_")
                     if len(tags) >= 4:
-                        target_locus = "_".join(tags[:-3])
-                        target_id = tags[-3]
                         detail = "_".join(tags[-2:])
                         if (len(tags[0])) != 0:
-                            gene_id, tar = get_gene_id(detail, target_id, genes,
-                                                       genomes, features)
+                            gene_id, tar, target_id, target_locus = get_gene_id(
+                                    detail, genes, genomes, features)
                             if tar is not None:
                                 if (srna not in srnas["IntaRNA"].keys()):
                                     srnas["IntaRNA"][srna] = []
@@ -233,32 +229,33 @@ def read_table(gffs, rnaplex, rnaup, intarna, genes, genomes, features):
     return srnas
 
 
-def get_gene_id(detail, tar_id, genes, gffs, features):
+def get_gene_id(detail, genes, gffs, features):
     tar = None
     for gff in gffs:
         if gff.feature in features:
-            if tar_id != "NA":
-                if "ID" in gff.attributes.keys():
-                    if gff.attributes["ID"] == tar_id:
-                        tar = gff
-                        break
-            else:
-                start = int(detail.split("-")[0])
-                end = int(detail.split("-")[-1].split("_")[0])
-                strand = detail.split("_")[-1]
-                if (gff.start == start) and (gff.end == end) and (
-                        gff.strand == strand):
-                    tar = gff
-                    break
+            strand = detail.split("_")[-1]
+            start = int(detail.split("-")[0])
+            end = int(detail.split("-")[1].split("_")[0])
+            strand = detail.split("_")[-1]
+            if (gff.start == start) and (gff.end == end) and (
+                    gff.strand == strand):
+                tar = gff
+                break
     gene_id = "NA"
+    target_id = "NA"
+    target_locus = "NA"
     if tar is not None:
+        if "ID" in tar.attributes.keys():
+            target_id = tar.attributes["ID"]
+        if "locus_tag" in tar.attributes.keys():
+            target_locus = tar.attributes["locus_tag"]
         for gene in genes:
             if "Parent" in tar.attributes.keys():
                 if "ID" in gene.attributes.keys():
                     if (gene.attributes["ID"] in
                             tar.attributes["Parent"].split(",")):
                         gene_id = gene.attributes["ID"]
-                        return gene_id, tar
+                        return gene_id, tar, target_id, target_locus
             if gene_id == "NA":
                 if (gene.seq_id == tar.seq_id) and (
                         gene.strand == tar.strand) and (
@@ -266,7 +263,7 @@ def get_gene_id(detail, tar_id, genes, gffs, features):
                         tar.end == gene.end)):
                     if "ID" in gene.attributes.keys():
                         gene_id = gene.attributes["ID"]
-                        return gene_id, tar
+                        return gene_id, tar, target_id, target_locus
         if gene_id == "NA":
             for gene in genes:
                 if (gene.seq_id == tar.seq_id) and (
@@ -283,8 +280,8 @@ def get_gene_id(detail, tar_id, genes, gffs, features):
                             tar.end >= gene.end)):
                         if "ID" in gene.attributes.keys():
                             gene_id = gene.attributes["ID"]
-                            return gene_id, tar
-    return gene_id, tar
+                            return gene_id, tar, target_id, target_locus
+    return gene_id, tar, target_id, target_locus
 
 
 def append_merge_three_methods(name, srna_info, ps_pos, pt_pos, u_data, i_data,

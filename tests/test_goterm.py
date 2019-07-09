@@ -61,7 +61,7 @@ class TestGetPolyT(unittest.TestCase):
         with open(out_file) as fh:
             for line in fh:
                 data.append(line)
-        self.assertEqual("".join(data), "Genome	Strand	Start	End	Protein_id	Go_term\ntest1\ntest2\n")
+        self.assertEqual("".join(data), "Genome	Strand	Start	End	Protein_id	Go_term\ntest2\ntest1\n")
         log.close()
 
 if __name__ == "__main__":

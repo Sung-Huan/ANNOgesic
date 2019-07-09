@@ -166,22 +166,6 @@ class TestsRNATargetPrediction(unittest.TestCase):
         self.assertEqual("\n".join(datas),
                          ">srna0|aaa|5|8|+\nAAATTAATTAAATTCCGGCCGGCCGG")
 
-    def test_merge_rnaplex_rnaup(self):
-        st.merge_srna_target = self.mock.mock_merge_srna_target
-        args = self.mock_args.mock()
-        args.srnas = self.srnas
-        args.fastas = self.fastas
-        args.gffs = self.gffs
-        args.program = ["RNAup", "RNAplex"]
-        args.out_folder = self.out
-        log = open(os.path.join(self.test_folder, "test.log"), "w")
-        args.top = "top"
-        self.star._merge_rnaplex_rnaup(["test"], args, log)
-        datas = import_data(os.path.join(self.test_folder, "out"))
-        self.assertEqual("\n".join(datas),
-                         ("test_folder/output/RNAplex_results/test/test_RNAplex"
-                          ".txttest_folder/output/RNAup_results/test/test_RNAup.txt"))
-
 
 class Example(object):
     srna_file = """aaa	UTR_derived	sRNA	5	8	.	+	.	ID=srna0;Name=srna_00000;UTR_type=3utr"""
