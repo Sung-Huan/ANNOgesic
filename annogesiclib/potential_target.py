@@ -1,4 +1,5 @@
 import os
+import sys
 from annogesiclib.helper import Helper
 from annogesiclib.gff3 import Gff3Parser
 
@@ -56,6 +57,11 @@ def read_file(seq_file, gff_file, target_folder, features):
         if entry.feature == "gene":
             genes.append(entry)
     g_h.close()
+    if len(cdss_f) == 0 and len(cdss_r) == 0:
+        print("No assigned features can be found. "
+              "Please check your genome annotation."
+              "And assign correct features to --target_feature.")
+        sys.exit()
     cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start,
                                            k.end, k.strand))
     cdss_r = sorted(cdss_r, key=lambda k: (k.seq_id, k.start,
