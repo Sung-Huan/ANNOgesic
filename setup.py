@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='ANNOgesic',
-    version='1.0.7',
+    version='1.0.8',
     packages=['annogesiclib'],
     author='Sung-Huan Yu',
     author_email='sung-huan.yu@uni-wuerzburg.de',
