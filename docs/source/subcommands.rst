@@ -1766,10 +1766,10 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             Default is 0.0001.
       --blast_score_srna BLAST_SCORE_SRNA, -bs BLAST_SCORE_SRNA
                             The minimum score for searching in sRNA database.
-                            Default is None.
+                            Default is 40.
       --blast_score_nr BLAST_SCORE_NR, -bn BLAST_SCORE_NR
                             The minimum score for searching in nr database.
-                            Default is None.
+                            Default is 40.
       --detect_srna_in_cds, -ds
                             Searching sRNA in CDS (e.g. the genome annotation is
                             not correct). More sRNA candidates which overlap with

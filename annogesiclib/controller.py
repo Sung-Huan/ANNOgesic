@@ -584,6 +584,14 @@ class Controller(object):
                           "if you want to extend 3'end of sRNA by "
                           "searching poly U tail!\n")
                 sys.exit()
+        if ((self._args.nr_format) and (self._args.nr_database_path is None)):
+            print("Error: The function for format of nr database was "
+                  "switched ont, but no nr database was assigned.")
+            sys.exit()
+        if ((self._args.srna_format) and (self._args.srna_database_path is None)):
+            print("Error: The function for format of srna database was "
+                  "switched ont, but no srna database was assigned.")
+            sys.exit()
         args_srna = self.args_container.container_srna(
                 self._args.rnafold_path, self._args.relplot_path,
                 self._args.mountain_path, self._args.blastn_path,
