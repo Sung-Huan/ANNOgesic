@@ -518,8 +518,8 @@ If ``optimize_tss_ps`` has been done before, assigning the final output folder o
 If you did not run ``optimize_tss_ps`` before and just want to do TSS prediction with 
 default parameters, ``--height``, ``--height_reduction``, ``--factor``, ``--factor_reduction``,
 ``--base_height``, and ``--enrichment_factor`` do not need to be assigned. For assigning 
-different parameters to multiple genomes, please check :ref:`ANNOgesic's subcommands` for the 
-details (``--genome_order``).
+different parameters to multiple genomes, please check :ref:`tss_ps` of 
+:ref:`ANNOgesic's subcommands` for the details (``--genome_order``).
 
 ::
 
