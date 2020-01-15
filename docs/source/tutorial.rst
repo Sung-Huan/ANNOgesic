@@ -496,9 +496,30 @@ We assigned the manual-checked TSS gff file to ``--manual_files``. Therefore,
 the output gff file will contain the manual-detected TSSs and predicted TSSs.
 If we didn't assign it, Only the predicted TSSs will be included in output gff file.
 
+A another way to run ``tss_ps`` with optimized parameters is using ``--auto_load_optimized_parameters``. 
+If ``optimize_tss_ps`` has been done before, assigning the final output folder of ``optimize_tss_ps`` to 
+``--auto_load_optimized_parameters`` will directly use the optimized parameters for the prediction.
+
+::
+
+    $ annogesic tss_ps \
+        --fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
+        --annotation_files ANNOgesic/input/references/annotations/NC_009839.1.gff \
+        --tex_notex_libs $TEX_LIBS \
+        --condition_names test \
+        --auto_load_optimized_parameters ANNOgesic/output/TSSs/optimized_TSSpredator \
+        --validate_gene \
+        --program TSS \
+        --replicate_tex all_1 \
+        --curated_sequence_length NC_009839.1:200000 \
+        --manual_files ANNOgesic/input/manual_TSSs/NC_009839_manual_TSS.gff \
+        --project_path ANNOgesic
+
 If you did not run ``optimize_tss_ps`` before and just want to do TSS prediction with 
 default parameters, ``--height``, ``--height_reduction``, ``--factor``, ``--factor_reduction``,
-``--base_height``, and ``--enrichment_factor`` do not need to be assigned.
+``--base_height``, and ``--enrichment_factor`` do not need to be assigned. For assigning 
+different parameters to multiple genomes, please check :ref:`ANNOgesic's subcommands` for the 
+details (``--genome_order``).
 
 ::
 

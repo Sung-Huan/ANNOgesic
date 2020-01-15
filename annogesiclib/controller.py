@@ -277,6 +277,7 @@ class Controller(object):
         ratt.annotation_transfer(args_ratt, log)
         log.close()
 
+
     def tsspredator(self):
         """Run TSSpredator for predicting TSS candidates."""
         if self._args.program.lower() == "tss":
@@ -312,11 +313,11 @@ class Controller(object):
             self._args.tsspredator_path, self._args.program,
             self._args.fasta_files, self._args.annotation_files,
             self._args.tex_notex_libs, self._args.condition_names,
-            self._args.height, self._args.height_reduction,
-            self._args.factor, self._args.factor_reduction,
-            self._args.base_height, self._args.enrichment_factor,
-            self._args.processing_factor, self._args.replicate_tex,
-            out_folder, self._args.validate_gene,
+            self._args.auto_load_optimized_parameters, self._args.genome_order,
+            self._args.height, self._args.height_reduction, self._args.factor,
+            self._args.factor_reduction, self._args.base_height,
+            self._args.enrichment_factor, self._args.processing_factor,
+            self._args.replicate_tex, out_folder, self._args.validate_gene,
             self._args.manual_files, self._args.curated_sequence_length,
             self._args.compare_transcript_files, self._args.tolerance,
             self._args.utr_length, self._args.cluster,

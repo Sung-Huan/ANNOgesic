@@ -642,38 +642,92 @@ For the transcripts, please check the section :ref:`transcript`.
       --tsspredator_path TSSPREDATOR_PATH
                             Path of TSSpredator. Default is
                             /usr/local/bin/TSSpredator.jar
-      --height HEIGHT, -he HEIGHT
-                            This value relates to the minimal number of read
+      --auto_load_optimized_parameters AUTO_LOAD_OPTIMIZED_PARAMETERS, -ap AUTO_LOAD_OPTIMIZED_PARAMETERS
+                            If optimize_tss_ps has been done before,
+                            --auto_load_optimized_parameters can automatically
+                            load the optimized parameters for the detection by
+                            specifying the folder of "optimized_TSSpredator"
+                            containing all output of "optimize_tss_ps".If the
+                            parameters need to be assigned manually, please do not
+                            turn on this function and assign the parameters to
+                            --parameter_sets. Default is None.
+      --genome_order GENOME_ORDER [GENOME_ORDER ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. It is the order for applying the parameters
+                            (--height, --height_reduction, --factor,
+                            --factor_reduction, --base_height,
+                            --enrichment_factor, and --processing_factor) of
+                            TSSpedator to genomes, ex: if --genome_order is
+                            "NC_002505.1 NC_002506.1" and --height is "0.3 0.5",
+                            0.3 will be used as --height to NC_002505.1 and 0.5
+                            will be used to NC_002506.1. Default is applying one
+                            parameter set to all genomes.
+      --height HEIGHT [HEIGHT ...], -he HEIGHT [HEIGHT ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. This value relates to the minimal number of read
                             starts at a certain genomic position to be considered
-                            as a TSS candidate. Default is 0.3.
-      --height_reduction HEIGHT_REDUCTION, -rh HEIGHT_REDUCTION
-                            When comparing different genomes/conditions and the
-                            step height threshold is reached in at least one
+                            as a TSS candidate. If using different --height to
+                            multiple genomes is required, please use spaces to
+                            split the input values. The order should match
+                            --genome_order. For the details, please check
+                            --geonme_order. Default is 0.3.
+      --height_reduction HEIGHT_REDUCTION [HEIGHT_REDUCTION ...], -rh HEIGHT_REDUCTION [HEIGHT_REDUCTION ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. When comparing different genomes/conditions and
+                            the step height threshold is reached in at least one
                             genome/condition, the threshold is reduced for the
                             other genomes/conditions by the value set here. This
                             value must be smaller than the step height threshold.
-                            Default is 0.2.
-      --factor FACTOR, -fa FACTOR
-                            The minimal factor by which the TSS height has to
-                            exceed the local expression background. Default is
-                            2.0.
-      --factor_reduction FACTOR_REDUCTION, -rf FACTOR_REDUCTION
-                            When comparing different genomes/conditions and the
-                            step factor threshold is reached in at least one
+                            If using different --height_reduction to multiple
+                            genomes is required, please use spaces to split the
+                            input values. The order should match --genome_order.
+                            For the details, please check --geonme_order. Default
+                            is 0.2.
+      --factor FACTOR [FACTOR ...], -fa FACTOR [FACTOR ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. The minimal factor by which the TSS height has to
+                            exceed the local expression background. If using
+                            different --factor to multiple genomes is required,
+                            please use spaces to split the input values. The order
+                            should match --genome_order. For the details, please
+                            check --geonme_order. Default is 2.0.
+      --factor_reduction FACTOR_REDUCTION [FACTOR_REDUCTION ...], -rf FACTOR_REDUCTION [FACTOR_REDUCTION ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. When comparing different genomes/conditions and
+                            the step factor threshold is reached in at least one
                             genome/condition, the threshold is reduced for the
                             other genomes/conditions by the value set here. This
                             value must be smaller than the step factor threshold.
-                            Default is 0.5.
-      --enrichment_factor ENRICHMENT_FACTOR, -ef ENRICHMENT_FACTOR
-                            The minimal enrichment factor. Default is 2.0.
-      --processing_factor PROCESSING_FACTOR, -pf PROCESSING_FACTOR
-                            The minimal processing factor. If the value for the
-                            untreated library is higher than the treated library
-                            the positionsis considered as a processing site and
-                            not annotated as detected. Default is 1.5.
-      --base_height BASE_HEIGHT, -bh BASE_HEIGHT
-                            The minimal number of reads should be mapped on TSS.
-                            Default is 0.0.
+                            If using different --factor_reduction to multiple
+                            genomes is required, please use spaces to split the
+                            input values. The order should match --genome_order.
+                            For the details, please check --geonme_order. Default
+                            is 0.5.
+      --enrichment_factor ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...], -ef ENRICHMENT_FACTOR [ENRICHMENT_FACTOR ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. The minimal enrichment factor. If using different
+                            --enrichment_factor to multiple genomes is required,
+                            please use spaces to split the input values. The order
+                            should match --genome_order. For the details, please
+                            check --geonme_order. Default is 2.0.
+      --processing_factor PROCESSING_FACTOR [PROCESSING_FACTOR ...], -pf PROCESSING_FACTOR [PROCESSING_FACTOR ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. The minimal processing factor. If the value for
+                            the untreated library is higher than the treated
+                            library the positionsis considered as a processing
+                            site and not annotated as detected. If using different
+                            --processing_factor to multiple genomes is required,
+                            please use spaces to split the input values. The order
+                            should match --genome_order. For the details, please
+                            check --geonme_order. Default is 1.5.
+      --base_height BASE_HEIGHT [BASE_HEIGHT ...], -bh BASE_HEIGHT [BASE_HEIGHT ...]
+                            It only works when --auto_load_optimized_parameters is
+                            off. The minimal number of reads should be mapped on
+                            TSS/PS. If using different --base_height to multiple
+                            genomes is required, please use spaces to split the
+                            input values. The order should match --genome_order.
+                            For the details, please check --geonme_order. Default
+                            is 0.0.
       --utr_length UTR_LENGTH, -u UTR_LENGTH
                             The length of UTRs. Default is 300.
       --tolerance TOLERANCE, -to TOLERANCE

@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <shyu@.biochem.mpg.dede>"
 __email__ = "shyu@biochem.mpg.de"
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 
 def main():
     print("""
@@ -201,42 +201,91 @@ def main():
         "--tsspredator_path", default="/usr/local/bin/TSSpredator.jar",
         help="Path of TSSpredator. Default is /usr/local/bin/TSSpredator.jar")
     TSSpredator_add.add_argument(
-        "--height", "-he", default=0.3,
-        help="This value relates to the minimal number of read starts at a "
+        "--auto_load_optimized_parameters", "-ap", default=None,
+        help="If optimize_tss_ps has been done before, "
+        "--auto_load_optimized_parameters can automatically load the optimized "
+        "parameters for the detection by specifying the folder of "
+        "\"optimized_TSSpredator\" containing all output of \"optimize_tss_ps\"."
+        "If the parameters need to be assigned manually, please do not turn on "
+        "this function and assign the parameters to --parameter_sets. "
+        "Default is None.")
+    TSSpredator_add.add_argument(
+        "--genome_order", default=None, nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "It is the order for applying the parameters (--height, "
+        "--height_reduction, --factor, --factor_reduction, --base_height, "
+        "--enrichment_factor, and --processing_factor) of TSSpedator to "
+        "genomes, ex: if --genome_order is \"NC_002505.1 NC_002506.1\" "
+        "and --height is \"0.3 0.5\", 0.3 will be used as --height to "
+        "NC_002505.1 and 0.5 will be used to NC_002506.1. Default is applying "
+        "one parameter set to all genomes.")
+    TSSpredator_add.add_argument(
+        "--height", "-he", default=[0.3], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "This value relates to the minimal number of read starts at a "
 	"certain genomic position to be considered as a TSS candidate. "
+        "If using different --height to multiple genomes is required, please "
+        "use spaces to split the input values. The order should match "
+        "--genome_order. For the details, please check --geonme_order. "
         "Default is 0.3.")
     TSSpredator_add.add_argument(
-        "--height_reduction", "-rh", default=0.2,
-        help="When comparing different genomes/conditions and "
+        "--height_reduction", "-rh", default=[0.2], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "When comparing different genomes/conditions and "
 	"the step height threshold is reached in at least one "
         "genome/condition, the threshold is reduced for the other "
         "genomes/conditions by the value set here. "
         "This value must be smaller than the step height threshold. "
-        "Default is 0.2.")
+        "If using different --height_reduction to multiple genomes is "
+        "required, please use spaces to split the input values. "
+        "The order should match --genome_order. For the details, please check "
+        "--geonme_order. Default is 0.2.")
     TSSpredator_add.add_argument(
-        "--factor", "-fa", default=2.0,
-        help="The minimal factor by which the TSS height has to "
-	"exceed the local expression background. Default is 2.0.")
+        "--factor", "-fa", default=[2.0], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "The minimal factor by which the TSS height has to "
+	"exceed the local expression background. "
+        "If using different --factor to multiple genomes is required, please "
+        "use spaces to split the input values. The order should match "
+        "--genome_order. For the details, please check --geonme_order. "
+        "Default is 2.0.")
     TSSpredator_add.add_argument(
-        "--factor_reduction", "-rf", default=0.5,
-        help="When comparing different genomes/conditions and "
+        "--factor_reduction", "-rf", default=[0.5], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "When comparing different genomes/conditions and "
         "the step factor threshold is reached in at least one "
         "genome/condition, the threshold is reduced for the other "
         "genomes/conditions by the value set here. "
         "This value must be smaller than the step factor threshold. "
-        "Default is 0.5.")
+        "If using different --factor_reduction to multiple genomes is "
+        "required, please use spaces to split the input values. The order "
+        "should match --genome_order. For the details, please check "
+        "--geonme_order. Default is 0.5.")
     TSSpredator_add.add_argument(
-        "--enrichment_factor", "-ef", default=2.0,
-        help="The minimal enrichment factor. Default is 2.0.")
+        "--enrichment_factor", "-ef", default=[2.0], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "The minimal enrichment factor. If using different "
+        "--enrichment_factor to multiple genomes is required, please "
+        "use spaces to split the input values. The order should match "
+        "--genome_order. For the details, please check --geonme_order. "
+        "Default is 2.0.")
     TSSpredator_add.add_argument(
-        "--processing_factor", "-pf", default=1.5,
-        help="The minimal processing factor. If the value for the "
+        "--processing_factor", "-pf", default=[1.5], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "The minimal processing factor. If the value for the "
         "untreated library is higher than the treated library the positions"
         "is considered as a processing site and not annotated as detected. "
-        "Default is 1.5.")
+        "If using different --processing_factor to multiple genomes is "
+        "required, please use spaces to split the input values. The order "
+        "should match --genome_order. For the details, please check "
+        "--geonme_order. Default is 1.5.")
     TSSpredator_add.add_argument(
-        "--base_height", "-bh", default=0,
-        help="The minimal number of reads should be mapped on TSS. "
+        "--base_height", "-bh", default=[0.0], nargs='+',
+        help="It only works when --auto_load_optimized_parameters is off. "
+        "The minimal number of reads should be mapped on TSS/PS. "
+        "If using different --base_height to multiple genomes is required, "
+        "please use spaces to split the input values. The order should match "
+        "--genome_order. For the details, please check --geonme_order. "
         "Default is 0.0.")
     TSSpredator_add.add_argument(
         "--utr_length", "-u", default=300, type=int,

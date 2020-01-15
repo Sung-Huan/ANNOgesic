@@ -157,9 +157,96 @@ class TSSpredator(object):
                     out.write("minNumRepMatches_{0} = {1}\n".format(
                         lib, rep))
 
+    def _extract_best_para(self, args_tss, prefix, log):
+        detect = False
+        for best_file in os.listdir(args_tss.auto_load):
+            if best_file == "_".join(["best", prefix + ".csv"]):
+                bh = open(os.path.join(args_tss.auto_load, best_file),"r" )
+                lines = bh.readlines()
+                bh.close()
+                if len(lines[len(lines)-1].split("\t")) < 8:
+                    print("Error: some information in {0} is missing. "
+                          "It may be due to that \"optimize_tss_ps\" did "
+                          "not finish successfully.".format(best_file))
+                    log.write("Error: some information in {0} is missing. "
+                              "It may be due to that \"optimize_tss_ps\" did "
+                              "not finish successfully.\n".format(best_file))
+                    sys.exit()
+                else:
+                    para_info = lines[len(lines)-1].split("\t")[1].split("_")
+                    detect_all =  all(elem in para_info
+                            for elem in ["he", "rh", "fa", "rf",
+                                         "bh", "ef", "pf"])
+                    if (not detect_all) or (len(para_info) != 14):
+                        print("Error: {0} is complete. Some parameters are "
+                              "missing!".format(best_file))
+                        log.write("Error: {0} is complete. Some parameters "
+                                  "are missing!\n".format(best_file))
+                        sys.exit()
+                    else:
+                        detect = True
+                        height = para_info[para_info.index("he") + 1]
+                        height_reduction = para_info[
+                            para_info.index("rh") + 1]
+                        factor = para_info[para_info.index("fa") + 1]
+                        factor_reduction = para_info[
+                            para_info.index("rf") + 1]
+                        base_height = para_info[
+                            para_info.index("bh") + 1]
+                        enrichment_factor = para_info[
+                            para_info.index("ef") + 1]
+                        processing_factor = para_info[
+                            para_info.index("pf") + 1]
+        if detect:
+            return height, height_reduction, factor, factor_reduction, \
+                   base_height, enrichment_factor, processing_factor
+        else:
+            print("Error: No best_{0}.csv can be found in {1}! ".format(
+                prefix, args_tss.auto_load))
+            log.write("Error: No best_{0}.csv can be found in {1}\n".format(
+                prefix, args_tss.auto_load))
+            sys.exit()
+
+    def _get_input_para(self, args_tss, prefix, log):
+        if args_tss.genome_order is None:
+            height = args_tss.height[0]
+            height_reduction = args_tss.height_reduction[0]
+            factor = args_tss.factor[0]
+            factor_reduction = args_tss.factor_reduction[0]
+            base_height = args_tss.base_height[0]
+            enrichment_factor = args_tss.enrichment_factor[0]
+            processing_factor = args_tss.processing_factor[0]
+        else:
+            if prefix not in args_tss.genome_order:
+                print("Error: the parameters for {0} were not assigned!".format(
+                    prefix))
+                log.write("Error: the parameters for {0} were not assigned!\n".format(
+                    prefix))
+                sys.exit()
+            else:
+                index = args_tss.genome_order.index(prefix)
+                height = args_tss.height[index]
+                height_reduction = args_tss.height_reduction[index]
+                factor = args_tss.factor[index]
+                factor_reduction = args_tss.factor_reduction[index]
+                base_height = args_tss.base_height[index]
+                enrichment_factor = args_tss.enrichment_factor[index]
+                processing_factor = args_tss.processing_factor[index]
+        return height, height_reduction, factor, factor_reduction, \
+               base_height, enrichment_factor, processing_factor
+
     def _gen_config(self, project_strain_name, args_tss, gff,
                     wig_folder, fasta, config_file, log):
         '''generation of config files'''
+        log.write("Generating config files for TSSpredator.\n")
+        if args_tss.auto_load is not None:
+            height, height_reduction, factor, factor_reduction, \
+            base_height, enrichment_factor, processing_factor = \
+            self._extract_best_para(args_tss, project_strain_name, log)
+        else:
+            height, height_reduction, factor, factor_reduction, \
+            base_height, enrichment_factor, processing_factor = \
+            self._get_input_para(args_tss, project_strain_name, log)
         master_folder = "MasterTable_" + project_strain_name
         out_path = os.path.join(self.master, master_folder)
         self.helper.check_make_folder(out_path)
@@ -175,19 +262,19 @@ class TSSpredator(object):
         out.write("maxASutrLength = 100\n")
         out.write("maxGapLengthInGene = 500\n")
         out.write("maxNormalTo5primeFactor = {0}\n".format(
-                  args_tss.processing_factor))
+                  processing_factor))
         out.write("maxTSSinClusterDistance = {0}\n".format(
                   args_tss.cluster + 1))
         out.write("maxUTRlength = {0}\n".format(args_tss.utr_length))
         out.write("min5primeToNormalFactor = {0}\n".format(
-                  args_tss.enrichment_factor))
-        out.write("minCliffFactor = {0}\n".format(args_tss.factor))
+                  enrichment_factor))
+        out.write("minCliffFactor = {0}\n".format(factor))
         out.write("minCliffFactorDiscount = {0}\n".format(
-                  args_tss.factor_reduction))
-        out.write("minCliffHeight = {0}\n".format(args_tss.height))
+                  factor_reduction))
+        out.write("minCliffHeight = {0}\n".format(height))
         out.write("minCliffHeightDiscount = {0}\n".format(
-                  args_tss.height_reduction))
-        out.write("minNormalHeight = {0}\n".format(args_tss.base_height))
+                  height_reduction))
+        out.write("minNormalHeight = {0}\n".format(base_height))
         self._print_repmatch(args_tss, out)
         out.write("minPlateauLength = 0\n")
         out.write("mode = cond\n")
@@ -355,10 +442,9 @@ class TSSpredator(object):
                     self.stat_outfolder, tss)):
                 log.write("\t" + file_ + "\n")
 
-    def _set_gen_config(self, args_tss, input_folder, log):
+    def _get_prefixs(self, args_tss):
         prefixs = []
         detect = False
-        log.write("Generating config files for TSSpredator.\n")
         for fasta in os.listdir(self.fasta_path):
             run = False
             for gff in os.listdir(self.gff_path):
@@ -371,13 +457,6 @@ class TSSpredator(object):
                             break
                     if detect:
                         prefixs.append(prefix)
-                        config = os.path.join(
-                                input_folder,
-                                "_".join(["config", prefix]) + ".ini")
-                        self._gen_config(
-                            prefix, args_tss,
-                            os.path.join(self.gff_path, gff), self.wig_path,
-                            os.path.join(self.fasta_path, fasta), config, log)
         return prefixs
 
     def _merge_wigs(self, wig_folder, prefix, libs):
@@ -489,8 +568,14 @@ class TSSpredator(object):
         self.multiparser.parser_fasta(args_tss.fastas)
         self.multiparser.parser_gff(args_tss.gffs, None)
         self.multiparser.parser_wig(args_tss.wig_folder)
-        prefixs = self._set_gen_config(args_tss, input_folder, log)
+        prefixs = self._get_prefixs(args_tss)
         for prefix in prefixs:
+            config = os.path.join(input_folder,
+                                  "_".join(["config", prefix]) + ".ini")
+            self._gen_config(
+                prefix, args_tss,
+                os.path.join(self.gff_path, prefix + ".gff"), self.wig_path,
+                os.path.join(self.fasta_path, prefix + ".fa"), config, log)
             out_path = os.path.join(
                     self.master, "_".join(["MasterTable", prefix]))
             config_file = os.path.join(

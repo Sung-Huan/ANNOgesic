@@ -382,6 +382,35 @@ class ArgsContainer(object):
         else:
             return None
 
+    def _check_tss_parameter_setting(
+            self, auto_load, genome_order, height, height_reduction, factor,
+            factor_reduction, base_height, enrichment_factor,
+            processing_factor):
+        if auto_load:
+            if not os.path.exists(auto_load):
+                print("Error: {0} is not found. Please assign proper folder to "
+                      "--auto_load_optimized_parameters!".format(auto_load))
+                sys.exit()
+        else:
+            para_lists = [height, height_reduction, factor, factor_reduction,
+                          base_height, enrichment_factor, processing_factor]
+            para_names = ["--height", "--height_reduction", "--factor",
+                        "--factor_reduction", "--base_height",
+                        "--enrichment_factor", "--processing_factor"]
+            if (genome_order is not None):
+                for para_list, para_name in zip(para_lists, para_names):
+                    if len(genome_order) != len(para_list):
+                        print("Error: --genome_order and {0} have different number of "
+                              "of genomes!".format(para_name))
+                        sys.exit()
+            else:
+                for para_list, para_name in zip(para_lists, para_names):
+                    if len(para_list) != 1:
+                        print("Error: --genome_order is default (using one "
+                              "parameter set to all genomes) but {0} has more "
+                              "than 1 input values!".format(para_name))
+                        sys.exit()
+
     def container_ratt(self, ratt_path, element, transfer_type,
                        ref_embl, ref_gbk, target_fasta, ref_fasta, ratt_folder,
                        tar_annotation_folder, compare_pair):
@@ -408,8 +437,9 @@ class ArgsContainer(object):
 
     def container_tsspredator(self, TSSpredator_path, compute_program,
                               fasta_files, annotation_files, lib,
-                              output_prefix, height, height_reduction, factor,
-                              factor_reduction, base_height, enrichment_factor,
+                              output_prefix, auto_load, genome_order, height,
+                              height_reduction, factor, factor_reduction,
+                              base_height, enrichment_factor,
                               processing_factor, replicate_match, out_folder,
                               validate_gene, merge_manual, strain_lengths,
                               compare_transcript_assembly, fuzzy, utr_length,
@@ -425,6 +455,9 @@ class ArgsContainer(object):
                 self.strain_lengths = {"all": "all"}
         self.tsspredator_path = TSSpredator_path
         self.program = compute_program
+        self._check_tss_parameter_setting(
+            auto_load, genome_order, height, height_reduction, factor,
+            factor_reduction, base_height, enrichment_factor, processing_factor)
         self.fastas = self._gen_copy_new_folder(
                 [".fa", ".fna", ".fasta"], out_folder, "tmp_fasta", fasta_files,
                 ["--fasta_files"])
@@ -439,6 +472,8 @@ class ArgsContainer(object):
         self.libs = self._check_libs(self.libs, None)
         self._check_condition_num(output_prefix, self.libs)
         self.output_prefixs = output_prefix
+        self.auto_load = auto_load
+        self.genome_order = genome_order
         self.height = height
         self.height_reduction = height_reduction
         self.factor = factor
