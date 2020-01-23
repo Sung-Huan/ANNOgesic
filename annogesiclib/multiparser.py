@@ -139,7 +139,7 @@ class Multiparser(object):
                                              prefix + "_reverse.wig"))
                 else:
                     print("Error: comparing input files of {0} failed. "
-                          "Please check the seq IDs of all gff and fasta "
+                          "Please check the seq IDs of all gff, fasta and wig "
                           "files, they should be the same.\nPlease "
                           "also check the wiggle files which should contain "
                           "forward and reverse files.".format(prefix))
@@ -286,9 +286,15 @@ class Multiparser(object):
                         if row[0].startswith("#"):
                             continue
                         else:
-                            if pre_seq_id == row[0]:
-                                out.write("\t".join(row) + "\n")
-                                out_t.write("\t".join(row) + "\n")
+                            if ("|" in row[0]) and (
+                                    len(row[0].split("|")) > 4):
+                                strain = row[0].split("|")
+                                name = strain[3]
+                            else:
+                                name = row[0]
+                            if pre_seq_id == name:
+                                out.write("\t".join([name] + row[1:]) + "\n")
+                                out_t.write("\t".join([name] + row[1:]) + "\n")
                             else:
                                 if first:
                                     first = False
@@ -296,12 +302,12 @@ class Multiparser(object):
                                     out.close()
                                     out_t.close()
                                 out = open(os.path.join(out_path,
-                                           row[0] + feature + ".gff"), "w")
+                                           name + feature + ".gff"), "w")
                                 out_t = open(os.path.join(par_tmp,
-                                             row[0] + feature + ".gff"), "w")
-                                pre_seq_id = row[0]
-                                out.write("\t".join(row) + "\n")
-                                out_t.write("\t".join(row) + "\n")
+                                             name + feature + ".gff"), "w")
+                                pre_seq_id = name
+                                out.write("\t".join([name] + row[1:]) + "\n")
+                                out_t.write("\t".join([name] + row[1:]) + "\n")
                     f_h.close()
         if not detect:
             print("Error: There are folders which contain no gff3 files! "
@@ -337,7 +343,15 @@ class Multiparser(object):
                                 if (line[0] == "track"):
                                     track_info = " ".join(line)
                                 if (line[0] == "variableStep") or (line[0] == "fixedStep"):
-                                    strain = line[1].split("=")
+                                    chrom = line[1].split("=")
+                                    if ("|" in chrom[1]) and (
+                                            len(chrom[1].split("|")) > 4):
+                                        strain = chrom[1].split("|")
+                                        name = strain[3]
+                                        weird = True
+                                    else:
+                                        name = chrom[1]
+                                        weird = False
                                     if first:
                                         first = False
                                     else:
@@ -345,16 +359,20 @@ class Multiparser(object):
                                         out_t.close()
                                     out = open("".join([
                                         os.path.join(out_path, filename[:-4]),
-                                        "_STRAIN_", strain[1], ".wig"]), "w")
+                                        "_STRAIN_", name, ".wig"]), "w")
                                     out_t = open("".join([
                                         os.path.join(wig_folder, "tmp",
                                                      filename[:-4]),
-                                        "_STRAIN_", strain[1], ".wig"]), "w")
+                                        "_STRAIN_", name, ".wig"]), "w")
                                     if track_info != "":
                                         out.write(track_info)
                                         out_t.write(track_info)
-                                    out.write(" ".join(line))
-                                    out_t.write(" ".join(line))
+                                    if weird:
+                                        f_line = "".join([line[0], " chrom=" + name, line[-1]])
+                                    else:
+                                        f_line = " ".join(line)
+                                    out.write(f_line)
+                                    out_t.write(f_line)
                                 if (line[0] != "track") and (
                                         line[0] != "variableStep"):
                                     out.write(" ".join(line))

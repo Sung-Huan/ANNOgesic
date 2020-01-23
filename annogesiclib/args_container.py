@@ -378,6 +378,10 @@ class ArgsContainer(object):
                           files, " ".join(file_types)))
                     sys.exit()
                 shutil.copy(file_, new_ref_folder)
+                if (file_.endswith(".gff3")):
+                    new_name = os.path.basename(file_)[:-1]
+                    shutil.move(os.path.join(new_ref_folder, os.path.basename(file_)),
+                                 os.path.join(new_ref_folder, new_name))
             return new_ref_folder
         else:
             return None
