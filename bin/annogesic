@@ -520,8 +520,8 @@ def main():
         "Please assign 1 or 2. Default is 1.")
     Terminator_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
-        help="This value is the minimal number of replicates that a TSS has "
-        "to be detected in. The format is "
+        help="This value is the minimal number of replicates that a terminator "
+        "has to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
         "different conditions, please use spaces to separate them. "
@@ -676,8 +676,8 @@ def main():
         "my_lib_frag_reverse.wig:frag:1:a:-.")
     Transcript_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
-        help="This value is the minimal number of replicates that a TSS has "
-        "to be detected in. The format is "
+        help="This value is the minimal number of replicates that a "
+        "transcript has to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
         "different conditions, please use spaces to separate them. "
@@ -883,7 +883,7 @@ def main():
         "Default is 2.")
     sRNA_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
-        help="This value is the minimal number of replicates that a TSS has "
+        help="This value is the minimal number of replicates that a sRNA has "
         "to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "
@@ -1206,7 +1206,7 @@ def main():
         "Please assign 1 or 2. Default is 2.")
     sORF_basic.add_argument(
         "--replicate_tex", "-rt", default=None, nargs='+',
-        help="This value is the minimal number of replicates that a TSS has "
+        help="This value is the minimal number of replicates that a sORF has "
         "to be detected in. The format is "
         "$NUMBERofCONDITION_$NUMBERofREPLICATE. "
         "If different --replicate_tex values need to be assigned to "

@@ -921,7 +921,7 @@ like CDSs, tRNAs, rRNAs, genome annotation gff files are required. There are fou
                             my_lib_frag_reverse.wig:frag:1:a:-.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected in. The format is
+                            transcript has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
@@ -1123,7 +1123,7 @@ which have coverage significant decrease.
                             Default is 1.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected in. The format is
+                            terminator has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
@@ -1630,7 +1630,7 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
                             TEX-, assigned by 1). Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected in. The format is
+                            sRNA has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
@@ -2085,7 +2085,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
                             Default is 2.
       --replicate_tex REPLICATE_TEX [REPLICATE_TEX ...], -rt REPLICATE_TEX [REPLICATE_TEX ...]
                             This value is the minimal number of replicates that a
-                            TSS has to be detected in. The format is
+                            sORF has to be detected in. The format is
                             $NUMBERofCONDITION_$NUMBERofREPLICATE. If different
                             --replicate_tex values need to be assigned to
                             different conditions, please use spaces to separate
