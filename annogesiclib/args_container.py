@@ -855,6 +855,8 @@ class ArgsContainer(object):
         self.rank_promoter = ranking_promoter
         self.promoter_name = promoter_name
         self = self._parser_combine_wigs("srna")
+        if (not TSS_source) and (tex_notex_libs is not None):
+            self.input_libs = self.tlibs
         return self
 
     def container_intersrna(self, file_type, files, args_srna, prefix,

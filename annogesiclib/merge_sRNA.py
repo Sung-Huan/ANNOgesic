@@ -530,6 +530,12 @@ def get_coverage(wigs, srna):
 def get_tss_pro(type_, srna):
     '''check the sRNA is associated with TSS or processing site'''
     if type_ == "utr":
+        if "start_cleavage" not in srna.attributes.keys():
+            srna.attributes["start_cleavage"] = "NA"
+        if "with_TSS" not in srna.attributes.keys():
+            srna.attributes["with_TSS"] = "NA"
+        if "end_cleavage" not in srna.attributes.keys():
+            srna.attributes["end_cleavage"] = "NA"
         if (srna.attributes["with_TSS"] != "NA") and (
                 srna.attributes["start_cleavage"] != "NA"):
             tss_pro = ";".join([srna.attributes["with_TSS"],

@@ -1827,7 +1827,11 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
       --detect_srna_in_cds, -ds
                             Searching sRNA in CDS (e.g. the genome annotation is
                             not correct). More sRNA candidates which overlap with
-                            CDS will be detected. Default is False.
+                            CDS will be detected. Beware, this argument may cause
+                            many false positives due to without considering the
+                            locations of genes and CDSs. Moreover, the rank of
+                            sRNA candidates will be influenced as well.Default is
+                            False.
       --overlap_percent_cds OVERLAP_PERCENT_CDS, -oc OVERLAP_PERCENT_CDS
                             The maximum ratio of overlapping between CDS and sRNA
                             candidates. It only works if --detect_srna_in_cds is

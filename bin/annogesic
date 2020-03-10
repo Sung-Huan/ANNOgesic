@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <shyu@.biochem.mpg.dede>"
 __email__ = "shyu@biochem.mpg.de"
-__version__ = "1.0.10"
+__version__ = "1.0.11"
 
 def main():
     print("""
@@ -1115,7 +1115,10 @@ def main():
         "--detect_srna_in_cds", "-ds", default=False, action="store_true",
         help="Searching sRNA in CDS (e.g. the genome "
         "annotation is not correct). More sRNA candidates which overlap "
-        "with CDS will be detected. Default is False.")
+        "with CDS will be detected. Beware, this argument may cause "
+        "many false positives due to without considering the locations of "
+        "genes and CDSs. Moreover, the rank of sRNA candidates will be "
+        "influenced as well. Default is False.")
     sRNA_add.add_argument(
         "--overlap_percent_cds", "-oc", default=0.5,
         help="The maximum ratio of overlapping between CDS and sRNA candidates. "
