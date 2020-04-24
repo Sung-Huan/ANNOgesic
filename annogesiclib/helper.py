@@ -208,8 +208,8 @@ class Helper(object):
     def check_make_folder(self, folder):
         '''make new folder (if the folder exists, 
         it will remove it and create new one)'''
-        path = "/".join(folder.split("/")[:-1])
-        gen_folder = folder.split("/")[-1]
+        path = os.path.dirname(folder)
+        gen_folder = os.path.basename(folder)
         if gen_folder in os.listdir(path):
             shutil.rmtree(os.path.join(path, gen_folder))
         os.mkdir(os.path.join(path, gen_folder))
