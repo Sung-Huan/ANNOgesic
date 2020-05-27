@@ -366,7 +366,7 @@ After setting the environment, we can try it.
 
 ::
 
-    anngesic annotation_transfer \
+    annogesic annotation_transfer \
         --related_embl_files ANNOgesic/input/references/annotations/NC_009839.1.embl \
         --related_fasta_files ANNOgesic/input/references/fasta_files/NC_009839.1.fa \
         --target_fasta_files ANNOgesic/output/updated_references/fasta_files/NC_test.1.fa \

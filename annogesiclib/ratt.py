@@ -194,7 +194,7 @@ class RATT(object):
         self.multiparser.parser_fasta(args_ratt.ref_fastas)
         out_gbk = None
         if args_ratt.ref_embls is None:
-            out_gbk = self._convert_embl(args_ratt.ref_gbki, log)
+            out_gbk = self._convert_embl(args_ratt.ref_gbk, log)
         self._format_and_run(args_ratt, log)
         files = []
         for data in os.listdir(args_ratt.output_path):
