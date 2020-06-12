@@ -311,28 +311,32 @@ def detect_express_gene(gffs, c_feature, strain):
 def print_tag_stat(stats, out, express_gene, c_feature):
     total = (stats["bsae"] + stats["bsbe"] + stats["asae"] +
              stats["asbe"] + stats["other"])
-    out.write("\t\tTranscript starts before and "
-              "ends after {0}:{1} ({2})\n".format(
-                  c_feature, str(stats["asbe"]),
-                  str(float(stats["asbe"]) / float(total))))
-    out.write("\t\tTranscript starts after and "
-              "ends before {0}:{1} ({2})\n".format(
-                  c_feature, str(stats["bsae"]),
-                  str(float(stats["bsae"]) / float(total))))
-    out.write("\t\tTranscript starts before and "
-              "ends within {0}:{1} ({2})\n".format(
-                  c_feature, str(stats["asae"]),
-                  str(float(stats["asae"]) / float(total))))
-    out.write("\t\tTranscript starts within and "
-              "ends after {0}:{1} ({2})\n".format(
-                  c_feature, str(stats["bsbe"]),
-                  str(float(stats["bsbe"]) / float(total))))
-    out.write("\t\tTranscript has no overlap of {0}:{1} ({2})\n".format(
-                  c_feature, str(stats["other"]),
-                  str(float(stats["other"]) / float(total))))
-    out.write("\t\tTotal {0}s which have expression:{1} ({2})\n".format(
+    if stats["gene"] != 0:
+        out.write("\t\tTranscript starts before and "
+                  "ends after {0}:{1} ({2})\n".format(
+                      c_feature, str(stats["asbe"]),
+                      str(float(stats["asbe"]) / float(total))))
+        out.write("\t\tTranscript starts after and "
+                  "ends before {0}:{1} ({2})\n".format(
+                      c_feature, str(stats["bsae"]),
+                      str(float(stats["bsae"]) / float(total))))
+        out.write("\t\tTranscript starts before and "
+                  "ends within {0}:{1} ({2})\n".format(
+                      c_feature, str(stats["asae"]),
+                      str(float(stats["asae"]) / float(total))))
+        out.write("\t\tTranscript starts within and "
+                  "ends after {0}:{1} ({2})\n".format(
+                      c_feature, str(stats["bsbe"]),
+                      str(float(stats["bsbe"]) / float(total))))
+        out.write("\t\tTranscript has no overlap of {0}:{1} ({2})\n".format(
+                      c_feature, str(stats["other"]),
+                      str(float(stats["other"]) / float(total))))
+        out.write("\t\tTotal {0}s which have expression:{1} ({2})\n".format(
                   c_feature, str(express_gene),
                   str(float(express_gene) / float(stats["gene"]))))
+    else:
+        out.write("\t\tNo {0} is detected in genome annotation file\n".format(
+                  c_feature))
 
 
 def read_tag_file(gff_file, ta_file, c_feature):
