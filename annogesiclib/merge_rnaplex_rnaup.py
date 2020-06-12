@@ -199,20 +199,27 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                 if len(inter) == 9:
                     srna = inter[3]
                     tags = inter[0].split("_")
-                    if len(tags) >= 4:
-                        detail = "_".join(tags[-2:])
-                        if (len(tags[0])) != 0:
-                            gene_id, tar, target_id, target_locus = get_gene_id(
-                                    detail, genes, genomes, features)
-                            if tar is not None:
-                                if (srna not in srnas["IntaRNA"].keys()):
-                                    srnas["IntaRNA"][srna] = []
-                                srnas["IntaRNA"][srna].append({
-                                    "target_id": target_id, "target_locus": target_locus,
-                                    "detail": detail, "energy": float(inter[-1]),
-                                    "gene_id": gene_id,
-                                    "tar_pos": ",".join(inter[1:3]),
-                                    "srna_pos": ",".join(inter[4:6])})
+                    if (len(tags) >= 4):
+                        try:
+                            if(int(inter[1]) and int(inter[2]) and 
+                                    int(inter[4]) and int(inter[5])):
+                                detail = "_".join(tags[-2:])
+                                if (len(tags[0])) != 0:
+                                    gene_id, tar, target_id, target_locus = get_gene_id(
+                                            detail, genes, genomes, features)
+                                    if tar is not None:
+                                        if (srna not in srnas["IntaRNA"].keys()):
+                                            srnas["IntaRNA"][srna] = []
+                                        srnas["IntaRNA"][srna].append({
+                                            "target_id": target_id,
+                                            "target_locus": target_locus,
+                                            "detail": detail,
+                                            "energy": float(inter[-1]),
+                                            "gene_id": gene_id,
+                                            "tar_pos": ",".join(inter[1:3]),
+                                            "srna_pos": ",".join(inter[4:6])})
+                        except:
+                            pass
 
 def read_table(gffs, rnaplex, rnaup, intarna, genes, genomes, features):
     srnas = {"RNAup": {}, "RNAplex": {}, "IntaRNA": {}}
