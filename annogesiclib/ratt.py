@@ -153,15 +153,24 @@ class RATT(object):
         log.write("Make sure your RATT version is at least 1.64.\n")
         log.write("If the RATT can not run properly, please check the "
                   "RATT_HOME and PAGIT_HOME is assigned correctly.\n")
+        temp_embl_folder = os.path.join(self.embl, ref)
+        os.mkdir(temp_embl_folder)
+        shutil.copy(os.path.join(self.embl, ref + ".embl"), os.path.join(self.embl, ref))
         log.write(" ".join([args_ratt.ratt_path, self.embl,
               os.path.join(self.tmp_files["tar"], tar + ".fa"),
               args_ratt.element, args_ratt.transfer_type,
               os.path.join(self.tmp_files["ref"], ref + ".fa")]) + "\n")
-        call([args_ratt.ratt_path, self.embl,
+        call([args_ratt.ratt_path, temp_embl_folder,
               os.path.join(self.tmp_files["tar"], tar + ".fa"),
               args_ratt.element, args_ratt.transfer_type,
               os.path.join(self.tmp_files["ref"], ref + ".fa")],
-             stdout=out, stderr=DEVNULL)
+              stdout=out, stderr=DEVNULL)
+        shutil.rmtree(temp_embl_folder)
+#        call([args_ratt.ratt_path, self.embl,
+#              os.path.join(self.tmp_files["tar"], tar + ".fa"),
+#              args_ratt.element, args_ratt.transfer_type,
+#              os.path.join(self.tmp_files["ref"], ref + ".fa")],
+#             stdout=out, stderr=DEVNULL)
         log.write("Done!\n")
 
     def _format_and_run(self, args_ratt, log):
