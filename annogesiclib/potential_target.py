@@ -10,7 +10,7 @@ def assign_name(entry):
     else:
         return entry.attributes["Name"]
 
-def print_fasta(entry, seq, out, gene):
+def print_fasta(entry, seq, out, gene, seq_id):
     if gene is not None:
         if ("locus_tag" in gene.attributes.keys()):
             locus = gene.attributes["locus_tag"]
@@ -20,13 +20,13 @@ def print_fasta(entry, seq, out, gene):
         locus = "NA"
     if ("ID" in entry.attributes.keys()):
         out.write(">{0}_{1}-{2}_{3}\n{4}\n".format(
-                  "_".join([locus,
+                  "_".join([str(seq_id), locus,
                             entry.attributes["ID"]]),
                   entry.start, entry.end,
                   entry.strand, seq))
     else:
         out.write(">{0}_{1}-{2}_{3}\n{4}\n".format(
-                  "_".join([locus, "NA"]) , entry.start, entry.end,
+                  "_".join([str(seq_id), locus, "NA"]) , entry.start, entry.end,
                   entry.strand, seq))
 
 
@@ -57,18 +57,13 @@ def read_file(seq_file, gff_file, target_folder, features):
         if entry.feature == "gene":
             genes.append(entry)
     g_h.close()
-    if len(cdss_f) == 0 and len(cdss_r) == 0:
-        print("No assigned features can be found. "
-              "Please check your genome annotation."
-              "And assign correct features to --target_feature.")
-        sys.exit()
     cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start,
                                            k.end, k.strand))
     cdss_r = sorted(cdss_r, key=lambda k: (k.seq_id, k.start,
                                            k.end, k.strand))
     genes = sorted(genes, key=lambda k: (k.seq_id, k.start,
                                          k.end, k.strand))
-    return fasta, cdss_f, cdss_r, genes
+    return fasta, cdss_f, cdss_r, genes, entry.seq_id
 
 
 def check_parent_gene(cds, genes):
@@ -104,7 +99,7 @@ def check_parent_gene(cds, genes):
     return target_gene
 
 
-def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
+def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end, seq_id):
     '''for forward strand'''
     pre_id = ""
     out = None
@@ -127,12 +122,12 @@ def deal_cds_forward(cdss_f, target_folder, fasta, genes, tar_start, tar_end):
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
         target_gene = check_parent_gene(cds, genes)
-        print_fasta(target, seq, out, target_gene)
+        print_fasta(target, seq, out, target_gene, seq_id)
     if out is not None:
         out.close()
 
 
-def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
+def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end, seq_id):
     '''for the reverse strand'''
     pre_id = ""
     out = None
@@ -154,20 +149,20 @@ def deal_cds_reverse(cdss_r, target_folder, fasta, genes, tar_start, tar_end):
         seq = Helper().extract_gene(fasta, start, end, cds.strand)
         target = cds
         target_gene = check_parent_gene(cds, genes)
-        print_fasta(target, seq, out, target_gene)
+        print_fasta(target, seq, out, target_gene, seq_id)
     if out is not None:
         out.close()
 
 
-def potential_target(gff_file, seq_file, target_folder, args_tar):
+def potential_target(gff_file, seq_file, target_folder, args_tar, prefixs):
     '''get the sequence of the potential target of sRNA'''
-    fasta, cdss_f, cdss_r, genes = read_file(seq_file, gff_file,
+    fasta, cdss_f, cdss_r, genes, seq_id = read_file(seq_file, gff_file,
                                              target_folder, args_tar.features)
     sort_cdss_f = sorted(cdss_f, key=lambda k: (k.seq_id, k.start,
                                                 k.end, k.strand))
     deal_cds_forward(sort_cdss_f, target_folder, fasta, genes,
-                     args_tar.tar_start, args_tar.tar_end)
+                     args_tar.tar_start, args_tar.tar_end, prefixs.index(seq_id))
     sort_cdss_r = sorted(cdss_r, reverse=True,
                          key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     deal_cds_reverse(sort_cdss_r, target_folder, fasta, genes,
-                     args_tar.tar_start, args_tar.tar_end)
+                     args_tar.tar_start, args_tar.tar_end, prefixs.index(seq_id))

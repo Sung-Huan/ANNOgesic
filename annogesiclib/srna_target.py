@@ -135,7 +135,48 @@ class sRNATargetPrediction(object):
             gff_f.close()
             out.close()
 
-    def _gen_seq(self, prefixs, args_tar):
+    def _gen_seq(self, prefixs, target_prefixs, args_tar):
+        print("Generating sRNA fasta files")
+        for gff in os.listdir(self.gff_path):
+            if gff.endswith(".gff"):
+                prefix = gff.replace(".gff", "")
+                target_prefixs.append(prefix)
+        detect = False
+        for gff in os.listdir(self.gff_path):
+            if gff.endswith(".gff"):
+                prefix = gff.replace(".gff", "")
+                potential_target(os.path.join(self.gff_path, gff),
+                                 os.path.join(self.fasta_path, prefix + ".fa"),
+                                 os.path.join(self.target_seq_path), args_tar, target_prefixs)
+                file_num = 1
+                num = 0
+                sub_prefix = os.path.join(self.target_seq_path,
+                                          "_".join([prefix, "target"]))
+                if os.path.exists(sub_prefix + ".fa"):
+                    sub_out = open("_".join([sub_prefix, str(file_num) + ".fa"]),
+                                   "w")
+                    with open((sub_prefix + ".fa"), "r") as t_f:
+                        for line in t_f:
+                            line = line.strip()
+                            if line.startswith(">"):
+#                                line = line.replace("|", "_")
+                                num += 1
+                            if (num == 100):
+                                num = 0
+                                file_num += 1
+                                sub_out.close()
+                                sub_out = open("_".join([sub_prefix,
+                                               str(file_num) + ".fa"]), "w")
+                            detect = True
+                            sub_out.write(line + "\n")
+                    sub_out.close()
+                else:
+                    open(sub_prefix + ".fa", "w").close()
+        if not detect:
+            print("No assigned features can be found. "
+              "Please check your genome annotation. "
+              "And assign correct features to --target_feature.")
+            sys.exit()
         print("Generating sRNA fasta files")
         for srna in os.listdir(self.srna_path):
             if srna.endswith("_sRNA.gff"):
@@ -157,40 +198,14 @@ class sRNATargetPrediction(object):
                             os.path.join(self.fasta_path, prefix + ".fa"),
                             srna_out, args_tar.query)
                 self._sort_srna_fasta(srna_out, prefix, self.srna_seq_path)
-        print("Generating target fasta files")
-        for gff in os.listdir(self.gff_path):
-            if gff.endswith(".gff"):
-                prefix = gff.replace(".gff", "")
-                potential_target(os.path.join(self.gff_path, gff),
-                                 os.path.join(self.fasta_path, prefix + ".fa"),
-                                 os.path.join(self.target_seq_path), args_tar)
-                file_num = 1
-                num = 0
-                sub_prefix = os.path.join(self.target_seq_path,
-                                          "_".join([prefix, "target"]))
-                sub_out = open("_".join([sub_prefix, str(file_num) + ".fa"]),
-                               "w")
-                with open((sub_prefix + ".fa"), "r") as t_f:
-                    for line in t_f:
-                        line = line.strip()
-                        if line.startswith(">"):
-#                            line = line.replace("|", "_")
-                            num += 1
-                        if (num == 100):
-                            num = 0
-                            file_num += 1
-                            sub_out.close()
-                            sub_out = open("_".join([sub_prefix,
-                                           str(file_num) + ".fa"]), "w")
-                        sub_out.write(line + "\n")
-                sub_out.close()
+
 
     def _run_rnaplex(self, prefix, rnaplfold_folder, args_tar, log):
         print("Running RNAplex of {0}".format(prefix))
         num_process = 0
         processes = []
         for seq in os.listdir(self.target_seq_path):
-            if (prefix in seq) and ("_target_" in seq):
+            if ("_target_" in seq):
                 print("Running RNAplex with {0}".format(seq))
                 out_rnaplex = open(os.path.join(
                     self.rnaplex_path, prefix, "_".join([
@@ -225,25 +240,31 @@ class sRNATargetPrediction(object):
             log.write("\t" + os.path.join(self.rnaplex_path, prefix, file_) + "\n")
         return num_process
 
-    def _rna_plex(self, prefixs, args_tar, log):
+    def _rna_plex(self, prefixs, target_prefixs, args_tar, log):
         log.write("Using RNAplex and RNAplfold to predict sRNA targets.\n")
         log.write("Please make sure the version of Vienna RNA package is "
                   "at least 2.3.2.\n")
+        tmp_rnaplfold_folder = os.path.join(self.rnaplex_path,
+                                          "tmp_RNAplfold")
+        if os.path.exists(tmp_rnaplfold_folder):
+            shutil.rmtree(tmp_rnaplfold_folder)
+        os.mkdir(tmp_rnaplfold_folder)
+        for prefix in target_prefixs:
+            self._run_rnaplfold(
+                args_tar.rnaplfold_path, "target", args_tar.win_size_t,
+                args_tar.span_t, args_tar.unstr_region_rnaplex_t,
+                self.target_seq_path, prefix, tmp_rnaplfold_folder, log)
         for prefix in prefixs:
             print("Running RNAplfold of {0}".format(prefix))
             self.helper.check_make_folder(
                         os.path.join(self.rnaplex_path, prefix))
             rnaplfold_folder = os.path.join(self.rnaplex_path, prefix,
                                           "RNAplfold")
-            os.mkdir(rnaplfold_folder)
+            shutil.copytree(tmp_rnaplfold_folder, rnaplfold_folder)
             self._run_rnaplfold(
                 args_tar.rnaplfold_path, "sRNA", args_tar.win_size_s,
                 args_tar.span_s, args_tar.unstr_region_rnaplex_s,
                 self.srna_seq_path, prefix, rnaplfold_folder, log)
-            self._run_rnaplfold(
-                args_tar.rnaplfold_path, "target", args_tar.win_size_t,
-                args_tar.span_t, args_tar.unstr_region_rnaplex_t,
-                self.target_seq_path, prefix, rnaplfold_folder, log)
             num_process = self._run_rnaplex(prefix, rnaplfold_folder, args_tar, log)
             rnaplex_file = os.path.join(self.rnaplex_path, prefix,
                                         "_".join([prefix, "RNAplex.txt"]))
@@ -331,7 +352,7 @@ class sRNATargetPrediction(object):
         shutil.move("tmp.txt", out_rnaup)
         return srnas
 
-    def _rnaup(self, prefixs, args_tar, log):
+    def _rnaup(self, prefixs, target_prefixs, args_tar, log):
         log.write("Using RNAup to predict sRNA targets.\n")
         log.write("Please make sure the version of Vienna RNA package is "
                   "at least 2.3.2.\n")
@@ -374,25 +395,32 @@ class sRNATargetPrediction(object):
                         if start:
                             out_up.write(line + "\n")
                             out_up.close()
-                            self.helper.merge_file(os.path.join(
-                                self.target_seq_path,
-                                "_".join([prefix, "target.fa"])),
-                                os.path.join(args_tar.out_folder,
-                                             "".join([self.tmps["tmp"],
-                                                      str(num_up), ".fa"])))
-                            if num_up == args_tar.core_up:
-                                self._run_rnaup(num_up, processes, prefix,
-                                                out_rnaup, out_log, args_tar, log)
-                                processes = []
-                                num_up = 0
-            self._run_rnaup(num_up, processes, prefix, out_rnaup, out_log,
-                            args_tar, log)
+                            for prefix in target_prefixs:
+                                self.helper.merge_file(os.path.join(
+                                    self.target_seq_path,
+                                    "_".join([prefix, "target.fa"])),
+                                    os.path.join(args_tar.out_folder,
+                                                 "".join([self.tmps["tmp"],
+                                                          str(num_up), ".fa"])))
+                                if num_up == args_tar.core_up:
+                                    self._run_rnaup(num_up, processes, prefix,
+                                                    out_rnaup, out_log, args_tar, log)
+                                    processes = []
+                                    num_up = 0
+                self._run_rnaup(num_up, processes, prefix, out_rnaup, out_log,
+                                args_tar, log)
             log.write("The prediction for {0} is done.\n".format(prefix))
             log.write("\t" + out_rnaup + " is complete generated and updated.\n")
 
-    def _intarna(self, prefixs, args_tar, log):
+    def _intarna(self, prefixs, target_prefixs, args_tar, log):
         log.write("Using IntaRNA to predict sRNA targets.\n")
         log.write("Please make sure the version of IntaRNA is at least 2.0.4.\n")
+        all_target = os.path.join(self.target_seq_path, "all_target.fa")
+        if os.path.exists(all_target):
+            os.remove(all_target)
+        for prefix in target_prefixs:
+            self.helper.merge_file(os.path.join(self.target_seq_path,
+                                   prefix + "_target.fa"), all_target)
         for prefix in prefixs:
             print("Running IntaRNA of {0}".format(prefix))
             intarna_file = os.path.join(self.intarna_path, prefix,
@@ -403,8 +431,7 @@ class sRNATargetPrediction(object):
                   "-q", os.path.join(
                       self.srna_seq_path, "_".join([
                           self.tmps["tmp"], prefix, "sRNA.fa"])),
-                  "-t", os.path.join(self.target_seq_path,
-                                     prefix + "_target.fa"),
+                  "-t", all_target,
                   "--qAccW", str(args_tar.slide_win_srna),
                   "--qAccL", str(args_tar.max_loop_srna),
                   "--tAccW", str(args_tar.slide_win_target),
@@ -415,11 +442,16 @@ class sRNATargetPrediction(object):
             log.write("The prediction for {0} is done.\n".format(prefix))
             log.write("\t" + intarna_file + " is generated.\n")
 
-    def _merge_rnaplex_rnaup(self, prefixs, args_tar, log):
+    def _merge_rnaplex_rnaup(self, prefixs, target_prefixs, args_tar, log):
         '''merge the result of IntaRNA, RNAup and RNAplex'''
         log.write("Running merge_rnaplex_rnaup.py to merge the results from "
                   "RNAplex, RNAup, and IntaRNA for generating finanl output.\n")
         log.write("The following files are generated:\n")
+        all_gff = os.path.join(self.gff_path, "all.gff")
+        if os.path.exists(all_gff):
+            os.remove(all_gff)
+        for prefix in target_prefixs:
+            self.helper.merge_file(os.path.join(self.gff_path, prefix + ".gff"), all_gff)
         for prefix in prefixs:
             rnaplex_file = None
             rnaup_file = None
@@ -459,7 +491,7 @@ class sRNATargetPrediction(object):
                               merge_file, overlap_file,
                               os.path.join(self.srna_path,
                                            "_".join([prefix, "sRNA.gff"])),
-                              os.path.join(self.gff_path, prefix + ".gff"))
+                              all_gff, target_prefixs)
             if ("RNAplex" in args_tar.program):
                 log.write("\t" + out_rnaplex + "\n")
             if ("RNAup" in args_tar.program):
@@ -586,17 +618,20 @@ class sRNATargetPrediction(object):
         self.multiparser.parser_fasta(args_tar.fastas)
         self.multiparser.parser_gff(args_tar.srnas, "sRNA")
         prefixs = []
-        self._gen_seq(prefixs, args_tar)
+        target_prefixs = []
+        self._gen_seq(prefixs, target_prefixs, args_tar)
         if ("RNAplex" in args_tar.program):
-            self._rna_plex(prefixs, args_tar, log)
+            self._rna_plex(prefixs, target_prefixs, args_tar, log)
         self.helper.remove_all_content(self.target_seq_path,
                                        "_target_", "file")
+        shutil.rmtree(os.path.join(self.rnaplex_path,
+                                   "tmp_RNAplfold"))
         log.write("The temporary files for running RNAplex are deleted.\n")
         if ("RNAup" in args_tar.program):
-            self._rnaup(prefixs, args_tar, log)
+            self._rnaup(prefixs, target_prefixs, args_tar, log)
         if ("IntaRNA" in args_tar.program):
-            self._intarna(prefixs, args_tar, log)
-        self._merge_rnaplex_rnaup(prefixs, args_tar, log)
+            self._intarna(prefixs, target_prefixs, args_tar, log)
+        self._merge_rnaplex_rnaup(prefixs, target_prefixs, args_tar, log)
         self.helper.remove_all_content(args_tar.out_folder,
                                        self.tmps["tmp"], "dir")
         self.helper.remove_all_content(args_tar.out_folder,
@@ -605,3 +640,4 @@ class sRNATargetPrediction(object):
         self.helper.remove_tmp_dir(args_tar.srnas)
         self.helper.remove_tmp_dir(args_tar.fastas)
         self.helper.remove_all_content(self.srna_seq_path, "tmp_", "file")
+        os.remove(os.path.join(self.target_seq_path, "all_target.fa"))

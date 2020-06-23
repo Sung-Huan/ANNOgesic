@@ -81,10 +81,10 @@ def mod_srna_tar_pos(gff, pos, type_, pre_target, suf_target, length):
     return g_start, g_end
 
 def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar, length):
-    out.write("\t".join(["sRNA", "Genome", "sRNA_position",
+    out.write("\t".join(["sRNA", "sRNA_genome", "sRNA_position",
                          "sRNA_interacted_position_" + feature,
-                         "sRNA_strand", "Target_gene_ID", "Target_ID",
-                         "Target_locus_tag", "Target_position",
+                         "sRNA_strand", "Target_genome", "Target_gene_ID",
+                         "Target_ID", "Target_locus_tag", "Target_position",
                          "Target_interacted_position_" + feature,
                          "Target_strand", "Energy_" + feature,
                          "Rank_" + feature]) + "\n")
@@ -116,7 +116,8 @@ def print_rank_one(srnas, out, feature, gffs, srna_gffs, args_tar, length):
                                     "-".join([str(srna_info.start),
                                               str(srna_info.end)]),
                                     "-".join([str(s_start), str(s_end)]),
-                                    srna_info.strand, target["gene_id"],
+                                    srna_info.strand, target["target_genome"],
+                                    target["gene_id"],
                                     target["target_id"],
                                     target["target_locus"],
                                     "-".join([str(target_info.start),
@@ -134,7 +135,7 @@ def extract_pos(line, srnas, method):
         srnas["tar_pos"] = tar_pos
         srnas["srna_pos"] = srna_pos
 
-def read_rnaplex(rnaplex, genes, genomes, features, srnas):
+def read_rnaplex(rnaplex, genes, genomes, features, srnas, target_prefixs):
     start = False
     count_seq = 0
     with open(rnaplex, "r") as p_h:
@@ -148,6 +149,7 @@ def read_rnaplex(rnaplex, genes, genomes, features, srnas):
                     target_locus = "_".join(tags[:-3])
                     target_id = tags[-3]
                     detail = "_".join(tags[-2:])
+                    target_genome = target_prefixs[int(tags[0])]
                     gene_id, tar, target_id, target_locus = get_gene_id(
                             detail, genes, genomes, features)
                 elif count_seq == 2:
@@ -157,6 +159,7 @@ def read_rnaplex(rnaplex, genes, genomes, features, srnas):
                     srnas["RNAplex"][srna].append({
                         "target_id": target_id, "gene_id": gene_id,
                         "target_locus": target_locus,
+                        "target_genome": target_genome,
                         "detail": detail, "energy": 0})
                     count_seq = 0
             else:
@@ -164,7 +167,7 @@ def read_rnaplex(rnaplex, genes, genomes, features, srnas):
                     detect_energy(line, srnas["RNAplex"][srna][-1])
                     extract_pos(line, srnas["RNAplex"][srna][-1], "RNAplex")
 
-def read_rnaup(rnaup, srna_names, srnas, genes, genomes, features):
+def read_rnaup(rnaup, srna_names, srnas, genes, genomes, features, target_prefixs):
     with open(rnaup, "r") as u_h:
         for line in u_h:
             line = line.strip()
@@ -176,22 +179,23 @@ def read_rnaup(rnaup, srna_names, srnas, genes, genomes, features):
                     detail = "_".join(tags[-2:])
                     gene_id, tar, target_id, target_locus = get_gene_id(
                             detail, genes, genomes, features)
+                    target_genome = target_prefixs[int(tags[0])]
                     if srna in srnas["RNAup"].keys():
                         srnas["RNAup"][srna].append({
                             "target_id": target_id, "target_locus": target_locus,
-                            "detail": detail, "energy": 0,
+                            "detail": detail, "energy": 0, "target_genome": target_genome,
                             "gene_id": gene_id})
                     else:
                         srnas["RNAup"][srna] = []
                         srnas["RNAup"][srna].append({
                             "target_id": target_id, "target_locus": target_locus,
-                            "detail": detail, "energy": 0,
+                            "detail": detail, "energy": 0, "target_genome": target_genome,
                             "gene_id": gene_id})
             else:
                 detect_energy(line, srnas["RNAup"][srna][-1])
                 extract_pos(line, srnas["RNAup"][srna][-1], "RNAplex")
 
-def read_intarna(intarna, srnas, genes, genomes, features):
+def read_intarna(intarna, srnas, genes, genomes, features, target_prefixs):
     with open(intarna, "r") as i_h:
         for line in i_h:
             inter = line.strip().split(";")
@@ -199,7 +203,7 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                 if len(inter) == 9:
                     srna = inter[3]
                     tags = inter[0].split("_")
-                    if (len(tags) >= 4):
+                    if (len(tags) >= 5):
                         try:
                             if(int(inter[1]) and int(inter[2]) and 
                                     int(inter[4]) and int(inter[5])):
@@ -207,6 +211,7 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                                 if (len(tags[0])) != 0:
                                     gene_id, tar, target_id, target_locus = get_gene_id(
                                             detail, genes, genomes, features)
+                                    target_genome = target_prefixs[int(tags[0])]
                                     if tar is not None:
                                         if (srna not in srnas["IntaRNA"].keys()):
                                             srnas["IntaRNA"][srna] = []
@@ -216,23 +221,24 @@ def read_intarna(intarna, srnas, genes, genomes, features):
                                             "detail": detail,
                                             "energy": float(inter[-1]),
                                             "gene_id": gene_id,
+                                            "target_genome": target_genome,
                                             "tar_pos": ",".join(inter[1:3]),
                                             "srna_pos": ",".join(inter[4:6])})
                         except:
                             pass
 
-def read_table(gffs, rnaplex, rnaup, intarna, genes, genomes, features):
+def read_table(gffs, rnaplex, rnaup, intarna, genes, genomes, features, target_prefixs):
     srnas = {"RNAup": {}, "RNAplex": {}, "IntaRNA": {}}
     srna_names = set()
     for gff in gffs:
         if gff.attributes["ID"] not in srna_names:
             srna_names.add(gff.attributes["ID"])
     if rnaplex is not None:
-        read_rnaplex(rnaplex, genes, genomes, features, srnas)
+        read_rnaplex(rnaplex, genes, genomes, features, srnas, target_prefixs)
     if rnaup is not None:
-        read_rnaup(rnaup, srna_names, srnas, genes, genomes, features)
+        read_rnaup(rnaup, srna_names, srnas, genes, genomes, features, target_prefixs)
     if intarna is not None:
-        read_intarna(intarna, srnas, genes, genomes, features)
+        read_intarna(intarna, srnas, genes, genomes, features, target_prefixs)
     return srnas
 
 
@@ -243,7 +249,6 @@ def get_gene_id(detail, genes, gffs, features):
             strand = detail.split("_")[-1]
             start = int(detail.split("-")[0])
             end = int(detail.split("-")[1].split("_")[0])
-            strand = detail.split("_")[-1]
             if (gff.start == start) and (gff.end == end) and (
                     gff.strand == strand):
                 tar = gff
@@ -296,7 +301,7 @@ def append_merge_three_methods(name, srna_info, ps_pos, pt_pos, u_data, i_data,
     merges.append([name, srna_info.seq_id,
                    "-".join([str(srna_info.start), str(srna_info.end)]),
                    ps_pos, u_data["s_pos"], i_data["s_pos"],
-                   srna_info.strand, srna_m1["gene_id"],
+                   srna_info.strand, srna_m1["target_genome"], srna_m1["gene_id"],
                    srna_m1["target_id"], srna_m1["target_locus"],
                    "-".join([str(target_info.start), str(target_info.end)]),
                    pt_pos, u_data["t_pos"], i_data["t_pos"],
@@ -348,7 +353,7 @@ def import_merge(merges, name, srna_info, srna_m1, srna_m2, srna_m3,
             merges.append([name, srna_info.seq_id,
                            "-".join([str(srna_info.start), str(srna_info.end)]),
                            ps_pos, u_data["s_pos"],
-                           srna_info.strand, srna_m1["gene_id"],
+                           srna_info.strand, srna_m1["target_genome"], srna_m1["gene_id"],
                            srna_m1["target_id"], srna_m1["target_locus"],
                            "-".join([str(target_info.start), str(target_info.end)]),
                            pt_pos, u_data["t_pos"],
@@ -412,24 +417,24 @@ def remove_no_rank(merges, index):
 
 def print_file(merges, out, num_method):
     if num_method == 2:
-        merges = remove_no_rank(merges, 14)
-        merges = sorted(merges, key=lambda k: (k[0], int(k[14])))
+        merges = remove_no_rank(merges, 15)
+        merges = sorted(merges, key=lambda k: (k[0], int(k[15])))
         for merge in merges:
-            if float(merge[13]) == 1000:
-                merge[13] = "NA"
-            if float(merge[15]) == 1000:
-                merge[15] = "NA"
+            if float(merge[14]) == 1000:
+                merge[14] = "NA"
+            if float(merge[16]) == 1000:
+                merge[16] = "NA"
             out.write("\t".join(merge) + "\n")
     elif num_method == 3:
-        merges = remove_no_rank(merges, 16)
-        merges = sorted(merges, key=lambda k: (k[0], int(k[16])))
+        merges = remove_no_rank(merges, 17)
+        merges = sorted(merges, key=lambda k: (k[0], int(k[17])))
         for merge in merges:
-            if float(merge[15]) == 1000:
-                merge[15] = "NA"
-            if float(merge[17]) == 1000:
-                merge[17] = "NA"
-            if float(merge[19]) == 1000:
-                merge[19] = "NA"
+            if float(merge[16]) == 1000:
+                merge[16] = "NA"
+            if float(merge[18]) == 1000:
+                merge[18] = "NA"
+            if float(merge[20]) == 1000:
+                merge[20] = "NA"
             out.write("\t".join(merge) + "\n")
 
 
@@ -448,19 +453,19 @@ def read_gff(filename):
 
 def print_title(out, methods):
     if len(methods) == 2: 
-        out.write("\t".join(["sRNA", "Genome", "sRNA_position",
+        out.write("\t".join(["sRNA", "sRNA_genome", "sRNA_position",
                              "sRNA_interacted_position_" + methods[0],
-                             "sRNA_interacted_position_" + methods[1], "sRNA_strand",
+                             "sRNA_interacted_position_" + methods[1], "sRNA_strand", "Target_genome",
                              "Target_gene_ID", "Target_ID", "Target_locus_tag", "Target_position",
                              "Target_interacted_position_" + methods[0],
                              "Target_interacted_position_" + methods[1], "Target_strand",
                              "Energy_" + methods[0], "Rank_" + methods[1],
                              "Energy_" + methods[0], "Rank_" + methods[1]]) + "\n")
     if len(methods) == 3:
-        out.write("\t".join(["sRNA", "Genome", "sRNA_position",
+        out.write("\t".join(["sRNA", "sRNA_genome", "sRNA_position",
                              "sRNA_interacted_position_" + methods[0],
                              "sRNA_interacted_position_" + methods[1],
-                             "sRNA_interacted_position_" + methods[2], "sRNA_strand",
+                             "sRNA_interacted_position_" + methods[2], "sRNA_strand", "Target_genome",
                              "Target_gene_ID", "Target_ID", "Target_locus_tag", "Target_position",
                              "Target_interacted_position_" + methods[0],
                              "Target_interacted_position_" + methods[1],
@@ -652,7 +657,7 @@ def read_fasta(seq_file):
 
 def merge_srna_target(rnaplex, rnaup, intarna, args_tar, out_rnaplex,
                       out_rnaup, out_intarna, seq_file, output,
-                      out_overlap, srna_gff_file, annotation_gff):
+                      out_overlap, srna_gff_file, annotation_gff, target_prefixs):
     '''merge the results of RNAup and RNAplex'''
     length = read_fasta(seq_file)
     merges = []
@@ -660,7 +665,7 @@ def merge_srna_target(rnaplex, rnaup, intarna, args_tar, out_rnaplex,
     srna_gffs, NA = read_gff(srna_gff_file)
     gffs, genes = read_gff(annotation_gff)
     srnas = read_table(srna_gffs, rnaplex, rnaup, intarna, genes, gffs,
-                       args_tar.features)
+                       args_tar.features, target_prefixs)
     if out_rnaplex is not None:
         print("Ranking for RNAplex")
         methods.append("RNAplex")
