@@ -51,11 +51,12 @@ def read_data(tss_file, fasta_file):
         with open(fasta_file, "r") as f_h:
             for line in f_h:
                 line = line.strip()
-                if line[0] == ">":
-                    seq[line[1:]] = ""
-                    seq_id = line[1:]
-                else:
-                    seq[seq_id] = seq[seq_id] + line
+                if len(line) != 0:
+                    if line[0] == ">":
+                        seq[line[1:]] = ""
+                        seq_id = line[1:]
+                    else:
+                        seq[seq_id] = seq[seq_id] + line
     tsss = sorted(tsss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
     return tsss, seq
 
