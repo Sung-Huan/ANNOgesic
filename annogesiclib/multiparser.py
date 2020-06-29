@@ -282,6 +282,16 @@ class Multiparser(object):
                     self.helper.sort_gff(os.path.join(gff_folder, filename),
                                          os.path.join(gff_folder, "tmp.gff"))
                     f_h = open(os.path.join(gff_folder, "tmp.gff"), "r")
+                    lens = {}
+                    for row in csv.reader(f_h, delimiter="\t"):
+                        if not (row[0].startswith("#")):
+                            if (row[2] == "source") or (
+                                row[2] == "region") or (
+                                row[2] == "remark"):
+                                if row[0] not in lens.keys():
+                                    lens[row[0]] = int(row[4])
+                    f_h.close()
+                    f_h = open(os.path.join(gff_folder, "tmp.gff"), "r")
                     for row in csv.reader(f_h, delimiter="\t"):
                         if row[0].startswith("#"):
                             continue
@@ -293,6 +303,8 @@ class Multiparser(object):
                             else:
                                 name = row[0]
                             if pre_seq_id == name:
+                                if lens[name] < int(row[4]):
+                                    row[4] = str(lens[name])
                                 out.write("\t".join([name] + row[1:]) + "\n")
                                 out_t.write("\t".join([name] + row[1:]) + "\n")
                             else:
@@ -306,6 +318,8 @@ class Multiparser(object):
                                 out_t = open(os.path.join(par_tmp,
                                              name + feature + ".gff"), "w")
                                 pre_seq_id = name
+                                if lens[name] < int(row[4]):
+                                    row[4] = str(lens[name])
                                 out.write("\t".join([name] + row[1:]) + "\n")
                                 out_t.write("\t".join([name] + row[1:]) + "\n")
                     f_h.close()
