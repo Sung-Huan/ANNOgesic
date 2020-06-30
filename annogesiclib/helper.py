@@ -291,10 +291,12 @@ class Helper(object):
                     if (gff.end > lens[gff.seq_id]):
                         name = "".join([gff.feature, ":", str(gff.start), "-",
                                         str(gff.end), "_", gff.strand])
-                        print("Error: The end point of " + name +
+                        print("Warning: The end point of " + name +
                               " is longer than the length of whole genome.")
-                        print("Please check the gff files.")
-                        sys.exit()
+                if "ID" not in gff.attributes.keys():
+                    gene_name = (gff.feature + ":" + str(gff.start) + 
+                            "-" + str(gff.end) + "_" + gff.strand)
+                    print("Warning: {0} contain no ID information, it may cause error!".format(gene_name))
             if first:
                 first = False
                 self._add_element(ids, "ID", gff)

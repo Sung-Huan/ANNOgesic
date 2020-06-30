@@ -308,8 +308,11 @@ def detect_feature_5utr(feas, tss, cdss, length, check_cds):
                     tss.start <= fea.start):
                 if "locus_tag" in fea.attributes.keys():
                     locus_tag = fea.attributes["locus_tag"]
-                else:
+                elif "ID" in fea.attributes.keys():
                     locus_tag = fea.attributes["ID"]
+                else:
+                    locus_tag = (fea.feature + ":" + str(fea.start) + 
+                            "-" + str(fea.end) + "_" + fea.strand)
                 if check_cds:
                     near_cds, cds_name, check_utr = detect_cds(cdss, fea)
                 else:
@@ -322,8 +325,11 @@ def detect_feature_5utr(feas, tss, cdss, length, check_cds):
                     tss.start >= fea.end):
                 if "locus_tag" in fea.attributes.keys():
                     locus_tag = fea.attributes["locus_tag"]
-                else:
+                elif "ID" in fea.attributes.keys():
                     locus_tag = fea.attributes["ID"]
+                else:
+                    locus_tag = (fea.feature + ":" + str(fea.start) +
+                            "-" + str(fea.end) + "_" + fea.strand)
                 if check_cds:
                     near_cds, cds_name, check_utr = detect_cds(cdss, fea)
                 else:
@@ -638,7 +644,7 @@ def get_near_cds(cdss, genes, ta, attributes, utr_length):
     if detect:
         check_gene = False
         for gene in genes:
-            if ("Parent" in near_cds.attributes.keys()):
+            if ("Parent" in near_cds.attributes.keys()) and ("ID" in gene.attributes.keys()):
                 if gene.attributes["ID"] in near_cds.attributes["Parent"].split(","):
                     get_gene_string(gene, attributes)
                     check_gene = True
