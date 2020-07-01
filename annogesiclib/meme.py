@@ -180,7 +180,7 @@ class MEME(object):
                         if line.startswith(">"):
                             datas = line.split("_")
                             strain = "_".join(datas[2:])
-                            if pre_strain != strain:
+                            if (pre_strain != strain):
                                 num_strain += 1
                                 filename = fasta.split("allgenome")
                                 if out is not None:
@@ -193,7 +193,7 @@ class MEME(object):
                             out.write(line + "\n")
                         else:
                             out.write(line + "\n")
-                if num_strain <= 1:
+                if num_strain == 1:
                     os.remove(os.path.join(input_path,
                               "".join([filename[0], strain, filename[-1]])))
         out.close()
