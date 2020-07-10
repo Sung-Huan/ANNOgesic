@@ -11,10 +11,10 @@ with open(path.join(here, 'README.rst')) as f:
 
 setup(
     name='ANNOgesic',
-    version='1.0.14',
+    version='1.0.15',
     packages=['annogesiclib'],
     author='Sung-Huan Yu',
-    author_email='sung-huan.yu@uni-wuerzburg.de',
+    author_email='shyu@biochem.mpg.de',
     description='ANNOgesic - A tool for bacterial/archaeal RNA-Seq based genome annotations',
     long_description=long_description,
     url='https://github.com/Sung-Huan/ANNOgesic',

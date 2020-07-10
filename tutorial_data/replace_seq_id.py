@@ -4,8 +4,8 @@ import os
 import shutil
 import argparse
 
-__author__ = "Sung-Huan Yu <sung-huan.yu@uni-wuerzburg.de>"
-__email__ = "sung-huan.yu@uni-wuerzburg.de"
+__author__ = "Sung-Huan Yu <shyu@biochem.mpg.de>"
+__email__ = "shyu@biochem.mpg.de"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-i","--input_wig_folder",help="input wig file")
