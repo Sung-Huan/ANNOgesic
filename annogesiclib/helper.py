@@ -296,7 +296,9 @@ class Helper(object):
                 if "ID" not in gff.attributes.keys():
                     gene_name = (gff.feature + ":" + str(gff.start) + 
                             "-" + str(gff.end) + "_" + gff.strand)
-                    print("Warning: {0} contain no ID information, it may cause error!".format(gene_name))
+                    if (gff.feature != "exon") or (gff.feature != "Exon"):
+                        print("Warning: {0} contains no ID information, "
+                              "it may cause error!".format(gene_name))
             if first:
                 first = False
                 self._add_element(ids, "ID", gff)
