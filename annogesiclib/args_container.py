@@ -1063,6 +1063,15 @@ class ArgsContainer(object):
         self.srnas = self._gen_copy_new_folder(
                 [".gff", ".gff3"], starget_output_folder, "tmp_srna", sRNA_files,
                 ["--srna_files"])
+        if "all" not in query_sRNA:
+            for q in query_sRNA:
+                data = q.split(":")
+                if (len(data) == 4) and (isinstance(data[1], int)) and (
+                        isinstance(data[2], int)):
+                    pass
+                else:
+                    print("Error: the --query_srna does not be assigned properly!\n")
+                    sys.exit()
         self.query = query_sRNA
         self.program = program
         self.inter_length = interaction_length

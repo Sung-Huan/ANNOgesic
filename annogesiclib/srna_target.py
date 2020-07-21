@@ -37,8 +37,27 @@ class sRNATargetPrediction(object):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(gffs, gff))
 
+    def _check_long_id(self, seq_file, long_ids, type_):
+        out_file = seq_file + "_tmp.fa"
+        out = open(out_file, "w")
+        with open(seq_file) as f_h:
+            for line in f_h:
+                line = line.strip()
+                if line.startswith(">"):
+                    if len(line) > 40:
+                        long_ids[type_].append(line[1:])
+                        out.write(">TMP" + type_ + "_" + str(len(long_ids[type_])) + "\n")
+                    else:
+                        out.write(line + "\n")
+                else:
+                    out.write(line + "\n")
+        out.close()
+        return out_file
+
+
+
     def _run_rnaplfold(self, rnaplfold_path, file_type, win_size, span,
-                       unstr_region, seq_path, prefix, out_path, log):
+                       unstr_region, long_ids, seq_path, prefix, out_path, log):
         current = os.getcwd()
         os.chdir(out_path)
         command = " ".join([rnaplfold_path,
@@ -47,17 +66,21 @@ class sRNATargetPrediction(object):
                             "-u", str(unstr_region),
                             "-O"])
         if file_type == "sRNA":
-            log.write("<".join([command, os.path.join(current, seq_path,
+            srna_seq_file = os.path.join(current, seq_path,
                                 "_".join([self.tmps["tmp"], prefix,
-                                          file_type + ".fa"]))]) + "\n")
-            os.system("<".join([command, os.path.join(current, seq_path,
-                                "_".join([self.tmps["tmp"], prefix,
-                                          file_type + ".fa"]))]))
+                                          file_type + ".fa"]))
+            out_file = self._check_long_id(srna_seq_file, long_ids, "srna")
+            log.write("<".join([command, out_file]) + "\n")
+            os.system("<".join([command, out_file]))
         else:
-            log.write("<".join([command, os.path.join(current, seq_path,
-                                "_".join([prefix, file_type + ".fa"]))]) + "\n")
-            os.system("<".join([command, os.path.join(current, seq_path,
-                                "_".join([prefix, file_type + ".fa"]))]))
+            tar_seq_file = os.path.join(current, seq_path,
+                                "_".join([prefix, file_type + ".fa"]))
+            for tar_seq_file in os.listdir(os.path.join(current, seq_path)):
+                if (prefix + "_" + file_type + "_") in tar_seq_file:
+                    out_file = self._check_long_id(os.path.join(
+                        current, seq_path, tar_seq_file), long_ids, "tar")
+                    log.write("<".join([command, out_file]) + "\n")
+                    os.system("<".join([command, out_file]))
         os.chdir(current)
 
     def _wait_process(self, processes):
@@ -205,8 +228,8 @@ class sRNATargetPrediction(object):
         num_process = 0
         processes = []
         for seq in os.listdir(self.target_seq_path):
-            if ("_target_" in seq):
-                print("Running RNAplex with {0}".format(seq))
+            if ("_target_" in seq) and (".fa_tmp.fa" in seq):
+                print("Running RNAplex with {0}".format(seq.replace(".fa_tmp.fa", "")))
                 out_rnaplex = open(os.path.join(
                     self.rnaplex_path, prefix, "_".join([
                         prefix, "RNAplex", str(num_process) + ".txt"])), "w")
@@ -214,7 +237,7 @@ class sRNATargetPrediction(object):
                 log.write(" ".join([args_tar.rnaplex_path,
                            "-q", os.path.join(
                                self.srna_seq_path, "_".join([
-                                   self.tmps["tmp"], prefix, "sRNA.fa"])),
+                                   self.tmps["tmp"], prefix, "sRNA.fa_tmp.fa"])),
                            "-t", os.path.join(self.target_seq_path, seq),
                            "-l", str(args_tar.inter_length),
                            "-e", str(args_tar.energy),
@@ -223,7 +246,7 @@ class sRNATargetPrediction(object):
                 p = Popen([args_tar.rnaplex_path,
                            "-q", os.path.join(
                                self.srna_seq_path, "_".join([
-                                   self.tmps["tmp"], prefix, "sRNA.fa"])),
+                                   self.tmps["tmp"], prefix, "sRNA.fa_tmp.fa"])),
                            "-t", os.path.join(self.target_seq_path, seq),
                            "-l", str(args_tar.inter_length),
                            "-e", str(args_tar.energy),
@@ -240,6 +263,24 @@ class sRNATargetPrediction(object):
             log.write("\t" + os.path.join(self.rnaplex_path, prefix, file_) + "\n")
         return num_process
 
+    def _restore_long_ids(self, rnaplex_file, long_ids):
+        out = open(rnaplex_file + "tmp", "w")
+        with open(rnaplex_file, "r") as t_f:
+            for line in t_f:
+                line = line.strip()
+                if (line.startswith(">")):
+                    if (line.startswith(">TMPtar_")):
+                        header = long_ids["tar"][int(line.split("_")[1]) - 1]
+                    elif (line.startswith(">TMPsrna_")):
+                        header = long_ids["srna"][int(line.split("_")[1]) - 1]
+                    else:
+                        header = line[1:]
+                    out.write(">" + header + "\n")
+                else:
+                    out.write(line + "\n")
+        out.close()
+        shutil.move(rnaplex_file + "tmp", rnaplex_file)
+
     def _rna_plex(self, prefixs, target_prefixs, args_tar, log):
         log.write("Using RNAplex and RNAplfold to predict sRNA targets.\n")
         log.write("Please make sure the version of Vienna RNA package is "
@@ -249,10 +290,11 @@ class sRNATargetPrediction(object):
         if os.path.exists(tmp_rnaplfold_folder):
             shutil.rmtree(tmp_rnaplfold_folder)
         os.mkdir(tmp_rnaplfold_folder)
+        long_ids = {"tar": [], "srna": []}
         for prefix in target_prefixs:
             self._run_rnaplfold(
                 args_tar.rnaplfold_path, "target", args_tar.win_size_t,
-                args_tar.span_t, args_tar.unstr_region_rnaplex_t,
+                args_tar.span_t, args_tar.unstr_region_rnaplex_t, long_ids,
                 self.target_seq_path, prefix, tmp_rnaplfold_folder, log)
         for prefix in prefixs:
             print("Running RNAplfold of {0}".format(prefix))
@@ -263,7 +305,7 @@ class sRNATargetPrediction(object):
             shutil.copytree(tmp_rnaplfold_folder, rnaplfold_folder)
             self._run_rnaplfold(
                 args_tar.rnaplfold_path, "sRNA", args_tar.win_size_s,
-                args_tar.span_s, args_tar.unstr_region_rnaplex_s,
+                args_tar.span_s, args_tar.unstr_region_rnaplex_s, long_ids,
                 self.srna_seq_path, prefix, rnaplfold_folder, log)
             num_process = self._run_rnaplex(prefix, rnaplfold_folder, args_tar, log)
             rnaplex_file = os.path.join(self.rnaplex_path, prefix,
@@ -277,6 +319,8 @@ class sRNATargetPrediction(object):
                     self.rnaplex_path, prefix, "_".join([
                         prefix, "RNAplex", str(index) + ".txt"])),
                     rnaplex_file)
+            if (len(long_ids["tar"]) != 0) or (len(long_ids["srna"]) != 0):
+                self._restore_long_ids(rnaplex_file, long_ids)
             log.write("\t" + rnaplex_file + " is generated.\n")
             self.helper.remove_all_content(os.path.join(
                  self.rnaplex_path, prefix), "_RNAplex_", "file")
