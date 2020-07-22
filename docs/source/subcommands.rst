@@ -845,7 +845,7 @@ given gene annotations and several parameters that can be set by the user.
 
 - **Optional input files**
 
-**TSS gff files:** If the user wants to compare transcripts with TSSs, TSS gff files are required.
+**TSS gff files:** If the user wants to compare transcripts with TSSs, TSS gff files are required. Please check the section :ref:`tss_ps`.
 
 **Gff files of genome anntations containing CDSs, tRNAs, rRNAs, etc:** If the user wants to compare transcripts with genome annotations or modify transcript based on genome annotations 
 like CDSs, tRNAs, rRNAs, genome annotation gff files are required. There are four options for modification of transcripts:
@@ -1068,7 +1068,7 @@ which have coverage significant decrease.
 
 **Wiggle files of TEX +/- treated libraries or fragmented/conventional libraries**
 
-**Gff files of the transcripts**
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 - **Basic arguments**
 
@@ -1320,13 +1320,13 @@ ANNOgesic, please use ``--tss_source`` to classify TSSs for the analysis.
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
-**Gff files of the TSSs**
+**Gff files of the TSSs**: Please check the section :ref:`tss_ps`.
 
-**Gff files of the transcripts**
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 - **Optional input files**
 
-**Gff files of the terminators:** If the information of terminators is needed, the gff files of terminators are required.
+**Gff files of the terminators:** If the information of terminators is needed, the gff files of terminators are required. Please check the section :ref:`terminator`.
 
 - **Basic Arguments**
 
@@ -1430,7 +1430,7 @@ BLAST to nr database and sRNA database can be set as well.
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
-**Gff files of the transcripts**
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 **Wiggle files of the fragmented/conventional or TEX+/- libraries:** Please check the section 
 :ref:`The input format of libraries for running ANNOgesic`.
@@ -1439,13 +1439,14 @@ BLAST to nr database and sRNA database can be set as well.
 
 **Gff files of the TSSs:** If you want to detect the UTR-derived sRNAs, it is necessary to input
 TSS information. If you don't want to detect UTR-derived sRNAs, TSS information still can be provided as a filter.
-We strongly recommend input this file.
+We strongly recommend input this file. please check the section :ref:`tss_ps`.
 
 **Gff files of processing sites:** For checking the sRNAs which end with processing sites. Moreover,
 Some 3'UTR-derived and interCDS-derived sRNA candidates start
 from processing sites not TSSs. If you don't want to detect UTR-derived sRNAs,
 This information still can be provided to increase the accuracy, especially for some
 long non-coding regions. We strongly recommend input this file if you want to detect UTR-derived sRNAs.
+Please check the section :ref:`tss_ps`.
 
 **Promoter tables:** Information of the promoter motifs can be used for prioritizing sRNA candidates via 
 promoters and sRNA coverage. The format should be as following:
@@ -1461,7 +1462,7 @@ First irow is header of the table, the last column is the name of promoter motif
 If subcommand ``promoter`` was implemented before, the table will be generated automatically.
 Please refer to the section :ref:`promoter`.
 
-- **Filers with the corresponding input files and tools**
+- **Filters with the corresponding input files and tools**
 
 There are some filters which can improve the prediction. The user can assign the information to remove false positive. 
 If the information is not assigned to be a filter, it still can input to the module. Then, the information will 
@@ -1520,19 +1521,19 @@ this candidates will be removed. ``--blast_score_nr`` and ``--blast_e_nr`` can b
 
 	**Required files:**
 
-		**Gff files of the terminators**
+		**Gff files of the terminators**: Please check the section :ref:`terminator`.
 
 **sORF:** Remove the candidates which overlap sORF.
 
 	**Required files:**
 
-		**Gff files of the sORFs**
+		**Gff files of the sORFs**: Please check the section :ref:`sorf`.
 
 **Promoter:** Remove the candidates which are not associated with promoter motif.
 
 	**Required files:**
 
-		**Tables of the promoters:** Please check the Promoter Tables of this section.
+		**Tables of the promoters:** Please check the Promoter Tables of this section and the section :ref:`promoter`.
 
 - **Basic arguments**
 
@@ -2019,7 +2020,7 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 - **Required files**
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
-**Gff files of the transcripts**
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 **Wiggle files of TEX+/- or fragmented/conventional libraries:** Please refer to the section :ref:`The input format of libraries for running ANNOgesic`.
 
@@ -2027,9 +2028,9 @@ a small transcript. There are three sORF candidates (200-241, 203-241 and 202-24
 
 - **Optional input files**
 
-**Gff files of the TSSs:** For checking the sORFs start from TSS or not. We strongly recommend to input this file. 
+**Gff files of the TSSs:** For checking the sORFs start from TSS or not. We strongly recommend to input this file. Please check the section :ref:`tss_ps`.
 
-**Gff files of sRNAs:** For checking the overlap of sRNAs and sORFs.
+**Gff files of sRNAs:** For checking the overlap of sRNAs and sORFs. Please check the section :ref:`srna`.
 
 - **Basic arguments**
 
@@ -2296,7 +2297,8 @@ promoter motifs.
 **Gff files of the TSSs:** If the input TSS gff file is not generated by ANNOgesic, 
 the libraries and wiggle files are necessary.
 Please refer to the :ref:`The input format of libraries for running ANNOgesic` 
-in order to assign the correct format.
+in order to assign the correct format. And for the details of TSS, 
+please check the section :ref:`tss_ps`.
 
 - **Basic arguments**
 
@@ -2424,13 +2426,13 @@ are not associated with genes, they would not be counted as operons.
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
-**Gff files of the transcripts**
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 - **Optional input files**
 
-**Gff files of the TSSs**: We strongly recommend to input this file for detecting sub-operon.
+**Gff files of the TSSs**: We strongly recommend to input this file for detecting sub-operon. Please check the section :ref:`tss_ps`.
 
-**Gff files of the terminators**
+**Gff files of the terminators**: Please check the section :ref:`terminator`.
 
 - **Basic arguments**
 
@@ -2675,7 +2677,7 @@ Some analyses of GO terms can be done as well.
 
 - **Optional input files**
 
-**Gff files of the transcripts:** For detecting the GO terms only based on expressed CDSs.
+**Gff files of the transcripts:** For detecting the GO terms only based on expressed CDSs. Please check the section :ref:`transcript`.
 
 - **Arguments**
 
@@ -2753,7 +2755,7 @@ programs. ``srna_target`` can also compare the results of both programs and prov
 
 **Gff files of the genome annotations containing CDSs**
 
-**Gff files of the sRNAs**
+**Gff files of the sRNAs**: Please check the section :ref:`srna`.
 
 **Fasta files of the genomes**
 
@@ -3066,6 +3068,7 @@ Some statistics and visualization files are provided as well.
 - **Optional input files**
 
 **Gff files of the transcripts:** For detecting subcellular localization only based on expressed CDSs.
+Please check the section :ref:`transcript`.
 
 - **Basic arguments**
 
@@ -3165,8 +3168,7 @@ the region in `Rfam <http://rfam.xfam.org/>`_.
 
 **Gff files of the genome annotations containing CDSs, tRNAs, rRNAs, etc**
 
-**Gff files of the transcripts**
-
+**Gff files of the transcripts**: Please check the section :ref:`transcript`.
 
 **Fasta files of the genome sequences**
 
@@ -3188,6 +3190,7 @@ from our Git repository.
 - **Optional input files**
 
 **Gff files of the TSSs**: For checking the ribosome binding site. We strongly recommend to input this file.
+Please check the section :ref:`tss_ps`.
 
 - **Basic arguments**
 
