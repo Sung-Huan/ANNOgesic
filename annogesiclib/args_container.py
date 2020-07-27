@@ -748,6 +748,9 @@ class ArgsContainer(object):
         self.num_u = num_u
         self.mut_u = mut_u
         self.blast_score_s = blast_score_s
+        if (promoter_tables is not None) and (promoter_name is None):
+            print("Error: No promoter names are assigned!\n")
+            sys.exit()
         if blast_score_n is None:
             self.blast_score_n = 0
         else:
