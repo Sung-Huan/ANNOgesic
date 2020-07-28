@@ -8,8 +8,6 @@
 About ANNOgesic
 ---------------
 
-test
-
 ANNOgesic is the swiss army knife for RNA-Seq based annotation of
 bacterial/archaeal genomes.
 
