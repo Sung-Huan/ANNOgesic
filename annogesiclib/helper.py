@@ -5,7 +5,6 @@ import shutil
 import csv
 import re
 from Bio.Seq import Seq
-from Bio.Alphabet import generic_dna
 from annogesiclib.gff3 import Gff3Parser
 
 
@@ -383,6 +382,6 @@ class Helper(object):
                 if seq.startswith(">"):
                     out.write(seq + "\n")
                 else:
-                    dna = Seq(seq, generic_dna)
+                    dna = Seq(seq)
                     out.write(str(dna.translate()) + "\n")
         out.close()
