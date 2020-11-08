@@ -309,7 +309,7 @@ class TranscriptDetection(object):
             strains = self._for_one_wig("tex_notex", args_tran)
         self._for_two_wigs(strains, args_tran, log)
         tas = []
-        if "none" not in args_tran.modify:
+        if ("none" not in args_tran.modify) and (args_tran.gffs is not None):
             for gff in os.listdir(args_tran.gffs):
                 if gff.endswith(".gff"):
                     self.helper.sort_gff(os.path.join(args_tran.gffs, gff),

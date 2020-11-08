@@ -11,7 +11,7 @@ class WigParser(object):
                 datas = line.split(" ")
                 if (datas[0] == "variableStep") or (datas[0] == "fixedStep"):
                     strain = datas[1].split("=")
-                    strain = strain[1]
+                    strain = strain[1].strip()
                     pre_pos = 0
                     first = True
                 if (datas[0] == "track"):
