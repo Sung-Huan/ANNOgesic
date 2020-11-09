@@ -362,10 +362,10 @@ class Multiparser(object):
                                     if ("|" in chrom[1]) and (
                                             len(chrom[1].split("|")) > 4):
                                         strain = chrom[1].split("|")
-                                        name = strain[3]
+                                        name = strain[3].strip()
                                         weird = True
                                     else:
-                                        name = chrom[1]
+                                        name = chrom[1].strip()
                                         weird = False
                                     if first:
                                         first = False

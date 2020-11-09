@@ -149,8 +149,6 @@ class TranscriptDetection(object):
         for strain in strains:
             out = os.path.join(self.gff_outfolder, "_".join([
                 strain, "transcript", type_ + ".gff"]))
-            print(os.path.join(args_tran.out_folder,
-                                 "_".join([strain, type_])))
             self.helper.sort_gff(os.path.join(args_tran.out_folder,
                                  "_".join([strain, type_])), out)
             os.remove(os.path.join(args_tran.out_folder,
