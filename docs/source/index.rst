@@ -137,4 +137,4 @@ Contact
 =======
 
 For question and requests feel free to contact `Sung-Huan Yu
-<shyu@biochem.mpg.de>`_
+<sunghuanyu@gmail.com>`_
