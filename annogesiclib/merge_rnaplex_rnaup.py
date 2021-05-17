@@ -459,8 +459,8 @@ def print_title(out, methods):
                              "Target_gene_ID", "Target_ID", "Target_locus_tag", "Target_position",
                              "Target_interacted_position_" + methods[0],
                              "Target_interacted_position_" + methods[1], "Target_strand",
-                             "Energy_" + methods[0], "Rank_" + methods[1],
-                             "Energy_" + methods[0], "Rank_" + methods[1]]) + "\n")
+                             "Energy_" + methods[0], "Rank_" + methods[0],
+                             "Energy_" + methods[1], "Rank_" + methods[1]]) + "\n")
     if len(methods) == 3:
         out.write("\t".join(["sRNA", "sRNA_genome", "sRNA_position",
                              "sRNA_interacted_position_" + methods[0],
