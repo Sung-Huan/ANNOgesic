@@ -322,23 +322,38 @@ class Helper(object):
         fh.close()
 
     def _read_fasta(self, fasta_file):
+        seq_ids = []
+        seqs = []
         seq = ""
         with open(fasta_file, "r") as seq_f:
             for line in seq_f:
                 line = line.strip()
                 if line.startswith(">"):
-                    continue
+                    if seq != "":
+                        seqs.append(seq)
+                    seq_ids.append(line[1:])
+                    seq = ""
                 else:
                     seq = seq + line
-        return seq
+        seqs.append(seq)
+        return seq_ids, seqs
 
     def get_seq(self, gff_file, fasta_file, out_file):
         gff_f = open(gff_file, "r")
         out = open(out_file, "w")
-        seq = self._read_fasta(fasta_file)
+        seq_ids, seqs = self._read_fasta(fasta_file)
         num = 0
+        pre_id = ""
         for entry in self.gff3parser.entries(gff_f):
-            gene = self.extract_gene(seq, entry.start, entry.end, entry.strand)
+            if entry.seq_id != pre_id:
+                pre_id = entry.seq_id
+                id_num = 0
+                for seq_id in seq_ids:
+                    if seq_id == entry.seq_id:
+                        break
+                    else:
+                        id_num += 1
+            gene = self.extract_gene(seqs[id_num], entry.start, entry.end, entry.strand)
             if "ID" in entry.attributes.keys():
                 id_ = entry.attributes["ID"]
             else:
