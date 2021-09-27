@@ -157,10 +157,17 @@ Arguments
 Citation
 --------
 
-SH Yu, J. Vogel, KU Förstner. 2018, GigaScience,
+Original paper
+
+SH Yu, J Vogel, KU Förstner. 2018, GigaScience,
 `DOI:10.1093/gigascience/giy096 <https://academic.oup.com/gigascience/advance-article/doi/10.1093/gigascience/giy096/5087959>`_,
 `PMID:30169674 <https://www.ncbi.nlm.nih.gov/pubmed/30169674>`_.
 
+Applications
+
+K Moon, M Sim, CH Tai, K Yoo, C Merzbacher, SH Yu, DD Kim, J Lee, KU Förstner, Q Chen, S Stibitz, LG Knipling, DM Hinton. 2021, Microbiology Spectrum
+`DOI:10.1128/Spectrum.00044-21 <https://journals.asm.org/doi/10.1128/Spectrum.00044-21>`_,
+`PMID:34550019 <https://pubmed.ncbi.nlm.nih.gov/34550019/>`_.
 
 License
 -------
