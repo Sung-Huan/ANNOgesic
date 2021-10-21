@@ -306,7 +306,7 @@ class Helper(object):
                 if gff.seq_id == pre_gff.seq_id:
                     if "ID" in gff.attributes.keys():
                         if gff.attributes["ID"] in ids:
-                            print("Warninng: Repeat ID {0} "
+                            print("Warning: Repeat ID {0} "
                                   "in gff file!!!".format(
                                       gff.attributes["ID"]))
                         else:

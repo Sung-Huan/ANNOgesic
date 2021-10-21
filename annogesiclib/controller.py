@@ -313,6 +313,7 @@ class Controller(object):
             self._args.tsspredator_path, self._args.program,
             self._args.fasta_files, self._args.annotation_files,
             self._args.tex_notex_libs, self._args.condition_names,
+            self._args.output_id,
             self._args.auto_load_optimized_parameters, self._args.genome_order,
             self._args.height, self._args.height_reduction, self._args.factor,
             self._args.factor_reduction, self._args.base_height,
@@ -371,10 +372,10 @@ class Controller(object):
             self._args.max_factor_reduction, self._args.max_base_height,
             self._args.max_enrichment_factor, self._args.max_processing_factor,
             self._args.utr_length, self._args.tex_notex_libs,
-            self._args.condition_names, self._args.cluster,
-            self._args.curated_sequence_length, self._args.parallels,
-            self._args.program, self._args.replicate_tex,
-            self._args.steps)
+            self._args.condition_names, self._args.output_id,
+            self._args.cluster, self._args.curated_sequence_length,
+            self._args.parallels, self._args.program,
+            self._args.replicate_tex, self._args.steps)
         optimize_tss(args_ops, log)
         log.close()
 

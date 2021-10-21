@@ -1,4 +1,5 @@
 import os
+import csv
 import sys
 import shutil
 from subprocess import call
@@ -106,6 +107,16 @@ class TSSpredator(object):
             elif (lib_datas[1] == "notex") and (lib_datas[4] == "-"):
                 lib_dict["nm"].append(self._assign_dict(lib_datas))
         for num_id in range(1, lib_num+1):
+            os.system("echo '##gff-version 3' > tmp")
+            g = open(gff, "r")
+            for row in csv.reader(g, delimiter='\t'):
+                if not row[0].startswith("#"):
+                    seq_name = row[0]
+                    break
+            os.system("echo '##sequence-region '" + seq_name + " >> tmp")
+            os.system("cat " + gff + ">> tmp")
+            g.close()
+            shutil.move("tmp", gff)
             out.write("annotation_{0} = {1}\n".format(num_id, gff))
         if program.lower() == "tss":
             self._print_lib(lib_num, lib_dict["fm"], out,
@@ -295,6 +306,9 @@ class TSSpredator(object):
         for prefix_id in range(len(args_tss.output_prefixs)):
             out.write("outputPrefix_{0} = {1}\n".format(
                       prefix_id + 1, args_tss.output_prefixs[prefix_id]))
+            out.write("outputID_{0} = {1}\n".format(
+                      prefix_id + 1, args_tss.output_id))
+        out.write("projectName = {0}\n".format(project_strain_name))
         out.write("projectName = {0}\n".format(project_strain_name))
         out.write("superGraphCompatibility = igb\n")
         out.write("texNormPercentile = 0.5\n")
@@ -558,12 +572,28 @@ class TSSpredator(object):
                 prefix = None
         out.close()
 
+    def _check_output_id(self, gff, output_id):
+        g = open(gff, "r")
+        for row in csv.reader(g, delimiter='\t'):
+            if len(row) != 0:
+                if (not row[0].startswith("#")):
+                    tags = row[-1].split(";")
+                    detect = False
+                    for tag in tags:
+                        if tag.startswith(output_id):
+                            detect = True
+                    if (not detect) and (row[2] == "gene"):
+                        print("Warning: --output_id does not exist in "
+                              "all genes of annotation gff files.")
+
     def run_tsspredator(self, args_tss, log):
         input_folder = os.path.join(args_tss.out_folder, "configs")
         for gff in os.listdir(args_tss.gffs):
             if gff.endswith(".gff"):
                 self.helper.check_uni_attributes(os.path.join(
                                                  args_tss.gffs, gff))
+                self._check_output_id(os.path.join(
+                        args_tss.gffs, gff), args_tss.output_id)
         self.helper.check_make_folder(self.gff_outfolder)
         self.multiparser.parser_fasta(args_tss.fastas)
         self.multiparser.parser_gff(args_tss.gffs, None)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 
 """A tool for bacterial/archaeal RNA-Seq based genome annotations"""
@@ -8,7 +8,7 @@ from annogesiclib.controller import Controller
 
 __author__ = "Sung-Huan Yu <shyu@.biochem.mpg.dede>"
 __email__ = "shyu@biochem.mpg.de"
-__version__ = "1.0.22"
+__version__ = "1.1.0"
 
 def main():
     print("""
@@ -195,6 +195,10 @@ def main():
         help="The output prefix of all conditions. If multiple conditions "
         "need to be assigned, please use spaces to separate them. "
         "For an example, prefix_condition1 prefix_condition2.")
+    TSSpredator_basic.add_argument(
+        "--output_id", "-oi", default='locus_tag',
+        help="The tag of attributes will be used for TSS classification. "
+        "Default is locus_tag.")
     TSSpredator_add = TSSpredator_parser.add_argument_group(
         'additional arguments')
     TSSpredator_add.add_argument(
@@ -412,6 +416,10 @@ def main():
         help="The prefixs of output filename."
         "If multiple conditions need to be assigned, please use spaces to "
         "separate them. For an example, prefix_condition1 prefix_condition2.")
+    op_TSSpredator_basic.add_argument(
+        "--output_id", "-oi", default='locus_tag',
+        help="The tag of attributes will be used for TSS classification. "
+        "Default is locus_tag.")
     op_TSSpredator_add = op_TSSpredator_parser.add_argument_group(
         'additional arguments')
     op_TSSpredator_add.add_argument(

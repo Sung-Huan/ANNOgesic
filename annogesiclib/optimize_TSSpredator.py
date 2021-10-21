@@ -3,7 +3,7 @@ import shutil
 import sys
 import random
 import csv
-from subprocess import Popen
+from subprocess import Popen, STDOUT
 import math
 import time
 from annogesiclib.gff3 import Gff3Parser
@@ -225,9 +225,10 @@ def convert2gff(out_path, gff_files, args_ops, strain):
 def run_TSSpredator(tsspredator_path, config_file):
     folders = config_file.split("/")
     out_path = "/".join(folders[:-1])
-    out = open(os.path.join(out_path, "TSSpredator_log.txt"), "w")
+    out = open(os.path.join(
+        out_path, "TSSpredator_log.txt"), "w")
     p = Popen(["java", "-jar",
-               tsspredator_path, config_file], stdout=out)
+               tsspredator_path, config_file], stdout=out, stderr=STDOUT)
     return p
 
 
@@ -311,6 +312,16 @@ def import_lib(wig_folder, rep_set, lib_dict, out, gff,
              (lib_datas[4] == "-"):
             lib_dict["nm"].append(assign_dict(lib_datas))
     for num_id in range(1, lib_num+1):
+        os.system("echo '##gff-version 3' > tmp")
+        g = open(gff, "r")
+        for row in csv.reader(g, delimiter='\t'):
+            if not row[0].startswith("#"):
+                seq_name = row[0]
+                break
+        os.system("echo '##sequence-region '" + seq_name + " >> tmp")
+        os.system("cat " + gff + ">> tmp")
+        g.close()
+        shutil.move("tmp", gff)
         out.write("annotation_{0} = {1}\n".format(num_id, gff))
     if args_ops.program.lower() == "tss":
         print_lib(lib_num, lib_dict["fm"], out, wig_folder,
@@ -409,6 +420,8 @@ def gen_config(para_list, out_path, core, wig, fasta, gff, args_ops, strain):
     for prefix_id in range(len(args_ops.replicate_name)):
         out.write("outputPrefix_{0} = {1}\n".format(
                   prefix_id + 1, args_ops.replicate_name[prefix_id]))
+        out.write("outputID_{0} = {1}\n".format(
+                  prefix_id + 1, args_ops.output_id))
     out.write("projectName = {0}\n".format(strain))
     out.write("superGraphCompatibility = igb\n")
     out.write("texNormPercentile = 0.5\n")
@@ -991,6 +1004,20 @@ def check_empty(stat_file):
                 break
     return empty_file
 
+def check_output_id(gff, output_id):
+    g = open(gff, "r")
+    for row in csv.reader(g, delimiter='\t'):
+        if len(row) != 0:
+            if (not row[0].startswith("#")):
+                tags = row[-1].split(";")
+                detect = False
+                for tag in tags:
+                    if tag.startswith(output_id):
+                        detect = True
+                if (not detect) and (row[2] == "gene"):
+                    print("Warning: --output_id does not exist in "
+                          "all genes of annotation gff files.")
+
 def optimization(wig, fasta, gff, args_ops, manual, length, strain, log):
     '''opimize TSSpredator'''
     best = {}
@@ -1029,6 +1056,7 @@ def optimization(wig, fasta, gff, args_ops, manual, length, strain, log):
         else:
             list_num = []
             stat_out = open(stat_file, "w")
+    check_output_id(gff, args_ops.output_id)
     optimization_process(indexs, current_para, list_num, max_num, best_para,
                          out_path, stat_out, best, wig, fasta, gff,
                          num_manual, new, args_ops, strain, manuals, length, log)

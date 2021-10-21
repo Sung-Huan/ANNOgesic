@@ -441,8 +441,8 @@ class ArgsContainer(object):
 
     def container_tsspredator(self, TSSpredator_path, compute_program,
                               fasta_files, annotation_files, lib,
-                              output_prefix, auto_load, genome_order, height,
-                              height_reduction, factor, factor_reduction,
+                              output_prefix, output_id, auto_load, genome_order,
+                              height, height_reduction, factor, factor_reduction,
                               base_height, enrichment_factor,
                               processing_factor, replicate_match, out_folder,
                               validate_gene, merge_manual, strain_lengths,
@@ -476,6 +476,7 @@ class ArgsContainer(object):
         self.libs = self._check_libs(self.libs, None)
         self._check_condition_num(output_prefix, self.libs)
         self.output_prefixs = output_prefix
+        self.output_id = output_id
         self.auto_load = auto_load
         self.genome_order = genome_order
         self.height = height
@@ -510,8 +511,9 @@ class ArgsContainer(object):
                            max_height_reduction, max_factor,
                            max_factor_reduction, max_base_height,
                            max_enrichment_factor, max_processing_factor,
-                           utr_length, lib, output_prefix, cluster, strain_lengths,
-                           core, program, replicate_match, steps):
+                           utr_length, lib, output_prefix, output_id,
+                           cluster, strain_lengths, core, program,
+                           replicate_match, steps):
         self.tsspredator_path = TSSpredator_path
         if strain_lengths is not None:
             nt_lengths = self._check_strain_length(
@@ -547,6 +549,7 @@ class ArgsContainer(object):
         self.utr = utr_length
         self._check_condition_num(output_prefix, self.libs)
         self.replicate_name = output_prefix
+        self.output_id = output_id
         self.cluster = cluster
         self.cores = core
         self.program = program

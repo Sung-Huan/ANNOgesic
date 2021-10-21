@@ -13,7 +13,7 @@ class TSSPredatorReader(object):
 class TSSPredatorEntry(object):
 
     def __init__(self, row):
-        assert(len(row) == 28)
+        assert(len(row) == 30)
         self.super_pos = int(row[0])
         self.super_strand = row[1]
         self.map_count = int(row[2])
@@ -42,6 +42,8 @@ class TSSPredatorEntry(object):
         self.is_putative_asrna = True if row[25] == "1" else False
         self.comment = row[26]
         self.seq = row[27]
+        self.contig_pos = row[28]
+        self.contig_id = row[29]
         self.is_orphan = False
         if (self.is_primary is False and self.is_secondary is False and
                 self.is_internal is False and self.is_antisense is False):

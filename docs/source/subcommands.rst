@@ -633,6 +633,9 @@ For the transcripts, please check the section :ref:`transcript`.
                             conditions need to be assigned, please use spaces to
                             separate them. For an example, prefix_condition1
                             prefix_condition2.
+      --output_id OUTPUT_ID, -oi OUTPUT_ID
+                            The tag of attributes will be used for TSS
+                            classification. Default is locus_tag.
 
 - **Additional arguments**
 
@@ -3498,6 +3501,9 @@ Then ``optimize_tss_ps`` can scan whole genome based on the manual detected set 
                             need to be assigned, please use spaces to separate
                             them. For an example, prefix_condition1
                             prefix_condition2.
+      --output_id OUTPUT_ID, -oi OUTPUT_ID
+                            The tag of attributes will be used for TSS
+                            classification. Default is locus_tag.
 
 - **Additional arguments**
 
