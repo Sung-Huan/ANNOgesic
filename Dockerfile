@@ -8,7 +8,7 @@ RUN apt-get install default-jre default-jdk python3 python3-setuptools python3-s
 vim make gcc g++ gfortran libx11-dev wget zip unzip python3-biopython cython3 \
 software-properties-common python3-software-properties bioperl zlib1g-dev \
 ncbi-blast+ pkg-config python3-dev libfreetype6-dev libxft-dev r-base libxml2-dev \
-libpng-dev python3-pip python-pip python3-numpy imagemagick infernal git \
+libpng-dev python3-pip python3-numpy imagemagick infernal git \
 openssh-client apache2 curl build-essential net-tools librpc-xml-perl \
 ncbi-blast+-legacy nano libf2c2 apache2-dev libapache-singleton-perl \
 libjson-rpc-perl libncurses5-dev build-essential hmmer lua5.1 blast2 \
@@ -53,7 +53,7 @@ ENV RATT_HOME=/opt/RATT \
 PERL5LIB=/opt/RATT/:$PERL5LIB \
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
 
-# TSSpredator
+# TSSpredator - out of date, need to be removed
 RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/releases/org/uni-tuebingen/it/TSSpredator/1.06/TSSpredator-1.06.jar && \
 cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
 
@@ -181,15 +181,19 @@ WORKDIR /tools
 # may need to re-write the code
 RUN pip3 install ANNOgesic --upgrade --force-reinstall
 
+# TSSpredator - latest version 
+RUN wget https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/InfoKogni/WSI/IntegTranskript/Softwareprojekte/TSSPredator/TSSpredator-1.1beta.jar && \
+cp TSSpredator-1.1beta.jar /usr/local/bin/TSSpredator.jar
+
 RUN rm segemehl_0_2_0.tar.gz \
 meme_4.11.1.tar.gz \
+CRT1.2-CLI.jar.zip \
 transterm_hp_v2.09.zip \
 htslib-1.3.1.tar.bz2 \
 bcftools-1.3.1.tar.bz2 \
 samtools-1.3.1.tar.bz2 \
 ViennaRNA-2.3.2.tar.gz \
 intaRNA-2.0.4.tar.gz \
-CRT1.2-CLI.jar.zip \
 PAGIT.V1.64bit.tgz
 
 # a patch for language setting, need to re-write the code.
