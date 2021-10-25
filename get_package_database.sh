@@ -239,13 +239,17 @@ get_segemehl(){
     # The following script will install segemehl and generate testrealign at the same time.    #
     ############################################################################################
     VERSION=0_2_0
-    wget -cP $TOOL_PATH http://www.bioinf.uni-leipzig.de/Software/segemehl/segemehl_${VERSION}.tar.gz
+    wget -cP $TOOL_PATH http://www.bioinf.uni-leipzig.de/Software/segemehl/old/segemehl_${VERSION}.tar.gz
+
+    #or try newer version:
+    VERSION=0.3.4
+    wget -cP $TOOL_PATH http://www.bioinf.uni-leipzig.de/Software/segemehl/downloads/segemehl-${VERSION}.tar.gz
     cd $TOOL_PATH
-    tar -zxvf segemehl_${VERSION}.tar.gz
-    cd segemehl_${VERSION}/segemehl/
+    tar -zxvf segemehl-${VERSION}.tar.gz
+    cd segemehl-${VERSION}/
     make all
     cd $TOOL_PATH
-    rm segemehl_${VERSION}.tar.gz
+    rm segemehl-${VERSION}.tar.gz
     cd $PATH_FILE
 }
 
