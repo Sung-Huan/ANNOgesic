@@ -11,6 +11,8 @@ def plot_bar(cutoffs, strain, out_snp, type_):
     name = []
     for index in range(0, len(cutoffs) + 1):
         name.append(index * 10)
+    if len(name) > len(cutoffs):
+        name = name[:len(cutoffs)]
     ind = np.arange(len(cutoffs))
     width = 0.5
     plt.figure(figsize=(20, 15))
@@ -285,7 +287,7 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
     num_nt = 0
     paths = []
     if len(conflicts) == 0:
-        paths.append("All")
+        paths.append("NA")
     else:
         for conflict in conflicts:
             for path in conflict:
@@ -299,7 +301,7 @@ def print_file(refs, out_ref, conflicts, key, values, mod_seq_init,
                           str(num_ref), ref, strain]) + "\n")
             num_ref += 1
     else:
-        out_ref.write("\t".join([str(key), "_".join(paths), "1", "All",
+        out_ref.write("\t".join([str(key), "_".join(paths), "1", "NA",
                       mod_seq_init["genome"]]) + "\n")
     if len(mod_seqs) == 0:
         out_fasta = open("_".join([out_seq, mod_seq_init["genome"],
@@ -444,6 +446,8 @@ def snp_detect(fasta_file, snp_file, depth_file, out_snp, out_seq,
             snp_file, args_snp, bam_number, depth_file, min_sample)
     out_best = open(out_snp + "_best.vcf", "w")
     out_ref = open(out_snp + "_seq_reference.csv", "w")
+    out_ref.write("Pos_Conflict_ID\tSelected_Pos\tMutation_Conflict_ID"
+                  "\tSelected_Pos:NT\tStrain\n")
     out_best.write("\n".join(dess) + "\n")
     out_best.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL"
                     "\tFILTER\tINFO\tFORMAT\tBAM\n")

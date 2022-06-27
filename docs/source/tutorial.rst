@@ -1146,6 +1146,7 @@ First, we copy the bam files to ``BAMs_map_reference_genomes``.
 Now, we can set our bam files
 
 ::
+
     $ BAM_FILES=ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515254_50000_NC_009839.1.bam,\
       ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515255_50000_NC_009839.1.bam,\
       ANNOgesic/input/BAMs/BAMs_map_reference_genomes/tex_notex/SRR515256_50000_NC_009839.1.bam,\
