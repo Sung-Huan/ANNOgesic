@@ -440,13 +440,13 @@ class TSSpredator(object):
                     "stat", feature, "libs", tss]) + ".csv"))
             self.helper.move_all_content(os.getcwd(), os.path.join(
                 self.stat_outfolder, tss), ["_class", ".png"])
-            if os.path.exists(os.path.join(
-                    self.stat_outfolder, "TSSstatistics.tsv")):
-                shutil.move(
-                    os.path.join(
-                        self.stat_outfolder, "TSSstatistics.tsv"),
-                    os.path.join(
-                        self.stat_outfolder, tss, "TSSstatistics.tsv"))
+            for file_ in os.listdir(self.stat_outfolder):
+                if file_.startswith("TSSstatistics_"):
+                    shutil.move(
+                        os.path.join(
+                            self.stat_outfolder, file_),
+                        os.path.join(
+                            self.stat_outfolder, tss, file_))
             plot_venn(compare_file, feature)
             self.helper.move_all_content(os.getcwd(), os.path.join(
                 self.stat_outfolder, tss), ["_venn", ".png"])
@@ -545,6 +545,37 @@ class TSSpredator(object):
                                        ref, args_tss.program,
                                        args_tss.cluster)
 
+    def _remove_re_hash(self, out_folder, args_tss):
+        out = open("tmp_re", "w")
+        if args_tss.program.lower() == "tss":
+            for tss in os.listdir(out_folder):
+                if tss.endswith("_TSS.gff"):
+                    hash_num = 0
+                    with open(os.path.join(out_folder, tss)) as fh:
+                        for line in fh:
+                            line = line.strip()
+                            if line.startswith("#"):
+                                if hash_num == 0:
+                                    out.write(line + "\n")
+                                    hash_num += 1
+                            else:
+                                out.write(line + "\n")
+        elif args_tss.program.lower() == "processing":
+            for tss in os.listdir(out_folder):
+                if tss.endswith("_processing.gff"):
+                    hash_num = 0
+                    with open(os.path.join(out_folder, tss)) as fh:
+                        for line in fh:
+                            line = line.strip()
+                            if line.startswith("#"):
+                                if hash_num == 0:
+                                    out.write(line + "\n")
+                                    hash_num += 1
+                            else:
+                                out.write(line + "\n")
+        out.close()
+        shutil.move("tmp_re", os.path.join(out_folder, tss))
+
     def _low_expression(self, args_tss, gff_folder):
         '''deal with the low expressed TSS'''
         prefix = None
@@ -615,7 +646,8 @@ class TSSpredator(object):
             if os.path.exists(os.path.join(out_path, "TSSstatistics.tsv")):
                 shutil.move(os.path.join(out_path, "TSSstatistics.tsv"),
                             os.path.join(
-                                self.stat_outfolder, "TSSstatistics.tsv"))
+                                self.stat_outfolder,
+                                "TSSstatistics_" + prefix + ".tsv"))
         if args_tss.program.lower() == "ps":
             args_tss.program = "processing"
         self._convert_gff(prefixs, args_tss, log)
@@ -651,6 +683,7 @@ class TSSpredator(object):
             self._merge_manual(datas, args_tss)
         log.write("Running filter_TSS_pro.py to deal with the overlap "
                   "position between TSS and PS.\n")
+        self._remove_re_hash(self.gff_outfolder, args_tss)
         self._deal_with_overlap(self.gff_outfolder, args_tss)
         log.write("Running stat_TSSpredator.py to do statistics.\n")
         self._stat_tss(datas, args_tss.program, log)
