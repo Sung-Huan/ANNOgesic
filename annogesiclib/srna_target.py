@@ -684,4 +684,5 @@ class sRNATargetPrediction(object):
         self.helper.remove_tmp_dir(args_tar.srnas)
         self.helper.remove_tmp_dir(args_tar.fastas)
         self.helper.remove_all_content(self.srna_seq_path, "tmp_", "file")
-        os.remove(os.path.join(self.target_seq_path, "all_target.fa"))
+        if os.path.exists(os.path.join(self.target_seq_path, "all_target.fa")):
+            os.remove(os.path.join(self.target_seq_path, "all_target.fa"))

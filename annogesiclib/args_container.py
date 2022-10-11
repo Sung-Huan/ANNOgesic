@@ -1072,8 +1072,8 @@ class ArgsContainer(object):
         if "all" not in query_sRNA:
             for q in query_sRNA:
                 data = q.split(":")
-                if (len(data) == 4) and (isinstance(data[1], int)) and (
-                        isinstance(data[2], int)):
+                if (len(data) == 4) and (data[1].isdigit()) and (
+                        data[2].isdigit()):
                     pass
                 else:
                     print("Error: the --query_srna does not be assigned properly!\n")
