@@ -40,6 +40,8 @@ class GoTermFinding(object):
             if self.tran_path is not None:
                 tran_file = os.path.join(self.tran_path,
                                          "_".join([prefix, "transcript.gff"]))
+                if not os.path.exists(tran_file):
+                    tran_file = None
             else:
                 tran_file = None
             retrieve_uniprot(uniprot, os.path.join(self.gff_path, gff),
