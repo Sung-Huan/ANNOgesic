@@ -163,6 +163,7 @@ class ArgsContainer(object):
             if datas[3] not in reps.keys():
                 reps[datas[3]] = 0
             reps[datas[3]] += 1
+            datas[4] = datas[4].strip()
             if (datas[4] != "+") and (datas[4] != "-"):
                 print("Error: Strand of libs should be assigned as + or -")
                 sys.exit()

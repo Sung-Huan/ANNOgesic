@@ -33,6 +33,7 @@ def modify_table(table, output_all):
         fh = open(table, "r")
         for row in csv.reader(fh, delimiter='\t'):
             rbss.append(import_data(row))
+        ids = []
         for rbs1 in rbss:
             repeat = False
             if "print" not in rbs1.keys():
@@ -44,7 +45,8 @@ def modify_table(table, output_all):
                         if "print" not in rbs2.keys():
                             rbs2["print"] = True
                             repeat = True
-                if not repeat:
+                if (not repeat) or (rbs1["ID"] not in ids):
+                    ids.append(rbs1["ID"])
                     out.write("\t".join(rbs1["info"] + [rbs1["rfam"],
                                         rbs1["e"], rbs1["score"],
                                         str(rbs1["start_align"]),

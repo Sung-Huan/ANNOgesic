@@ -98,65 +98,69 @@ class Ribos(object):
         for gff in os.listdir(self.gff_path):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
-                first_seq = os.path.join(tmp_files["fasta"],
-                                         prefix + ".fa")
-                prefixs.append(prefix)
-                print("Extracting sequences of candidates for {0}".format(
-                      prefix))
-                if self.tss_path is not None:
-                    tss_file = os.path.join(self.tss_path, prefix + "_TSS.gff")
-                else:
-                    tss_file = None
-                log.write("Running extract_RBS.py to extract potential "
-                          "sequences of riboswitches/RNA thermometers for "
-                          "{0}.\n".format(prefix))
-                extract_potential_rbs(
-                      os.path.join(self.fasta_path, prefix + ".fa"),
-                      os.path.join(self.gff_path, gff), tss_file,
-                      os.path.join(self.tran_path, prefix + "_transcript.gff"),
-                      first_seq, args_ribo, feature)
-                log.write("\t" + first_seq + " is temporary generated.\n")
-                print("Pre-scanning of {0}".format(prefix))
-                log.write("Using Infernal to pre-scan riboswitches/RNA "
-                          "thermometers for {0}.\n".format(prefix))
-                log.write("Please make sure the version of Infernal is at least 1.1.1.\n")
-                first_scan_file = self._run_cmscan(
-                        args_ribo, first_seq, "txt", prefix, tmp_files,
-                        suffixs, rfam, log)
-                sec_seq = os.path.join(tmp_files["fasta"],
-                                       "_".join([prefix, "regenerate.fa"]))
-                first_table = os.path.join(
-                        tmp_files["table"],
-                        "_".join([prefix, suffixs["csv"]]))
-                log.write("Running recompute_RBS.py to update the potential "
-                          "sequences of riboswitches/RNA thermometers for {0} "
-                          "based on the pre-scanning results.\n".format(prefix))
-                regenerate_seq(first_scan_file, first_seq,
-                               first_table, sec_seq)
-                log.write("\t" + sec_seq + " is temporary generated.\n")
-                print("Scanning of {0}".format(prefix))
-                log.write("Using Infernal to scan riboswitches/RNA "
-                          "thermometers for {0}.\n".format(prefix))
-                log.write("Please make sure the version of Infernal is at "
-                          "least 1.1.1.\n")
-                sec_scan_file = self._run_cmscan(
-                        args_ribo, sec_seq, "re_txt", prefix, tmp_files,
-                        suffixs, rfam, log)
-                sec_table = os.path.join(
-                        tmp_files["table"],
-                        "_".join([prefix, suffixs["re_csv"]]))
-                log.write("Running recompute_RBS.py and modify_rbs_table.py "
-                          "to generate tables for {0} "
-                          "based on the scanning results.\n".format(prefix))
-                reextract_rbs(sec_scan_file, first_table, sec_table,
-                              args_ribo.cutoff)
-                shutil.move(sec_table, first_table)
-                modify_table(first_table, args_ribo.output_all)
+                tran_file = os.path.join(self.tran_path, prefix + "_transcript.gff")
+                first_seq = os.path.join(tmp_files["fasta"], prefix + ".fa")
+                if (os.path.exists(tran_file)):
+                    first_seq = os.path.join(tmp_files["fasta"], prefix + ".fa")
+                    print("Extracting sequences of candidates for {0}".format(
+                          prefix))
+                    if self.tss_path is not None:
+                        tss_file = os.path.join(self.tss_path, prefix + "_TSS.gff")
+                    else:
+                        tss_file = None
+                    log.write("Running extract_RBS.py to extract potential "
+                              "sequences of riboswitches/RNA thermometers for "
+                              "{0}.\n".format(prefix))
+                    extract_potential_rbs(
+                          os.path.join(self.fasta_path, prefix + ".fa"),
+                          os.path.join(self.gff_path, gff), tss_file,
+                          tran_file, first_seq, args_ribo, feature)
+                    log.write("\t" + first_seq + " is temporary generated.\n")
+                    print("Pre-scanning of {0}".format(prefix))
+                    log.write("Using Infernal to pre-scan riboswitches/RNA "
+                              "thermometers for {0}.\n".format(prefix))
+                    log.write("Please make sure the version of Infernal is at least 1.1.1.\n")
+                    if (os.stat(first_seq).st_size != 0):
+                        prefixs.append(prefix)
+                        first_scan_file = self._run_cmscan(
+                                args_ribo, first_seq, "txt", prefix, tmp_files,
+                                suffixs, rfam, log)
+                        sec_seq = os.path.join(tmp_files["fasta"],
+                                               "_".join([prefix, "regenerate.fa"]))
+                        first_table = os.path.join(
+                                tmp_files["table"],
+                                "_".join([prefix, suffixs["csv"]]))
+                        log.write("Running recompute_RBS.py to update the "
+                                  "potential sequences of riboswitches/RNA "
+                                  "thermometers for {0} based on the "
+                                  "pre-scanning results.\n".format(prefix))
+                        regenerate_seq(first_scan_file, first_seq,
+                                       first_table, sec_seq)
+                        log.write("\t" + sec_seq + " is temporary generated.\n")
+                        print("Scanning of {0}".format(prefix))
+                        log.write("Using Infernal to scan riboswitches/RNA "
+                                  "thermometers for {0}.\n".format(prefix))
+                        log.write("Please make sure the version of Infernal "
+                                  "is at least 1.1.1.\n")
+                        if (os.stat(sec_seq).st_size != 0):
+                            sec_scan_file = self._run_cmscan(
+                                    args_ribo, sec_seq, "re_txt", prefix, tmp_files,
+                                    suffixs, rfam, log)
+                            sec_table = os.path.join(
+                                    tmp_files["table"],
+                                    "_".join([prefix, suffixs["re_csv"]]))
+                            log.write("Running recompute_RBS.py and modify_rbs_table.py "
+                                      "to generate tables for {0} "
+                                      "based on the scanning results.\n".format(prefix))
+                            reextract_rbs(sec_scan_file, first_table, sec_table,
+                                          args_ribo.cutoff)
+                            shutil.move(sec_table, first_table)
+                        modify_table(first_table, args_ribo.output_all)
         return prefixs
 
     def _merge_results(self, args_ribo, scan_folder, suffixs, tmp_files,
                        table_folder, stat_folder, feature_id, gff_outfolder,
-                       feature, log):
+                       feature, log, prefixs):
         '''merge the results from the results of two searching'''
         for gff in os.listdir(args_ribo.gffs):
             if gff.endswith(".gff"):
@@ -169,7 +173,7 @@ class Ribos(object):
                 log.write("Merging the results from Infernal to generate "
                           "tables for {0}.\n".format(prefix))
                 for entry in self.gff_parser.entries(fh):
-                    if entry.seq_id != pre_strain:
+                    if (entry.seq_id != pre_strain) and (entry.seq_id in prefixs):
                         if len(pre_strain) == 0:
                             shutil.copyfile(os.path.join(
                                 tmp_files["table"],
@@ -188,10 +192,12 @@ class Ribos(object):
                             tmp_files["scan"],
                             "_".join([entry.seq_id, suffixs["txt"]])),
                             os.path.join(scan_folder, prefix))
-                        shutil.copy(os.path.join(
+                        sec_scan = os.path.join(
                             tmp_files["scan"],
-                            "_".join([entry.seq_id, suffixs["re_txt"]])),
-                            os.path.join(scan_folder, prefix))
+                            "_".join([entry.seq_id, suffixs["re_txt"]]))
+                        if os.path.exists(sec_scan):
+                            shutil.copy(sec_scan,
+                                os.path.join(scan_folder, prefix))
                         pre_strain = entry.seq_id
                 log.write("The following files are generated.\n")
                 for folder in (table_folder, scan_folder):
@@ -220,11 +226,12 @@ class Ribos(object):
         self.helper.remove_tmp_dir(args_ribo.trans)
         self.helper.remove_tmp_dir(args_ribo.tsss)
 
-    def _remove_overlap(self, gff_path, tmp_files, suffixs, type_, fuzzy, log):
+    def _remove_overlap(self, gff_path, tmp_files, suffixs, type_, fuzzy,
+                        log, prefixs):
         log.write("Running rbs_overlap.py to remove the overlapping "
                   "riboswitches/RNA thermometers.\n")
         for gff in os.listdir(gff_path):
-            if gff.endswith(".gff"):
+            if gff.endswith(".gff") and (gff.replace(".gff", "") in prefixs):
                 tmp_table = os.path.join(os.path.join(
                         tmp_files["table"], "_".join([
                         gff.replace(".gff", ""), suffixs["csv"]])))
@@ -253,10 +260,10 @@ class Ribos(object):
         prefixs = self._scan_extract_rfam(
                 prefixs, args_ribo, tmp_files, suffixs, feature, rfam, log)
         self._remove_overlap(self.gff_path, tmp_files, suffixs, type_,
-                             args_ribo.fuzzy, log)
+                             args_ribo.fuzzy, log, prefixs)
         self._merge_results(args_ribo, scan_folder, suffixs, tmp_files,
                             table_folder, stat_folder, feature_id,
-                            gff_outfolder, feature, log)
+                            gff_outfolder, feature, log, prefixs)
         log.write("Running map_ribos.py to extract all the details from Rfam.\n")
         mapping_ribos(table_folder, feature_id, feature)
         log.write("The following files are updated:\n")
