@@ -88,15 +88,17 @@ class SubLocal(object):
         dna_seq_file = os.path.join(tmp_path, "_".join([prefix, "dna.fa"]))
         print("Generating CDS fasta files of {0}".format(prefix))
         if tran_path is not None:
-            log.write("Predicting subcellular localization for expressed "
-                      "CDSs for {0}.\n".format(prefix))
-            self._compare_cds_tran(os.path.join(self.gff_path, gff),
-                                   os.path.join(tran_path, "_".join([
-                                       prefix, "transcript.gff"])), log)
-            log.write("Running helper.py to extract sequences for CDSs.\n")
-            self.helper.get_cds_seq(os.path.join(self.out_all, "tmp_cds.gff"),
-                                    fasta, dna_seq_file)
-            os.remove(os.path.join(self.out_all, "tmp_cds.gff"))
+            tran_file = os.path.join(tran_path, "_".join([
+                                     prefix, "transcript.gff"]))
+            if (os.path.exists(tran_file)):
+                log.write("Predicting subcellular localization for expressed "
+                          "CDSs for {0}.\n".format(prefix))
+                self._compare_cds_tran(os.path.join(self.gff_path, gff),
+                                       tran_file, log)
+                log.write("Running helper.py to extract sequences for CDSs.\n")
+                self.helper.get_cds_seq(os.path.join(self.out_all, "tmp_cds.gff"),
+                                        fasta, dna_seq_file)
+                os.remove(os.path.join(self.out_all, "tmp_cds.gff"))
         else:
             log.write("Predicting subcellular localization for all CDSs for "
                       "{0}.\n".format(prefix))
@@ -109,12 +111,13 @@ class SubLocal(object):
         log.write("Running helper.py to translate DNA sequences to Protein "
                   "sequences.\n")
         tmp_file = os.path.join(args_sub.out_folder, "tmp")
-        self.helper.translation(dna_seq_file, tmp_file)
-        prot_seq_file = os.path.join(
-                tmp_path, "_".join([prefix, "protein.fa"]))
-        self.fixer.fix_emboss(tmp_file, prot_seq_file)
-        log.write(prot_seq_file + " is generated.\n")
-        os.remove(tmp_file)
+        if os.path.exists(dna_seq_file):
+            self.helper.translation(dna_seq_file, tmp_file)
+            prot_seq_file = os.path.join(
+                    tmp_path, "_".join([prefix, "protein.fa"]))
+            self.fixer.fix_emboss(tmp_file, prot_seq_file)
+            log.write(prot_seq_file + " is generated.\n")
+            os.remove(tmp_file)
         return prefix
 
     def _psortb(self, psortb_path, strain_type, prot_seq_file,

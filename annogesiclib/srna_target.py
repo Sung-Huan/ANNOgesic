@@ -668,8 +668,9 @@ class sRNATargetPrediction(object):
             self._rna_plex(prefixs, target_prefixs, args_tar, log)
         self.helper.remove_all_content(self.target_seq_path,
                                        "_target_", "file")
-        shutil.rmtree(os.path.join(self.rnaplex_path,
-                                   "tmp_RNAplfold"))
+        if os.path.exists(os.path.join(self.rnaplex_path, "tmp_RNAplfold")):
+            shutil.rmtree(os.path.join(self.rnaplex_path,
+                                       "tmp_RNAplfold"))
         log.write("The temporary files for running RNAplex are deleted.\n")
         if ("RNAup" in args_tar.program):
             self._rnaup(prefixs, target_prefixs, args_tar, log)

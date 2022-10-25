@@ -366,7 +366,7 @@ class Helper(object):
         out.close()
 
     def get_cds_seq(self, gff_file, fasta_file, out_file):
-        seq = self._read_fasta(fasta_file)
+        seq_ids, seqs = self._read_fasta(fasta_file)
         out = open(out_file, "w")
         cdss = []
         gh = open(gff_file)
@@ -375,16 +375,19 @@ class Helper(object):
                 cdss.append(entry)
         cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
         for entry in cdss:
-            cds = self.extract_gene(seq, entry.start, entry.end, entry.strand)
-            if "protein_id" in entry.attributes.keys():
-                protein_id = entry.attributes["protein_id"]
-            elif "locus_tag" in entry.attributes.keys():
-                protein_id = entry.attributes["locus_tag"]
-            else:
-                protein_id = entry.attributes["ID"]
-            out.write("_".join([">" + entry.seq_id, "_" + protein_id,
-                      entry.strand, str(entry.start), str(entry.end)]) + "\n")
-            out.write(cds + "\n")
+            for seq_id, seq in zip(seq_ids, seqs):
+                if seq_id == entry.seq_id:
+                    cds = self.extract_gene(seq, entry.start,
+                                            entry.end, entry.strand)
+                    if "protein_id" in entry.attributes.keys():
+                        protein_id = entry.attributes["protein_id"]
+                    elif "locus_tag" in entry.attributes.keys():
+                        protein_id = entry.attributes["locus_tag"]
+                    else:
+                        protein_id = entry.attributes["ID"]
+                    out.write("_".join([">" + entry.seq_id, "_" + protein_id,
+                              entry.strand, str(entry.start), str(entry.end)]) + "\n")
+                    out.write(cds + "\n")
         out.close()
         gh.close()
 
