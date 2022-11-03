@@ -54,8 +54,8 @@ PERL5LIB=/opt/RATT/:$PERL5LIB \
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/RATT:$PATH
 
 # TSSpredator - out of date, need to be removed
-RUN wget https://lambda.informatik.uni-tuebingen.de/nexus/content/repositories/releases/org/uni-tuebingen/it/TSSpredator/1.06/TSSpredator-1.06.jar && \
-cp TSSpredator-1.06.jar /usr/local/bin/TSSpredator.jar
+RUN wget https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/InfoKogni/WSI/IntegTranskript/Softwareprojekte/TSSPredator/TSSpredator-1.1beta.jar && \
+cp TSSpredator-1.1beta.jar /usr/local/bin/TSSpredator.jar
 
 # MEME
 RUN wget http://www.mpich.org/static/downloads/3.2/mpich-3.2.tar.gz && \
