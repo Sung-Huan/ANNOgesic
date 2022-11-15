@@ -503,5 +503,5 @@ class PPINetwork(object):
                         break
             self._retrieve_id(strain_id, genes, files, log)
             self._retrieve_actions(files, strain_id, paths, args_ppi, log)
-#        self._plot(args_ppi, files, log)
-#        self._remove_tmps(args_ppi)
+        self._plot(args_ppi, files, log)
+        self._remove_tmps(args_ppi)
