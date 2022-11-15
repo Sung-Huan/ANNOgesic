@@ -50,7 +50,7 @@ class PPINetwork(object):
         if strain == strain_id["ptt"]:
             print("Retrieving STRING ID for {0} of {1} -- {2}".format(
                    locus, strain_id["string"], strain_id["file"]))
-            id_source = ("http://string-db.org/api/tsv/resolve?"
+            id_source = ("http://string-db.org/api/tsv/get_string_ids?"
                          "identifier={0}&species={1}").format(
                          locus, strain_id["string"])
             self._run_wget(id_source, os.path.join(files["id_list"], locus),
@@ -90,8 +90,8 @@ class PPINetwork(object):
             if (filename[1] in os.listdir(files["id_list"])):
                 id_h = open(os.path.join(files["id_list"], filename[1]), "r")
                 for row_i in csv.reader(id_h, delimiter="\t"):
-                    if row_a == row_i[0]:
-                        prefername = row_i[3]
+                    if row_a == row_i[1]:
+                        prefername = row_i[4]
                 id_h.close()
         return prefername
 
@@ -107,10 +107,11 @@ class PPINetwork(object):
             locus = self.ref_tags[prefername]
         out.write("Interaction of {0} | {1}\n".format(
             locus, prefername))
-        out.write("Genome\tItem_id_a\tItem_id_b\tMode\tAction\ta_is_acting\t"
-                  "STRING_action_score\tPubmed_id\tPubmed_score\n")
+        out.write("Genome\tstringId_A\tstringId_B\tpreferredName_A\t"
+                  "preferredName_B\tncbiTaxonId\t"
+                  "STRING_score\tPubmed_id\tPubmed_score\n")
 
-    def _get_pubmed(self, row, strain_id, mode, actor, id_file, first_output,
+    def _get_pubmed(self, row, strain_id, score, id_file, first_output,
                     ptt, files, paths, args_ppi, log):
         prefer1 = self._get_prefer_name(row[0], strain_id,
                                         files, args_ppi.querys, log)
@@ -120,21 +121,17 @@ class PPINetwork(object):
             if args_ppi.no_specific:
                 pubmed_source = (
                     "http://www.ncbi.nlm.nih.gov/CBBresearch/"
-                    "Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}").format(
+                    "Wilbur/IRET/PIE/getppi.cgi?term={0}+AND+{1}").format(
                         prefer1, prefer2)
                 self._run_wget(pubmed_source, self.tmp_files["nospecific"],
                                files["pubmed_log"], log)
             strain_id["pie"] = "+".join(strain_id["pie"].split(" "))
             pubmed_source = (
                 "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur"
-                "/IRET/PIE/getppi.cgi?term={0}+{1}+{2}").format(
+                "/IRET/PIE/getppi.cgi?term={0}+AND+{1}+AND+{2}").format(
                     prefer1, prefer2, strain_id["pie"])
             self._run_wget(pubmed_source, self.tmp_files["specific"],
                            files["pubmed_log"], log)
-            row[2] = mode
-            row[4] = actor
-            row[0] = prefer1
-            row[1] = prefer2
             self._merge_information(
                 first_output, self.tmp_files["specific"],
                 files["all_specific"], files["best_specific"], row,
@@ -152,10 +149,10 @@ class PPINetwork(object):
     def _print_single_file(self, out_single, row_a, ptt, row):
         if row == "NA":
             out_single.write("\t".join(
-                             [ptt, "\t".join(row_a), "NA", "NA"]) + "\n")
+                             [ptt, "\t".join(row_a[:6]), "NA", "NA"]) + "\n")
         else:
             out_single.write("\t".join(
-                             [ptt, "\t".join(row_a), "\t".join(row)]) + "\n")
+                             [ptt, "\t".join(row_a[:6]), "\t".join(row)]) + "\n")
 
     def _merge_information(self, first_output, filename, out_all, out_best,
                            row_a, score, id_file, id_folder, file_type,
@@ -175,7 +172,7 @@ class PPINetwork(object):
                 if first_output["_".join([file_type, "all"])]:
                     first_output["_".join([file_type, "all"])] = False
                     self._print_title(out_all, id_file, id_folder)
-                out_all.write("\t".join([ptt, "\t".join(row_a),
+                out_all.write("\t".join([ptt, "\t".join(row_a[:6]),
                                          "\t".join(row)]) + "\n")
                 if (float(row[1]) >= score):
                     detect = True
@@ -183,7 +180,7 @@ class PPINetwork(object):
                     if first_output["_".join([file_type, "best"])]:
                         first_output["_".join([file_type, "best"])] = False
                         self._print_title(out_best, id_file, id_folder)
-                    out_best.write("\t".join([ptt, "\t".join(row_a),
+                    out_best.write("\t".join([ptt, "\t".join(row_a[:6]),
                                               "\t".join(row)]) + "\n")
             f_h.close()
             if not detect:
@@ -310,14 +307,14 @@ class PPINetwork(object):
         print("Retrieving STRING actions for {0} of {1} -- {2}".format(
               id_file, strain_id["string"], strain_id["file"]))
         for row in csv.reader(t_h, delimiter="\t"):
-            if row[0].startswith("stringId"):
+            if row[0].startswith("queryIndex"):
                 continue
             else:
                 detect = True
-                if row[1] == strain_id["string"]:
-                    action_source = ("http://string-db.org/api/tsv/actions?"
+                if row[2] == strain_id["string"]:
+                    action_source = ("http://string-db.org/api/tsv/interaction_partners?"
                                      "identifier={0}&species={1}").format(
-                                     row[0], row[1])
+                                     row[1], row[2])
                     self._run_wget(
                         action_source, self.tmp_files["wget_action"],
                         files["action_log"], log)
@@ -350,32 +347,29 @@ class PPINetwork(object):
                         if row_a == []:
                             print("No interaction can be detected")
                             break
-                        if row_a[0].startswith("item_id_a"):
+                        if row_a[0].startswith("stringId_A"):
                             continue
                         else:
                             detect = True
                             if first:
                                 first = False
-                                mode = row_a[2]
-                                actor = row_a[4]
+                                score = row_a[5]
                             else:
                                 if (row_a[0] != pre_row[0]) or (
                                         row_a[1] != pre_row[1]):
                                     self._get_pubmed(
-                                        pre_row, strain_id, mode, actor,
+                                        pre_row, strain_id, score,
                                         id_file, first_output,
                                         strain_id["ptt"], files, paths,
                                         args_ppi, log)
-                                    mode = row_a[2]
-                                    actor = row_a[4]
+                                    score = row_a[5]
                                 else:
-                                    mode = mode + ";" + row_a[2]
-                                    actor = actor + ";" + row_a[4]
+                                    score = score + ";" + row_a[5]
                             pre_row = row_a
                     if detect:
                         detect = False
                         self._get_pubmed(
-                            row_a, strain_id, mode, actor, id_file,
+                            row_a, strain_id, score, id_file,
                             first_output, strain_id["ptt"], files,
                             paths, args_ppi, log)
         self._list_files(args_ppi, paths, files, log)
@@ -482,7 +476,7 @@ class PPINetwork(object):
             ptt_file = "PPI_" + datas[0].replace(".gff", ".ptt")
             rnt_file = "PPI_" + datas[0].replace(".gff", ".rnt")
             self.converter.convert_gff2rntptt(
-                           os.path.join(args_ppi.ptts, datas[0]),
+                           os.path.join(args_ppi.ptts, datas[0]), datas[1],
                            "0", os.path.join(args_ppi.ptts, ptt_file),
                            os.path.join(args_ppi.ptts, rnt_file), None, None)
             strain_ids.append({"file": ptt_file,
@@ -509,5 +503,5 @@ class PPINetwork(object):
                         break
             self._retrieve_id(strain_id, genes, files, log)
             self._retrieve_actions(files, strain_id, paths, args_ppi, log)
-        self._plot(args_ppi, files, log)
-        self._remove_tmps(args_ppi)
+#        self._plot(args_ppi, files, log)
+#        self._remove_tmps(args_ppi)

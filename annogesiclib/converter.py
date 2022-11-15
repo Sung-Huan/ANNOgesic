@@ -64,30 +64,38 @@ class Converter(object):
         out.write("\t".join(["Location", "Strand", "Length", "PID",
                   "Gene", "Synonym", "Code", "COG", "Product"]) + "\n")
 
-    def _read_file(self, gff_file, fasta_file, rnas, cdss, genes):
+    def _read_file(self, gff_file, fasta_file, rnas, cdss, genes, seq_id):
         num_cds = 0
         num_rna = 0
         seq = ""
         g_f = open(gff_file, "r")
         for entry in self.gff3parser.entries(g_f):
-            if (entry.feature == "rRNA") or (entry.feature == "tRNA"):
-                num_rna += 1
-                rnas.append(entry)
-            elif entry.feature == "CDS":
-                num_cds += 1
-                cdss.append(entry)
-            elif entry.feature == "gene":
-                genes.append(entry)
+            if entry.seq_id == seq_id:
+                if (entry.feature == "rRNA") or (entry.feature == "tRNA"):
+                    num_rna += 1
+                    rnas.append(entry)
+                elif entry.feature == "CDS":
+                    num_cds += 1
+                    cdss.append(entry)
+                elif entry.feature == "gene":
+                    genes.append(entry)
         g_f.close()
         if fasta_file == "0":
             seq = "-1"
         else:
+            detect = False
             with open(fasta_file, "r") as f_f:
                 for line in f_f:
                     line = line.strip()
                     if len(line) != 0:
-                        if line[0] != ">":
-                            seq = seq + line
+                        if line.startswith(">"):
+                            if line[1:] == seq_id:
+                                detect = True
+                            else:
+                                detect = False
+                        else:
+                            if detect:
+                                seq = seq + line
         return (num_cds, num_rna, seq)
 
     def _srna2rntptt(self, srna_input_file, srna_output_file, srnas, length):
@@ -288,14 +296,14 @@ class Converter(object):
                              str(tss.super_pos), ".", tss.super_strand, ".",
                              attribute_string]) + "\n")
 
-    def convert_gff2rntptt(self, gff_file, fasta_file, ptt_file, rnt_file,
+    def convert_gff2rntptt(self, gff_file, seq_id, fasta_file, ptt_file, rnt_file,
                            srna_input_file, srna_output_file):
         '''Convert gff format to rnt and ptt format'''
         genes = []
         rnas = []
         cdss = []
         srnas = []
-        datas = self._read_file(gff_file, fasta_file, rnas, cdss, genes)
+        datas = self._read_file(gff_file, fasta_file, rnas, cdss, genes, seq_id)
         rnas = sorted(rnas, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
         cdss = sorted(cdss, key=lambda k: (k.seq_id, k.start, k.end, k.strand))
         genes = sorted(genes, key=lambda k: (k.seq_id, k.start,
