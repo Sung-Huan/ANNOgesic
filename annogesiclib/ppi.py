@@ -121,17 +121,19 @@ class PPINetwork(object):
             if args_ppi.no_specific:
                 pubmed_source = (
                     "http://www.ncbi.nlm.nih.gov/CBBresearch/"
-                    "Wilbur/IRET/PIE/getppi.cgi?term={0}+AND+{1}").format(
+                    "Wilbur/IRET/PIE/getppi.cgi?term={0}+{1}").format(
                         prefer1, prefer2)
                 self._run_wget(pubmed_source, self.tmp_files["nospecific"],
                                files["pubmed_log"], log)
             strain_id["pie"] = "+".join(strain_id["pie"].split(" "))
             pubmed_source = (
                 "http://www.ncbi.nlm.nih.gov/CBBresearch/Wilbur"
-                "/IRET/PIE/getppi.cgi?term={0}+AND+{1}+AND+{2}").format(
+                "/IRET/PIE/getppi.cgi?term={0}+{1}+{2}").format(
                     prefer1, prefer2, strain_id["pie"])
             self._run_wget(pubmed_source, self.tmp_files["specific"],
                            files["pubmed_log"], log)
+            row[0] = row[0].split(".")[-1]
+            row[1] = row[1].split(".")[-1]
             self._merge_information(
                 first_output, self.tmp_files["specific"],
                 files["all_specific"], files["best_specific"], row,

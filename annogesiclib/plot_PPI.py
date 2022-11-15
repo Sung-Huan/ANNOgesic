@@ -119,9 +119,9 @@ def nx_node(G, pos, node_size, colors, color_list):
 
 def nx_edge(G, pos, edges, colors, styles, weights):
     '''draw the edge'''
-    color_edge = (nx.draw_networkx_edges(G, pos, edges=edges,
+    color_edge = (nx.draw_networkx_edges(G, pos, edgelist=edges,
                   edge_color=colors, style=styles, width=weights,
-                  edge_vmin=-1, edge_vmax=1, vmin=-1, vmax=1))
+                  edge_vmin=-1, edge_vmax=1))
     return color_edge
 
 
@@ -280,8 +280,7 @@ def plot_ppi(PPI_file, cutoff_score, out_folder, node_size):
             elif row[0] == "Genome":
                 pass
             else:
-                ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2],
-                       "mode": row[3]}
+                ppi = {"strain": row[0], "item_a": row[1], "item_b": row[2]}
                 if (ppi["item_a"] == center["locus_tag"]) or (
                         ppi["item_a"] == center["gene_name"]) or (
                         ppi["item_b"] == center["locus_tag"]) or (
