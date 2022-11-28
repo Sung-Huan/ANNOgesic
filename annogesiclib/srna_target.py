@@ -126,8 +126,11 @@ class sRNATargetPrediction(object):
                     seq = seq + line
         return seq
 
-    def _get_specific_seq(self, srna_file, seq_file, srna_out, querys):
+    def _get_specific_seq(self, srna_file, seq_file, srna_out, querys,
+                          prefix, check_q):
         for query in querys:
+            if query not in check_q.keys():
+                check_q[query] = False
             srna_datas = query.split(":")
             srna = {"seq_id": srna_datas[0], "strand": srna_datas[3],
                     "start": int(srna_datas[1]), "end": int(srna_datas[2])}
@@ -136,30 +139,33 @@ class sRNATargetPrediction(object):
             seq = self._read_fasta(seq_file)
             num = 0
             detect = False
-            for entry in self.gff_parser.entries(gff_f):
-                if (entry.seq_id == srna["seq_id"]) and (
-                        entry.strand == srna["strand"]) and (
-                        entry.start == srna["start"]) and (
-                        entry.end == srna["end"]):
-                    detect = True
-                    if "ID" in entry.attributes.keys():
-                        id_ = entry.attributes["ID"]
-                    else:
-                        id_ = entry.feature + str(num)
-                    gene = self.helper.extract_gene(seq, entry.start,
-                                                    entry.end, entry.strand)
-                    out.write(">{0}|{1}|{2}|{3}|{4}\n{5}\n".format(
-                              id_, entry.seq_id, entry.start,
-                              entry.end, entry.strand, gene))
-                    num += 1
-            if not detect:
-                print("Error: Some of the query sRNAs do not exist!")
-                sys.exit()
-            gff_f.close()
-            out.close()
+            if srna["seq_id"] == prefix:
+                for entry in self.gff_parser.entries(gff_f):
+                    if (entry.seq_id == srna["seq_id"]) and (
+                            entry.strand == srna["strand"]) and (
+                            entry.start == srna["start"]) and (
+                            entry.end == srna["end"]):
+                        detect = True
+                        check_q[query] = True
+                        if "ID" in entry.attributes.keys():
+                            id_ = entry.attributes["ID"]
+                        else:
+                            id_ = entry.feature + str(num)
+                        gene = self.helper.extract_gene(seq, entry.start,
+                                                        entry.end, entry.strand)
+                        out.write(">{0}|{1}|{2}|{3}|{4}\n{5}\n".format(
+                                  id_, entry.seq_id, entry.start,
+                                  entry.end, entry.strand, gene))
+                        num += 1
+#                if not detect:
+#                    print("Error: {} do not exist!".format(query))
+#                    sys.exit()
+                gff_f.close()
+                out.close()
 
     def _gen_seq(self, prefixs, target_prefixs, args_tar):
         print("Generating sRNA fasta files")
+        check_q = {}
         for gff in os.listdir(self.gff_path):
             if gff.endswith(".gff"):
                 prefix = gff.replace(".gff", "")
@@ -219,8 +225,12 @@ class sRNATargetPrediction(object):
                     self._get_specific_seq(
                             os.path.join(self.srna_path, srna),
                             os.path.join(self.fasta_path, prefix + ".fa"),
-                            srna_out, args_tar.query)
+                            srna_out, args_tar.query, prefix, check_q)
                 self._sort_srna_fasta(srna_out, prefix, self.srna_seq_path)
+        for key, value in check_q.items():
+            if not value:
+                print("Error: {} does not exist.".format(key))
+                sys.exit()
 
 
     def _run_rnaplex(self, prefix, rnaplfold_folder, args_tar, log):
