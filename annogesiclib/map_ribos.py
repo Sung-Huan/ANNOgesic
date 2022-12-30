@@ -19,19 +19,20 @@ def mapping_ribos(table_folder, id_file, feature):
             tables = []
             fh = open(table_file, "r")
             out.write("#ID\tGenome\tStrand\tAssociated_CDS\tStart_genome\t"
-                      "End_genome\tRfam\tE_value\tStart_align\tEnd_align\n")
+                      "End_genome\tRfam_ID\tRfam_name\tE_value\tScore\t"
+                      "Start_align\tEnd_align\n")
             for row in csv.reader(fh, delimiter='\t'):
                 if not row[0].startswith("#"):
                     tables.append({"input": row[0:6], "Rfam": row[6],
-                                   "e": row[7], "start": row[8],
-                                   "end": row[9]})
+                                   "e": row[7], "score": row[8],
+                                   "start": row[9], "end": row[10]})
             for table in tables:
                 for id_ in ids:
                     if table["Rfam"] == id_["id"]:
                         name = id_["name"]
                 out.write("\t".join(table["input"] + [table["Rfam"], name,
-                                    table["e"], table["start"],
-                                    table["end"]]) + "\n")
+                                    table["e"],  table["score"],
+                                    table["start"], table["end"]]) + "\n")
             out.close()
             os.remove(table_file)
             shutil.move(tmp_table, table_file)
