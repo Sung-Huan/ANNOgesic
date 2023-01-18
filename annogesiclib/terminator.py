@@ -118,7 +118,7 @@ class Terminator(object):
                             gff_file, srna, ptt_file, rnt_file,
                             srna.replace(".gff", ".rnt")))
                         self.converter.convert_gff2rntptt(
-                            gff_file, fasta, ptt_file, rnt_file, srna,
+                            gff_file, prefix, fasta, ptt_file, rnt_file, srna,
                             srna.replace(".gff", ".rnt"))
                         file_types[prefix] = "srna"
                         log.write("The following files are generated:\n")
@@ -129,7 +129,7 @@ class Terminator(object):
                                   "to {1}, and {2}.\n".format(
                             gff_file, ptt_file, rnt_file))
                         self.converter.convert_gff2rntptt(
-                            gff_file, fasta, ptt_file, rnt_file, None, None)
+                            gff_file, prefix, fasta, ptt_file, rnt_file, None, None)
                         file_types[prefix] = "normal"
                         log.write("The following files are generated:\n")
                         log.write("\t{0}\n\t{1}\n".format(ptt_file, rnt_file))
@@ -138,7 +138,7 @@ class Terminator(object):
                               "to {1}, and {2}.\n".format(
                         gff_file, ptt_file, rnt_file))
                     self.converter.convert_gff2rntptt(
-                        gff_file, fasta, ptt_file, rnt_file, None, None)
+                        gff_file, prefix, fasta, ptt_file, rnt_file, None, None)
                     file_types[prefix] = "normal"
                     log.write("The following files are generated:\n")
                     log.write("\t{0}\n\t{1}\n".format(ptt_file, rnt_file))

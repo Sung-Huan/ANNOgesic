@@ -45,7 +45,7 @@ class RATT(object):
                 fasta = self.helper.get_correct_file(self.tmp_files["tar"],
                                                      ".fa", prefix, None, None)
                 if fasta:
-                    self.converter.convert_gff2rntptt(gff, fasta, ptt, rnt,
+                    self.converter.convert_gff2rntptt(gff, prefix, fasta, ptt, rnt,
                                                       None, None)
                     log.write("\t" + ptt + " is generated.\n")
                     log.write("\t" + rnt + " is generated.\n")
