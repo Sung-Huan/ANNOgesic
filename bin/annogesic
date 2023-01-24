@@ -42,7 +42,7 @@ def main():
     # Parameters for get input files
     get_input_parser = subparsers.add_parser(
         "get_input_files", help="Get required files. "
-        "(i.e. annotation files, fasta files)")
+        "(i.e. annotation files, fasta files).")
     get_input_basic = get_input_parser.add_argument_group(
             'basic arguments')
     get_input_basic.add_argument(
@@ -1797,7 +1797,7 @@ def main():
     
     # Parameters of protein-protein interaction network
     ppi_parser = subparsers.add_parser(
-        "ppi_network", help="Detect protein-protein interactions suported by "
+        "ppi_network", help="Detect protein-protein interactions supported by "
         "literature.")
     ppi_basic = ppi_parser.add_argument_group(
         'basic arguments')
