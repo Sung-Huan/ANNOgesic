@@ -178,4 +178,4 @@ Consortium license ~ simplified BSD license) - see `LICENSE <http://annogesic.re
 Contact
 -------
 
-If you have any questions, please contact `Sung-Huan Yu <mailto:silasysh@mail.nsysu.edu.tw>`_
+If you have any questions, please contact `Sung-Huan Yu <mailto:silasysh@g-mail.nsysu.edu.tw>`_
