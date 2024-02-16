@@ -169,6 +169,10 @@ K Moon, M Sim, CH Tai, K Yoo, C Merzbacher, SH Yu, DD Kim, J Lee, KU Förstner, 
 `DOI:10.1128/Spectrum.00044-21 <https://journals.asm.org/doi/10.1128/Spectrum.00044-21>`_,
 `PMID:34550019 <https://pubmed.ncbi.nlm.nih.gov/34550019/>`_.
 
+H Lee, SH Yu, JE Shim, D Yong. 2024, mSystems
+`DOI:10.1128/msystems.00877-23 <https://doi.org/10.1128/msystems.00877-23>`_,
+`PMID:38349171 <https://pubmed.ncbi.nlm.nih.gov/38349171/>`_.
+
 Book Chapter
 
 CH Tai, D Hinton, S.H. Yu. 2024, Bacterial regulatory RNAs - Methods and Protocols
